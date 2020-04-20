@@ -34,7 +34,6 @@
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
         var dataItem = obj.getAttribute('data-item');
-        var submitItem = obj.getAttribute('data-validateTable');
         var tag = obj.tagName;
         obj.classList.remove("is-up");
         //validation
@@ -47,10 +46,15 @@
             InputValidation(obj, value);
         }
         //trigger
-        TriggerHandler(obj, Name, value, dataRule, dataItem, submitItem);
-        obj.form.classList.add("needs-validation");
-        obj.form.classList.remove("is-valid");
-        obj.form.classList.remove("was-validated");        
+        TriggerHandler(obj, Name, value, dataRule, dataItem);
+        try {
+            obj.form.classList.add("needs-validation");
+            obj.form.classList.remove("is-valid");
+            obj.form.classList.remove("was-validated");
+        }
+        catch (ex) {
+            //we assume the obj is part of a form but may not always be the case
+        }
     }
 
     function InputValidation(obj, value) {
@@ -104,7 +108,7 @@
         }
     }
 
-    function TriggerHandler(obj, Name, Value, Rule, DataItem, SubmitItem) {
+    function TriggerHandler(obj, Name, Value, Rule, DataItem) {
         try {
             //all rules go here
             DefaultRule(Value, Name);
@@ -162,13 +166,19 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "ValidateOnSubmit") {
+                var ids = DataItem.split(',');
+                obj.setAttribute('data-onsubmititem', ids[1]);
+                DefaultRule(Value, Name);
+            }
+            if (Rule === "reverseValidateOnSubmit") {
                 var tempVal = Value
+                var ids = DataItem.split(',');
                 if (tempVal == "1") {
-                    obj.setAttribute('data-validateTable', SubmitItem);
+                    obj.setAttribute('data-onsubmititem', ids[1]);
                     Value = "2";
                 }
                 if (tempVal == "2") {
-                    obj.removeAttribute('data-validateTable');
+                    obj.removeAttribute('data-onsubmititem');
                     Value = "1";
                 }
                 DefaultRule(Value, Name);
@@ -176,7 +186,7 @@
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
             
-            console.log(ex);
+            //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }

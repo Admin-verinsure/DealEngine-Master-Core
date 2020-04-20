@@ -58,7 +58,6 @@
 
                    //<--!Boostrap validation method
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
-                   debugger;
                    var formIds = [];
                    for (var i = 0; i < forms.length; i++) {
                        formIds.push(forms[i].id);
@@ -80,6 +79,31 @@
                                OnChange(element.id, element.name);
                                //hardcoded to find the div visibility
                                var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                               var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
+
+                               //onsubmitfunction trigger
+                               var validationelement = document.getElementById(hasOnsubmitValidation);
+                               if (validationelement != null) {
+                                   var tag = validationelement.tagName;
+                                   //hardcoded for project table
+                                   if (tag == "TABLE") {
+                                       debugger;
+
+                                       if (validationelement.rows.length < 2) {
+                                           debugger;
+                                           event.preventDefault();
+                                           event.stopPropagation();
+                                           $("#more").trigger("click");
+                                           //go back to div// go back to accordion to get id
+                                           var accordianId = "Projects";
+                                           window.alert("Please provide a project");
+                                           $("[id='" + accordianId + "']").trigger("click");
+                                           element.scrollIntoView();
+                                           throw accordianId + " incomplete";
+                                           debugger;
+                                       }
+                                   }                                                                     
+                               }
                                if (element.classList.contains("is-invalid") && isHidden == false) {
                                    //write a message here or stop the process
                                    event.preventDefault();
@@ -152,11 +176,8 @@
                        var Isnamedpartycount = 0;
                        var IsLocationCount = 0;
                        var value = "";
-                       debugger;
-
 
                        $('#tblLocation tr').each(function () {
-                           debugger;
                            var $tds = $(this).find('td'),
                                value = $tds.eq(2).text().toString();
 

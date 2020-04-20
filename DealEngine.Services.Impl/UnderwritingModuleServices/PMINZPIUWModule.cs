@@ -262,6 +262,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int intexpiringlimit = 0;
             decimal decexpiringpremium = 0m;
+            string strretrodate = "";
 
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -270,18 +271,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (preRenewOrRefData.DataType == "preterm")
                     {
                         intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
-
+                        decexpiringpremium = Convert.ToDecimal(preRenewOrRefData.PIBoundPremium);
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+                        {
+                            strretrodate = preRenewOrRefData.PIRetro;
+                        }
+                        
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+                    {
+                        ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                        agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
                     }
                 }
             }
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            //{
-            //    intexpiringlimit = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            //}
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            //{
-            //    decexpiringpremium = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            //}
+
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"] / 100);
@@ -299,14 +303,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term1millimitoption.DateDeleted = null;
             term1millimitoption.DeletedBy = null;
 
-            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            //{
-            //    bolrenewalpremiumslowerthanexpiring = true;
-            //}
-            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            //{
-            //    bolrenewalpremiumshigherthanexpiring = true;
-            //}
+            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            {
+                bolrenewalpremiumslowerthanexpiring = true;
+            }
+            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            {
+                bolrenewalpremiumshigherthanexpiring = true;
+            }
 
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = decPIBasePremium * (1 + rates["pi2millimitloadingrate"] / 100);
@@ -324,14 +328,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimitoption.DateDeleted = null;
             term2millimitoption.DeletedBy = null;
 
-            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            //{
-            //    bolrenewalpremiumslowerthanexpiring = true;
-            //}
-            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            //{
-            //    bolrenewalpremiumshigherthanexpiring = true;
-            //}
+            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            {
+                bolrenewalpremiumslowerthanexpiring = true;
+            }
+            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            {
+                bolrenewalpremiumshigherthanexpiring = true;
+            }
 
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = decPIBasePremium * (1 + rates["pi5millimitloadingrate"] / 100);
@@ -375,10 +379,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfpriorinsurance(underwritingUser, agreement);
             //No Projects Managed
             uwrfnoprojectsmanaged(underwritingUser, agreement);
-            ////Renewal Premiums Lower than Expiring
-            //uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
-            ////Renewal Premiums Higher than Expiring
-            //uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
+            //Renewal Premiums Lower than Expiring
+            uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
+            //Renewal Premiums Higher than Expiring
+            uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
             //Capacity of an Engineer to Contract
             uwrfcapacityofanengineertocontract(underwritingUser, agreement);
             //Construction revenue as role as Engineer to the Contract
@@ -400,6 +404,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "PMINZ PI UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

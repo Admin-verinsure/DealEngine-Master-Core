@@ -1072,10 +1072,14 @@ namespace DealEngine.Services.Impl
                     {
                         businessContract = new BusinessContract(currentUser);
                         businessContract.MembershipNumber = parts[7];
-                        businessContract.ProjectDescription = parts[0];
-                        businessContract.Fees = parts[1];
-                        businessContract.ConstructionValue = parts[2];
-                        businessContract.ProjectDuration = parts[3];
+                        if (!string.IsNullOrEmpty(parts[0]))
+                            businessContract.ProjectDescription = parts[0];
+                        if (!string.IsNullOrEmpty(parts[1]))
+                            businessContract.Fees = parts[1];
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            businessContract.ConstructionValue = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            businessContract.ProjectDuration = parts[3];
                         if (parts[4] == "1")
                         {
                             businessContract.ProjectDirector = true;

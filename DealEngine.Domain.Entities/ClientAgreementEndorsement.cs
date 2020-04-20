@@ -42,13 +42,13 @@ namespace DealEngine.Domain.Entities
         public virtual string Name
         {
             get;
-            protected set;
+            set;
         }
 
         public virtual string Type
         {
             get;
-            protected set;
+            set;
         }
 
         public virtual Endorsement Endorsement

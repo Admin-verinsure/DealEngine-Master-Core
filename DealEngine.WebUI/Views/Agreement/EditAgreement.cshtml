@@ -114,6 +114,28 @@
                         </tr>
                         <tr>
                             <td>
+                                <label class="label required"><strong>Territory: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @*<i class="icon-append fa fa-edit"></i>*@
+                                    @Html.TextBoxFor(m => m.TerritoryLimit)
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="label required"><strong>Jurisdiction: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @*<i class="icon-append fa fa-edit"></i>*@
+                                    @Html.TextBoxFor(m => m.Jurisdiction)
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Cancel</a>

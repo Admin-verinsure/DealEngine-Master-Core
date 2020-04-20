@@ -1938,6 +1938,8 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientNumber = agreement.ClientNumber;
                 model.PolicyNumber = agreement.PolicyNumber;
                 model.RetroactiveDate = agreement.RetroactiveDate;
+                model.TerritoryLimit = agreement.TerritoryLimit;
+                model.Jurisdiction = agreement.Jurisdiction;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1970,6 +1972,8 @@ namespace DealEngine.WebUI.Controllers
                     agreement.ClientNumber = model.ClientNumber;
                     agreement.PolicyNumber = model.PolicyNumber;
                     agreement.RetroactiveDate = model.RetroactiveDate;
+                    agreement.Jurisdiction = model.Jurisdiction;
+                    agreement.TerritoryLimit = model.TerritoryLimit;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);

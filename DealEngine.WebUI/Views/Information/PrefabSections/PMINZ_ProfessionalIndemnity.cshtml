@@ -546,7 +546,7 @@
                     <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
                 </div>
                 <div class="col-3">
-                    <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="ValidateOnSubmit" data-item='PMINZPIViewModel.HasManagedProjectOptions' class="custom-select" onchange="OnChange(this.id, this.name)">
+                    <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="reverseValidateOnSubmit" data-item='PMINZPIViewModel.HasManagedProjectOptions,tblpminzproject' class="custom-select" onchange="OnChange(this.id, this.name)">
                         @foreach (var option in Model.PMINZPIViewModel.HasManagedProjectOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>

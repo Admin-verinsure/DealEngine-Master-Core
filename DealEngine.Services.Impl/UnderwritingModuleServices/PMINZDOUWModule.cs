@@ -60,6 +60,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.DORetro))
+                        {
+                            strretrodate = preRenewOrRefData.DORetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "DO")
+                    {
+                        ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                        agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                    }
+                }
+            }
+
             int TermLimit500k = 500000;
             decimal TermPremium500K = rates["do500klimitpremium"];
             decimal TermBrokerage500k = 0m;
@@ -130,6 +151,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "Worldwide";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "PMINZ DO UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
