@@ -1686,7 +1686,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            property.SetValue(reflectModel, DateTime.Parse(answer.Value));
+                            var defaultDate = DateTime.Parse("01/01/0001");
+                            var date = DateTime.Parse(answer.Value);
+                            if(date == defaultDate)
+                            {
+                                date = DateTime.Now;
+                            }
+                            property.SetValue(reflectModel, date);
                         }
                     }
                 }

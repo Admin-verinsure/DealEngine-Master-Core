@@ -3171,7 +3171,10 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
                 string orgTypeName = "";
-
+                if (model.Type == "project management personnel")
+                {
+                    model.OrganisationTypeName = "Person - Individual";
+                }
                 try
                 {
                     if (model.OrganisationTypeName != null)
@@ -3180,7 +3183,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             case "Person - Individual":
                                 {
-                                    orgTypeName = "Sole Trader";
+                                    orgTypeName = "Person - Individual";
                                     break;
                                 }
                             case "Corporation – Limited liability":
@@ -3188,7 +3191,13 @@ namespace DealEngine.WebUI.Controllers
                                     orgTypeName = "Corporation – Limited liability";
                                     break;
                                 }
-                            
+                            case "Trust":
+                                {
+                                    orgTypeName = "Corporation – Limited liability";
+                                    break;
+                                }
+
+
                             case "Partnership":
                                 {
                                     orgTypeName = "Partnership";
@@ -3200,10 +3209,10 @@ namespace DealEngine.WebUI.Controllers
                                 }
                         }
                     }
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Person - Individual");
+                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                     if (insuranceAttribute == null)
                     {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Person - Individual");
+                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                     }
                     OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
                     if (organisationType == null)
@@ -3222,7 +3231,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (orgTypeName == "Person - Individual")
                         {
-                            userdb = await _userService.GetUserByEmail(organisation.Email);
+                            userdb = await _userService.GetUserByEmail(model.Email);
                             if (userdb == null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -3382,6 +3391,7 @@ namespace DealEngine.WebUI.Controllers
                         model.ID = partyID;
                         model.OrganisationName = sheet.Owner.Name;
                         model.Type = "Owner";
+                        model.OrganisationTypeName = sheet.Owner.OrganisationType.Name;
                         model.Email = sheet.Owner.Email;
                         model.AnswerSheetId = answerSheetId;
                     }

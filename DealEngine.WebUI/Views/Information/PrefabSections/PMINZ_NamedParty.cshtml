@@ -117,8 +117,8 @@
                         <label class="input">
                             <select id="EditOrganisationType" onchange="EditPMINZOrgTyprselected('EditOrganisationType')" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
-                                <option value="Person - Individual">Private</option>
-                                <option value="Corporation – Limited liability">Company</option>
+                                <option value="Person - Individual">Private/Soletrader</option>
+                                <option value="Corporation – Limited liability">Limited Liability Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
 
@@ -349,8 +349,8 @@
                         <label class="input">
                             <select id="AddOrgTypeName" onchange="AddOrgTypeSelected('AddOrgTypeName')" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
-                                <option value="Person - Individual">Private</option>
-                                <option value="Corporation – Limited liability">Company</option>
+                                <option value="Person - Individual">Private/Soletrader</option>
+                                <option value="Corporation – Limited liability">Limited Liability Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
 
@@ -749,13 +749,17 @@
             data: postData
         })
             .done(function (data) {
-                     debugger;
+                debugger;
+                $('#PMINZNamedPartyOrganisationId').val(data.id);
+                
                 if (data.type == "Owner") {
 
                     $('.nonOwnerSec').addClass('hidden');
+                    $('.EditNonProjectPersonnel').removeClass('hidden');
                     $('.OwnerSec').removeClass('hidden');
 
                 } else {
+                    $('.EditNonProjectPersonnel').addClass('hidden');
                     $('.nonOwnerSec').removeClass('hidden');
                     $('.OwnerSec').addClass('hidden');
                 }

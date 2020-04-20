@@ -26,8 +26,6 @@
                     element.classList.add("is-up");
                 }
             }
-            form.classList.remove("is-valid");
-            form.classList.add("needs-validation");
         }
     });
 
@@ -36,20 +34,23 @@
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
         var dataItem = obj.getAttribute('data-item');
-        var Tag = obj.tagName;
+        var submitItem = obj.getAttribute('data-validateTable');
+        var tag = obj.tagName;
         obj.classList.remove("is-up");
-
         //validation
-        if (Tag == "SELECT") {
+        if (tag == "SELECT") {
             SelectValidation(obj, value);
-        } else if (Tag == "INPUT") {
+        } else if (tag == "INPUT") {
             InputValidation(obj, value);
         }
-        else if (Tag == "TEXTAREA") {
+        else if (tag == "TEXTAREA") {
             InputValidation(obj, value);
         }
         //trigger
-        TriggerHandler(Name, value, dataRule, dataItem);
+        TriggerHandler(obj, Name, value, dataRule, dataItem, submitItem);
+        obj.form.classList.add("needs-validation");
+        obj.form.classList.remove("is-valid");
+        obj.form.classList.remove("was-validated");        
     }
 
     function InputValidation(obj, value) {
@@ -73,13 +74,25 @@
     }
 
     function SelectValidation(obj, value) {
-        if (value != "0" && value != "") {
-            obj.classList.add("is-valid");
-            obj.classList.remove("is-invalid");
+        if (!obj.multiple) {
+            if (value != "0") {
+                obj.classList.add("is-valid");
+                obj.classList.remove("is-invalid");
+            }
+            else {
+                obj.classList.remove("is-valid");
+                obj.classList.add("is-invalid");
+            }
         }
         else {
-            obj.classList.remove("is-valid");
-            obj.classList.add("is-invalid");
+            if (value != "") {
+                obj.classList.add("is-valid");
+                obj.classList.remove("is-invalid");
+            }
+            else {
+                obj.classList.remove("is-valid");
+                obj.classList.add("is-invalid");
+            }
         }
     }
 
@@ -91,7 +104,7 @@
         }
     }
 
-    function TriggerHandler(Name, Value, Rule, DataItem) {
+    function TriggerHandler(obj, Name, Value, Rule, DataItem, SubmitItem) {
         try {
             //all rules go here
             DefaultRule(Value, Name);
@@ -148,9 +161,22 @@
                 var element = document.getElementById(ids[1]);
                 DefaultRule(Value, element.name);
             }
+            if (Rule === "ValidateOnSubmit") {
+                var tempVal = Value
+                if (tempVal == "1") {
+                    obj.setAttribute('data-validateTable', SubmitItem);
+                    Value = "2";
+                }
+                if (tempVal == "2") {
+                    obj.removeAttribute('data-validateTable');
+                    Value = "1";
+                }
+                DefaultRule(Value, Name);
+            }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
-            //console.log(ex);
+            
+            console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
