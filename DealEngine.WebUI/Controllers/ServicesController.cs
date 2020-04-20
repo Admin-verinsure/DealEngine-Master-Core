@@ -3391,7 +3391,6 @@ namespace DealEngine.WebUI.Controllers
                         model.ID = partyID;
                         model.OrganisationName = sheet.Owner.Name;
                         model.Type = "Owner";
-                        model.OrganisationTypeName = sheet.Owner.OrganisationType.Name;
                         model.Email = sheet.Owner.Email;
                         model.AnswerSheetId = answerSheetId;
                     }
