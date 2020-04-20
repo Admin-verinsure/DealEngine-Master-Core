@@ -408,16 +408,16 @@
                             <label class="label required">Qualifications:</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="Qualifications" id="AddPMINZQualifications" name="Qualifications" placeholder="Qualifications" value="">
+                                <input data-type="TEXTBOX" data-name="Qualifications" id="AddPMINZQualifications" name="Qualifications" placeholder="Qualifications" value="" required>
                             </label>
-                            <p class="validationContainer" id="partyname"></p>
+                            <p class="validationContainer" id="validateAddPMINZQualifications"></p>
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Professional Affiliations:</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="ProfAffiliation" id="AddPMINZProfAffiliation" name="ProfAffiliation" placeholder="Professional Affiliations" value="">
+                                <input data-type="TEXTBOX" data-name="ProfAffiliation" id="AddPMINZProfAffiliation" name="ProfAffiliation" placeholder="Professional Affiliations" value="" required>
                             </label>
                             <p class="validationContainer" id="partyname"></p>
 
@@ -426,7 +426,7 @@
                             <label class="label required">Job title:</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="JobTitle" id="AddPMINZJobTitle" name="JobTitle" placeholder="Job Title Name" value="">
+                                <input data-type="TEXTBOX" data-name="JobTitle" id="AddPMINZJobTitle" name="JobTitle" placeholder="Job Title Name" value="" required>
                             </label>
                             <p class="validationContainer" id="partyname"></p>
 
@@ -435,7 +435,7 @@
                             <label class="label required">Email:</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="Email" id="AddPMINZEmail" name="Email" placeholder="E-mail" value="">
+                                <input data-type="TEXTBOX" data-name="Email" id="AddPMINZEmail" name="Email" placeholder="E-mail" value="" required>
                             </label>
                             <p class="validationContainer" id="partyemail"></p>
 
@@ -444,7 +444,7 @@
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Relation to insured entity:</label>
 
-                            <label class="input w100">
+                            <label class="input w100"required>
                                 <select class="form-control oper" onchange="AddEditInsuredEntity('AddPMINZInsuredEntity')" id="AddPMINZInsuredEntity" name="InsuredEntityRelation" required>
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="Director">Director</option>
@@ -456,10 +456,10 @@
 
                         </section>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddisContractorInsuredsec" style="display:none">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddisContractorInsuredsec" style="display:none" required>
                             <label class="label required">Does this contractor carry their own insurance ? </label>
 
-                            <label class="input w100">
+                            <label class="input w100" required>
                                 <select class="form-control oper" onchange="AddContractorInsuredSelected('AddPMINZIsContractorInsured')" id="AddPMINZIsContractorInsured" name="IsContractorInsured" required>
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
@@ -472,7 +472,7 @@
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddisInsuredrequiredsec" style="display:none">
                             <label class="label required">Does this contractor require to be insured under this policy ? </label>
 
-                            <label class="input w100">
+                            <label class="input w100" required>
                                 <select class="form-control oper" id="AddPMINZIsInsuredRequired" name="IsInsuredRequired" required>
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
@@ -485,7 +485,7 @@
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Do you have a current PMI membership (i.e. not expired)? :</label>
 
-                            <label class="input w100">
+                            <label class="input w100" required>
 
                                 <select class="form-control oper" onchange="Currenmembership('AddPMINZIsCurrentMembership')" id="AddPMINZIsCurrentMembership" name="IsCurrentMembership" required>
                                     <option selected="selected" value="">-- Select --</option>
@@ -500,7 +500,7 @@
                             <label class="label required">PMI membership no:</label>
 
                             <label class="input w100">
-                                <input data-type="TEXTBOX" data-name="CurrentMembershipNo" id="AddCurrentMembershipNo" name="CurrentMembershipNo" placeholder="Current Membership No" value="">
+                                <input data-type="TEXTBOX" data-name="CurrentMembershipNo" id="AddCurrentMembershipNo" name="CurrentMembershipNo" placeholder="Current Membership No" value="" required>
 
                             </label>
                             <p class="validationContainer" id="validateAddPMINZCurrentMembership"></p>
@@ -511,7 +511,7 @@
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">PMI Certification Type: </label>
 
-                            <label class="input w100">
+                            <label class="input w100" required>
                                 <select class="form-control oper" id="AddPMINZCertType" name="CertType" required>
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="Ordinary">Ordinary</option>
@@ -536,17 +536,13 @@
 
                     </div>
 
-                    @*</div>*@
-                    @*<div class="row" id="update">
-                            <section class="col col-xs-12">
-                                <button onclick="AddPMINZNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateNamedParty">Add</button>
-                                <button onclick="ClearBoats(event,'#PMINZNamedPartyTabs3','PMINZNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearNamedParty">Cancel Add</button>
+                    <br />
 
-                            </section>
-                        </div>*@
+                    <p class="validationContainer" id="validatenamedparty"></p>
 
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <button onclick="AddPMINZNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                        @*<button onclick="AddPMINZNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>*@
+                        <button onclick="ValidatePminznonprojectpersonel()" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                         <button onclick="ClearBoats(event,'#PMINZNamedPartyTabs3','PMINZNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearNamedParty">Cancel Add</button>
                     </section>
 
@@ -955,4 +951,77 @@
                 }
             });
     }
+
+    function ValidatePminzprojectpersonel() {
+        debugger;
+        $('#ProjectPersonnelSec input:required , select').each(function () {
+             event.preventDefault();
+            if ($(this).val() === '') {
+                $('#validatenamedparty').html("<font color='red'>Please fill all the fields marked by * </font>");
+                $(this).css({ "border": ".5px solid red" });
+                if (this.id = "AddCurrentMembershipNo" && $(this).val() === '') {
+                    if ($('#validatenamedparty').val() == "true") {
+                        return false;
+
+                    } else {
+                        return true;
+
+                    }
+                }
+                return false;
+            } else {
+                 $(this).css({ "border": ".5px solid green" });
+                return true;
+            }
+        });
+    };
+
+     function ValidatePminznonprojectpersonel() {
+         debugger;
+                         event.preventDefault();
+
+        $('#ProjectPersonnelSec input:required , select').each(function() {
+            if ($(this).val() === '') {
+                $('#validatenamedparty').html("<font color='red'>Please fill all the fields marked by * </font>");
+                $(this).css({ "border": "1px solid red" });
+                return false;
+            } else {
+                 $(this).css({ "border": "1px solid green" });
+                return true;
+            }
+        });
+    };
+
+    
+     function ValidfgdatePminznonprojectpersonel() {
+         debugger;
+                         event.preventDefault();
+
+        $('#ProjectPersonnelSec input:required').each(function() {
+            if ($(this).val() === '') {
+                $('#validatenamedparty').html("<font color='red'>Please fill all the fields marked by * </font>");
+                $(this).css({ "border": "1px solid red" });
+                return false;
+            } else {
+                 $(this).css({ "border": "1px solid green" });
+                return true;
+            }
+        });
+    };
 </script>
+
+
+<style>
+
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+
+    .selectuse option {
+        background-color: white;
+    }
+
+   
+</style>
