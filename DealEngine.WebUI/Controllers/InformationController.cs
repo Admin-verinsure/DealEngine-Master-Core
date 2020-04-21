@@ -1177,7 +1177,16 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
                 {
-                    productname.Add(agreement.Product.Name);
+                    if (agreement.Product.IsOptionalProduct)
+                    {
+                        if (sheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                        {
+                            productname.Add(agreement.Product.Name);
+                        }
+                    } else
+                    {
+                        productname.Add(agreement.Product.Name);
+                    }                    
                 }
 
                 return Json(productname);
@@ -1656,7 +1665,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            property.SetValue(reflectModel, DateTime.Parse(answer.Value));
+                            var defaultDate = DateTime.Parse("01/01/0001");
+                            var date = DateTime.Parse(answer.Value);
+                            if(date == defaultDate || date == null)
+                            {
+                                date = DateTime.Now;
+                            }
+                            property.SetValue(reflectModel, date);
                         }
                     }
                 }
@@ -1671,7 +1686,7 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if(revenueData != null)
+                if(revenueData.Activities.Count> 0 || revenueData.Territories.Count > 0)
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
@@ -2301,18 +2316,22 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
+            ClientInformationSheet sheet1 = null;
+
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                //sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
                 {
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
-                    //sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
+
                     await _clientInformationService.SaveAnswersFor(sheet, collection);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

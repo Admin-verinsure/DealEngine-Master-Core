@@ -60,6 +60,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.ELRetro))
+                        {
+                            strretrodate = preRenewOrRefData.ELRetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "EL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
             int TermLimit250k = 250000;
             decimal TermPremium250k = rates["el250klimitpremium"];
             decimal TermBrokerage250k = 0m;
@@ -102,6 +126,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "PMINZ EL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

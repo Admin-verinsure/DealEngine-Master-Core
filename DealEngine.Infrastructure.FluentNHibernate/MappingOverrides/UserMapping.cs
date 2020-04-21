@@ -16,6 +16,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
             mapping.IgnoreProperty (p => p.Branches);
 			mapping.IgnoreProperty (p => p.Departments);
 			mapping.HasManyToMany (p => p.Organisations);
+            mapping.References(p => p.PrimaryOrganisation).Not.LazyLoad();
         }
     }
 }

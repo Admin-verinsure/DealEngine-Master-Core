@@ -82,121 +82,59 @@ namespace DealEngine.WebUI.Controllers
             model.DealItems = new List<ProductItem>();
             model.CriticalTaskItems = new List<TaskItem>();
             model.ImportantTaskItems = new List<TaskItem>();
-            model.CompletedTaskItems = new List<TaskItem>();
 
             User user = null;
             try
             {
                 user = await CurrentUser();
-                if (DemoEnvironment)
+
+                model.DisplayDeals = true;
+                model.DisplayProducts = false;
+                model.CurrentUserType = "Client";
+                if (user.PrimaryOrganisation.IsBroker)
                 {
-                    model.DisplayDeals = true;
-                    model.DisplayProducts = false;
-                    model.DisplayRole = "Client";
-
-                    if (user.PrimaryOrganisation.IsBroker)
-                    {
-                        model.CurrentUserIsBroker = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsBroker = "False";
-                    }
-                    if (user.PrimaryOrganisation.IsInsurer)
-                    {
-                        model.CurrentUserIsInsurer = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsInsurer = "False";
-                    }
-                    if (user.PrimaryOrganisation.IsTC)
-                    {
-                        model.CurrentUserIsTC = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsTC = "False";
-                    }
-
-                    IList<string> languages = new List<string>();
-                    languages.Add("nz");
-
-                    model.ProgrammeItems = new List<ProgrammeItem>();
-                    var programmeList = await _programmeService.GetAllProgrammes();
-                    foreach (Programme programme in programmeList)
-                    {
-                        List<DealItem> deals = new List<DealItem>();
-                        var taskList = await _taskingService.GetAllTasksFor(user);
-                        foreach (var task in taskList)
-                        {
-                            if (task.IsActive)
-                            {
-                                var taskItem = new TaskItem
-                                {
-                                    Id = task.Id,
-                                    Details = task.Details,
-                                    Description = task.Description,
-                                    DueDate = LocalizeTime(task.DueDate)
-                                };
-                                if (task.Completed)
-                                {
-                                    model.CompletedTaskItems.Add(taskItem);
-                                    continue;
-                                }
-                                if (task.Priority == 1)
-                                    model.CriticalTaskItems.Add(taskItem);
-                                else
-                                    model.ImportantTaskItems.Add(taskItem);
-                            }
-
-                        }
-
-                        model.ProgrammeItems.Add(new ProgrammeItem
-                        {
-                            Deals = deals,
-                            Name = programme.Name,
-                            Languages = languages,
-                            ProgrammeId = programme.Id.ToString(),
-                            ProgrammeClaim = programme.Claim
-                        });
-                    }
-
-                    return View("IndexNew", model);
+                    model.CurrentUserType = "Broker";
+                }
+                if (user.PrimaryOrganisation.IsInsurer)
+                {
+                    model.CurrentUserType = "Insurer";
+                }
+                if (user.PrimaryOrganisation.IsTC)
+                {
+                    model.CurrentUserType = "TC";
                 }
 
-
-                // Server URL
-                // Server Username
-                // Server Password
-
-                var servers = new List<string>();
-
-                if (!DemoEnvironment)
+                IList<string> languages = new List<string>();
+                languages.Add("nz");
+                List<DealItem> deals = new List<DealItem>();
+                IList<Programme> programmeList = new List<Programme>();
+                model.ProgrammeItems = new List<ProgrammeItem>();
+                if (model.CurrentUserType == "Client")
                 {
-                    var privateServers = await _privateServerService.GetAllPrivateServers();
-
-                    foreach (var individualprivateServer in privateServers)
+                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp=>bp.BaseProgramme);                    
+                    foreach (var clientProgramme in clientProgList)
                     {
-                        servers.Add(individualprivateServer.ServerAddress + "/api");
+                        programmeList.Add(clientProgramme.Key);                     
                     }
-
                 }
-
-                if (model.DisplayDeals = model.DealItems.Count > 0 || DemoEnvironment)
+                else
                 {
-                    model.DealItems = model.DealItems.OrderBy(o => o.Description).ToList();
+                    programmeList = await _programmeService.GetAllProgrammes();
                 }
 
-                if (model.DisplayProducts = model.ProductItems.Count > 0 || DemoEnvironment)
+                foreach (Programme programme in programmeList)
                 {
-                    model.ProductItems = model.ProductItems.OrderBy(o => o.Name).ToList();
+                    model.ProgrammeItems.Add(new ProgrammeItem
+                    {
+                        Deals = deals,
+                        Name = programme.Name,
+                        Languages = languages,
+                        ProgrammeId = programme.Id.ToString(),
+                        ProgrammeClaim = programme.Claim
+                    });
                 }
 
-                if (User.Identity.Name == "TCustomer")
-                    return View("Customer");
-
-                return View(model);
+                return View("IndexNew", model);
             }
             catch (Exception ex)
             {

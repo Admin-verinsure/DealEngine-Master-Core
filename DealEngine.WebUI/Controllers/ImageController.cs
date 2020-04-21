@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Drawing;
 using Microsoft.Extensions.Logging;
-
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
@@ -19,7 +18,12 @@ namespace DealEngine.WebUI.Controllers
     public class ImageController : BaseController
     {
         IMapperSession<CKImage> _ckimageRepository;
+
+        IMapperSession<Document> _fileRepository;
+
         private readonly ICKImageService _ckimageService;
+        private readonly IProductService _iproductService;
+
         private readonly IWebHostEnvironment _hostingEnv;
         //IMapperSession<User> _userRepository;
         IApplicationLoggingService _applicationLoggingService;
@@ -27,7 +31,9 @@ namespace DealEngine.WebUI.Controllers
 
         public ImageController(IUserService userRepository, 
             IMapperSession<CKImage> ckimageRepository, 
-            ICKImageService ckimageService, 
+            IMapperSession<Document> fileRepository, 
+            ICKImageService ckimageService,
+            IProductService iproductService, 
             IWebHostEnvironment hostingEnv,
             IApplicationLoggingService applicationLoggingService,
             ILogger<ImageController> logger
@@ -37,7 +43,9 @@ namespace DealEngine.WebUI.Controllers
             _applicationLoggingService=applicationLoggingService;
             _logger=logger;
             _ckimageRepository = ckimageRepository;
+            _fileRepository = fileRepository;
             _ckimageService = ckimageService;
+            _iproductService = iproductService;
             _hostingEnv = hostingEnv;
         }
 
@@ -46,8 +54,10 @@ namespace DealEngine.WebUI.Controllers
         public async Task<ViewResult> ManageImage()
         {
             var list = await _ckimageService.GetAllImages();
+            var list2 = await _iproductService.GetAllProducts();
             ImageViewModel model = new ImageViewModel();
             model.Item = list;
+            model.Products = list2;
 
             return View(model);
         }
@@ -146,6 +156,79 @@ namespace DealEngine.WebUI.Controllers
             }
             return Redirect("~/Image/ManageImage");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadDoc(ImageViewModel model)
+        {
+
+            var user = await CurrentUser();
+            if (model != null)
+            {
+                if (model.File != null)
+                {
+
+                    var contentType = model.File.ContentType;
+                    var extension = "";
+                    var filename = "";
+                    
+                    if (contentType == "application/pdf")
+                    {
+                        extension = ".pdf";
+                    }                    
+                    else
+                    {
+                        throw new FileFormatException("Invalid File Type");
+                    }
+
+                    if (model.Name != null){
+                        filename = model.Name + extension;
+                    }
+                    else {
+                        filename = model.File.FileName;
+                    }
+
+                    var path = Path.Combine(_hostingEnv.WebRootPath, "files", model.Product, "attachmentfiles");
+                    System.IO.Directory.CreateDirectory(path);
+                    path = Path.Combine(path, filename);
+
+                    // no thumbnail needed as can use generic microsoft/adobe icons in the views ... if thats legal...
+                    
+                    try
+                    {
+                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        {
+                            await model.File.CopyToAsync(fileStream);
+                        }
+                        
+                        DealEngine.Domain.Entities.Document newFile = new DealEngine.Domain.Entities.Document {
+                            Name = filename,
+                            Description = "testing",
+                            DocumentType = 1,
+                            IsTemplate = true,
+                            ContentType = model.File.ContentType,
+                            FileRendered = false,                                                       
+                            Path = path
+                        };                       
+
+                        await _fileRepository.AddAsync(newFile);
+
+                        Guid productID = Guid.Parse(model.Product);
+                        Product myProduct = await _iproductService.GetProductById(productID);                        
+                        myProduct.Documents.Add(newFile);
+                        await _iproductService.UpdateProduct(myProduct);
+                    }
+
+                    catch (Exception Ex)
+                    {
+                        Console.WriteLine(Ex.ToString());
+                    }
+
+                }
+                return Redirect("~/Image/ManageImage");
+            }
+            return Redirect("~/Image/ManageImage");
+        }
+
 
 
         public async Task<IActionResult> CKUpload()

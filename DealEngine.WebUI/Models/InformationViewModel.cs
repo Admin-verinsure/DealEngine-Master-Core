@@ -612,6 +612,7 @@ namespace DealEngine.WebUI.Models
             HasCriminalOptions = GetSelectListOptions();
             HasProcecutionOptions = GetSelectListOptions();
             HasObligationOptions = GetSelectListOptions();
+            FormDate = DateTime.Now;
         }
 
         public IList<SelectListItem> HasDAOLIOptions { get; set; }

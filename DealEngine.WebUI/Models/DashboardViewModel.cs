@@ -10,8 +10,6 @@ namespace DealEngine.WebUI.Models
 
 		public bool DisplayDeals { get; set; }
 
-		public string DisplayRole { get; set; }
-
 		public IList<ProductItemV2> ProductItems { get; set; }
 
 		public IList<ProductItem> DealItems { get; set; }
@@ -22,13 +20,7 @@ namespace DealEngine.WebUI.Models
 
 		public IList<TaskItem> ImportantTaskItems { get; set; }
 
-		public IList<TaskItem> CompletedTaskItems { get; set; }
-
-        public string CurrentUserIsBroker { get; set; }
-
-        public string CurrentUserIsInsurer { get; set; }
-
-        public string CurrentUserIsTC { get; set; }
+        public string CurrentUserType { get; set; }
     }
 
 	public class ButtonItem
@@ -114,13 +106,9 @@ namespace DealEngine.WebUI.Models
 	{
 		public string Name { get; set; }
 
-		public string Description { get; set; }
-
 		public string ProgrammeId { get; set; }
 
 		public IList<string> Languages { get; set; }
-
-		public string DisplayRole { get; set; }
 
 		public IList<DealItem> Deals { get; set; }
 

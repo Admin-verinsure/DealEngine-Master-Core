@@ -106,257 +106,260 @@
                     </td>
                 </tr>
             </tbody>
-        </table>        
+        </table>
     </div>
 </fieldset>
 
 @if (!Model.IsMultipleOption)
 {
-<fieldset>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Policy Inclusions</strong>
+    <fieldset>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Policy Inclusions</strong>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Risk</strong>
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Risk</strong>
+                </div>
+                @foreach (var item in Model.Inclusions)
+                {
+                    <div class="col">
+                        <strong>@item.RiskName</strong>
+                    </div>
+                }
             </div>
-            @foreach (var item in Model.Inclusions)
+
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Terms</strong>
+                </div>
+            </div>
+
+            @if (Model.HasBoats && (Model.Boats.Count() > 0))
             {
-                <div class="col">
-                    <strong>@item.RiskName</strong>
+                <div class="row">
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+
+                        <tr>
+                            <th class="text-center" width="13%">Vessel Name</th>
+                            <th class="text-center" width="13%">Vessel Make</th>
+                            <th class="text-center" width="13%">Vessel Model</th>
+                            <th class="text-center" width="13%">Vessel Sum Insured</th>
+                            <th class="text-center" width="13%">Vessel Excess</th>
+                        </tr>
+                        @foreach (var item in Model.BVTerms)
+                        {
+                            <tr class="clickable-row">
+                                <td class="pt-3-half" width="13%" contenteditable="true" id="BoatName">
+                                    @item.BoatName
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.BoatMake
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.BoatModel
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
                 </div>
             }
-        </div>
 
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Terms</strong>
-            </div>
-        </div>
-
-        @if (Model.HasBoats && (Model.Boats.Count() > 0))
-        {
             <div class="row">
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+                &nbsp;<br />
+            </div>
 
+            @if (Model.HasVehicles && (Model.Vehicles.Count() > 0))
+            {
+                <div class="row">
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
+                        <tr>
+                            <th class="text-center" width="13%">Trailer Registration</th>
+                            <th class="text-center" width="13%">Trailer Year</th>
+                            <th class="text-center" width="13%">Trailer Make</th>
+                            <th class="text-center" width="13%">Trailer Model</th>
+                            <th class="text-center" width="13%">Trailer Sum Insured</th>
+                        </tr>
+                        @foreach (var item in Model.Vehicles)
+                        {
+                            <tr class="clickable-row">
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Registration
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Year
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Make
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.VehicleModel
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            }
+            <div class="row">
+                <table class="table text-center" style="border:1px;" id="vehicleTable">
                     <tr>
-                        <th class="text-center" width="13%">Vessel Name</th>
-                        <th class="text-center" width="13%">Vessel Make</th>
-                        <th class="text-center" width="13%">Vessel Model</th>
-                        <th class="text-center" width="13%">Vessel Sum Insured</th>
-                        <th class="text-center" width="13%">Vessel Excess</th>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
                     </tr>
-                    @foreach (var item in Model.BVTerms)
+                    @foreach (var item in Model.Inclusions)
                     {
                         <tr class="clickable-row">
-                            <td class="pt-3-half" width="13%" contenteditable="true" id="BoatName">
-                                @item.BoatName
-                            </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.BoatMake
+                                Total Sum Insured
                             </td>
+                            <td></td>
+                            <td></td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.BoatModel
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                @Html.Raw(@item.Inclusion)
                             </td>
                         </tr>
-
                     }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </table>
             </div>
-        }
-
-        <div class="row">
-            &nbsp;<br />
         </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Policy Exclusions</strong>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Risk</strong>
+                </div>
+                @foreach (var item in Model.Exclusions)
+                {
+                    <div class="col">
+                        <strong>@item.RiskName</strong>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-3 font-md">
+                    <strong>Premiums Due</strong>
+                </div>
+            </div>
 
-        @if (Model.HasVehicles && (Model.Vehicles.Count() > 0))
-        {
             <div class="row">
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
                     <tr>
-                        <th class="text-center" width="13%">Trailer Registration</th>
-                        <th class="text-center" width="13%">Trailer Year</th>
-                        <th class="text-center" width="13%">Trailer Make</th>
-                        <th class="text-center" width="13%">Trailer Model</th>
-                        <th class="text-center" width="13%">Trailer Sum Insured</th>
+                        <th class="text-center" width="13%">Risk</th>
+                        <th class="text-center" width="13%">Premium</th>
+                        <th class="text-center" width="13%">FENZ Levy</th>
+                        <th class="text-center" width="13%">Total</th>
                     </tr>
-                    @foreach (var item in Model.Vehicles)
+                    @foreach (var item in Model.RiskPremiums)
                     {
                         <tr class="clickable-row">
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Registration
+                                @item.RiskName
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Year
+                                @item.Premium
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Make
+                                @item.FSL
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.VehicleModel
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                @item.TotalPremium
                             </td>
                         </tr>
                     }
                 </table>
             </div>
-        }
-        <div class="row">
-            <table class="table text-center" style="border:1px;" id="vehicleTable">
-                <tr>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                </tr>
-                @foreach (var item in Model.Inclusions)
-                {
+
+            <br />
+
+            <div class="row">
+                <table class="table text-center" style="border:1px;" id="vehicleTable">
+                    <tr>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
+                        <th class="text-center" width="25%"></th>
+                    </tr>
+                    @foreach (var item in Model.RiskPremiums)
+                    {
+                        <tr class="clickable-row">
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                Total Premiums
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                @Html.Raw(@item.TotalPremium)
+                            </td>
+                        </tr>
+                    }
                     <tr class="clickable-row">
                         <td class="pt-3-half" width="13%" contenteditable="true">
-                            Total Sum Insured
+                            Broker Service Fee
                         </td>
                         <td></td>
                         <td></td>
                         <td class="pt-3-half" width="13%" contenteditable="true">
-                            @Html.Raw(@item.Inclusion)
+                            @Model.AdministrationFee
                         </td>
                     </tr>
-                }
-                <tr>
-                    <td></td><td></td><td></td><td></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Policy Exclusions</strong>
+
+                    @foreach (var item in Model.RiskPremiums)
+                    {
+                        <tr class="clickable-row">
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                GST
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                @Html.Raw(@item.TotalPremiumIncFeeGST)
+                            </td>
+                        </tr>
+                    }
+
+                    @foreach (var item in Model.RiskPremiums)
+                    {
+                        <tr class="clickable-row">
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                <strong>Total Amount Due</strong>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="pt-3-half" width="13%" contenteditable="true">
+                                <strong>@Html.Raw(@item.TotalPremiumIncFeeIncGST)</strong>
+                            </td>
+                        </tr>
+                    }
+                </table>
             </div>
         </div>
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Risk</strong>
-            </div>
-            @foreach (var item in Model.Exclusions)
-            {
-                    <div class="col">
-                        <strong>@item.RiskName</strong>
-                    </div>             
-            }
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-3 font-md">
-                <strong>Premiums Due</strong>
-            </div>
-        </div>
-
-        <div class="row">
-            <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
-                <tr>
-                    <th class="text-center" width="13%">Risk</th>
-                    <th class="text-center" width="13%">Premium</th>
-                    <th class="text-center" width="13%">FENZ Levy</th>
-                    <th class="text-center" width="13%">Total</th>
-                </tr>
-                @foreach (var item in Model.RiskPremiums)
-                {
-                    <tr class="clickable-row">
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @item.RiskName
-                        </td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @item.Premium
-                        </td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @item.FSL
-                        </td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @item.TotalPremium
-                        </td>
-                    </tr>
-                }
-            </table>
-        </div>
-
-        <br />
-
-        <div class="row">
-            <table class="table text-center" style="border:1px;" id="vehicleTable">
-                <tr>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                    <th class="text-center" width="25%"></th>
-                </tr>
-                @foreach (var item in Model.RiskPremiums)
-                {
-                    <tr class="clickable-row">
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            Total Premiums
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @Html.Raw(@item.TotalPremium)
-                        </td>
-                    </tr>
-                }
-                <tr class="clickable-row">
-                    <td class="pt-3-half" width="13%" contenteditable="true">
-                        Broker Service Fee
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td class="pt-3-half" width="13%" contenteditable="true">
-                        @Model.AdministrationFee
-                    </td>
-                </tr>
-
-                @foreach (var item in Model.RiskPremiums)
-                {
-                    <tr class="clickable-row">
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            GST
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            @Html.Raw(@item.TotalPremiumIncFeeGST)
-                        </td>
-                    </tr>
-                }
-
-                @foreach (var item in Model.RiskPremiums)
-                {
-                    <tr class="clickable-row">
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            <strong>Total Amount Due</strong>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td class="pt-3-half" width="13%" contenteditable="true">
-                            <strong>@Html.Raw(@item.TotalPremiumIncFeeIncGST)</strong>
-                        </td>
-                    </tr>
-                }
-            </table>
-        </div>
-    </div>
-</fieldset>
+    </fieldset>
 }
 else
 {
@@ -369,44 +372,49 @@ else
             </div>
 
             <div class="row">
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="@Model.ProductName">
                     <tr>
-                        <th class="text-center" width="10%"></th>
-                        <th class="text-center" width="20%">Risk Name</th>
+                        <th class="text-center" width="5%"></th>
+                        <th class="text-center" width="17%">Risk Name</th>
                         <th class="text-center" width="20%">Limit</th>
                         <th class="text-center" width="20%">Excess</th>
-                        <th class="text-center" width="20%">Premium</th>
-                    </tr>                    
-                        @foreach (var item in Model.MultiCoverOptions)
-                        {
-                            <tr class="clickable-row">
-                                <td>
-                                    <input type="radio" dirname=""
-                                           id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.RiskName
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.Inclusion
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.Exclusion
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.TotalPremium
-                                </td>
-                            </tr>
-                        }
-                        @if (Model.IsOptionalProduct)
-                        {
-                            <tr>
-                                <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
-                                <td class="pt-4-half" colspan="3" width="15%">
-                                    <label> I don't want this cover</label>
-                                </td>
-                            </tr>
-                        }                    
+                        <th class="text-center" width="16%">Premium</th>
+                        <th class="text-center" width="17%" hidden>Dependableproduct</th>
+
+                    </tr>
+                    @foreach (var item in Model.MultiCoverOptions)
+                    {
+                        <tr class="clickable-row">
+                            <td>
+                                <input type="radio" dirname=""
+                                       id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                            </td>
+                            <td class="pt-3-half" width="12%" contenteditable="true">
+                                @item.RiskName
+                            </td>
+                            <td class="pt-3-half" width="20%" contenteditable="true">
+                                @item.Inclusion
+                            </td>
+                            <td class="pt-3-half" width="20%" contenteditable="true">
+                                @item.Exclusion
+                            </td>
+                            <td class="pt-3-half" width="20%" contenteditable="true">
+                                @item.TotalPremium
+                            </td>
+                            <td class="pt-3-half" width="12%" contenteditable="true" value="@item.Dependableproduct" hidden>
+                                @item.Dependableproduct
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.IsOptionalProduct)
+                    {
+                        <tr>
+                            <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
+                            <td class="pt-4-half" colspan="5" width="15%">
+                                <label> I don't want this cover</label>
+                            </td>
+                        </tr>
+                    }
                 </table>
             </div>
 
@@ -517,6 +525,8 @@ else
         } else {
             $("#Coveroptionssec :input").prop("disabled", false);
         }
+
+
     });
 </script>
 

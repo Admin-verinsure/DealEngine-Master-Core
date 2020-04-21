@@ -117,6 +117,11 @@ namespace DealEngine.Services.Impl
 			return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Name == documentName);
         }
 
+        public async Task<Document> GetDocumentByID(Guid documentID)
+        {
+            return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Id == documentID);
+        }
+
         public async Task<Document> GetDocumentByType(Organisation primaryOrganisation, int DocumentType)
         {
             Document document = await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.OwnerOrganisation == primaryOrganisation && i.DocumentType == DocumentType);
@@ -142,7 +147,6 @@ namespace DealEngine.Services.Impl
 
                 if (term.Bound)
                 {
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
@@ -522,6 +526,9 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate]]", agreement.RetroactiveDate));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
             if (clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
@@ -547,7 +554,7 @@ namespace DealEngine.Services.Impl
 
                 if (term.Bound)
                 {
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
+                    //mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
@@ -627,7 +634,7 @@ namespace DealEngine.Services.Impl
             }
 
             //Endorsements
-            if (agreement.ClientAgreementEndorsements.Count > 0)
+            if (agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).Count() > 0)
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Endorsement Name");
@@ -636,17 +643,21 @@ namespace DealEngine.Services.Impl
 
                 foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements)
                 {
-                    DataRow dr = dt.NewRow();
-
-                    dr["Endorsement Name"] = ClientAgreementEndorsement.Name;
-                    if(agreement.ClientInformationSheet.Product != null)
+                    if (ClientAgreementEndorsement.DateDeleted == null)
                     {
-                        dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
-                    }
-                    
-                    dr["Endorsement Text"] = ClientAgreementEndorsement.Value;
+                        DataRow dr = dt.NewRow();
 
-                    dt.Rows.Add(dr);
+                        dr["Endorsement Name"] = ClientAgreementEndorsement.Name;
+                        if (agreement.ClientInformationSheet.Product != null)
+                        {
+                            dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
+                        }
+
+                        dr["Endorsement Text"] = ClientAgreementEndorsement.Value;
+
+                        dt.Rows.Add(dr);
+                    }
+                   
                 }
 
                 dt.TableName = "EndorsementTable";

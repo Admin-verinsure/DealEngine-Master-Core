@@ -3099,6 +3099,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.PMICert = model.PMICert;
                     organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                     organisation.CertType = model.CertType;
+                    organisation.MajorShareHolder = model.MajorShareHolder;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -3142,7 +3143,10 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
                 string orgTypeName = "";
-
+                if (model.Type == "project management personnel")
+                {
+                    model.OrganisationTypeName = "Person - Individual";
+                }
                 try
                 {
                     if (model.OrganisationTypeName != null)
@@ -3151,7 +3155,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             case "Person - Individual":
                                 {
-                                    orgTypeName = "Sole Trader";
+                                    orgTypeName = "Person - Individual";
                                     break;
                                 }
                             case "Corporation – Limited liability":
@@ -3159,7 +3163,13 @@ namespace DealEngine.WebUI.Controllers
                                     orgTypeName = "Corporation – Limited liability";
                                     break;
                                 }
-                            
+                            case "Trust":
+                                {
+                                    orgTypeName = "Corporation – Limited liability";
+                                    break;
+                                }
+
+
                             case "Partnership":
                                 {
                                     orgTypeName = "Partnership";
@@ -3171,10 +3181,10 @@ namespace DealEngine.WebUI.Controllers
                                 }
                         }
                     }
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Person - Individual");
+                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                     if (insuranceAttribute == null)
                     {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Person - Individual");
+                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                     }
                     OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
                     if (organisationType == null)
@@ -3193,7 +3203,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (orgTypeName == "Person - Individual")
                         {
-                            userdb = await _userService.GetUserByEmail(organisation.Email);
+                            userdb = await _userService.GetUserByEmail(model.Email);
                             if (userdb == null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -3262,7 +3272,9 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
                             organisation.CertType = model.CertType;
-                           
+                            organisation.MajorShareHolder = model.MajorShareHolder;
+
+
                         }
                         else
                         {
@@ -3280,6 +3292,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsContractorInsured = model.IsContractorInsured;
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
+                            organisation.MajorShareHolder = model.MajorShareHolder;
                             organisation.CertType = model.CertType;
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
@@ -3342,6 +3355,7 @@ namespace DealEngine.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.IsCurrentMembership = org.IsCurrentMembership;
+                    model.MajorShareHolder = org.MajorShareHolder;
                     model.CurrentMembershipNo = org.CurrentMembershipNo;
                     model.OrganisationName = org.Name;
                     model.AnswerSheetId = answerSheetId;
@@ -4794,7 +4808,7 @@ namespace DealEngine.WebUI.Controllers
                 //condition for organisation exists
                 if (organisation == null)
                 {
-                    organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType);
                     organisation.Phone = phonenumber;
                     organisation.Email = email;
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -4859,12 +4873,8 @@ namespace DealEngine.WebUI.Controllers
                         try
                         {
                             var reference = await _referenceService.GetLatestReferenceId();
-
                             var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-
                             await _referenceService.CreateClientInformationReference(sheet);
-
-
 
                             using (var uow = _unitOfWork.BeginUnitOfWork())
                             {
@@ -4880,7 +4890,6 @@ namespace DealEngine.WebUI.Controllers
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
                                 {
-                                    Thread.Sleep(1000);
                                     await uow.Commit();
                                 }
                                 catch (Exception ex)

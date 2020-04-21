@@ -186,6 +186,7 @@ namespace DealEngine.Domain.Entities
         public virtual string PMICert { get; set; }
         public virtual string CertType { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
+        public virtual bool MajorShareHolder { get; set; }
         public virtual bool IsContractorInsured { get; set; }
         public virtual bool IsInsuredRequired { get; set; }
         public virtual bool IsOtherdirectorship { get; set; }
@@ -197,14 +198,7 @@ namespace DealEngine.Domain.Entities
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
-
-
-        public virtual IList<Programme> Programmes
-        {
-            get;
-            set;
-        }
-
+        public virtual IList<Programme> Programmes { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
 
         #endregion

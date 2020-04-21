@@ -118,7 +118,28 @@ namespace DealEngine.Services.Impl
             email.WithSubject ("Deal Engine Password Reset");
 			email.WithBody (body);
 			email.UseHtmlBody (true);
-			email.Send ();
+            
+            /*         
+            Guid newGuid = Guid.Parse("85578a21-d383-45fb-8e71-aba300363f4b");
+            SystemDocument test = await _fileService.GetDocumentByID(newGuid);
+            var testPath = test.Path;
+            //if (File.Exists(testPath))
+            //{
+            //    FileStream fileStream = File.OpenRead(testPath);
+            //}
+            //Attachment document = new Attachment(new MemoryStream(fileBytes), file.FileName);         
+            You can try this multi-step approach.
+            //First create FileContent
+            FileContentResult fileContent = File(fileName, "application/pdf", "file.pdf");
+            MemoryStream ms = new MemoryStream(fileContent.FileContents); 
+            // Create an in-memory System.IO.Stream
+            ContentType ct = new ContentType(fileContent.ContentType);
+            Attachment a = new Attachment(ms, ct);
+            sender.SendMail("email", "email", "subject", "Body", a);                     
+            email.Attachments();
+            */
+
+            email.Send ();
 		}
 
         public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
