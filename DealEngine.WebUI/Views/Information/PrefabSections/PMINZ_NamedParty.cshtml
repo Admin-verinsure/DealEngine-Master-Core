@@ -645,12 +645,12 @@
             $('.privateorgtypesec ').removeClass('hidden');
 
         } else {
-           
+
                $('.privateorgtypesec ').addClass('hidden');
                $('.EditNonProjectPersonnel ').removeClass('hidden');
                $('.nonprivateorgtypesec ').removeClass('hidden');
                $("EditProjectPersonnelSec :input").val(""); //Clears form
-            
+
          }
      }
 
@@ -753,7 +753,7 @@
             .done(function (data) {
                 debugger;
                 $('#PMINZNamedPartyOrganisationId').val(data.id);
-                
+
                 if (data.type == "Owner") {
 
                     $('.nonOwnerSec').addClass('hidden');

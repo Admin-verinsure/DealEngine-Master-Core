@@ -72,6 +72,8 @@ namespace DealEngine.WebUI.Models
         public string PMICert { get; set; }
         public string PartyName { get; set; }
         public string CertType { get; set; }
+        public  bool MajorShareHolder { get; set; }
+
         public bool isaffiliation { get; set; }
         public  string affiliationdetails { get; set; }
         public  string CurrentMembershipNo { get; set; }
