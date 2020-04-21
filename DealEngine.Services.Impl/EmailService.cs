@@ -695,17 +695,21 @@ namespace DealEngine.Services.Impl
         /// <param name="recipient">Recipient.</param>
         public async Task<EmailBuilder> GetLocalizedEmailBuilder (string defaultSender, string recipient)
 		{
-            EmailBuilder email = new EmailBuilder("james@techcertain.com");
+            EmailBuilder email = new EmailBuilder(DefaultSender);
             //EmailBuilder email = new EmailBuilder (DefaultSender);
             if (string.IsNullOrWhiteSpace(CatchAllEmail))
             {
                 if (recipient != null)
                 {
-                    email.To(recipient).BCC(BCCEmail);
+                    email.To(recipient);
+                    if(BCCEmail != null)
+                    {
+                        email.BCC(BCCEmail);
+                    }
                     //email.To(recipient).BCC(SystemEmail);
                     if (ReplyToEmail != null)
                     {
-                        email.ReplyTo();
+                        email.ReplyTo(ReplyToEmail);
                     }
                 }
             }
