@@ -9,6 +9,7 @@ using DealEngine.Domain.Entities;
 using SystemDocument = DealEngine.Domain.Entities.Document;
 using System.Net.Mime;
 using System.IO;
+using File = System.IO.File;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -119,26 +120,30 @@ namespace DealEngine.Services.Impl
 			email.WithBody (body);
 			email.UseHtmlBody (true);
             
-            /*         
+
+            // Get file part
+
+            // Find path from DB
             Guid newGuid = Guid.Parse("85578a21-d383-45fb-8e71-aba300363f4b");
             SystemDocument test = await _fileService.GetDocumentByID(newGuid);
             var testPath = test.Path;
-            //if (File.Exists(testPath))
-            //{
-            //    FileStream fileStream = File.OpenRead(testPath);
-            //}
-            //Attachment document = new Attachment(new MemoryStream(fileBytes), file.FileName);         
-            You can try this multi-step approach.
-            //First create FileContent
-            FileContentResult fileContent = File(fileName, "application/pdf", "file.pdf");
-            MemoryStream ms = new MemoryStream(fileContent.FileContents); 
-            // Create an in-memory System.IO.Stream
-            ContentType ct = new ContentType(fileContent.ContentType);
-            Attachment a = new Attachment(ms, ct);
-            sender.SendMail("email", "email", "subject", "Body", a);                     
-            email.Attachments();
-            */
 
+            // Get the file from server and store for attaching
+            if (File.Exists(testPath))
+            {
+
+                using var fileStream = new FileStream(testPath, FileMode.Open);
+                Attachment document = new Attachment(fileStream, testPath, MediaTypeNames.Application.Pdf);
+
+                // what if we made it a systemdocument using a byte array as the "contents" partt...? then code makes sense in context of dealengine's emailbuilder
+                // attachments.Add(await ToAttachment(document));
+                // You now have the file, next thing is to attach it somehow....
+                email.Attachments(document);
+
+                Console.WriteLine("lalala");
+
+            }
+            Console.WriteLine("lalala");
             email.Send ();
 		}
 
