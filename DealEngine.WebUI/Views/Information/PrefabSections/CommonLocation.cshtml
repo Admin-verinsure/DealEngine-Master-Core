@@ -26,18 +26,21 @@
                         <th data-field="locationType" data-sortable="true">Location Type</th>
                         <th data-field="commonName" data-sortable="true">Common Name</th>
                         <th data-field="street" data-sortable="true">Street</th>
-                        <th data-field="suburb" data-sortable="true">Suburb</th>
-                        <th data-field="postcode" data-sortable="true">Postcode</th>
                         <th data-field="city" data-sortable="true">City</th>
                         <th ata-field="deleteButton" data-sortable="false"></th>
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab2')"><i class="fa fa-edit"></i></button>
+                        </td>
+                    </tr>
                     @foreach (var location in Model.LocationViewModel.Locations)
                     {
                         <tr>
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="EditLocation(@location.Id)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="EditLocation('@location.LocationType, @location.CommonName, @location.Street, @location.City, @location.Country')"><i class="fa fa-edit"></i></button>
                             </td>
                             <td>
                                 @location.LocationType
@@ -49,16 +52,10 @@
                                 @location.Street
                             </td>
                             <td>
-                                @location.Suburb
-                            </td>
-                            <td>
-                                @location.Postcode
-                            </td>
-                            <td>
                                 @location.City
                             </td>
                             <td>
-                                <button onclick="SetLocationRemovedStatus(@location.Id)" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                <button onclick="SetLocationRemovedStatus('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
                             </td>
 
                         </tr>
@@ -68,7 +65,6 @@
         </div>
         <div id="locationtab2" class="tab-pane" role="tabpanel">
             <form class="is-valid" id="LocationViewModel">
-                <input id="LocationId" name="LocationId" type="hidden" />
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -84,12 +80,12 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <label for="locationtypesoptions" class="label required">
+                            <label for="locationtypeoptions" class="label required">
                                 Location Type:
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypesoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>

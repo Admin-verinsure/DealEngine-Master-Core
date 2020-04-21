@@ -20,4 +20,20 @@
                 debugger;
             });
     }
+
+    function EditLocation(LocationType, CommonName, Street, City, Country) {
+        var locationtypes = document.getElementById('locationtypeoptions');
+        debugger;
+        for (var i = 0; i < locationtypes.options.length; i++) {
+            if (locationtypes.options[i].value == LocationType) {
+                locationtypes.options[i].selected = true;
+                break;
+            }
+        }
+        document.getElementById('streetdetails').value = Street;
+        document.getElementById('citydetails').value = City;
+        document.getElementById('countrydetails').value = Country;
+        document.getElementById('commonnamedetails').value = CommonName;
+        SetCurrentTab('locationtab2');
+    }
 </script>
