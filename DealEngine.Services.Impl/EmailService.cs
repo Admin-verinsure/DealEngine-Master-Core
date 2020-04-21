@@ -111,7 +111,7 @@ namespace DealEngine.Services.Impl
 			body += string.Format("<p>Your username is <em>{0}</em></p>", user.UserName);
 			body += "<p>Thanks<br/>- The Proposalonline Team</p>";
 			body += "<p>Proposalonline is technology of DealEngine Group Limited who provide technical support.</p>";
-			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@DealEngine.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
+			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
@@ -218,7 +218,7 @@ namespace DealEngine.Services.Impl
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
-            mergeFields.Add(new KeyValuePair<string, string>("[[SupportEmail]]", "09 377 6564"));
+            mergeFields.Add(new KeyValuePair<string, string>("[[SupportEmail]]", "support@techcertain.com"));
 
             SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("LoginEmail");
             if (systemEmailTemplate == null)
@@ -743,7 +743,7 @@ namespace DealEngine.Services.Impl
                             // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                         }
                         string oldpath = "<img src=\"../../../images";
-                        string newpath = "<img  style='margin:0px 580px' align='middle' height='100' width='100' src=\"https://staging.professionalrisks.online/images";
+                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
 
                         if (html.Contains(oldpath))
                         {

@@ -101,7 +101,8 @@ namespace DealEngine.WebUI.Controllers
                                     // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
                                 string oldpath = "<img src=\"../../../images";
-                                string newpath = "<img  style='margin:0px 580px' align='middle' height='100' width='100' src=\"https://staging.professionalrisks.online/images";
+                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
+
 
                                 if (html.Contains(oldpath))
                                 {
