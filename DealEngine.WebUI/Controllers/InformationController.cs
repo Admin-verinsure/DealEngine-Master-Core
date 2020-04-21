@@ -2408,7 +2408,6 @@ namespace DealEngine.WebUI.Controllers
                         sheet.SubmittedBy = user;
                         await uow.Commit();
                     }
-
                 }
                 //sheet owner is null
                 //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
