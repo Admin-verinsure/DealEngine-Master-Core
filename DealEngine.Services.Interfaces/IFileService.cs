@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using System;
 
 namespace DealEngine.Services.Interfaces
 {
@@ -20,7 +21,9 @@ namespace DealEngine.Services.Interfaces
 
         Task<Document> GetDocument (string documentName);
 
-        Task<Image> GetImage (string imageName);
+		Task<Document> GetDocumentByID(Guid documentID);
+
+		Task<Image> GetImage (string imageName);
 
         Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
 

@@ -14,14 +14,17 @@ namespace DealEngine.WebUI.Models.Image
 
         public IFormFile Image { get; set; }
 
-        // public byte[] Contents { get; set; }
-
         public string Path { get; set; }
 
         public IFormFile Thumbnail { get; set; }
 
         public IList<CKImage> Item { get;set; }
 
+        public IList<Product> Products {get; set;}
+
+        public IFormFile File { get; set; }
+
+        public string Product { get; set; }
 
     }
 }
