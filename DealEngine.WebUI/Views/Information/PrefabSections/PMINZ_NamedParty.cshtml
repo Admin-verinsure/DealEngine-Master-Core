@@ -959,6 +959,7 @@
          event.preventDefault();
          var validity = 0;
          var validatortype = type;
+
          var pminzType = $('#' + validatortype + 'PMINZType').val();
          var pminzorgType = $('#' + validatortype + 'OrgTypeName').val();
          var pminzfname = $('#' + validatortype + 'FirstName').val();
@@ -970,7 +971,8 @@
          var pminziscurrentmembership = $('#' + validatortype + 'IsCurrentMembership').val();
          var pminzcurrentmembershipno = $('#' + validatortype + 'CurrentMembershipNo').val();
          var pminzcerttype = $('#' + validatortype + 'CertType').val();
-        
+
+
 
          if (validity > 0) {
              return false;

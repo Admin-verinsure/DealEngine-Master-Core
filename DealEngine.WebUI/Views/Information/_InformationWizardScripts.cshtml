@@ -190,7 +190,6 @@
 
 
                    $('#PMINZNamedParties tr').each(function () {
-                       debugger;
                        var $tds = $(this).find('td'),
                            value = $tds.eq(2).text().toString();
 
@@ -301,6 +300,9 @@
                var postdata = {
                    id: ID
                }
+               var validaterowdata = 0;
+                var rownum = 0;
+
                var proddata = "";
                $.ajax({
                    url: '@Url.Action("GetProductName", "Information")',
@@ -322,29 +324,40 @@
                             var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
                             var producttable = "[id='" + ProdName + "'] tr";
-                           
+                             rownum = 0;
                             //var jhjk = '"[id='"+ProdName +"']' tr";
-                             $(producttable).each(function () {
-                                 var $tds = $(this).find('td'),
-                                     value = $tds.eq(5).text().trim();
-                                 if (value != "") {
-                                     var dependoption = "" + "input[name='" + value + "']:checked";
-                                     var dependendoptionsselected = $(dependoption).val();
-                                     if (dependendoptionsselected == "None" && optionsselected != "None") {
+                            if (optionsselected != null && typeof optionsselected !== "undefined") {
+                                $(producttable).each(function () {
+                                    var $tds = $(this).find('td'),
+                                        value = $tds.eq(5).text().trim();
+                                    rownum++;
+                                    if (value != "") {
+                                        var dependoption = "" + "input[name='" + value + "']:checked";
+                                        var dependendoptionsselected = $(dependoption).val();
+                                        if (dependendoptionsselected == "None" && optionsselected != "None") {
 
-                                         alert("You cannot have " + ProdName + "Without " + value);
-                                         isvalid++;
+                                            alert("You cannot have " + ProdName + "Without " + value);
+                                            isvalid++;
+                                            return false;
+                                        }
+                                        validaterowdata++;
+
+                                    }
+
+                                });
+                            } else {
+                                isvalid++;
+                                         alert("Please select cover options for all products");
                                          return false;
-                                     }
-                                 } else {
-                                      isvalid++;
-                                     alert("Please select cover options for all products");
-                                         return false;
-                                 }
+                            }
+
+                            
+                                 //if (validaterowdata == 0 && rownum > 1) {
+                                 //        isvalid++;
+                                 //        alert("Please select cover options for all products");
+                                 //        return false;
+                                 //}
                                  
-                                  
-                             });
-
                             if (isvalid != 0) {
                                      break;
                             }
