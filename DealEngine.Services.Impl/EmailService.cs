@@ -699,15 +699,15 @@ namespace DealEngine.Services.Impl
             //EmailBuilder email = new EmailBuilder (DefaultSender);
             if (string.IsNullOrWhiteSpace(CatchAllEmail))
             {
-                if (recipient != null)
-                {
+                if (!string.IsNullOrWhiteSpace(recipient))
+                {                    
                     email.To(recipient);
-                    if(BCCEmail != null)
+                    if(!string.IsNullOrWhiteSpace(BCCEmail))
                     {
                         email.BCC(BCCEmail);
                     }
                     //email.To(recipient).BCC(SystemEmail);
-                    if (ReplyToEmail != null)
+                    if (!string.IsNullOrWhiteSpace(ReplyToEmail))
                     {
                         email.ReplyTo(ReplyToEmail);
                     }
