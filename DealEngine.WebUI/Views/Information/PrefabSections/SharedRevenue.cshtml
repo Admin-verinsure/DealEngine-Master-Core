@@ -52,7 +52,7 @@
                                                 @select.Location
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Location" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableterritories" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Location" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateRevenueTable" data-item="validatetableterritories" value="@select.Percentage" />
                                             </td>
                                         </tr>
                                     }
@@ -121,7 +121,7 @@
                                                 @select.Description
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Description" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableactivities" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Description" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="ValidateRevenueTable" data-item="validatetableactivities" value="@select.Percentage" />
                                             </td>
                                         </tr>
                                     }
