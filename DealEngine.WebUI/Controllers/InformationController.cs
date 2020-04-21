@@ -1688,7 +1688,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if(date == defaultDate)
+                            if(date == defaultDate || date == null)
                             {
                                 date = DateTime.Now;
                             }

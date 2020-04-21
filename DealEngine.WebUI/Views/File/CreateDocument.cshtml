@@ -200,5 +200,17 @@
         debugger;
           $("#documentType").val("@Model.DocumentType");
     });
+
+        function selectImg(image) {
+            var imgName = image.getAttribute('name');
+            $('#selImg').val(imgName);
+        }
+
+        function importImg() {
+            var triggerMutationObserver = $('#importImg').val();
+            triggerMutationObserver += "1";
+            $('#importImg').val(triggerMutationObserver);
+        }
+
     </script>
 }

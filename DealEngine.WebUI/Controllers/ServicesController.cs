@@ -3128,6 +3128,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.PMICert = model.PMICert;
                     organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                     organisation.CertType = model.CertType;
+                    organisation.MajorShareHolder = model.MajorShareHolder;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -3300,7 +3301,9 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
                             organisation.CertType = model.CertType;
-                           
+                            organisation.MajorShareHolder = model.MajorShareHolder;
+
+
                         }
                         else
                         {
@@ -3318,6 +3321,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsContractorInsured = model.IsContractorInsured;
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
+                            organisation.MajorShareHolder = model.MajorShareHolder;
                             organisation.CertType = model.CertType;
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
@@ -3380,6 +3384,7 @@ namespace DealEngine.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.IsCurrentMembership = org.IsCurrentMembership;
+                    model.MajorShareHolder = org.MajorShareHolder;
                     model.CurrentMembershipNo = org.CurrentMembershipNo;
                     model.OrganisationName = org.Name;
                     model.AnswerSheetId = answerSheetId;
