@@ -327,14 +327,14 @@ namespace DealEngine.WebUI.Controllers
                     {
                         deUser = await _userManager.FindByNameAsync(userName);
 						var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
-                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
-                        {
-                            var hasRole = await _roleManager.RoleExistsAsync("Client");
-                            if (hasRole)
-                            {
-                                await _userManager.AddToRoleAsync(deUser, "Client");
-                            }
-                        }
+                        //if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
+                        //{
+                        //    var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        //    if (hasRole)
+                        //    {
+                        //        await _userManager.AddToRoleAsync(deUser, "Client");
+                        //   }
+                        //}
                     }
                     else
                     {

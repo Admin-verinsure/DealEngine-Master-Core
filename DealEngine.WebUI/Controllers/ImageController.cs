@@ -18,15 +18,13 @@ namespace DealEngine.WebUI.Controllers
     public class ImageController : BaseController
     {
         IMapperSession<CKImage> _ckimageRepository;
-
         IMapperSession<Document> _fileRepository;
-
         private readonly ICKImageService _ckimageService;
         private readonly IProductService _iproductService;
-
         private readonly IWebHostEnvironment _hostingEnv;
         //IMapperSession<User> _userRepository;
         IApplicationLoggingService _applicationLoggingService;
+        IAppSettingService _appSettingService;
         ILogger<ImageController> _logger;
 
         public ImageController(IUserService userRepository, 
@@ -35,6 +33,7 @@ namespace DealEngine.WebUI.Controllers
             ICKImageService ckimageService,
             IProductService iproductService, 
             IWebHostEnvironment hostingEnv,
+            IAppSettingService appSettingService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<ImageController> logger
             )
@@ -47,6 +46,8 @@ namespace DealEngine.WebUI.Controllers
             _ckimageService = ckimageService;
             _iproductService = iproductService;
             _hostingEnv = hostingEnv;
+            _appSettingService = appSettingService;
+
         }
 
 
@@ -104,8 +105,10 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     var filename = model.Name + extension;
-                    var path = Path.Combine(_hostingEnv.WebRootPath, "images", filename);
-                    var url = "";
+                    //var path = Path.Combine(_hostingEnv.WebRootPath, "files", model.Product, "attachmentfiles");
+
+                    var path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
+                    // var url = filename;
                     
                     try
                     {
@@ -114,7 +117,7 @@ namespace DealEngine.WebUI.Controllers
 
                         if (thumbnail != null)
                         {
-                               thumbnail.Save("wwwroot/images/_" + filename, thumbnail.RawFormat);
+                               thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
                         }
                         else
                         {
@@ -132,14 +135,13 @@ namespace DealEngine.WebUI.Controllers
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
-                            url = "../../images/" + filename;
                         }
 
                         CKImage newCKImage = new CKImage
                         {
                             Name = filename,
-                            Path = url,
-                            ThumbPath = "../../images/_" + filename
+                            Path = filename,
+                            ThumbPath = "_" + filename          // "../../images/_" + filename
                         };
 
                         await _ckimageRepository.AddAsync(newCKImage);
@@ -155,6 +157,90 @@ namespace DealEngine.WebUI.Controllers
                 return Redirect("~/Image/ManageImage");
             }
             return Redirect("~/Image/ManageImage");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CKUpload()
+        {
+            IFormFileCollection files = HttpContext.Request.Form.Files;
+            int fileCount = files.Count;
+            IFormFile file = null;
+
+            if (fileCount == 0)
+            {
+                return BadRequest();
+            }
+
+            else if (fileCount == 1)
+            {
+                foreach (var x in files)
+                {
+                    file = x;
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            if (file != null && file.Length > 0)
+            {
+                var name = file.FileName;
+                var path = Path.Combine(_hostingEnv.WebRootPath, "Image", name);
+                var url = "https://" + _appSettingService.domainQueryString + "/Image/" + name;
+
+                // var url = "https://localhost:44323/Image/" + name;
+                var json = Json(new { url });
+                //string url = "";
+
+                try
+                {
+                    // Create Thumbnail and save it
+                    Stream stream = file.OpenReadStream();
+                    System.Drawing.Image thumbnail = GetReducedImage(100, 100, stream);
+                    if (thumbnail != null)
+                    {
+                        thumbnail.Save("wwwroot/Image/_" + name, thumbnail.RawFormat);
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException("Image is null.");
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        // Save the Image
+                        await file.CopyToAsync(fileStream);
+                    }
+                    // Save Record of Image
+                    CKImage newCKImage = new CKImage
+                    {
+                        Name = name,
+                        Path = name,
+                        ThumbPath = "_" + name
+                    };
+                    await _ckimageRepository.AddAsync(newCKImage);
+                    return json;
+                }
+
+                catch (Exception Ex)
+                {
+                    Console.WriteLine(Ex.ToString());
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            return BadRequest();
         }
 
         [HttpPost]
@@ -190,8 +276,6 @@ namespace DealEngine.WebUI.Controllers
                     var path = Path.Combine(_hostingEnv.WebRootPath, "files", model.Product, "attachmentfiles");
                     System.IO.Directory.CreateDirectory(path);
                     path = Path.Combine(path, filename);
-
-                    // no thumbnail needed as can use generic microsoft/adobe icons in the views ... if thats legal...
                     
                     try
                     {
@@ -227,93 +311,6 @@ namespace DealEngine.WebUI.Controllers
                 return Redirect("~/Image/ManageImage");
             }
             return Redirect("~/Image/ManageImage");
-        }
-
-
-
-        public async Task<IActionResult> CKUpload()
-        {
-            IFormFileCollection files = HttpContext.Request.Form.Files;
-            int fileCount = files.Count;
-            IFormFile file = null;
-
-            if (fileCount == 0)
-            {
-                return BadRequest();
-            }
-
-            else if (fileCount == 1)
-            {
-                foreach (var x in files)
-                {
-                    file = x;
-                }
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            if (file != null && file.Length > 0)
-            {
-                var name = file.FileName;
-                var path = Path.Combine(_hostingEnv.WebRootPath, "images", name);
-                var json = Json(new { path });
-                string url = "";
-
-               try
-                    {
-                        Stream stream = file.OpenReadStream();
-                        System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
-
-                        if (thumbnail != null)
-                        {
-                               thumbnail.Save("wwwroot/images/_" + name, thumbnail.RawFormat);
-                        }
-                        else
-                        {
-                            throw new ArgumentNullException("Image is null.");
-                        }
-                    }
-                    
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-
-                try
-                {
-
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                        url = "../../images/" + name;
-                        json = Json(new { url });
-                    }
-
-                    CKImage newCKImage = new CKImage
-                    {
-                        Name = name,
-                        Path = url,
-                        ThumbPath =  "../../images/_" + name
-                    };
-
-                    await _ckimageRepository.AddAsync(newCKImage);
-
-                    return json;
-                }
-
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.ToString());
-                }
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            return BadRequest();
         }
 
         [HttpPost]
