@@ -91,14 +91,14 @@ namespace DealEngine.WebUI.Controllers
 
                                 // Create document with a "main part" to it. No data has been added yet.
                                 if (html.Contains(showBorder)){
-                                    html = html.Replace(showBorder, "<table width=\"100%\" border=\"1\"><tbody><tr>");
-                                    // NEED TO DO CLOSING TAGS TOO      align=\"center\"     <tr style=\"font-weight:bold\">
+                                    html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
+                                    // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
                                 if (html.Contains(noBorder)){
-                                    html = html.Replace(noBorder, "<table width=\"100%\" border=\"0\"><tbody><tr>");
-                                    // NEED TO DO CLOSING TAGS TOO      align=\"center\"     <tr style=\"font-weight:bold\">
+                                    html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+                                    // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
-                                
+
                                 // Create a new html convertor with input mainPart
                                 HtmlConverter converter = new HtmlConverter(mainPart);
                                 

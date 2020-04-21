@@ -526,9 +526,9 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate]]", agreement.RetroactiveDate), ""));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[Jurisdiction]]", agreement.Jurisdiction), ""));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[Territory]]", agreement.TerritoryLimit), ""));
+            mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate]]", agreement.RetroactiveDate));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
             if (clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
