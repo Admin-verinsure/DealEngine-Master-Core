@@ -26,7 +26,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Organisation> Organisation { get; set; }
 		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }        
         public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
-        public virtual RevenueByActivity RevenueData { get; set; }
+        public virtual RevenueData RevenueData { get; set; }
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
         public virtual string Status { get; set; }        
         public virtual string ReferenceId { get; set; }        
@@ -41,6 +41,7 @@ namespace DealEngine.Domain.Entities
         public virtual User UnlockedBy { get; set; }        
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }        
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
+        public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
         protected ClientInformationSheet () : this (null) { }
 
 		protected ClientInformationSheet (User createdBy)
@@ -58,9 +59,11 @@ namespace DealEngine.Domain.Entities
             BoatUses = new List<BoatUse>();
             ClaimNotifications = new List<ClaimNotification>();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
+            PreRenewOrRefDatas = new List<PreRenewOrRefData>();
             BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
-		}
+            RevenueData = new RevenueData(null, createdBy);
+        }
 
 		public ClientInformationSheet (User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
 			: this (createdBy)
@@ -140,6 +143,10 @@ namespace DealEngine.Domain.Entities
         {
             ClientInformationSheetAuditLogs.Add(clientInformationSheetAuditLog);
         }
+        public virtual void AddPreRenewOrRefData(PreRenewOrRefData preRenewOrRefData)
+        {
+            PreRenewOrRefDatas.Add(preRenewOrRefData);
+        }
         public virtual void AddBusinessContract(BusinessContract businessContract)
         {
             BusinessContracts.Add(businessContract);
@@ -187,6 +194,140 @@ namespace DealEngine.Domain.Entities
 
 		public virtual Product Product { get; set; }
 	}
+
+    public class RevenueData : EntityBase
+    {
+        protected RevenueData() 
+            : this (null)
+        {
+            Territories = new List<Territory>();
+            Activities = new List<BusinessActivity>();
+            AdditionalActivityInformation = new AdditionalActivityInformation(null);
+        }
+
+        public RevenueData(ClientInformationSheet sheet = null, User user = null) 
+            : base(user) 
+        {
+            Territories = new List<Territory>();
+            Activities = new List<BusinessActivity>();
+            AdditionalActivityInformation = new AdditionalActivityInformation(user);
+
+            if (sheet != null)
+            {
+                Territories = CreateTerritories(sheet);
+                Activities = CreateActivities(sheet);
+            }                       
+        }
+
+        private IList<Territory> CreateTerritories(ClientInformationSheet sheet)
+        {
+            if(sheet.RevenueData != null)
+            {
+                foreach (var territory in sheet.RevenueData.Territories)
+                {
+                    Territories.Add(new Territory(null)
+                    {
+                        TemplateId = territory.TemplateId,
+                        Location = territory.Location,
+                        Percentage = 0,
+                        Selected = false
+                        //Percentage = territory.Percentage,
+                        //Selected = territory.Selected                    
+                    });
+                }
+            }
+            if(Territories.Count != sheet.Programme.BaseProgramme.TerritoryTemplates.Count)
+            {
+                foreach (var template in sheet.Programme.BaseProgramme.TerritoryTemplates)
+                {
+                    var containsTerritory = Territories.Where(t => t.TemplateId == template.Id).ToList();
+                    if (containsTerritory.Count == 0)
+                    {
+                        Territories.Add(new Territory(null)
+                        {
+                            TemplateId = template.Id,
+                            Location = template.Location,
+                            Percentage = 0,
+                            Selected = false
+                        });
+                    }
+                }
+            }
+            
+            return Territories;
+        }
+        private IList<BusinessActivity> CreateActivities(ClientInformationSheet sheet)
+        {
+            if (sheet.RevenueData != null)
+            {
+                foreach (var activity in sheet.RevenueData.Activities)
+                {
+                    Activities.Add(new BusinessActivity(null)
+                    {
+                        Description = activity.Description,
+                        AnzsciCode = activity.AnzsciCode,
+                        Percentage = 0,
+                        Selected = false
+                        //Selected = activity.Selected,
+                        //Percentage = activity.Percentage,                        
+                    });
+                }
+            }
+            if (Activities.Count != sheet.Programme.BaseProgramme.BusinessActivityTemplates.Count)
+            {
+                foreach (var template in sheet.Programme.BaseProgramme.BusinessActivityTemplates)
+                {
+                    var containsTerritory = Activities.Where(t => t.AnzsciCode == template.AnzsciCode).ToList();
+                    if (containsTerritory.Count == 0)
+                    {
+                        Activities.Add(new BusinessActivity(null)
+                        {
+                            Description = template.Description,
+                            AnzsciCode = template.AnzsciCode,
+                            Selected = false,
+                            Percentage = 0
+                        });
+                    }
+                }
+            }
+            return Activities;
+        }
+
+        public virtual IList<Territory> Territories { get; set; }
+        public virtual IList<BusinessActivity> Activities { get; set; }
+        public virtual decimal NextFinancialYearTotal { get; set; }
+        public virtual decimal CurrentYearTotal { get; set; }
+        public virtual decimal LastFinancialYearTotal { get; set; }
+        public virtual AdditionalActivityInformation AdditionalActivityInformation { get; set; }
+    }
+
+    public class AdditionalActivityInformation : EntityBase
+    {
+        protected AdditionalActivityInformation() : this(null) { }
+        public AdditionalActivityInformation(User createdBy = null) : base(createdBy)
+        {
+        }
+
+        public virtual string HasInspectionReportOptions { get; set; }
+        public virtual string HasDisclaimerReportsOptions { get; set; }
+        public virtual string HasObservationServicesOptions { get; set; }
+        public virtual string HasRecommendedCladdingOptions { get; set; }
+        public virtual string HasStateSchoolOptions { get; set; }
+        public virtual string HasIssuedCertificatesOptions { get; set; }
+        public virtual string QualificationDetails { get; set; }
+        public virtual string ValuationDetails { get; set; }
+        public virtual string OtherDetails { get; set; }
+        public virtual string RebuildDetails { get; set; }
+        public virtual string InspectionReportDetails { get; set; }
+        public virtual string OtherProjectManagementDetails { get; set; }
+        public virtual string NonProjectManagementDetails { get; set; }
+        public virtual decimal ConstructionCommercialDetails { get; set; }
+        public virtual decimal ConstructionDwellingDetails { get; set; }
+        public virtual decimal ConstructionIndustrialDetails { get; set; }
+        public virtual decimal ConstructionInfrastructureDetails { get; set; }
+        public virtual decimal ConstructionSchoolDetails { get; set; }
+        public virtual string ConstructionEngineerDetails { get; set; }
+    }
 
     public class SubClientInformationSheet : ClientInformationSheet
     {

@@ -112,13 +112,13 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnel">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnel nonOwnerSec">
                         <label class=" label required nonOwnerSec ">Organisation Type</label>
                         <label class="input">
                             <select id="EditOrganisationType" onchange="EditPMINZOrgTyprselected('EditOrganisationType')" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
-                                <option value="Person - Individual">Private</option>
-                                <option value="Corporation – Limited liability">Company</option>
+                                <option value="Person - Individual">Private/Soletrader</option>
+                                <option value="Corporation – Limited liability">Limited Liability Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
 
@@ -349,8 +349,8 @@
                         <label class="input">
                             <select id="AddOrgTypeName" onchange="AddOrgTypeSelected('AddOrgTypeName')" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
-                                <option value="Person - Individual">Private</option>
-                                <option value="Corporation – Limited liability">Company</option>
+                                <option value="Person - Individual">Private/Soletrader</option>
+                                <option value="Corporation – Limited liability">Limited Liability Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
 
@@ -636,7 +636,7 @@
         }
     }
 
-      function EditPMINZOrgTyprselected(typeselected) {
+    function EditPMINZOrgTyprselected(typeselected) {
         var addTypeselected = document.getElementById(typeselected);
         var jhj = addTypeselected.options[addTypeselected.selectedIndex].value;
         if (addTypeselected.options[addTypeselected.selectedIndex].value == "Person - Individual") {
@@ -645,12 +645,14 @@
             $('.privateorgtypesec ').removeClass('hidden');
 
         } else {
-            $('.privateorgtypesec ').addClass('hidden');
-            $('.EditNonProjectPersonnel ').removeClass('hidden');
-            $('.nonprivateorgtypesec ').removeClass('hidden');
-            $("EditProjectPersonnelSec :input").val(""); //Clears form
-        }
-      }
+           
+               $('.privateorgtypesec ').addClass('hidden');
+               $('.EditNonProjectPersonnel ').removeClass('hidden');
+               $('.nonprivateorgtypesec ').removeClass('hidden');
+               $("EditProjectPersonnelSec :input").val(""); //Clears form
+            
+         }
+     }
 
 
      function Currenmembership(typeselected) {
@@ -749,7 +751,9 @@
             data: postData
         })
             .done(function (data) {
-                     debugger;
+                debugger;
+                $('#PMINZNamedPartyOrganisationId').val(data.id);
+                
                 if (data.type == "Owner") {
 
                     $('.nonOwnerSec').addClass('hidden');
@@ -808,9 +812,10 @@
                     if (data.isCurrentMembership) {
                       EditCurrentmembership('PMINZCurrentMembership');
                     };
-
+                if (data.type != "Owner") {
                     EditPMINZOrgTyprselected('EditOrganisationType');
                     EditPMINZTypeSelected('EditPMINZType');
+                }
 
             });
     };

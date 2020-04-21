@@ -2,19 +2,24 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
+
     public class InformationViewModel : BaseViewModel
     {
-        public InformationViewModel()
+        public InformationViewModel() { }
+        public InformationViewModel(Domain.Entities.Programme Programme)
         {
             PMINZEPLViewModel = new PMINZEPLViewModel();
             CLIViewModel = new CLIViewModel();
             PMINZPIViewModel = new PMINZPIViewModel();
             DAOLIViewModel = new DAOLIViewModel();
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
+            RevenueDataViewModel = new RevenueDataViewModel(Programme);
         }
+        public Domain.Entities.Programme Programme;
         public string CompanyName { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
@@ -51,7 +56,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
         public string Advisory { get; set; }
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
-        public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
+        public RevenueDataViewModel RevenueDataViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
         public ClaimsHistoryViewModel ClaimsHistoryViewModel { get; set; }
         public PMINZEPLViewModel PMINZEPLViewModel { get; set; }
@@ -190,96 +195,126 @@ namespace DealEngine.WebUI.Models
         }
     }
 
-    public class RevenueByActivityViewModel
+    public class RevenueDataViewModel
     {
-        public bool IsTradingOutsideNZ { get; set; }
-        public IList<SelectListItem> Territories { get; set; }
-        public IList<SelectListItem> Activities { get; set; }
-        public decimal NextFincialYear { get; set; }
-        public decimal CurrentYear { get; set; }
-        public decimal LastFinancialYear { get; set; }
-        public RevenueByActivity RevenueData { get; set; }
-        public AdditionalActivityViewModel AdditionalInformation { get; set; }
+        public RevenueDataViewModel() { }
+        public RevenueDataViewModel(Domain.Entities.Programme programme)
+        {
+            Territories = GetTerritories(programme);
+            Activities = GetActivities(programme);
+            AdditionalActivityViewModel = new AdditionalActivityViewModel();
+        }
+        private IList<BusinessActivity> GetActivities(Domain.Entities.Programme programme)
+        {
+            Activities = new List<BusinessActivity>();
+            foreach (var template in programme.BusinessActivityTemplates)
+            {
+                Activities.Add(new BusinessActivity(null)
+                {
+                    Description = template.Description,
+                    AnzsciCode = template.AnzsciCode,
+                    Selected = false,
+                    Percentage = 0
+                });
+            }
+            return Activities;
+        }
+        private IList<Territory> GetTerritories(Domain.Entities.Programme programme)
+        {
+            Territories = new List<Territory>();
+            foreach (var template in programme.TerritoryTemplates)
+            {
+                Territories.Add(new Territory(null)
+                {
+                    TemplateId = template.Id,
+                    Location = template.Location,
+                    Percentage = 0,
+                    Selected = false
+                });
+            }
+            return Territories;
+        }
+        public IList<Territory> Territories { get; set; }
+        public IList<BusinessActivity> Activities { get; set; }
+        public decimal NextFinancialYearTotal { get; set; }
+        public decimal CurrentYearTotal { get; set; }
+        public decimal LastFinancialYearTotal { get; set; }
+        public AdditionalActivityViewModel AdditionalActivityViewModel { get; set; }
     }
 
     public class AdditionalActivityViewModel
     {
-        public AdditionalActivityViewModel()
+        public AdditionalActivityViewModel(AdditionalActivityInformation additionalActivityInformation = null)
         {
-            InspectionReportBoolId = new List<SelectListItem>()
+            SetOptions();
+        }
+
+        public void SetOptions()
+        {
+            HasInspectionReportOptions = GetSelectListOptions();
+            HasDisclaimerReportsOptions = GetSelectListOptions();
+            HasObservationServicesOptions = GetSelectListOptions();
+            HasRecommendedCladdingOptions = GetSelectListOptions();
+            HasStateSchoolOptions = GetSelectListOptions();
+            HasIssuedCertificatesOptions = GetSelectListOptions();
+
+            //var des = this.GetType();
+            //var src = info.GetType();
+            //foreach (var item in src.GetType())
+            //{
+            //    var property = (des)des.GetMember
+            //    if (item.Name.Replace("get_", string.Empty) == des.Name)
+            //    {
+            //        var test = item.GetType();
+            //        var test2 = field.GetType();
+            //        if (item.GetType() == field.GetType())
+            //        {
+
+            //        }
+            //        else
+            //        {
+
+            //        }
+            //    }
+            //}
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "Select Option", Value = "" },
+                {
+                    Text = "-- Select --", Value = "0"
+                },
                 new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            ValuationBoolId = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId2 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId3 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId4 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
+                {
+                    Text = "Yes", Value = "1"
+                },
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
         }
-        public virtual IList<SelectListItem> InspectionReportBoolId { get; set; }
-        public virtual IList<SelectListItem> ValuationBoolId { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId2 { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId3 { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId4 { get; set; }
-        public virtual string ValuationTextId { get; set; }
-        public virtual string ValuationTextId2 { get; set; }
-        public virtual string OtherActivitiesTextId { get; set; }
-        public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
-        public virtual string InspectionReportTextId { get; set; }
-        public virtual string OtherProjectManagementTextId { get; set; }
-        public virtual string NonProjectManagementTextId { get; set; }
-        public decimal ConstructionCommercial { get; set; }
-        public decimal ConstructionDwellings { get; set; }
-        public decimal ConstructionIndustrial { get; set; }
-        public decimal ConstructionInfrastructure { get; set; }
-        public decimal ConstructionSchool { get; set; }
-        public string ConstructionTextId { get; set; }
+        public IList<SelectListItem> HasInspectionReportOptions { get; set; }
+        public IList<SelectListItem> HasDisclaimerReportsOptions { get; set; }
+        public IList<SelectListItem> HasObservationServicesOptions { get; set; }
+        public IList<SelectListItem> HasRecommendedCladdingOptions { get; set; }
+        public IList<SelectListItem> HasStateSchoolOptions { get; set; }
+        public IList<SelectListItem> HasIssuedCertificatesOptions { get; set; }
+        public string QualificationDetails { get; set; }
+        public string ValuationDetails { get; set; }
+        public string OtherDetails { get; set; }
+        public string RebuildDetails { get; set; }
+        public string InspectionReportDetails { get; set; }
+        public string OtherProjectManagementDetails { get; set; }
+        public string NonProjectManagementDetails { get; set; }
+        public decimal ConstructionCommercialDetails { get; set; }
+        public decimal ConstructionDwellingDetails { get; set; }
+        public decimal ConstructionIndustrialDetails { get; set; }
+        public decimal ConstructionInfrastructureDetails { get; set; }
+        public decimal ConstructionSchoolDetails { get; set; }
+        public string ConstructionEngineerDetails { get; set; }
+        
     }
 
     public class SharedRoleViewModel
@@ -372,7 +407,7 @@ namespace DealEngine.WebUI.Models
             };
         }
         public IList<SelectListItem> HasEPLOptions { get; set; }
-        public IList<SelectListItem> HasEPLIOptions { get; set; }        
+        public IList<SelectListItem> HasEPLIOptions { get; set; }
         public IList<SelectListItem> CoveredOptions { get; set; }
         public IList<SelectListItem> LegalAdvisorOptions { get; set; }
         public IList<SelectListItem> CasualBasisOptions { get; set; }
@@ -381,7 +416,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> PostingNoticesOptions { get; set; }
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
         public IList<SelectListItem> IsInsuredClaimOptions { get; set; }
-        
+
     }
     public class CLIViewModel
     {
@@ -420,7 +455,7 @@ namespace DealEngine.WebUI.Models
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
-        public IList<SelectListItem> HasSecurityOptions { get; set; }        
+        public IList<SelectListItem> HasSecurityOptions { get; set; }
         public IList<SelectListItem> HasAccessControlOptions { get; set; }
         public IList<SelectListItem> HasProhibitAccessOptions { get; set; }
         public IList<SelectListItem> HasBackupOptions { get; set; }
@@ -434,7 +469,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasRenewalOptions { get; set; }
         public IList<SelectListItem> HasLocationOptions { get; set; }
-        
+
         public int CoverAmount { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
@@ -476,8 +511,8 @@ namespace DealEngine.WebUI.Models
                     Text = " Network security", Value = "1"
                 },
                 new SelectListItem
-                { 
-                    Text = "On-line stock trading", Value = "2" 
+                {
+                    Text = "On-line stock trading", Value = "2"
                 },
                 new SelectListItem
                 {
@@ -551,7 +586,7 @@ namespace DealEngine.WebUI.Models
         public string EngageDetails { get; set; }
         public string DisciplinaryDetails { get; set; }
         public string ClaimDetails { get; set; }
-        public string ClaimDetails2 { get; set; }        
+        public string ClaimDetails2 { get; set; }
         public string ResponsibleDetails { get; set; }
         public string RefundDetails { get; set; }
         public string SuedDetails { get; set; }
@@ -560,7 +595,7 @@ namespace DealEngine.WebUI.Models
         public string ManagedProjectDetails { get; set; }
         public string IncludedDesignDetails { get; set; }
         public string EngineerDetails { get; set; }
-        public string ContractingServicesDetails { get; set; }  
+        public string ContractingServicesDetails { get; set; }
     }
 
     public class DAOLIViewModel
@@ -576,8 +611,9 @@ namespace DealEngine.WebUI.Models
             HasCriminalOptions = GetSelectListOptions();
             HasProcecutionOptions = GetSelectListOptions();
             HasObligationOptions = GetSelectListOptions();
+            FormDate = DateTime.Now;
         }
-        
+
         public IList<SelectListItem> HasDAOLIOptions { get; set; }
         public IList<SelectListItem> HasClaimOptions { get; set; }
         public IList<SelectListItem> HasCircumstanceOptions { get; set; }
@@ -587,13 +623,12 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasCriminalOptions { get; set; }
         public IList<SelectListItem> HasProcecutionOptions { get; set; }
         public IList<SelectListItem> HasObligationOptions { get; set; }
-        
+
         public int ShareholderTotal { get; set; }
         public int AssetTotal { get; set; }
         public int DebtTotal { get; set; }
         public DateTime FormDate { get; set; }
         public string CompanyNameDetails { get; set; }
-        public string ClaimDetails { get; set; }
         public string CircumstanceDetails { get; set; }
         public string InvestigationDetails { get; set; }
         public string DeclinedDetails { get; set; }
@@ -601,7 +636,7 @@ namespace DealEngine.WebUI.Models
         public string CriminalDetails { get; set; }
         public string ProcecutionDetails { get; set; }
         public string ObligationDetails { get; set; }
-        
+
 
         private IList<SelectListItem> GetSelectListOptions()
         {

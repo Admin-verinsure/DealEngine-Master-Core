@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord", 
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord",
                 "pifinancialcomponentrateord", "piothercomponentrateord", "piitcomponentminpremiumord", "piconstructioncomponentminpremiumord", "pibusinessdevpmtcomponentminpremiumord",
                 "pimanufacturingcomponentminpremiumord", "pifinancialcomponentminpremiumord", "piothercomponentminpremiumord",
                 "piitcomponentratecapm", "piconstructioncomponentratecapm", "pibusinessdevpmtcomponentratecapm", "pimanufacturingcomponentratecapm",
@@ -123,7 +123,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (uisorg.CertType == "Ordinary")
                     {
                         intordnumber += 1;
-                    } 
+                    }
                     else if (uisorg.CertType == "PMP")
                     {
                         intpmpnumber += 1;
@@ -144,22 +144,22 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
                     numberoffeeincome += 1;
                 }
                 feeincome = totalfeeincome / numberoffeeincome;
 
                 foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
                 {
-                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Pecentage > 0) //Work outside New Zealand Check
+                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Percentage > 0) //Work outside New Zealand Check
                     {
                         bolworkoutsidenz = true;
                     }
@@ -169,47 +169,47 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISActivity.AnzsciCode == "M696210") //Business Development & Strategic Planning
                     {
-                        decBDSP = uISActivity.Pecentage;
+                        decBDSP = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "E") //Construction
                     {
-                        decCon = uISActivity.Pecentage;
+                        decCon = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696230") //Design Management
                     {
-                        decDM = uISActivity.Pecentage;
+                        decDM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696240") //Financial and Accounting Systems Analysis
                     {
-                        decFASA = uISActivity.Pecentage;
+                        decFASA = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696250") //Information Technology
                     {
-                        decIT = uISActivity.Pecentage;
+                        decIT = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696260") //Manufacturing & Operational Processes
                     {
-                        decMOP = uISActivity.Pecentage;
+                        decMOP = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696270") //Project Management Teaching and Coaching
                     {
-                        decPMTC = uISActivity.Pecentage;
+                        decPMTC = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696300") //Resource Consent and Implementation Management
                     {
-                        decRCIM = uISActivity.Pecentage;
+                        decRCIM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696400") //Telecommunications Management
                     {
-                        decTM = uISActivity.Pecentage;
+                        decTM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696500") //Other Project Management Activities
                     {
-                        decOPMA = uISActivity.Pecentage;
+                        decOPMA = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696600") //Non Project Management Activities
                     {
-                        decNPMA = uISActivity.Pecentage;
+                        decNPMA = uISActivity.Percentage;
                     }
 
                 }
@@ -246,7 +246,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     cAEConstruction.DateDeleted = null;
                     cAEConstruction.DeletedBy = null;
                 }
-            } else
+            }
+            else
             {
                 if (cAENonConstruction != null)
                 {
@@ -261,17 +262,36 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int intexpiringlimit = 0;
             decimal decexpiringpremium = 0m;
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            //{
-            //    intexpiringlimit = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            //}
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            //{
-            //    decexpiringpremium = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            //}
+            string strretrodate = "";
+
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
+                        decexpiringpremium = Convert.ToDecimal(preRenewOrRefData.PIBoundPremium);
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+                        {
+                            strretrodate = preRenewOrRefData.PIRetro;
+                        }
+                        
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
 
             int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"]/100);
+            decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"] / 100);
             decimal TermBrokerage1mil = 0m;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
             decimal TopupBrokerage1mil = 0m;
@@ -286,14 +306,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term1millimitoption.DateDeleted = null;
             term1millimitoption.DeletedBy = null;
 
-            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            //{
-            //    bolrenewalpremiumslowerthanexpiring = true;
-            //}
-            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            //{
-            //    bolrenewalpremiumshigherthanexpiring = true;
-            //}
+            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            {
+                bolrenewalpremiumslowerthanexpiring = true;
+            }
+            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            {
+                bolrenewalpremiumshigherthanexpiring = true;
+            }
 
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = decPIBasePremium * (1 + rates["pi2millimitloadingrate"] / 100);
@@ -304,21 +324,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm term2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitoption.TermLimit = TermLimit2mil;
-            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) *10;
+            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) * 10;
             term2millimitoption.Excess = TermExcess;
             term2millimitoption.BrokerageRate = agreement.Brokerage;
             term2millimitoption.Brokerage = (TermBrokerage2mil > MinBrokerage) ? TermBrokerage2mil : MinBrokerage;
             term2millimitoption.DateDeleted = null;
             term2millimitoption.DeletedBy = null;
 
-            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            //{
-            //    bolrenewalpremiumslowerthanexpiring = true;
-            //}
-            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            //{
-            //    bolrenewalpremiumshigherthanexpiring = true;
-            //}
+            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            {
+                bolrenewalpremiumslowerthanexpiring = true;
+            }
+            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            {
+                bolrenewalpremiumshigherthanexpiring = true;
+            }
 
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = decPIBasePremium * (1 + rates["pi5millimitloadingrate"] / 100);
@@ -362,10 +382,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfpriorinsurance(underwritingUser, agreement);
             //No Projects Managed
             uwrfnoprojectsmanaged(underwritingUser, agreement);
-            ////Renewal Premiums Lower than Expiring
-            //uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
-            ////Renewal Premiums Higher than Expiring
-            //uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
+            //Renewal Premiums Lower than Expiring
+            uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
+            //Renewal Premiums Higher than Expiring
+            uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
             //Capacity of an Engineer to Contract
             uwrfcapacityofanengineertocontract(underwritingUser, agreement);
             //Construction revenue as role as Engineer to the Contract
@@ -387,6 +407,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "PMINZ PI UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

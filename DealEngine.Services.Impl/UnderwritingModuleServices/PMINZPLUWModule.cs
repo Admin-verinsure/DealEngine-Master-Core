@@ -60,6 +60,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+                        {
+                            strretrodate = preRenewOrRefData.GLRetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "GL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = rates["pl2millimitpremium"];
             decimal TermBrokerage2mil = 0m;
@@ -117,7 +141,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            
+
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
 

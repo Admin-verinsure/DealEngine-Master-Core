@@ -10,16 +10,9 @@ namespace DealEngine.Services.Interfaces
     {
         Task<List<BusinessActivityTemplate>> GetBusinessActivitiesByClassification (int classification);
         Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplates();
-        //Task<BusinessActivityTemplate> GetBusinessActivitiesTemplate(BusinessActivityTemplate businessActivity);
-        Task<BusinessActivity> GetBusinessActivity(Guid Id);
         Task<BusinessActivityTemplate> GetBusinessActivityTemplate(Guid Id);
-        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivity);
-        Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode);
-        Task UpdateBusinessActivity(BusinessActivity businessActivity);
         Task CreateBusinessActivityTemplate(BusinessActivityTemplate businessActivity);
-        Task CreateBusinessActivity(BusinessActivity newBusinessActivity);
-        Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode);
-        Task RemoveBusinessActivity(BusinessActivityTemplate businessActivityTemplate);
+        Task<BusinessActivity> CreateActivity(Guid guid);
     }
     
 }

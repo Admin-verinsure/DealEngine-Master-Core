@@ -18,5 +18,6 @@ namespace DealEngine.Services.Interfaces
         Task ImportPMINZServiceContract(User user);
         Task ImportCEASServicePrincipals(User user);
         Task ImportPMINZServicePrincipals(User user);
+        Task ImportPMINZServicePreRenewData(User user);
     }
 }

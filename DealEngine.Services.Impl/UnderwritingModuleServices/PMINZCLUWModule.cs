@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", 
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium",
                 "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium", "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules
@@ -61,6 +61,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.CLRetro))
+                        {
+                            strretrodate = preRenewOrRefData.CLRetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "CL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
@@ -79,15 +103,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
                     numberoffeeincome += 1;
                 }
                 feeincome = totalfeeincome / numberoffeeincome;
@@ -118,9 +142,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
             if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" && 
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOtions").First().Value == "1")
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" && 
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
             {
                 extpremium = rates["clsocialengineeringextpremium"];
 
@@ -200,6 +224,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "PMINZ CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

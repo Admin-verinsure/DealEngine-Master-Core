@@ -33,7 +33,6 @@ namespace DealEngine.WebUI.Models
             //CreateMap<UserTask, TaskItem>().ReverseMap();
 
             // Information
-            CreateMap<AdditionalActivityViewModel, RevenueByActivityViewModel>();
             CreateMap<InformationTemplate, InformationViewModel>();
             CreateMap<InformationSection, InformationSectionViewModel>();
             CreateMap<InformationItem, InformationItemViewModel>()
@@ -72,6 +71,18 @@ namespace DealEngine.WebUI.Models
             // Policy
             CreateMap<RiskCategory, InsuranceRiskCategory>().ReverseMap();
             CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
+
+            CreateMap<RevenueData, RevenueDataViewModel>();
+
+            CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
+                .IncludeAllDerived();
+                
+
+                //.ForMember(dest => dest.HasInspectionReportOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasIssuedCertificatesOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasObservationServicesOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasRecommendedCladdingOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasStateSchoolOptions, map => map.Ignore());
 
             //subsystem            
             CreateMap<InformationTemplate, SubInformationTemplate>()

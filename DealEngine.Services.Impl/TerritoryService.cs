@@ -20,14 +20,21 @@ namespace DealEngine.Services.Impl
             _territoryTemplateRepository = territoryTemplateRepository;
         }
 
-        public async Task AddTerritory(Territory territory)
-        {
-            await _territoryRepository.AddAsync(territory);
-        }
-
         public async Task AddTerritoryTemplate(TerritoryTemplate territoryTemplate)
         {
             await _territoryTemplateRepository.AddAsync(territoryTemplate);
+        }
+
+        public async Task<Territory> CreateTerritory(Guid guid)
+        {
+            var template= await _territoryTemplateRepository.GetByIdAsync(guid);
+            Territory territory = new Territory(null)
+            {
+                Location = template.Location,
+                TemplateId = template.Id
+            };
+            await _territoryRepository.AddAsync(territory);
+            return territory;
         }
 
         public async Task CreateTerritoryTemplate(string LocationName)
@@ -35,16 +42,6 @@ namespace DealEngine.Services.Impl
             TerritoryTemplate territoryTemplate = new TerritoryTemplate(null, LocationName);
             territoryTemplate.Ispublic = true;
             await _territoryTemplateRepository.AddAsync(territoryTemplate);
-        }
-
-        public async Task<List<TerritoryTemplate>> GetAllTerritoryTemplates()
-        {
-            return await _territoryTemplateRepository.FindAll().ToListAsync();
-        }
-
-        public async Task<TerritoryTemplate> GetTerritoryTemplateById(Guid territoryTemplateId)
-        {
-            return await _territoryTemplateRepository.GetByIdAsync(territoryTemplateId);
         }
 
         public async Task<TerritoryTemplate> GetTerritoryTemplateByName(string LocationName)
@@ -59,31 +56,6 @@ namespace DealEngine.Services.Impl
             }
 
             return await _territoryTemplateRepository.FindAll().FirstOrDefaultAsync(t => t.Location == LocationName);
-        }
-
-        public async Task UpdateTerritory(Territory territory)
-        {
-            await _territoryRepository.UpdateAsync(territory);
-        }
-
-        public async Task<Territory> GetTerritoryById(Guid territoryId)
-        {
-            return await _territoryRepository.GetByIdAsync(territoryId);
-        }
-
-        public async Task<Territory> GetTerritoryByName(string location)
-        {
-            return await _territoryRepository.FindAll().FirstOrDefaultAsync(t => t.Location == location);
-        }
-
-        public async Task<Territory> GetTerritoryByTemplateId(Guid Id)
-        {
-            return await _territoryRepository.FindAll().FirstOrDefaultAsync(t => t.TerritoryTemplateId == Id);
-        }
-
-        public async Task RemoveTerritory(Territory territory)
-        {
-            await _territoryRepository.RemoveAsync(territory);
         }
     }
 }

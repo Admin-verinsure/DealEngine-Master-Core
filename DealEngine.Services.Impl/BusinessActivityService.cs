@@ -20,25 +20,6 @@ namespace DealEngine.Services.Impl
             _businessActivityTemplateRepository = businessActivityTemplateRepository;
         }
 
-        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivity)
-        {
-            businessActivity.Programme = programme;
-            await Update(businessActivity);
-        }
-
-        public async Task Update(BusinessActivityTemplate businessActivity)
-        {
-            await _businessActivityTemplateRepository.UpdateAsync(businessActivity);
-        }
-
-        public async Task CreateBusinessActivity(BusinessActivity businessActivity)
-        {
-            if (businessActivity.AnzsciCode != null || businessActivity.Description != null)
-            {
-                await _businessActivityRepository.AddAsync(businessActivity);
-            }
-        }
-
         public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplates()
         {
             return await _businessActivityTemplateRepository.FindAll().OrderBy(ba => ba.AnzsciCode).ToListAsync();            
@@ -48,21 +29,6 @@ namespace DealEngine.Services.Impl
         {
             var list = await GetBusinessActivitiesTemplates();
             return list.Where(ba => ba.Classification == classification).ToList();
-        }
-
-        public async Task<BusinessActivity> GetBusinessActivity(Guid Id)
-        {
-            return await _businessActivityRepository.GetByIdAsync(Id);
-        }
-
-        public async Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode)
-        {
-            return await _businessActivityRepository.FindAll().FirstOrDefaultAsync(a => a.AnzsciCode == AnzsciCode);
-        }
-
-        public async Task UpdateBusinessActivity(BusinessActivity businessActivity)
-        {
-            await _businessActivityRepository.UpdateAsync(businessActivity);
         }
 
         public async Task CreateBusinessActivityTemplate(BusinessActivityTemplate businessActivityTemplate)
@@ -78,14 +44,16 @@ namespace DealEngine.Services.Impl
             return await _businessActivityTemplateRepository.GetByIdAsync(Id);
         }
 
-        public async Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode)
+        public async Task<BusinessActivity> CreateActivity(Guid guid)
         {
-            return await _businessActivityTemplateRepository.FindAll().FirstOrDefaultAsync(bat => bat.AnzsciCode == anzsciCode);
-        }
-
-        public async Task RemoveBusinessActivity(BusinessActivityTemplate businessActivityTemplate)
-        {
-            await _businessActivityTemplateRepository.RemoveAsync(businessActivityTemplate);
+            var template = await _businessActivityTemplateRepository.GetByIdAsync(guid);
+            BusinessActivity activity = new BusinessActivity(null)
+            {
+                AnzsciCode = template.AnzsciCode,
+                Description = template.Description,                
+            };
+            await _businessActivityRepository.AddAsync(activity);
+            return activity;
         }
     }
 }

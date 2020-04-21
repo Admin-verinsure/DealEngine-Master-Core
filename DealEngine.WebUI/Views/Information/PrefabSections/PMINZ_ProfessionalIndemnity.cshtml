@@ -1,569 +1,573 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-<form id="PMINZPIViewModel" class="is-valid">
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hascontractingservices" class="label required">
-                    Please select the areas you provide contracting services from the following:
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hascontractingservices" name="PMINZPIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PMINZPIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.ContractingServicesOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.ContractingServicesOptions" hidden>
+
+<div id="PI">
+    <form id="PMINZPIViewModel" class="is-valid">
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="contractingservicesdetails" class="label required">
-                        Please provide full details:
+                    <label for="hascontractingservices" class="label required">
+                        Please select the areas you provide contracting services from the following:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ContractingServicesDetails, new { @class = "form-control", @id = "contractingservicesdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hascontractingservices" name="PMINZPIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PMINZPIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.ContractingServicesOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="label">
-            <strong>Insurance History</strong><br />
-            <strong>Have you ever had any:</strong>
-        </label>
-        <div class="row">
-            <div class="col-9">
-                <label for="hasstardardterms" class="label required">
-                    Do you have standard terms upon which you supply your professional services?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasstardardterms" name="PMINZPIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasStandardTermsOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div id="PMINZPIViewModel.ContractingServicesOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="contractingservicesdetails" class="label required">
+                            Please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ContractingServicesDetails, new { @class = "form-control", @id = "contractingservicesdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasnegotiate" class="label required">
-                    Do you ever negotiate contracts with your customers in which you accept liability for liquidated and/or consequential damages?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasnegotiate" name="PMINZPIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasNegotiateOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasnoagreementoptions" class="label required">
-                    Do you ever commence any assignment/project where there is no written agreement or contract?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasnoagreementoptions" name="PMINZPIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasNoAgreementOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div class="form-group">
+            <label class="label">
+                <strong>Insurance History</strong><br />
+                <strong>Have you ever had any:</strong>
+            </label>
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasstardardterms" class="label required">
+                        Do you have standard terms upon which you supply your professional services?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasstardardterms" name="PMINZPIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasStandardTermsOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="label">
-            When engaging consultants or contractors, do you ensure that those consultants/contractors:
-        </label>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasownPI" class="label required">
-                    Maintain their own professional indemnity insurance?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasownPI" name="PMINZPIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasOwnPIOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasboundcontract" class="label required">
-                    Are bound by contract to accept full responsibility for their own actions?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasboundcontract" name="PMINZPIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasBoundContractOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasrecorded" class="label required">
-                    Do you always record amended or additional instructions from your client?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasrecorded" name="PMINZPIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasRecordedOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasdairyrecord" class="label required">
-                    Do you have a master diary system for recording all deadlines?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasdairyrecord" name="PMINZPIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasDiaryRecordOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hascomplaint" class="label required">
-                    Do you have a complaints process that if a client complains, relevant factors are promptly considered and documents, including:
-                    <br />
-                    <span>
-                        Documenting the complaint to the Client
-                    </span>
-                    <br />
-                    <span>
-                        Whether a conflict of interest has arisen
-                    </span>
-                    <br />
-                    <span>
-                        Whether you should notify your Broker/Insurer
-                    </span>
-                    <br />
-                    <span>
-                        Whether the complaint's impact can be minimised
-                    </span>
-                    <br />
-                    <span>
-                        Whether reputational risk ia a factor
-                    </span>
-                    <br />
-                    <span>
-                        Whether another party or the Client might have contributed to the problem
-                    </span>
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hascomplaint" name="PMINZPIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasComplaintOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasengage" class="label required">
-                    Do you engage in any Component Specification activities and or design ( not including design management activities)?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasengage" name="PMINZPIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasEngageOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasEngageOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="engagedetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasnegotiate" class="label required">
+                        Do you ever negotiate contracts with your customers in which you accept liability for liquidated and/or consequential damages?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.EngageDetails, new { @class = "form-control", @id = "engagedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasnegotiate" name="PMINZPIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasNegotiateOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasdisciplinary" class="label required">
-                    Has any Partner, Principal, Director or staff member ever been the subject of disciplinary proceedings for professional misconduct?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasdisciplinary" name="PMINZPIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasDisciplinaryOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasDisciplinaryOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="disciplinarydetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasnoagreementoptions" class="label required">
+                        Do you ever commence any assignment/project where there is no written agreement or contract?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.DisciplinaryDetails, new { @class = "form-control", @id = "disciplinarydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasnoagreementoptions" name="PMINZPIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasNoAgreementOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasclaimsagainst" class="label required">
-                    Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasclaimsagainst" name="PMINZPIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
+        <div class="form-group">
+            <label class="label">
+                When engaging consultants or contractors, do you ensure that those consultants/contractors:
+            </label>
         </div>
-    </div>
-    <div id="PMINZPIViewModel.HasClaimsAgainstOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="claimdetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasownPI" class="label required">
+                        Maintain their own professional indemnity insurance?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasownPI" name="PMINZPIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasOwnPIOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasresponsible" class="label required">
-                    Have you or your sub-contractors been responsible for any delays or past due contracts?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasresponsible" name="PMINZPIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasResponsibleOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasResponsibleOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="responsibledetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasboundcontract" class="label required">
+                        Are bound by contract to accept full responsibility for their own actions?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ResponsibleDetails, new { @class = "form-control", @id = "responsibledetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasboundcontract" name="PMINZPIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasBoundContractOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasclaimsagainst2" class="label required">
-                    Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasclaimsagainst2" name="PMINZPIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions2)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="claimdetails2" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasrecorded" class="label required">
+                        Do you always record amended or additional instructions from your client?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails2, new { @class = "form-control", @id = "claimdetails2", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasrecorded" name="PMINZPIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasRecordedOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasrefund" class="label required">
-                    Within the past three years, have any customers withheld payments or requested a refund because your products or services did not meet the Customer's performance expectations
-                    or did not perform the compliance with your warranties or representations?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasrefund" name="PMINZPIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasRefundOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="refunddetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasdairyrecord" class="label required">
+                        Do you have a master diary system for recording all deadlines?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.RefundDetails, new { @class = "form-control", @id = "refunddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasdairyrecord" name="PMINZPIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasDiaryRecordOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hassued" class="label required">
-                    Within the past three years, have you sued any customers for non-payment of contracts?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hassued" name="PMINZPIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasSuedOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasSuedOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="sueddetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hascomplaint" class="label required">
+                        Do you have a complaints process that if a client complains, relevant factors are promptly considered and documents, including:
+                        <br />
+                        <span>
+                            Documenting the complaint to the Client
+                        </span>
+                        <br />
+                        <span>
+                            Whether a conflict of interest has arisen
+                        </span>
+                        <br />
+                        <span>
+                            Whether you should notify your Broker/Insurer
+                        </span>
+                        <br />
+                        <span>
+                            Whether the complaint's impact can be minimised
+                        </span>
+                        <br />
+                        <span>
+                            Whether reputational risk ia a factor
+                        </span>
+                        <br />
+                        <span>
+                            Whether another party or the Client might have contributed to the problem
+                        </span>
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.SuedDetails, new { @class = "form-control", @id = "sueddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hascomplaint" name="PMINZPIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasComplaintOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasdispute" class="label required">
-                    Are you aware of any act, error or omission, unresolved contract dispute or any other circumstance aileging non-performance of contract or non-performance of your products or services?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="hasdispute" name="PMINZPIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasDisputeOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="PMINZPIViewModel.HasDisputeOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="disputedetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasengage" class="label required">
+                        Do you engage in any Component Specification activities and or design ( not including design management activities)?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.DisputeDetails, new { @class = "form-control", @id = "disputedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasengage" name="PMINZPIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasEngageOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="haspenalty" class="label required">
-                    Have you ever had a penalty imposed under the Health & Safety in Employment Act?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="haspenalty" name="PMINZPIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.PMINZPIViewModel.HasPenaltyOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div id="PMINZPIViewModel.HasEngageOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="engagedetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.EngageDetails, new { @class = "form-control", @id = "engagedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="PMINZPIViewModel.HasPenaltyOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="penaltydetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasdisciplinary" class="label required">
+                        Has any Partner, Principal, Director or staff member ever been the subject of disciplinary proceedings for professional misconduct?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.PenaltyDetails, new { @class = "form-control", @id = "penaltydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <select id="hasdisciplinary" name="PMINZPIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasDisciplinaryOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasengineer" class="label required">Do you or have you acted in the capacity of an Engineer to the Contract?</label>
-            </div>
-            <div class="col-3">
-                <select id="hasengineer" name="PMINZPIViewModel.HasEngineerOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
-                    @foreach (var option in Model.PMINZPIViewModel.HasEngineerOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div id="PMINZPIViewModel.HasDisciplinaryOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="disciplinarydetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.DisciplinaryDetails, new { @class = "form-control", @id = "disciplinarydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="PMINZPIViewModel.HasEngineerOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="engineerdetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasclaimsagainst" class="label required">
+                        Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.EngineerDetails, new { @class = "form-control", @id = "engineerdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    <select id="hasclaimsagainst" name="PMINZPIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div><div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasincludeddesign" class="label required">Do you engage in any Component Specification activities and or design (not including design management activities)?</label>
-            </div>
-            <div class="col-3">
-                <select id="hasincludeddesign" name="PMINZPIViewModel.HasIncludedDesignOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
-                    @foreach (var option in Model.PMINZPIViewModel.HasIncludedDesignOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="claimdetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="PMINZPIViewModel.HasIncludedDesignOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="includeddesigndetails" class="label required">
-                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    <label for="hasresponsible" class="label required">
+                        Have you or your sub-contractors been responsible for any delays or past due contracts?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.IncludedDesignDetails, new { @class = "form-control", @id = "includeddesigndetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    <select id="hasresponsible" name="PMINZPIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasResponsibleOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
-            </div>
-            <div class="col-3">
-                <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' class="custom-select" onchange="OnChange(this.id, this.name)">
-                    @foreach (var option in Model.PMINZPIViewModel.HasManagedProjectOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+        <div id="PMINZPIViewModel.HasResponsibleOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="responsibledetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ResponsibleDetails, new { @class = "form-control", @id = "responsibledetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="PMINZPIViewModel.HasManagedProjectOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="managedprojectdetails" class="label required">
-                        <strong>You have answered "No" </strong>, please provide full details:
+                    <label for="hasclaimsagainst2" class="label required">
+                        Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    <select id="hasclaimsagainst2" name="PMINZPIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions2)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="claimdetails2" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails2, new { @class = "form-control", @id = "claimdetails2", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasrefund" class="label required">
+                        Within the past three years, have any customers withheld payments or requested a refund because your products or services did not meet the Customer's performance expectations
+                        or did not perform the compliance with your warranties or representations?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasrefund" name="PMINZPIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasRefundOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="refunddetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.RefundDetails, new { @class = "form-control", @id = "refunddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hassued" class="label required">
+                        Within the past three years, have you sued any customers for non-payment of contracts?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hassued" name="PMINZPIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasSuedOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasSuedOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="sueddetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.SuedDetails, new { @class = "form-control", @id = "sueddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasdispute" class="label required">
+                        Are you aware of any act, error or omission, unresolved contract dispute or any other circumstance aileging non-performance of contract or non-performance of your products or services?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasdispute" name="PMINZPIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasDisputeOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasDisputeOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="disputedetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.DisputeDetails, new { @class = "form-control", @id = "disputedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="haspenalty" class="label required">
+                        Have you ever had a penalty imposed under the Health & Safety in Employment Act?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="haspenalty" name="PMINZPIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZPIViewModel.HasPenaltyOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasPenaltyOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="penaltydetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.PenaltyDetails, new { @class = "form-control", @id = "penaltydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasengineer" class="label required">Do you or have you acted in the capacity of an Engineer to the Contract?</label>
+                </div>
+                <div class="col-3">
+                    <select id="hasengineer" name="PMINZPIViewModel.HasEngineerOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PMINZPIViewModel.HasEngineerOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasEngineerOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="engineerdetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.EngineerDetails, new { @class = "form-control", @id = "engineerdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasincludeddesign" class="label required">Do you engage in any Component Specification activities and or design (not including design management activities)?</label>
+                </div>
+                <div class="col-3">
+                    <select id="hasincludeddesign" name="PMINZPIViewModel.HasIncludedDesignOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PMINZPIViewModel.HasIncludedDesignOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasIncludedDesignOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="includeddesigndetails" class="label required">
+                            <strong>You have answered "Yes" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.IncludedDesignDetails, new { @class = "form-control", @id = "includeddesigndetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
+                </div>
+                <div class="col-3">
+                    <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="reverseValidateOnSubmit" data-item='PMINZPIViewModel.HasManagedProjectOptions,tblpminzproject' class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PMINZPIViewModel.HasManagedProjectOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PMINZPIViewModel.HasManagedProjectOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="managedprojectdetails" class="label required">
+                            <strong>You have answered "No" </strong>, please provide full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

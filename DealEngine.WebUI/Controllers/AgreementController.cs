@@ -1410,8 +1410,16 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
                     {
+                        if (null != agreement.Product.DependableProduct)
+                        {
+                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
 
-                        multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                        }
+                        else
+                        {
+                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = "NonDependable" });
+
+                        }
                     }
 
                     // List Agreement Premiums
@@ -1930,6 +1938,8 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientNumber = agreement.ClientNumber;
                 model.PolicyNumber = agreement.PolicyNumber;
                 model.RetroactiveDate = agreement.RetroactiveDate;
+                model.TerritoryLimit = agreement.TerritoryLimit;
+                model.Jurisdiction = agreement.Jurisdiction;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1962,6 +1972,8 @@ namespace DealEngine.WebUI.Controllers
                     agreement.ClientNumber = model.ClientNumber;
                     agreement.PolicyNumber = model.PolicyNumber;
                     agreement.RetroactiveDate = model.RetroactiveDate;
+                    agreement.Jurisdiction = model.Jurisdiction;
+                    agreement.TerritoryLimit = model.TerritoryLimit;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
@@ -2206,7 +2218,7 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
             try
             {
-                if (Guid.TryParse(HttpContext.Request.Form["ClientInformationSheet.Id"], out sheetId))
+                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
                 {
                     sheet = await _customerInformationService.GetInformation(sheetId);
                 }

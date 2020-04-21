@@ -45,7 +45,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())
                     .Conventions.Add<CascadeConvention>()
                     .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
-                .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
+                .UseOverridesFromAssemblyOf<UserMappingOverride>())
                 ).BuildConfiguration()
                 .AddIdentityMappingsForPostgres()
                 .BuildSessionFactory();
