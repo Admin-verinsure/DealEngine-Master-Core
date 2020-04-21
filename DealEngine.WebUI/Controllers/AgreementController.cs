@@ -2282,12 +2282,12 @@ namespace DealEngine.WebUI.Controllers
                                 await _fileService.UploadFile(renderedDoc);
                             }                            
                         }
-                        if (template.FileRendered == false) 
-                        {
-                            SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
-                            agreement.Documents.Add(notRenderedDoc);
-                            documents.Add(notRenderedDoc);
-                        }
+                        //if (template.FileRendered == false) 
+                        //{
+                        //    SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
+                        //    agreement.Documents.Add(notRenderedDoc);
+                        //    documents.Add(notRenderedDoc);
+                        //}
                     }
 
                     if (programme.BaseProgramme.ProgEnableEmail)

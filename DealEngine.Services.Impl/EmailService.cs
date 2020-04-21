@@ -218,7 +218,8 @@ namespace DealEngine.Services.Impl
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
-            
+            mergeFields.Add(new KeyValuePair<string, string>("[[SupportEmail]]", "09 377 6564"));
+
             SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("LoginEmail");
             if (systemEmailTemplate == null)
             {
@@ -481,7 +482,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -519,7 +520,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, agreement.ClientInformationSheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -600,7 +601,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(binder, insuredOrg, programme, agreement.ClientInformationSheet);
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
@@ -724,8 +725,34 @@ namespace DealEngine.Services.Impl
 						// Add a main document part. 
 						MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
 						new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
-						HtmlConverter converter = new HtmlConverter (mainPart);
-						converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+
+                        //================
+                        //document override
+                        string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                        string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+                        // Create document with a "main part" to it. No data has been added yet.
+                        if (html.Contains(showBorder))
+                        {
+                            html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        if (html.Contains(noBorder))
+                        {
+                            html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        string oldpath = "<img src=\"../../../images";
+                        string newpath = "<img  style='margin:0px 580px' align='middle' height='100' width='100' src=\"https://staging.professionalrisks.online/images";
+
+                        if (html.Contains(oldpath))
+                        {
+                            html = html.Replace(oldpath, newpath);
+                        }
+                        //================
+
+                        HtmlConverter converter = new HtmlConverter (mainPart);
+                        converter.ImageProcessing = ImageProcessing.ManualProvisioning;
 						converter.ParseHtml (html);
 					}
 					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
@@ -761,6 +788,7 @@ namespace DealEngine.Services.Impl
             if(insuredOrg != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
+                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", insuredOrg.Email));
             }
             if(uISIssuer != null)
             {
