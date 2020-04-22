@@ -2341,53 +2341,59 @@ namespace DealEngine.WebUI.Controllers
                 // TODO - rewrite to save templates on a per programme basis
 
                 ClientProgramme programme = sheet.Programme;
-                ClientAgreement agreement = programme.Agreements[0];
-
-                Organisation insured = programme.Owner;
-
-                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-
-                EmailTemplateViewModel model = new EmailTemplateViewModel();
-
-                user = await CurrentUser();
-
-                if (emailTemplate != null)
+                foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    model.Name = emailTemplate.Name;
-                    model.Subject = emailTemplate.Subject;
-                    model.Body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
-                }
-                else
-                {
-                    model.Name = "";
-                    model.Subject = "";
-                    model.Body = "";
-                }
-
-                model.ClientProgrammeID = programme.Id;
-
-                if (programme.Owner != null)
-                {
-                    var recipents = new List<UserViewModel>();
-
-                    recipents.Add(new UserViewModel { ID = user.Id, UserName = user.UserName, FirstName = user.FirstName, LastName = user.LastName, FullName = user.FullName, Email = user.Email });
-
-                    var recipentList = await _userService.GetAllUsers();
-                    foreach (User recipent in recipentList.Where(ur1 => ur1.Organisations.Contains(programme.Owner)))
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null && acagreement.Bound).Count() > 0)
                     {
-                        recipents.Add(new UserViewModel { ID = recipent.Id, UserName = recipent.UserName, FirstName = recipent.FirstName, LastName = recipent.LastName, FullName = recipent.FullName, Email = recipent.Email });
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var documents = new List<SystemDocument>();
+                        var agreeTemplateList = agreement.Product.Documents;
+                        var agreeDocList = agreement.GetDocuments();
+
+                        foreach (SystemDocument doc in agreeDocList)
+                        {
+                            doc.Delete(user);
+                        }
+
+                        foreach (SystemDocument template in agreeTemplateList)
+                        {
+                            //render docs except invoice
+                            if (template.DocumentType != 4 && template.DocumentType != 6)
+                            {
+                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc);
+                                documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }
+                            //render all subsystem
+                            if (template.DocumentType == 6)
+                            {
+                                foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                                {
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    agreement.Documents.Add(renderedDoc);
+                                    documents.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
+                            }
+                        }
+
+                        if (programme.BaseProgramme.ProgEnableEmail)
+                        {
+                            //send out policy document email
+                            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
+                            }
+                        }
                     }
 
-                    model.Recipents = recipents;
-                }
-                else
-                {
-                    model.Recipents = null;
                 }
 
-                ViewBag.Title = programme.BaseProgramme.Name + " Agreement Documents Covering Text";
-
-                return View("SendPolicyDocuments", model);
+                return NoContent();
             }
             catch (Exception ex)
             {
