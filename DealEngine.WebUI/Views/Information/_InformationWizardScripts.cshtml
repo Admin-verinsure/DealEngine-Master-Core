@@ -345,6 +345,7 @@
                                     }
 
                                 });
+                            
                             } else {
                                 isvalid++;
                                          alert("Please select cover options for all products");
@@ -7440,13 +7441,21 @@ async: true
 
     function bypassPayment() {
         event.preventDefault();
+                       $('#getDocumentsModal').show();
+
+
         $.ajax({
             url: '@Url.Action("ByPassPayment", "Agreement")',
             type: "Post",
             data: $("#tab_1 :input").serialize({ json: true }),
             async: true
         }).done(function (data) {
+             $('#getDocumentsModal').hide();
+
                window.location.href = data.url;
+        }).fail(function (a, s, d) {
+
+            $('#getDocumentsModal').hide();
         });
     }
 

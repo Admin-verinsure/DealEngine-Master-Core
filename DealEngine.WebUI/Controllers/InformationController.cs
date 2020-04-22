@@ -1200,16 +1200,7 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
                 {
-                    if (agreement.Product.IsOptionalProduct)
-                    {
-                        if (sheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
-                        {
-                            productname.Add(agreement.Product.Name);
-                        }
-                    } else
-                    {
-                        productname.Add(agreement.Product.Name);
-                    }                    
+                    productname.Add(agreement.Product.Name);
                 }
 
                 return Json(productname);
