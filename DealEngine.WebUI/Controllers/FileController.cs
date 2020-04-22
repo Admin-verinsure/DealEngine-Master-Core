@@ -101,6 +101,7 @@ namespace DealEngine.WebUI.Controllers
                                     // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
                                 string oldpath = "<img src=\"../../../images";
+
                                 string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
 
 
@@ -109,20 +110,23 @@ namespace DealEngine.WebUI.Controllers
                                     html = html.Replace(oldpath, newpath);
                                 }
 
-                                //}
-                                //html = "< img aligh= "center" src = \"/img/umbrella.png\" /> ";
-                                //if (html.Contains(oldpath))
-                                //{
-                                //}
-                                //    html = html.Replace(oldpath, newpath);
-                                //ImagePart imagePart = mainPart.AddImagePart(~\img\umbrella.png);
-                                //using (FileStream stream = new FileStream(fileName, FileMode.Open))
-                                //{
-                                //    imagePart.FeedData(stream);
-                                //}
-                                //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
-                                // Create a new html convertor with input mainPart
-                                HtmlConverter converter = new HtmlConverter(mainPart);
+                                    //}
+                                    //html = "< img aligh= "center" src = \"/img/umbrella.png\" /> ";
+                                    //if (html.Contains(oldpath))
+                                    //{
+                                    //}
+                                    //    html = html.Replace(oldpath, newpath);
+                                    //ImagePart imagePart = mainPart.AddImagePart(~\img\umbrella.png);
+                                    //using (FileStream stream = new FileStream(fileName, FileMode.Open))
+                                    //{
+                                    //    imagePart.FeedData(stream);
+                                    //}
+                                    //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
+                                    // Create a new html convertor with input mainPart
+                                    HtmlConverter converter = new HtmlConverter(mainPart);
+
+                                
+                              
 
 
                                 // Need to figure out how to add classes to style the document... (adding to the top of HTML document doesn't work, also lots of the table styling css doesn't actually work. Just the old way works where style isn't specified e.g <table width=\"100%\" border=\"0\"><tr style=\"font-weight: bold\"><td>Studio</td><td colspan=\"2\")
