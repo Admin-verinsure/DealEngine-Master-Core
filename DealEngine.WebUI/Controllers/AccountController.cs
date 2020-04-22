@@ -323,20 +323,7 @@ namespace DealEngine.WebUI.Controllers
                 if (resultCode == 0)
                 {
                     var identityResult = await DealEngineIdentityUserLogin(user, password);
-                    if (identityResult.Succeeded)
-                    {
-                        deUser = await _userManager.FindByNameAsync(userName);
-						var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
-                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
-                        {
-                            var hasRole = await _roleManager.RoleExistsAsync("Client");
-                            if (hasRole)
-                            {
-                                await _userManager.AddToRoleAsync(deUser, "Client");
-                            }
-                        }
-                    }
-                    else
+                    if (!identityResult.Succeeded)
                     {
                         deUser = await _userManager.FindByNameAsync(userName);
                         await _userManager.RemovePasswordAsync(deUser);
@@ -378,7 +365,16 @@ namespace DealEngine.WebUI.Controllers
                         Email = user.Email,
                         UserName = user.UserName
                     };
+                    
                     var result = await _userManager.CreateAsync(deUser, password);
+                    if (result.Succeeded)
+                    {
+                        var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        if (hasRole)
+                        {
+                            await _userManager.AddToRoleAsync(deUser, "Client");
+                        }
+                    }
                 }
 
                 return await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);                

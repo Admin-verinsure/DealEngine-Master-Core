@@ -4841,7 +4841,7 @@ namespace DealEngine.WebUI.Controllers
                 //condition for organisation exists
                 if (organisation == null)
                 {
-                    organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType);
                     organisation.Phone = phonenumber;
                     organisation.Email = email;
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -4906,12 +4906,8 @@ namespace DealEngine.WebUI.Controllers
                         try
                         {
                             var reference = await _referenceService.GetLatestReferenceId();
-
                             var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-
                             await _referenceService.CreateClientInformationReference(sheet);
-
-
 
                             using (var uow = _unitOfWork.BeginUnitOfWork())
                             {
@@ -4927,7 +4923,6 @@ namespace DealEngine.WebUI.Controllers
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
                                 {
-                                    Thread.Sleep(1000);
                                     await uow.Commit();
                                 }
                                 catch (Exception ex)

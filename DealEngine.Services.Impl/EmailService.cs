@@ -111,7 +111,7 @@ namespace DealEngine.Services.Impl
 			body += string.Format("<p>Your username is <em>{0}</em></p>", user.UserName);
 			body += "<p>Thanks<br/>- The Proposalonline Team</p>";
 			body += "<p>Proposalonline is technology of DealEngine Group Limited who provide technical support.</p>";
-			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@DealEngine.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
+			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
@@ -218,7 +218,8 @@ namespace DealEngine.Services.Impl
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
-            
+            mergeFields.Add(new KeyValuePair<string, string>("[[SupportEmail]]", "support@techcertain.com"));
+
             SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("LoginEmail");
             if (systemEmailTemplate == null)
             {
@@ -481,7 +482,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -519,7 +520,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, agreement.ClientInformationSheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -600,7 +601,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(binder, insuredOrg, programme, agreement.ClientInformationSheet);
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
@@ -694,16 +695,21 @@ namespace DealEngine.Services.Impl
         /// <param name="recipient">Recipient.</param>
         public async Task<EmailBuilder> GetLocalizedEmailBuilder (string defaultSender, string recipient)
 		{
-			EmailBuilder email = new EmailBuilder (DefaultSender);
-			if (string.IsNullOrWhiteSpace(CatchAllEmail))
+            EmailBuilder email = new EmailBuilder(DefaultSender);
+            //EmailBuilder email = new EmailBuilder (DefaultSender);
+            if (string.IsNullOrWhiteSpace(CatchAllEmail))
             {
-                if (recipient != null)
-                {
-                    email.To(recipient).BCC(BCCEmail);
-                    //email.To(recipient).BCC(SystemEmail);
-                    if (ReplyToEmail != null)
+                if (!string.IsNullOrWhiteSpace(recipient))
+                {                    
+                    email.To(recipient);
+                    if(!string.IsNullOrWhiteSpace(BCCEmail))
                     {
-                        email.ReplyTo();
+                        email.BCC(BCCEmail);
+                    }
+                    //email.To(recipient).BCC(SystemEmail);
+                    if (!string.IsNullOrWhiteSpace(ReplyToEmail))
+                    {
+                        email.ReplyTo(ReplyToEmail);
                     }
                 }
             }
@@ -724,8 +730,34 @@ namespace DealEngine.Services.Impl
 						// Add a main document part. 
 						MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
 						new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
-						HtmlConverter converter = new HtmlConverter (mainPart);
-						converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+
+                        //================
+                        //document override
+                        string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                        string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+                        // Create document with a "main part" to it. No data has been added yet.
+                        if (html.Contains(showBorder))
+                        {
+                            html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        if (html.Contains(noBorder))
+                        {
+                            html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        string oldpath = "<img src=\"../../../images";
+                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
+
+                        if (html.Contains(oldpath))
+                        {
+                            html = html.Replace(oldpath, newpath);
+                        }
+                        //================
+
+                        HtmlConverter converter = new HtmlConverter (mainPart);
+                        converter.ImageProcessing = ImageProcessing.ManualProvisioning;
 						converter.ParseHtml (html);
 					}
 					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
@@ -761,6 +793,7 @@ namespace DealEngine.Services.Impl
             if(insuredOrg != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
+                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", insuredOrg.Email));
             }
             if(uISIssuer != null)
             {

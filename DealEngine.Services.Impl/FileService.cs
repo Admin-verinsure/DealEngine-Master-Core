@@ -584,6 +584,20 @@ namespace DealEngine.Services.Impl
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     }
+
+                    if (term.SubTermType == "CL")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
+                        } else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                        }
+                        
+                    }
                 }
             }
             //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
