@@ -108,7 +108,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal totalfeeincome = 0M;
             int numberoffeeincome = 1;
             bool bolworkoutsidenz = false;
-
+            bool constructionEngineerDetails = false;
             bool bolrenewalpremiumslowerthanexpiring = false;
             bool bolrenewalpremiumshigherthanexpiring = false;
 
@@ -224,6 +224,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decPRMOP = decMOP / (decSumActivity - decNPMA) * decSumActivity;
                 decPROther = decOther / (decSumActivity - decNPMA) * decSumActivity;
 
+                if (decCon > 0 && !string.IsNullOrEmpty(agreement.ClientInformationSheet.RevenueData.AdditionalActivityInformation.ConstructionEngineerDetails))
+                {
+                    constructionEngineerDetails = true;
+                }
             }
 
             ClientAgreementEndorsement cAEConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Construction)");
@@ -389,7 +393,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Capacity of an Engineer to Contract
             uwrfcapacityofanengineertocontract(underwritingUser, agreement);
             //Construction revenue as role as Engineer to the Contract
-            //uwrfconstructionrevenue(underwritingUser, agreement);
+            uwrfconstructionrevenue(underwritingUser, agreement, constructionEngineerDetails);
             //Component Specification Activities
             uwrfcomponentspecificationactivities(underwritingUser, agreement);
 
@@ -808,7 +812,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        void uwrfconstructionrevenue(User underwritingUser, ClientAgreement agreement)
+        void uwrfconstructionrevenue(User underwritingUser, ClientAgreement agreement, bool constructionEngineerDetails)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null) == null)
             {
@@ -823,7 +827,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasManagedProjectOptions").First().Value == "2") // changes required once revenue completed
+                    if (constructionEngineerDetails)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null).Status = "Pending";
                     }

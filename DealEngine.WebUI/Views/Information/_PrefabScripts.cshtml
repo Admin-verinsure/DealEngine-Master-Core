@@ -27,6 +27,15 @@
                 }
             }
         }
+        //hardcoded for sharedrevenue - relook once form is converted
+        var activitiesTable = document.getElementById('activitiestable');
+        for (var r = 1; r < activitiesTable.rows.length; r++) {
+            for (var c = 0; c < activitiesTable.rows[r].cells.length; c++) {
+                if (activitiesTable.rows[r].cells[c].firstElementChild != null) {
+                    OnChange(activitiesTable.rows[r].cells[c].firstElementChild.id, activitiesTable.rows[r].cells[c].firstElementChild.name)                    
+                }               
+            }
+        }
     });
 
     function OnChange(Id, Name) {
@@ -183,6 +192,35 @@
                 }
                 DefaultRule(Value, Name);
             }
+            if (Rule === "ValidateRevenueTable") {
+                if (DataItem === "validatetableactivities") {
+                    var activities = document.getElementById("activities");
+                    var element;
+                    for (var i = 0; i < activities.options.length; i++) {
+                        var additionalactivityId = activities.options[i].value;
+                        if (activities.options[i].selected === true) {
+                            hasItem = true;
+                            element = document.getElementById(additionalactivityId);
+                            if (element != null) {
+                                element.hidden = false;
+                            }
+                        } else {
+                            element = document.getElementById(additionalactivityId);
+                            if (element != null) {
+                                element.hidden = true;
+                            }
+                        }
+                    }
+                    document.getElementById("noadditionalinfolabel").hidden = false;
+                    var additionalinfotab = document.getElementById("RevenueTabs3");
+                    for (var d = 1; d < additionalinfotab.children.length; d++) {
+                        if (additionalinfotab.children[d].hidden == false) {
+                            document.getElementById("noadditionalinfolabel").hidden = true;
+                        }
+                    }
+                }
+            }
+            
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
             
@@ -238,7 +276,7 @@
         input.setAttribute("name", Id + "." + element.value);
         input.setAttribute("id", element.text);
         input.setAttribute("class", "form-control");
-        input.setAttribute("data-rule", "validatetable");
+        input.setAttribute("data-rule", "ValidateRevenueTable");
         input.setAttribute("data-item", "validatetable" + element.parentElement.id);
         input.setAttribute("onchange", "OnChange(this.id, this.name)");
         return input.outerHTML;

@@ -3103,6 +3103,8 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
                             organisation.CertType = model.CertType;
+                            organisation.CurrentMembershipNo = model.CurrentMembershipNo;
+                            organisation.IsCurrentMembership = model.IsCurrentMembership;
                             organisation.MajorShareHolder = model.MajorShareHolder;
 
 
@@ -3125,6 +3127,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.PMICert = model.PMICert;
                             organisation.MajorShareHolder = model.MajorShareHolder;
                             organisation.CertType = model.CertType;
+                            organisation.IsCurrentMembership = model.IsCurrentMembership;
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
