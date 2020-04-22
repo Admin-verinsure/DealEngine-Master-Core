@@ -894,7 +894,7 @@ namespace DealEngine.WebUI.Controllers
                 if (collection == null)
                     throw new ArgumentNullException(nameof(collection));
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
                 var locationForm = collection.Keys.Where(s => s.StartsWith("LocationViewModel", StringComparison.CurrentCulture));
                 Location location = new Location(user);
                 var type = location.GetType();
@@ -911,29 +911,6 @@ namespace DealEngine.WebUI.Controllers
 
 
                 return Json(location);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetLocation(Guid answerSheetId, Guid locationId)
-        {
-            
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                LocationViewModel model = new LocationViewModel(sheet);
-                Location location = sheet.Locations.FirstOrDefault(loc => loc.Id == locationId);
-                model.Locations.Add(location);
-
-                return Json(model);
             }
             catch (Exception ex)
             {
