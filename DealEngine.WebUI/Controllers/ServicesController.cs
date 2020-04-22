@@ -896,13 +896,21 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
                 var locationForm = collection.Keys.Where(s => s.StartsWith("LocationViewModel", StringComparison.CurrentCulture));
-                Location location = new Location(user);
+                var id = collection["LocationViewModel.LocationId"];
+                Location location = await _locationService.GetLocationById(Guid.Parse(id));
+                if(location == null)
+                {
+                    location = new Location(user);
+                }
                 var type = location.GetType();
                 foreach(var keyField in locationForm)
                 {
-                    var propertyName = keyField.Split('.').ToList();
-                    var property = type.GetProperty(propertyName.LastOrDefault());
-                    property.SetValue(location, collection[keyField].ToString());
+                    if(keyField != "LocationViewModel.LocationId")
+                    {
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        property.SetValue(location, collection[keyField].ToString());
+                    }
                 }
                 var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
                 location.OrganisationalUnits.Add(OUList);
@@ -910,7 +918,7 @@ namespace DealEngine.WebUI.Controllers
                 await _clientInformationService.UpdateInformation(sheet);
 
 
-                return Json(location);
+                return Json(location.Id.ToString());
             }
             catch (Exception ex)
             {
