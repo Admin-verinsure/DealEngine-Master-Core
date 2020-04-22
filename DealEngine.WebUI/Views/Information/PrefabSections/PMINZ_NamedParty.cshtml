@@ -111,7 +111,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnel">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnel PMINZOrganisationTypesec">
                         <label class=" label required nonOwnerSec ">Organisation Type</label>
                         <label class="input">
                             <select id="PMINZOrganisationType" onchange="EditPMINZOrgTyprselected('PMINZOrganisationType')" class="form-control b" name="OrganisationTypeName">
@@ -392,6 +392,8 @@
 
                         </section>
                     </div>
+                  
+
                     <div id="ProjectPersonnelSec" class="hidden">
 
                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -541,7 +543,7 @@
 
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <p class="validationContainer" id="validatenamedparty"></p>
-                        <button onclick="AddPMINZNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                        <button onclick="ValidatePMINZAddNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1','AddPMINZ')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                         @*<button onclick="ValidatePMINZAddNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1','AddPMINZ')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>*@
                         <button onclick="ClearBoats(event,'#PMINZNamedPartyTabs3','PMINZNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearNamedParty">Cancel Add</button>
                     </section>
@@ -754,10 +756,12 @@
 
                     $('.nonOwnerSec').addClass('hidden');
                     $('.OwnerSec').removeClass('hidden');
-
+                    $('.PMINZOrganisationTypesec').addClass('hidden');
+                    
                 } else {
                     $('.nonOwnerSec').removeClass('hidden');
                     $('.OwnerSec').addClass('hidden');
+                      $('.PMINZOrganisationTypesec').removeClass('hidden');
                 }
 
                  $('#PMINZType').val(data.type);
@@ -795,7 +799,7 @@
                      if (!data.isContractorInsured && data.insuredEntityRelation == "Contractor" ) {
                              debugger;
                          $('#isInsuredrequiredsec').show();
-                         $('#PMINZIsInsuredRequired').val(data.isInsuredRequired);
+                         //$('#PMINZIsInsuredRequired').val(data.isInsuredRequired);
                      } else {
                          $('#IsInsuredRequiredsec').val('');
                          //$('#IsContractorInsuredsec').val('');
@@ -1020,71 +1024,72 @@
                  $("#validate" + type + "OrgName").html("<i></i>");
              }
 
-             if (pminzemail == "") {
-                 $("#validate" + type + "Email").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+             if (pminzType == "project management personnel") {
+                 if (pminzemail == "") {
+                     $("#validate" + type + "Email").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "Email").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "Email").html("<i></i>");
-             }
 
 
-             if (pminzinsuredentity == "") {
-                 $("#validate" + type + "InsuredEntity").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminzinsuredentity == "") {
+                     $("#validate" + type + "InsuredEntity").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "InsuredEntity").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "InsuredEntity").html("<i></i>");
-             }
 
-             if (pminziscontractorinsured == "" && pminzinsuredentity == "Contractor") {
-                 $("#validate" + type + "IsContractorInsured").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminziscontractorinsured == "" && pminzinsuredentity == "Contractor") {
+                     $("#validate" + type + "IsContractorInsured").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "IsContractorInsured").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "IsContractorInsured").html("<i></i>");
-             }
 
-             if (pminzisinsuredrequired == "" && pminziscontractorinsured == "false") {
-                 $("#validate" + type + "IsInsuredRequired").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminzisinsuredrequired == "" && pminziscontractorinsured == "false") {
+                     $("#validate" + type + "IsInsuredRequired").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "IsInsuredRequired").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "IsInsuredRequired").html("<i></i>");
-             }
 
 
-             if (pminziscurrentmembership == "") {
-                 $("#validate" + type + "IsCurrentMembership").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminziscurrentmembership == "") {
+                     $("#validate" + type + "IsCurrentMembership").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "IsCurrentMembership").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "IsCurrentMembership").html("<i></i>");
-             }
 
-             if (pminzcurrentmembershipno == "" && pminziscurrentmembership == "true") {
-                 $("#validate" + type + "CurrentMembershipNo").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminzcurrentmembershipno == "" && pminziscurrentmembership == "true") {
+                     $("#validate" + type + "CurrentMembershipNo").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "CurrentMembershipNo").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "CurrentMembershipNo").html("<i></i>");
-             }
 
-             if (pminzcerttype == "") {
-                 $("#validate" + type + "CertType").html("<font color='red'>Field is required</font>");
-                 if (validity) {
-                     validity = false;
+                 if (pminzcerttype == "") {
+                     $("#validate" + type + "CertType").html("<font color='red'>Field is required</font>");
+                     if (validity) {
+                         validity = false;
+                     }
+                 } else {
+                     $("#validate" + type + "CertType").html("<i></i>");
                  }
-             } else {
-                 $("#validate" + type + "CertType").html("<i></i>");
              }
-
              if (validity == false) {
                  return false;
              } else {

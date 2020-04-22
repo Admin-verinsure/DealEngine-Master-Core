@@ -3370,8 +3370,12 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
 
                     model.ID = partyID;
-                    model.FirstName = userdb.FirstName;
-                    model.LastName = userdb.LastName;
+                    if(userdb != null)
+                    {
+                        model.FirstName = userdb.FirstName;
+                        model.LastName = userdb.LastName;
+                    }
+                    
                     model.Email = org.Email;
                     model.Qualifications = org.Qualifications;
                     model.isaffiliation = org.IsAffiliation;
