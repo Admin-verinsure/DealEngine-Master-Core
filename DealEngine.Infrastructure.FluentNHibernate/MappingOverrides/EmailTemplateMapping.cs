@@ -10,7 +10,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
     {
         public void Override(AutoMapping<EmailTemplate> mapping)
         {
-            mapping.Map(x => x.Body).Length(4000);
+            mapping.Map(x => x.Body).Length(10000);
         }
     }
 }

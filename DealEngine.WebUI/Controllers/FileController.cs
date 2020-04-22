@@ -102,7 +102,7 @@ namespace DealEngine.WebUI.Controllers
                                 }
                                 string oldpath = "<img src=\"../../../images";
 
-                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
+                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://professionalrisks.online/images";
 
 
                                 if (html.Contains(oldpath))
