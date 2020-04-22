@@ -1608,6 +1608,16 @@ namespace DealEngine.WebUI.Controllers
                         Text = organisation.Name
                     });
                 }
+
+                availableorganisation.Add(new SelectListItem
+                {
+                    Selected = false,
+                    Value = "" + sheet.Owner.Id,
+                    Text = sheet.Owner.Name
+                });
+
+
+
                 model.AvailableOrganisations = availableorganisation;
 
                 model.AllVehicles = vehicles;
