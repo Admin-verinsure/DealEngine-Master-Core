@@ -31,11 +31,12 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<Product> _productRepository;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
+        IAppSettingService _appSettingService;
 
-  //      string _appData = "~/App_Data/";
-		//string _uploadFolder = "uploads";
+        //      string _appData = "~/App_Data/";
+        //string _uploadFolder = "uploads";
 
-		public FileController(
+        public FileController(
             ILogger<FileController> logger,
             IProgrammeService programmeService,
             IApplicationLoggingService applicationLoggingService,
@@ -44,7 +45,8 @@ namespace DealEngine.WebUI.Controllers
             IFileService fileService,
             IMapperSession<SystemDocument> documentRepository, 
             IMapperSession<Image> imageRepository, 
-            IMapperSession<Product> productRepository
+            IMapperSession<Product> productRepository,
+            IAppSettingService appSettingService
             )
 			: base (userRepository)
 		{
@@ -56,6 +58,7 @@ namespace DealEngine.WebUI.Controllers
 			_documentRepository = documentRepository;
 			_imageRepository = imageRepository;
             _productRepository = productRepository;
+            _appSettingService = appSettingService;
         }
 
         [HttpGet]
@@ -100,10 +103,9 @@ namespace DealEngine.WebUI.Controllers
                                     html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                                     // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
+                                string pathurl = "https://" + _appSettingService.domainQueryString + "/images";
                                 string oldpath = "<img src=\"../../../images";
-
-                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://professionalrisks.online/images";
-
+                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
 
                                 if (html.Contains(oldpath))
                                 {
