@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
@@ -743,6 +742,7 @@ namespace DealEngine.WebUI.Models
         {
             HasGLOptions = GetSelectListOptions();
             HasHigherGLOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
         }
         private IList<SelectListItem> GetSelectListOptions()
         {
