@@ -535,15 +535,15 @@ namespace DealEngine.WebUI.Models
         public PIViewModel()
         {
             ContractingServicesOptions = GetContractingServicesOptions();
-            HasStandardTermsOptions = GetSelectListOptions();
-            HasNegotiateOptions = GetSelectListOptions();
-            HasNoAgreementOptions = GetSelectListOptions();
-            HasOwnPIOptions = GetSelectListOptions();
-            HasBoundContractOptions = GetSelectListOptions();
-            HasEngagementLetterOptions = GetSelectListOptions();
-            HasRecordedOptions = GetSelectListOptions();
-            HasDiaryRecordOptions = GetSelectListOptions();
-            HasComplaintOptions = GetSelectListOptions();
+            HasStandardTermsOptions = GetSometimesSelectListOptions();
+            HasNegotiateOptions = GetSometimesSelectListOptions();
+            HasNoAgreementOptions = GetSometimesSelectListOptions();
+            HasOwnPIOptions = GetSometimesSelectListOptions();
+            HasBoundContractOptions = GetSometimesSelectListOptions();
+            HasEngagementLetterOptions = GetSometimesSelectListOptions();
+            HasRecordedOptions = GetSometimesSelectListOptions();
+            HasDiaryRecordOptions = GetSometimesSelectListOptions();
+            HasComplaintOptions = GetSometimesSelectListOptions();
             HasEngageOptions = GetSelectListOptions(); 
             HasDisciplinaryOptions = GetSelectListOptions();
             HasClaimsAgainstOptions = GetSelectListOptions();
@@ -618,6 +618,28 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 { Text = "No", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetSometimesSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { 
+                    Text = "No", Value = "2" 
+                },
+                new SelectListItem
+                {
+                    Text = "Sometimes", Value = "3"
+                }
             };
         }
         public IList<SelectListItem> ContractingServicesOptions { get; set; }
