@@ -94,9 +94,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
-            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value) > 4)
+            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 4)
             {
-                TermPremium250k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value) - 4) * rates["eltopuppremiumover4employee"];
+                TermPremium250k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 4) * rates["eltopuppremiumover4employee"];
             }
 
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit250k, TermExcess);

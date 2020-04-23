@@ -246,8 +246,8 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            <select id="hasrenewal" name="CLIViewModel.HasRenewalOptions" class="custom-select" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.CLIViewModel.HasRenewalOptions)
+                            <select id="hasrenewal" name="CLIViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasExistingPolicyOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
@@ -256,7 +256,7 @@
                     </div>
                 </div>
             </div>
-            <div id="CLIViewModel.HasRenewalOptions" hidden>
+            <div id="CLIViewModel.HasExistingPolicyOptions" hidden>
                 <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
                 <div class="form-group">
                     <div class="row">

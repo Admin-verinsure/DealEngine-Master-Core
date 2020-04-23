@@ -1354,8 +1354,11 @@ namespace DealEngine.WebUI.Controllers
                 
                 //build models from answers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
 
@@ -1668,10 +1671,23 @@ namespace DealEngine.WebUI.Controllers
                 var value = 0;
                 try
                 {
+                    var modelName = "";
                     var split = answer.ItemName.Split('.').ToList();
+                    if (split.FirstOrDefault() == "PMINZEPLViewModel")
+                    {
+                        modelName = "EPLViewModel";
+                    }
+                    else if(split.FirstOrDefault() == "PMINZPIViewModel")
+                    {
+                        modelName = "PIViewModel";
+                    }
+                    else
+                    {
+                        modelName = split.FirstOrDefault();
+                    }
                     if (split.Count > 1)
                     {
-                        var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
+                        var modeltype = typeof(InformationViewModel).GetProperty(modelName);
                         var reflectModel = modeltype.GetValue(model);
 
                         var property = reflectModel.GetType().GetProperty(split.LastOrDefault());

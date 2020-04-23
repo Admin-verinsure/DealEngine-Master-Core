@@ -12,10 +12,13 @@ namespace DealEngine.WebUI.Models
         public InformationViewModel() { }
         public InformationViewModel(Domain.Entities.Programme Programme)
         {
-            PMINZEPLViewModel = new PMINZEPLViewModel();
-            CLIViewModel = new CLIViewModel();
-            PMINZPIViewModel = new PMINZPIViewModel();
-            DAOLIViewModel = new DAOLIViewModel();
+            ELViewModel = new ELViewModel(); //Employment Liability Insurance
+            EPLViewModel = new EPLViewModel(); //Employers Practices Insurance
+            CLIViewModel = new CLIViewModel(); //Cyber Liability Insurance
+            PIViewModel = new PIViewModel(); //Professional Indemnity
+            DAOLIViewModel = new DAOLIViewModel(); //Directors officers liability
+            GLViewModel = new GLViewModel(); //General liability 
+            SLViewModel = new SLViewModel(); //Statutory Liability
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             RevenueDataViewModel = new RevenueDataViewModel(Programme);
         }
@@ -59,10 +62,13 @@ namespace DealEngine.WebUI.Models
         public RevenueDataViewModel RevenueDataViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
         public ClaimsHistoryViewModel ClaimsHistoryViewModel { get; set; }
-        public PMINZEPLViewModel PMINZEPLViewModel { get; set; }
+        public EPLViewModel EPLViewModel { get; set; }
+        public ELViewModel ELViewModel { get; set; }
         public CLIViewModel CLIViewModel { get; set; }
-        public PMINZPIViewModel PMINZPIViewModel { get; set; }
+        public PIViewModel PIViewModel { get; set; }
         public DAOLIViewModel DAOLIViewModel { get; set; }
+        public GLViewModel GLViewModel { get; set; }        
+        public SLViewModel SLViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
         public ClientProgramme ClientProgramme { get; internal set; }
@@ -257,26 +263,6 @@ namespace DealEngine.WebUI.Models
             HasRecommendedCladdingOptions = GetSelectListOptions();
             HasStateSchoolOptions = GetSelectListOptions();
             HasIssuedCertificatesOptions = GetSelectListOptions();
-
-            //var des = this.GetType();
-            //var src = info.GetType();
-            //foreach (var item in src.GetType())
-            //{
-            //    var property = (des)des.GetMember
-            //    if (item.Name.Replace("get_", string.Empty) == des.Name)
-            //    {
-            //        var test = item.GetType();
-            //        var test2 = field.GetType();
-            //        if (item.GetType() == field.GetType())
-            //        {
-
-            //        }
-            //        else
-            //        {
-
-            //        }
-            //    }
-            //}
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -373,9 +359,73 @@ namespace DealEngine.WebUI.Models
             };
         }
     }
-    public class PMINZEPLViewModel
+
+    public class SLViewModel
     {
-        public PMINZEPLViewModel()
+        public SLViewModel()
+        {
+            HasSLOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        public IList<SelectListItem> HasSLOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
+    }
+    public class ELViewModel
+    {
+        public ELViewModel()
+        {
+            HasELOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        public IList<SelectListItem> HasELOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
+
+    }
+    public class EPLViewModel
+    {
+        public EPLViewModel()
         {
             HasEPLOptions = GetSelectListOptions();
             CoveredOptions = GetSelectListOptions();
@@ -387,6 +437,7 @@ namespace DealEngine.WebUI.Models
             StaffRedundancyOptions = GetSelectListOptions();
             HasEPLIOptions = GetSelectListOptions();
             IsInsuredClaimOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
         }
         public int TotalEmployees { get; set; }
         public string InsuredClaimDetails { get; set; }
@@ -406,6 +457,7 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasEPLOptions { get; set; }
         public IList<SelectListItem> HasEPLIOptions { get; set; }
         public IList<SelectListItem> CoveredOptions { get; set; }
@@ -416,6 +468,10 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> PostingNoticesOptions { get; set; }
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
         public IList<SelectListItem> IsInsuredClaimOptions { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
 
     }
     public class CLIViewModel
@@ -435,7 +491,7 @@ namespace DealEngine.WebUI.Models
             HasOptionalCLEOptions = GetSelectListOptions();
             HasProceduresOptions = GetSelectListOptions();
             HasApprovedVendorsOptions = GetSelectListOptions();
-            HasRenewalOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
             HasLocationOptions = GetSelectListOptions();
         }
         private IList<SelectListItem> GetSelectListOptions()
@@ -467,7 +523,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasOptionalCLEOptions { get; set; }
         public IList<SelectListItem> HasProceduresOptions { get; set; }
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
-        public IList<SelectListItem> HasRenewalOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasLocationOptions { get; set; }
 
         public int CoverAmount { get; set; }
@@ -475,9 +531,9 @@ namespace DealEngine.WebUI.Models
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }        
     }
-    public class PMINZPIViewModel
+    public class PIViewModel
     {
-        public PMINZPIViewModel()
+        public PIViewModel()
         {
             ContractingServicesOptions = GetContractingServicesOptions();
             HasStandardTermsOptions = GetSelectListOptions();
@@ -489,7 +545,7 @@ namespace DealEngine.WebUI.Models
             HasRecordedOptions = GetSelectListOptions();
             HasDiaryRecordOptions = GetSelectListOptions();
             HasComplaintOptions = GetSelectListOptions();
-            HasEngageOptions = GetSelectListOptions();
+            HasEngageOptions = GetSelectListOptions(); 
             HasDisciplinaryOptions = GetSelectListOptions();
             HasClaimsAgainstOptions = GetSelectListOptions();
             HasResponsibleOptions = GetSelectListOptions();
@@ -497,10 +553,15 @@ namespace DealEngine.WebUI.Models
             HasRefundOptions = GetSelectListOptions();
             HasSuedOptions = GetSelectListOptions();
             HasDisputeOptions = GetSelectListOptions();
+            HasDisputeOptions2 = GetSelectListOptions();
             HasPenaltyOptions = GetSelectListOptions();
             HasManagedProjectOptions = GetSelectListOptions();
             HasIncludedDesignOptions = GetSelectListOptions();
             HasEngineerOptions = GetSelectListOptions();
+            HasAluminium = GetSelectListOptions();
+            HasPracticeClaimOptions = GetSelectListOptions();
+            HasThirdPartyOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
         }
         private IList<SelectListItem> GetContractingServicesOptions()
         {
@@ -578,10 +639,16 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasRefundOptions { get; set; }
         public IList<SelectListItem> HasSuedOptions { get; set; }
         public IList<SelectListItem> HasDisputeOptions { get; set; }
+        public IList<SelectListItem> HasDisputeOptions2 { get; set; }        
         public IList<SelectListItem> HasPenaltyOptions { get; set; }
         public IList<SelectListItem> HasManagedProjectOptions { get; set; }
         public IList<SelectListItem> HasIncludedDesignOptions { get; set; }
         public IList<SelectListItem> HasEngineerOptions { get; set; }
+        public IList<SelectListItem> HasAluminium { get; set; }
+        public IList<SelectListItem> HasPracticeClaimOptions { get; set; }
+        public IList<SelectListItem> HasThirdPartyOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        
 
         public string EngageDetails { get; set; }
         public string DisciplinaryDetails { get; set; }
@@ -596,6 +663,10 @@ namespace DealEngine.WebUI.Models
         public string IncludedDesignDetails { get; set; }
         public string EngineerDetails { get; set; }
         public string ContractingServicesDetails { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
     }
 
     public class DAOLIViewModel
@@ -611,6 +682,8 @@ namespace DealEngine.WebUI.Models
             HasCriminalOptions = GetSelectListOptions();
             HasProcecutionOptions = GetSelectListOptions();
             HasObligationOptions = GetSelectListOptions();
+            HasDebtsOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptions();
             FormDate = DateTime.Now;
         }
 
@@ -623,6 +696,9 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasCriminalOptions { get; set; }
         public IList<SelectListItem> HasProcecutionOptions { get; set; }
         public IList<SelectListItem> HasObligationOptions { get; set; }
+        public IList<SelectListItem> HasDebtsOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        
 
         public int ShareholderTotal { get; set; }
         public int AssetTotal { get; set; }
@@ -636,6 +712,10 @@ namespace DealEngine.WebUI.Models
         public string CriminalDetails { get; set; }
         public string ProcecutionDetails { get; set; }
         public string ObligationDetails { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
 
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -655,5 +735,37 @@ namespace DealEngine.WebUI.Models
             };
         }
 
+    }
+
+    public class GLViewModel
+    {
+        public GLViewModel()
+        {
+            HasGLOptions = GetSelectListOptions();
+            HasHigherGLOptions = GetSelectListOptions();
+        }
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        public IList<SelectListItem> HasGLOptions { get; set; }
+        public IList<SelectListItem> HasHigherGLOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public int CoverAmount { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }
     }
 }
