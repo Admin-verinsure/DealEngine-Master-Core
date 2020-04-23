@@ -1,7 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 <div id="PI">
-    <form id="PMINZPIViewModel" class="is-valid">
+    <form id="PIViewModel" class="is-valid">
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
@@ -10,8 +10,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hascontractingservices" name="PMINZPIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PMINZPIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.ContractingServicesOptions)
+                    <select id="hascontractingservices" name="PIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.ContractingServicesOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.ContractingServicesOptions" hidden>
+        <div id="PIViewModel.ContractingServicesOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -28,7 +28,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ContractingServicesDetails, new { @class = "form-control", @id = "contractingservicesdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.ContractingServicesDetails, new { @class = "form-control", @id = "contractingservicesdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -45,8 +45,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasstardardterms" name="PMINZPIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasStandardTermsOptions)
+                    <select id="hasstardardterms" name="PIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasStandardTermsOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -62,8 +62,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasnegotiate" name="PMINZPIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasNegotiateOptions)
+                    <select id="hasnegotiate" name="PIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasNegotiateOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -79,8 +79,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasnoagreementoptions" name="PMINZPIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasNoAgreementOptions)
+                    <select id="hasnoagreementoptions" name="PIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasNoAgreementOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -101,8 +101,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasownPI" name="PMINZPIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasOwnPIOptions)
+                    <select id="hasownPI" name="PIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasOwnPIOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -118,8 +118,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasboundcontract" name="PMINZPIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasBoundContractOptions)
+                    <select id="hasboundcontract" name="PIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasBoundContractOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -135,8 +135,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasrecorded" name="PMINZPIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasRecordedOptions)
+                    <select id="hasrecorded" name="PIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasRecordedOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -152,8 +152,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasdairyrecord" name="PMINZPIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasDiaryRecordOptions)
+                    <select id="hasdairyrecord" name="PIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasDiaryRecordOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -193,8 +193,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hascomplaint" name="PMINZPIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasComplaintOptions)
+                    <select id="hascomplaint" name="PIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasComplaintOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -210,8 +210,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasengage" name="PMINZPIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasEngageOptions)
+                    <select id="hasengage" name="PIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasEngageOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -219,7 +219,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasEngageOptions" hidden>
+        <div id="PIViewModel.HasEngageOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -228,7 +228,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.EngageDetails, new { @class = "form-control", @id = "engagedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.EngageDetails, new { @class = "form-control", @id = "engagedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -241,8 +241,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasdisciplinary" name="PMINZPIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasDisciplinaryOptions)
+                    <select id="hasdisciplinary" name="PIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasDisciplinaryOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -250,7 +250,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasDisciplinaryOptions" hidden>
+        <div id="PIViewModel.HasDisciplinaryOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -259,7 +259,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.DisciplinaryDetails, new { @class = "form-control", @id = "disciplinarydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.DisciplinaryDetails, new { @class = "form-control", @id = "disciplinarydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -272,8 +272,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasclaimsagainst" name="PMINZPIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions)
+                    <select id="hasclaimsagainst" name="PIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasClaimsAgainstOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -281,7 +281,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasClaimsAgainstOptions" hidden>
+        <div id="PIViewModel.HasClaimsAgainstOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -290,7 +290,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -303,8 +303,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasresponsible" name="PMINZPIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasResponsibleOptions)
+                    <select id="hasresponsible" name="PIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasResponsibleOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -312,7 +312,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasResponsibleOptions" hidden>
+        <div id="PIViewModel.HasResponsibleOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -321,7 +321,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ResponsibleDetails, new { @class = "form-control", @id = "responsibledetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.ResponsibleDetails, new { @class = "form-control", @id = "responsibledetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -334,8 +334,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasclaimsagainst2" name="PMINZPIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions2)
+                    <select id="hasclaimsagainst2" name="PIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasClaimsAgainstOptions2)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -343,7 +343,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+        <div id="PIViewModel.HasClaimsAgainstOptions2" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -352,7 +352,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails2, new { @class = "form-control", @id = "claimdetails2", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.ClaimDetails2, new { @class = "form-control", @id = "claimdetails2", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -366,8 +366,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasrefund" name="PMINZPIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasRefundOptions)
+                    <select id="hasrefund" name="PIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasRefundOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -375,7 +375,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+        <div id="PIViewModel.HasClaimsAgainstOptions2" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -384,7 +384,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.RefundDetails, new { @class = "form-control", @id = "refunddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.RefundDetails, new { @class = "form-control", @id = "refunddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -397,8 +397,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hassued" name="PMINZPIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasSuedOptions)
+                    <select id="hassued" name="PIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasSuedOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -406,7 +406,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasSuedOptions" hidden>
+        <div id="PIViewModel.HasSuedOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -415,7 +415,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.SuedDetails, new { @class = "form-control", @id = "sueddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.SuedDetails, new { @class = "form-control", @id = "sueddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -428,8 +428,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasdispute" name="PMINZPIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasDisputeOptions)
+                    <select id="hasdispute" name="PIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasDisputeOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -437,7 +437,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasDisputeOptions" hidden>
+        <div id="PIViewModel.HasDisputeOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -446,7 +446,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.DisputeDetails, new { @class = "form-control", @id = "disputedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.DisputeDetails, new { @class = "form-control", @id = "disputedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -459,8 +459,8 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="haspenalty" name="PMINZPIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasPenaltyOptions)
+                    <select id="haspenalty" name="PIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasPenaltyOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -468,7 +468,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasPenaltyOptions" hidden>
+        <div id="PIViewModel.HasPenaltyOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -477,7 +477,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.PenaltyDetails, new { @class = "form-control", @id = "penaltydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextAreaFor(m => m.PIViewModel.PenaltyDetails, new { @class = "form-control", @id = "penaltydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -488,8 +488,8 @@
                     <label for="hasengineer" class="label required">Do you or have you acted in the capacity of an Engineer to the Contract?</label>
                 </div>
                 <div class="col-3">
-                    <select id="hasengineer" name="PMINZPIViewModel.HasEngineerOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
-                        @foreach (var option in Model.PMINZPIViewModel.HasEngineerOptions)
+                    <select id="hasengineer" name="PIViewModel.HasEngineerOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PIViewModel.HasEngineerOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -497,7 +497,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasEngineerOptions" hidden>
+        <div id="PIViewModel.HasEngineerOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -506,7 +506,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.EngineerDetails, new { @class = "form-control", @id = "engineerdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.PIViewModel.EngineerDetails, new { @class = "form-control", @id = "engineerdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>
@@ -517,8 +517,8 @@
                     <label for="hasincludeddesign" class="label required">Do you engage in any Component Specification activities and or design (not including design management activities)?</label>
                 </div>
                 <div class="col-3">
-                    <select id="hasincludeddesign" name="PMINZPIViewModel.HasIncludedDesignOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
-                        @foreach (var option in Model.PMINZPIViewModel.HasIncludedDesignOptions)
+                    <select id="hasincludeddesign" name="PIViewModel.HasIncludedDesignOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PIViewModel.HasIncludedDesignOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -526,7 +526,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasIncludedDesignOptions" hidden>
+        <div id="PIViewModel.HasIncludedDesignOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -535,7 +535,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.IncludedDesignDetails, new { @class = "form-control", @id = "includeddesigndetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.PIViewModel.IncludedDesignDetails, new { @class = "form-control", @id = "includeddesigndetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>
@@ -546,8 +546,8 @@
                     <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
                 </div>
                 <div class="col-3">
-                    <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="reverseValidateOnSubmit" data-item='PMINZPIViewModel.HasManagedProjectOptions,tblpminzproject' class="custom-select" onchange="OnChange(this.id, this.name)">
-                        @foreach (var option in Model.PMINZPIViewModel.HasManagedProjectOptions)
+                    <select id="hasmanagedprojects" name="PIViewModel.HasManagedProjectOptions" data-rule="reverseValidateOnSubmit" data-item='PIViewModel.HasManagedProjectOptions,tblpminzproject' class="custom-select" onchange="OnChange(this.id, this.name)">
+                        @foreach (var option in Model.PIViewModel.HasManagedProjectOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                         }
@@ -555,7 +555,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZPIViewModel.HasManagedProjectOptions" hidden>
+        <div id="PIViewModel.HasManagedProjectOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -564,7 +564,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.PMINZPIViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.PIViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>

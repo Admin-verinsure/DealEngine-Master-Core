@@ -2120,9 +2120,9 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
-                if (model.EndorsementNameToAdd != null && model.EndorsementTextToAdd != null)
+                if (model.EndorsementNameToAdd != null && model.Content != null)
                 {
-                    await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.EndorsementTextToAdd, 100, agreement);
+                    await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
                 }
 
                 if (model.ClientAgreementEndorsements != null)
