@@ -81,7 +81,6 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(ImageViewModel model)
         {
-
             var user = await CurrentUser();
             if (model != null)
             {
@@ -89,8 +88,7 @@ namespace DealEngine.WebUI.Controllers
                 {
 
                     var contentType = model.Image.ContentType;
-                    var extension = "";
-                    
+                    var extension = "";                   
                     if (contentType == "image/jpeg")
                     {
                         extension = ".jpg";
@@ -103,12 +101,13 @@ namespace DealEngine.WebUI.Controllers
                     {
                         throw new FileFormatException("Invalid File Type");
                     }
-
+                    if (model.Name == null)
+                    {
+                        model.Name = model.Image.FileName;
+                        extension = "";
+                    }
                     var filename = model.Name + extension;
-                    //var path = Path.Combine(_hostingEnv.WebRootPath, "files", model.Product, "attachmentfiles");
-
                     var path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
-                    // var url = filename;
                     
                     try
                     {
