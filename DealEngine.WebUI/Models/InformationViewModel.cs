@@ -561,6 +561,14 @@ namespace DealEngine.WebUI.Models
             HasPracticeClaimOptions = GetSelectListOptions();
             HasThirdPartyOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HasDANZOptions = GetSelectListOptions();
+            HasSalesRelateOptions = GetSelectListOptions();
+            HasSubstantialChangeOptions = GetSelectListOptions();
+            HasLeakyBuildingCoverOptions = GetSelectListOptions();
+            HasRiskManagementOptions = GetRiskManagementOptions();
+            HasRetainedDocumentOptions = GetAlternativeSelectListOptions();
+            HasComplaintAlternativeOptions = GetAlternativeSelectListOptions();
+            HasCircumstanceAriseOptions = GetAlternativeSelectListOptions();
         }
         private IList<SelectListItem> GetContractingServicesOptions()
         {
@@ -568,7 +576,7 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                 {
-                    Text = " Network security", Value = "1"
+                    Text = "Network security", Value = "1"
                 },
                 new SelectListItem
                 {
@@ -597,6 +605,36 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                 {
                     Text = "Defence", Value = "8"
+                },
+                new SelectListItem
+                {
+                    Text = "None of the above", Value = "10"
+                },
+            };
+        }
+        private IList<SelectListItem> GetRiskManagementOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "Always obtain clients instructions in writing ", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "If applicable, check rates notice to ensure the client owns the land", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Set out a budget and actively review it with your client as may be required ", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "Review contract conditions to ensure requirements are within your professional indemnity insurance conditions or policy limits", Value = "4"
+                },
+                new SelectListItem
+                {
+                    Text = "Have your client sign off each page of the contract documents", Value = "5"
                 },
                 new SelectListItem
                 {
@@ -642,6 +680,28 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
+        private IList<SelectListItem> GetAlternativeSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes for all of the above", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "No", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Don't know", Value = "3"
+                }
+            };
+        }
         public IList<SelectListItem> ContractingServicesOptions { get; set; }
         public IList<SelectListItem> HasStandardTermsOptions { get; set; }
         public IList<SelectListItem> HasNegotiateOptions { get; set; }
@@ -669,7 +729,15 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasPracticeClaimOptions { get; set; }
         public IList<SelectListItem> HasThirdPartyOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
-        
+        public IList<SelectListItem> HasDANZOptions { get; set; }
+        public IList<SelectListItem> HasSalesRelateOptions { get; set; }
+        public IList<SelectListItem> HasSubstantialChangeOptions { get; set; }
+        public IList<SelectListItem> HasLeakyBuildingCoverOptions { get; set; }
+        public IList<SelectListItem> HasRiskManagementOptions { get; set; }
+        public IList<SelectListItem> HasRetainedDocumentOptions { get; set; }
+        public IList<SelectListItem> HasComplaintAlternativeOptions { get; set; }
+        public IList<SelectListItem> HasCircumstanceAriseOptions { get; set; }
+
 
         public string EngageDetails { get; set; }
         public string DisciplinaryDetails { get; set; }
@@ -685,9 +753,13 @@ namespace DealEngine.WebUI.Models
         public string EngineerDetails { get; set; }
         public string ContractingServicesDetails { get; set; }
         public int CoverAmount { get; set; }
+        public int PercentFees { get; set; }
+        public string PercentDetails { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
+        public string SubstantialChangeDetails { get; set; }
+        
     }
 
     public class DAOLIViewModel
