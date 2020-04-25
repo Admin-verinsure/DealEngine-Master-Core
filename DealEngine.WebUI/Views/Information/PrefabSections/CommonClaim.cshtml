@@ -115,10 +115,10 @@
                                     </select>
                                 </label>
                             </section>*@
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditClaimStatus">
                             <label class="label required">Claim Status</label>
                             <label class="input">
-                                <select class="form-control bui" id="ClaimStatus" name="ClaimStatus">
+                                <select class="form-control bui" id="ClaimStatus" name="ClaimStatus" disabled>
                                     <option selected="selected" value="Precautionary notification only">Precautionary notification only</option>
                                     <option value="Withdrawn by insured">Withdrawn by insured</option>
                                     <option value="Formal claim filed">Formal claim filed</option>
@@ -131,6 +131,8 @@
                                     <option value="Proceedings issued">Proceedings issued</option>
                                     <option value="Settled">Settled</option>
                                     <option value="Closed">Closed</option>
+                                    <option value="Open">Open</option>
+
                                 </select>
                             </label>
                             <p class="validationContainer" id="validateClaimStatus"></p>
@@ -209,7 +211,7 @@
                             <label class="label required">$ Estimate of Liability</label>
                             <label class="input">
                                 <i></i>
-                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" id="ClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" id="ClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
                             </label>
                             <p class="validationContainer" id="validateClaimEstimateInsuredLiability"></p>
 
@@ -296,9 +298,9 @@
                         <section class="col col-xs-12">
                             @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateClaim('#clTabs-2', '#tblClaim','clTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
 
-                            @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-2','clTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
-                          
-                            <button onclick="ValidateClaim(event,'#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                                @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-2','clTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+
+                            <button onclick="ValidateClaim(event,'#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="ClaimUpdate">Update</button>
                             <button onclick="ClearBoats(event,'#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
 
                         </section>
@@ -340,7 +342,7 @@
                                     </select>
                                 </label>
                             </section>*@
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ClaimStatus">
                             <label class="label required">Claim Status</label>
                             <label class="input">
                                 <select class="form-control bui" id="AddClaimStatus" name="ClaimStatus">
@@ -356,6 +358,8 @@
                                     <option value="Proceedings issued">Proceedings issued</option>
                                     <option value="Settled">Settled</option>
                                     <option value="Closed">Closed</option>
+                                    <option value="Open">Open</option>
+
                                 </select>
                             </label>
                             <p class="validationContainer" id="AddvalidateClaimStatus"></p>
@@ -434,7 +438,7 @@
                             <label class="label required">$ Estimate of Liability</label>
                             <label class="input">
                                 <i></i>
-                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" id="AddClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" id="AddClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
                             </label>
                             <p class="validationContainer" id="AddvalidateClaimEstimateInsuredLiability"></p>
 
@@ -497,8 +501,8 @@
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddClaim('#clTabs-3', '#tblClaim','clTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
 
-                            @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-3','clTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
-                        
+                                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-3','clTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
+
                         </section>
                     </div>
                 </fieldset>
