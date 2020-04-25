@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl100klimitpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl100klimitpremium", "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -60,18 +60,93 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.CLRetro))
+                        {
+                            strretrodate = preRenewOrRefData.CLRetro;
+                        }
 
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "CL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+            decimal extpremium = 0m;
             int TermLimit100k = 100000;
             decimal TermPremium100k = rates["cl100klimitpremium"];
             decimal TermBrokerage100k = 0m;
 
-            TermBrokerage100k = TermPremium100k * agreement.Brokerage;
+            TermBrokerage100k = TermPremium100k * agreement.Brokerage / 100;
 
             int TermExcess = 0;
 
             //Return terms based on the limit options
 
             TermExcess = 2500;
+
+            ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+            ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
+            ClientAgreementEndorsement cAECLUPM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Unencrypted Portable Media Exclusion (UPM)");
+
+            if (cAECLExt != null)
+            {
+                cAECLExt.DateDeleted = DateTime.UtcNow;
+                cAECLExt.DeletedBy = underwritingUser;
+            }
+            if (cAECLDRB != null)
+            {
+                cAECLDRB.DateDeleted = DateTime.UtcNow;
+                cAECLDRB.DeletedBy = underwritingUser;
+            }
+            if (cAECLUPM != null)
+            {
+                cAECLUPM.DateDeleted = DateTime.UtcNow;
+                cAECLUPM.DeletedBy = underwritingUser;
+            }
+
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+            {
+                extpremium = rates["clsocialengineeringextpremium"];
+
+                if (cAECLExt != null)
+                {
+                    cAECLExt.DateDeleted = null;
+                    cAECLExt.DeletedBy = null;
+                }
+            }
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "2")
+            {
+                if (cAECLUPM != null)
+                {
+                    cAECLUPM.DateDeleted = null;
+                    cAECLUPM.DeletedBy = null;
+                }
+            }
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBackupOptions").First().Value == "2")
+            {
+                if (cAECLDRB != null)
+                {
+                    cAECLDRB.DateDeleted = null;
+                    cAECLDRB.DeletedBy = null;
+                }
+            }
 
             ClientAgreementTerm termcl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
             termcl100klimitoption.TermLimit = TermLimit100k;
@@ -97,6 +172,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Unlimited excluding known claims or circumstances";
+            agreement.TerritoryLimit = "Worldwide";
+            agreement.Jurisdiction = "Worldwide";
+            agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "DANZ CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

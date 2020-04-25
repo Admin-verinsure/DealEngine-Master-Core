@@ -88,7 +88,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil = rates["do1millimitpremium"];
             decimal TermBrokerage1mil = 0m;
 
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage;
+            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             int TermExcess = 0;
             int intCompanyAge = 0;
@@ -152,8 +152,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception or Date since DO policy first held";
-            agreement.TerritoryLimit = "Worldwide";
+            string retrodate = "Unlimited";
+            agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))

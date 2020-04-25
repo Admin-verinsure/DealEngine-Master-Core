@@ -41,20 +41,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord",
-                "pifinancialcomponentrateord", "piothercomponentrateord", "piitcomponentminpremiumord", "piconstructioncomponentminpremiumord", "pibusinessdevpmtcomponentminpremiumord",
-                "pimanufacturingcomponentminpremiumord", "pifinancialcomponentminpremiumord", "piothercomponentminpremiumord",
-                "piitcomponentratecapm", "piconstructioncomponentratecapm", "pibusinessdevpmtcomponentratecapm", "pimanufacturingcomponentratecapm",
-                "pifinancialcomponentratecapm", "piothercomponentratecapm", "piitcomponentminpremiumcapm", "piconstructioncomponentminpremiumcapm", "pibusinessdevpmtcomponentminpremiumcapm",
-                "pimanufacturingcomponentminpremiumcapm", "pifinancialcomponentminpremiumcapm", "piothercomponentminpremiumcapm",
-                "piitcomponentratepmp", "piconstructioncomponentratepmp", "pibusinessdevpmtcomponentratepmp", "pimanufacturingcomponentratepmp",
-                "pifinancialcomponentratepmp", "piothercomponentratepmp", "piitcomponentminpremiumpmp", "piconstructioncomponentminpremiumpmp", "pibusinessdevpmtcomponentminpremiumpmp",
-                "pimanufacturingcomponentminpremiumpmp", "pifinancialcomponentminpremiumpmp", "piothercomponentminpremiumpmp",
-                "piitcomponentratepd", "piconstructioncomponentratepd", "pibusinessdevpmtcomponentratepd", "pimanufacturingcomponentratepd",
-                "pifinancialcomponentratepd", "piothercomponentratepd", "piitcomponentminpremiumpd", "piconstructioncomponentminpremiumpd", "pibusinessdevpmtcomponentminpremiumpd",
-                "pimanufacturingcomponentminpremiumpd", "pifinancialcomponentminpremiumpd", "piothercomponentminpremiumpd",
-                "pi1millimitloadingrate", "pi2millimitloadingrate", "pi5millimitloadingrate", "piminbrokerage", "maximumnumberofpersonnel", "maximumfeeincome", "exppremthresholdgreaterthan",
-                "exppremthresholdlessthan");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piBSSTopUpPremium", "piIRTopUpPremium", "piQSTopUpPremium", "piSETopUpPremium",
+                "piTPTopUpPremium", "piValTopUpPremium", "piUPTopUpPremium", "piEPTopUpPremium", "piRMTopUpPremium",
+                "piProjMTopUpPremium", "pitermexcess5000discount", "pitermexcess10kdiscount", 
+                "pl500klimitincomeunder100kpremium", "pl500klimitincome100kto200kpremium", "pl500klimitincome200kto500kpremium",
+                "pl1millimitincomeunder100kpremium", "pl1millimitincome100kto200kpremium", "pl1millimitincome200kto500kpremium", 
+                "pl2millimitincomeunder100kpremium", "pl2millimitincome100kto200kpremium", "pl2millimitincome200kto500kpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -446,7 +438,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception or Date since PI policy first held";
+            string retrodate = "Inception";
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;

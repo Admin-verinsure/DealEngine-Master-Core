@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "ed100klimitpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "ed100klimitpremium", "edtopuppremiumover4employee");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -88,11 +88,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium100k = rates["ed100klimitpremium"];
             decimal TermBrokerage100k = 0m;
 
-            TermBrokerage100k = TermPremium100k * agreement.Brokerage;
+            TermBrokerage100k = TermPremium100k * agreement.Brokerage / 100;
 
             int TermExcess = 0;
 
             TermExcess = 5000;
+
+            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 4)
+            {
+                TermPremium100k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 4) * rates["edtopuppremiumover4employee"];
+            }
 
             ClientAgreementTerm termed100klimitoption = GetAgreementTerm(underwritingUser, agreement, "ED", TermLimit100k, TermExcess);
             termed100klimitoption.TermLimit = TermLimit100k;
@@ -119,7 +124,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception or Date since ED policy first held";
+            string retrodate = "Unlimited, excluding known claims or circumstances";
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
