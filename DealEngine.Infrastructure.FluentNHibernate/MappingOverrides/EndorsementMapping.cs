@@ -10,7 +10,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
     {
         public void Override(AutoMapping<Endorsement> mapping)
         {
-            mapping.Map(x => x.Value).Length(4000);
+            mapping.Map(x => x.Value).Length(10000);
         }
     }
 }
