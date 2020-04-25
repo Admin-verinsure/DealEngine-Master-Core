@@ -494,7 +494,8 @@
                 }
             }, 450);
         });
-
+        
+        $('.AccordionTab').tabs();
         $('#Principaltabs').tabs();
         $('#ceasprojecttabs').tabs();
         $(".chosen-select").chosen({ width: "95%" });
@@ -3185,7 +3186,15 @@ function showAccordionPanel(id, panelNo) {
         $('#ClaimDateOfLoss').val(data.claimDateOfLoss);
         $('#ClaimNotifiedDate').val(data.claimNotifiedDate);
         $('#ClaimEstimateInsuredLiability').val(data.claimEstimateInsuredLiability);
-        $('#ClaimStatus').val(data.claimStatus);
+
+                if (data.claimStatus != "Precautionary notification only") {
+                    $('#ClaimUpdate').addClass('hidden');
+                    $('#EditClaimStatus').addClass('hidden');
+                } else {
+                    $('#ClaimUpdate').removeClass('hidden');
+                    $('#EditClaimStatus').removeClass('hidden');
+                }
+
         $('#ClaimBrokerReference').val(data.claimBrokerReference);
         $('#ClaimInsurerReference').val(data.claimInsurerReference);
         $('#ClaimPaid').val(data.claimPaid);

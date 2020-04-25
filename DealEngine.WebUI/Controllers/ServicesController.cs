@@ -4092,7 +4092,14 @@ namespace DealEngine.WebUI.Controllers
 
                     ClaimNotification claim = claims[i];
                     JqGridRow row = new JqGridRow(claim.Id);
-                    row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
+                    if(claim.ClaimStatus != "Precautionary notification only")
+                    {
+                        row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant);
+                    }
+                    else
+                    {
+                        row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
+                    }
                     model.AddRow(row);
                 }
 

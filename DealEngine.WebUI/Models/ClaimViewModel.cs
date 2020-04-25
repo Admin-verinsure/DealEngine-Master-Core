@@ -74,7 +74,7 @@ namespace DealEngine.WebUI.Models
             claim.SelectedClaimProducts = SelectedClaimProducts;
             claim.SelectedResponsiblePrincipal = SelectedResponsiblePrincipal;
             claim.ClaimInsurerName = ClaimInsurerName;
-            claim.ClaimStatus = ClaimStatus;
+            claim.ClaimStatus = "Precautionary notification only";
             claim.ClaimNotes = ClaimNotes;
             if (!string.IsNullOrEmpty(ClaimDateOfLoss))
             {
