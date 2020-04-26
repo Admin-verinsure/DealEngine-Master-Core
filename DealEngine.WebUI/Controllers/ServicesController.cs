@@ -3004,7 +3004,7 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save - No Client information for " + model.AnswerSheetId);
                 string orgTypeName = "";
-                if(model.Type == "project management personnel")
+                if (model.Type == "project management personnel")
                 {
                     model.OrganisationTypeName = "Person - Individual";
                 }
@@ -3126,6 +3126,12 @@ namespace DealEngine.WebUI.Controllers
                     organisation.IsInsuredRequired = model.IsInsuredRequired;
                     organisation.IsCurrentMembership = model.IsCurrentMembership;
                     organisation.PMICert = model.PMICert;
+                    organisation.DateQualified = model.DateQualified;
+                    organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                    organisation.DesignLicensed = model.DesignLicensed;
+                    organisation.SiteLicensed = model.SiteLicensed;
+                    organisation.OtherCompanyname = model.Othercompanyname;
+                    organisation.YearofPractice = model.YearofPractice;
                     organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                     organisation.CertType = model.CertType;
                     organisation.MajorShareHolder = model.MajorShareHolder;
@@ -3154,6 +3160,8 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
+
+
 
 
 
@@ -3304,6 +3312,12 @@ namespace DealEngine.WebUI.Controllers
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.IsCurrentMembership = model.IsCurrentMembership;
                             organisation.MajorShareHolder = model.MajorShareHolder;
+                            organisation.DateQualified = model.DateQualified;
+                            organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                            organisation.DesignLicensed = model.DesignLicensed;
+                            organisation.SiteLicensed = model.SiteLicensed;
+                            organisation.OtherCompanyname = model.Othercompanyname;
+                            organisation.YearofPractice = model.YearofPractice;
 
 
                         }
@@ -3326,6 +3340,12 @@ namespace DealEngine.WebUI.Controllers
                             organisation.MajorShareHolder = model.MajorShareHolder;
                             organisation.CertType = model.CertType;
                             organisation.IsCurrentMembership = model.IsCurrentMembership;
+                            organisation.DateQualified = model.DateQualified;
+                            organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                            organisation.DesignLicensed = model.DesignLicensed;
+                            organisation.SiteLicensed = model.SiteLicensed;
+                            organisation.OtherCompanyname = model.Othercompanyname;
+                            organisation.YearofPractice = model.YearofPractice;
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
@@ -3394,6 +3414,12 @@ namespace DealEngine.WebUI.Controllers
                     model.MajorShareHolder = org.MajorShareHolder;
                     model.CurrentMembershipNo = org.CurrentMembershipNo;
                     model.OrganisationName = org.Name;
+                    model.DateQualified = org.DateQualified;
+                    model.IsRegisteredLicensed = org.IsRegisteredLicensed;
+                    model.DesignLicensed = org.DesignLicensed;
+                    model.SiteLicensed = org.SiteLicensed;
+                    model.Othercompanyname = org.OtherCompanyname;
+                    model.YearofPractice = org.YearofPractice;            
                     model.AnswerSheetId = answerSheetId;
                 }
                 else
