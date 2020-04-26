@@ -36,25 +36,33 @@
 
                 @if (Model.HasEndorsements)
                 {
-                    <table class="table table-bordered table-responsive-md table-striped text-center" id="endorsements">
-                        <tr>
-                            <th class="text-center" width="25%" style="color:black">Endorsement Name</th>
-                            <th class="text-center" width="75%" style="color:black">Endorsement Text</th>
-                        </tr>
-                        @foreach (var item in Model.ClientAgreementEndorsements)
-                        {
-                            <tr>
-                                <td class="pt-3-half" width="25%" contenteditable="true" id="EndorsementName" style="color:black" align="left">
-                                    @item.Name
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="endorsements">
+                    <tr>
+                        <th class="text-center" width="25%" style="color:black">Endorsement Name</th>
+                        <th class="text-center" width="75%" style="color:black">Endorsement Text</th>
+                    </tr>
+                    @foreach (var item in Model.ClientAgreementEndorsements)
+                    {
+                       <tr>
+                          <td class="pt-3-half" width="25%" contenteditable="true" id="EndorsementName" style="color:black" align="left">
+                           @item.Name
 
-                                </td>
-                                <td class="pt-3-half" width="75%" contenteditable="true" style="color:black" align="left">
-                                    @Html.Raw(@item.Value)
-                                </td>
-                            </tr>
+                          </td>
+                         <td class="pt-3-half" width="75%" contenteditable="true" style="color:black" align="left">
+                          @Html.Raw(@item.Value)
+                         </td>
 
-                        }
-                    </table>
+                         @*<td width="9%">
+                          <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                           data-boat-Sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                           data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
+                           data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
+                           <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
+                          </td>*@
+                       </tr>
+
+                    }
+                </table>
                 }
 
                 <table class="table table-striped table-bordered">
@@ -90,7 +98,7 @@
     <!-- end widget -->
 </div>
 <!-- WIDGET END -->
-@section pagespecific {
+@*@section pagespecific {
 
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
@@ -98,81 +106,4 @@
     <link href="~/css/ckeditor.css" rel="stylesheet" />
     <script src="~/js/ckeditorPlugin.js"></script>
 
-    <script type="text/javascript">
-//// DO NOT REMOVE : GLOBAL FUNCTIONS!
-
-    $(document).ready(function () {
-        $('#CreateDocsmartwizard').smartWizard({
-        selected: 0,  // Initial selected step, 0 = first step
-        keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-        autoAdjustHeight:false, // Automatically adjust content height
-        cycleSteps: false, // Allows to cycle the navigation of steps
-        backButtonSupport: true, // Enable the back button support
-        useURLhash: true, // Enable selection of the step based on url hash
-        lang: {  // Language variables
-            next: 'Next',
-            previous: 'Previous'
-        },
-        toolbarSettings: {
-            toolbarPosition: 'bottom', // none, top, bottom, both
-            toolbarButtonPosition: 'right', // left, right
-            showNextButton: true, // show/hide a Next button
-            showPreviousButton: true, // show/hide a Previous button
-
-        },
-        anchorSettings: {
-            anchorClickable: true, // Enable/Disable anchor navigation
-            enableAllAnchors: false, // Activates all anchors clickable all times
-            markDoneStep: true, // add done css
-            enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
-        },
-        contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
-        disabledSteps: [],    // Array Steps disabled
-        errorSteps: [],    // Highlight step with errors
-        theme: 'dots',
-        transitionEffect: 'fade', // Effect on navigation, none/slide/fade
-        transitionSpeed: '400'
-        });
-
-        $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-               debugger;
-               var informationsheetstatus = $('#Status').val();
-               var clientInformationSheet = $('#AnswerSheetId').val();
-
-            if (stepNumber === 1) {
-                 debugger;
-
-                 if (confirm("Are you sure you want to submit this document?")) {
-                     console.log("Document has been submitted!");
-                     const body = window.editor.getData();
-                     var bodyElement = $("#@Html.IdFor(m => m.Content)");
-                     bodyElement.text(bodyElement.text(body).html());
-
-                     $.ajax({
-                         type: "POST",
-                         url: '@Url.Action("CreateDocument", "File")',
-                         data: $("#wizard-1").serialize(),
-                     })
-                         .done(function (json) {
-                             debugger;
-                             $("#productAutoReview")
-                             console.log(json);
-                         })
-                         .fail(function (err, ajaxOptions, thrownError) {
-                             debugger;
-                             alert("Unable to save." + err.responseText);
-                             console.log(err);
-                             console.log(ajaxOptions);
-                             console.log(thrownError);
-                         });
-                 } else {
-                     return false;
-                 }
-             }
-         });
-    });
-
-
-
-    </script>
-}
+   }*@
