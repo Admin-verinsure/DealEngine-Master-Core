@@ -41,20 +41,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord",
-                "pifinancialcomponentrateord", "piothercomponentrateord", "piitcomponentminpremiumord", "piconstructioncomponentminpremiumord", "pibusinessdevpmtcomponentminpremiumord",
-                "pimanufacturingcomponentminpremiumord", "pifinancialcomponentminpremiumord", "piothercomponentminpremiumord",
-                "piitcomponentratecapm", "piconstructioncomponentratecapm", "pibusinessdevpmtcomponentratecapm", "pimanufacturingcomponentratecapm",
-                "pifinancialcomponentratecapm", "piothercomponentratecapm", "piitcomponentminpremiumcapm", "piconstructioncomponentminpremiumcapm", "pibusinessdevpmtcomponentminpremiumcapm",
-                "pimanufacturingcomponentminpremiumcapm", "pifinancialcomponentminpremiumcapm", "piothercomponentminpremiumcapm",
-                "piitcomponentratepmp", "piconstructioncomponentratepmp", "pibusinessdevpmtcomponentratepmp", "pimanufacturingcomponentratepmp",
-                "pifinancialcomponentratepmp", "piothercomponentratepmp", "piitcomponentminpremiumpmp", "piconstructioncomponentminpremiumpmp", "pibusinessdevpmtcomponentminpremiumpmp",
-                "pimanufacturingcomponentminpremiumpmp", "pifinancialcomponentminpremiumpmp", "piothercomponentminpremiumpmp",
-                "piitcomponentratepd", "piconstructioncomponentratepd", "pibusinessdevpmtcomponentratepd", "pimanufacturingcomponentratepd",
-                "pifinancialcomponentratepd", "piothercomponentratepd", "piitcomponentminpremiumpd", "piconstructioncomponentminpremiumpd", "pibusinessdevpmtcomponentminpremiumpd",
-                "pimanufacturingcomponentminpremiumpd", "pifinancialcomponentminpremiumpd", "piothercomponentminpremiumpd",
-                "pi1millimitloadingrate", "pi2millimitloadingrate", "pi5millimitloadingrate", "piminbrokerage", "maximumnumberofpersonnel", "maximumfeeincome", "exppremthresholdgreaterthan",
-                "exppremthresholdlessthan");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piBSSTopUpPremium", "piIRTopUpPremium", "piQSTopUpPremium", "piSETopUpPremium",
+                "piTPTopUpPremium", "piValTopUpPremium", "piUPTopUpPremium", "piEPTopUpPremium", "piRMTopUpPremium",
+                "piProjMTopUpPremium", "pitermexcess5000discount", "pitermexcess10kdiscount", 
+                "pi500klimitincomeunder100kpremium", "pi500klimitincome100kto200kpremium", "pi500klimitincome200kto500kpremium",
+                "pi1millimitincomeunder100kpremium", "pi1millimitincome100kto200kpremium", "pi1millimitincome200kto500kpremium", 
+                "pi2millimitincomeunder100kpremium", "pi2millimitincome100kto200kpremium", "pi2millimitincome200kto500kpremium", "piwwextpremium", "maximumfeeincome");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -73,88 +65,64 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermExcess = 2000;
             decimal feeincome = 0;
 
-            int totalnumberofpersonnel = 0;
-            int intordnumber = 0;
-            int intcapmnumber = 0;
-            int intpmpnumber = 0;
-            int intpdnumber = 0;
-            bool bolnonpmimember = false;
-
-            decimal decBDSP = 0M;
-            decimal decCon = 0M;
-            decimal decDM = 0M;
-            decimal decFASA = 0M;
-            decimal decIT = 0M;
-            decimal decMOP = 0M;
-            decimal decPMTC = 0M;
-            decimal decRCIM = 0M;
-            decimal decTM = 0M;
-            decimal decOPMA = 0M;
-            decimal decNPMA = 0M;
+            decimal decBSS= 0M;
+            decimal decArchRSD = 0M;
+            decimal decArchRMD = 0M;
+            decimal decArchCB = 0M;
+            decimal decArchI = 0M;
+            decimal decIR = 0M;
+            decimal decQS = 0M;
+            decimal decSE = 0M;
+            decimal decTP = 0M;
+            decimal decVal = 0M;
+            decimal decUP = 0M;
+            decimal decProjM = 0M;
+            decimal decEP = 0M;
+            decimal decRM = 0M;
             decimal decOther = 0M;
-            decimal decSumActivity = 0M;
-            decimal decPRBDSP = 0M;
-            decimal decPRCon = 0M;
-            decimal decPRFASA = 0M;
-            decimal decPRIT = 0M;
-            decimal decPRMOP = 0M;
-            decimal decPROther = 0M;
 
-            decimal decPIBasePremium = 0M;
+            decimal decBSSTopUpPre = 0M;
+            decimal decIRTopUpPre = 0M;
+            decimal decQSTopUpPre = 0M;
+            decimal decSETopUpPre = 0M;
+            decimal decTPTopUpPre = 0M;
+            decimal decValTopUpPre = 0M;
+            decimal decUPTopUpPre = 0M;
+            decimal decProjMTopUpPre = 0M;
+            decimal decEPTopUpPre = 0M;
+            decimal decRMTopUpPre = 0M;
 
+            decimal decPIPremiumTopUp = 0M;
             decimal totalfeeincome = 0M;
             int numberoffeeincome = 1;
             bool bolworkoutsidenz = false;
-            bool constructionEngineerDetails = false;
-            bool bolrenewalpremiumslowerthanexpiring = false;
-            bool bolrenewalpremiumshigherthanexpiring = false;
+
+            decimal extpremium = 0m;
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (!bolnonpmimember && uisorg.IsCurrentMembership)
-                    {
-                        bolnonpmimember = true;
-                    }
-                    if (uisorg.CertType == "Ordinary")
-                    {
-                        intordnumber += 1;
-                    }
-                    else if (uisorg.CertType == "PMP")
-                    {
-                        intpmpnumber += 1;
-                    }
-                    else if (uisorg.CertType == "CAPM")
-                    {
-                        intcapmnumber += 1;
-                    }
-                    else if (uisorg.CertType == "ProjectDirector")
-                    {
-                        intpdnumber += 1;
-                    }
+
                 }
 
-                totalnumberofpersonnel = intordnumber + intpmpnumber + intcapmnumber + intpdnumber;
+                
             }
 
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
                 totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
+
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0 && 
+                    (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal) )
                 {
                     totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
-                {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
-                    numberoffeeincome += 1;
-                }
+                
                 feeincome = totalfeeincome / numberoffeeincome;
 
                 foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
@@ -167,105 +135,119 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
                 {
-                    if (uISActivity.AnzsciCode == "M696210") //Business Development & Strategic Planning
+                    if (uISActivity.AnzsciCode == "E322") //Building Structure Services
                     {
-                        decBDSP = uISActivity.Percentage;
+                        decBSS = uISActivity.Percentage;
+                        decBSSTopUpPre = rates["piBSSTopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "E") //Construction
+                    else if (uISActivity.AnzsciCode == "M692121") //Architecture - residential single dwellings
                     {
-                        decCon = uISActivity.Percentage;
+                        decArchRSD = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M696230") //Design Management
+                    else if (uISActivity.AnzsciCode == "M692122") //Architecture - residential multi dwellings
                     {
-                        decDM = uISActivity.Percentage;
+                        decArchRMD = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M696240") //Financial and Accounting Systems Analysis
+                    else if (uISActivity.AnzsciCode == "M692123") //Architecture - commercial building
                     {
-                        decFASA = uISActivity.Percentage;
+                        decArchCB = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M696250") //Information Technology
+                    else if (uISActivity.AnzsciCode == "M692124") //Architecture - interior
                     {
-                        decIT = uISActivity.Percentage;
+                        decArchI = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M696260") //Manufacturing & Operational Processes
+                    else if (uISActivity.AnzsciCode == "M692160") //Inspection Reports 
                     {
-                        decMOP = uISActivity.Percentage;
+                        decIR = uISActivity.Percentage;
+                        decIRTopUpPre = rates["piIRTopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M696270") //Project Management Teaching and Coaching
+                    else if (uISActivity.AnzsciCode == "M692170") //Quantity Surveying 
                     {
-                        decPMTC = uISActivity.Percentage;
+                        decQS = uISActivity.Percentage;
+                        decQSTopUpPre = rates["piQSTopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M696300") //Resource Consent and Implementation Management
+                    else if (uISActivity.AnzsciCode == "M692180") //Structural Engineering 
                     {
-                        decRCIM = uISActivity.Percentage;
+                        decSE = uISActivity.Percentage;
+                        decSETopUpPre = rates["piSETopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M696400") //Telecommunications Management
+                    else if (uISActivity.AnzsciCode == "M692190") //Town Planning 
                     {
-                        decTM = uISActivity.Percentage;
+                        decTP = uISActivity.Percentage;
+                        decTPTopUpPre = rates["piTPTopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M696500") //Other Project Management Activities
+                    else if (uISActivity.AnzsciCode == "M692210") //Valuations 
                     {
-                        decOPMA = uISActivity.Percentage;
+                        decVal = uISActivity.Percentage;
+                        decValTopUpPre = rates["piValTopUpPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M696600") //Non Project Management Activities
+                    else if (uISActivity.AnzsciCode == "M692211") //Urban planning 
                     {
-                        decNPMA = uISActivity.Percentage;
+                        decUP = uISActivity.Percentage;
+                        decUPTopUpPre = rates["piUPTopUpPremium"];
+                    }
+                    else if (uISActivity.AnzsciCode == "M692212") //Environmental planning 
+                    {
+                        decEP = uISActivity.Percentage;
+                        decEPTopUpPre = rates["piEPTopUpPremium"];
+                    }
+                    else if (uISActivity.AnzsciCode == "M692213") //Resource management 
+                    {
+                        decRM = uISActivity.Percentage;
+                        decRMTopUpPre = rates["piRMTopUpPremium"];
+                    }
+                    else if (uISActivity.AnzsciCode == "M692214") //Project management 
+                    {
+                        decProjM = uISActivity.Percentage;
+                        decProjMTopUpPre = rates["piProjMTopUpPremium"];
+                    }
+                    else if (uISActivity.AnzsciCode == "S") //Other Services
+                    {
+                        decOther = uISActivity.Percentage;
                     }
 
                 }
 
-                decOther = decPMTC + decOPMA + decDM + decTM + decRCIM;
-                decSumActivity = decBDSP + decCon + decIT + decMOP + decNPMA + decOther;
-
-                decPRBDSP = decBDSP / (decSumActivity - decNPMA) * decSumActivity;
-                decPRCon = decCon / (decSumActivity - decNPMA) * decSumActivity;
-                decPRFASA = decFASA / (decSumActivity - decNPMA) * decSumActivity;
-                decPRIT = decIT / (decSumActivity - decNPMA) * decSumActivity;
-                decPRMOP = decMOP / (decSumActivity - decNPMA) * decSumActivity;
-                decPROther = decOther / (decSumActivity - decNPMA) * decSumActivity;
-
-                if (decCon > 0 && !string.IsNullOrEmpty(agreement.ClientInformationSheet.RevenueData.AdditionalActivityInformation.ConstructionEngineerDetails))
-                {
-                    constructionEngineerDetails = true;
-                }
+                decPIPremiumTopUp = Math.Max(decBSSTopUpPre, Math.Max(decIRTopUpPre, Math.Max(decQSTopUpPre, Math.Max(decSETopUpPre, Math.Max(decTPTopUpPre, Math.Max(decValTopUpPre, Math.Max(decUPTopUpPre, Math.Max(decProjMTopUpPre, Math.Max(decEPTopUpPre, decRMTopUpPre)))))))));
             }
 
-            ClientAgreementEndorsement cAEConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Construction)");
-            ClientAgreementEndorsement cAENonConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Non-Construction)");
+            //ClientAgreementEndorsement cAEConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Construction)");
+            //ClientAgreementEndorsement cAENonConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Non-Construction)");
 
-            if (cAEConstruction != null)
+            //if (cAEConstruction != null)
+            //{
+            //    cAEConstruction.DateDeleted = DateTime.UtcNow;
+            //    cAEConstruction.DeletedBy = underwritingUser;
+            //}
+            //if (cAENonConstruction != null)
+            //{
+            //    cAENonConstruction.DateDeleted = DateTime.UtcNow;
+            //    cAENonConstruction.DeletedBy = underwritingUser;
+            //}
+            //if (decCon > 0)
+            //{
+            //    if (cAEConstruction != null)
+            //    {
+            //        cAEConstruction.DateDeleted = null;
+            //        cAEConstruction.DeletedBy = null;
+            //    }
+            //}
+            //else
+            //{
+            //    if (cAENonConstruction != null)
+            //    {
+            //        cAENonConstruction.DateDeleted = null;
+            //        cAENonConstruction.DeletedBy = null;
+            //    }
+            //}
+
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value != null && 
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value == "1")
             {
-                cAEConstruction.DateDeleted = DateTime.UtcNow;
-                cAEConstruction.DeletedBy = underwritingUser;
-            }
-            if (cAENonConstruction != null)
-            {
-                cAENonConstruction.DateDeleted = DateTime.UtcNow;
-                cAENonConstruction.DeletedBy = underwritingUser;
-            }
-            if (decCon > 0)
-            {
-                if (cAEConstruction != null)
-                {
-                    cAEConstruction.DateDeleted = null;
-                    cAEConstruction.DeletedBy = null;
-                }
-            }
-            else
-            {
-                if (cAENonConstruction != null)
-                {
-                    cAENonConstruction.DateDeleted = null;
-                    cAENonConstruction.DeletedBy = null;
-                }
+                extpremium = rates["piwwextpremium"];
             }
 
-            decPIBasePremium = GetPIBasePremiumFor(rates, feeincome, decPRBDSP, decPRCon, decPRFASA, decPRIT, decPRMOP, decPROther, intordnumber, intpmpnumber, intcapmnumber, intpdnumber);
-
-            decimal MinBrokerage = rates["piminbrokerage"];
-
-            int intexpiringlimit = 0;
-            decimal decexpiringpremium = 0m;
+            bool bolcustomendorsementrenew = false;
             string strretrodate = "";
 
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
@@ -274,8 +256,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
-                        decexpiringpremium = Convert.ToDecimal(preRenewOrRefData.PIBoundPremium);
                         if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
                         {
                             strretrodate = preRenewOrRefData.PIRetro;
@@ -286,6 +266,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
                         {
+                            bolcustomendorsementrenew = true;
                             ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
                             agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
                         }
@@ -294,108 +275,165 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
 
+
+            int TermLimit500k = 500000;
             int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"] / 100);
-            decimal TermBrokerage1mil = 0m;
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
-            decimal TopupBrokerage1mil = 0m;
-            TopupBrokerage1mil = (TermBrokerage1mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage1mil);
-
-            ClientAgreementTerm term1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
-            term1millimitoption.TermLimit = TermLimit1mil;
-            term1millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium1mil + TopupBrokerage1mil) / 10), 0) * 10;
-            term1millimitoption.Excess = TermExcess;
-            term1millimitoption.BrokerageRate = agreement.Brokerage;
-            term1millimitoption.Brokerage = (TermBrokerage1mil > MinBrokerage) ? TermBrokerage1mil : MinBrokerage;
-            term1millimitoption.DateDeleted = null;
-            term1millimitoption.DeletedBy = null;
-
-            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            {
-                bolrenewalpremiumslowerthanexpiring = true;
-            }
-            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            {
-                bolrenewalpremiumshigherthanexpiring = true;
-            }
-
             int TermLimit2mil = 2000000;
-            decimal TermPremium2mil = decPIBasePremium * (1 + rates["pi2millimitloadingrate"] / 100);
-            decimal TermBrokerage2mil = 0m;
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
-            decimal TopupBrokerage2mil = 0m;
-            TopupBrokerage2mil = (TermBrokerage2mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage2mil);
 
-            ClientAgreementTerm term2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
-            term2millimitoption.TermLimit = TermLimit2mil;
-            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) * 10;
-            term2millimitoption.Excess = TermExcess;
-            term2millimitoption.BrokerageRate = agreement.Brokerage;
-            term2millimitoption.Brokerage = (TermBrokerage2mil > MinBrokerage) ? TermBrokerage2mil : MinBrokerage;
-            term2millimitoption.DateDeleted = null;
-            term2millimitoption.DeletedBy = null;
+            int TermExcess2500 = 2500;
+            int TermExcess5000 = 5000;
+            decimal TermExcess5000Discount = rates["pitermexcess5000discount"];
+            int TermExcess10k = 10000;
+            decimal TermExcess10kDiscount = rates["pitermexcess10kdiscount"];
 
-            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            {
-                bolrenewalpremiumslowerthanexpiring = true;
-            }
-            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            {
-                bolrenewalpremiumshigherthanexpiring = true;
-            }
+            decimal TermPremium500k2500Excess = 0m;
+            decimal TermPremium500k5000Excess = 0m;
+            decimal TermPremium500k10kExcess = 0m;
+            decimal TermBrokerage500k2500Excess = 0m;
+            decimal TermBrokerage500k5000Excess = 0m;
+            decimal TermBrokerage500k10kExcess = 0m;
 
-            int TermLimit5mil = 5000000;
-            decimal TermPremium5mil = decPIBasePremium * (1 + rates["pi5millimitloadingrate"] / 100);
-            decimal TermBrokerage5mil = 0m;
-            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
-            decimal TopupBrokerage5mil = 0m;
-            TopupBrokerage5mil = (TermBrokerage5mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage5mil);
+            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
+            TermPremium500k5000Excess = TermPremium500k2500Excess - TermExcess5000Discount;
+            TermPremium500k10kExcess = TermPremium500k2500Excess - TermExcess10kDiscount;
+            TermBrokerage500k2500Excess = TermPremium500k2500Excess * agreement.Brokerage / 100;
+            TermBrokerage500k5000Excess = TermPremium500k5000Excess * agreement.Brokerage / 100;
+            TermBrokerage500k10kExcess = TermPremium500k10kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
-            term5millimitoption.TermLimit = TermLimit5mil;
-            term5millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium5mil + TopupBrokerage5mil) / 10), 0) * 10;
-            term5millimitoption.Excess = TermExcess;
-            term5millimitoption.BrokerageRate = agreement.Brokerage;
-            term5millimitoption.Brokerage = (TermBrokerage5mil > MinBrokerage) ? TermBrokerage5mil : MinBrokerage;
-            term5millimitoption.DateDeleted = null;
-            term5millimitoption.DeletedBy = null;
+            ClientAgreementTerm term500klimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess2500);
+            term500klimit2500excessoption.TermLimit = TermLimit500k;
+            term500klimit2500excessoption.Premium = TermPremium500k2500Excess;
+            term500klimit2500excessoption.Excess = TermExcess2500;
+            term500klimit2500excessoption.BrokerageRate = agreement.Brokerage;
+            term500klimit2500excessoption.Brokerage = TermBrokerage500k2500Excess;
+            term500klimit2500excessoption.DateDeleted = null;
+            term500klimit2500excessoption.DeletedBy = null;
 
-            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 5000000 && (TermPremium5mil + TopupBrokerage5mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            {
-                bolrenewalpremiumslowerthanexpiring = true;
-            }
-            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 5000000 && (TermPremium5mil + TopupBrokerage5mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            {
-                bolrenewalpremiumshigherthanexpiring = true;
-            }
+            ClientAgreementTerm term500klimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess5000);
+            term500klimit5000excessoption.TermLimit = TermLimit500k;
+            term500klimit5000excessoption.Premium = TermPremium500k5000Excess;
+            term500klimit5000excessoption.Excess = TermExcess5000;
+            term500klimit5000excessoption.BrokerageRate = agreement.Brokerage;
+            term500klimit5000excessoption.Brokerage = TermBrokerage500k5000Excess;
+            term500klimit5000excessoption.DateDeleted = null;
+            term500klimit5000excessoption.DeletedBy = null;
+
+            ClientAgreementTerm term500klimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess10k);
+            term500klimit10kexcessoption.TermLimit = TermLimit500k;
+            term500klimit10kexcessoption.Premium = TermPremium500k10kExcess;
+            term500klimit10kexcessoption.Excess = TermExcess10k;
+            term500klimit10kexcessoption.BrokerageRate = agreement.Brokerage;
+            term500klimit10kexcessoption.Brokerage = TermBrokerage500k10kExcess;
+            term500klimit10kexcessoption.DateDeleted = null;
+            term500klimit10kexcessoption.DeletedBy = null;
+
+            decimal TermPremium1mil2500Excess = 0m;
+            decimal TermPremium1mil5000Excess = 0m;
+            decimal TermPremium1mil10kExcess = 0m;
+            decimal TermBrokerage1mil2500Excess = 0m;
+            decimal TermBrokerage1mil5000Excess = 0m;
+            decimal TermBrokerage1mil10kExcess = 0m;
+
+            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium;
+            TermPremium1mil5000Excess = TermPremium1mil2500Excess - TermExcess5000Discount;
+            TermPremium1mil10kExcess = TermPremium1mil2500Excess - TermExcess10kDiscount;
+            TermBrokerage1mil2500Excess = TermPremium1mil2500Excess * agreement.Brokerage / 100;
+            TermBrokerage1mil5000Excess = TermPremium1mil5000Excess * agreement.Brokerage / 100;
+            TermBrokerage1mil10kExcess = TermPremium1mil10kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term1millimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess2500);
+            term1millimit2500excessoption.TermLimit = TermLimit1mil;
+            term1millimit2500excessoption.Premium = TermPremium1mil2500Excess;
+            term1millimit2500excessoption.Excess = TermExcess2500;
+            term1millimit2500excessoption.BrokerageRate = agreement.Brokerage;
+            term1millimit2500excessoption.Brokerage = TermBrokerage1mil2500Excess;
+            term1millimit2500excessoption.DateDeleted = null;
+            term1millimit2500excessoption.DeletedBy = null;
+
+            ClientAgreementTerm term1millimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess5000);
+            term1millimit5000excessoption.TermLimit = TermLimit1mil;
+            term1millimit5000excessoption.Premium = TermPremium1mil5000Excess;
+            term1millimit5000excessoption.Excess = TermExcess5000;
+            term1millimit5000excessoption.BrokerageRate = agreement.Brokerage;
+            term1millimit5000excessoption.Brokerage = TermBrokerage1mil5000Excess;
+            term1millimit5000excessoption.DateDeleted = null;
+            term1millimit5000excessoption.DeletedBy = null;
+
+            ClientAgreementTerm term1millimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess10k);
+            term1millimit10kexcessoption.TermLimit = TermLimit1mil;
+            term1millimit10kexcessoption.Premium = TermPremium1mil10kExcess;
+            term1millimit10kexcessoption.Excess = TermExcess10k;
+            term1millimit10kexcessoption.BrokerageRate = agreement.Brokerage;
+            term1millimit10kexcessoption.Brokerage = TermBrokerage1mil10kExcess;
+            term1millimit10kexcessoption.DateDeleted = null;
+            term1millimit10kexcessoption.DeletedBy = null;
+
+            decimal TermPremium2mil2500Excess = 0m;
+            decimal TermPremium2mil5000Excess = 0m;
+            decimal TermPremium2mil10kExcess = 0m;
+            decimal TermBrokerage2mil2500Excess = 0m;
+            decimal TermBrokerage2mil5000Excess = 0m;
+            decimal TermBrokerage2mil10kExcess = 0m;
+
+            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium;
+            TermPremium2mil5000Excess = TermPremium2mil2500Excess - TermExcess5000Discount;
+            TermPremium2mil10kExcess = TermPremium2mil2500Excess - TermExcess10kDiscount;
+            TermBrokerage2mil2500Excess = TermPremium2mil2500Excess * agreement.Brokerage / 100;
+            TermBrokerage2mil5000Excess = TermPremium2mil5000Excess * agreement.Brokerage / 100;
+            TermBrokerage2mil10kExcess = TermPremium2mil10kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term2millimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess2500);
+            term2millimit2500excessoption.TermLimit = TermLimit2mil;
+            term2millimit2500excessoption.Premium = TermPremium2mil2500Excess;
+            term2millimit2500excessoption.Excess = TermExcess2500;
+            term2millimit2500excessoption.BrokerageRate = agreement.Brokerage;
+            term2millimit2500excessoption.Brokerage = TermBrokerage2mil2500Excess;
+            term2millimit2500excessoption.DateDeleted = null;
+            term2millimit2500excessoption.DeletedBy = null;
+
+            ClientAgreementTerm term2millimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess5000);
+            term2millimit5000excessoption.TermLimit = TermLimit2mil;
+            term2millimit5000excessoption.Premium = TermPremium2mil5000Excess;
+            term2millimit5000excessoption.Excess = TermExcess5000;
+            term2millimit5000excessoption.BrokerageRate = agreement.Brokerage;
+            term2millimit5000excessoption.Brokerage = TermBrokerage2mil5000Excess;
+            term2millimit5000excessoption.DateDeleted = null;
+            term2millimit5000excessoption.DeletedBy = null;
+
+            ClientAgreementTerm term2millimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess10k);
+            term2millimit10kexcessoption.TermLimit = TermLimit2mil;
+            term2millimit10kexcessoption.Premium = TermPremium2mil10kExcess;
+            term2millimit10kexcessoption.Excess = TermExcess10k;
+            term2millimit10kexcessoption.BrokerageRate = agreement.Brokerage;
+            term2millimit10kexcessoption.Brokerage = TermBrokerage2mil10kExcess;
+            term2millimit10kexcessoption.DateDeleted = null;
+            term2millimit10kexcessoption.DeletedBy = null;
+
 
             //Referral points per agreement
-            //Number of Personnel
-            uwrfnumberofpersonnel(underwritingUser, agreement, totalnumberofpersonnel, rates);
-            //Non PMINZ Members
-            uwrfnonpminzmembers(underwritingUser, agreement, bolnonpmimember);
-            //Other or Non PM Activities
-            uwrfotherornonpmactivities(underwritingUser, agreement, decOPMA, decNPMA);
             //Operates Outside of NZ
             uwrfoperatesoutsideofnz(underwritingUser, agreement, bolworkoutsidenz);
-            //High Fee Income
-            uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
-            //Contracting Services
-            uwrfcontractingservices(underwritingUser, agreement);
             //Claims / Insurance History
             uwrfpriorinsurance(underwritingUser, agreement);
-            //No Projects Managed
-            uwrfnoprojectsmanaged(underwritingUser, agreement);
-            //Renewal Premiums Lower than Expiring
-            uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
-            //Renewal Premiums Higher than Expiring
-            uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
-            //Capacity of an Engineer to Contract
-            uwrfcapacityofanengineertocontract(underwritingUser, agreement);
-            //Construction revenue as role as Engineer to the Contract
-            uwrfconstructionrevenue(underwritingUser, agreement, constructionEngineerDetails);
-            //Component Specification Activities
-            uwrfcomponentspecificationactivities(underwritingUser, agreement);
+            //High Fee Income
+            uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
+            //Negative Turnover
+            uwrfnegativefeeincome(underwritingUser, agreement, feeincome, rates);
+            //Substancial Business Changes
+            uwrfsubstancialbusinesschanges(underwritingUser, agreement);
+            //Staff Dishonesty
+            uwrfstaffdishonesty(underwritingUser, agreement);
+
+            //DANZ Member
+            uwrfnotdanzmember(underwritingUser, agreement);
+            //Excluded Activities (I.e. Inspection reports, Valuation, Other)
+            uwrfexcludedactivities(underwritingUser, agreement, decIR, decVal, decOther);
+            //Over 10% Allied Professions Activities (Structural Engineer, Quantity Surveying, Building Services Engineer, Architect and Town Planning, Urban Planning , 
+            //Environmental planning, Inspection reports, Project Management, Resource Management, Local government Policy advice and Valuations)
+            uwrfover10perap(underwritingUser, agreement, decSE, decQS, decBSS, decTP, decUP, decEP, decIR, decProjM, decRM, decVal);
+            //Custom Endorsement renew
+            uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
+
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -407,7 +445,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception or Date since PI policy first held";
+            string retrodate = "Inception";
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
@@ -490,134 +528,69 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPIBasePremiumFor(IDictionary<string, decimal> rates, decimal feeincome, decimal decPRBDSP, decimal decPRCon, decimal decPRFASA, decimal decPRIT, decimal decPRMOP, decimal decPROther,
-            int intordnumber, int intpmpnumber, int intcapmnumber, int intpdnumber)
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption)
         {
-            decimal pibasepremium = 0M;
-            decimal basepremiumOrd = 0M;
-            decimal basepremiumCAPM = 0M;
-            decimal basepremiumPMP = 0M;
-            decimal basepremiumPD = 0M;
-            decimal minpremiumOrd = 0M;
-            decimal minpremiumCAPM = 0M;
-            decimal minpremiumPMP = 0M;
-            decimal minpremiumPD = 0M;
+            decimal premiumoption = 0M;
 
-            if (intordnumber > 0)
+            switch (limitoption)
             {
-                basepremiumOrd = (feeincome * decPRIT / 100 * rates["piitcomponentrateord"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentrateord"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentrateord"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentrateord"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentrateord"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentrateord"] / 100);
-                minpremiumOrd = (decPRIT / 100 * rates["piitcomponentminpremiumord"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumord"]) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumord"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumord"]) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumord"]) + (decPROther / 100 * rates["piothercomponentminpremiumord"]);
-                basepremiumOrd = (basepremiumOrd > minpremiumOrd) ? basepremiumOrd : minpremiumOrd;
-            }
-            if (intcapmnumber > 0)
-            {
-                basepremiumCAPM = (feeincome * decPRIT / 100 * rates["piitcomponentratecapm"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratecapm"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratecapm"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratecapm"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratecapm"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratecapm"] / 100);
-                minpremiumCAPM = (decPRIT / 100 * rates["piitcomponentminpremiumcapm"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumcapm"]) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumcapm"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumcapm"]) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumcapm"]) + (decPROther / 100 * rates["piothercomponentminpremiumcapm"]);
-                basepremiumCAPM = (basepremiumCAPM > minpremiumCAPM) ? basepremiumCAPM : minpremiumCAPM;
-            }
-            if (intpmpnumber > 0)
-            {
-                basepremiumPMP = (feeincome * decPRIT / 100 * rates["piitcomponentratepmp"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepmp"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepmp"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepmp"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepmp"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepmp"] / 100);
-                minpremiumPMP = (decPRIT / 100 * rates["piitcomponentminpremiumpmp"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpmp"]) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpmp"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpmp"]) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpmp"]) + (decPROther / 100 * rates["piothercomponentminpremiumpmp"]);
-                basepremiumPMP = (basepremiumPMP > minpremiumPMP) ? basepremiumPMP : minpremiumPMP;
-            }
-            if (intpdnumber > 0)
-            {
-                basepremiumPD = (feeincome * decPRIT / 100 * rates["piitcomponentratepd"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepd"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepd"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepd"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepd"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepd"] / 100);
-                minpremiumPD = (decPRIT / 100 * rates["piitcomponentminpremiumpd"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpd"]) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpd"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpd"]) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpd"]) + (decPROther / 100 * rates["piothercomponentminpremiumpd"]);
-                basepremiumPD = (basepremiumPD > minpremiumPD) ? basepremiumPD : minpremiumPD;
-            }
-
-            pibasepremium = Math.Max(basepremiumOrd, Math.Max(basepremiumCAPM, Math.Max(basepremiumPMP, basepremiumPD)));
-
-            return pibasepremium;
-        }
-
-
-        void uwrfnumberofpersonnel(User underwritingUser, ClientAgreement agreement, int totalnumberofpersonnel, IDictionary<string, decimal> rates)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (totalnumberofpersonnel > rates["maximumnumberofpersonnel"])
+                case 500000:
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null).Status = "Pending";
+                        if (feeincome >= 0 && feeincome <= 100000)
+                        {
+                            premiumoption = rates["pi500klimitincomeunder100kpremium"];
+                        }
+                        else if (feeincome > 100000 && feeincome <= 200000)
+                        {
+                            premiumoption = rates["pi500klimitincome100kto200kpremium"];
+                        }
+                        else if (feeincome > 200000 && feeincome <= 500000)
+                        {
+                            premiumoption = rates["pi500klimitincome200kto500kpremium"];
+                        }
+                        break;
                     }
-                }
+                case 1000000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 100000)
+                        {
+                            premiumoption = rates["pi1millimitincomeunder100kpremium"];
+                        }
+                        else if (feeincome > 100000 && feeincome <= 200000)
+                        {
+                            premiumoption = rates["pi1millimitincome100kto200kpremium"];
+                        }
+                        else if (feeincome > 200000 && feeincome <= 500000)
+                        {
+                            premiumoption = rates["pi1millimitincome200kto500kpremium"];
+                        }
+                        break;
+                    }
+                case 2000000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 100000)
+                        {
+                            premiumoption = rates["pi2millimitincomeunder100kpremium"];
+                        }
+                        else if (feeincome > 100000 && feeincome <= 200000)
+                        {
+                            premiumoption = rates["pi2millimitincome100kto200kpremium"];
+                        }
+                        else if (feeincome > 200000 && feeincome <= 500000)
+                        {
+                            premiumoption = rates["pi2millimitincome200kto500kpremium"];
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception(string.Format("Can not calculate premium for PI"));
+                    }
             }
+
+            return premiumoption;
         }
 
-        void uwrfnonpminzmembers(User underwritingUser, ClientAgreement agreement, bool bolnonpmimember)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (!bolnonpmimember)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfotherornonpmactivities(User underwritingUser, ClientAgreement agreement, decimal decOPMA, decimal decNPMA)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (decOPMA > 0 || decNPMA > 0)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
 
         void uwrfoperatesoutsideofnz(User underwritingUser, ClientAgreement agreement, bool bolworkoutsidenz)
         {
@@ -637,57 +610,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (bolworkoutsidenz) //Work outside New Zealand
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfhighfeeincome(User underwritingUser, ClientAgreement agreement, decimal feeincome, IDictionary<string, decimal> rates)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (feeincome > rates["maximumfeeincome"])
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfcontractingservices(User underwritingUser, ClientAgreement agreement)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcontractingservices") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcontractingservices").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcontractingservices").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcontractingservices").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcontractingservices").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value != null)
-                    {
-                        var result = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Substring(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Length - 2);
-                        if (result != "10")
-                        {
-                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
-                        }
-
                     }
                 }
             }
@@ -721,143 +643,190 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        void uwrfnoprojectsmanaged(User underwritingUser, ClientAgreement agreement)
+        void uwrfhighfeeincome(User underwritingUser, ClientAgreement agreement, decimal feeincome, IDictionary<string, decimal> rates)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoprojectsmanaged" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoprojectsmanaged") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoprojectsmanaged").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoprojectsmanaged").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoprojectsmanaged").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoprojectsmanaged").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoprojectsmanaged" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasManagedProjectOptions").First().Value == "2")
+                    if (feeincome > rates["maximumfeeincome"])
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoprojectsmanaged" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfrenewalpremiumslowerthanexpiring(User underwritingUser, ClientAgreement agreement, bool bolrenewalpremiumslowerthanexpiring)
+        void uwrfnegativefeeincome(User underwritingUser, ClientAgreement agreement, decimal feeincome, IDictionary<string, decimal> rates)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumslowerthanexpiring" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumslowerthanexpiring") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumslowerthanexpiring").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumslowerthanexpiring").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumslowerthanexpiring").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumslowerthanexpiring").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumslowerthanexpiring" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (bolrenewalpremiumslowerthanexpiring)
+                    if (feeincome < 0)
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumslowerthanexpiring" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfrenewalpremiumshigherthanexpiring(User underwritingUser, ClientAgreement agreement, bool bolrenewalpremiumshigherthanexpiring)
+        void uwrfsubstancialbusinesschanges(User underwritingUser, ClientAgreement agreement)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumshigherthanexpiring" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumshigherthanexpiring") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumshigherthanexpiring").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumshigherthanexpiring").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumshigherthanexpiring").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfrenewalpremiumshigherthanexpiring").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumshigherthanexpiring" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (bolrenewalpremiumshigherthanexpiring)
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasSubstantialChangeOptions").First().Value == "1")
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfrenewalpremiumshigherthanexpiring" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfcapacityofanengineertocontract(User underwritingUser, ClientAgreement agreement)
+        void uwrfstaffdishonesty(User underwritingUser, ClientAgreement agreement)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcapacityofanengineertocontract" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcapacityofanengineertocontract") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcapacityofanengineertocontract").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcapacityofanengineertocontract").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcapacityofanengineertocontract").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcapacityofanengineertocontract").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcapacityofanengineertocontract" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasEngineerOptions").First().Value == "1")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasSubstantialChangeOptions").First().Value == "1") // change answer dismiss one
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcapacityofanengineertocontract" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfconstructionrevenue(User underwritingUser, ClientAgreement agreement, bool constructionEngineerDetails)
+        void uwrfnotdanzmember(User underwritingUser, ClientAgreement agreement)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfconstructionrevenue") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfconstructionrevenue").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfconstructionrevenue").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfconstructionrevenue").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfconstructionrevenue").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (constructionEngineerDetails)
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasDANZOptions").First().Value == "2")
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfconstructionrevenue" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfcomponentspecificationactivities(User underwritingUser, ClientAgreement agreement)
+        void uwrfexcludedactivities(User underwritingUser, ClientAgreement agreement, decimal decIR, decimal decVal, decimal decOther)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcomponentspecificationactivities" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcomponentspecificationactivities") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcomponentspecificationactivities").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcomponentspecificationactivities").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcomponentspecificationactivities").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcomponentspecificationactivities").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcomponentspecificationactivities" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasIncludedDesignOptions").First().Value == "1")
+                    if (decIR > 0 || decVal > 0 || decOther > 0)
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcomponentspecificationactivities" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
+
+        void uwrfover10perap(User underwritingUser, ClientAgreement agreement, decimal decSE, decimal decQS, decimal decBSS, decimal decTP, decimal decUP, decimal decEP, decimal decIR, decimal decProjM, decimal decRM, decimal decVal)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (decSE > 10 || decQS > 10 || decBSS > 10 || decTP > 10 || decUP > 10 || decEP > 10 || decIR > 10 || decProjM > 10 || decRM > 10 || decVal > 10)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrfcustomendorsementrenew(User underwritingUser, ClientAgreement agreement, bool bolcustomendorsementrenew)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (bolcustomendorsementrenew) //Custom Endorsement Renew
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
 
     }
 }
