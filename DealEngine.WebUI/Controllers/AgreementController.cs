@@ -2151,6 +2151,43 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetAgreementEndorsement(ViewAgreementEndorsementViewModel model)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
+                if (model.EndorsementNameToAdd != null && model.Content != null)
+                {
+                    await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
+                }
+
+                if (model.ClientAgreementEndorsements != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
+                        {
+                            var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
+                            cev.Value = clientAgreement.Value;
+                        }
+
+                        await uow.Commit();
+                    }
+
+                }
+
+                return Redirect(model.ClientAgreementID.ToString());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> AcceptAgreement(Guid Id)
