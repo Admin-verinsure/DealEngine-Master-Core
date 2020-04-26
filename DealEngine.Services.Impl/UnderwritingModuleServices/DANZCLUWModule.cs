@@ -150,7 +150,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm termcl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
             termcl100klimitoption.TermLimit = TermLimit100k;
-            termcl100klimitoption.Premium = TermPremium100k;
+            termcl100klimitoption.Premium = TermPremium100k + extpremium;
             termcl100klimitoption.Excess = TermExcess;
             termcl100klimitoption.BrokerageRate = agreement.Brokerage;
             termcl100klimitoption.Brokerage = TermBrokerage100k;
@@ -172,7 +172,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Unlimited excluding known claims or circumstances";
+            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
+            string retrodate = "Policy Inception";
             agreement.TerritoryLimit = "Worldwide";
             agreement.Jurisdiction = "Worldwide";
             agreement.RetroactiveDate = retrodate;

@@ -98,17 +98,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal totalfeeincome = 0M;
             int numberoffeeincome = 1;
             bool bolworkoutsidenz = false;
-
+            bool bolsitelicensecategory3 = false;
             decimal extpremium = 0m;
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-
+                    if (!bolsitelicensecategory3 && uisorg.SiteLicensed == "Category 3")
+                    {
+                        bolsitelicensecategory3 = true;
+                    }
                 }
-
-                
             }
 
 
@@ -138,7 +139,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (uISActivity.AnzsciCode == "E322") //Building Structure Services
                     {
                         decBSS = uISActivity.Percentage;
-                        decBSSTopUpPre = rates["piBSSTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decBSSTopUpPre = rates["piBSSTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692121") //Architecture - residential single dwellings
                     {
@@ -159,47 +161,56 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     else if (uISActivity.AnzsciCode == "M692160") //Inspection Reports 
                     {
                         decIR = uISActivity.Percentage;
-                        decIRTopUpPre = rates["piIRTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decIRTopUpPre = rates["piIRTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692170") //Quantity Surveying 
                     {
                         decQS = uISActivity.Percentage;
-                        decQSTopUpPre = rates["piQSTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decQSTopUpPre = rates["piQSTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692180") //Structural Engineering 
                     {
                         decSE = uISActivity.Percentage;
-                        decSETopUpPre = rates["piSETopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decSETopUpPre = rates["piSETopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692190") //Town Planning 
                     {
                         decTP = uISActivity.Percentage;
-                        decTPTopUpPre = rates["piTPTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decTPTopUpPre = rates["piTPTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692210") //Valuations 
                     {
                         decVal = uISActivity.Percentage;
-                        decValTopUpPre = rates["piValTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decValTopUpPre = rates["piValTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692211") //Urban planning 
                     {
                         decUP = uISActivity.Percentage;
-                        decUPTopUpPre = rates["piUPTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decUPTopUpPre = rates["piUPTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692212") //Environmental planning 
                     {
                         decEP = uISActivity.Percentage;
-                        decEPTopUpPre = rates["piEPTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decEPTopUpPre = rates["piEPTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692213") //Resource management 
                     {
                         decRM = uISActivity.Percentage;
-                        decRMTopUpPre = rates["piRMTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decRMTopUpPre = rates["piRMTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "M692214") //Project management 
                     {
                         decProjM = uISActivity.Percentage;
-                        decProjMTopUpPre = rates["piProjMTopUpPremium"];
+                        if (uISActivity.Percentage > 0)
+                            decProjMTopUpPre = rates["piProjMTopUpPremium"];
                     }
                     else if (uISActivity.AnzsciCode == "S") //Other Services
                     {
@@ -211,40 +222,63 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decPIPremiumTopUp = Math.Max(decBSSTopUpPre, Math.Max(decIRTopUpPre, Math.Max(decQSTopUpPre, Math.Max(decSETopUpPre, Math.Max(decTPTopUpPre, Math.Max(decValTopUpPre, Math.Max(decUPTopUpPre, Math.Max(decProjMTopUpPre, Math.Max(decEPTopUpPre, decRMTopUpPre)))))))));
             }
 
-            //ClientAgreementEndorsement cAEConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Construction)");
-            //ClientAgreementEndorsement cAENonConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Non-Construction)");
-
-            //if (cAEConstruction != null)
-            //{
-            //    cAEConstruction.DateDeleted = DateTime.UtcNow;
-            //    cAEConstruction.DeletedBy = underwritingUser;
-            //}
-            //if (cAENonConstruction != null)
-            //{
-            //    cAENonConstruction.DateDeleted = DateTime.UtcNow;
-            //    cAENonConstruction.DeletedBy = underwritingUser;
-            //}
-            //if (decCon > 0)
-            //{
-            //    if (cAEConstruction != null)
-            //    {
-            //        cAEConstruction.DateDeleted = null;
-            //        cAEConstruction.DeletedBy = null;
-            //    }
-            //}
-            //else
-            //{
-            //    if (cAENonConstruction != null)
-            //    {
-            //        cAENonConstruction.DateDeleted = null;
-            //        cAENonConstruction.DeletedBy = null;
-            //    }
-            //}
-
+            ClientAgreementEndorsement cAEIR = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Pre Purchase Inspections and Building Surveying Exclusion");
+            if (cAEIR != null)
+            {
+                cAEIR.DateDeleted = DateTime.UtcNow;
+                cAEIR.DeletedBy = underwritingUser;
+            }
+            if (decIR > 0)
+            {
+                if (cAEIR != null)
+                {
+                    cAEIR.DateDeleted = null;
+                    cAEIR.DeletedBy = null;
+                }
+            }
+            ClientAgreementEndorsement cAEQS = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Quantity Surveying Exclusion");
+            if (cAEQS != null)
+            {
+                cAEQS.DateDeleted = DateTime.UtcNow;
+                cAEQS.DeletedBy = underwritingUser;
+            }
+            if (decQS > 0)
+            {
+                if (cAEQS != null)
+                {
+                    cAEQS.DateDeleted = null;
+                    cAEQS.DeletedBy = null;
+                }
+            }
+            ClientAgreementEndorsement cAEProjM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers Endorsement");
+            if (cAEProjM != null)
+            {
+                cAEProjM.DateDeleted = DateTime.UtcNow;
+                cAEProjM.DeletedBy = underwritingUser;
+            }
+            if (decProjM > 0)
+            {
+                if (cAEProjM != null)
+                {
+                    cAEProjM.DateDeleted = null;
+                    cAEProjM.DeletedBy = null;
+                }
+            }
+            ClientAgreementEndorsement cAEWTExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits");
+            if (cAEWTExt != null)
+            {
+                cAEWTExt.DateDeleted = DateTime.UtcNow;
+                cAEWTExt.DeletedBy = underwritingUser;
+            }
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value != null && 
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value == "1")
             {
                 extpremium = rates["piwwextpremium"];
+                if (cAEWTExt != null)
+                {
+                    cAEWTExt.DateDeleted = null;
+                    cAEWTExt.DeletedBy = null;
+                }
             }
 
             bool bolcustomendorsementrenew = false;
@@ -293,7 +327,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage500k5000Excess = 0m;
             decimal TermBrokerage500k10kExcess = 0m;
 
-            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
+            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium + decPIPremiumTopUp;
             TermPremium500k5000Excess = TermPremium500k2500Excess - TermExcess5000Discount;
             TermPremium500k10kExcess = TermPremium500k2500Excess - TermExcess10kDiscount;
             TermBrokerage500k2500Excess = TermPremium500k2500Excess * agreement.Brokerage / 100;
@@ -334,7 +368,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil5000Excess = 0m;
             decimal TermBrokerage1mil10kExcess = 0m;
 
-            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium;
+            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium + decPIPremiumTopUp;
             TermPremium1mil5000Excess = TermPremium1mil2500Excess - TermExcess5000Discount;
             TermPremium1mil10kExcess = TermPremium1mil2500Excess - TermExcess10kDiscount;
             TermBrokerage1mil2500Excess = TermPremium1mil2500Excess * agreement.Brokerage / 100;
@@ -375,7 +409,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage2mil5000Excess = 0m;
             decimal TermBrokerage2mil10kExcess = 0m;
 
-            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium;
+            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium + decPIPremiumTopUp;
             TermPremium2mil5000Excess = TermPremium2mil2500Excess - TermExcess5000Discount;
             TermPremium2mil10kExcess = TermPremium2mil2500Excess - TermExcess10kDiscount;
             TermBrokerage2mil2500Excess = TermPremium2mil2500Excess * agreement.Brokerage / 100;
@@ -423,7 +457,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfsubstancialbusinesschanges(underwritingUser, agreement);
             //Staff Dishonesty
             uwrfstaffdishonesty(underwritingUser, agreement);
-
+            //Site License Category3
+            uwrfsitelicensecategory3(underwritingUser, agreement, bolsitelicensecategory3);
             //DANZ Member
             uwrfnotdanzmember(underwritingUser, agreement);
             //Excluded Activities (I.e. Inspection reports, Valuation, Other)
@@ -445,7 +480,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception";
+            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
+            string retrodate = "Policy Inception";
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
@@ -610,6 +646,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (bolworkoutsidenz) //Work outside New Zealand
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrfsitelicensecategory3(User underwritingUser, ClientAgreement agreement, bool bolsitelicensecategory3)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3v").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (bolsitelicensecategory3)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }

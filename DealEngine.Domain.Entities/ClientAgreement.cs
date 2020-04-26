@@ -88,7 +88,8 @@ namespace DealEngine.Domain.Entities
         public virtual string ClientNumber { get; set; }
         public virtual string Jurisdiction { get; set; }
         public virtual string TerritoryLimit { get; set; }
-        
+        public virtual string ProfessionalBusiness { get; set; }
+
         //Quoted; Referred; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Declined by Insurer; Declined by Insured; Cancelled; Cancel Pending
         public virtual string Status { get; set; }
         public virtual bool ReferToTC { get; set; }
