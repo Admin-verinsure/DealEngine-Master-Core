@@ -81,5 +81,10 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
+        public virtual bool Removed
+        {
+            get;
+            set;
+        }
     }
 }
