@@ -2091,7 +2091,7 @@ namespace DealEngine.WebUI.Controllers
                 if (model.HasEndorsements)
                 {
                     var clientAgreementEndorsements = new AgreementEndorsementsViewModel();
-                    foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).OrderBy(ce => ce.OrderNumber))
+                    foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && ce.Removed != true).OrderBy(ce => ce.OrderNumber))
                     {
                         clientAgreementEndorsements.Add(new ClientAgreementEndorsementViewModel { ClientAgreementEndorsementID = ce.Id, Name = ce.Name, Value = ce.Value });
                     }
@@ -2122,26 +2122,43 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
-                if (model.EndorsementNameToAdd != null && model.Content != null)
-                {
-                    await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
-                }
+                var clientAgreementendorsement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(model.ClientAgreementEndorsementID);
 
-                if (model.ClientAgreementEndorsements != null)
+                if(model.ClientAgreementEndorsementID == Guid.Empty)
+                {
+                    if (model.EndorsementNameToAdd != null && model.Content != null)
+                    {
+                        await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
+                    }
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (model.ClientAgreementEndorsements != null)
+                        {
+
+                            foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
+                            {
+                                var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
+                                cev.Value = clientAgreement.Value;
+                            }
+
+
+                            await uow.Commit();
+
+                        }
+
+                    }
+                }
+                else
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
-                        foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
-                        {
-                            var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
-                            cev.Value = clientAgreement.Value;
-                        }
-
+                        clientAgreementendorsement.Name = model.EndorsementNameToAdd;
+                        clientAgreementendorsement.Value = model.Content;
                         await uow.Commit();
+
                     }
-
                 }
-
+                
                 return Redirect(model.ClientAgreementID.ToString());
             }
             catch(Exception ex)
@@ -2152,34 +2169,24 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetAgreementEndorsement(ViewAgreementEndorsementViewModel model)
+        public async Task<IActionResult> GetAgreementEndorsement(Guid clientAgreementEndorsementID)
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
-                if (model.EndorsementNameToAdd != null && model.Content != null)
+                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
+                var clientAgreementendorsement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(clientAgreementEndorsementID);
+                ClientAgreementEndorsementViewModel model = new ClientAgreementEndorsementViewModel();
+                if (clientAgreementendorsement != null)
                 {
-                    await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
+                    model.ClientAgreementEndorsementID = clientAgreementendorsement.Id;
+                    model.Name = clientAgreementendorsement.Name;
+                    model.Value = clientAgreementendorsement.Value;
+                    //await _clientAgreementEndorsementService.AddClientAgreementEndorsement(user, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.Content, 100, agreement);
                 }
 
-                if (model.ClientAgreementEndorsements != null)
-                {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
-                        {
-                            var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
-                            cev.Value = clientAgreement.Value;
-                        }
-
-                        await uow.Commit();
-                    }
-
-                }
-
-                return Redirect(model.ClientAgreementID.ToString());
+                return Json(model);
             }
             catch (Exception ex)
             {
@@ -2188,6 +2195,32 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SetEndorsementRemovedStatus(Guid clientAgreementEndorsementID)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
+                var clientAgreementendorsement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(clientAgreementEndorsementID);
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    clientAgreementendorsement.Removed = true;
+
+                    await uow.Commit();
+                }
+
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> AcceptAgreement(Guid Id)
