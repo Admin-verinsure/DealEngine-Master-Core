@@ -617,6 +617,34 @@ namespace DealEngine.WebUI.Controllers
             }                       
         }
 
+        [HttpGet]
+        public async Task<IActionResult> IssueReminder(string ProgrammeId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                IssueUISViewModel model = new IssueUISViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+
+                foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    clientProgrammes.Add(client);
+                }
+
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
         {
@@ -660,33 +688,48 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ViewTask(Guid Id)
+        [HttpPost]
+        public async Task<IActionResult> IssueReminder(IFormCollection formCollection)
         {
             User user = null;
+            Programme programme = null;
+            string email = null;
+
             try
             {
                 user = await CurrentUser();
-                UserTask task = await _taskingService.GetTask(Id);
-                UserTaskViewModel model = new UserTaskViewModel
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                foreach (var key in formCollection.Keys)
                 {
-                    Details = task.Details,
-                    Description = task.Description,
-                    DueDate = task.DueDate,
-                    Priority = task.Priority,
-                    Completed = task.Completed,
-                    CompletedBy = task.CompletedBy,
-                    For = task.For
-                };
+                    email = key;
+                    var correctEmail = await _userService.GetUserByEmail(email);
+                    if (correctEmail != null)
+                    {
+                        if (programme.ProgEnableEmail)
+                        {
+                            //send out login instruction email
+                            await _emailService.SendSystemEmailLogin(email);
+                            //send out information sheet instruction email
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            }
+                            //send out uis issue notification email
+                            //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
+                        }
+                    }
 
-                return View(model);
+                }
+
+                return await RedirectToLocal();
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
+        }        
 
     }
 }
