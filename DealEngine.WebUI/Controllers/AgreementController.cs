@@ -1940,6 +1940,7 @@ namespace DealEngine.WebUI.Controllers
                 model.RetroactiveDate = agreement.RetroactiveDate;
                 model.TerritoryLimit = agreement.TerritoryLimit;
                 model.Jurisdiction = agreement.Jurisdiction;
+                model.ProfessionalBusiness = agreement.ProfessionalBusiness;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1974,6 +1975,7 @@ namespace DealEngine.WebUI.Controllers
                     agreement.RetroactiveDate = model.RetroactiveDate;
                     agreement.Jurisdiction = model.Jurisdiction;
                     agreement.TerritoryLimit = model.TerritoryLimit;
+                    agreement.ProfessionalBusiness = model.ProfessionalBusiness;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);

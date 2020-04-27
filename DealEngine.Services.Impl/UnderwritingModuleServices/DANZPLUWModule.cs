@@ -92,6 +92,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage2mil = 0m;
 
             int TermExcess = 0;
+            TermExcess = 250;
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage;
@@ -127,7 +128,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-
+            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
 
