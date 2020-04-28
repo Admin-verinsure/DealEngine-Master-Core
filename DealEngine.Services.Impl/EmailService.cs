@@ -17,6 +17,9 @@ using DealEngine.Infrastructure.Email;
 using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using MimeKit;
+using NLog.LayoutRenderers;
+using Microsoft.AspNetCore.Authentication;
 
 namespace DealEngine.Services.Impl
 {
@@ -117,33 +120,32 @@ namespace DealEngine.Services.Impl
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
             email.WithSubject ("Deal Engine Password Reset");
-			email.WithBody (body);
-			email.UseHtmlBody (true);
-            
-
-            // Get file part
-
-            // Find path from DB
-            Guid newGuid = Guid.Parse("85578a21-d383-45fb-8e71-aba300363f4b");
+            /* For testing purposes of attaching pdf
+            Guid newGuid = Guid.Parse("ba871350-dc5f-495e-92b0-aba700406eb7");
+            Guid newGuid2 = Guid.Parse("defb8401-92a1-4574-ba80-ab1f0019f46e");
             SystemDocument test = await _fileService.GetDocumentByID(newGuid);
+            List<SystemDocument> docList = new List<SystemDocument>();
+            docList.Add(test);
+            var documentsList = await ToAttachments(docList);
+            email.Attachments(documentsList.ToArray());
             var testPath = test.Path;
-
             // Get the file from server and store for attaching
             if (File.Exists(testPath))
             {
-
                 using var fileStream = new FileStream(testPath, FileMode.Open);
-                Attachment document = new Attachment(fileStream, testPath, MediaTypeNames.Application.Pdf);
-
-                // what if we made it a systemdocument using a byte array as the "contents" partt...? then code makes sense in context of dealengine's emailbuilder
-                // attachments.Add(await ToAttachment(document));
-                // You now have the file, next thing is to attach it somehow....
-                email.Attachments(document);
-
-                Console.WriteLine("lalala");
-
+                Attachment document = new Attachment(fileStream, testPath, MediaTypeNames.Application.Pdf);               
+                //email.Attachments(document);
+                //var attachment = new MimePart ("application", "pdf")
+                //{
+                //    Content = new MimeContent (File.OpenRead(testPath)),
+                //    ContentDisposition = new MimeKit.ContentDisposition (MimeKit.ContentDisposition.Attachment),
+                //    ContentTransferEncoding = ContentEncoding.Base64,
+                //    FileName = Path.GetFileName (testPath)
+                //};
             }
-            Console.WriteLine("lalala");
+            */
+            email.WithBody(body);
+            email.UseHtmlBody(true);
             email.Send ();
 		}
 
@@ -721,6 +723,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
+
 			if (document.ContentType == MediaTypeNames.Text.Html) {
 				// Testing HtmlToOpenXml
 				string html = _fileService.FromBytes (document.Contents);
@@ -737,6 +740,21 @@ namespace DealEngine.Services.Impl
 					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 				}
 			}
+            else if (document.ContentType == MediaTypeNames.Application.Pdf)
+            {
+                var path = document.Path;
+                if (File.Exists(path))
+                {
+                    var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
+                    Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
+                    return pdf;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
 			return null;
 		}
 

@@ -95,8 +95,8 @@ namespace DealEngine.Infrastructure.Email
 
         public void Send()
         {
-            string smtpServer = "localhost";
-            int smtpPort = 25;
+            string smtpServer = "localhost"; // techcertain.com
+			int smtpPort = 25;
 
             using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient())
             {
