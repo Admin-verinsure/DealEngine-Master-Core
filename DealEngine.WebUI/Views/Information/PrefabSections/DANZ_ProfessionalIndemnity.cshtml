@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-9">
                         <label for="percentdetails" class="label required">
-                            If "Yes", please state the percentage of gross fees / gross sales derived from the sale, design and construction of physical products or buildings:
+                            If "Yes", please provide full details: *
                         </label>
                     </div>
                     <div class="col-3">
@@ -78,6 +78,7 @@
                 </div>
             </div>
         </div>
+
         <div id="PIViewModel.HasSubstantialChangeOptions" hidden>
             <div class="form-group">
                 <div class="row">
@@ -88,6 +89,144 @@
                     </div>
                     <div class="col-3">
                         @Html.TextAreaFor(m => m.PIViewModel.SubstantialChangeDetails, new { @class = "form-control", @id = "substantialchangedetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasreferencesobtained" class="label required">
+                        Are references obtained when engaging staff?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasreferencesobtained" name="PIViewModel.HasReferencesObtainedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasReferencesObtainedOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="haspersonneldismissed" class="label required">
+                        Have any personnel been dismissed for, or as a result of, dishonesty or incompetence?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="haspersonneldismissed" name="PIViewModel.HasPersonnelDismissedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasPersonnelDismissedOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PIViewModel.HasPersonnelDismissedOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="personneldismisseddetails" class="label required">
+                            If "Yes", please give full details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PIViewModel.PersonnelDismisedDetails, new { @class = "form-control", @id = "personneldismisseddetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasstandardcontractform" class="label required">
+                        Do you have a standard form of contract or agreement that applies to the provision of professional or specialist services/advice?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasstandardcontractform" name="PIViewModel.HasStandardContractFormOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasStandardContractFormOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="PIViewModel.HasStandardContractFormOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="isforminpractice" class="label required">
+                            If "Yes", Is it your practice to use your standard form on all occasions?
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <select id="isforminpractice" name="PIViewModel.IsFormInPracticeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="reverse" required>
+                            @foreach (var option in Model.PIViewModel.IsFormInPracticeOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="PIViewModel.IsFormInPracticeOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="forminpracticedetails" class="label required">
+                            If "No", please provide details:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PIViewModel.FormInPracticeDetails, new { @class = "form-control", @id = "forminpracticedetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="hasanyotherform" class="label required">
+                        Do you use any standard form, disclaimer or liability waiver other than as disclosed under your standard form of contract/agreement?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="hasanyotherform" name="PIViewModel.HasAnyOtherFormOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PIViewModel.HasAnyOtherFormOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="PIViewModel.HasAnyOtherFormOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="useincircumstancesdetails" class="label required">
+                            If "Yes", please state the circumstances under which it is used:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        @Html.TextAreaFor(m => m.PIViewModel.UseInCircumstancesDetails, new { @class = "form-control", @id = "useincircumstancesdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>
@@ -135,27 +274,27 @@
                         Do you have a complaints process that if a client complains, relevant factors are promptly considered and documents, including:
                         <br />
                         <span>
-                            Documenting the complaint to the Client
+                            - Documenting the complaint to the Client
                         </span>
                         <br />
                         <span>
-                            Whether a conflict of interest has arisen
+                            - Whether a conflict of interest has arisen
                         </span>
                         <br />
                         <span>
-                            Whether you should notify your Broker/Insurer
+                            - Whether you should notify your Broker/Insurer
                         </span>
                         <br />
                         <span>
-                            Whether the complaint's impact can be minimised
+                            - Whether the complaint's impact can be minimised
                         </span>
                         <br />
                         <span>
-                            Whether reputational risk ia a factor
+                            - Whether reputational risk ia a factor
                         </span>
                         <br />
                         <span>
-                            Whether another party or the Client might have contributed to the problem
+                            - Whether another party or the Client might have contributed to the problem
                         </span>
                     </label>
                 </div>
