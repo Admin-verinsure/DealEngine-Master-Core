@@ -710,13 +710,11 @@ namespace DealEngine.WebUI.Controllers
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetReminder");
                             if (emailTemplate != null)
                             {
                                 await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
                             }
-                            //send out uis issue notification email
-                            //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
                         }
                     }
 
