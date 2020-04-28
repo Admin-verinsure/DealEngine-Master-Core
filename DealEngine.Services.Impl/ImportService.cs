@@ -35,7 +35,7 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
-            WorkingDirectory = "C:\\tmp\\danz\\";
+            WorkingDirectory = "/tmp/";
             //WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -1180,7 +1180,7 @@ namespace DealEngine.Services.Impl
             PreRenewOrRefData preRenewOrRefData;
             bool readFirstLine = true;
             string line;
-            var fileName = WorkingDirectory + "PMINZPolicyData2019Final.csv";
+            var fileName = WorkingDirectory + "DANZPolicyData2019Final.csv";
 
             using (reader = new StreamReader(fileName))
             {
@@ -1233,7 +1233,7 @@ namespace DealEngine.Services.Impl
             //addresses need to be on one line            
             var fileName = WorkingDirectory + "DANZClients2019.csv";
             var currentUser = CreatedUser;
-            Guid programmeID = Guid.Parse("6a82f324-964f-47a6-b1cd-78848c62f616"); //PMINZ Programme ID need to change for real import
+            Guid programmeID = Guid.Parse("226ca7cb-8145-4ac4-87dd-7f5dcc6358f4"); 
             StreamReader reader;
             User user = null;
             Organisation organisation = null;
@@ -1251,6 +1251,7 @@ namespace DealEngine.Services.Impl
                     //    line = reader.ReadLine();
                     //    readFirstLine = true;
                     //}
+
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
                     user = null;
@@ -1350,9 +1351,10 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
+            var fileName = WorkingDirectory + "DANZPersonnel2019.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            int lineCount = 0;
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -1367,10 +1369,10 @@ namespace DealEngine.Services.Impl
                     string[] parts = line.Split(',');
                     user = null;
                     organisation = null;
-                    email = "";
+                    email = "";                    
                     try
                     {
-                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[13]);
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[12]);
                         var fullname = parts[0] + " " + parts[1];
                         if (hasProgramme)
                         {
@@ -1387,97 +1389,68 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[13];
+                            organisation.NZIAmembership = parts[12];
                             organisation.Email = email;
                             organisation.Phone = "12345";
 
-                            if (!string.IsNullOrEmpty(parts[3]))
-                            {
-                                organisation.JobTitle = parts[3];
-                            }
-                            if (!string.IsNullOrEmpty(parts[4]))
-                            {
-                                organisation.Qualifications = parts[4];
-                            }
                             if (!string.IsNullOrEmpty(parts[5]))
                             {
-                                organisation.ProfAffiliation = parts[5];
+                                organisation.Qualifications = parts[5];
+                            }
+                            if (!string.IsNullOrEmpty(parts[3]))
+                            {
+                                organisation.DateQualified = parts[3];
                             }
                             if (!string.IsNullOrEmpty(parts[6]))
                             {
-                                organisation.CurrentMembershipNo = parts[6];
+                                if(parts[6] == "1")
+                                {
+                                    organisation.IsRegisteredLicensed = true;
+                                }
+                                else
+                                {
+                                    organisation.IsRegisteredLicensed = false;
+                                }
+                                
                             }
                             if (!string.IsNullOrEmpty(parts[7]))
                             {
                                 if (parts[7] == "1")
                                 {
-                                    organisation.IsCurrentMembership = true;
+                                    organisation.DesignLicensed = "Yes";
                                 }
                                 else
                                 {
-                                    organisation.IsCurrentMembership = false;
+                                    organisation.DesignLicensed = "No";
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(parts[8]))
+                            {
+                                if (parts[8] == "1")
+                                {
+                                    organisation.SiteLicensed = "Yes";
+                                }
+                                else
+                                {
+                                    organisation.SiteLicensed = "No";
                                 }
                             }
                             if (!string.IsNullOrEmpty(parts[9]))
                             {
                                 if (parts[9] == "1")
                                 {
-                                    organisation.CertType = "PMP";
+                                    organisation.InsuredEntityRelation = "Director";
                                 }
                                 else if (parts[9] == "2")
                                 {
-                                    organisation.CertType = "CAPM";
-                                }
-                                else if (parts[9] == "3")
-                                {
-                                    organisation.CertType = "ProjectDirector";
-                                }
-                                else
-                                {
-                                    organisation.CertType = "Ordinary";
-                                }
-                            }
-                            else
-                            {
-                                organisation.CertType = "Ordinary";
-                            }
-                            if (!string.IsNullOrEmpty(parts[10]))
-                            {
-                                if (parts[10] == "1")
-                                {
-                                    organisation.InsuredEntityRelation = "Director";
-                                }
-                                else if (parts[10] == "2")
-                                {
                                     organisation.InsuredEntityRelation = "Employee";
                                 }
-                                else if (parts[10] == "3")
+                                else if (parts[9] == "3")
                                 {
                                     organisation.InsuredEntityRelation = "Contractor";
                                 }
                             }
-                            if (!string.IsNullOrEmpty(parts[11]))
-                            {
-                                if (parts[11] == "1")
-                                {
-                                    organisation.IsContractorInsured = true;
-                                }
-                                else
-                                {
-                                    organisation.IsContractorInsured = false;
-                                }
-                            }
-                            if (!string.IsNullOrEmpty(parts[12]))
-                            {
-                                if (parts[12] == "1")
-                                {
-                                    organisation.IsInsuredRequired = true;
-                                }
-                                else
-                                {
-                                    organisation.IsInsuredRequired = false;
-                                }
-                            }
+                            
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
@@ -1525,10 +1498,11 @@ namespace DealEngine.Services.Impl
                                 await _userService.ApplicationCreateUser(user);
                             }
                         }
+                        lineCount++;
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.Message + lineCount);
                     }
 
                 }
