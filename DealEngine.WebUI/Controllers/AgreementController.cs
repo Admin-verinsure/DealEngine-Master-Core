@@ -2295,7 +2295,7 @@ namespace DealEngine.WebUI.Controllers
                         //send out policy document email
                         EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                         if (emailTemplate != null)
-                        {
+                        {   //nathantest@techcertain.com
                             await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
                         }
                         //send out agreement bound notification email

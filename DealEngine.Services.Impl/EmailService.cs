@@ -120,30 +120,17 @@ namespace DealEngine.Services.Impl
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
             email.WithSubject ("Deal Engine Password Reset");
-            /* For testing purposes of attaching pdf
-            Guid newGuid = Guid.Parse("ba871350-dc5f-495e-92b0-aba700406eb7");
-            Guid newGuid2 = Guid.Parse("defb8401-92a1-4574-ba80-ab1f0019f46e");
+            
+            // For testing purposes of attaching pdf
+            /*
+            Guid newGuid = Guid.Parse("put your uploaded pdf's guid here");
             SystemDocument test = await _fileService.GetDocumentByID(newGuid);
             List<SystemDocument> docList = new List<SystemDocument>();
             docList.Add(test);
             var documentsList = await ToAttachments(docList);
             email.Attachments(documentsList.ToArray());
-            var testPath = test.Path;
-            // Get the file from server and store for attaching
-            if (File.Exists(testPath))
-            {
-                using var fileStream = new FileStream(testPath, FileMode.Open);
-                Attachment document = new Attachment(fileStream, testPath, MediaTypeNames.Application.Pdf);               
-                //email.Attachments(document);
-                //var attachment = new MimePart ("application", "pdf")
-                //{
-                //    Content = new MimeContent (File.OpenRead(testPath)),
-                //    ContentDisposition = new MimeKit.ContentDisposition (MimeKit.ContentDisposition.Attachment),
-                //    ContentTransferEncoding = ContentEncoding.Base64,
-                //    FileName = Path.GetFileName (testPath)
-                //};
-            }
             */
+            
             email.WithBody(body);
             email.UseHtmlBody(true);
             email.Send ();
@@ -735,6 +722,7 @@ namespace DealEngine.Services.Impl
 						HtmlConverter converter = new HtmlConverter (mainPart);
 						converter.ImageProcessing = ImageProcessing.AutomaticDownload;
 						converter.ParseHtml (html);
+                        // var test = "test";
 					}
 					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
@@ -755,10 +743,16 @@ namespace DealEngine.Services.Impl
                 }
 
             }
-			return null;
-		}
+            else
+            {
+                return null;
 
-		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
+            }
+            return null;
+
+        }
+
+        public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
