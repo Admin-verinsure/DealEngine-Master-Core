@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper.Configuration.Annotations;
 using DealEngine.Domain.Entities.Abstracts;
@@ -13,6 +14,8 @@ namespace DealEngine.Domain.Entities
         public virtual Payment Payment { get; set; }
         public virtual User BrokerContactUser { get; set; }
         public virtual ChangeReason ChangeReason { get; set; }
+        public virtual DateTime IssueDate { get; set; }
+        public virtual DateTime ReminderDate { get; set; }
         public virtual IDictionary<Product, bool> Products { get; set; }        
         public virtual IList<ClientAgreement> Agreements { get; protected set; }        
         public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }        

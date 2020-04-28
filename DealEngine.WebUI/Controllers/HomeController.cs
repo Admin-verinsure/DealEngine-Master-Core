@@ -33,7 +33,7 @@ namespace DealEngine.WebUI.Controllers
         IProgrammeService _programmeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
-        IApplicationLoggingService _applicationLoggingService;
+        IApplicationLoggingService _applicationLoggingService;       
 
         public HomeController(            
             IEmailService emailService,
@@ -658,12 +658,17 @@ namespace DealEngine.WebUI.Controllers
                 programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
                 foreach (var key in formCollection.Keys)
                 {
+
                     email = key;
                     var correctEmail = await _userService.GetUserByEmail(email);
                     if (correctEmail != null)
                     {
                         if (programme.ProgEnableEmail)
                         {
+                            var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
+                            clientProgramme.IssueDate = DateTime.Now;
+                            await _programmeService.Update(clientProgramme);
+
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
@@ -707,6 +712,10 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (programme.ProgEnableEmail)
                         {
+                            var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
+                            clientProgramme.ReminderDate = DateTime.Now;
+                            await _programmeService.Update(clientProgramme);
+
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
