@@ -1,296 +1,92 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-<div class="padding-10">
-    <div id="DNOForm" class="smart-form" novalidate="novalidate">
-        <fieldset id="StatutoryLiabilityInsurance">
+
+    <form id="EPLViewModel" class="is-valid">
+        <div class="form-group">
             <div class="row">
-
-
-                <div class="panel-body" id="@Model.ClientProgramme.Id body">
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">
-                                Would you like Employment Practices Liability Insurance?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <select id="EmployerPracticesLiability1" onchange="EmployerPracticesLiabilityInsurance1Selected('EmployerPracticesLiability1')" class="form-control rmv editable" name="EmployerPracticesLiability1">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateEmployerPractices1"></p>
-
-                        </section>
-
-                    </section>
-
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="EmployerPracticesLiability2Sec">
-
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">
-                                Is this a renewal of an existing policy placed with @Model.Name ?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <select id="EmployerPracticesLiability2" onchange="EmployerPracticesLiabilityInsurance2Selected('EmployerPracticesLiability2')" class="form-control rmv editable" name="EmployerPracticesLiability2">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateEmployerPractices2"></p>
-
-                        </section>
-
-                    </section>
-
-                    <div class="hidden" id="LiabilityInsuranceSec">
-                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
-                        <br />
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">
-                                    $ Amount of Cover:
-                                </label>
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="input form-group">
-                                    <i></i>
-                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="EmployerPracticesLiability3" name="EmployerPracticesLiability3" placeholder="$ Amount of Cover" value="" required>
-                                </label>
-                                <p class="validationContainer" id="ValidateEmployerPractices3"></p>
-
-                            </section>
-
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">
-                                    When Lapsed:
-                                </label>
-                            </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="input form-group">
-                                    <label class="input ">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="EmployerPracticesLiability4" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerPracticesLiability4" type="text">
-                                    </label>
-                                </label>
-                                <p class="validationContainer" id="ValidateEmployerPractices4"></p>
-
-                            </section>
-
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">
-                                    Name of Insurer:
-                                </label>
-                            </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="input form-group">
-                                    <i></i>
-                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="EmployerPracticesLiability5" name="EmployerPracticesLiability5" placeholder="Insurer Name" value="" required>
-                                </label>
-                                <p class="validationContainer" id="ValidateEmployerPractices5"></p>
-
-                            </section>
-
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">
-                                    Retroactive date:
-                                </label>
-                            </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="input form-group">
-                                    <label class="input ">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="EmployerPracticesLiability6" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerPracticesLiability6" type="text">
-                                    </label>
-                                </label>
-                                <p class="validationContainer" id="ValidateEmployerPractices6"></p>
-
-                            </section>
-
-                        </section>
-
-                    </div>
-
+                <div class="col-6">
+                    <label for="HasEPL" class="label required">
+                        Would you like Employment Practices Liability Insurance?
+                    </label>
+                </div>
+                <div class="col-6">
+                    <select id="HasEPL" name="EPLViewModel.HasELOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.EPLViewModel.HasEPLOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
-
-            @*<button onclick="ValidatePractice(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
-            @*<button onclick="SaveEmployerLiability(event,'#DNOForm')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
-
-        </fieldset>
-    </div>
-</div>
-
-
-<script type="text/javascript">
-
-    $(window).on("load", function () {
-
-        var clientInformationSheet = $('#AnswerSheetId').val();
-        var postData = { ClientInformationSheet: clientInformationSheet };
-
-        $.ajax({
-            url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                var valid = "true";
-                var count = 0;
-                for (var i = 0; i < data.length - 5; i++) {
-                    if (data[i] == null) {
-                        if (valid) {
-                            valid = "false";
-                        }
-                    }                    
-                }
-                debugger;
-                if (data[0] != "" && valid == "true") {
-                    for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        if (arr != null) {
-                            $('#' + arr[count]).val(arr[count + 1]);
-                            if ($('#EmployerPracticesLiability1').val() == 'true') {
-                                $('#EmployerPracticesLiability2Sec').removeClass('hidden');
-                            } else {
-                                $('#EmployerPracticesLiability2Sec').addClass('hidden');
+        </div>
+        <div id="EPLViewModel.HasELOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="hasexistingpolicy" class="label required">
+                            Is this a renewal of an existing policy placed with @Model.Name ?
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <select id="hasexistingpolicy" name="EPLViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.EPLViewModel.HasExistingPolicyOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }
-                            if ($('#EmployerPracticesLiability2').val() == 'false') {
-                                $('#LiabilityInsuranceSec').removeClass('hidden');
-                            } else {
-                                $('#LiabilityInsuranceSec').addClass('hidden');
-                            }
-                        }                       
-                    }
-                };
-            })
-            .fail(function (a, s, d) {
-                alert("Unable to save.");
-            });
-    });
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="EPLViewModel.HasExistingPolicyOptions" hidden>
+                <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="coveramount" class="label required">
+                                $ Amount of Cover:
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.EPLViewModel.CoverAmount, new { @class = "form-control", @id = "coveramount", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="datelapsed" class="label required">
+                                When Lapsed:
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.EPLViewModel.DateLapsed, new { @class = "form-control", @id = "datelapsed", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="insurername" class="label required">
+                                Name of Insurer:
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.EPLViewModel.InsurerName, new { @class = "form-control", @id = "insurername", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="retroactivedate" class="label required">
+                                Retroactive date:
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.EPLViewModel.RetroactiveDate, new { @class = "form-control", @id = "retroactivedate", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
-    function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {        
-        var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
-
-        if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
-            $('#EmployerPracticesLiability2Sec').removeClass('hidden');
-        } else {
-            $('#EmployerPracticesLiability2').val('');
-            $('#EmployerPracticesLiability3').val('');
-            $('#EmployerPracticesLiability4').val('');
-            $('#EmployerPracticesLiability5').val('');
-            $('#EmployerPracticesLiability6').val('');
-            $('#EmployerPracticesLiability2Sec').addClass('hidden');
-        }
-    };
-
-    
-    function EmployerPracticesLiabilityInsurance2Selected(EmployerPracticesLiability) {        
-        var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
-
-        if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "false") {
-            $('#LiabilityInsuranceSec').removeClass('hidden');
-        } else {
-              $('#EmployerPracticesLiability3').val('');
-              $('#EmployerPracticesLiability4').val('');
-              $('#EmployerPracticesLiability5').val('');
-              $('#EmployerPracticesLiability6').val('');
-              $('#LiabilityInsuranceSec').addClass('hidden');
-        }
-    };
-
-    function ValidatePractice() {
-        event.preventDefault();
-
-        var GLI1 = $('#EmployerPracticesLiability1').val();
-        var GLI2 = $('#EmployerPracticesLiability2').val();
-        var validity = true;
-        if (GLI1 == "") {
-            $('#ValidateEmployerPractices1').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateEmployerPractices1').html("<i></i>");
-        }
-        if (GLI2 == "" && GLI1 == 'true') {
-            $('#ValidateEmployerPractices2').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateEmployerPractices2').html("<i></i>");
-        }
-
-        for (var index = 3; index <= 6; index++) {
-            var employerLiabilityInsurance = "#EmployerPracticesLiability" + index;
-            var value = $(employerLiabilityInsurance).val();
-            var validator = "#ValidateEmployerPractices" + index;
-
-            if (value == "" && ($('#EmployerPracticesLiability2').val() == 'false')) {
-                $(validator).html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                $(validator).html("<i></i>");
-            }
-        }
-        return validity;
-    };
-
-    function SaveEmployerPracticesLiability() {
-        var EmployerPracticesLiability = new Array(6);
-        for (var i = 0; i < EmployerPracticesLiability.length; i++) {
-            EmployerPracticesLiability[i] = new Array(2);
-        }
-
-        for (var i = 1; i <= 6; i++) {
-            for (var j = 0; j < 2; j++) {
-                EmployerPracticesLiability[i - 1][0] = "EmployerPracticesLiability" + i;
-                var employerPracticesLiability = "#EmployerPracticesLiability" + i;
-                EmployerPracticesLiability[i - 1][1] = $(employerPracticesLiability).val();
-            }
-        }
-
-        var postData = { Answers: EmployerPracticesLiability, ClientInformationSheet: clientInformationSheet };
-        $.ajax({
-            url: '@Url.Action("UpdateAnswer", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                return true;
-            })
-            .fail(function (a, s, d) {
-                alert("Unable to save.");
-            });
-    }
-</script>
-
-<style>
-    .required:after {
-        content: " *";
-        color: red;
-        font-size: 20px;
-    }
-</style>
+    </form>

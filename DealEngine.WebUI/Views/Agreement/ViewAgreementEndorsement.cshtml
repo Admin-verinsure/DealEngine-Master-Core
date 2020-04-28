@@ -39,18 +39,26 @@
                     <table class="table table-bordered table-responsive-md table-striped text-center" id="endorsements">
                         <tr>
                             <th class="text-center" width="25%" style="color:black">Endorsement Name</th>
-                            <th class="text-center" width="75%" style="color:black">Endorsement Text</th>
+                            <th class="text-center" width="60%" style="color:black">Endorsement Text</th>
+                            <th class="text-center" width="15%" style="color:black">Endorsement Action</th>
+
                         </tr>
                         @foreach (var item in Model.ClientAgreementEndorsements)
                         {
-                            <tr>
-                                <td class="pt-3-half" width="25%" contenteditable="true" id="EndorsementName" style="color:black" align="left">
-                                    @item.Name
+                           <tr>
+                            <td class="pt-3-half" width="25%" contenteditable="true" id="EndorsementName" style="color:black" align="left">
+                               @item.Name
 
-                                </td>
-                                <td class="pt-3-half" width="75%" contenteditable="true" style="color:black" align="left">
-                                    @Html.Raw(@item.Value)
-                                </td>
+                            </td>
+                            <td class="pt-3-half" width="75%" contenteditable="true" style="color:black" align="left">
+                                @Html.Raw(@item.Value)
+                             </td>
+                             <td>
+                               <button onclick="getEndorsement('@item.ClientAgreementEndorsementID')" style="color:red"><i class="fa fa-edit"></i></button>
+                               <button onclick="SetEndorsementRemovedStatus('@item.ClientAgreementEndorsementID')" class="btn btn-success btn-sm"><span class="fa fa-trash"></span></button>
+
+                             </td>
+                            
                             </tr>
 
                         }
@@ -59,6 +67,11 @@
 
                 <table class="table table-striped table-bordered">
                     <tbody>
+                        <tr hidden>
+                            <td >
+                                @Html.TextBoxFor(m => m.ClientAgreementEndorsementID)
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <label class="col-md-2 control-label">Endorsement Name: </label>
@@ -72,13 +85,14 @@
                                 <label class="col-md-2 control-label">Endorsement Text: </label>
                             </td>
                             <td>
-                                @Html.TextAreaFor(m => m.EndorsementTextToAdd)
+                                @Html.TextAreaFor(m => m.Content, new { @class = "form-control" })
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Save</button>
                             </td>
+
                             <td>
                             </td>
                         </tr>
@@ -90,3 +104,60 @@
     <!-- end widget -->
 </div>
 <!-- WIDGET END -->
+@section pagespecific {
+
+    <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+    <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
+    <script src="~/js/ckeditorPlugin.js"></script>
+
+    <script type="text/javascript">
+
+      function getEndorsement(endorsemnetID) {
+        debugger;
+        event.preventDefault();
+        var postData = { clientAgreementEndorsementID: endorsemnetID };
+
+        $.ajax({
+            url: '@Url.Action("GetAgreementEndorsement", "Agreement")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                debugger; 
+                $("#ClientAgreementEndorsementID").val(data.clientAgreementEndorsementID);
+                $("#EndorsementNameToAdd").val(data.name);
+                window.editor.setData(data.value);
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                alert("There was an error while trying to save the Vehicle.");
+            });
+
+      };
+
+         function SetEndorsementRemovedStatus(endorsemnetID) {
+             event.preventDefault();
+           var postData = { clientAgreementEndorsementID: endorsemnetID };
+           
+           $.ajax({
+            url: '@Url.Action("SetEndorsementRemovedStatus", "Agreement")',
+            type: "Post",
+            data: postData
+           })
+            .done(function (data) {
+                if (data === true) {
+                    location.reload(true);
+                    alert("Deleted Successfully!");
+                } else {
+                    alert("There was an error while trying to delete the Endorsement.");
+                }
+            });
+         }
+
+    </script>
+
+}
+

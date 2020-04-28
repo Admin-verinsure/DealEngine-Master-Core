@@ -31,11 +31,12 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<Product> _productRepository;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
+        IAppSettingService _appSettingService;
 
-  //      string _appData = "~/App_Data/";
-		//string _uploadFolder = "uploads";
+        //      string _appData = "~/App_Data/";
+        //string _uploadFolder = "uploads";
 
-		public FileController(
+        public FileController(
             ILogger<FileController> logger,
             IProgrammeService programmeService,
             IApplicationLoggingService applicationLoggingService,
@@ -44,7 +45,8 @@ namespace DealEngine.WebUI.Controllers
             IFileService fileService,
             IMapperSession<SystemDocument> documentRepository, 
             IMapperSession<Image> imageRepository, 
-            IMapperSession<Product> productRepository
+            IMapperSession<Product> productRepository,
+            IAppSettingService appSettingService
             )
 			: base (userRepository)
 		{
@@ -56,11 +58,12 @@ namespace DealEngine.WebUI.Controllers
 			_documentRepository = documentRepository;
 			_imageRepository = imageRepository;
             _productRepository = productRepository;
+            _appSettingService = appSettingService;
         }
 
-		[HttpGet]
-		public async Task<IActionResult> GetDocument (Guid id, string format)
-		{
+        [HttpGet]
+        public async Task<IActionResult> GetDocument(Guid id, string format)
+        {
             User user = null;
             try
             {
@@ -84,29 +87,58 @@ namespace DealEngine.WebUI.Controllers
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 // Add a main document part. 
-                                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();                 
+                                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
                                 string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
                                 string noBorder = "<figure class=\"table\"><table><tbody><tr>";
 
                                 // Create document with a "main part" to it. No data has been added yet.
-                                if (html.Contains(showBorder)){
-                                    html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
+                                if (html.Contains(showBorder))
+                                {
+                                    html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
                                     // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
-                                if (html.Contains(noBorder)){
+                                if (html.Contains(noBorder))
+                                {
                                     html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                                     // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
+                                string pathurl = "https://" + _appSettingService.domainQueryString + "/images";
+                                string oldpath = "<img src=\"../../../images";
+                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
 
-                                // Create a new html convertor with input mainPart
-                                HtmlConverter converter = new HtmlConverter(mainPart);
+                                if (html.Contains(oldpath))
+                                {
+                                    html = html.Replace(oldpath, newpath);
+                                }
+
+                                    //}
+                                    //html = "< img aligh= "center" src = \"/img/umbrella.png\" /> ";
+                                    //if (html.Contains(oldpath))
+                                    //{
+                                    //}
+                                    //    html = html.Replace(oldpath, newpath);
+                                    //ImagePart imagePart = mainPart.AddImagePart(~\img\umbrella.png);
+                                    //using (FileStream stream = new FileStream(fileName, FileMode.Open))
+                                    //{
+                                    //    imagePart.FeedData(stream);
+                                    //}
+                                    //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
+                                    // Create a new html convertor with input mainPart
+                                    HtmlConverter converter = new HtmlConverter(mainPart);
+
                                 
+                              
+
+
                                 // Need to figure out how to add classes to style the document... (adding to the top of HTML document doesn't work, also lots of the table styling css doesn't actually work. Just the old way works where style isn't specified e.g <table width=\"100%\" border=\"0\"><tr style=\"font-weight: bold\"><td>Studio</td><td colspan=\"2\")
                                 // converter.HtmlStyles.DefaultStyle = converter.HtmlStyles.GetStyle("testClass");
                                 // converter.RefreshStyles();
-                                
-                                converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+
+                                converter.ImageProcessing = ImageProcessing.ManualProvisioning;
+                                //converter.ProvisionImage = converter.OnProvisionImage;
+
+                                Body body = mainPart.Document.Body;
                                 converter.ParseHtml(html);
                             }
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");

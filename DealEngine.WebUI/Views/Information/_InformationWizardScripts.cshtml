@@ -174,7 +174,8 @@
                    var namedPartyExists = document.getElementById("Insured Details / Named Parties");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
                    var IsboatNamecount = 0;
-                   var Isnamedpartyexist = document.querySelector('[aria-describedby="PMINZNamedParties_OrganisationType"]') !== null;
+                       var Isnamedpartyexist = document.querySelector('[aria-describedby="PMINZNamedParties_OrganisationType"]') !== null;
+                       var IsDANZnamedpartyexist = document.querySelector('[aria-describedby="DANZNamedParties_OrganisationType"]') !== null;
                        var Isnamedpartycount = 0;
                        var IsLocationCount = 0;
                        var value = "";
@@ -190,7 +191,15 @@
 
 
                    $('#PMINZNamedParties tr').each(function () {
-                       debugger;
+                       var $tds = $(this).find('td'),
+                           value = $tds.eq(2).text().toString();
+
+                       if (value == "project management personnel" && value != "") {
+                           Isnamedpartycount++;
+                       }
+                   });
+
+                   $('#DANZNamedParties tr').each(function () {
                        var $tds = $(this).find('td'),
                            value = $tds.eq(2).text().toString();
 
@@ -220,7 +229,7 @@
                        $("#Vessel").trigger("click");
                        return false;
 
-                   }else  if (Isnamedpartycount == 0 && (informationsheetstatus != "Bound") || Isnamedpartyexist == false && namedPartyExists != null ) {
+                   }else  if ((Isnamedpartycount == 0 && informationsheetstatus != "Bound") || (!(Isnamedpartyexist == true || IsDANZnamedpartyexist == true) && namedPartyExists != null) ) {
 
                        window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
                        $("[id='Insured Details / Named Parties']").trigger("click");
@@ -301,6 +310,9 @@
                var postdata = {
                    id: ID
                }
+               var validaterowdata = 0;
+                var rownum = 0;
+
                var proddata = "";
                $.ajax({
                    url: '@Url.Action("GetProductName", "Information")',
@@ -315,32 +327,47 @@
                         alert("There was an error getting ProductName.");
                     });
 
-                      debugger;
                       var CoverOptions = new Array(proddata.length);
                         for (var i = 0; i < proddata.length; i++) {
                                var ProdName = proddata[i];
                             var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
                             var producttable = "[id='" + ProdName + "'] tr";
-                           
+                             rownum = 0;
                             //var jhjk = '"[id='"+ProdName +"']' tr";
-                             $(producttable).each(function () {
-                                 var $tds = $(this).find('td'),
-                                     value = $tds.eq(5).text().trim();
-                                 if (value != "") {
-                                     var dependoption = "" + "input[name='" + value + "']:checked";
-                                     var dependendoptionsselected = $(dependoption).val();
-                                     if (dependendoptionsselected == "None" && optionsselected != "None") {
+                            if (optionsselected != null && typeof optionsselected !== "undefined") {
+                                $(producttable).each(function () {
+                                    var $tds = $(this).find('td'),
+                                        value = $tds.eq(5).text().trim();
+                                    rownum++;
+                                    if (value != "") {
+                                        var dependoption = "" + "input[name='" + value + "']:checked";
+                                        var dependendoptionsselected = $(dependoption).val();
+                                        if (dependendoptionsselected == "None" && optionsselected != "None") {
 
-                                         alert("You cannot have " + ProdName + "Without " + value);
-                                         isvalid++;
+                                            alert("You cannot have " + ProdName + "Without " + value);
+                                            isvalid++;
+                                            return false;
+                                        }
+                                        validaterowdata++;
+
+                                    }
+
+                                });
+                            
+                            } else {
+                                isvalid++;
+                                         alert("Please select cover options for all products");
                                          return false;
-                                     }
-                                 }
-                                 
-                                  
-                             });
+                            }
 
+                            
+                                 //if (validaterowdata == 0 && rownum > 1) {
+                                 //        isvalid++;
+                                 //        alert("Please select cover options for all products");
+                                 //        return false;
+                                 //}
+                                 
                             if (isvalid != 0) {
                                      break;
                             }
@@ -477,7 +504,8 @@
                 }
             }, 450);
         });
-
+        
+        $('.AccordionTab').tabs();
         $('#Principaltabs').tabs();
         $('#ceasprojecttabs').tabs();
         $(".chosen-select").chosen({ width: "95%" });
@@ -2829,46 +2857,16 @@ function showAccordionPanel(id, panelNo) {
         var claimTitle = $('#ClaimTitle').val();
         var claimDescription = $('#ClaimDescription').val();
         var claimStatus = $('#ClaimStatus').val();
-        var claimReference = $('#ClaimReference').val();
         var claimPolicyReference = $('#ClaimPolicyReference').val();
         var claimInsurerName = $('#ClaimInsurerName').val();
         var claimInsuredName = $('#ClaimInsuredName').val();
         var claimant = $('#Claimant').val();
         var claimDateOfLoss = $('#ClaimDateOfLoss').val();
         var claimNotifiedDate = $('#ClaimNotifiedDate').val();
-        var claimEstimateInsuredLiability = $('#ClaimEstimateInsuredLiability').val();
-        var avaiprod = $('#PrimaryPolicyprod').val();
-        var avaiorg = $('#ResponsiblePrincipal').val();
-
+      
         var result = true;
         debugger;
-         if (avaiprod == "") {
-            $('#validatePrimaryPolicyprod').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validatePrimaryPolicyprod').html("<font></font>");
-        }
-
-
-        if (avaiorg == "") {
-            $('#validateResponsiblePrincipal').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateResponsiblePrincipal').html("<font></font>");
-        }
-
-        if (claimEstimateInsuredLiability == "") {
-            $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateClaimEstimateInsuredLiability').html("<font></font>");
-        }
+      
         if (claimInsurerName == "") {
             $('#validateclaimInsurerName').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2934,14 +2932,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#validateclaimStatus').html("<font></font>");
         }
-        if (claimReference == "") {
-            $('#validateclaimReference').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateclaimReference').html("<font></font>");
-        }
+        
         if (claimPolicyReference == "") {
             $('#validateclaimPolicyReference').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2950,13 +2941,8 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#validateclaimPolicyReference').html("<font></font>");
         }
+        
         if (result) {
-            var r = /^-?[0-9]*[1-9][0-9]*$/;
-            var result1 = r.test(claimEstimateInsuredLiability);
-        } else {
-            return result;
-        }
-        if (result1) {
             AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
@@ -2972,46 +2958,16 @@ function showAccordionPanel(id, panelNo) {
         var claimTitle = $('#AddClaimTitle').val();
         var claimDescription = $('#AddClaimDescription').val();
         var claimStatus = $('#AddClaimStatus').val();
-        var claimReference = $('#AddClaimReference').val();
+        //var claimReference = $('#AddClaimReference').val();
         var claimPolicyReference = $('#AddClaimPolicyReference').val();
         var claimInsurerName = $('#AddClaimInsurerName').val();
         var claimInsuredName = $('#AddClaimInsuredName').val();
         var claimant = $('#AddClaimant').val();
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
-        var claimEstimateInsuredLiability = $('#AddClaimEstimateInsuredLiability').val();
-        var avaiprod = $('#AddPrimaryPolicyprod').val();
-        var avaiorg = $('#AddResponsiblePrincipal').val();
-
         var result = true;
         debugger;
-         if (avaiprod == "") {
-            $('#AddvalidatePrimaryPolicyprod').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidatePrimaryPolicyprod').html("<font></font>");
-        }
-
-
-        if (avaiorg == "") {
-            $('#AddvalidateResponsiblePrincipal').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateResponsiblePrincipal').html("<font></font>");
-        }
-
-        if (claimEstimateInsuredLiability == "") {
-            $('#AddvalidateClaimEstimateInsuredLiability').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateClaimEstimateInsuredLiability').html("<font></font>");
-        }
+        
         if (claimInsurerName == "") {
             $('#AddvalidateclaimInsurerName').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -3077,14 +3033,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#AddvalidateclaimStatus').html("<font></font>");
         }
-        if (claimReference == "") {
-            $('#AddvalidateclaimReference').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateclaimReference').html("<font></font>");
-        }
+      
         if (claimPolicyReference == "") {
             $('#AddvalidateclaimPolicyReference').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -3093,14 +3042,9 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#AddvalidateclaimPolicyReference').html("<font></font>");
         }
-        if (result) {
-            var r = /^-?[0-9]*[1-9][0-9]*$/;
-            var result1 = r.test(claimEstimateInsuredLiability);
-        } else {
-            return result;
-        }
+       
 
-        if (result1) {
+        if (result) {
             AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
@@ -3168,7 +3112,15 @@ function showAccordionPanel(id, panelNo) {
         $('#ClaimDateOfLoss').val(data.claimDateOfLoss);
         $('#ClaimNotifiedDate').val(data.claimNotifiedDate);
         $('#ClaimEstimateInsuredLiability').val(data.claimEstimateInsuredLiability);
-        $('#ClaimStatus').val(data.claimStatus);
+
+                if (data.claimStatus != "Precautionary notification only") {
+                    $('#ClaimUpdate').addClass('hidden');
+                    $('#EditClaimStatus').addClass('hidden');
+                } else {
+                    $('#ClaimUpdate').removeClass('hidden');
+                    $('#EditClaimStatus').removeClass('hidden');
+                }
+
         $('#ClaimBrokerReference').val(data.claimBrokerReference);
         $('#ClaimInsurerReference').val(data.claimInsurerReference);
         $('#ClaimPaid').val(data.claimPaid);
@@ -7423,13 +7375,21 @@ async: true
 
     function bypassPayment() {
         event.preventDefault();
+                       $('#getDocumentsModal').show();
+
+
         $.ajax({
             url: '@Url.Action("ByPassPayment", "Agreement")',
             type: "Post",
             data: $("#tab_1 :input").serialize({ json: true }),
             async: true
         }).done(function (data) {
+             $('#getDocumentsModal').hide();
+
                window.location.href = data.url;
+        }).fail(function (a, s, d) {
+
+            $('#getDocumentsModal').hide();
         });
     }
 

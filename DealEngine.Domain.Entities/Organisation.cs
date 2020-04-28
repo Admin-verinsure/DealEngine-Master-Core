@@ -111,10 +111,10 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual DateTime DateofRetirement 
-        { 
-            get; 
-            set; 
+        public virtual DateTime DateofRetirement
+        {
+            get;
+            set;
         }
 
         public virtual bool IsRetiredorDecieved
@@ -122,17 +122,17 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual string Activities 
-        { 
-            get; 
-            set; 
+        public virtual string Activities
+        {
+            get;
+            set;
         }
 
 
-        public virtual DateTime DateofDeceased 
+        public virtual DateTime DateofDeceased
         {
-            get; 
-            set; 
+            get;
+            set;
         }
 
         public virtual DateTime DateofBirth
@@ -163,6 +163,11 @@ namespace DealEngine.Domain.Entities
             set;
         }
         public virtual bool IsCurrentMembership { get; set; }
+       // public virtual string Othercompanyname { get; set; }
+        public virtual string DateQualified { get; set; }
+        public virtual string DesignLicensed { get; set; }
+        public virtual string SiteLicensed { get; set; }
+        public virtual bool IsRegisteredLicensed { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual string Description { get; set; }
@@ -186,6 +191,7 @@ namespace DealEngine.Domain.Entities
         public virtual string PMICert { get; set; }
         public virtual string CertType { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
+        public virtual bool MajorShareHolder { get; set; }
         public virtual bool IsContractorInsured { get; set; }
         public virtual bool IsInsuredRequired { get; set; }
         public virtual bool IsOtherdirectorship { get; set; }

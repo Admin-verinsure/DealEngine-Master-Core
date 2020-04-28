@@ -6,6 +6,13 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="wwwroot\images\**" />
+    <Content Remove="wwwroot\images\**" />
+    <EmbeddedResource Remove="wwwroot\images\**" />
+    <None Remove="wwwroot\images\**" />
+  </ItemGroup>
+
    <ItemGroup>
     <Compile Remove="Controllers\InformationDemoController.cs" />
   </ItemGroup>
@@ -64,7 +71,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ckeditor\" />
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,7 @@ using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using Microsoft.Extensions.Logging;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using DealEngine.Infrastructure.FluentNHibernate;
 #endregion
 
 namespace DealEngine.WebUI.Controllers
@@ -41,8 +42,10 @@ namespace DealEngine.WebUI.Controllers
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
         IImportService _importService;
+        IUnitOfWork _unitOfWork;
 
         public AccountController(
+            IUnitOfWork unitOfWork,
             IImportService importService,
             IApplicationLoggingService applicationLoggingService,
             IAuthenticationService authenticationService,
@@ -59,6 +62,7 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationalUnitService organisationalUnitService, 
             IAppSettingService appSettingService) : base (userService)
 		{
+            _unitOfWork = unitOfWork;
             _organisationService = organisationService;
             _importService = importService;
             _applicationLoggingService = applicationLoggingService;
@@ -315,32 +319,25 @@ namespace DealEngine.WebUI.Controllers
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";
-                IdentityUser deUser;                
+                string resultMessage = "";               
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
                     var identityResult = await DealEngineIdentityUserLogin(user, password);
-                    if (identityResult.Succeeded)
+                    if (!identityResult.Succeeded)
                     {
-                        deUser = await _userManager.FindByNameAsync(userName);
-						var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
-                        /*if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
-                        {
-                            var hasRole = await _roleManager.RoleExistsAsync("Client");
-                            if (hasRole)
-                            {
-                                await _userManager.AddToRoleAsync(deUser, "Client");
-                           }
-                        }*/
+                        var deUser = await _userManager.FindByNameAsync(userName);
+                        await _userManager.RemovePasswordAsync(deUser);
+                        await _userManager.AddPasswordAsync(deUser, password);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
                     }
                     else
                     {
+                        var deUser = await _userManager.FindByNameAsync(userName);
+                        await _signInManager.SignOutAsync();
                         deUser = await _userManager.FindByNameAsync(userName);
-                        await _userManager.RemovePasswordAsync(deUser);
-                        await _userManager.AddPasswordAsync(deUser, password);
                         await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
                     }
 
@@ -370,15 +367,27 @@ namespace DealEngine.WebUI.Controllers
             
             try
             {
-                IdentityUser deUser = await _userManager.FindByNameAsync(user.UserName);
+                var deUser = await _userManager.FindByNameAsync(user.UserName);
                 if (deUser == null)
                 {
-                    deUser = new IdentityUser
+                    deUser = new IdentityUser();
+                    deUser.UserName = user.UserName;
+                    deUser.Email = user.Email;
+
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
-                        Email = user.Email,
-                        UserName = user.UserName
-                    };
-                    var result = await _userManager.CreateAsync(deUser, password);
+                        var result = await _userManager.CreateAsync(deUser, password);
+                        if (result.Succeeded)
+                        {
+                            var hasRole = await _roleManager.RoleExistsAsync("Client");
+                            if (hasRole)
+                            {
+                                await _userManager.AddToRoleAsync(deUser, "Client");
+                                await _userManager.UpdateAsync(deUser);
+                            }
+                        }
+                        await uow.Commit();
+                    }
                 }
 
                 return await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);                
@@ -410,15 +419,7 @@ namespace DealEngine.WebUI.Controllers
                     if (result.Succeeded)
                     {
                         var deUser = await _userManager.FindByNameAsync(userName);
-                        var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
-                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
-                        {
-                            var hasRole = await _roleManager.RoleExistsAsync("Client");
-                            if (hasRole)
-                            {
-                                await _userManager.AddToRoleAsync(deUser, "Client");
-                            }
-                        }
+
                         MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
                         MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
                         rsaUser.DevicePrint = "version%3D3%2E5%2E1%5F4%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%2010%2E0%3B%20win64%3B%20x64%3B%20rv%3A68%2E0%29%20gecko%2F20100101%20firefox%2F68%2E0%7C5%2E0%20%28Windows%29%7CWin32%26pm%5Ffpsc%3D24%7C1920%7C1080%7C1050%26pm%5Ffpsw%3D%26pm%5Ffptz%3D12%26pm%5Ffpln%3Dlang%3Den%2DUS%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D0%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dnpswf64%5F32%5F0%5F0%5F223%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1920%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D68%26pm%5Fbr%3DFirefox%26pm%5Finpt%3D%26pm%5Fexpt%3D";//viewModel.DevicePrint;

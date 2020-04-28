@@ -3004,7 +3004,7 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save - No Client information for " + model.AnswerSheetId);
                 string orgTypeName = "";
-                if(model.Type == "project management personnel")
+                if (model.Type == "project management personnel")
                 {
                     model.OrganisationTypeName = "Person - Individual";
                 }
@@ -3126,8 +3126,15 @@ namespace DealEngine.WebUI.Controllers
                     organisation.IsInsuredRequired = model.IsInsuredRequired;
                     organisation.IsCurrentMembership = model.IsCurrentMembership;
                     organisation.PMICert = model.PMICert;
+                    organisation.DateQualified = model.DateQualified;
+                    organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                    organisation.DesignLicensed = model.DesignLicensed;
+                    organisation.SiteLicensed = model.SiteLicensed;
+                    organisation.OtherCompanyname = model.Othercompanyname;
+                    organisation.YearofPractice = model.YearofPractice;
                     organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                     organisation.CertType = model.CertType;
+                    organisation.MajorShareHolder = model.MajorShareHolder;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -3153,6 +3160,8 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
+
+
 
 
 
@@ -3300,7 +3309,17 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
                             organisation.CertType = model.CertType;
-                           
+                            organisation.CurrentMembershipNo = model.CurrentMembershipNo;
+                            organisation.IsCurrentMembership = model.IsCurrentMembership;
+                            organisation.MajorShareHolder = model.MajorShareHolder;
+                            organisation.DateQualified = model.DateQualified;
+                            organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                            organisation.DesignLicensed = model.DesignLicensed;
+                            organisation.SiteLicensed = model.SiteLicensed;
+                            organisation.OtherCompanyname = model.Othercompanyname;
+                            organisation.YearofPractice = model.YearofPractice;
+
+
                         }
                         else
                         {
@@ -3318,7 +3337,15 @@ namespace DealEngine.WebUI.Controllers
                             organisation.IsContractorInsured = model.IsContractorInsured;
                             organisation.IsInsuredRequired = model.IsInsuredRequired;
                             organisation.PMICert = model.PMICert;
+                            organisation.MajorShareHolder = model.MajorShareHolder;
                             organisation.CertType = model.CertType;
+                            organisation.IsCurrentMembership = model.IsCurrentMembership;
+                            organisation.DateQualified = model.DateQualified;
+                            organisation.IsRegisteredLicensed = model.IsRegisteredLicensed;
+                            organisation.DesignLicensed = model.DesignLicensed;
+                            organisation.SiteLicensed = model.SiteLicensed;
+                            organisation.OtherCompanyname = model.Othercompanyname;
+                            organisation.YearofPractice = model.YearofPractice;
                             organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
@@ -3363,8 +3390,12 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
 
                     model.ID = partyID;
-                    model.FirstName = userdb.FirstName;
-                    model.LastName = userdb.LastName;
+                    if(userdb != null)
+                    {
+                        model.FirstName = userdb.FirstName;
+                        model.LastName = userdb.LastName;
+                    }
+                    
                     model.Email = org.Email;
                     model.Qualifications = org.Qualifications;
                     model.isaffiliation = org.IsAffiliation;
@@ -3380,8 +3411,15 @@ namespace DealEngine.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.IsCurrentMembership = org.IsCurrentMembership;
+                    model.MajorShareHolder = org.MajorShareHolder;
                     model.CurrentMembershipNo = org.CurrentMembershipNo;
                     model.OrganisationName = org.Name;
+                    model.DateQualified = org.DateQualified;
+                    model.IsRegisteredLicensed = org.IsRegisteredLicensed;
+                    model.DesignLicensed = org.DesignLicensed;
+                    model.SiteLicensed = org.SiteLicensed;
+                    model.Othercompanyname = org.OtherCompanyname;
+                    model.YearofPractice = org.YearofPractice;            
                     model.AnswerSheetId = answerSheetId;
                 }
                 else
@@ -4080,7 +4118,14 @@ namespace DealEngine.WebUI.Controllers
 
                     ClaimNotification claim = claims[i];
                     JqGridRow row = new JqGridRow(claim.Id);
-                    row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
+                    if(claim.ClaimStatus != "Precautionary notification only")
+                    {
+                        row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant);
+                    }
+                    else
+                    {
+                        row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
+                    }
                     model.AddRow(row);
                 }
 
@@ -4836,7 +4881,7 @@ namespace DealEngine.WebUI.Controllers
                 //condition for organisation exists
                 if (organisation == null)
                 {
-                    organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType);
                     organisation.Phone = phonenumber;
                     organisation.Email = email;
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -4901,12 +4946,8 @@ namespace DealEngine.WebUI.Controllers
                         try
                         {
                             var reference = await _referenceService.GetLatestReferenceId();
-
                             var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-
                             await _referenceService.CreateClientInformationReference(sheet);
-
-
 
                             using (var uow = _unitOfWork.BeginUnitOfWork())
                             {
@@ -4922,7 +4963,6 @@ namespace DealEngine.WebUI.Controllers
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
                                 {
-                                    Thread.Sleep(1000);
                                     await uow.Commit();
                                 }
                                 catch (Exception ex)

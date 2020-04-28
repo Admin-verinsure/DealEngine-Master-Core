@@ -139,6 +139,13 @@ namespace DealEngine.Services.Impl
                 new PMINZEDUWModule(),
                 new PMINZELUWModule(),
                 new PMINZCLUWModule(),
+                new DANZPIUWModule(),
+                new DANZPLUWModule(),
+                new DANZSLUWModule(),
+                new DANZDOUWModule(),
+                new DANZEDUWModule(),
+                new DANZELUWModule(),
+                new DANZCLUWModule(),
 
             };
             return modules;

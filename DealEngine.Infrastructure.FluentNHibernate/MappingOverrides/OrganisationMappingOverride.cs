@@ -6,11 +6,13 @@ using FluentNHibernate.Automapping;
 
 namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
 {
-    public class EndorsementMappingOverride : IAutoMappingOverride<Endorsement>
+
+    public class OrganisationMappingOverride : IAutoMappingOverride<Organisation>
     {
-        public void Override(AutoMapping<Endorsement> mapping)
+        public void Override(AutoMapping<Organisation> mapping)
         {
-            mapping.Map(x => x.Value).Length(10000);
+            mapping.Id(p => p.Id).GeneratedBy.Assigned();
         }
     }
+
 }

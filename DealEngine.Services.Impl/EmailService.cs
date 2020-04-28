@@ -29,15 +29,17 @@ namespace DealEngine.Services.Impl
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
         IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
+        IAppSettingService _appSettingService;
         private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService)
 		{
             _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
             _userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
             _configuration = configuration;
+            _appSettingService = appSettingService;
         }
 
 		#region IEmailService implementation
@@ -115,7 +117,7 @@ namespace DealEngine.Services.Impl
 			body += string.Format("<p>Your username is <em>{0}</em></p>", user.UserName);
 			body += "<p>Thanks<br/>- The Proposalonline Team</p>";
 			body += "<p>Proposalonline is technology of DealEngine Group Limited who provide technical support.</p>";
-			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@DealEngine.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
+			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
@@ -143,23 +145,31 @@ namespace DealEngine.Services.Impl
 
             if (clientInformationSheet != null)
             {
-                mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet);
-            }
+                if (clientAgreement != null)
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, clientAgreement);
+                }
+                else
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, null);
+                }
+
+            } 
             else
             {
-                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet);
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
             }
-                      
-
+            string systememailsubject = emailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)
-            {                
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                 systememailbody = systememailbody.Replace(field.Key, field.Value);
             }            
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
-            email.WithSubject (emailTemplate.Subject);
+            email.WithSubject (systememailsubject);
 			email.WithBody (systememailbody);
 			email.UseHtmlBody (true);
             if(documents != null)
@@ -212,7 +222,8 @@ namespace DealEngine.Services.Impl
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
-            
+            mergeFields.Add(new KeyValuePair<string, string>("[[SupportEmail]]", "support@techcertain.com"));
+
             SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("LoginEmail");
             if (systemEmailTemplate == null)
             {
@@ -244,7 +255,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig");
                 if (systemEmailTemplate == null)
@@ -282,7 +293,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig");
                 if (systemEmailTemplate == null)
@@ -321,7 +332,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet, null);
 
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig");
@@ -361,7 +372,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig");
                 if (systemEmailTemplate == null)
@@ -400,7 +411,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);                    
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -437,7 +448,7 @@ namespace DealEngine.Services.Impl
             {
                 recipent.Add(insuredOrg.Email);
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail");
                 if (systemEmailTemplate == null)
@@ -475,7 +486,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -513,7 +524,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssued, insuredOrg, programme, agreement.ClientInformationSheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -553,7 +564,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail");
                 if (systemEmailTemplate == null)
@@ -594,7 +605,7 @@ namespace DealEngine.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(binder, insuredOrg, programme, agreement.ClientInformationSheet, null);
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
@@ -634,7 +645,7 @@ namespace DealEngine.Services.Impl
             {
                 recipent.Add("support@DealEngine.com");
 
-                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail");
                 if (systemEmailTemplate == null)
@@ -688,16 +699,21 @@ namespace DealEngine.Services.Impl
         /// <param name="recipient">Recipient.</param>
         public async Task<EmailBuilder> GetLocalizedEmailBuilder (string defaultSender, string recipient)
 		{
-			EmailBuilder email = new EmailBuilder (DefaultSender);
-			if (string.IsNullOrWhiteSpace(CatchAllEmail))
+            EmailBuilder email = new EmailBuilder(DefaultSender);
+            //EmailBuilder email = new EmailBuilder (DefaultSender);
+            if (string.IsNullOrWhiteSpace(CatchAllEmail))
             {
-                if (recipient != null)
-                {
-                    email.To(recipient).BCC(BCCEmail);
-                    //email.To(recipient).BCC(SystemEmail);
-                    if (ReplyToEmail != null)
+                if (!string.IsNullOrWhiteSpace(recipient))
+                {                    
+                    email.To(recipient);
+                    if(!string.IsNullOrWhiteSpace(BCCEmail))
                     {
-                        email.ReplyTo();
+                        email.BCC(BCCEmail);
+                    }
+                    //email.To(recipient).BCC(SystemEmail);
+                    if (!string.IsNullOrWhiteSpace(ReplyToEmail))
+                    {
+                        email.ReplyTo(ReplyToEmail);
                     }
                 }
             }
@@ -719,8 +735,34 @@ namespace DealEngine.Services.Impl
 						// Add a main document part. 
 						MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
 						new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
-						HtmlConverter converter = new HtmlConverter (mainPart);
-						converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+
+                        //================
+                        //document override
+                        string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                        string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+                        // Create document with a "main part" to it. No data has been added yet.
+                        if (html.Contains(showBorder))
+                        {
+                            html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        if (html.Contains(noBorder))
+                        {
+                            html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                        }
+                        string pathurl = "https://" + _appSettingService.domainQueryString + "/images";
+                        string oldpath = "<img src=\"../../../images";
+                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
+                        if (html.Contains(oldpath))
+                        {
+                            html = html.Replace(oldpath, newpath);
+                        }
+                        //================
+
+                        HtmlConverter converter = new HtmlConverter (mainPart);
+                        converter.ImageProcessing = ImageProcessing.ManualProvisioning;
 						converter.ParseHtml (html);
                         // var test = "test";
 					}
@@ -762,7 +804,7 @@ namespace DealEngine.Services.Impl
 
 
         #region Merge Field Library
-        public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet)
+        public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
 
@@ -778,6 +820,7 @@ namespace DealEngine.Services.Impl
             if(insuredOrg != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
+                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", insuredOrg.Email));
             }
             if(uISIssuer != null)
             {
@@ -787,6 +830,11 @@ namespace DealEngine.Services.Impl
             if(clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[ReferenceID]]", clientInformationSheet.ReferenceId));
+            }
+            if (clientAgreement != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                mergeFields.Add(new KeyValuePair<string, string>("[[ProductName]]", clientAgreement.Product.Name));
             }
                         
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));

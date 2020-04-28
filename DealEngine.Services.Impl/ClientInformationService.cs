@@ -130,12 +130,14 @@ namespace DealEngine.Services.Impl
         {
             //find a faster way of getting all models
             AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));            
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture))); 
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
         }
 
         private void SaveAnswer(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
