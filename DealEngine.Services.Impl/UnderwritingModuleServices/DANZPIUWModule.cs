@@ -468,7 +468,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfover10perap(underwritingUser, agreement, decSE, decQS, decBSS, decTP, decUP, decEP, decIR, decProjM, decRM, decVal);
             //Custom Endorsement renew
             uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
-
+            //Not a renewal of an existing policy
+            uwrfnotrenewal(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -786,7 +787,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasSubstantialChangeOptions").First().Value == "1") // change answer dismiss one
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPersonnelDismissedOptions").First().Value == "1")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -886,6 +887,28 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
+        void uwrfnotrenewal(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ProfessionalIndemnity7").First().Value == "false")
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
 
     }
 }
