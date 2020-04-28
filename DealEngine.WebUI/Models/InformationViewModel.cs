@@ -523,6 +523,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasProceduresOptions { get; set; }
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        
         public IList<SelectListItem> HasLocationOptions { get; set; }
 
         public int CoverAmount { get; set; }
@@ -564,6 +565,11 @@ namespace DealEngine.WebUI.Models
             HasDANZOptions = GetSelectListOptions();
             HasSalesRelateOptions = GetSelectListOptions();
             HasSubstantialChangeOptions = GetSelectListOptions();
+            IsFormInPracticeOptions = GetSelectListOptions();
+            HasStandardContractFormOptions = GetSelectListOptions();
+            HasAnyOtherFormOptions = GetSelectListOptions();
+            HasPersonnelDismissedOptions = GetSelectListOptions();
+            HasReferencesObtainedOptions = GetSelectListOptions();
             HasLeakyBuildingCoverOptions = GetSelectListOptions();
             HasRiskManagementOptions = GetRiskManagementOptions();
             HasRetainedDocumentOptions = GetAlternativeSelectListOptions();
@@ -732,6 +738,11 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasDANZOptions { get; set; }
         public IList<SelectListItem> HasSalesRelateOptions { get; set; }
         public IList<SelectListItem> HasSubstantialChangeOptions { get; set; }
+        public IList<SelectListItem> HasStandardContractFormOptions { get; set; }
+        public IList<SelectListItem> IsFormInPracticeOptions { get; set; }
+        public IList<SelectListItem> HasAnyOtherFormOptions { get; set; }
+        public IList<SelectListItem> HasPersonnelDismissedOptions { get; set; }
+        public IList<SelectListItem> HasReferencesObtainedOptions { get; set; }
         public IList<SelectListItem> HasLeakyBuildingCoverOptions { get; set; }
         public IList<SelectListItem> HasRiskManagementOptions { get; set; }
         public IList<SelectListItem> HasRetainedDocumentOptions { get; set; }
@@ -755,6 +766,10 @@ namespace DealEngine.WebUI.Models
         public int CoverAmount { get; set; }
         public int PercentFees { get; set; }
         public string PercentDetails { get; set; }
+        public string PersonnelDismisedDetails { get; set; }
+        public string FormInPracticeDetails { get; set; }
+        public string UseInCircumstancesDetails { get; set; }
+        
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
