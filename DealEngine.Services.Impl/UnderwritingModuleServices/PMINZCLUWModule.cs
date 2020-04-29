@@ -204,9 +204,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.DeletedBy = null;
 
 
-            ////Referral points per agreement
-            ////Not a renewal of an existing policy
-            //uwrfnotrenewalcl(underwritingUser, agreement);
+            //Referral points per agreement
+            //Not a renewal of an existing policy
+            uwrfnotrenewalcl(underwritingUser, agreement);
             //Cyber Issue
             uwrclissue(underwritingUser, agreement, feeincome);
 
@@ -368,9 +368,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DNO2").First().Value == "false")
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasExistingPolicyOptions").First().Value == "2")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null).Status = "Pending";
                         }
