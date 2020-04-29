@@ -15,7 +15,7 @@ namespace DealEngine.Domain.Entities
         public ClaimNotification(User createdBy)
             : base(createdBy)
         {
-
+            ClaimProducts = new List<Product>();
         }
 
         public virtual ClientInformationSheet ClientInformationSheet

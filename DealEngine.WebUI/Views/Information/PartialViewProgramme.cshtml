@@ -75,7 +75,15 @@
             $(tr).addClass("hidden");
             $(tr).hide();
            
-            
+             if ("@Model.Status" == "Submitted") {
+                debugger;
+               
+                 $('#updateBoat').addClass("hidden");
+                 $('#ClearBoat').addClass("hidden");
+                 $("select").attr("disabled", "disabled");
+                //$("#PIViewModel :input").prop("disabled", true);
+
+             }
 
             
         });
