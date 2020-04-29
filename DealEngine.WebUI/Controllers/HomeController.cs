@@ -602,7 +602,10 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    clientProgrammes.Add(client);                    
+                    if (client.DateDeleted == null)
+                    {
+                        clientProgrammes.Add(client);
+                    }
                 }
 
                 model.ClientProgrammes = clientProgrammes;     
@@ -630,7 +633,10 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    clientProgrammes.Add(client);
+                    if (client.DateDeleted == null)
+                    {
+                        clientProgrammes.Add(client);
+                    }
                 }
 
                 model.ClientProgrammes = clientProgrammes;
