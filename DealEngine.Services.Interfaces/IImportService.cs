@@ -22,5 +22,6 @@ namespace DealEngine.Services.Interfaces
         Task ImportDANZServicePreRenewData(User user);
         Task ImportDANZServiceIndividuals(User user);
         Task ImportDANZServicePersonnel(User user);
+        Task ImportDANZServiceClaims(User user);
     }
 }

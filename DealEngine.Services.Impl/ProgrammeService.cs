@@ -62,7 +62,10 @@ namespace DealEngine.Services.Impl
                 var isBaseClass = await IsBaseClass(client);
                 if (isBaseClass)
                 {
-                    clientList.Add(client);
+                    if (client.DateDeleted == null)
+                    {
+                        clientList.Add(client);
+                    }
                 }
             }
             return clientList;
@@ -79,7 +82,10 @@ namespace DealEngine.Services.Impl
                 var isBaseClass = await IsBaseClass(client);
                 if (isBaseClass)
                 {
-                    clientList.Add(client);
+                    if (client.DateDeleted == null)
+                    {
+                        clientList.Add(client);
+                    }
                 }
             }
 

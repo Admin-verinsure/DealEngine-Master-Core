@@ -395,224 +395,326 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> PartialViewProgramme(String name, Guid id)
         {
-            var MarinaLocations = new List<OrganisationViewModel>();
+            //var MarinaLocations = new List<OrganisationViewModel>();
             User user = null;
 
             try
             {
+
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                model.ClientInformationSheet = sheet;                
+                model.ClientInformationSheet = sheet;
                 model.SectionView = name;
-                model.ClientProgramme = clientProgramme;                
+                model.ClientProgramme = clientProgramme;
                 user = await CurrentUser();
-                try
-                {                   
+             
+                //build custom models
+                await GetRevenueViewModel(model, sheet.RevenueData);
 
-                    foreach (var section in model.Sections)
-                        foreach (var item in section.Items)
+                //build models from answers
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
+                model.SharedRoleViewModel = sharedRoleViewModel;
+                model.AnswerSheetId = sheet.Id;
+                model.ClientInformationSheet = sheet;
+                model.ClientProgramme = clientProgramme;
+                model.CompanyName = _appSettingService.GetCompanyTitle;
+                //testing dynamic wizard here
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                if (isSubsystem)
+                {
+                    model.Wizardsteps = LoadWizardsteps("Subsystem");
+                }
+                else
+                {
+                    model.Wizardsteps = LoadWizardsteps("Standard");
+                }
+
+
+                string advisoryDesc = "";
+                if (sheet.Status == "Not Started")
+                {
+                    var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                    if (milestone != null)
+                    {
+                        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
+                        if (advisory != null)
                         {
-                            var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                            if (answer != null)
-                                item.Value = answer.Value;
+                            advisoryDesc = advisory.Description;
                         }
-
-                    var boats = new List<BoatViewModel>();
-                    foreach (Boat b in sheet.Boats)
-                    {
-                        boats.Add(BoatViewModel.FromEntity(b));
                     }
-                    model.Boats = boats;
 
-                    var operators = new List<OrganisationViewModel>();
-                    var orgSkipperList = await _organisationService.GetAllOrganisations();
-                    foreach (Organisation or in orgSkipperList.Where(o => o.OrganisationType.Name == "Skipper"))
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
-                        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(or);
-                        ovm.OrganisationName = or.Name;
+                        sheet.Status = "Started";
+                        await uow.Commit();
+                    }
+                }
+
+                model.Advisory = advisoryDesc;
+
+                var boats = new List<BoatViewModel>();
+                foreach (var b in sheet.Boats)
+                {
+                    boats.Add(BoatViewModel.FromEntity(b));
+                }
+
+                model.Boats = boats;
+
+                var operators = new List<OrganisationViewModel>();
+
+                foreach (Organisation skipperorg in sheet.Organisation.Where(o => o.OrganisationType.Name == "Person - Individual"))
+                {
+                    if (skipperorg.InsuranceAttributes.FirstOrDefault(ia => ia.InsuranceAttributeName == "Skipper") != null)
+                    {
+                        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipperorg);
+                        ovm.OrganisationName = skipperorg.Name;
+                        ovm.OrganisationEmail = skipperorg.Email;
+                        ovm.ID = skipperorg.Id;
                         operators.Add(ovm);
                     }
-                    model.Operators = operators;
-
-                    List<SelectListItem> skipperlist = new List<SelectListItem>();
-
-                    for (var i = 0; i < model.Operators.Count(); i++)
-                    {
-                        skipperlist.Add(new SelectListItem
-                        {
-                            Selected = false,
-                            Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
-                            Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
-                        });
-                    }
-
-                    model.SkipperList = skipperlist;
-
-                    var claims = new List<ClaimViewModel>();
-                    foreach (ClaimNotification cl in sheet.ClaimNotifications)
-                    {
-                        claims.Add(ClaimViewModel.FromEntity(cl));
-                    }
-                    model.Claims = claims;
-
-                    var interestedParties = new List<OrganisationViewModel>();
-                    try
-                    {
-                        var insuranceAttributesList = await _insuranceAttributeService.GetInsuranceAttributes();
-                        foreach (InsuranceAttribute IA in insuranceAttributesList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
-                        {
-                            foreach (var org in IA.IAOrganisations)
-                            {
-                                if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability")
-                                {
-                                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                                    ovm.OrganisationName = org.Name;
-                                    interestedParties.Add(ovm);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-
-                    model.InterestedParties = interestedParties;
-                    List<SelectListItem> linterestedparty = new List<SelectListItem>();
-
-                    for (var i = 0; i < model.InterestedParties.Count(); i++)
-                    {
-                        linterestedparty.Add(new SelectListItem
-                        {
-                            Selected = false,
-                            Text = model.InterestedParties.ElementAtOrDefault(i).OrganisationName,
-                            Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
-                        });
-                    }
-
-                    model.InterestedPartyList = linterestedparty;
-
-                    var boatUses = new List<BoatUseViewModel>();
-                    foreach (BoatUse bu in sheet.BoatUses)
-                    {
-                        boatUses.Add(BoatUseViewModel.FromEntity(bu));
-                    }
-                    List<SelectListItem> list = new List<SelectListItem>();
-
-                    try
-                    {
-                        foreach (var bu in boatUses)
-                        {
-                            var text = bu.BoatUseCategory.Substring(0, 4);
-                            var val = bu.BoatUseId.ToString();
-
-                            list.Add(new SelectListItem
-                            {
-                                Selected = false,
-                                Value = val,
-                                Text = text
-                            });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.InnerException);
-                    }
-
-                    model.BoatUseslist = list;
-                    // TODO - find a better way to pass these in
-                    model.HasVehicles = sheet.Vehicles.Count > 0;
-                    var vehicles = new List<VehicleViewModel>();
-                    foreach (Vehicle v in sheet.Vehicles)
-                    {
-                        vehicles.Add(VehicleViewModel.FromEntity(v));
-                    }
-                    model.AllVehicles = vehicles;
-                    model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-                    model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
-
-                    var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                    model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-                    model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                    var locations = new List<LocationViewModel>();
-                    var buildings = new List<BuildingViewModel>();
-                    var waterLocations = new List<WaterLocationViewModel>();
-                    foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
-                    {
-                        organisationalUnits.Add(new OrganisationalUnitViewModel
-                        {
-                            OrganisationalUnitId = ou.Id,
-                            Name = ou.Name
-                        });
-                        model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-                    }
-
-                    foreach (Location loc in sheet.Locations)
-                    {
-                        locations.Add(LocationViewModel.FromEntity(loc));
-                    }
-
-                    foreach (Building bui in sheet.Buildings)
-                    {
-                        buildings.Add(BuildingViewModel.FromEntity(bui));
-                    }
-                    try
-                    {
-                        var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
-                        foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
-                        {
-                            foreach (var org in IA.IAOrganisations)
-                            {
-                                if (org.OrganisationType.Name == "Corporation – Limited liability")
-                                {
-                                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                                    ovm.OrganisationName = org.Name;
-                                    MarinaLocations.Add(ovm);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-
-                    model.MarinaLocations = MarinaLocations;
-
-                    foreach (WaterLocation wl in sheet.WaterLocations)
-                    {
-                        waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
-                    }
-
-                    var availableProducts = new List<SelectListItem>();
-
-
-                    var userDetails = _mapper.Map<UserDetailsVM>(await CurrentUser());
-                    userDetails.PostalAddress = user.Address;
-                    userDetails.StreetAddress = user.Address;
-
-                    var organisationDetails = new OrganisationDetailsVM
-                    {
-                        Name = sheet.Owner.Name,
-                        Phone = sheet.Owner.Phone,
-                        Website = sheet.Owner.Domain
-                    };
-
-                    model.OrganisationalUnits = organisationalUnits;
-                    model.Locations = locations;
-                    model.Buildings = buildings;
-                    model.WaterLocations = waterLocations;
-                    model.InterestedParties = interestedParties;
-                    model.ClaimProducts = availableProducts;
-                    model.OrganisationDetails = organisationDetails;
-                    model.UserDetails = userDetails;
-
                 }
-                catch (Exception ex)
+
+                if (sheet.Owner.OrganisationType.Name == "Person - Individual")
                 {
-                    Console.WriteLine(ex);
+                    OrganisationViewModel ovmowner = _mapper.Map<OrganisationViewModel>(sheet.Owner);
+                    ovmowner.OrganisationName = sheet.Owner.Name;
+                    ovmowner.OrganisationEmail = sheet.Owner.Email;
+                    ovmowner.ID = sheet.Owner.Id;
+                    operators.Add(ovmowner);
                 }
+
+                model.Operators = operators;
+
+                List<SelectListItem> skipperlist = new List<SelectListItem>();
+
+                for (var i = 0; i < model.Operators.Count(); i++)
+                {
+                    skipperlist.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
+                        Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
+                    });
+
+                }
+
+                model.SkipperList = skipperlist;
+
+                var claims = new List<ClaimViewModel>();
+                for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
+                {
+                    claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
+                }
+
+                model.Claims = claims;
+
+                var businessContracts = new List<BusinessContractViewModel>();
+                for (var i = 0; i < sheet.BusinessContracts.Count; i++)
+                {
+                    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
+                }
+                model.BusinessContracts = businessContracts;
+
+                var interestedParties = new List<OrganisationViewModel>();
+
+                var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
+                foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
+                {
+
+                    foreach (var org in IA.IAOrganisations)
+                    {
+                        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                            org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
+                        {
+                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                            ovm.OrganisationName = org.Name;
+                            interestedParties.Add(ovm);
+                        }
+                    }
+                }
+
+                model.InterestedParties = interestedParties;
+
+                List<SelectListItem> linterestedparty = new List<SelectListItem>();
+
+                for (var i = 0; i < model.InterestedParties.Count(); i++)
+                {
+                    linterestedparty.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Text = model.InterestedParties.ElementAtOrDefault(i).OrganisationName,
+                        Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
+                    });
+                }
+
+                model.InterestedPartyList = linterestedparty;
+
+                var boatUses = new List<BoatUseViewModel>();
+                for (var i = 0; i < sheet.BoatUses.Count(); i++)
+                {
+                    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
+
+                }
+
+                List<SelectListItem> list = new List<SelectListItem>();
+
+                for (var i = 0; i < boatUses.Count(); i++)
+                {
+                    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
+                    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
+
+                    list.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = val,
+                        Text = text
+                    });
+
+                }
+
+                model.BoatUseslist = list;
+                // TODO - find a better way to pass these in
+                model.HasVehicles = sheet.Vehicles.Count > 0;
+                var vehicles = new List<VehicleViewModel>();
+                foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
+                {
+                    vehicles.Add(VehicleViewModel.FromEntity(v));
+                }
+                model.AllVehicles = vehicles;
+                model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
+                model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
+
+                var organisationalUnits = new List<OrganisationalUnitViewModel>();
+                model.OrganisationalUnitsVM = new OrganisationalUnitVM();
+                model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
+                var locations = new List<LocationViewModel>();
+                var buildings = new List<BuildingViewModel>();
+                var waterLocations = new List<WaterLocationViewModel>();
+                var MarinaLocations = new List<OrganisationViewModel>();
+                var organisationalunit = new List<OrganisationalUnit>();
+
+
+                for (var i = 0; i < sheet.Owner.OrganisationalUnits.Count(); i++)
+                {
+                    organisationalUnits.Add(new OrganisationalUnitViewModel
+                    {
+                        OrganisationalUnitId = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Id,
+                        Name = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Name
+                    });
+                }
+
+
+                for (var i = 0; i < sheet.Locations.Count(); i++)
+                {
+                    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
+                }
+
+                for (var i = 0; i < sheet.Buildings.Count(); i++)
+                {
+                    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
+
+                }
+
+                var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
+                foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
+                {
+                    foreach (var org in IA.IAOrganisations)
+                    {
+                        if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
+                        {
+                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                            ovm.OrganisationName = org.Name;
+                            MarinaLocations.Add(ovm);
+                        }
+                    }
+                }
+
+                model.MarinaLocations = MarinaLocations;
+
+                for (var i = 0; i < sheet.WaterLocations.Count(); i++)
+                {
+                    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
+                }
+
+                var availableProducts = new List<SelectListItem>();
+
+                foreach (Product product in clientProgramme.BaseProgramme.Products)
+                {
+                    availableProducts.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = "" + product.Id,
+                        Text = product.Name
+                    });
+                }
+
+                var availableorganisation = new List<SelectListItem>();
+
+                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
+                {
+                    availableorganisation.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = "" + organisation.Id,
+                        Text = organisation.Name
+                    });
+                }
+
+                availableorganisation.Add(new SelectListItem
+                {
+                    Selected = false,
+                    Value = "" + sheet.Owner.Id,
+                    Text = sheet.Owner.Name
+                });
+
+
+
+                model.AvailableOrganisations = availableorganisation;
+
+                model.AllVehicles = vehicles;
+
+                var userDetails = _mapper.Map<UserDetailsVM>(user);
+                userDetails.PostalAddress = user.Address;
+                userDetails.StreetAddress = user.Address;
+                userDetails.FirstName = user.FirstName;
+                userDetails.Email = user.Email;
+
+                var organisationDetails = new OrganisationDetailsVM
+                {
+                    Name = sheet.Owner.Name,
+                    Phone = sheet.Owner.Phone,
+                    Website = sheet.Owner.Domain
+                };
+
+                model.OrganisationalUnits = organisationalUnits;
+                model.Locations = locations;
+                model.Buildings = buildings;
+                //model.Buildings.
+                model.WaterLocations = waterLocations;
+                //model.InterestedParties = interestedParties;
+
+
+                model.ClaimProducts = availableProducts;
+                model.OrganisationDetails = organisationDetails;
+                model.UserDetails = userDetails;
+                model.Status = sheet.Status;
+                List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                model.ClientInformationAnswers = informationAnswers;
+
                 ViewBag.Title = "Programme Email Template ";
                 return View(model);
             }

@@ -1180,7 +1180,7 @@ namespace DealEngine.Services.Impl
             PreRenewOrRefData preRenewOrRefData;
             bool readFirstLine = true;
             string line;
-            var fileName = WorkingDirectory + "DANZPolicyData2019Final.csv";
+            var fileName = WorkingDirectory + "DANZPolicyData2019.csv";
 
             using (reader = new StreamReader(fileName))
             {
@@ -1505,6 +1505,59 @@ namespace DealEngine.Services.Impl
                         Console.WriteLine(ex.Message + lineCount);
                     }
 
+                }
+            }
+        }
+
+        public async Task ImportDANZServiceClaims(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            ClaimNotification claimNotification;
+            var programme = await _programmeService.GetProgramme(Guid.Parse("226ca7cb-8145-4ac4-87dd-7f5dcc6358f4"));
+            Product DanzPIProd = programme.Products.FirstOrDefault(p=>p.UnderwritingModuleCode == "DANZ_PI");
+            Product DanzEPLProd = programme.Products.FirstOrDefault(p => p.UnderwritingModuleCode == "DANZ_ED");
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "DANZClaimsDetails.csv";
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if (!readFirstLine)
+                    //{
+                    //    line = reader.ReadLine();
+                    //    readFirstLine = true;
+                    //}
+                    try
+                    {
+                        line = reader.ReadLine();
+                        string[] parts = line.Split(',');
+                        claimNotification = new ClaimNotification(currentUser);
+                        claimNotification.ClaimMembershipNumber = parts[0];
+                        claimNotification.ClaimTitle = parts[4];
+                        claimNotification.ClaimReference = parts[3];
+                        claimNotification.ClaimDescription = parts[5];
+                        claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[7]);
+                        claimNotification.ClaimDateOfLoss = DateTime.Parse(parts[8]);
+                        claimNotification.ClaimEstimateInsuredLiability = decimal.Parse(parts[2]);
+                        claimNotification.Claimant = parts[6];
+                        claimNotification.ClaimStatus = parts[9];
+                        if(parts[1] == "PI")
+                        {
+                            claimNotification.ClaimProducts.Add(DanzPIProd);
+                        }
+                        else
+                        {
+                            claimNotification.ClaimProducts.Add(DanzEPLProd);
+                        }
+
+                        await _programmeService.AddClaimNotificationByMembership(claimNotification);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }

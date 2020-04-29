@@ -1167,16 +1167,27 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
-                ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
-
-                using (var uow = _unitOfWork.BeginUnitOfWork())
+                if(clientAgreementSubTerm.TermId != Guid.Empty)
                 {
-                    term.Premium = clientAgreementSubTerm.Premium;
-                    term.TermLimit = clientAgreementSubTerm.TermLimit;
-                    term.Excess = clientAgreementSubTerm.Excess;
-                    await uow.Commit();
+                    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        term.Premium = clientAgreementSubTerm.Premium;
+                        term.TermLimit = clientAgreementSubTerm.TermLimit;
+                        term.Excess = clientAgreementSubTerm.Excess;
+                        await uow.Commit();
+                    }
                 }
-
+                else
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        decimal brokeragerate = agreement.Product.DefaultBrokerage;
+                        decimal Brokerage = clientAgreementSubTerm.Premium * agreement.Product.DefaultBrokerage / 100;
+                        _clientAgreementTermService.AddAgreementTerm(user, clientAgreementSubTerm.TermLimit, clientAgreementSubTerm.Excess, clientAgreementSubTerm.Premium, 0.0m, brokeragerate, Brokerage, agreement, clientAgreementSubTerm.TermType);
+                        await uow.Commit();
+                    }
+                }
                 return RedirectToAction("EditTerms", new { id = clientAgreementId });
             }
             catch(Exception ex)
