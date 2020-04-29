@@ -2984,6 +2984,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Id = id;
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
+                ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
 
                 return View("ViewAcceptedAgreementList", models);
             }
