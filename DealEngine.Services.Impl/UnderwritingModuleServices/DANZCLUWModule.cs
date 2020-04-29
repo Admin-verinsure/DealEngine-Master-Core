@@ -83,7 +83,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
                 }
             }
-            decimal extpremium = 0m;
+
             int TermLimit100k = 100000;
             decimal TermPremium100k = rates["cl100klimitpremium"];
             decimal TermBrokerage100k = 0m;
@@ -96,15 +96,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
-            ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+            //ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
             ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
             ClientAgreementEndorsement cAECLUPM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Unencrypted Portable Media Exclusion (UPM)");
 
-            if (cAECLExt != null)
-            {
-                cAECLExt.DateDeleted = DateTime.UtcNow;
-                cAECLExt.DeletedBy = underwritingUser;
-            }
+            //if (cAECLExt != null)
+            //{
+            //    cAECLExt.DateDeleted = DateTime.UtcNow;
+            //    cAECLExt.DeletedBy = underwritingUser;
+            //}
             if (cAECLDRB != null)
             {
                 cAECLDRB.DateDeleted = DateTime.UtcNow;
@@ -116,19 +116,19 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 cAECLUPM.DeletedBy = underwritingUser;
             }
 
-            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
-            {
-                extpremium = rates["clsocialengineeringextpremium"];
+            //if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+            //{
+            //    extpremium = rates["clsocialengineeringextpremium"];
 
-                if (cAECLExt != null)
-                {
-                    cAECLExt.DateDeleted = null;
-                    cAECLExt.DeletedBy = null;
-                }
-            }
+            //    if (cAECLExt != null)
+            //    {
+            //        cAECLExt.DateDeleted = null;
+            //        cAECLExt.DeletedBy = null;
+            //    }
+            //}
             if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "2")
             {
@@ -150,7 +150,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm termcl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
             termcl100klimitoption.TermLimit = TermLimit100k;
-            termcl100klimitoption.Premium = TermPremium100k + extpremium;
+            termcl100klimitoption.Premium = TermPremium100k;
             termcl100klimitoption.Excess = TermExcess;
             termcl100klimitoption.BrokerageRate = agreement.Brokerage;
             termcl100klimitoption.Brokerage = TermBrokerage100k;

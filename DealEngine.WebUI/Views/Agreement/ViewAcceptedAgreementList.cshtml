@@ -162,7 +162,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }
 
                
-                    @if (@multiCoverOptionsStatus && (@ViewBag.Status.Contains("Bound") && (@ViewBag.IsBroker || @ViewBag.IsTC)))
+                    @if (@multiCoverOptionsStatus && (@ViewBag.IsBroker || @ViewBag.IsTC))
                     {
                         <div class="form-group">
                             <div> <button class="btn btn-success btn-sm" onclick="SaveCoveroptions();">Save All Cover Options</button></div>
