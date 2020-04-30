@@ -602,7 +602,7 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    if (client.DateDeleted == null)
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
                     {
                         clientProgrammes.Add(client);
                     }
@@ -633,7 +633,7 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    if (client.DateDeleted == null)
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
                     {
                         clientProgrammes.Add(client);
                     }
