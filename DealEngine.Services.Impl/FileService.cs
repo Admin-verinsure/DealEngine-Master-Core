@@ -148,6 +148,10 @@ namespace DealEngine.Services.Impl
                 if (term.Bound)
                 {
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx4_{0}]]", term.SubTermType), (term.TermLimit * 4).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx5_{0}]]", term.SubTermType), (term.TermLimit * 5).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
                     if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
@@ -529,6 +533,7 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate]]", agreement.RetroactiveDate));
             mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
             mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ProfessionalBusiness]]", agreement.ProfessionalBusiness));
             if (clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
@@ -556,6 +561,10 @@ namespace DealEngine.Services.Impl
                 {
                     //mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx4_{0}]]", term.SubTermType), (term.TermLimit * 4).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx5_{0}]]", term.SubTermType), (term.TermLimit * 5).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
                     if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
@@ -587,16 +596,24 @@ namespace DealEngine.Services.Impl
 
                     if (term.SubTermType == "CL")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
-                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
-                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
-                        {
-                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
-                        } else
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
                         {
                             mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                        } else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                            }
                         }
-                        
                     }
                 }
             }
@@ -652,7 +669,7 @@ namespace DealEngine.Services.Impl
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Endorsement Name");
-                dt.Columns.Add("Product Name");
+                //dt.Columns.Add("Product Name");
                 dt.Columns.Add("Endorsement Text");
 
                 foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements)
@@ -662,10 +679,10 @@ namespace DealEngine.Services.Impl
                         DataRow dr = dt.NewRow();
 
                         dr["Endorsement Name"] = ClientAgreementEndorsement.Name;
-                        if (agreement.ClientInformationSheet.Product != null)
-                        {
-                            dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
-                        }
+                        //if (agreement.ClientInformationSheet.Product != null)
+                        //{
+                        //    dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
+                        //}
 
                         dr["Endorsement Text"] = ClientAgreementEndorsement.Value;
 

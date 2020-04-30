@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class PMINZELUWModule : IUnderwritingModule
+    public class DANZSLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public PMINZELUWModule()
+        public DANZSLUWModule()
         {
-            Name = "PMINZ_EL";
+            Name = "DANZ_SL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -33,15 +33,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm elterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm slterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null))
                 {
-                    elterm.Delete(underwritingUser);
+                    slterm.Delete(underwritingUser);
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "el250klimitpremium", "eltopuppremiumover4employee");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl250klimitminpremium", "sl500klimitminpremium", "sl1millimitminpremium",
+            //    "sl250klimitunder6employeerate", "sl500klimitunder6employeerate", "sl1millimitunder6employeerate", "sl250klimit6to10employeerate", "sl500klimit6to10employeerate",
+            //    "sl1millimit6to10employeerate", "sl250klimitover10employeerate", "sl500klimitover10employeerate", "sl1millimitover10employeerate");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -67,13 +69,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.ELRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.SLRetro))
                         {
-                            strretrodate = preRenewOrRefData.ELRetro;
+                            strretrodate = preRenewOrRefData.SLRetro;
                         }
 
                     }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "EL")
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "SL")
                     {
                         if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
                         {
@@ -84,29 +86,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            int TermLimit250k = 250000;
-            decimal TermPremium250k = rates["el250klimitpremium"];
-            decimal TermBrokerage250k = 0m;
+            int TermLimit1mil = 1000000;
+            decimal TermPremium1mil = 0m;
+            decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
 
             //Return terms based on the limit options
 
-            TermExcess = 2500;
+            TermExcess = 250;
 
-            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 4)
-            {
-                TermPremium250k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 4) * rates["eltopuppremiumover4employee"];
-            }
-
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremium250k;
-            termsl250klimitoption.Excess = TermExcess;
-            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerage250k;
-            termsl250klimitoption.DateDeleted = null;
-            termsl250klimitoption.DeletedBy = null;
+            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit1mil, TermExcess);
+            termsl1millimitoption.TermLimit = TermLimit1mil;
+            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Excess = TermExcess;
+            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1millimitoption.Brokerage = TermBrokerage1mil;
+            termsl1millimitoption.DateDeleted = null;
+            termsl1millimitoption.DeletedBy = null;
 
 
             ////Referral points per agreement
@@ -122,7 +119,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Inception or Date since EL policy first held";
+            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
+            string retrodate = "Policy Inception";
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
@@ -131,7 +129,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.RetroactiveDate = strretrodate;
             }
 
-            string auditLogDetail = "PMINZ EL UW created/modified";
+            string auditLogDetail = "DANZ SL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -209,4 +207,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
     }
 }
+
+
 

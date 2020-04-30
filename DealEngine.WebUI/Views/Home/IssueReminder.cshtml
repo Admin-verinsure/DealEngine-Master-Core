@@ -1,12 +1,12 @@
 ﻿@model IssueUISViewModel
 
 <div class="container">
-    <form method="POST" action="~/Home/IssueUIS" novalidate>
+    <form method="POST" action="~/Home/IssueReminder" novalidate>
         <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
         <div class="card">
             <div class="card-header">
                 <h5>
-                    This page lists the clients from this programme. Please select the client and click on Send to issue the information sheet instruction, this will send out the login instruction email and information sheet instruction email. If you cannot find the client in the list, use Create UIS from the previous page to add them.
+                    This page lists the clients from this programme. Please select the client and click on Send to issue the information sheet reminder, this will send out the login instruction email and information sheet reminder email. If you cannot find the client in the list, use Create UIS from the previous page to add them.
                 </h5>
             </div>
             <div class="card-body">
@@ -20,7 +20,7 @@
                                 Email
                             </th>
                             <th>
-                                Issued Date
+                                Reminder Date
                             </th>
                         </tr>
                     </thread>
@@ -42,7 +42,7 @@
                                 <input type="text" class="form-control" value="@clientProg.Owner.Email" readonly>
                             </td>
                             <td>
-                                <input type="text" class="dateInput form-control" value="@clientProg.IssueDate" readonly>
+                                <input type="text" class="dateInput form-control" value="@clientProg.ReminderDate" readonly>
                             </td>
                         </tr>
                         }
@@ -55,4 +55,3 @@
         </div>
     </form>
 </div>
-

@@ -25,15 +25,17 @@ namespace DealEngine.Services.Impl
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
         IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
+        IAppSettingService _appSettingService;
         private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService)
 		{
             _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
             _userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
             _configuration = configuration;
+            _appSettingService = appSettingService;
         }
 
 		#region IEmailService implementation
@@ -755,9 +757,9 @@ namespace DealEngine.Services.Impl
                             html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                             // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                         }
+                        string pathurl = "https://" + _appSettingService.domainQueryString + "/images";
                         string oldpath = "<img src=\"../../../images";
-                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"https://staging.professionalrisks.online/images";
-
+                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
                         if (html.Contains(oldpath))
                         {
                             html = html.Replace(oldpath, newpath);

@@ -51,5 +51,11 @@ namespace DealEngine.Services.Impl
         {
             return await _clientAgreementEndorsementRepository.GetByIdAsync(clientAgreementEndorsementId);
         }
+
+        public async Task<ClientAgreementEndorsement> GetClientAgreementEndorsementByName(ClientAgreement clientAgreement ,string clientAgreementEndorsementName)
+        {
+            return await _clientAgreementEndorsementRepository.FindAll().FirstOrDefaultAsync(c => c.Name == clientAgreementEndorsementName && c.ClientAgreement == clientAgreement); ;
+        }
+
     }
 }

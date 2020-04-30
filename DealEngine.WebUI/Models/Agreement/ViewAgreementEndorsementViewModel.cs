@@ -12,10 +12,10 @@ namespace DealEngine.WebUI.Models.Agreement
         public Guid ClientAgreementID { get; set; }
 
         public Guid ClientProgrammeID { get; set; }
-
+        public Guid ClientAgreementEndorsementID { get; set; }
         public string EndorsementNameToAdd { get; set; }
 
-        public string EndorsementTextToAdd { get; set; }
+        public string Content { get; set; }
 
     }
 

@@ -174,70 +174,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-9">
-                            <label for="hasprocedures" class="label required">
-                                Do you have procedures for verifying destination bank accounts and/or any changes to destination bank account details, before funds are transferred?
-                            </label>
-                        </div>
-                        <div class="col-3">
-                            <select id="hasprocedures" name="CLIViewModel.HasProceduresOptions" class="custom-select" data-rule="CyberOptional" data-item="hasapprovedvendors,hasprocedures" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.CLIViewModel.HasProceduresOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-9">
-                            <label for="hasapprovedvendors" class="label required">
-                                Do you hold an approved list of vendors and suppliers, including authorized contract people and contace details, which is checked when payments are made?
-                            </label>
-                        </div>
-                        <div class="col-3">
-                            <select id="hasapprovedvendors" name="CLIViewModel.HasApprovedVendorsOptions" class="custom-select" data-rule="CyberOptional" data-item="hasapprovedvendors,hasprocedures" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.CLIViewModel.HasApprovedVendorsOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div id="CLIViewModel.HasApprovedVendorsOptions" hidden>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-12">
-                                <label class="label">
-                                    <strong>Social Engineering Fraud Extension</strong>
 
-                                    Social Engineering Fraud optional extension to cover Phishing (the fraudulent use of electronic communications or websites to impersonate you to solicit personal or confidential information about your clients) , Phreaking (the unauthorised and malicious use of your telephone system which results in charges which you are legally liable to pay) and Fake Invoice losses (voluntarily giving away of your own money to a third party due to that third party impersonating one of your employees, principals, clients or suppliers)
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-9">
-                                <label for="hasoptionalCLE" class="label required">
-                                    Would you like to purchase this optional Cyber Liability Social Engineering Fraud Extension policy extension for $250?
-                                </label>
-                            </div>
-                            <div class="col-3">
-                                <select id="hasoptionalCLE" name="CLIViewModel.HasOptionalCLEOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.CLIViewModel.HasOptionalCLEOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">

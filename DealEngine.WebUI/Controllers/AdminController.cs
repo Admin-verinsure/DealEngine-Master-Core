@@ -274,6 +274,78 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DANZImportUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportDANZServiceIndividuals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DANZImportPersonnel()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportDANZServicePersonnel(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DANZImportClaims()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportDANZServiceClaims(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DANZImportPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportDANZServicePreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AONImportContracts()
         {
             User user = null;

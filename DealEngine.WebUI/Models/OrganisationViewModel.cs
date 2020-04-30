@@ -64,7 +64,7 @@ namespace DealEngine.WebUI.Models
         public string Othercompanyname { get; set; }
         public string Activities { get; set; }
         public string ProfAffiliation { get; set; }
-        public  string JobTitle { get; set; }
+        public string JobTitle { get; set; }
         public string InsuredEntityRelation { get; set; }
         public bool IsContractorInsured { get; set; }
         public bool IsCurrentMembership { get; set; }
@@ -72,11 +72,16 @@ namespace DealEngine.WebUI.Models
         public string PMICert { get; set; }
         public string PartyName { get; set; }
         public string CertType { get; set; }
-        public  bool MajorShareHolder { get; set; }
+        public bool MajorShareHolder { get; set; }
 
         public bool isaffiliation { get; set; }
-        public  string affiliationdetails { get; set; }
-        public  string CurrentMembershipNo { get; set; }
+        public string affiliationdetails { get; set; }
+        public string CurrentMembershipNo { get; set; }
+
+        public  string DateQualified { get; set; }
+        public  string DesignLicensed { get; set; }
+        public  string SiteLicensed { get; set; }
+        public  bool IsRegisteredLicensed { get; set; }
 
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }

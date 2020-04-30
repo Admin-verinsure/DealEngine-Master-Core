@@ -73,6 +73,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string RetroactiveDate { get; set; }
         public string TerritoryLimit { get; set; }
         public string Jurisdiction { get; set; }
+        public string ProfessionalBusiness { get; set; }
     }
 
     public class InsuranceInclusion

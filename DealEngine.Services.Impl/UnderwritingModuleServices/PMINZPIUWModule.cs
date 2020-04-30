@@ -680,14 +680,19 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value != null)
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value != null)
                     {
-                        var result = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Substring(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Length - 2);
-                        if (result != "10")
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Length >= 2)
+                        {
+                            var result = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Substring(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Length - 2);
+                            if (result != "10")
+                            {
+                                agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
+                            }
+                        } else
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
                         }
-                        
                     }
                 }
             }
@@ -712,7 +717,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasWithdrawnOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1")
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" || 
+                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -735,7 +741,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoprojectsmanaged" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasManagedProjectOptions").First().Value == "2")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasManagedProjectOptions").First().Value == "2")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoprojectsmanaged" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -804,7 +810,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcapacityofanengineertocontract" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasEngineerOptions").First().Value == "1")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasEngineerOptions").First().Value == "1")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcapacityofanengineertocontract" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -850,7 +856,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcomponentspecificationactivities" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.HasIncludedDesignOptions").First().Value == "1")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasIncludedDesignOptions").First().Value == "1")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcomponentspecificationactivities" && cref.DateDeleted == null).Status = "Pending";
                     }

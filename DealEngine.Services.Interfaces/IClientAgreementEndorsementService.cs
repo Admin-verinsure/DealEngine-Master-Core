@@ -13,5 +13,7 @@ namespace DealEngine.Services.Interfaces
             Task<List<ClientAgreementEndorsement>> GetAllClientAgreementEndorsementFor(ClientAgreement clientAgreement);
 
             Task<ClientAgreementEndorsement> GetClientAgreementEndorsementBy(Guid clientAgreementEndorsementId);
-        }
+            Task<ClientAgreementEndorsement> GetClientAgreementEndorsementByName(ClientAgreement clientAgreement , string clientAgreementEndorsementName);
+
     }
+}

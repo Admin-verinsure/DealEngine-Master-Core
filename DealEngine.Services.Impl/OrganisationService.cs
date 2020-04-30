@@ -104,7 +104,8 @@ namespace DealEngine.Services.Impl
 				|| ia.InsuranceAttributeName == "Subsidiary"
 				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
 				|| ia.InsuranceAttributeName == "JointVenture"
-				|| ia.InsuranceAttributeName == "Mergers"))
+				|| ia.InsuranceAttributeName == "Mergers"
+				|| ia.InsuranceAttributeName == "project management personnel"))
 			{
 				foreach (var org in IA.IAOrganisations)
 				{

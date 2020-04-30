@@ -202,7 +202,10 @@
         });
     });
 
-
+     $("#btnAdd").click(function () {
+            debugger;
+                termSubmit();
+     });
 
     function LoadSubmit() {
         debugger;
@@ -375,8 +378,6 @@
             return validation;
         }
 
-
-
         function validate(value) {
             var r = /^\d+(\.\d+)?$/;
             value = value.replace("$", " ").replace(/,/g, '').trim();
@@ -436,8 +437,6 @@
               contentType: "application/json; charset=utf-8"
           })
     }
-
-
     function selectorgUser() {
         debugger;
         var selectedParty = $('input[name=Parties]:checked').val();
@@ -613,7 +612,7 @@
                });
     }
 
-        function motorSubmit() {
+     function motorSubmit() {
             debugger;
             var agreement = $("#ClientAgreementId").val();
             var boatSumInsured = $("#MotorSumInsured").val().replace("$", " ");
@@ -646,6 +645,7 @@
             });
         }
 
+    
      function termSubmit() {
             debugger;
             var agreement = $("#ClientAgreementId").val();
