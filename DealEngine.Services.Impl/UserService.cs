@@ -223,9 +223,10 @@ namespace DealEngine.Services.Impl
 			return await _userRepository.FindAll().Where(u => u.Locked == true).ToListAsync();
 		}
 
-		public async Task<User> GetUserByOrganisation(Organisation org)
+		public async Task<List<User>> GetBrokerUsers()
 		{
-			return _userRepository.FindAll().FirstOrDefault(u => u.PrimaryOrganisation == org);
+			var users = await _userRepository.FindAll().Where(u => u.PrimaryOrganisation.IsBroker == true).ToListAsync();
+			return users;			
 		}
 	}
 }
