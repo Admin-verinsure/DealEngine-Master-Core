@@ -132,8 +132,8 @@ namespace DealEngine.WebUI.Controllers
                         Name = RoleName
                     };
 
-                    var identityreult = await _roleManager.CreateAsync(role);
-                    if (identityreult.Succeeded)
+                    var identityresult = await _roleManager.CreateAsync(role);
+                    if (identityresult.Succeeded)
                     {
                         await _userRoleService.AddUserRole(user, role, organisation);
 
@@ -155,7 +155,29 @@ namespace DealEngine.WebUI.Controllers
             }
                      
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> DeleteRoleSelect(string RoleName)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                var isRole = await _roleManager.RoleExistsAsync(RoleName);
+                if (isRole)
+                {
+                    var role = await _roleManager.FindByNameAsync(RoleName);
+                    await _roleManager.DeleteAsync(role);
+                }
 
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> UpdateRole(string RoleName, string[] Claims)
         {
@@ -226,6 +248,33 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUserToClaim(string UserId, string[] Claims)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                var appUser = await _userService.GetUserById(Guid.Parse(UserId));
+                var identityUser = await _userManager.FindByNameAsync(appUser.UserName);
+                if(identityUser != null)
+                {
+                    foreach (var cl in Claims)
+                    {
+                        var claim = new Claim(cl, cl);
+                        await _userManager.AddClaimAsync(identityUser, claim);
+                    }
+                }
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
