@@ -10,5 +10,6 @@ namespace DealEngine.Services.Interfaces
         Task<Location> GetLocationByStreet(string street);
         Task<Location> GetLocationById(Guid locationId);
         Task<List<string>> GetLocationStreetList();
+        Task UpdateLocation(Location location);
     }
 }

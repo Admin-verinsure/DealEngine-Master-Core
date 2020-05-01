@@ -1127,6 +1127,13 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
+
+            var accordianPanel = sessionStorage.getItem("accordianTrigger");
+            if (accordianPanel != null) {
+                $("[id='" + accordianPanel + "']").trigger("click");
+                sessionStorage.removeItem("accordianTrigger");
+            }
+
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');

@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div id="CommonLocation" class="container-fluid">
+<div id="Location" class="container-fluid">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" id="tab1">
             <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
@@ -9,7 +9,7 @@
             <a class="nav-link" href="#locationtab2" data-toggle="tab"> Location Details </a>
         </li>
         <li class="nav-item" id="tab3">
-            <a class="nav-link" href="#locationtab3" data-toggle="tab"> Add </a>
+            <a class="nav-link" href="#locationtab3" data-toggle="tab"> List Removed </a>
         </li>
     </ul>
     <div class="tab-content">
@@ -36,11 +36,11 @@
                             <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab2')"><i class="fa fa-edit"></i></button>
                         </td>
                     </tr>
-                    @foreach (var location in Model.LocationViewModel.Locations)
+                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList()) 
                     {
-                        <tr>
+                        <tr id="@location.Id">
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id, @location.LocationType, @location.CommonName, @location.Street, @location.City, @location.Country')"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id,@location.LocationType,@location.CommonName,@location.Street,@location.City,@location.Country')"><i class="fa fa-edit"></i></button>
                             </td>
                             <td>
                                 @location.LocationType
@@ -55,9 +55,8 @@
                                 @location.City
                             </td>
                             <td>
-                                <button onclick="SetLocationRemovedStatus('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                <button onclick="RemoveLocation('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
                             </td>
-
                         </tr>
                     }
                 </tbody>
@@ -130,6 +129,46 @@
                     <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
                 </div>
             </form>
+        </div>
+        <div id="locationtab3" class="tab-pane" role="tabpanel">
+            <table id="tblRemovedLocation"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="restoreButton" data-sortable="false"></th>
+                        <th data-field="locationType" data-sortable="true">Location Type</th>
+                        <th data-field="commonName" data-sortable="true">Common Name</th>
+                        <th data-field="street" data-sortable="true">Street</th>
+                        <th data-field="city" data-sortable="true">City</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == true).ToList()) 
+                    {
+                        <tr id="@location.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="RestoreLocation('@location.Id')"><i class="fa fa-undo"></i></button>
+                            </td>
+                            <td>
+                                @location.LocationType
+                            </td>
+                            <td>
+                                @location.CommonName
+                            </td>
+                            <td>
+                                @location.Street
+                            </td>
+                            <td>
+                                @location.City
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

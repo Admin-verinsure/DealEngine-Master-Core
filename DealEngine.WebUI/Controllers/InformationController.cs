@@ -47,7 +47,7 @@ namespace DealEngine.WebUI.Controllers
         IAdvisoryService _advisoryService;
         IOrganisationService _organisationService;
         IInsuranceAttributeService _insuranceAttributeService;
-        IBusinessActivityService _businessActivityService;        
+        IBusinessActivityService _businessActivityService;
         IProductService _productService;
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
@@ -60,7 +60,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
-            IInformationSectionService informationSectionService,            
+            IInformationSectionService informationSectionService,
             IInsuranceAttributeService insuranceAttributeService,
             IOrganisationService organisationService,
             IActivityService activityService,
@@ -96,7 +96,7 @@ namespace DealEngine.WebUI.Controllers
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
-            _logger = logger;            
+            _logger = logger;
             _insuranceAttributeService = insuranceAttributeService;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
@@ -175,153 +175,170 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> StartInformation(Guid id)
-        {
-            User user = null;
-            try
-            {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
-                ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                user = await CurrentUser();
-                model.ClientInformationSheet = sheet;
-                model.ClientProgramme = clientProgramme;
-                model.CompanyName = _appSettingService.GetCompanyTitle;
+        //[HttpGet]
+        //public async Task<IActionResult> StartInformation(Guid id)
+        //{
+        //    User user = null;
+        //    try
+        //    {
+        //        ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+        //        ClientInformationSheet sheet = clientProgramme.InformationSheet;
+        //        InformationViewModel model = await GetInformationViewModel(clientProgramme);
+        //        user = await CurrentUser();
+        //        model.ClientInformationSheet = sheet;
+        //        model.ClientProgramme = clientProgramme;
+        //        model.CompanyName = _appSettingService.GetCompanyTitle;
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    if (sheet.Status == "Not Started")
-                    {
-                        sheet.Status = "Started";
-                    }
-                    foreach (var section in model.Sections)
-                        foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-                        {
-                            var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                            if (answer != null)
-                                item.Value = answer.Value;
-                            else
-                                sheet.AddAnswer(item.Name, "");
-                        }
-                    await uow.Commit();
-                }
+        //        using (var uow = _unitOfWork.BeginUnitOfWork())
+        //        {
+        //            if (sheet.Status == "Not Started")
+        //            {
+        //                sheet.Status = "Started";
+        //            }
+        //            foreach (var section in model.Sections)
+        //                foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
+        //                {
+        //                    var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
+        //                    if (answer != null)
+        //                        item.Value = answer.Value;
+        //                    else
+        //                        sheet.AddAnswer(item.Name, "");
+        //                }
+        //            await uow.Commit();
+        //        }
 
-                var boats = new List<BoatViewModel>();
-                foreach (Boat b in sheet.Boats)
-                {
-                    boats.Add(BoatViewModel.FromEntity(b));
-                }
-                model.Boats = boats;
+        //        var boats = new List<BoatViewModel>();
+        //        foreach (Boat b in sheet.Boats)
+        //        {
+        //            boats.Add(BoatViewModel.FromEntity(b));
+        //        }
+        //        model.Boats = boats;
 
-                var operators = new List<OrganisationViewModel>();
-                var organisationList = await _organisationService.GetAllOrganisations();
-                foreach (Organisation skipper in organisationList.Where(o => o.OrganisationType.Name == "Skipper"))
-                {
-                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipper);
-                    ovm.OrganisationName = skipper.Name;
-                    ovm.OrganisationEmail = skipper.Email;
-                    operators.Add(ovm);
-                }
-                model.Operators = operators;
+        //        var operators = new List<OrganisationViewModel>();
+        //        var organisationList = await _organisationService.GetAllOrganisations();
+        //        foreach (Organisation skipper in organisationList.Where(o => o.OrganisationType.Name == "Skipper"))
+        //        {
+        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipper);
+        //            ovm.OrganisationName = skipper.Name;
+        //            ovm.OrganisationEmail = skipper.Email;
+        //            operators.Add(ovm);
+        //        }
+        //        model.Operators = operators;
 
-                var claims = new List<ClaimViewModel>();
-                foreach (ClaimNotification cl in sheet.ClaimNotifications)
-                {
-                    claims.Add(ClaimViewModel.FromEntity(cl));
-                }
-                model.Claims = claims;
+        //        var claims = new List<ClaimViewModel>();
+        //        foreach (ClaimNotification cl in sheet.ClaimNotifications)
+        //        {
+        //            claims.Add(ClaimViewModel.FromEntity(cl));
+        //        }
+        //        model.Claims = claims;
 
-                var boatUses = new List<BoatUseViewModel>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(bu));
-                }
-                model.BoatUse = boatUses;
+        //        var boatUses = new List<BoatUseViewModel>();
+        //        foreach (BoatUse bu in sheet.BoatUses)
+        //        {
+        //            boatUses.Add(BoatUseViewModel.FromEntity(bu));
+        //        }
+        //        model.BoatUse = boatUses;
 
-                // TODO - find a better way to pass these in
-                model.HasVehicles = sheet.Vehicles.Count > 0;
-                var vehicles = new List<VehicleViewModel>();
-                foreach (Vehicle v in sheet.Vehicles)
-                {
-                    vehicles.Add(VehicleViewModel.FromEntity(v));
-                }
-                model.AllVehicles = vehicles;
-                model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-                model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
+        //        // TODO - find a better way to pass these in
+        //        model.HasVehicles = sheet.Vehicles.Count > 0;
+        //        var vehicles = new List<VehicleViewModel>();
+        //        foreach (Vehicle v in sheet.Vehicles)
+        //        {
+        //            vehicles.Add(VehicleViewModel.FromEntity(v));
+        //        }
+        //        model.AllVehicles = vehicles;
+        //        model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
+        //        model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-                model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                var buildings = new List<BuildingViewModel>();
-                var waterLocations = new List<WaterLocationViewModel>();
-                foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        model.OrganisationalUnitsVM = new OrganisationalUnitVM();
+        //        model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
+        //        var locations = new List<LocationViewModel>();
+        //        var buildings = new List<BuildingViewModel>();
+        //        var waterLocations = new List<WaterLocationViewModel>();
+        //        foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
+        //        {
+        //            organisationalUnits.Add(new OrganisationalUnitViewModel
+        //            {
+        //                OrganisationalUnitId = ou.Id,
+        //                Name = ou.Name
+        //            });
 
-                    model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-                }
+        //            model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
 
-                var interestedParties = new List<OrganisationViewModel>();
-                var orgList = await _organisationService.GetAllOrganisations();
-                foreach (Organisation org in orgList.Where(o => o.OrganisationType != null))
-                {
-                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                    ovm.OrganisationName = org.Name;
-                    interestedParties.Add(ovm);
-                }
+        //            foreach (Location loc in ou.Locations)
+        //            {
+        //                //locations.Add(LocationViewModel.FromEntity(loc));
 
-                var boatUse = new List<BoatUse>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUse.Add(bu);
+        //                foreach (Building bui in loc.Buildings)
+        //                {
+        //                    buildings.Add(BuildingViewModel.FromEntity(bui));
+        //                }
 
-                }
+        //                foreach (WaterLocation wl in loc.WaterLocations)
+        //                {
+        //                    waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
+        //                }
+        //            }
+        //        }
 
-                //var availableProducts = new List<ProductItem>();
-                // TODO verify that this is no longer needed with the Programme Implementation
-                //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
-                //	// skip any information sheet that has been renewed or updated
-                //	if (otherSheet.NextInformationSheet != null)
-                //		continue;
-                //	availableProducts.Add (new ProductItem {
-                //		Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
-                //		Status = otherSheet.Status,
-                //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-                //	});
-                //}
+        //        var interestedParties = new List<OrganisationViewModel>();
+        //        var orgList = await _organisationService.GetAllOrganisations();
+        //        foreach (Organisation org in orgList.Where(o => o.OrganisationType != null))
+        //        {
+        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+        //            ovm.OrganisationName = org.Name;
+        //            interestedParties.Add(ovm);
+        //        }
 
-                var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
+        //        var boatUse = new List<BoatUse>();
+        //        foreach (BoatUse bu in sheet.BoatUses)
+        //        {
+        //            boatUse.Add(bu);
 
-                var organisationDetails = new OrganisationDetailsVM
-                {
-                    Name = sheet.Owner.Name,
-                    Phone = sheet.Owner.Phone,
-                    Website = sheet.Owner.Domain
-                };
+        //        }
 
-                model.OrganisationalUnits = organisationalUnits;
-                model.Buildings = buildings;
-                model.WaterLocations = waterLocations;
-                model.InterestedParties = interestedParties;
-                //model.AvailableProducts = availableProducts;
-                model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
+        //        //var availableProducts = new List<ProductItem>();
+        //        // TODO verify that this is no longer needed with the Programme Implementation
+        //        //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
+        //        //	// skip any information sheet that has been renewed or updated
+        //        //	if (otherSheet.NextInformationSheet != null)
+        //        //		continue;
+        //        //	availableProducts.Add (new ProductItem {
+        //        //		Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
+        //        //		Status = otherSheet.Status,
+        //        //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
+        //        //	});
+        //        //}
 
-                return View("InformationWizard", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
+        //        userDetails.PostalAddress = user.Address;
+        //        userDetails.StreetAddress = user.Address;
+
+        //        var organisationDetails = new OrganisationDetailsVM
+        //        {
+        //            Name = sheet.Owner.Name,
+        //            Phone = sheet.Owner.Phone,
+        //            Website = sheet.Owner.Domain
+        //        };
+
+        //        model.OrganisationalUnits = organisationalUnits;
+        //        //model.Locations = locations;
+        //        model.Buildings = buildings;
+        //        model.WaterLocations = waterLocations;
+        //        model.InterestedParties = interestedParties;
+        //        //model.AvailableProducts = availableProducts;
+        //        model.OrganisationDetails = organisationDetails;
+        //        model.UserDetails = userDetails;
+
+        //        return View("InformationWizard", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> EditPanel(Guid panelId, string panelName, int panelPosition)
@@ -363,7 +380,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);                
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientProgramme = clientProgramme;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
@@ -391,7 +408,7 @@ namespace DealEngine.WebUI.Controllers
                 model.SectionView = name;
                 model.ClientProgramme = clientProgramme;
                 user = await CurrentUser();
-             
+
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
 
@@ -598,27 +615,45 @@ namespace DealEngine.WebUI.Controllers
                     });
                 }
 
-                    foreach (Building bui in sheet.Buildings)
+
+                //for (var i = 0; i < sheet.Locations.Count(); i++)
+                //{
+                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
+                //}
+
+                for (var i = 0; i < sheet.Buildings.Count(); i++)
+                {
+                    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
+
+                }
+
+                var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
+                foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
+                {
+                    foreach (var org in IA.IAOrganisations)
                     {
-                        buildings.Add(BuildingViewModel.FromEntity(bui));
-                    }
-                    try
-                    {
-                        var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
-                        foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
+                        if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
-                            foreach (var org in IA.IAOrganisations)
-                            {
-                                if (org.OrganisationType.Name == "Corporation – Limited liability")
-                                {
-                                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                                    ovm.OrganisationName = org.Name;
-                                    MarinaLocations.Add(ovm);
-                                }
-                            }
+                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                            ovm.OrganisationName = org.Name;
+                            MarinaLocations.Add(ovm);
                         }
                     }
-                    catch (Exception ex)
+                }
+
+                model.MarinaLocations = MarinaLocations;
+
+                for (var i = 0; i < sheet.WaterLocations.Count(); i++)
+                {
+                    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
+                }
+
+                var availableProducts = new List<SelectListItem>();
+
+                foreach (Product product in clientProgramme.BaseProgramme.Products)
+                {
+                    availableProducts.Add(new SelectListItem
                     {
                         Selected = false,
                         Value = "" + product.Id,
@@ -664,13 +699,21 @@ namespace DealEngine.WebUI.Controllers
                     Website = sheet.Owner.Domain
                 };
 
-                    model.OrganisationalUnits = organisationalUnits;
-                    model.Buildings = buildings;
-                    model.WaterLocations = waterLocations;
-                    model.InterestedParties = interestedParties;
-                    model.ClaimProducts = availableProducts;
-                    model.OrganisationDetails = organisationDetails;
-                    model.UserDetails = userDetails;
+                model.OrganisationalUnits = organisationalUnits;
+                //model.Locations = locations;
+                model.Buildings = buildings;
+                //model.Buildings.
+                model.WaterLocations = waterLocations;
+                //model.InterestedParties = interestedParties;
+
+
+                model.ClaimProducts = availableProducts;
+                model.OrganisationDetails = organisationDetails;
+                model.UserDetails = userDetails;
+                model.Status = sheet.Status;
+                List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                model.ClientInformationAnswers = informationAnswers;
 
                 ViewBag.Title = "Programme Email Template ";
                 return View(model);
@@ -843,12 +886,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
-                var sheet = clientProgramme.InformationSheet;                
+                var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                
+
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
-                
+
                 //build models from answers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
@@ -860,7 +903,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
 
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);                
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -893,7 +936,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {                                
+                    {
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
@@ -956,13 +999,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Claims = claims;
-
-                var businessContracts = new List<BusinessContractViewModel>();
-                for (var i = 0; i < sheet.BusinessContracts.Count; i++)
-                {
-                    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
-                }
-                model.BusinessContracts = businessContracts;
 
                 var interestedParties = new List<OrganisationViewModel>();
 
@@ -1036,7 +1072,6 @@ namespace DealEngine.WebUI.Controllers
                 var organisationalUnits = new List<OrganisationalUnitViewModel>();
                 model.OrganisationalUnitsVM = new OrganisationalUnitVM();
                 model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                var locations = new List<LocationViewModel>();
                 var buildings = new List<BuildingViewModel>();
                 var waterLocations = new List<WaterLocationViewModel>();
                 var MarinaLocations = new List<OrganisationViewModel>();
@@ -1051,6 +1086,12 @@ namespace DealEngine.WebUI.Controllers
                         Name = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Name
                     });
                 }
+
+
+                //for (var i = 0; i < sheet.Locations.Count(); i++)
+                //{
+                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
+                //}
 
                 for (var i = 0; i < sheet.Buildings.Count(); i++)
                 {
@@ -1094,7 +1135,7 @@ namespace DealEngine.WebUI.Controllers
 
                 var availableorganisation = new List<SelectListItem>();
 
-                foreach (Organisation organisation in  await _organisationService.GetOrganisationPrincipals(sheet))
+                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
                 {
                     availableorganisation.Add(new SelectListItem
                     {
@@ -1131,6 +1172,7 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
+                //model.Locations = locations;
                 model.Buildings = buildings;
                 //model.Buildings.
                 model.WaterLocations = waterLocations;
@@ -1168,7 +1210,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         modelName = "EPLViewModel";
                     }
-                    else if(split.FirstOrDefault() == "PMINZPIViewModel")
+                    else if (split.FirstOrDefault() == "PMINZPIViewModel")
                     {
                         modelName = "PIViewModel";
                     }
@@ -1205,7 +1247,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if(date == defaultDate || date == null)
+                            if (date == defaultDate || date == null)
                             {
                                 date = DateTime.Now;
                             }
@@ -1224,17 +1266,17 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if(revenueData.Activities.Count> 0 || revenueData.Territories.Count > 0)
+                if (revenueData.Activities.Count > 0 || revenueData.Territories.Count > 0)
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
                     model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }            
+            }
         }
 
         private IList<string> LoadWizardsteps(string wizardType)
@@ -1317,7 +1359,7 @@ namespace DealEngine.WebUI.Controllers
             }
 
             return sharedRoleViewModel;
-        }        
+        }
 
         [HttpGet]
         public async Task<IActionResult> Unlock(Guid id)
@@ -1528,7 +1570,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "PMINZPI1" || c.ItemName == "PMINZPI2" || c.ItemName == "PMINZPI3" || c.ItemName == "PMINZPI4" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6"
-                                                                                                                                                         || c.ItemName == "PMINZPI7"  || c.ItemName == "PMINZPI8" || c.ItemName == "PMINZPI9" || c.ItemName == "PMINZPI10" || c.ItemName == "PMINZPI11" || c.ItemName == "PMINZPI12"
+                                                                                                                                                         || c.ItemName == "PMINZPI7" || c.ItemName == "PMINZPI8" || c.ItemName == "PMINZPI9" || c.ItemName == "PMINZPI10" || c.ItemName == "PMINZPI11" || c.ItemName == "PMINZPI12"
                                                                                                                                                          || c.ItemName == "PMINZPI13" || c.ItemName == "PMINZPI14" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6" || c.ItemName == "PMINZPI17" || c.ItemName == "PMINZPI18" || c.ItemName == "PMINZPI19" || c.ItemName == "PMINZPI20")))
                 {
                     ProfessionalIndemnity = new String[3];
@@ -1772,31 +1814,31 @@ namespace DealEngine.WebUI.Controllers
                         if (item[1] != null)
                         {
                             //for (var x = 0; x < item.Length - 1; x++)
-                           // {
+                            // {
 
-                                
-                                ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
-                                if (answer != null)
-                                {
-                                    answer.Value = item[1];
-                                    if(item.Length > 2)
+
+                            ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
+                            if (answer != null)
+                            {
+                                answer.Value = item[1];
+                                if (item.Length > 2)
                                     answer.ClaimDetails = item[2];
-                                    //answer.ClaimDetails = item[2];
+                                //answer.ClaimDetails = item[2];
+                            }
+                            else
+                            {
+                                sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
+                                if (item.Length > 2)
+                                {
+                                    await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
                                 }
                                 else
                                 {
-                                    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                    if (item.Length > 2)
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
-                                    }
-                                    else
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
-
-                                    }
+                                    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
 
                                 }
+
+                            }
                             //}
                         }
                         await uow.Commit();
@@ -2316,7 +2358,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }                       
+        }
 
         public async Task<InformationViewModel> GetInformationViewModel(ClientProgramme clientProgramme)
         {
@@ -2330,7 +2372,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
-                };                
+                };
                 model.Name = programme.Name;
                 Product product = null;
                 if (programme.Products.Count > 1)
@@ -2392,8 +2434,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 InformationViewModel model = await GetInformationViewModel(sheet.Programme);
-                model.Sections = model.Sections.OrderBy(sec => sec.Position);                
-                model.ClientInformationSheet = sheet;                
+                model.Sections = model.Sections.OrderBy(sec => sec.Position);
+                model.ClientInformationSheet = sheet;
 
                 foreach (var section in model.Sections)
                     foreach (var item in section.Items)
@@ -2447,7 +2489,7 @@ namespace DealEngine.WebUI.Controllers
                 var orgType = form["cgradioselect"];
                 var orgName = form["fname"].ToList().First();
                 var firstName = form["fname"].ToList().Last();
-                var lastName = form["lname"];                
+                var lastName = form["lname"];
                 var mobilePhone = form["mphon"];
                 var programmeList = await _programmeService.GetAllProgrammes();
                 var programme = programmeList.LastOrDefault();
@@ -2560,12 +2602,12 @@ namespace DealEngine.WebUI.Controllers
 
                     user.SetPrimaryOrganisation(organisation);
                     await _userService.Update(user);
-                    
+
                     var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                     var reference = await _referenceService.GetLatestReferenceId();
                     var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
                     await _referenceService.CreateClientInformationReference(sheet);
-                    
+
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
@@ -2577,22 +2619,22 @@ namespace DealEngine.WebUI.Controllers
                         }
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         try
-                        {                                
+                        {
                             await uow.Commit();
                         }
                         catch (Exception ex)
                         {
                             throw new Exception(ex.Message);
-                        }                        
-                    }                    
+                        }
+                    }
                 }
                 return NoContent();
-            }                          
+            }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         // Important Notices - CK Editor

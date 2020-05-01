@@ -21,6 +21,7 @@ namespace DealEngine.WebUI.Models
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(ClientInformationSheet);
+            ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
         }
         public Domain.Entities.Programme Programme;
         public string CompanyName { get; set; }
@@ -67,8 +68,9 @@ namespace DealEngine.WebUI.Models
         public CLIViewModel CLIViewModel { get; set; }
         public PIViewModel PIViewModel { get; set; }
         public DAOLIViewModel DAOLIViewModel { get; set; }
-        public GLViewModel GLViewModel { get; set; }        
+        public GLViewModel GLViewModel { get; set; }
         public SLViewModel SLViewModel { get; set; }
+        public ProjectViewModel ProjectViewModel { get;set;}
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
         public ClientProgramme ClientProgramme { get; internal set; }
@@ -87,7 +89,6 @@ namespace DealEngine.WebUI.Models
 
         public int Position { get; set; }
     }
-
     public class InformationItemViewModel
     {
         public Guid Id { get; set; }
@@ -122,7 +123,6 @@ namespace DealEngine.WebUI.Models
         }
 
     }
-
     public enum ItemType
     {
         LABEL,
@@ -137,14 +137,12 @@ namespace DealEngine.WebUI.Models
         STATICVEHICLEPLANTLIST,
         SECTIONBREAK
     }
-
     public class OrganisationalUnitVM : List<OrganisationalUnitViewModel>
     {
         public IList<SelectListItem> OrganisationalUnits { get; set; }
 
         public string[] SelectedOrganisationalUnits { get; set; }
     }
-
     public class UserDetailsVM
     {
         public string FirstName { get; set; }
@@ -161,7 +159,6 @@ namespace DealEngine.WebUI.Models
 
         public string StreetAddress { get; set; }
     }
-
     public class OrganisationDetailsVM
     {
         public string Name { get; set; }
@@ -200,7 +197,6 @@ namespace DealEngine.WebUI.Models
             return model;
         }
     }
-
     public class RevenueDataViewModel
     {
         public RevenueDataViewModel() { }
@@ -247,7 +243,6 @@ namespace DealEngine.WebUI.Models
         public decimal LastFinancialYearTotal { get; set; }
         public AdditionalActivityViewModel AdditionalActivityViewModel { get; set; }
     }
-
     public class AdditionalActivityViewModel
     {
         public AdditionalActivityViewModel(AdditionalActivityInformation additionalActivityInformation = null)
@@ -302,7 +297,6 @@ namespace DealEngine.WebUI.Models
         public string ConstructionEngineerDetails { get; set; }
         
     }
-
     public class SharedRoleViewModel
     {
         public SharedRoleViewModel()
@@ -314,7 +308,6 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> SharedRoles { get; set; }
         public IList<SharedDataRole> SharedDataRoles { get; set; }
     }
-
     public class BusinessActivityViewModel
     {
         public int Classification { get; set; }
@@ -359,7 +352,6 @@ namespace DealEngine.WebUI.Models
             };
         }
     }
-
     public class SLViewModel
     {
         public SLViewModel()
@@ -777,7 +769,6 @@ namespace DealEngine.WebUI.Models
         public string SubstantialChangeDetails { get; set; }
         
     }
-
     public class DAOLIViewModel
     {
         public DAOLIViewModel()
@@ -845,7 +836,6 @@ namespace DealEngine.WebUI.Models
         }
 
     }
-
     public class GLViewModel
     {
         public GLViewModel()
@@ -877,5 +867,55 @@ namespace DealEngine.WebUI.Models
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
+    }
+
+    public class ProjectViewModel
+    {
+        public ProjectViewModel(ClientInformationSheet clientInformationSheet)
+        {
+            BusinessContracts = GetBusinessContracts(clientInformationSheet);
+            ResponsibilityOptions = GetResponsibilityOptions();
+        }
+
+        private IList<BusinessContract> GetBusinessContracts(ClientInformationSheet clientInformationSheet)
+        {
+            BusinessContracts = new List<BusinessContract>();
+            foreach (var businessContract in clientInformationSheet.BusinessContracts)
+            {
+                BusinessContracts.Add(businessContract);
+            }
+            return BusinessContracts;
+        }
+
+        private IList<SelectListItem> GetResponsibilityOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "Proj. Director", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "Proj. Manager", Value = "2"
+                },
+                new SelectListItem
+                { 
+                    Text = "Proj. Coordinator/Administrator", Value = "3" 
+                },
+                new SelectListItem
+                {
+                    Text = "Proj. Engineers", Value = "3"
+                }
+            };
+        }
+
+        public IList<BusinessContract> BusinessContracts { get; set; }
+        public IList<SelectListItem> ResponsibilityOptions { get; set; }
+        public string ProjectDescription { get; set; }
+        public string Fees { get; set; }
+        public string ConstructionValue { get; set; }
+        public string ProjectDuration { get; set; }
+        
     }
 }

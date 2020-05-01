@@ -1,81 +1,140 @@
 ﻿<script type="text/javascript">
 
     $(document).ready(function () {
+        $('#tblRemovedLocation').bootstrapTable();
+    });
+
+    $(document).ready(function () {
         $('#tblLocation').bootstrapTable();
     });
 
+    $(document).ready(function () {
+        $('#tblRemovedProject').bootstrapTable();
+    });
+
+    $(document).ready(function () {
+        $('#tblProject').bootstrapTable();
+    });
+
     function AddLocation() {
-        var locationSaved = false;
-        var locationId;
         $.ajax({
             url: '@Url.Action("AddLocation", "Services")',
             type: "POST",
             data: $("#tab_1 :input").serialize({ json: true })
-            //data: $("#tab_1 :input").serialize({ json: true })
         })
-            .done(function (data) {
-                locationSaved = true;
-                debugger;
-                locationId = data;
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Location');
+                location.reload();
             })
             .fail(function (a, s, d) {
                 debugger;
             });
-        if (locationSaved) {
-            debugger;
-            var locationTable = document.getElementById("tblLocation").getElementsByTagName('tbody')[0];
-            var street = document.getElementById('streetdetails');
-            var type = document.getElementById('locationtypeoptions');
-            var city = document.getElementById('citydetails');
-            var common = document.getElementById('commonnamedetails');
-
-            var form = document.getElementById('LocationViewModel');
-            
-
-            //var tr = document.createElement('tr');
-            //var td1 = document.createElement('td');
-            //td1.appendChild(document.createTextNode(list[t].text));
-            //tr.appendChild(td1);
-            //var td2 = document.createElement('td');
-            //td2.innerHTML = CreateSharedInput(Name, list.options[t]);
-            //tr.appendChild(td2);
-            //tbdy.appendChild(tr);
-
-            //var newRow = locationTable.insertRow();
-            //var newCell = newRow.insertCell(0);
-            //// Append a text node to the cell
-            //var newText = document.createTextNode('New row');
-            //newCell.appendChild(newText);
-            //locationTable
-        }
     }
 
-    function EditLocation(Location) {
-        var data = Location.split(',');
-        var locationtypes = document.getElementById('locationtypeoptions');        
-        locationtypes.selectedOptions.remove(0)
-        debugger;
-        for (var i = 0; i < locationtypes.options.length; i++) {
-            debugger
-            if (locationtypes.options[i].value == data[1]) {
+    function RemoveLocation(Id) {
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveLocation", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Location');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
                 debugger;
-                locationtypes.options[i].selected = true;
-                break;
-            }
-        }
-        document.getElementById('streetdetails').innerHTML = data[3];
-        document.getElementById('citydetails').value = data[4];
-        document.getElementById('countrydetails').value = data[5];
-        document.getElementById('commonnamedetails').value = data[2];
-        document.getElementById('LocationId').value = data[0];
-        SetCurrentTab('locationtab2');
+            });
     }
 
-    function CreateLocationEdit() {
-        var button = document.createElement('BUTTON');
-        button.setAttribute("class", "btn btn-success btn-sm");
-        button.setAttribute("onclick", "EditLocation('Id, LocationType, CommonName, Street, City, Country')");
-        button.innerHTML = "<i class='fa fa-edit'></i>";
-        return button;
+    function RestoreLocation(Id) {
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreLocation", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Location');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
     }
+
+    function EditLocation(Data) {        
+        var array = Data.split(',');
+        document.getElementById("LocationId").value = array[0];
+        document.getElementById("locationtypeoptions").value = array[1];
+        document.getElementById("commonnamedetails").value = array[2];
+        document.getElementById("streetdetails").value = array[3];
+        document.getElementById("citydetails").value = array[4];
+        document.getElementById("countrydetails").value = array[5];
+        SetCurrentTab("locationtab2");
+    }  
+
+    function AddBusinessContract() {
+        $.ajax({
+            url: '@Url.Action("AddProject", "Services")',
+            type: "POST",
+            data: $("#tab_1 :input").serialize({ json: true })
+        })
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Projects');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RemoveProject(Id) {
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveProject", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Projects');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RestoreProject(Id) {
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreProject", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                sessionStorage.setItem('accordianTrigger', 'Projects');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function EditProject(Data) {        
+        var array = Data.split(',');
+        document.getElementById("ProjectId").value = array[0];
+        document.getElementById("projectdetails").value = array[1];
+        document.getElementById("projectfees").value = array[2];
+        document.getElementById("contractdetails").value = array[3];
+        document.getElementById("ProjectDuration").value = array[4];
+        SetCurrentTab("projecttab2");
+    }    
+
 </script>
