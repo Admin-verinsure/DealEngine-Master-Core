@@ -105,7 +105,7 @@ namespace DealEngine.Services.Impl
 
                         if (!string.IsNullOrWhiteSpace(parts[4]))
                         {
-                            var email = parts[7] + "@DealEngine.com";
+                            var email = parts[7] + "@techcertain.com";
                             user = await _userService.GetUserByEmail(email);
                         }                            
                         if(user == null)
@@ -198,7 +198,7 @@ namespace DealEngine.Services.Impl
 
                             if (string.IsNullOrWhiteSpace(parts[5]))
                             {
-                                email = parts[2] + "@DealEngine.com";
+                                email = parts[2] + "@techcertain.com";
                             }
                             else
                             {
@@ -471,7 +471,7 @@ namespace DealEngine.Services.Impl
                     {
                         if (string.IsNullOrWhiteSpace(parts[4]))
                         {
-                            email = parts[8] + "@DealEngine.com";
+                            email = parts[8] + "@techcertain.com";
                             user = await _userService.GetUserByEmail(email);
                         }
                         else
@@ -696,7 +696,7 @@ namespace DealEngine.Services.Impl
 
                             if (string.IsNullOrWhiteSpace(parts[5]))
                             {
-                                email = parts[2] + "@DealEngine.com";
+                                email = parts[2] + "@techcertain.com";
                             }
                             else
                             {

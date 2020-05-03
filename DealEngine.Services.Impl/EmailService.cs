@@ -190,7 +190,7 @@ namespace DealEngine.Services.Impl
 		{
 			string subjectPrefix = "Support Request: ";
 
-			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@DealEngine.com");
+			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
 			email.From (sender);
             email.WithSubject (subjectPrefix + subject);
             email.WithBody (body);
@@ -649,7 +649,7 @@ namespace DealEngine.Services.Impl
 
             if (uISIssued != null)
             {
-                recipent.Add("support@DealEngine.com");
+                recipent.Add("support@techcertain.com");
 
                 List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
