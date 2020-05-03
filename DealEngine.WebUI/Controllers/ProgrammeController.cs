@@ -979,13 +979,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
-                model.Brokers.Add(
-                    new SelectListItem
-                    {
-                        Text = programme.BrokerContactUser.FirstName + " " + programme.BrokerContactUser.Email,
-                        Value = programme.BrokerContactUser.Id.ToString(),
-                        Selected = true
-                    });                               
+                model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;                              
                 model.Id = Id;
                 model.programmeName = programme.Name;
                 model.IsPublic = programme.IsPublic;
@@ -994,6 +988,9 @@ namespace DealEngine.WebUI.Controllers
                 model.StopAgreement = programme.StopAgreement;
                 model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
                 model.HasSubsystemEnabled = programme.HasSubsystemEnabled;
+                model.Declaration = programme.Declaration;
+                model.StopAgreementMessage = programme.StopAgreementMessage;
+                model.NoPaymentRequiredMessage = programme.NoPaymentRequiredMessage;
                 model.ProgrammeClaim = programme.Claim;
 
                 return View("EditProgramme", model);
@@ -1023,7 +1020,7 @@ namespace DealEngine.WebUI.Controllers
         private async Task<ProgrammeInfoViewModel> GetProgrammeInfoViewModel()
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            var brokers = await _userService.GetAllUsers();
+            var brokers = await _userService.GetBrokerUsers();            
             var brokerList = new List<SelectListItem>();
             foreach (var broker in brokers)
             {
@@ -1154,6 +1151,7 @@ namespace DealEngine.WebUI.Controllers
                     programme.StopAgreementMessage = model.StopAgreementMessage;
                     programme.Declaration = model.Declaration;
                     programme.NoPaymentRequiredMessage = model.NoPaymentRequiredMessage;
+                    programme.BrokerContactUser = model.BrokerContactUser;
                     programme.Claim = "";
                     if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
                     {

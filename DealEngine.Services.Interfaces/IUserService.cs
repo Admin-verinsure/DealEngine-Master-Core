@@ -17,5 +17,6 @@ namespace DealEngine.Services.Interfaces
         Task<List<User>> GetLockedUsers();
         Task<User> GetUserByOrganisation(Organisation org);
         Task<List<User>> GetAllUserByOrganisation(Organisation org);
+        Task<List<User>> GetBrokerUsers();
     }
 }
