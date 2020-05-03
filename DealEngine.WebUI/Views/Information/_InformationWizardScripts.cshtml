@@ -55,7 +55,6 @@
            if (stepNumber === 0) {
                if (informationsheetstatus != "Submitted") {
 
-
                    //<--!Boostrap validation method
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
                    var formIds = [];
@@ -64,7 +63,6 @@
                            formIds.push(forms[i].id);
                        }
                    }
-                   debugger;
                    for (var f = 0; f < formIds.length; f++) {
                        var form = document.getElementById(formIds[f]);
                        var element = null;
@@ -126,58 +124,63 @@
 
 
                    //hardcoded shared revenue
-                   var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
-                   var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");    
-                   var territories = document.getElementById('territories');
-                   var activities = document.getElementById('activities');
-                   var hasItem = false;
-                   var percentage = 0;                   
-                   var hasPercent = true;
+                   var IsFeeIncomeexist = document.querySelector('[aria-labelledby="Fee Income / Activities"]') !== null;
+                   debugger;
+                   if (IsFeeIncomeexist == true) {
 
-                   for (var i = 0; i < territories.options.length; i++) {
-                       if (territories.options[i].selected === true) {
-                           hasItem = true;
-                           break;
+                       var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
+                       var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
+                       var territories = document.getElementById('territories');
+                       var activities = document.getElementById('activities');
+                       var hasItem = false;
+                       var percentage = 0;
+                       var hasPercent = true;
+
+                       for (var i = 0; i < territories.options.length; i++) {
+                           if (territories.options[i].selected === true) {
+                               hasItem = true;
+                               break;
+                           }
                        }
-                   }
-                   for (var v = 0; v < territoryVals.length; v++) {
-                       percentage += parseInt(territoryVals[v].value);
-                   }
-                   if (percentage != 100) {                       
-                       hasPercent = false;
-                   }
-                   if (!hasItem || !hasPercent) {
-                       event.preventDefault();
-                       event.stopPropagation();
-                       var accordianId = "Fee Income / Activities";
-                       $("[id='" + accordianId + "']").trigger("click");
-                       //SetCurrentTab('RevenueTabs' + 1);
-                       window.alert("Please complete this section " + accordianId +" Territories Section");
-                       throw accordianId + " incomplete";
-                   }
-                   var percentage = 0; 
-                   hasPercent = true
-                   hasItem = false;
-                   for (var i = 0; i < activities.options.length; i++) {
-                       if (activities.options[i].selected === true) {
-                           hasItem = true;
-                           break;
+                       for (var v = 0; v < territoryVals.length; v++) {
+                           percentage += parseInt(territoryVals[v].value);
                        }
-                   }
-                   for (var v = 0; v < activityVals.length; v++) {
-                       percentage += parseInt(activityVals[v].value);
-                   }
-                   if (percentage != 100) {                       
-                       hasPercent = false;
-                   }
-                   if (!hasItem || !hasPercent) {
-                       event.preventDefault();
-                       event.stopPropagation();
-                       var accordianId = "Fee Income / Activities";
-                       $("[id='" + accordianId + "']").trigger("click");
-                       //SetCurrentTab('RevenueTabs' + 1);
-                       window.alert("Please complete this section " + accordianId +" Activities Section");
-                       throw accordianId + " incomplete";
+                       if (percentage != 100) {
+                           hasPercent = false;
+                       }
+                       if (!hasItem || !hasPercent) {
+                           event.preventDefault();
+                           event.stopPropagation();
+                           var accordianId = "Fee Income / Activities";
+                           $("[id='" + accordianId + "']").trigger("click");
+                           //SetCurrentTab('RevenueTabs' + 1);
+                           window.alert("Please complete this section " + accordianId + " Territories Section");
+                           throw accordianId + " incomplete";
+                       }
+                       var percentage = 0;
+                       hasPercent = true
+                       hasItem = false;
+                       for (var i = 0; i < activities.options.length; i++) {
+                           if (activities.options[i].selected === true) {
+                               hasItem = true;
+                               break;
+                           }
+                       }
+                       for (var v = 0; v < activityVals.length; v++) {
+                           percentage += parseInt(activityVals[v].value);
+                       }
+                       if (percentage != 100) {
+                           hasPercent = false;
+                       }
+                       if (!hasItem || !hasPercent) {
+                           event.preventDefault();
+                           event.stopPropagation();
+                           var accordianId = "Fee Income / Activities";
+                           $("[id='" + accordianId + "']").trigger("click");
+                           //SetCurrentTab('RevenueTabs' + 1);
+                           window.alert("Please complete this section " + accordianId + " Activities Section");
+                           throw accordianId + " incomplete";
+                       }
                    }
 
                    //!-->
@@ -248,7 +251,7 @@
                        $("#Vessel").trigger("click");
                        return false;
 
-                   }else  if ((Isnamedpartycount == 0 && informationsheetstatus != "Bound") || (!(Isnamedpartyexist == true || IsDANZnamedpartyexist == true) && namedPartyExists != null) ) {
+                   }else  if ((Isnamedpartycount == 0 && informationsheetstatus != "Bound")  && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false) ) {
 
                        window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
                        $("[id='Insured Details / Named Parties']").trigger("click");

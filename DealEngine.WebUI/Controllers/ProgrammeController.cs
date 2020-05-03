@@ -1191,6 +1191,7 @@ namespace DealEngine.WebUI.Controllers
                 string userType = "";
                 var title = collection["Name"];
                 var selectedParty = collection["selectedEmail"];
+                var PartyName = collection["selectedparty"];
                 if (programme != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1314,12 +1315,13 @@ namespace DealEngine.WebUI.Controllers
 
                 if ("organisation" != null)
                 {
-                    var userList = await _userService.GetAllUsers();
-                    foreach (var userOrg in userList.Where(p => p.PrimaryOrganisation == organisation))
+                    List<User> userList = await _userService.GetAllUserByOrganisation(organisation);
+
+                    foreach (var userOrg in userList)
                     {
                         userPartyList.Add(new PartyUserViewModel()
                         {
-                            Name = userOrg.FirstName,
+                            Name = userOrg.FullName,
                             Id = userOrg.Id.ToString(),
                             Email = userOrg.Email,
                         });
@@ -1351,6 +1353,33 @@ namespace DealEngine.WebUI.Controllers
                 model.Id = Id;
                 model.Name = Title;
                 model.Parties = programme.Parties;
+                //model.OrgUser = programme.UISIssueNotifyUsers;
+                List<SelectListItem> usrlist = new List<SelectListItem>();
+                foreach(var org in programme.Parties)
+                {
+                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
+
+                    foreach (var userOrg in userList)
+                    {
+                        usrlist.Add(new SelectListItem()
+                        {
+                            Selected = false,
+                            Text = userOrg.FullName,
+                            Value = userOrg.Email,
+                        });
+                    }
+                }
+                //foreach (var useroption in programme.UISIssueNotifyUsers)
+                //{
+                //    usrlist.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Text = useroption.FullName,
+                //        Value = useroption.Email,
+                //    });
+
+                //}
+                model.OrgUser = usrlist;
                 ViewBag.Title = "Add/Edit Programme Email Template";
 
                 return View("IssueNotification", model);
