@@ -1,174 +1,176 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div id="Location" class="container-fluid">
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" id="tab1">
-            <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
-        </li>
-        <li class="nav-item" id="tab2">
-            <a class="nav-link" href="#locationtab2" data-toggle="tab"> Location Details </a>
-        </li>
-        <li class="nav-item" id="tab3">
-            <a class="nav-link" href="#locationtab3" data-toggle="tab"> List Removed </a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div id="locationtab1" class="tab-pane active" role="tabpanel">
-            <table id="tblLocation"
-                   class="table table-striped" width="100%"
-                   data-show-columns="true"
-                   data-pagination="true"
-                   data-search="true"
-                   data-show-jump-to="true">
-                <thead>
-                    <tr>
-                        <th data-field="editButton" data-sortable="false"></th>
-                        <th data-field="locationType" data-sortable="true">Location Type</th>
-                        <th data-field="commonName" data-sortable="true">Common Name</th>
-                        <th data-field="street" data-sortable="true">Street</th>
-                        <th data-field="city" data-sortable="true">City</th>
-                        <th ata-field="deleteButton" data-sortable="false"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab2')"><i class="fa fa-edit"></i></button>
-                        </td>
-                    </tr>
-                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList()) 
-                    {
-                        <tr id="@location.Id">
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id,@location.LocationType,@location.CommonName,@location.Street,@location.City,@location.Country')"><i class="fa fa-edit"></i></button>
-                            </td>
-                            <td>
-                                @location.LocationType
-                            </td>
-                            <td>
-                                @location.CommonName
-                            </td>
-                            <td>
-                                @location.Street
-                            </td>
-                            <td>
-                                @location.City
-                            </td>
-                            <td>
-                                <button onclick="RemoveLocation('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div id="locationtab2" class="tab-pane" role="tabpanel">
-            <form class="is-valid" id="LocationViewModel">
-                <input id="LocationId" name="LocationViewModel.LocationId" type="hidden" />
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="streetdetails" class="label required">
-                                Street:
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+    <div id="Location" class="container-fluid">
+        <form class="is-valid" id="LocationViewModel">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" id="tab1">
+                    <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
+                </li>
+                <li class="nav-item" id="tab2">
+                    <a class="nav-link" href="#locationtab2" data-toggle="tab"> Location Details </a>
+                </li>
+                <li class="nav-item" id="tab3">
+                    <a class="nav-link" href="#locationtab3" data-toggle="tab"> List Removed </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="locationtab1" class="tab-pane active" role="tabpanel">
+                    <table id="tblLocation"
+                           class="table table-striped" width="100%"
+                           data-show-columns="true"
+                           data-pagination="true"
+                           data-search="true"
+                           data-show-jump-to="true">
+                        <thead>
+                            <tr>
+                                <th data-field="editButton" data-sortable="false"></th>
+                                <th data-field="locationType" data-sortable="true">Location Type</th>
+                                <th data-field="commonName" data-sortable="true">Common Name</th>
+                                <th data-field="street" data-sortable="true">Street</th>
+                                <th data-field="city" data-sortable="true">City</th>
+                                <th ata-field="deleteButton" data-sortable="false"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab2')"><i class="fa fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList())
+                            {
+                                <tr id="@location.Id">
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id,@location.LocationType,@location.CommonName,@location.Street,@location.City,@location.Country')"><i class="fa fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        @location.LocationType
+                                    </td>
+                                    <td>
+                                        @location.CommonName
+                                    </td>
+                                    <td>
+                                        @location.Street
+                                    </td>
+                                    <td>
+                                        @location.City
+                                    </td>
+                                    <td>
+                                        <button onclick="RemoveLocation('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div id="locationtab2" class="tab-pane" role="tabpanel">
+
+                    <input id="LocationId" name="LocationViewModel.LocationId" type="hidden" />
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="streetdetails" class="label required">
+                                    Street:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="locationtypeoptions" class="label required">
-                                Location Type:
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="citydetails" class="label required">
-                                City:
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="locationtypeoptions" class="label required">
+                                    Location Type:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="countrydetails" class="label required">
-                                Country:
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="commonnamedetails" class="label required">
-                                Common Name
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="citydetails" class="label required">
+                                    City:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="countrydetails" class="label required">
+                                    Country:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="commonnamedetails" class="label required">
+                                    Common Name
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
+                    </div>
+
                 </div>
-                <div class="form-group">
-                    <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
+                <div id="locationtab3" class="tab-pane" role="tabpanel">
+                    <table id="tblRemovedLocation"
+                           class="table table-striped" width="100%"
+                           data-show-columns="true"
+                           data-pagination="true"
+                           data-search="true"
+                           data-show-jump-to="true">
+                        <thead>
+                            <tr>
+                                <th data-field="restoreButton" data-sortable="false"></th>
+                                <th data-field="locationType" data-sortable="true">Location Type</th>
+                                <th data-field="commonName" data-sortable="true">Common Name</th>
+                                <th data-field="street" data-sortable="true">Street</th>
+                                <th data-field="city" data-sortable="true">City</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == true).ToList())
+                            {
+                                <tr id="@location.Id">
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="RestoreLocation('@location.Id')"><i class="fa fa-undo"></i></button>
+                                    </td>
+                                    <td>
+                                        @location.LocationType
+                                    </td>
+                                    <td>
+                                        @location.CommonName
+                                    </td>
+                                    <td>
+                                        @location.Street
+                                    </td>
+                                    <td>
+                                        @location.City
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </div>
-        <div id="locationtab3" class="tab-pane" role="tabpanel">
-            <table id="tblRemovedLocation"
-                   class="table table-striped" width="100%"
-                   data-show-columns="true"
-                   data-pagination="true"
-                   data-search="true"
-                   data-show-jump-to="true">
-                <thead>
-                    <tr>
-                        <th data-field="restoreButton" data-sortable="false"></th>
-                        <th data-field="locationType" data-sortable="true">Location Type</th>
-                        <th data-field="commonName" data-sortable="true">Common Name</th>
-                        <th data-field="street" data-sortable="true">Street</th>
-                        <th data-field="city" data-sortable="true">City</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == true).ToList()) 
-                    {
-                        <tr id="@location.Id">
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="RestoreLocation('@location.Id')"><i class="fa fa-undo"></i></button>
-                            </td>
-                            <td>
-                                @location.LocationType
-                            </td>
-                            <td>
-                                @location.CommonName
-                            </td>
-                            <td>
-                                @location.Street
-                            </td>
-                            <td>
-                                @location.City
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+            </div>
+        </form>
 </div>

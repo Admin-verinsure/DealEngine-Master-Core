@@ -1128,18 +1128,16 @@
     <script>
         $(window).on("load", function () {
 
-            var accordianPanel = sessionStorage.getItem("accordianTrigger");
+            var accordianPanel = localStorage.getItem("accordianTrigger");
             if (accordianPanel != null) {
                 $("[id='" + accordianPanel + "']").trigger("click");
-                sessionStorage.removeItem("accordianTrigger");
+                localStorage.removeItem("accordianTrigger");
             }
 
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
-            } else {
-                $("#getDetailsModal").modal('show');
-            }
+            } 
 
             if ("@Model.Status" == "Submitted") {
                 debugger;
@@ -1150,46 +1148,9 @@
                 }
                 $('.btn-sm').addClass("hidden");
                 $("#accordion :input").prop("disabled", true);
-
-
-
-                //$('.btn').addClass("hidden");
             }
-
-            var clientInformationSheet = $('#InformationViewModel.InformationSheet.Id').val();
-            var postData = { ClientInformationSheet: clientInformationSheet };
-
-            $.ajax({
-                // change back once mono decides to fix
-                url: '@Url.Action("GetClaimHistory", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (data) {
-                    if (data != "" &&
-                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null)
-                    ){
-                        for (var item = 0; item < data.length; item++){
-                            var arr = data[item];
-                            var count = 0;
-                            $('#' + arr[count]).val(arr[count + 1]);
-                            if (arr[count + 1] == "true") {
-                                $('#' + arr[count] + 'Details').val(arr[count + 2]);
-                                $('#' + arr[count] + 'Sec').removeClass('hidden');
-                            } else {
-                                $('#' + arr[count] + 'Details').val("");
-                                $('#' + arr[count] + 'Sec').addClass('hidden');
-                            }
-                        }
-                    };
-                    $("#getDetailsModal").modal('hide');
-                })
-                .fail(function (a, s, d) {
-                    $("#getDetailsModal").modal('hide');
-                    alert("Unable to save.");
-                });
-
         });
+
 
         function CloseAdvisory(clientInformationSheetId) {
             if (typeof clientInformationSheetId !== null) {

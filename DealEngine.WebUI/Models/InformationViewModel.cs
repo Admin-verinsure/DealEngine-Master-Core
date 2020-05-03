@@ -868,7 +868,6 @@ namespace DealEngine.WebUI.Models
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
     }
-
     public class ProjectViewModel
     {
         public ProjectViewModel(ClientInformationSheet clientInformationSheet)
@@ -905,7 +904,7 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "Proj. Engineers", Value = "3"
+                    Text = "Proj. Engineers", Value = "4"
                 }
             };
         }

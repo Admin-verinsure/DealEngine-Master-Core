@@ -4063,8 +4063,38 @@ namespace DealEngine.WebUI.Controllers
                     if (keyField != "ProjectViewModel.ProjectId")
                     {
                         var propertyName = keyField.Split('.').ToList();
-                        var property = type.GetProperty(propertyName.LastOrDefault());
-                        property.SetValue(businessContract, collection[keyField].ToString());
+                        if (propertyName.LastOrDefault() == "ResponsibilityOptions")
+                        {
+                            var responsibilites = collection[keyField].ToList();
+                            foreach(var responsibility in responsibilites)
+                            {
+                                if(responsibility == "1")
+                                {
+                                    var property = type.GetProperty("ProjectDirector");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "2")
+                                {
+                                    var property = type.GetProperty("ProjectManager");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "3")
+                                {
+                                    var property = type.GetProperty("ProjectCoordinator");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "4")
+                                {
+                                    var property = type.GetProperty("ProjectEngineer");
+                                    property.SetValue(businessContract, true);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(propertyName.LastOrDefault());
+                            property.SetValue(businessContract, collection[keyField].ToString());
+                        }
                     }
                 }
 

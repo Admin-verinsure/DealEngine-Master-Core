@@ -2,69 +2,70 @@
 
 
 <div id="Project" class="container-fluid">
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" id="tab1">
-            <a class="nav-link active" href="#projecttab1" data-toggle="tab"> List All </a>
-        </li>
-        <li class="nav-item" id="tab2">
-            <a class="nav-link" href="#projectab2" data-toggle="tab"> Edit </a>
-        </li>
-        <li class="nav-item" id="tab3">
-            <a class="nav-link" href="#projectab3" data-toggle="tab"> Add </a>
-        </li>
-        <li class="nav-item" id="tab4">
-            <a class="nav-link" href="#projecttab4" data-toggle="tab"> List Removed </a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div id="projecttab1" class="tab-pane active" role="tabpanel">
-            <table id="tblProject"
-                   class="table table-striped" width="100%"
-                   data-show-columns="true"
-                   data-pagination="true"
-                   data-search="true"
-                   data-show-jump-to="true">
-                <thead>
-                    <tr>
-                        <th data-field="editButton" data-sortable="false"></th>
-                        <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
-                        <th data-field="description" data-sortable="true">The Project Description</th>
-                        <th data-field="Fees" data-sortable="true">Your Earned Fees</th>                        
-                        <th ata-field="deleteButton" data-sortable="false"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <button class="btn btn-success btn-sm" onclick="SetCurrentTab('projectab2')"><i class="fa fa-edit"></i></button>
-                        </td>
-                    </tr>
-                    @foreach (var project in Model.ProjectViewModel.BusinessContracts.Where(p => p.Removed == false).ToList())
-                    {
-                        <tr id="@project.Id">
+    <form class="is-valid" id="ProjectViewModel">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" id="tab1">
+                <a class="nav-link active" href="#projecttab1" data-toggle="tab"> List All </a>
+            </li>
+            <li class="nav-item" id="tab2">
+                <a class="nav-link" href="#projecttab2" data-toggle="tab"> Edit </a>
+            </li>
+            <li class="nav-item" id="tab3">
+                <a class="nav-link" href="#projecttab3" data-toggle="tab"> Add </a>
+            </li>
+            <li class="nav-item" id="tab4">
+                <a class="nav-link" href="#projecttab4" data-toggle="tab"> List Removed </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="projecttab1" class="tab-pane active" role="tabpanel">
+                <table id="tblProject"
+                       class="table table-striped" width="100%"
+                       data-show-columns="true"
+                       data-pagination="true"
+                       data-search="true"
+                       data-show-jump-to="true">
+                    <thead>
+                        <tr>
+                            <th data-field="editButton" data-sortable="false"></th>
+                            <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
+                            <th data-field="description" data-sortable="true">The Project Description</th>
+                            <th data-field="Fees" data-sortable="true">Your Earned Fees</th>
+                            <th ata-field="deleteButton" data-sortable="false"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="EditProject('@project.Id,@project.ProjectDescription,@project.Fees,@project.ConstructionValue,@project.ProjectDuration')"><i class="fa fa-edit"></i></button>
-                            </td>
-                            <td>
-                                @project.ContractTitle
-                            </td>
-                            <td>
-                                @project.ProjectDescription
-                            </td>
-                            <td>
-                                @project.Fees
-                            </td>
-                            <td>
-                                <button onclick="RemoveProject('@project.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                <button class="btn btn-success btn-sm" onclick="SetCurrentTab('projecttab2')"><i class="fa fa-edit"></i></button>
                             </td>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div id="projecttab2" class="tab-pane" role="tabpanel">
-            <form class="is-valid" id="LocationViewModel">
-                <input id="ProjectId" name="ProjectViewModel.ProjectId" type="hidden" />
+                        @foreach (var project in Model.ProjectViewModel.BusinessContracts.Where(p => p.Removed == false).ToList())
+                        {
+                            <tr id="@project.Id">
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="EditProject('@project.Id,@project.ProjectDescription,@project.Fees,@project.ConstructionValue,@project.ProjectDuration')"><i class="fa fa-edit"></i></button>
+                                </td>
+                                <td>
+                                    @project.ContractTitle
+                                </td>
+                                <td>
+                                    @project.ProjectDescription
+                                </td>
+                                <td>
+                                    @project.Fees
+                                </td>
+                                <td>
+                                    <button onclick="RemoveProject('@project.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div id="projecttab2" class="tab-pane" role="tabpanel">
+
+                <input id="ProjectId" name="ProjectViewModel.ProjectId" hidden />
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -121,52 +122,53 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(m => m.ProjectViewModel.ResponsibilityOptions, Model.ProjectViewModel.ResponsibilityOptions, new { id = "responsibilityoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.DropDownListFor(m => m.ProjectViewModel.ResponsibilityOptions, Model.ProjectViewModel.ResponsibilityOptions, new { id = "responsibilityoptions", @class = "chosen-select custom-select b", @onchange = "OnChange(this.id, this.name)", @required = "", @multiple = "" })
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <a class="btn btn-sm btn-primary text-light" onclick="AddBusinessContract()"> Submit </a>
+                    <a class="btn btn-sm btn-primary text-light" onclick="AddProject()"> Submit </a>
                 </div>
-            </form>
-        </div>
-        <div id="projecttab4" class="tab-pane" role="tabpanel">
-            <table id="tblRemovedProject"
-                   class="table table-striped" width="100%"
-                   data-show-columns="true"
-                   data-pagination="true"
-                   data-search="true"
-                   data-show-jump-to="true">
-                <thead>
-                    <tr>
-                        <th data-field="editButton" data-sortable="false"></th>
-                        <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
-                        <th data-field="description" data-sortable="true">The Project Description</th>
-                        <th data-field="Fees" data-sortable="true">Your Earned Fees</th>
-                        <th ata-field="deleteButton" data-sortable="false"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var project in Model.ProjectViewModel.BusinessContracts.Where(p => p.Removed == true).ToList())
-                    {
-                        <tr id="@project.Id">
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="RestoreProject('@project.Id')"><i class="fa fa-undo"></i></button>
-                            </td>
-                            <td>
-                                @project.ContractTitle
-                            </td>
-                            <td>
-                                @project.ProjectDescription
-                            </td>
-                            <td>
-                                @project.Fees
-                            </td>
+
+            </div>
+            <div id="projecttab4" class="tab-pane" role="tabpanel">
+                <table id="tblRemovedProject"
+                       class="table table-striped" width="100%"
+                       data-show-columns="true"
+                       data-pagination="true"
+                       data-search="true"
+                       data-show-jump-to="true">
+                    <thead>
+                        <tr>
+                            <th data-field="editButton" data-sortable="false"></th>
+                            <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
+                            <th data-field="description" data-sortable="true">The Project Description</th>
+                            <th data-field="Fees" data-sortable="true">Your Earned Fees</th>
+                            <th ata-field="deleteButton" data-sortable="false"></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var project in Model.ProjectViewModel.BusinessContracts.Where(p => p.Removed == true).ToList())
+                        {
+                            <tr id="@project.Id">
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="RestoreProject('@project.Id')"><i class="fa fa-undo"></i></button>
+                                </td>
+                                <td>
+                                    @project.ContractTitle
+                                </td>
+                                <td>
+                                    @project.ProjectDescription
+                                </td>
+                                <td>
+                                    @project.Fees
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 

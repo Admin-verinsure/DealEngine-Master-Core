@@ -60,11 +60,10 @@
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
                    var formIds = [];
                    for (var i = 0; i < forms.length; i++) {
-                       if (forms[i].id != "myForm") {
+                       if (forms[i].id != "myForm" && forms[i].id != "RevenueDataViewModel" && forms[i].id != "ProjectViewModel") {
                            formIds.push(forms[i].id);
                        }
                    }
-                   debugger;
                    for (var f = 0; f < formIds.length; f++) {
                        var form = document.getElementById(formIds[f]);
                        var element = null;
@@ -146,6 +145,7 @@
                    if (percentage != 100) {                       
                        hasPercent = false;
                    }
+                   debugger;
                    if (!hasItem || !hasPercent) {
                        event.preventDefault();
                        event.stopPropagation();
@@ -184,11 +184,7 @@
 
                    event.preventDefault();
                    if (stepDirection == "forward") {
-                       var claim1 = $('#Claimexp1').val();
-                   var claim2 = $('#Claimexp2').val();
-                   var claim3 = $('#Claimexp3').val();
-                   var claim4 = $('#Claimexp4').val();
-                   var claim5 = $('#Claimexp5').val();
+
                    var vesselExists = document.getElementById("Vessel");
                    var namedPartyExists = document.getElementById("Insured Details / Named Parties");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
@@ -271,28 +267,6 @@
                        var prevbutton = document.getElementsByClassName("previous");
                        $(prevbutton).addClass("hidden");
                        $(prevbutton).hide();
-                   }
-
-                   var stringArray = new Array();
-                   stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
-                   stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
-                   stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
-                   stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
-                   stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
-
-                   var postData = { Claims: stringArray, ClientInformationSheet: clientInformationSheet };
-                   if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                       $.ajax({
-                           url: '@Url.Action("UpdateClaim", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
                    }
 
                   }               
@@ -531,7 +505,6 @@
         $('#Nonregisteredtabs').tabs();
         $('#tabs').tabs();
         $('#Boattabs').tabs();
-        $('#SharedRevenue').tabs();
         $('#SharedRole').tabs();
         $('#PMINZNamedPartiestabs').tabs();        
         $('#registeredtrailertabs').tabs();
@@ -667,41 +640,12 @@
     });
 
 
-
-        //$("#accordion").accordion({
-        //    beforeActivate: function (e, ui) {
-        //        var currentform = ui.oldPanel[0];
-        //        if (currentform.classList.contains('needs-validation')) {
-        //        }                
-        //            for (var f = 0; f < currentform.length; f++) {
-        //                var element = document.getElementById(currentform[f].id);
-        //                OnChange(element.id, element.name);
-        //                //hardcoded to find the div visibility
-        //                var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
-        //                if (element.classList.contains("is-invalid") && isHidden == false) {       
-        //                    //write a message here or stop the process
-
-        //                    //e.preventDefault();
-        //                    //e.stopPropagation();
-        //                    //element.scrollIntoView();
-        //                }
-        //                else {
-        //                    currentform[f].classList.remove("needs-validation");
-        //                    currentform[f].classList.add("was-validated");
-        //                }
-        //            }
-        //        }
-                
-        //    }
-        //});
-
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {          
-            @*$.ajax({
+            $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
                 data: $("#tab_1 :input").serialize({ json:true })
-                //data: $("#myForm").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
@@ -722,8 +666,7 @@
            })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     debugger;
-               alert("Unable to save....");
-           });*@
+           });
         }
     });
 
