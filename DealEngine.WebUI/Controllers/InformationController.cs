@@ -47,7 +47,7 @@ namespace DealEngine.WebUI.Controllers
         IAdvisoryService _advisoryService;
         IOrganisationService _organisationService;
         IInsuranceAttributeService _insuranceAttributeService;
-        IBusinessActivityService _businessActivityService;        
+        IBusinessActivityService _businessActivityService;
         IProductService _productService;
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
@@ -60,7 +60,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
-            IInformationSectionService informationSectionService,            
+            IInformationSectionService informationSectionService,
             IInsuranceAttributeService insuranceAttributeService,
             IOrganisationService organisationService,
             IActivityService activityService,
@@ -96,7 +96,7 @@ namespace DealEngine.WebUI.Controllers
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
-            _logger = logger;            
+            _logger = logger;
             _insuranceAttributeService = insuranceAttributeService;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
@@ -175,170 +175,170 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> StartInformation(Guid id)
-        {
-            User user = null;
-            try
-            {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
-                ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                user = await CurrentUser();
-                model.ClientInformationSheet = sheet;
-                model.ClientProgramme = clientProgramme;
-                model.CompanyName = _appSettingService.GetCompanyTitle;
+        //[HttpGet]
+        //public async Task<IActionResult> StartInformation(Guid id)
+        //{
+        //    User user = null;
+        //    try
+        //    {
+        //        ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+        //        ClientInformationSheet sheet = clientProgramme.InformationSheet;
+        //        InformationViewModel model = await GetInformationViewModel(clientProgramme);
+        //        user = await CurrentUser();
+        //        model.ClientInformationSheet = sheet;
+        //        model.ClientProgramme = clientProgramme;
+        //        model.CompanyName = _appSettingService.GetCompanyTitle;
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    if (sheet.Status == "Not Started")
-                    {
-                        sheet.Status = "Started";
-                    }
-                    foreach (var section in model.Sections)
-                        foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-                        {
-                            var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                            if (answer != null)
-                                item.Value = answer.Value;
-                            else
-                                sheet.AddAnswer(item.Name, "");
-                        }
-                    await uow.Commit();
-                }
+        //        using (var uow = _unitOfWork.BeginUnitOfWork())
+        //        {
+        //            if (sheet.Status == "Not Started")
+        //            {
+        //                sheet.Status = "Started";
+        //            }
+        //            foreach (var section in model.Sections)
+        //                foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
+        //                {
+        //                    var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
+        //                    if (answer != null)
+        //                        item.Value = answer.Value;
+        //                    else
+        //                        sheet.AddAnswer(item.Name, "");
+        //                }
+        //            await uow.Commit();
+        //        }
 
-                var boats = new List<BoatViewModel>();
-                foreach (Boat b in sheet.Boats)
-                {
-                    boats.Add(BoatViewModel.FromEntity(b));
-                }
-                model.Boats = boats;
+        //        var boats = new List<BoatViewModel>();
+        //        foreach (Boat b in sheet.Boats)
+        //        {
+        //            boats.Add(BoatViewModel.FromEntity(b));
+        //        }
+        //        model.Boats = boats;
 
-                var operators = new List<OrganisationViewModel>();
-                var organisationList = await _organisationService.GetAllOrganisations();
-                foreach (Organisation skipper in organisationList.Where(o => o.OrganisationType.Name == "Skipper"))
-                {
-                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipper);
-                    ovm.OrganisationName = skipper.Name;
-                    ovm.OrganisationEmail = skipper.Email;
-                    operators.Add(ovm);
-                }
-                model.Operators = operators;
+        //        var operators = new List<OrganisationViewModel>();
+        //        var organisationList = await _organisationService.GetAllOrganisations();
+        //        foreach (Organisation skipper in organisationList.Where(o => o.OrganisationType.Name == "Skipper"))
+        //        {
+        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipper);
+        //            ovm.OrganisationName = skipper.Name;
+        //            ovm.OrganisationEmail = skipper.Email;
+        //            operators.Add(ovm);
+        //        }
+        //        model.Operators = operators;
 
-                var claims = new List<ClaimViewModel>();
-                foreach (ClaimNotification cl in sheet.ClaimNotifications)
-                {
-                    claims.Add(ClaimViewModel.FromEntity(cl));
-                }
-                model.Claims = claims;
+        //        var claims = new List<ClaimViewModel>();
+        //        foreach (ClaimNotification cl in sheet.ClaimNotifications)
+        //        {
+        //            claims.Add(ClaimViewModel.FromEntity(cl));
+        //        }
+        //        model.Claims = claims;
 
-                var boatUses = new List<BoatUseViewModel>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(bu));
-                }
-                model.BoatUse = boatUses;
+        //        var boatUses = new List<BoatUseViewModel>();
+        //        foreach (BoatUse bu in sheet.BoatUses)
+        //        {
+        //            boatUses.Add(BoatUseViewModel.FromEntity(bu));
+        //        }
+        //        model.BoatUse = boatUses;
 
-                // TODO - find a better way to pass these in
-                model.HasVehicles = sheet.Vehicles.Count > 0;
-                var vehicles = new List<VehicleViewModel>();
-                foreach (Vehicle v in sheet.Vehicles)
-                {
-                    vehicles.Add(VehicleViewModel.FromEntity(v));
-                }
-                model.AllVehicles = vehicles;
-                model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-                model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
+        //        // TODO - find a better way to pass these in
+        //        model.HasVehicles = sheet.Vehicles.Count > 0;
+        //        var vehicles = new List<VehicleViewModel>();
+        //        foreach (Vehicle v in sheet.Vehicles)
+        //        {
+        //            vehicles.Add(VehicleViewModel.FromEntity(v));
+        //        }
+        //        model.AllVehicles = vehicles;
+        //        model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
+        //        model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-                model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                var locations = new List<LocationViewModel>();
-                var buildings = new List<BuildingViewModel>();
-                var waterLocations = new List<WaterLocationViewModel>();
-                foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        model.OrganisationalUnitsVM = new OrganisationalUnitVM();
+        //        model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
+        //        var locations = new List<LocationViewModel>();
+        //        var buildings = new List<BuildingViewModel>();
+        //        var waterLocations = new List<WaterLocationViewModel>();
+        //        foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
+        //        {
+        //            organisationalUnits.Add(new OrganisationalUnitViewModel
+        //            {
+        //                OrganisationalUnitId = ou.Id,
+        //                Name = ou.Name
+        //            });
 
-                    model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+        //            model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
 
-                    foreach (Location loc in ou.Locations)
-                    {
-                        locations.Add(LocationViewModel.FromEntity(loc));
+        //            foreach (Location loc in ou.Locations)
+        //            {
+        //                //locations.Add(LocationViewModel.FromEntity(loc));
 
-                        foreach (Building bui in loc.Buildings)
-                        {
-                            buildings.Add(BuildingViewModel.FromEntity(bui));
-                        }
+        //                foreach (Building bui in loc.Buildings)
+        //                {
+        //                    buildings.Add(BuildingViewModel.FromEntity(bui));
+        //                }
 
-                        foreach (WaterLocation wl in loc.WaterLocations)
-                        {
-                            waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
-                        }
-                    }
-                }
+        //                foreach (WaterLocation wl in loc.WaterLocations)
+        //                {
+        //                    waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
+        //                }
+        //            }
+        //        }
 
-                var interestedParties = new List<OrganisationViewModel>();
-                var orgList = await _organisationService.GetAllOrganisations();
-                foreach (Organisation org in orgList.Where(o => o.OrganisationType != null))
-                {
-                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                    ovm.OrganisationName = org.Name;
-                    interestedParties.Add(ovm);
-                }
+        //        var interestedParties = new List<OrganisationViewModel>();
+        //        var orgList = await _organisationService.GetAllOrganisations();
+        //        foreach (Organisation org in orgList.Where(o => o.OrganisationType != null))
+        //        {
+        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+        //            ovm.OrganisationName = org.Name;
+        //            interestedParties.Add(ovm);
+        //        }
 
-                var boatUse = new List<BoatUse>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUse.Add(bu);
+        //        var boatUse = new List<BoatUse>();
+        //        foreach (BoatUse bu in sheet.BoatUses)
+        //        {
+        //            boatUse.Add(bu);
 
-                }
+        //        }
 
-                //var availableProducts = new List<ProductItem>();
-                // TODO verify that this is no longer needed with the Programme Implementation
-                //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
-                //	// skip any information sheet that has been renewed or updated
-                //	if (otherSheet.NextInformationSheet != null)
-                //		continue;
-                //	availableProducts.Add (new ProductItem {
-                //		Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
-                //		Status = otherSheet.Status,
-                //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-                //	});
-                //}
+        //        //var availableProducts = new List<ProductItem>();
+        //        // TODO verify that this is no longer needed with the Programme Implementation
+        //        //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
+        //        //	// skip any information sheet that has been renewed or updated
+        //        //	if (otherSheet.NextInformationSheet != null)
+        //        //		continue;
+        //        //	availableProducts.Add (new ProductItem {
+        //        //		Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
+        //        //		Status = otherSheet.Status,
+        //        //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
+        //        //	});
+        //        //}
 
-                var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
+        //        var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
+        //        userDetails.PostalAddress = user.Address;
+        //        userDetails.StreetAddress = user.Address;
 
-                var organisationDetails = new OrganisationDetailsVM
-                {
-                    Name = sheet.Owner.Name,
-                    Phone = sheet.Owner.Phone,
-                    Website = sheet.Owner.Domain
-                };
+        //        var organisationDetails = new OrganisationDetailsVM
+        //        {
+        //            Name = sheet.Owner.Name,
+        //            Phone = sheet.Owner.Phone,
+        //            Website = sheet.Owner.Domain
+        //        };
 
-                model.OrganisationalUnits = organisationalUnits;
-                model.Locations = locations;
-                model.Buildings = buildings;
-                model.WaterLocations = waterLocations;
-                model.InterestedParties = interestedParties;
-                //model.AvailableProducts = availableProducts;
-                model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
+        //        model.OrganisationalUnits = organisationalUnits;
+        //        //model.Locations = locations;
+        //        model.Buildings = buildings;
+        //        model.WaterLocations = waterLocations;
+        //        model.InterestedParties = interestedParties;
+        //        //model.AvailableProducts = availableProducts;
+        //        model.OrganisationDetails = organisationDetails;
+        //        model.UserDetails = userDetails;
 
-                return View("InformationWizard", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        return View("InformationWizard", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> EditPanel(Guid panelId, string panelName, int panelPosition)
@@ -380,7 +380,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);                
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientProgramme = clientProgramme;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
@@ -408,7 +408,7 @@ namespace DealEngine.WebUI.Controllers
                 model.SectionView = name;
                 model.ClientProgramme = clientProgramme;
                 user = await CurrentUser();
-             
+
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
 
@@ -616,10 +616,10 @@ namespace DealEngine.WebUI.Controllers
                 }
 
 
-                for (var i = 0; i < sheet.Locations.Count(); i++)
-                {
-                    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
-                }
+                //for (var i = 0; i < sheet.Locations.Count(); i++)
+                //{
+                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
+                //}
 
                 for (var i = 0; i < sheet.Buildings.Count(); i++)
                 {
@@ -700,7 +700,7 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
-                model.Locations = locations;
+                //model.Locations = locations;
                 model.Buildings = buildings;
                 //model.Buildings.
                 model.WaterLocations = waterLocations;
@@ -886,12 +886,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
-                var sheet = clientProgramme.InformationSheet;                
+                var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                
+
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
-                
+
                 //build models from answers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
@@ -903,7 +903,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
 
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);                
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -936,7 +936,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {                                
+                    {
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
@@ -999,13 +999,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Claims = claims;
-
-                var businessContracts = new List<BusinessContractViewModel>();
-                for (var i = 0; i < sheet.BusinessContracts.Count; i++)
-                {
-                    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
-                }
-                model.BusinessContracts = businessContracts;
 
                 var interestedParties = new List<OrganisationViewModel>();
 
@@ -1079,7 +1072,6 @@ namespace DealEngine.WebUI.Controllers
                 var organisationalUnits = new List<OrganisationalUnitViewModel>();
                 model.OrganisationalUnitsVM = new OrganisationalUnitVM();
                 model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                var locations = new List<LocationViewModel>();
                 var buildings = new List<BuildingViewModel>();
                 var waterLocations = new List<WaterLocationViewModel>();
                 var MarinaLocations = new List<OrganisationViewModel>();
@@ -1096,10 +1088,10 @@ namespace DealEngine.WebUI.Controllers
                 }
 
 
-                for (var i = 0; i < sheet.Locations.Count(); i++)
-                {
-                    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
-                }
+                //for (var i = 0; i < sheet.Locations.Count(); i++)
+                //{
+                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
+                //}
 
                 for (var i = 0; i < sheet.Buildings.Count(); i++)
                 {
@@ -1143,7 +1135,7 @@ namespace DealEngine.WebUI.Controllers
 
                 var availableorganisation = new List<SelectListItem>();
 
-                foreach (Organisation organisation in  await _organisationService.GetOrganisationPrincipals(sheet))
+                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
                 {
                     availableorganisation.Add(new SelectListItem
                     {
@@ -1180,7 +1172,7 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
-                model.Locations = locations;
+                //model.Locations = locations;
                 model.Buildings = buildings;
                 //model.Buildings.
                 model.WaterLocations = waterLocations;
@@ -1218,7 +1210,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         modelName = "EPLViewModel";
                     }
-                    else if(split.FirstOrDefault() == "PMINZPIViewModel")
+                    else if (split.FirstOrDefault() == "PMINZPIViewModel")
                     {
                         modelName = "PIViewModel";
                     }
@@ -1255,7 +1247,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if(date == defaultDate || date == null)
+                            if (date == defaultDate || date == null)
                             {
                                 date = DateTime.Now;
                             }
@@ -1274,17 +1266,17 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if(revenueData.Activities.Count> 0 || revenueData.Territories.Count > 0)
+                if (revenueData.Activities.Count > 0 || revenueData.Territories.Count > 0)
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
                     model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }            
+            }
         }
 
         private IList<string> LoadWizardsteps(string wizardType)
@@ -1367,7 +1359,7 @@ namespace DealEngine.WebUI.Controllers
             }
 
             return sharedRoleViewModel;
-        }        
+        }
 
         [HttpGet]
         public async Task<IActionResult> Unlock(Guid id)
@@ -1447,12 +1439,15 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheetId = Guid.Parse(collection["ClientInformationSheet.Id"]);
+                sheetId = Guid.Parse(collection["AnswerSheetId"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
 
-                //await _clientInformationService.SaveAnswersFor(sheet, collection);
+                if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                {
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                }
 
                 return Json("Success");
             }
@@ -1461,444 +1456,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetDNO(Guid ClientInformationSheet)
-        {
-            string[][] DNOAnwers = new String[15][];
-            var count = 0;
-            string[] DNOItem;
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DNO1" || c.ItemName == "DNO2" || c.ItemName == "DNO3"
-                                                                                                                                                          || c.ItemName == "DNO4" || c.ItemName == "DNO5" || c.ItemName == "DNO6" || c.ItemName == "DNO7"
-                                                                                                                                                          || c.ItemName == "DNO8" || c.ItemName == "DNO9" || c.ItemName == "DNO10" || c.ItemName == "DNO11"
-                                                                                                                                                          || c.ItemName == "DNO12" || c.ItemName == "DNO13" || c.ItemName == "DNO14" || c.ItemName == "DNO15")))
-                {
-                    DNOItem = new String[2];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        DNOItem[i] = answer.ItemName;
-                        DNOItem[i + 1] = answer.Value;
-                    }
-
-                    DNOAnwers[count] = DNOItem;
-                    count++;
-                }
-
-                return Json(DNOAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetStatutoryLiability(Guid ClientInformationSheet)
-        {
-            String[][] GeneralLiabilityAnwers = new String[6][];
-            var count = 0;
-            String[] GeneralLiability;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "StatutoryLiability1" || c.ItemName == "StatutoryLiability2" || c.ItemName == "StatutoryLiability3"
-                                                                                                                                                      || c.ItemName == "StatutoryLiability4" || c.ItemName == "StatutoryLiability5" || c.ItemName == "StatutoryLiability6")))
-                {
-                    GeneralLiability = new String[2];
-                    for (var i = 0; i < 1; i++)
-                    {
-                        GeneralLiability[i] = answer.ItemName;
-                        GeneralLiability[i + 1] = answer.Value;
-                    }
-
-                    GeneralLiabilityAnwers[count] = GeneralLiability;
-                    count++;
-                }
-
-                return Json(GeneralLiabilityAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetProfessionalIdemnity(Guid ClientInformationSheet)
-        {
-            String[][] ProfessionalIndemnityAnswer = new String[11][];
-            var count = 0;
-            String[] ProfessionalIndemnity;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1" || c.ItemName == "ProfessionalIndemnity2" || c.ItemName == "ProfessionalIndemnity11"
-                                                                                                                                || c.ItemName == "ProfessionalIndemnity3" || c.ItemName == "ProfessionalIndemnity4" || c.ItemName == "ProfessionalIndemnity5" || c.ItemName == "ProfessionalIndemnity10"
-                                                                                                                                || c.ItemName == "ProfessionalIndemnity6" || c.ItemName == "ProfessionalIndemnity7" || c.ItemName == "ProfessionalIndemnity8" || c.ItemName == "ProfessionalIndemnity9")))
-                {
-                    ProfessionalIndemnity = new String[2];
-                    for (var i = 0; i < 1; i++)
-                    {
-                        ProfessionalIndemnity[i] = answer.ItemName;
-                        ProfessionalIndemnity[i + 1] = answer.Value;
-                    }
-                    ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
-                    count++;
-                }
-                return Json(ProfessionalIndemnityAnswer);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetPMINZProfessionalIdemnity(Guid ClientInformationSheet)
-        {
-            String[][] ProfessionalIndemnityAnswer = new String[20][];
-            var count = 0;
-            String[] ProfessionalIndemnity;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "PMINZPI1" || c.ItemName == "PMINZPI2" || c.ItemName == "PMINZPI3" || c.ItemName == "PMINZPI4" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6"
-                                                                                                                                                         || c.ItemName == "PMINZPI7"  || c.ItemName == "PMINZPI8" || c.ItemName == "PMINZPI9" || c.ItemName == "PMINZPI10" || c.ItemName == "PMINZPI11" || c.ItemName == "PMINZPI12"
-                                                                                                                                                         || c.ItemName == "PMINZPI13" || c.ItemName == "PMINZPI14" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6" || c.ItemName == "PMINZPI17" || c.ItemName == "PMINZPI18" || c.ItemName == "PMINZPI19" || c.ItemName == "PMINZPI20")))
-                {
-                    ProfessionalIndemnity = new String[3];
-                    for (var i = 0; i < 1; i++)
-                    {
-                        ProfessionalIndemnity[i] = answer.ItemName;
-                        ProfessionalIndemnity[i + 1] = answer.Value;
-                        ProfessionalIndemnity[i + 2] = answer.ClaimDetails;
-                    }
-                    ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
-                    count++;
-                }
-                return Json(ProfessionalIndemnityAnswer);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> GetEmployerLiability(Guid ClientInformationSheet)
-        {
-            String[][] GeneralLiabilityAnwers = new String[6][];
-            var count = 0;
-            String[] GeneralLiability;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerLiabilityInsurance1" || c.ItemName == "EmployerLiabilityInsurance2"
-                                                                                                                                                     || c.ItemName == "EmployerLiabilityInsurance3" || c.ItemName == "EmployerLiabilityInsurance4"
-                                                                                                                                                     || c.ItemName == "EmployerLiabilityInsurance5" || c.ItemName == "EmployerLiabilityInsurance6")))
-                {
-                    GeneralLiability = new String[2];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        GeneralLiability[i] = answer.ItemName;
-                        GeneralLiability[i + 1] = answer.Value;
-                    }
-
-                    GeneralLiabilityAnwers[count] = GeneralLiability;
-                    count++;
-                }
-
-                return Json(GeneralLiabilityAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetEmployerPracticesLiability(Guid ClientInformationSheet)
-        {
-            String[][] GeneralLiabilityAnwers = new String[6][];
-            var count = 0;
-            String[] GeneralLiability;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerPracticesLiability1" || c.ItemName == "EmployerPracticesLiability2"
-                                                                                                                                                     || c.ItemName == "EmployerPracticesLiability3" || c.ItemName == "EmployerPracticesLiability4"
-                                                                                                                                                     || c.ItemName == "EmployerPracticesLiability5" || c.ItemName == "EmployerPracticesLiability6")))
-                {
-                    GeneralLiability = new String[2];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        GeneralLiability[i] = answer.ItemName;
-                        GeneralLiability[i + 1] = answer.Value;
-                    }
-
-                    GeneralLiabilityAnwers[count] = GeneralLiability;
-                    count++;
-                }
-
-                return Json(GeneralLiabilityAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetGeneralLiability(Guid ClientInformationSheet)
-        {
-            String[][] GeneralLiabilityAnwers = new String[7][];
-            var count = 0;
-            String[] GeneralLiability;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "GeneralLiabilityInsurance1" || c.ItemName == "GeneralLiabilityInsurance2" || c.ItemName == "GeneralLiabilityInsurance3"
-                                                                                                                                                     || c.ItemName == "GeneralLiabilityInsurance4" || c.ItemName == "GeneralLiabilityInsurance5" || c.ItemName == "GeneralLiabilityInsurance6" || c.ItemName == "GeneralLiabilityInsurance7")))
-
-                {
-                    GeneralLiability = new String[2];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        GeneralLiability[i] = answer.ItemName;
-                        GeneralLiability[i + 1] = answer.Value;
-                    }
-
-                    GeneralLiabilityAnwers[count] = GeneralLiability;
-                    count++;
-                }
-
-                return Json(GeneralLiabilityAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetDirectorsandOfficersLiability(Guid ClientInformationSheet)
-        {
-            String[][] GeneralLiabilityAnwers = new String[7][];
-            var count = 0;
-            String[] GeneralLiability;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DirectorsandOfficers1" || c.ItemName == "DirectorsandOfficers2" || c.ItemName == "DirectorsandOfficers3"
-                                                                                                                                                     || c.ItemName == "DirectorsandOfficers4" || c.ItemName == "DirectorsandOfficers5" || c.ItemName == "DirectorsandOfficers6" || c.ItemName == "DirectorsandOfficers7")))
-
-                {
-                    GeneralLiability = new String[2];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        GeneralLiability[i] = answer.ItemName;
-                        GeneralLiability[i + 1] = answer.Value;
-                    }
-
-                    GeneralLiabilityAnwers[count] = GeneralLiability;
-                    count++;
-                }
-
-                return Json(GeneralLiabilityAnwers);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateAnswer(List<string[]> Answers, Guid ClientInformationSheet)
-        {
-            ClientInformationSheet sheet = null;
-            User user = null;
-
-            try
-            {
-                foreach (var item in Answers)
-                {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        if (item[1] != null)
-                        {
-                            for (var x = 0; x < item.Length - 1; x++)
-                            {
-                                ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
-                                if (answer != null)
-                                {
-                                    answer.Value = item[1];
-                                    if (item.Length > 2)
-                                        answer.ClaimDetails = item[2];
-                                    //answer.ClaimDetails = item[2];
-                                }
-                                else
-                                {
-                                    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                    if (item.Length > 2)
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
-                                    }
-                                    else
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
-
-                                    }
-
-                                }
-                                //if (answer != null)
-                                //{
-                                //    answer.Value = item[1];
-                                //    //answer.ClaimDetails = item[2];
-                                //}
-                                //else
-                                //{
-                                //    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                //    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
-                                //}
-                            }
-                        }
-                        await uow.Commit();
-                    }
-                }
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdatePMINZPIAnswer(List<string[]> Answers, Guid ClientInformationSheet)
-        {
-            ClientInformationSheet sheet = null;
-            User user = null;
-
-            try
-            {
-                foreach (var item in Answers)
-                {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        if (item[1] != null)
-                        {
-                            //for (var x = 0; x < item.Length - 1; x++)
-                           // {
-
-                                
-                                ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
-                                if (answer != null)
-                                {
-                                    answer.Value = item[1];
-                                    if(item.Length > 2)
-                                    answer.ClaimDetails = item[2];
-                                    //answer.ClaimDetails = item[2];
-                                }
-                                else
-                                {
-                                    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                    if (item.Length > 2)
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
-                                    }
-                                    else
-                                    {
-                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
-
-                                    }
-
-                                }
-                            //}
-                        }
-                        await uow.Commit();
-                    }
-                }
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
-        {
-            ClientInformationSheet sheet = null;
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                foreach (var item in Claims)
-                {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        for (var x = 0; x < item.Length - 1; x++)
-                        {
-                            ClientInformationAnswer answer = _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet).Result;
-                            if (answer != null)
-                            {
-                                answer.Value = item[1];
-                                answer.ClaimDetails = item[2];
-                            }
-                            else
-                            {
-                                sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
-                                await _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet);
-                            }
-                        }
-                        await uow.Commit();
-                    }
-                }
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        }              
 
         [HttpPost]
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)
@@ -1972,8 +1530,6 @@ namespace DealEngine.WebUI.Controllers
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Submitted";
-                        //ClientInformationAnswer clientInformationAnswer = sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status");
-                        //sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Submitted";
                         sheet.SubmitDate = DateTime.UtcNow;
                         sheet.SubmittedBy = user;
                         await uow.Commit();
@@ -2086,137 +1642,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateDemoUIS()
-        //{
-        //    User user = null;
-
-        //    try
-        //    {
-        //        var demoData = null;//await LoadTemplate();
-        //        user = await CurrentUser();
-        //        List<InformationSection> informationSections = new List<InformationSection>();
-
-        //        foreach (var section in demoData.Sections)
-        //        {
-
-        //            // Update section Id in view model
-        //            // See Above temporaraly
-
-        //            List<InformationItem> items = new List<InformationItem>();
-
-        //            //Loop through Questions
-        //            foreach (var item in section.Items)
-        //            {
-        //                using (var uow = _unitOfWork.BeginUnitOfWork())
-        //                {
-        //                    // Create Information Item
-
-
-        //                    if (item != null)
-        //                    {
-        //                        string itemTypeName = Enum.GetName(typeof(ItemType), item.Type);
-        //                        InformationItem newItem = null;
-
-        //                        switch (item.Type)
-        //                        {
-        //                            case ItemType.TEXTAREA:
-        //                            case ItemType.TEXTBOX:
-        //                                var textboxItem = await _informationItemService.CreateTextboxItem(user, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
-        //                                items.Add(textboxItem);
-        //                                item.Id = textboxItem.Id;
-        //                                break;
-
-        //                            case ItemType.LABEL:
-        //                                var labelItem = await _informationItemService.CreateLabelItem(user, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
-        //                                items.Add(labelItem);
-        //                                item.Id = labelItem.Id;
-        //                                break;
-
-        //                            case ItemType.PERCENTAGEBREAKDOWN:
-        //                            case ItemType.DROPDOWNLIST:
-        //                                //Mapper.CreateMap<SelectListItem, DropdownListOption>();
-        //                                //Mapper.CreateMap<DropdownListOption, SelectListItem>()
-        //                                var options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-        //                                var newDropdownList = await _informationItemService.CreateDropdownListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
-        //                                //newDropdownList.AddItems(options);
-        //                                items.Add(newDropdownList);
-        //                                item.Id = newDropdownList.Id;
-        //                                break;
-
-        //                            //case ItemType.MULTISELECT:
-        //                            //    options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-        //                            //    var multiselectList = await _informationItemService.CreateMultiselectListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
-        //                            //    items.Add(multiselectList);
-        //                            //    item.Id = multiselectList.Id;
-        //                            //    break;
-
-        //                            case ItemType.JSBUTTON:
-        //                                newItem = await _informationItemService.CreateJSButtonItem(user, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
-        //                                break;
-
-        //                            case ItemType.SUBMITBUTTON:
-        //                                newItem = await _informationItemService.CreateSubmitButtonItem(user, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
-        //                                break;
-
-        //                            //case ItemType.SECTIONBREAK:
-        //                            //    var terminatorItem = await _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName);
-        //                            //    items.Add(terminatorItem);
-        //                            //    break;
-
-        //                            default:
-        //                                newItem = null;
-        //                                break;
-        //                        }
-
-        //                        if (newItem != null)
-        //                        {
-        //                            items.Add(newItem);
-        //                            item.Id = newItem.Id;
-        //                            newItem = null;
-        //                        }
-
-
-        //                        // Update Inforamtion Item ID in view model
-        //                        // For now see code above, Will fix later with Domain Model
-        //                    }
-        //                    await uow.Commit();
-        //                }
-
-        //            }
-
-        //            using (var uow = _unitOfWork.BeginUnitOfWork())
-        //            {
-        //                // Create New Section
-
-        //                InformationSection informationSection = await _informationSectionService.CreateNewSection(user, section.Name, items);
-        //                informationSection.CustomView = section.CustomView;
-        //                informationSections.Add(informationSection);
-
-        //                section.Id = informationSection.Id;
-        //                await uow.Commit();
-        //            }
-
-        //        }
-
-        //        using (var uow = _unitOfWork.BeginUnitOfWork())
-        //        {
-        //            InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(user, demoData.Name, informationSections);
-
-        //            demoData.Id = template.Id;
-
-        //            await uow.Commit();
-        //        }
-
-        //        return Json(demoData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
 
         [HttpGet]
         public async Task<IActionResult> IssueDemoUIS(string id)
@@ -2369,7 +1794,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }                       
+        }
 
         public async Task<InformationViewModel> GetInformationViewModel(ClientProgramme clientProgramme)
         {
@@ -2379,11 +1804,11 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel(programme)
+                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
-                };                
+                };
                 model.Name = programme.Name;
                 Product product = null;
                 if (programme.Products.Count > 1)
@@ -2445,8 +1870,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 InformationViewModel model = await GetInformationViewModel(sheet.Programme);
-                model.Sections = model.Sections.OrderBy(sec => sec.Position);                
-                model.ClientInformationSheet = sheet;                
+                model.Sections = model.Sections.OrderBy(sec => sec.Position);
+                model.ClientInformationSheet = sheet;
 
                 foreach (var section in model.Sections)
                     foreach (var item in section.Items)
@@ -2500,7 +1925,7 @@ namespace DealEngine.WebUI.Controllers
                 var orgType = form["cgradioselect"];
                 var orgName = form["fname"].ToList().First();
                 var firstName = form["fname"].ToList().Last();
-                var lastName = form["lname"];                
+                var lastName = form["lname"];
                 var mobilePhone = form["mphon"];
                 var programmeList = await _programmeService.GetAllProgrammes();
                 var programme = programmeList.LastOrDefault();
@@ -2613,12 +2038,12 @@ namespace DealEngine.WebUI.Controllers
 
                     user.SetPrimaryOrganisation(organisation);
                     await _userService.Update(user);
-                    
+
                     var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                     var reference = await _referenceService.GetLatestReferenceId();
                     var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
                     await _referenceService.CreateClientInformationReference(sheet);
-                    
+
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
@@ -2630,22 +2055,22 @@ namespace DealEngine.WebUI.Controllers
                         }
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         try
-                        {                                
+                        {
                             await uow.Commit();
                         }
                         catch (Exception ex)
                         {
                             throw new Exception(ex.Message);
-                        }                        
-                    }                    
+                        }
+                    }
                 }
                 return NoContent();
-            }                          
+            }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         // Important Notices - CK Editor

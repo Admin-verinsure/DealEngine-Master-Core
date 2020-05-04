@@ -7,5 +7,6 @@ namespace DealEngine.Services.Interfaces
     public interface IBusinessContractService
     {
         Task<BusinessContract> GetBusinessContractById(Guid businessContractId);
+        Task Update(BusinessContract businessContract);
     }
 }

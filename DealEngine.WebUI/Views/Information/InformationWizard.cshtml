@@ -32,7 +32,8 @@
                                 </div>
 
                             }
-                            <div class="widget-body">
+                        <div class="widget-body">
+                            <form class="is-valid" id="LocationViewModel"></form>
                                 <form action="#" class="" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8">
 
                                     <!-- SmartWizard html -->
@@ -143,9 +144,9 @@
                                                                                     <label class="input w100">
                                                                                         <select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
                                                                                             <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
-                                                                                            @foreach (var wloc in Model.Locations)
+                                                                                            @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                             {
-                                                                                                <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                                <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                             }
                                                                                             <option value="add">Add Location</option>
                                                                                         </select>
@@ -197,9 +198,9 @@
                                                                                     <label class="input w100">
                                                                                         <select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
                                                                                             <option selected="selected" value="">-- Select --</option>
-                                                                                            @foreach (var wloc in Model.Locations)
+                                                                                            @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                             {
-                                                                                                <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                                <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                             }
                                                                                             <option value="add">Add Location</option>
                                                                                         </select>
@@ -630,9 +631,9 @@
                                                                                         <label class="input cgmodalInput">
                                                                                             <select onchange="addNewTrailerLoc()" class="form-control b" id="VehicleLocationModal" name="VehicleLocation" required>
                                                                                                 <option selected="selected" value="">-- Select --</option>
-                                                                                                @foreach (var tloc in Model.Locations)
+                                                                                                @foreach (var tloc in Model.LocationViewModel.Locations)
                                                                                                 {
-                                                                                                    <option value="@tloc.LocationId">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
+                                                                                                    <option value="@tloc.Id">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
                                                                                                 }
                                                                                                 <option value="add">Add Location</option>
                                                                                             </select>
@@ -994,7 +995,7 @@
                                     </div>
 
                                 </form>
-                            </div>
+                        </div>
 
                             <div class="modal" id="getAgreementModal" tabindex="-1" role="dialog" data-backdrop="static">
                                 <div class="modal-dialog">
@@ -1127,12 +1128,17 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
+
+            var accordianPanel = localStorage.getItem("accordianTrigger");
+            if (accordianPanel != null) {
+                $("[id='" + accordianPanel + "']").trigger("click");
+                localStorage.removeItem("accordianTrigger");
+            }
+
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
-            } else {
-                $("#getDetailsModal").modal('show');
-            }
+            } 
 
             if ("@Model.Status" == "Submitted") {
                 debugger;
@@ -1143,46 +1149,9 @@
                 }
                 $('.btn-sm').addClass("hidden");
                 $("#accordion :input").prop("disabled", true);
-
-
-
-                //$('.btn').addClass("hidden");
             }
-
-            var clientInformationSheet = $('#InformationViewModel.InformationSheet.Id').val();
-            var postData = { ClientInformationSheet: clientInformationSheet };
-
-            $.ajax({
-                // change back once mono decides to fix
-                url: '@Url.Action("GetClaimHistory", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (data) {
-                    if (data != "" &&
-                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null)
-                    ){
-                        for (var item = 0; item < data.length; item++){
-                            var arr = data[item];
-                            var count = 0;
-                            $('#' + arr[count]).val(arr[count + 1]);
-                            if (arr[count + 1] == "true") {
-                                $('#' + arr[count] + 'Details').val(arr[count + 2]);
-                                $('#' + arr[count] + 'Sec').removeClass('hidden');
-                            } else {
-                                $('#' + arr[count] + 'Details').val("");
-                                $('#' + arr[count] + 'Sec').addClass('hidden');
-                            }
-                        }
-                    };
-                    $("#getDetailsModal").modal('hide');
-                })
-                .fail(function (a, s, d) {
-                    $("#getDetailsModal").modal('hide');
-                    alert("Unable to save.");
-                });
-
         });
+
 
         function CloseAdvisory(clientInformationSheetId) {
             if (typeof clientInformationSheetId !== null) {
@@ -1209,6 +1178,7 @@
     </script>
 
     @await Html.PartialAsync("_InformationWizardScripts")
+    @await Html.PartialAsync("_DataTableScripts")
     @await Html.PartialAsync("_PrefabScripts")
 
 }
