@@ -3,6 +3,7 @@
 
 <div id="Project" class="container-fluid">
     <form class="is-valid" id="ProjectViewModel">
+        <input id="ProjectId" name="ProjectViewModel.ProjectId" hidden />
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="tab1">
                 <a class="nav-link active" href="#projecttab1" data-toggle="tab"> List All </a>
@@ -37,7 +38,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="SetCurrentTab('projecttab2')"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="SetCurrentTab('projecttab3')"><i class="fa fa-edit"></i></button>
                             </td>
                         </tr>
                         @foreach (var project in Model.ProjectViewModel.BusinessContracts.Where(p => p.Removed == false).ToList())
@@ -64,8 +65,6 @@
                 </table>
             </div>
             <div id="projecttab2" class="tab-pane" role="tabpanel">
-
-                <input id="ProjectId" name="ProjectViewModel.ProjectId" hidden />
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -127,9 +126,76 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <a class="btn btn-sm btn-primary text-light" onclick="AddProject()"> Submit </a>
+                    <a class="btn btn-sm btn-danger text-light" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Cancel </a>
+                    <a class="btn btn-sm btn-success text-light" onclick="AddProject()"> Update </a>
                 </div>
 
+            </div>
+            <div id="projecttab3" class="tab-pane" role="tabpanel">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="projectdetails" class="label required">
+                                Description of Project:
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextAreaFor(m => m.ProjectViewModel.ProjectDescription, new { id = "projectdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="projectfees" class="label required">
+                                Fees Earned:
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.ProjectViewModel.Fees, new { id = "projectfees", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="contractdetails" class="label required">
+                                Contract Value:
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.ProjectViewModel.ConstructionValue, new { id = "contractdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="durationdetails" class="label required">
+                                Duration (Months):
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDuration, new { id = "durationdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="responsibilityoptions" class="label required">
+                                Your Major Responsibilities
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.DropDownListFor(m => m.ProjectViewModel.ResponsibilityOptions, Model.ProjectViewModel.ResponsibilityOptions, new { id = "responsibilityoptions", @class = "chosen-select custom-select b", @onchange = "OnChange(this.id, this.name)", @required = "", @multiple = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-sm btn-danger text-light" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Cancel </a>
+                    <a class="btn btn-sm btn-success text-light" onclick="AddProject()"> Add </a>
+                </div>
             </div>
             <div id="projecttab4" class="tab-pane" role="tabpanel">
                 <table id="tblRemovedProject"

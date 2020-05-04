@@ -16,6 +16,11 @@
         $('#tblProject').bootstrapTable();
     });
 
+    function Cancel(Form, Tab) {
+        document.getElementById(Form).reset();
+        SetCurrentTab(Tab);
+    }
+
     function AddLocation() {
         var locationForm = [];
         locationForm.push("locationtypeoptions");

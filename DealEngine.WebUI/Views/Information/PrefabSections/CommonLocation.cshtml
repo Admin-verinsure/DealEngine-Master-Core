@@ -2,15 +2,19 @@
 
     <div id="Location" class="container-fluid">
         <form class="is-valid" id="LocationViewModel">
+            <input id="LocationId" name="LocationViewModel.LocationId" hidden />
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" id="tab1">
                     <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
                 </li>
                 <li class="nav-item" id="tab2">
-                    <a class="nav-link" href="#locationtab2" data-toggle="tab"> Location Details </a>
+                    <a class="nav-link" href="#locationtab2" data-toggle="tab"> Edit </a>
+                </li>
+                <li class="nav-item" id="tab2">
+                    <a class="nav-link" href="#locationtab3" data-toggle="tab"> Add </a>
                 </li>
                 <li class="nav-item" id="tab3">
-                    <a class="nav-link" href="#locationtab3" data-toggle="tab"> List Removed </a>
+                    <a class="nav-link" href="#locationtab4" data-toggle="tab"> List Removed </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -34,7 +38,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab2')"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-success btn-sm" onclick="SetCurrentTab('locationtab3')"><i class="fa fa-edit"></i></button>
                                 </td>
                             </tr>
                             @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList())
@@ -64,8 +68,6 @@
                     </table>
                 </div>
                 <div id="locationtab2" class="tab-pane" role="tabpanel">
-
-                    <input id="LocationId" name="LocationViewModel.LocationId" type="hidden" />
                     <div class="form-group">
                         <div class="row">
                             <div class="col-6">
@@ -127,11 +129,77 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel', 'locationtab1')"> Cancel </a>
                         <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
                     </div>
-
                 </div>
                 <div id="locationtab3" class="tab-pane" role="tabpanel">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="streetdetails" class="label required">
+                                    Street:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="locationtypeoptions" class="label required">
+                                    Location Type:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="citydetails" class="label required">
+                                    City:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="countrydetails" class="label required">
+                                    Country:
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="commonnamedetails" class="label required">
+                                    Common Name
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel', 'locationtab1')"> Cancel </a>
+                        <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
+                    </div>
+                </div>
+                <div id="locationtab4" class="tab-pane" role="tabpanel">
                     <table id="tblRemovedLocation"
                            class="table table-striped" width="100%"
                            data-show-columns="true"
