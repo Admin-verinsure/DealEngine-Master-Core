@@ -1478,7 +1478,10 @@ namespace DealEngine.WebUI.Controllers
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
 
-                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                    {
+                        await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    }
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (sheet.Status != "Submitted" && sheet.Status != "Bound")

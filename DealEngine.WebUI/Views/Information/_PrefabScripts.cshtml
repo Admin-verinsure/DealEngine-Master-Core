@@ -1,11 +1,15 @@
 ﻿<script type="text/javascript">
     $(function () {
         //get all forms on load
+        debugger;
         var forms = document.getElementsByClassName('is-valid');
         var formIds = [];
         for (var f = 0; f < forms.length; f++) {
             //get each form id
-            formIds.push(forms[f].id);
+            if (forms[f].id != "RevenueDataViewModel") {
+                formIds.push(forms[f].id);
+            }
+
         }
         for (var i = 0; i < formIds.length; i++) {
             var form = document.getElementById(formIds[i]);
