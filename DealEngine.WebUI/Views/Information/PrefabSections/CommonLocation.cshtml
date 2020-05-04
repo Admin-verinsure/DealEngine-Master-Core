@@ -1,8 +1,8 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
     <div id="Location" class="container-fluid">
-        <form class="is-valid" id="LocationViewModel">
-            <input id="LocationId" name="LocationViewModel.LocationId" hidden />
+        @*<form class="is-valid" id="LocationViewModel">*@
+            <input id="LocationId" name="LocationViewModel.LocationId" hidden  form="LocationViewModel"/>
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" id="tab1">
                     <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
@@ -76,7 +76,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -124,12 +124,12 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel', 'locationtab1')"> Cancel </a>
+                        <a class="btn btn-sm btn-danger text-light" onclick="LocationCancel('locationtab1')"> Cancel </a>
                         <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -154,7 +154,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypeoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
@@ -190,12 +190,12 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "", @form="LocationViewModel" })
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel', 'locationtab1')"> Cancel </a>
+                        <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel','locationtab1')"> Cancel </a>
                         <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()"> Submit </a>
                     </div>
                 </div>
@@ -240,5 +240,5 @@
                     </table>
                 </div>
             </div>
-        </form>
+        @*</form>*@
 </div>

@@ -620,7 +620,60 @@ namespace DealEngine.WebUI.Models
             HasComplaintAlternativeOptions = GetAlternativeSelectListOptions();
             HasCircumstanceAriseOptions = GetAlternativeSelectListOptions();
             HasChchRebuildOptions = GetSelectListOptions();
+            HasBasicLimitOptions = GetBasicLimitSelectListOptions();
         }
+
+        private IList<SelectListItem> GetBasicLimitSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "--Select--", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$300,000", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "$500,000", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000,000", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,500,000", Value = "4"
+                },
+                new SelectListItem
+                {
+                    Text = "$2,000,000", Value = "5"
+                },
+                new SelectListItem
+                {
+                    Text = "$2,500,000", Value = "6"
+                },
+                new SelectListItem
+                {
+                    Text = "$3,000,000", Value = "7"
+                },
+                new SelectListItem
+                {
+                    Text = "$4,000,000", Value = "8"
+                },
+                new SelectListItem
+                {
+                    Text = "$5,000,000", Value = "9"
+                },
+                new SelectListItem
+                {
+                    Text = "Other", Value = "-1"
+                }
+            };
+        }
+
         private IList<SelectListItem> GetContractingServicesOptions()
         {
             return new List<SelectListItem>()
@@ -794,8 +847,11 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasComplaintAlternativeOptions { get; set; }
         public IList<SelectListItem> HasCircumstanceAriseOptions { get; set; }
         public IList<SelectListItem> HasChchRebuildOptions { get; set; }
+        public IList<SelectListItem> HasBasicLimitOptions { get; set; }
 
 
+        public int BasicLimit { get; set; }        
+        public int AlternativeLimit { get; set; }
         public string EngageDetails { get; set; }
         public string AluminiumDetails { get; set; }
         public string DisciplinaryDetails { get; set; }

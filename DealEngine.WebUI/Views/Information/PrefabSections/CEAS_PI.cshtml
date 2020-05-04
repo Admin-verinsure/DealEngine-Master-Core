@@ -98,17 +98,46 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
-                        <label for="HasAluminium" class="label required">
+                        <label for="hasbasiclimit" class="label required">
                             Please indicate the basic limit of indemnity you require:
                         </label>
                     </div>
                     <div class="col-6">
-                        <select id="HasAluminium" name="PIViewModel.HasAluminium" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PIViewModel.HasAluminium)
+                        <select id="hasbasiclimit" name="PIViewModel.HasBasicLimitOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.PIViewModel.HasBasicLimitOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }
                         </select>
+                    </div>
+                </div>
+            </div>
+            <div id="PIViewModel.HasBasicLimitOptions" hidden>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="basiclimitdetails" class="label required">
+                                If "Other", please indicate the basic limit of indemnity:
+                                Higher or alternative limits will be quoted upon application.
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.PIViewModel.BasicLimit, new { @class = "form-control", @id = "basiclimitdetails", @type = "number", onchange = "OnChange(this.id, this.name)" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="alternativelimitdetails" class="label required">
+                            Please indicate any higher or alternative limits for which you require a quotation
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.PIViewModel.AlternativeLimit, new { @class = "form-control", @id = "alternativelimitdetails", @type = "number", onchange = "OnChange(this.id, this.name)" })
+                        </div>
                     </div>
                 </div>
             </div>
