@@ -715,7 +715,7 @@ namespace DealEngine.WebUI.Controllers
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
                 model.ClientInformationAnswers = informationAnswers;
 
-                ViewBag.Title = "Programme Email Template ";
+                ViewBag.Title = " View Information Sheet ";
                 return View(model);
             }
             catch (Exception ex)
