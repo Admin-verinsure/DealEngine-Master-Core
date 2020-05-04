@@ -1444,7 +1444,10 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     return Json("Failure");
 
-                await _clientInformationService.SaveAnswersFor(sheet, collection);
+                if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                {
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                }
 
                 return Json("Success");
             }

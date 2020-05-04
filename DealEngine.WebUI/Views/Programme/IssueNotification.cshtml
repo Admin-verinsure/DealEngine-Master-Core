@@ -19,12 +19,12 @@
             </span>
         </div>
 
-        <div class="container">
+        <div class="container col-6">
             <!-- new widget -->
             <div class="card">
                 <form class="client-form" method="post" id="issueNotifyForm" action="../AddselectedParty">
                     <div class="card-header">
-                        <h2>@Model.Name </h2>                        
+                        <h2>@Model.Name </h2>
                     </div>
                     <div class="card-body">
 
@@ -40,21 +40,46 @@
                                 }
                             </select>
                         </div>
-                        <div id="OrgUserSection" class="form-group">
-                            <div id="div1"></div>
-                        </div>
+                        <div id="div1"></div>
+                        @*<div id="OrgUserSection" class="form-group">
+
+            <select class="chosen-select form-control b" data-placeholder="Choose User to notify..." id="partyuser" multiple>
+                @foreach (var blloc in Model.OrgUser)
+                {
+                    <option value="@blloc.Value"> @blloc.Text</option>
+                }
+            </select>
+
+        </div>*@
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-success btn-sm">save</button>                        
+                        <button type="submit" class="btn btn-success btn-sm">save</button>
                     </div>
                 </form>
             </div>
         </div>
+
     </div>
 
 
+
+
 @section pagespecific {
-  
+<script>
+            $(".chosen-select").chosen({ width: "95%" });
+
+</script>
+    @*<script>
+       $("#partyuser option").each(function(item){
+			var element =  $(this) ; 
+			if (element.data("tag") != selected){
+				element.hide() ; 
+			}else{
+				element.show();
+			}
+		}) ; 
+    </script>*@
+
     @await Html.PartialAsync("_ProgrammeScripts")
 
 }
