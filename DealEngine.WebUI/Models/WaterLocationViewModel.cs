@@ -6,6 +6,10 @@ namespace DealEngine.WebUI.Models
 {
     public class WaterLocationViewModel : BaseViewModel
     {
+        public WaterLocationViewModel()
+        {
+            Locations = new List<Location>();
+        }
         public Guid AnswerSheetId { get; set; }
 
         public Guid WaterLocationId { get; set; }
@@ -23,7 +27,7 @@ namespace DealEngine.WebUI.Models
         public Guid OrganisationalUnit { get; set; }
         public OrganisationalUnit OrganisationalUnits { get; set; }
         public List<OrganisationalUnitViewModel> LOrganisationalUnits { get; set; }
-        public List<LocationViewModel> lLocation { get; set; }
+        public IList<Location> Locations { get; set; }
 
 
         public IList<String> OUselectedVal { get; set; }

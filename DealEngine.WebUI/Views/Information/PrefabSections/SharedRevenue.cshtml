@@ -5,16 +5,16 @@
     IList<BusinessActivity> SelectedActivities = Model.RevenueDataViewModel.Activities.Where(t => t.Selected == true).ToList();
 }
 
-    <div id="SharedRevenue">
+    <div id="SharedRevenue" class="container-fluid">
         <form class="is-valid" id="RevenueDataViewModel">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item" id="SharedRevenueTab1">
+                <li class="nav-item" id="tab1">
                     <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a>
                 </li>
-                <li class="nav-item" id="SharedRevenueTab2">
+                <li class="nav-item" id="tab2">
                     <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a>
                 </li>
-                <li class="nav-item" id="SharedRevenueTab3">
+                <li class="nav-item" id="tab3">
                     <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a>
                 </li>
             </ul>

@@ -1,0 +1,200 @@
+﻿<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#tblRemovedLocation').bootstrapTable();
+    });
+
+    $(document).ready(function () {
+        $('#tblLocation').bootstrapTable();
+    });
+
+    $(document).ready(function () {
+        $('#tblRemovedProject').bootstrapTable();
+    });
+
+    $(document).ready(function () {
+        $('#tblProject').bootstrapTable();
+    });
+
+    function Cancel(Form, Tab) {
+        document.getElementById(Form).reset();
+        SetCurrentTab(Tab);
+    }
+
+    function AddLocation() {
+        var locationForm = [];
+        locationForm.push("locationtypeoptions");
+        locationForm.push("commonnamedetails");
+        locationForm.push("streetdetails");
+        locationForm.push("citydetails");
+        locationForm.push("countrydetails");
+        var formValid = true;
+
+
+        for (var i = 0; i < locationForm.length; i++) {
+            var obj = document.getElementById(locationForm[i]);
+            if (obj.value == "") {
+                formValid = false;
+                obj.classList.add("is-invalid");
+                window.alert("Please complete location details");
+                break;
+            }
+        }
+
+        if (formValid) {
+            $.ajax({
+                url: '@Url.Action("AddLocation", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    localStorage.setItem('accordianTrigger', 'Location');
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function RemoveLocation(Id) {
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveLocation", "Services")',
+            type: "POST",
+            data: postData, 
+            async: false
+        })
+            .done(function () {
+                //Save the session and reload
+                localStorage.setItem('accordianTrigger', 'Location');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RestoreLocation(Id) {
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreLocation", "Services")',
+            type: "POST",
+            data: postData, 
+            async: false
+        })
+            .done(function () {
+                //Save the session and reload
+                localStorage.setItem('accordianTrigger', 'Location');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function EditLocation(Data) {
+        var array = Data.split(',');
+        document.getElementById("LocationId").value = array[0];
+        document.getElementById("locationtypeoptions").value = array[1];
+        document.getElementById("commonnamedetails").value = array[2];
+        document.getElementById("streetdetails").value = array[3];
+        document.getElementById("citydetails").value = array[4];
+        document.getElementById("countrydetails").value = array[5];
+        SetCurrentTab("locationtab2");
+    }
+
+    function AddProject() {
+        var form = document.getElementById("ProjectViewModel");
+        var formValid = TableFormValidation(form);
+        if (formValid) {
+            $.ajax({
+                url: '@Url.Action("AddProject", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    localStorage.setItem('accordianTrigger', 'Projects');
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function RemoveProject(Id) {
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveProject", "Services")',
+            type: "POST",
+            data: postData, 
+            async: false
+        })
+            .done(function () {
+                //Save the session and reload
+                localStorage.setItem('accordianTrigger', 'Projects');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RestoreProject(Id) {
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreProject", "Services")',
+            type: "POST",
+            data: postData, 
+            async: false
+        })
+            .done(function () {
+                //Save the session and reload
+                localStorage.setItem('accordianTrigger', 'Projects');
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function EditProject(Data) {
+        var array = Data.split(',');
+        document.getElementById("ProjectId").value = array[0];
+        document.getElementById("projectdetails").value = array[1];
+        document.getElementById("projectfees").value = array[2];
+        document.getElementById("contractdetails").value = array[3];
+        document.getElementById("durationdetails").value = array[4];
+        SetCurrentTab("projecttab2");
+    }
+
+    function TableFormValidation(form) {
+        for (var e = 0; e < form.length; e++) {
+            var element = null;
+            try {
+                if (form[e].id != "") {
+                    element = document.getElementById(form[e].id);
+                }
+            }
+            catch (ex) {
+                //will have to add further function for forms with added elements
+            }
+            if (element != null) {
+                OnChange(element.id, element.name);
+                if ((element.classList.contains("is-invalid") || element.classList.contains("is-up")) && element.hidden == false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    window.alert("Please complete project details");
+                    return false;
+                }
+            }            
+        }
+        return true;
+    }
+
+</script>

@@ -118,5 +118,22 @@ deploy_mydealslive:
   when: manual
   dependencies:
     - build
+
+deploy_stagingmnzconnect:
+  stage: deploy
+  script:
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLstagingmnzconnect" './DE-DeployPrep.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingmnzconnect:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLstagingmnzconnect" './DE-DeployFin.sh'
+
+  environment:
+    name: mnzconnect
+    url: https://staging.mnzconnect.com
+  when: manual
+  dependencies:
+    - build
     
     

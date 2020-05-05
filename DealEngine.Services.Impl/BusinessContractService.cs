@@ -20,6 +20,11 @@ namespace DealEngine.Services.Impl
         {
             return await _businessContractRepository.GetByIdAsync(businessContractId);
         }
+
+        public async Task Update(BusinessContract businessContract)
+        {
+            await _businessContractRepository.UpdateAsync(businessContract);
+        }
     }
 }
 

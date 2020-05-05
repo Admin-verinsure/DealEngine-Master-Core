@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -865,219 +866,43 @@ namespace DealEngine.WebUI.Controllers
         #region Locations
 
         [HttpPost]
-        public async Task<IActionResult> SearchLocationStreet(Guid answerSheetId, string street)
+        public async Task<IActionResult> AddLocation(IFormCollection collection)
         {
-            LocationViewModel model = new LocationViewModel();
             User user = null;
-
             try
             {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
                 user = await CurrentUser();
-                model.Street = street;
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                Location location = await _locationService.GetLocationByStreet(street);
-                if (location != null)
+                Location location = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var locationForm = collection.Keys.Where(s => s.StartsWith("LocationViewModel", StringComparison.CurrentCulture));
+                var id = collection["LocationViewModel.LocationId"];
+                if (string.IsNullOrWhiteSpace(id))
                 {
-                    model = LocationViewModel.FromEntity(location);
+                    location = new Location(user);
                 }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddLocation(LocationViewModel model)
-        {
-            User user = null;
-
-            try
-            {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
-
-                Location location = await _locationService.GetLocationById(model.LocationId);
-                if (location == null)
-                    location = model.ToEntity(user);
-                model.UpdateEntity(location);
-                var OUList = new List<OrganisationalUnit>();
-
-                if (sheet.Owner.OrganisationalUnits.Count > 0)
-                    OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
-
-                location.OrganisationalUnits = OUList;
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                else
                 {
-                    sheet.Locations.Add(location);
-                    await uow.Commit();
+                    location = await _locationService.GetLocationById(Guid.Parse(id));
                 }
-
-                model.LocationId = location.Id;
-
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }                        
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetLocation(Guid answerSheetId, Guid locationId)
-        {
-            LocationViewModel model = new LocationViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                Location location = sheet.Locations.FirstOrDefault(loc => loc.Id == locationId);
-                if (location != null)
+                var type = location.GetType();
+                foreach(var keyField in locationForm)
                 {
-                    model = LocationViewModel.FromEntity(location);
-                    model.AnswerSheetId = answerSheetId;
-                    //model.SelectedOrganisationalUnits = location.OrganisationalUnits.Select(ou => ou.Id).ToArray();
-                }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var locations = sheet.Owner.OrganisationalUnits.SelectMany(ou => ou.Locations).Distinct().ToList();
-
-                locations = sheet.Locations.Where(loc => loc.Removed == removed && loc.DateDeleted == null).ToList();
-
-                if (_search)
-                {
-                    switch (searchOper)
+                    if(keyField != "LocationViewModel.LocationId")
                     {
-                        case "eq":
-                            locations = locations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            locations = locations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            locations = locations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        property.SetValue(location, collection[keyField].ToString());
                     }
                 }
-                //locations = locations.OrderBy(sidx + " " + sord).ToList();
-                locations = locations.ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = locations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    Location location = locations[i];
-                    JqGridRow row = new JqGridRow(location.Id);
-                    row.AddValues(location.Id, location.LocationType, location.CommonName, location.Street, location.Suburb, location.Postcode, location.City, location.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-           
-        }
+                var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
+                location.OrganisationalUnits.Add(OUList);
+                sheet.Locations.Add(location);
+                await _clientInformationService.UpdateInformation(sheet);
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetLocationss(Guid informationId, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var locations = sheet.Owner.OrganisationalUnits.SelectMany(ou => ou.Locations).Distinct().ToList();
-
-                locations = sheet.Locations.Where(loc => loc.Removed == false && loc.DateDeleted == null).ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = locations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    Location location = locations[i];
-                    JqGridRow row = new JqGridRow(location.Id);
-                    row.AddValues(location.Id, location.LocationType, location.CommonName, location.Street, location.Suburb, location.Postcode, location.City, location.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetLocationStreet(string term)
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                var locationStreetList = await _locationService.GetLocationStreetList();
-                var results = locationStreetList.Where(n => n.ToLower().Contains(term.ToLower()));
-                return new JsonResult(results.ToArray());
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -1087,70 +912,38 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetLocationList(Guid answerSheetId)
+        public async Task<IActionResult> RemoveLocation(string locationId)
         {
-            List<LocationViewModel> models = new List<LocationViewModel>();
             User user = null;
-
             try
             {
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                foreach (var location in sheet.Locations)
-                    models.Add(LocationViewModel.FromEntity(location));
+                Location location = await _locationService.GetLocationById(Guid.Parse(locationId));
+                location.Removed = true;
+                await _locationService.UpdateLocation(location);
 
-                return new JsonResult(models.ToArray());
+                return Ok();
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetLocationsByCountry(Guid answerSheetId)
+        public async Task<IActionResult> RestoreLocation(string locationId)
         {
             User user = null;
-            List<LocationViewModel> models = new List<LocationViewModel>();
-
             try
             {
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                List<Location> countries = sheet.Locations.GroupBy(loc => loc.Country)
-                                              .Select(grp => grp.First())
-                                              .ToList();
+                Location location = await _locationService.GetLocationById(Guid.Parse(locationId));
+                location.Removed = false;
+                await _locationService.UpdateLocation(location);
 
-                foreach (var location in countries)
-                    models.Add(LocationViewModel.FromEntity(location));
-
-                return new JsonResult(models.ToArray());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SetLocationRemovedStatus(Guid locationId, bool status)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Location location = await _locationService.GetLocationById(locationId);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    location.Removed = status;
-                    await uow.Commit();
-                }
-
-                return new JsonResult(true);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -1478,14 +1271,8 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
                 {
-                    Locations.Add(new LocationViewModel
-                    {
-                        LocationId = loc.Id,
-                        Street = loc.Street
-                    });
-                }
-
-                model.lLocation = Locations;
+                    model.Locations.Add(loc);
+                }                
 
                 return Json(model);
             }
@@ -3710,7 +3497,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> OUSelected(Guid OUselect)
         {
             OrganisationalUnit orgunit = null;
-            var locations = new List<LocationViewModel>();
+            var location = new LocationViewModel();
             User user = null;
 
             try
@@ -3719,14 +3506,10 @@ namespace DealEngine.WebUI.Controllers
                 orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
                 foreach (Location ou in orgunit.Locations)
                 {
-                    locations.Add(new LocationViewModel
-                    {
-                        LocationId = ou.Id,
-                        Street = ou.Street
-                    });
+                    location.Locations.Add(ou);
                 }
 
-                return Json(locations);
+                return Json(location);
             }
             catch (Exception ex)
             {
@@ -4256,33 +4039,111 @@ namespace DealEngine.WebUI.Controllers
         #region BusinessContracts
 
         [HttpPost]
-        public async Task<IActionResult> AddBusinessContract(BusinessContractViewModel model)
+        public async Task<IActionResult> AddProject(IFormCollection collection)
         {
             User user = null;
-
             try
             {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
-
-                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(model.BusinessContractId);
-                if (businessContract == null)
-                    businessContract = model.ToEntity(user);
-                model.UpdateEntity(businessContract);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                BusinessContract businessContract = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var projectForm = collection.Keys.Where(s => s.StartsWith("ProjectViewModel", StringComparison.CurrentCulture));
+                var id = collection["ProjectViewModel.ProjectId"];
+                if (string.IsNullOrWhiteSpace(id))
                 {
-                    sheet.BusinessContracts.Add(businessContract);
-                    await uow.Commit();
+                    businessContract = new BusinessContract(user);
+                }
+                else
+                {
+                    businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(id));
+                }
+                var type = businessContract.GetType();
+                foreach (var keyField in projectForm)
+                {
+                    if (keyField != "ProjectViewModel.ProjectId")
+                    {
+                        var propertyName = keyField.Split('.').ToList();
+                        if (propertyName.LastOrDefault() == "ResponsibilityOptions")
+                        {
+                            var responsibilites = collection[keyField].ToList();
+                            foreach(var responsibility in responsibilites)
+                            {
+                                if(responsibility == "1")
+                                {
+                                    var property = type.GetProperty("ProjectDirector");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "2")
+                                {
+                                    var property = type.GetProperty("ProjectManager");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "3")
+                                {
+                                    var property = type.GetProperty("ProjectCoordinator");
+                                    property.SetValue(businessContract, true);
+                                }
+                                if (responsibility == "4")
+                                {
+                                    var property = type.GetProperty("ProjectEngineer");
+                                    property.SetValue(businessContract, true);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(propertyName.LastOrDefault());
+                            property.SetValue(businessContract, collection[keyField].ToString());
+                        }
+                    }
                 }
 
-                model.BusinessContractId = businessContract.Id;
+                sheet.BusinessContracts.Add(businessContract);
+                await _clientInformationService.UpdateInformation(sheet);
 
-                return Json(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveProject(string projectId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(projectId));
+                businessContract.Removed = true;
+                await _businessContractService.Update(businessContract);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreProject(string projectId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(projectId));
+                businessContract.Removed = false;
+                await _businessContractService.Update(businessContract);
+
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -4439,136 +4300,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetBusinessContracts(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == removed && bc.DateDeleted == null).ToList();
-
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            businessContracts = businessContracts.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            businessContracts = businessContracts.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            businessContracts = businessContracts.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                businessContracts = businessContracts.ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = businessContracts.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    BusinessContract businessContract = businessContracts[i];
-                    JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetBusinessContractss(Guid informationId, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == false && bc.DateDeleted == null).ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = businessContracts.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    BusinessContract businessContract = businessContracts[i];
-                    JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(businessContractId);
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    businessContract.Removed = status;
-                    await uow.Commit();
-                }
-
-                return new JsonResult(true);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
 
         #endregion
 
