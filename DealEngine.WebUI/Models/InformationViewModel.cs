@@ -438,10 +438,62 @@ namespace DealEngine.WebUI.Models
     {
         public ELViewModel()
         {
+            HasLimitOptions = GetLimitSelectOptions();
             HasELOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HasDeductibleOptions = GetDeductibleSelectListOptions();
         }
 
+        private IList<SelectListItem> GetDeductibleSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$5000", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "$5,000", Value = "3"
+                }
+            };
+        }
+
+        private IList<SelectListItem> GetLimitSelectOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$250,000", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "$500,000", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000,000", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "Other", Value = "-1"
+                }
+            };
+        }
+        
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -459,8 +511,11 @@ namespace DealEngine.WebUI.Models
             };
         }
         public IList<SelectListItem> HasELOptions { get; set; }
-        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public IList<SelectListItem> HasDeductibleOptions { get; set; }
+        public IList<SelectListItem> HasLimitOptions { get; set; }
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }     
         public int CoverAmount { get; set; }
+        public int AlternativeLimit { get; set; }        
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
@@ -481,9 +536,51 @@ namespace DealEngine.WebUI.Models
             HasEPLIOptions = GetSelectListOptions();
             IsInsuredClaimOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HasLimitOptions = GetLimitSelectListOptions();
+            HasDeductibleOptions = GetDeductibleSelectListOptions();
         }
-        public int TotalEmployees { get; set; }
-        public string InsuredClaimDetails { get; set; }
+
+        private IList<SelectListItem> GetDeductibleSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$2,500", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "$5,000", Value = "2"
+                }
+            };
+        }
+
+        private IList<SelectListItem> GetLimitSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$250,000", Value = "1"
+                },
+                new SelectListItem
+                { 
+                    Text = "$500,000", Value = "2" 
+                },
+                new SelectListItem
+                {
+                    Text = "Other", Value = "3"
+                },
+            };
+        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -500,7 +597,10 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
-        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+
+        public IList<SelectListItem> HasDeductibleOptions { get; set; }        
+        public IList<SelectListItem> HasExistingPolicyOptions { get; set; }    
+        public IList<SelectListItem> HasLimitOptions { get; set; }
         public IList<SelectListItem> HasEPLOptions { get; set; }
         public IList<SelectListItem> HasEPLIOptions { get; set; }
         public IList<SelectListItem> CoveredOptions { get; set; }
@@ -511,12 +611,16 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> PostingNoticesOptions { get; set; }
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
         public IList<SelectListItem> IsInsuredClaimOptions { get; set; }
+        
         public int CoverAmount { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
-
+        public int TotalEmployees { get; set; }
+        public int AlternativeLimit { get; set; }
+        public string InsuredClaimDetails { get; set; }
     }
+
     public class CLIViewModel
     {
         public CLIViewModel()
@@ -579,6 +683,11 @@ namespace DealEngine.WebUI.Models
     {
         public PIViewModel()
         {
+            HasIndustrialSoftwareOptions = GetSelectListOptions();
+            HasEngageSoftwareOptions = GetSelectListOptions();
+            HasSignificantShareholderOptions = GetSelectListOptions();
+            HasEngageConsortium = GetSelectListOptions();
+            HasAssociatedPracticeOptions = GetSelectListOptions();
             ContractingServicesOptions = GetContractingServicesOptions();
             HasStandardTermsOptions = GetSometimesSelectListOptions();
             HasNegotiateOptions = GetSometimesSelectListOptions();
@@ -621,6 +730,14 @@ namespace DealEngine.WebUI.Models
             HasCircumstanceAriseOptions = GetAlternativeSelectListOptions();
             HasChchRebuildOptions = GetSelectListOptions();
             HasBasicLimitOptions = GetBasicLimitSelectListOptions();
+            HasConsultantantsResponsibilityOptions = GetSelectListOptions();
+            HasComputerSoftwareOptions = GetSelectListOptions();
+            HasJurisdictionOptions = GetSelectListOptions();
+            HasDishonestyOptions = GetSelectListOptions();
+            HasEmployeeFidelityOptions = GetSelectListOptions();
+            HasLossDocumentsOptions = GetSelectListOptions();
+            HasLegalCouncelOptions = GetSelectListOptions();
+            HasFormalProceduresOptions = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetBasicLimitSelectListOptions()
@@ -673,7 +790,6 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
-
         private IList<SelectListItem> GetContractingServicesOptions()
         {
             return new List<SelectListItem>()
@@ -817,6 +933,11 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasDiaryRecordOptions { get; set; }
         public IList<SelectListItem> HasComplaintOptions { get; set; }
         public IList<SelectListItem> HasEngageOptions { get; set; }
+        public IList<SelectListItem> HasJurisdictionOptions { get; set; }
+        public IList<SelectListItem> HasDishonestyOptions { get; set; }
+        public IList<SelectListItem> HasEmployeeFidelityOptions { get; set; }
+        public IList<SelectListItem> HasLossDocumentsOptions { get; set; }
+        public IList<SelectListItem> HasLegalCouncelOptions { get; set; }        
         public IList<SelectListItem> HasDisciplinaryOptions { get; set; }
         public IList<SelectListItem> HasClaimsAgainstOptions { get; set; }
         public IList<SelectListItem> HasClaimsAgainstOptions2 { get; set; }
@@ -848,8 +969,24 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasCircumstanceAriseOptions { get; set; }
         public IList<SelectListItem> HasChchRebuildOptions { get; set; }
         public IList<SelectListItem> HasBasicLimitOptions { get; set; }
+        public IList<SelectListItem> HasConsultantantsResponsibilityOptions { get; set; }
+        public IList<SelectListItem> HasAssociatedPracticeOptions { get; set; }
+        public IList<SelectListItem> HasEngageConsortium { get; set; }
+        public IList<SelectListItem> HasSignificantShareholderOptions { get; set; }
+        public IList<SelectListItem> HasEngageSoftwareOptions { get; set; }
+        public IList<SelectListItem> HasIndustrialSoftwareOptions { get; set; }
+        public IList<SelectListItem> HasComputerSoftwareOptions { get; set; }
+        public IList<SelectListItem> HasFormalProceduresOptions { get; set; }
 
-
+        public string ProcedureManagedDetails { get; set; }
+        public string LegalCouncelDetails { get; set; }
+        public string ComputerSoftwareActivityDetails { get; set; }
+        public int DeductableAmount { get; set; }
+        public string IndustrialSoftwareDetails { get; set; }
+        public string EngagementSoftwareDetails { get; set; }
+        public string EngageConsortiumDetails { get; set; }
+        public string SignificantShareholderDetails { get; set; }        
+        public string AssociatedPracticeDetails { get; set; }
         public int BasicLimit { get; set; }        
         public int AlternativeLimit { get; set; }
         public string EngageDetails { get; set; }
@@ -883,6 +1020,8 @@ namespace DealEngine.WebUI.Models
     {
         public DAOLIViewModel()
         {
+            HasLimitOptions = GetLimitSelectListOptions();
+            HasDeductibleOptions = GetDeductibleSelectListOptions();
             HasDAOLIOptions = GetSelectListOptions();
             HasClaimOptions = GetSelectListOptions();
             HasCircumstanceOptions = GetSelectListOptions();
@@ -897,6 +1036,8 @@ namespace DealEngine.WebUI.Models
             FormDate = DateTime.Now;
         }
 
+        public IList<SelectListItem> HasDeductibleOptions { get; set; }        
+        public IList<SelectListItem> HasLimitOptions { get; set; }
         public IList<SelectListItem> HasDAOLIOptions { get; set; }
         public IList<SelectListItem> HasClaimOptions { get; set; }
         public IList<SelectListItem> HasCircumstanceOptions { get; set; }
@@ -928,6 +1069,68 @@ namespace DealEngine.WebUI.Models
         public string InsurerName { get; set; }
 
 
+        private IList<SelectListItem> GetLimitSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$300,000", Value = "1"
+                },                
+                new SelectListItem
+                {
+                    Text = "$500,000", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "$750,000", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000,000", Value = "4"
+                },
+                new SelectListItem
+                {
+                    Text = "$2,000,000", Value = "5"
+                },
+                new SelectListItem
+                {
+                    Text = "$3,000,000", Value = "6"
+                },
+                new SelectListItem
+                {
+                    Text = "$4,000,000", Value = "7"
+                },
+                new SelectListItem
+                {
+                    Text = "$5,000,000", Value = "8"
+                },
+                new SelectListItem
+                {
+                    Text = "$6,000,000", Value = "9"
+                },
+                new SelectListItem
+                {
+                    Text = "$7,000,000", Value = "11"
+                },
+                new SelectListItem
+                {
+                    Text = "$8,000,000", Value = "12"
+                },
+                new SelectListItem
+                {
+                    Text = "$9,000,000", Value = "13"
+                },
+                new SelectListItem
+                {
+                    Text = "$10,000,000", Value = "14"
+                }
+            };
+        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -942,6 +1145,32 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 { Text = "No", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetDeductibleSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000", Value = "1"
+                },                
+                new SelectListItem
+                {
+                    Text = "$2,000", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "$5,000", Value = "3"
+                },
+                new SelectListItem
+                { 
+                    Text = "$10,000", Value = "4" 
+                }
             };
         }
 
@@ -950,9 +1179,34 @@ namespace DealEngine.WebUI.Models
     {
         public GLViewModel()
         {
+            HasLimitOptions = GetLimitSelectListOptions();
             HasGLOptions = GetSelectListOptions();
             HasHigherGLOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HasAssumeLiabilityOptions = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetLimitSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "$1,000,000", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "$2,000,000", Value = "2"
+                },
+                new SelectListItem
+                { 
+                    Text = "$5,000,000", Value = "3" 
+                }
+            };
         }
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -970,10 +1224,18 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
+        public IList<SelectListItem> HasLimitOptions { get; set; }        
         public IList<SelectListItem> HasGLOptions { get; set; }
         public IList<SelectListItem> HasHigherGLOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
+        
         public int CoverAmount { get; set; }
+        public int AlternativeLimit { get; set; }
+        public string VehicleDetails { get; set; }
+        public string AssumeLiabilityDetails { get; set; }
+        public string CarParkDetails { get; set; }
+        public string EquipmentDetails { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
