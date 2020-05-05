@@ -2700,7 +2700,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                           
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2737,22 +2739,22 @@ namespace DealEngine.WebUI.Controllers
                         organisationName = model.OrganisationName;
                     }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                    organisation = _mapper.Map<Organisation>(model);
-                    //organisation.Qualifications = model.Qualifications;
-                    //organisation.IsNZIAmember = model.IsNZIAmember;
-                    //organisation.NZIAmembership = model.NZIAmembership;
-                    //organisation.IsADNZmember = model.IsADNZmember;
-                    //organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                    //organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                    //organisation.YearofPractice = model.YearofPractice;
-                    //organisation.PrevPractice = model.prevPractice;
-                    //organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                    //organisation.OtherCompanyname = model.Othercompanyname;
-                    //organisation.Activities = model.Activities;
-                    //organisation.Email = userdb.Email;
-                    //organisation.Type = model.Type;
-                    //organisation.IsIPENZmember = model.IsIPENZmember;
-                    //organisation.CPEngQualified = model.CPEngQualified;
+                    //organisation = _mapper.Map<Organisation>(model);
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.IsNZIAmember = model.IsNZIAmember;
+                    organisation.NZIAmembership = model.NZIAmembership;
+                    organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    organisation.YearofPractice = model.YearofPractice;
+                    organisation.PrevPractice = model.prevPractice;
+                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    organisation.OtherCompanyname = model.Othercompanyname;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    organisation.IsIPENZmember = model.IsIPENZmember;
+                    organisation.CPEngQualified = model.CPEngQualified;
                     if (model.DateofBirth != null)
                     {
                         organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
