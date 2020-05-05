@@ -898,9 +898,16 @@ namespace DealEngine.WebUI.Controllers
                 }
                 var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
                 location.OrganisationalUnits.Add(OUList);
-                sheet.Locations.Add(location);
-                await _clientInformationService.UpdateInformation(sheet);
 
+                if (sheet.Locations.Contains(location))
+                {
+                    await _locationService.UpdateLocation(location);
+                }
+                else
+                {
+                    sheet.Locations.Add(location);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
 
                 return Ok();
             }
@@ -2487,7 +2494,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                           
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2524,22 +2533,22 @@ namespace DealEngine.WebUI.Controllers
                         organisationName = model.OrganisationName;
                     }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                    organisation = _mapper.Map<Organisation>(model);
-                    //organisation.Qualifications = model.Qualifications;
-                    //organisation.IsNZIAmember = model.IsNZIAmember;
-                    //organisation.NZIAmembership = model.NZIAmembership;
-                    //organisation.IsADNZmember = model.IsADNZmember;
-                    //organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                    //organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                    //organisation.YearofPractice = model.YearofPractice;
-                    //organisation.PrevPractice = model.prevPractice;
-                    //organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                    //organisation.OtherCompanyname = model.Othercompanyname;
-                    //organisation.Activities = model.Activities;
-                    //organisation.Email = userdb.Email;
-                    //organisation.Type = model.Type;
-                    //organisation.IsIPENZmember = model.IsIPENZmember;
-                    //organisation.CPEngQualified = model.CPEngQualified;
+                    //organisation = _mapper.Map<Organisation>(model);
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.IsNZIAmember = model.IsNZIAmember;
+                    organisation.NZIAmembership = model.NZIAmembership;
+                    organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    organisation.YearofPractice = model.YearofPractice;
+                    organisation.PrevPractice = model.prevPractice;
+                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    organisation.OtherCompanyname = model.Othercompanyname;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    organisation.IsIPENZmember = model.IsIPENZmember;
+                    organisation.CPEngQualified = model.CPEngQualified;
                     if (model.DateofBirth != null)
                     {
                         organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -4056,6 +4065,10 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(id));
+                    businessContract.ProjectDirector = false;
+                    businessContract.ProjectEngineer = false;
+                    businessContract.ProjectManager = false;
+                    businessContract.ProjectCoordinator = false;
                 }
                 var type = businessContract.GetType();
                 foreach (var keyField in projectForm)
@@ -4063,43 +4076,27 @@ namespace DealEngine.WebUI.Controllers
                     if (keyField != "ProjectViewModel.ProjectId")
                     {
                         var propertyName = keyField.Split('.').ToList();
-                        if (propertyName.LastOrDefault() == "ResponsibilityOptions")
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        if (typeof(string) == property.PropertyType)
                         {
-                            var responsibilites = collection[keyField].ToList();
-                            foreach(var responsibility in responsibilites)
-                            {
-                                if(responsibility == "1")
-                                {
-                                    var property = type.GetProperty("ProjectDirector");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "2")
-                                {
-                                    var property = type.GetProperty("ProjectManager");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "3")
-                                {
-                                    var property = type.GetProperty("ProjectCoordinator");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "4")
-                                {
-                                    var property = type.GetProperty("ProjectEngineer");
-                                    property.SetValue(businessContract, true);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            var property = type.GetProperty(propertyName.LastOrDefault());
                             property.SetValue(businessContract, collection[keyField].ToString());
+                        }
+                        if (typeof(bool) == property.PropertyType)
+                        {
+                            property.SetValue(businessContract, bool.Parse(collection[keyField].ToString()));
                         }
                     }
                 }
 
-                sheet.BusinessContracts.Add(businessContract);
-                await _clientInformationService.UpdateInformation(sheet);
+                if (sheet.BusinessContracts.Contains(businessContract))
+                {
+                    await _businessContractService.Update(businessContract);
+                }
+                else
+                {
+                    sheet.BusinessContracts.Add(businessContract);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
 
                 return Ok();
             }

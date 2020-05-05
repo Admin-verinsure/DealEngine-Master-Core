@@ -1264,19 +1264,19 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                 {
-                    Text = "Proj. Director", Value = "1"
+                    Text = "Proj. Director", Value = "ProjectViewModel.ProjectDirector"
                 },
                 new SelectListItem
                 {
-                    Text = "Proj. Manager", Value = "2"
+                    Text = "Proj. Manager", Value = "ProjectViewModel.ProjectManager"
                 },
                 new SelectListItem
                 { 
-                    Text = "Proj. Coordinator/Administrator", Value = "3" 
+                    Text = "Proj. Coordinator/Administrator", Value = "ProjectViewModel.ProjectCoordinator"
                 },
                 new SelectListItem
                 {
-                    Text = "Proj. Engineers", Value = "4"
+                    Text = "Proj. Engineers", Value = "ProjectViewModel.ProjectEngineer"
                 }
             };
         }

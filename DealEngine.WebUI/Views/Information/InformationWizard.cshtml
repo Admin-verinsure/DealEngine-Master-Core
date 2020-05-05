@@ -32,8 +32,8 @@
                                 </div>
 
                             }
-                        <div class="widget-body">
-                            <form class="is-valid" id="LocationViewModel"></form>
+                            <div class="widget-body">
+                                <form class="is-valid" id="LocationViewModel"></form>
                                 <form action="#" class="" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8">
 
                                     <!-- SmartWizard html -->
@@ -995,7 +995,7 @@
                                     </div>
 
                                 </form>
-                        </div>
+                            </div>
 
                             <div class="modal" id="getAgreementModal" tabindex="-1" role="dialog" data-backdrop="static">
                                 <div class="modal-dialog">
@@ -1126,19 +1126,23 @@
 
 @section pagespecific {
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
+    @await Html.PartialAsync("_InformationWizardScripts")
+    @await Html.PartialAsync("_DataTableScripts")
+    @await Html.PartialAsync("_PrefabScripts")
     <script>
-        $(window).on("load", function () {
 
-            var accordianPanel = localStorage.getItem("accordianTrigger");
+        $(document).ready(function () {
+            var accordianPanel = sessionStorage.getItem("accordianTrigger");
             if (accordianPanel != null) {
+                debugger;
                 $("[id='" + accordianPanel + "']").trigger("click");
-                localStorage.removeItem("accordianTrigger");
+                sessionStorage.removeItem("accordianTrigger");
             }
 
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
-            } 
+            }
 
             if ("@Model.Status" == "Submitted") {
                 debugger;
@@ -1174,12 +1178,6 @@
             }
         }
 
-
     </script>
-
-    @await Html.PartialAsync("_InformationWizardScripts")
-    @await Html.PartialAsync("_DataTableScripts")
-    @await Html.PartialAsync("_PrefabScripts")
-
 }
 
