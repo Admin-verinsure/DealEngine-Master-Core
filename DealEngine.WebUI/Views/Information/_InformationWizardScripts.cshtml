@@ -235,33 +235,33 @@
                        }
                    });
 
-                   if ((Isboatexist == false ||  IsboatNamecount == 1) && ( informationsheetstatus != "Bound") && vesselExists != null) {
+                       if ((Isboatexist == false || IsboatNamecount == 1) && (informationsheetstatus != "Bound") && vesselExists != null) {
 
-                       window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
-                       $("#Vessel").trigger("click");
-                       return false;
+                           window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
+                           $("#Vessel").trigger("click");
+                           return false;
 
-                   } else  if (IsboatNamecount == 1 && ( informationsheetstatus != "Bound") || Isboatexist == false && vesselExists != null ) {
+                       } else if (IsboatNamecount == 1 && (informationsheetstatus != "Bound") || Isboatexist == false && vesselExists != null) {
 
-                       window.alert("Please complete Vessel Information");
-                       $("#Vessel").trigger("click");
-                       return false;
+                           window.alert("Please complete Vessel Information");
+                           $("#Vessel").trigger("click");
+                           return false;
 
-                   }else  if ((Isnamedpartycount == 0 && informationsheetstatus != "Bound")  && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false) ) {
+                       } else if ((Isnamedpartycount == 0 && informationsheetstatus != "Bound") && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false)) {
 
-                       window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
-                       $("[id='Insured Details / Named Parties']").trigger("click");
-                       return false;
-                      
-                   } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
-                       //$("#Vessel").trigger("click");
-                       window.alert("Please Add Claims Experience to proceed for policy. ");
+                           window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
+                           $("[id='Insured Details / Named Parties']").trigger("click");
+                           return false;
+                       }
+                   //} else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
+                   //    //$("#Vessel").trigger("click");
+                   //    window.alert("Please Add Claims Experience to proceed for policy. ");
 
-                       $("#more").trigger("click");
-                       $("[id='Claims Experience / Insurance History']").trigger("click");
-                       return false;
+                   //    $("#more").trigger("click");
+                   //    $("[id='Claims Experience / Insurance History']").trigger("click");
+                   //    return false;
 
-                   }
+                   //}
 
                    if ($('#CompanyName').val() === "AON") {
                        var nextbutton = document.getElementsByClassName("next");

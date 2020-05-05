@@ -40,7 +40,7 @@
                                     {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
-                                                        return ('<button onclick="SetPMINZNamedPartyRemovedStatus(\'' + cellvalue + '\', \'true\', \'#DANZNamedParties\', \'#tblDANZRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                                        return ('<button onclick="SetDANZNamedPartyRemovedStatus(\'' + cellvalue + '\', \'true\', \'#DANZNamedParties\', \'#tblDANZRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                          }
                                      }
 
@@ -826,7 +826,7 @@
     };
 
 
-    function EditPMINZNamedParty(event, tabId, tableId, currenttab) {
+    function EditDANZNamedParty(event, tabId, tableId, currenttab) {
                 debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
@@ -853,7 +853,7 @@
             });
     };
 
-     function SetPMINZNamedPartyRemovedStatus(PrincipalId, status, sourceTable, destTable) {
+     function SetDANZNamedPartyRemovedStatus(PrincipalId, status, sourceTable, destTable) {
         var AnswersheetId = $('#AnswerSheetId').val();
         var postData = {
             'answersheetId': AnswersheetId,
