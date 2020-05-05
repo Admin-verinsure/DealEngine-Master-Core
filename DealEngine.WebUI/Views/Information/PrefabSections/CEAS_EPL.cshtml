@@ -1,15 +1,24 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-    <form id="EPLViewModel" class="is-valid">
+    <form id="ELViewModel" class="is-valid">
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
-                    <label for="HasEPL" class="label required">
-                        Would you like Employment Practices Liability Insurance?
+                <div class="col-12">
+                    <label class="label">
+                        Coverage against claims by Employees alleging discrimination, unfair dismissal and sexual or workplace harassment Claims Made & Notified Basis of Insurance
+                    </label>
+                </div>                
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="HasEL" class="label required">
+                        Would you like Employers Practices Liability Insurance?
                     </label>
                 </div>
-                <div class="col-6">
-                    <select id="HasEPL" name="EPLViewModel.HasELOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                <div class="col-3">
+                    <select id="HasEL" name="EPLViewModel.HasELOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.EPLViewModel.HasEPLOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -18,15 +27,63 @@
                 </div>
             </div>
         </div>
-        <div id="EPLViewModel.HasELOptions" hidden>
+        <div id="EPLViewModel.HasEPLOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
+                        <label for="haslimit" class="label required">
+                            Please select the limit you require:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <select id="haslimit" name="EPLViewModel.HasLimitOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.EPLViewModel.HasLimitOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="EPLViewModel.HasLimitOptions">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="alternativelimit" class="label required">
+                                Higher or alternative limits will be quoted upon application. Please indicate any higher or alternative limits for which you require a quotation
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            @Html.TextBoxFor(m => m.EPLViewModel.AlternativeLimit, new { @class = "form-control", @id = "alternativelimit", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="hasdeductible" class="label required">
+                            Please select the deductible you require:
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <select id="hasdeductible" name="EPLViewModel.HasDeductibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.EPLViewModel.HasDeductibleOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
                         <label for="hasexistingpolicy" class="label required">
                             Is this a renewal of an existing policy placed with @Model.Name ?
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         <select id="hasexistingpolicy" name="EPLViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                             @foreach (var option in Model.EPLViewModel.HasExistingPolicyOptions)
                             {
@@ -88,5 +145,5 @@
                 </div>
             </div>
         </div>
-
     </form>
+  
