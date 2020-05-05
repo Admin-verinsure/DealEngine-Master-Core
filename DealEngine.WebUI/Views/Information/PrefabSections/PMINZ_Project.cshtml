@@ -8,13 +8,13 @@
         <input id="ProjectId" name="ProjectViewModel.ProjectId" hidden />
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="tab1">
-                <a class="nav-link active" href="#projecttab1" data-toggle="tab"> List All </a>
+                <a class="nav-link active" href="#projecttab1" data-toggle="tab" onclick="ResetFormView('ProjectViewModel', 'projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> List All </a>
             </li>
             <li class="nav-item" id="tab2">
                 <a class="nav-link" href="#projecttab2" data-toggle="tab"> Edit </a>
             </li>
             <li class="nav-item" id="tab3">
-                <a class="nav-link" href="#projecttab3" data-toggle="tab" onclick="ResetFormView('ProjectViewModel', 'projecttab3','projecttab2', 'LocationAddButton')"> Add </a>
+                <a class="nav-link" href="#projecttab3" data-toggle="tab" onclick="ResetFormView('ProjectViewModel', 'projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> Add </a>
             </li>
             <li class="nav-item" id="tab4">
                 <a class="nav-link" href="#projecttab4" data-toggle="tab"> List Removed </a>
@@ -31,7 +31,6 @@
                     <thead>
                         <tr>
                             <th data-field="editButton" data-sortable="false"></th>
-                            <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
                             <th data-field="description" data-sortable="true">The Project Description</th>
                             <th data-field="Fees" data-sortable="true">Your Earned Fees</th>
                             <th ata-field="deleteButton" data-sortable="false"></th>
@@ -43,9 +42,6 @@
                             <tr id="@project.Id">
                                 <td>
                                     <button class="btn btn-success btn-sm" onclick="EditProject('@project.Id','@project.ProjectDescription','@project.Fees','@project.ConstructionValue','@project.ProjectDuration', '@project.ProjectDirector,@project.ProjectManager,@project.ProjectCoordinator,@project.ProjectEngineer')"><i class="fa fa-edit"></i></button>
-                                </td>
-                                <td>
-                                    @project.ContractTitle
                                 </td>
                                 <td>
                                     @project.ProjectDescription
@@ -62,7 +58,7 @@
                 </table>
             </div>
             <div id="projecttab2" class="tab-pane" role="tabpanel">
-
+                Select a project from the 'List All' Tab and Click Edit Button
             </div>
             <div id="projecttab3" class="tab-pane" role="tabpanel">
                 <div class="form-group">
@@ -92,7 +88,7 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <label for="contractdetails" class="label required">
+                            <label for="contractdetails" class="label">
                                 Contract Value:
                             </label>
                         </div>
@@ -138,8 +134,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <a class="btn btn-sm btn-success text-light" id="LocationAddButton" onclick="AddProject()"> Add </a>
-                    <a class="btn btn-sm btn-danger text-light" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Cancel </a>
+                    <a class="btn btn-sm btn-success text-light" id="ProjectAddButton" onclick="AddProject()"> Add </a>
+                    <a class="btn btn-sm btn-danger text-light" id="ProjectCancelButton" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Clear and Cancel </a>
                 </div>
             </div>
             <div id="projecttab4" class="tab-pane" role="tabpanel">
@@ -152,7 +148,6 @@
                     <thead>
                         <tr>
                             <th data-field="editButton" data-sortable="false"></th>
-                            <th data-field="client" data-sortable="true">Your Client (i.e. Employer)</th>
                             <th data-field="description" data-sortable="true">The Project Description</th>
                             <th data-field="Fees" data-sortable="true">Your Earned Fees</th>
                             <th ata-field="deleteButton" data-sortable="false"></th>
@@ -164,9 +159,6 @@
                             <tr id="@project.Id">
                                 <td>
                                     <button class="btn btn-success btn-sm" onclick="RestoreProject('@project.Id')"><i class="fa fa-undo"></i></button>
-                                </td>
-                                <td>
-                                    @project.ContractTitle
                                 </td>
                                 <td>
                                     @project.ProjectDescription

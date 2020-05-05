@@ -21,24 +21,26 @@
         SetCurrentTab(Tab);
     }
 
-    function ResetFormView(Form, AddTabId, EditTabId, ButtonId) {
+    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId,) {
         var editTabHTML = document.getElementById(EditTabId);
+        debugger;
         if (editTabHTML.children.length != 0) {
             document.getElementById(Form).reset();
             var addTabHTML = document.getElementById(AddTabId);
             addTabHTML.innerHTML = editTabHTML.innerHTML;
-            editTabHTML.innerHTML = "";
-            document.getElementById(ButtonId).innerText = "Add";
+            editTabHTML.innerHTML = "Select a "+Object+" from the 'List All' Tab and Click Edit Button";
+            document.getElementById(AddButtonId).innerText = "Add";
+            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
     }
 
-    function CloneFormView(AddTabId, EditTabId, ButtonId) {
+    function CloneFormView(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
         var editTabHTML = document.getElementById(EditTabId);
         var addTabHTML = document.getElementById(AddTabId);  
-        document.getElementById(ButtonId).innerText = "Update";
-
         editTabHTML.innerHTML = addTabHTML.innerHTML;
         addTabHTML.innerHTML = "";
+        document.getElementById(AddButtonId).innerText = "Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";
     }
 
     function AddLocation() {
@@ -97,7 +99,7 @@
     }
 
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
-        CloneFormView("locationtab3", "locationtab2", "LocationAddButton");
+        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
 
         document.getElementById("LocationId").value = Id;
         document.getElementById("locationtypeoptions").value = LocationType;
@@ -169,7 +171,7 @@
 
     function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectResponsibilityData) {
         event.preventDefault();
-        CloneFormView("projecttab3", "projecttab2", "LocationAddButton");
+        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         document.getElementById("projectdetails").value = ProjectDescription;
@@ -179,7 +181,6 @@
 
         var array = ProjectResponsibilityData.split(',');
         for (var i = 0; i < array.length; i++) {
-            debugger;
             var cb = document.getElementById("responsibility."+i);
             if (array[i] == "True") {
                 cb.setAttribute("checked","true");
