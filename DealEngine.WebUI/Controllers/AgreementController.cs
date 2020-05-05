@@ -2318,7 +2318,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted==null && acagreement.Bound).Count() > 0)
                     {
-                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner); 
                         var documents = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
@@ -2346,33 +2346,35 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument template in agreeTemplateList)
                         {
-                            //render docs except invoice
-                            if (template.DocumentType != 4 && template.DocumentType != 6)
+                            if (template.FileRendered == false)
                             {
-                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                agreement.Documents.Add(renderedDoc);
-                                documents.Add(renderedDoc);
-                                await _fileService.UploadFile(renderedDoc);
+                                SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
+                                agreement.Documents.Add(notRenderedDoc);
+                                documents.Add(notRenderedDoc);
                             }
-                            //render all subsystem
-                            if (template.DocumentType == 6)
-                            {
-                                foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                            else { 
+                            //render docs except invoice
+                                if (template.DocumentType != 4 && template.DocumentType != 6)
                                 {
-                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     agreement.Documents.Add(renderedDoc);
                                     documents.Add(renderedDoc);
                                     await _fileService.UploadFile(renderedDoc);
                                 }
+                                //render all subsystem
+                                if (template.DocumentType == 6)
+                                {
+                                    foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                                    {
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                        agreement.Documents.Add(renderedDoc);
+                                        documents.Add(renderedDoc);
+                                        await _fileService.UploadFile(renderedDoc);
+                                    }
+                                }
                             }
-                            //if (template.FileRendered == false) 
-                            //{
-                            //    SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
-                            //    agreement.Documents.Add(notRenderedDoc);
-                            //    documents.Add(notRenderedDoc);
-                            //}
                         }
 
                         if (programme.BaseProgramme.ProgEnableEmail)

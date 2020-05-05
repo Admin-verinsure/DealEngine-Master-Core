@@ -17,6 +17,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using ServiceStack;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -69,18 +70,36 @@ namespace DealEngine.WebUI.Controllers
             {
                 SystemDocument doc = await _documentRepository.GetByIdAsync(id);
                 string extension = "";
+                var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
                 if (doc.ContentType == MediaTypeNames.Text.Html)
                 {
                     extension = ".html";
+                    string html = _fileService.FromBytes(doc.Contents);
+                    string oldhtml = html; //for testing purposes
+
+                    string centerImage = "<figure class=\"image\"><img src=\"";
+                    string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
+                    string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
+
+                    if (html.Contains(centerImage))
+                    {
+                        html = html.Replace(centerImage, "<img style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"");
+                    }
+                    if (html.Contains(leftImage))
+                    {
+                        html = html.Replace(leftImage, "<img style=\"display:block;margin-left:0;margin-right:auto;\" src=\"");
+                    }
+                    if (html.Contains(rightImage))
+                    {
+                        html = html.Replace(rightImage, "<img style=\"display:block;margin-left:auto;margin-right:0;\" src=\"");
+                    }
+                    
+                    docContents = _fileService.ToBytes(html);
+                    // put document contents back in
 
                     if (format == "docx")
                     {
                         // Testing HtmlToOpenXml
-                        string html = _fileService.FromBytes(doc.Contents);
-                        string oldhtml = html;
-
-
-
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
                             //using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(virtualFile, false))
@@ -89,55 +108,44 @@ namespace DealEngine.WebUI.Controllers
                                 // Add a main document part. 
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                                
+                                // Fix border issue
                                 string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
                                 string noBorder = "<figure class=\"table\"><table><tbody><tr>";
-
-                                // Create document with a "main part" to it. No data has been added yet.
                                 if (html.Contains(showBorder))
                                 {
                                     html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
-                                    // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
+                                    // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
                                 }
                                 if (html.Contains(noBorder))
                                 {
                                     html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
-                                    // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
                                 }
-                                string pathurl = "https://" + _appSettingService.domainQueryString + "/images";
-                                string oldpath = "<img src=\"../../../images";
-                                string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
 
-                                if (html.Contains(oldpath))
+                                // Fix Image Alignment issue
+                                /*string centerImage = "<figure class=\"image\"><img src=\"";
+                                string leftImage = "<figure class=\"image image-style - align - left\"><img src=\"";
+                                string rightImage = "<figure class=\"image image-style - align - right\"><img src=\"";
+
+                                if (html.Contains(centerImage))
                                 {
-                                    html = html.Replace(oldpath, newpath);
+                                    html = html.Replace(centerImage, "<img style=\"display:block;margin-left:auto;margin-right:auto;\"");
                                 }
+                                if (html.Contains(leftImage))
+                                {
+                                    html = html.Replace(leftImage, "<img style=\"display:block;margin-left:0;margin-right:auto;\"");
+                                }
+                                if (html.Contains(rightImage))
+                                {
+                                    html = html.Replace(rightImage, "<img style=\"display:block;margin-left:auto;margin-right:0;\"");
+                                }*/
 
-                                    //}
-                                    //html = "< img aligh= "center" src = \"/img/umbrella.png\" /> ";
-                                    //if (html.Contains(oldpath))
-                                    //{
-                                    //}
-                                    //    html = html.Replace(oldpath, newpath);
-                                    //ImagePart imagePart = mainPart.AddImagePart(~\img\umbrella.png);
-                                    //using (FileStream stream = new FileStream(fileName, FileMode.Open))
-                                    //{
-                                    //    imagePart.FeedData(stream);
-                                    //}
-                                    //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
-                                    // Create a new html convertor with input mainPart
-                                    HtmlConverter converter = new HtmlConverter(mainPart);
-
-                                
-                              
-
-
+                                HtmlConverter converter = new HtmlConverter(mainPart);
+                                converter.ImageProcessing = ImageProcessing.ManualProvisioning;
+                                //converter.ProvisionImage = converter.OnProvisionImage;
                                 // Need to figure out how to add classes to style the document... (adding to the top of HTML document doesn't work, also lots of the table styling css doesn't actually work. Just the old way works where style isn't specified e.g <table width=\"100%\" border=\"0\"><tr style=\"font-weight: bold\"><td>Studio</td><td colspan=\"2\")
                                 // converter.HtmlStyles.DefaultStyle = converter.HtmlStyles.GetStyle("testClass");
                                 // converter.RefreshStyles();
-
-                                converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-                                //converter.ProvisionImage = converter.OnProvisionImage;
-
                                 Body body = mainPart.Document.Body;
                                 converter.ParseHtml(html);
                             }
@@ -145,7 +153,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
                 }
-                return File(doc.Contents, doc.ContentType, doc.Name + extension);
+                return File(docContents, doc.ContentType, doc.Name + extension);
             }
             catch (Exception ex)
             {

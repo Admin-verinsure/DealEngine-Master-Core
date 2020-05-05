@@ -148,7 +148,7 @@
                                 <select asp-for="Product" class="form-control form-control" id="sel1">
                                     @foreach (var product in Model.Products)
                                     {
-                                        <option value="@product.Id">@product.Name</option>
+                                        <option value="@product.Id">@product.Name @product.UnderwritingModuleCode</option>
                                     }
                                 </select>
                             </div>
