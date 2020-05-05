@@ -173,7 +173,7 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            <select id="isforminpractice" name="PIViewModel.IsFormInPracticeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="reverse" required>
+                            <select id="isforminpractice" name="PIViewModel.IsFormInPracticeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
                                 @foreach (var option in Model.PIViewModel.IsFormInPracticeOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -377,7 +377,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        <select id="hasexistingpolicy" name="PIViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="reverse" required>
+                        <select id="hasexistingpolicy" name="PIViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
                             @foreach (var option in Model.PIViewModel.HasExistingPolicyOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>

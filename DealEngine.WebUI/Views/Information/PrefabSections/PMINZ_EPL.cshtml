@@ -8,7 +8,7 @@
                         <label for="HasEPL" class="label required">Would you like Employers Liability Insurance?</label>
                     </div>
                     <div class="col-3">
-                        <select id="HasEPL" name="EPLViewModel.HasEPLOptions" class="custom-select" data-rule="clear" data-item="hasEPLI" onchange="OnChange(this.id, this.name)" required>
+                        <select id="HasEPL" name="EPLViewModel.HasEPLOptions" class="custom-select" data-rule="Clear" data-item="hasEPLI" onchange="OnChange(this.id, this.name)" required>
                             @foreach (var option in Model.EPLViewModel.HasEPLOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>

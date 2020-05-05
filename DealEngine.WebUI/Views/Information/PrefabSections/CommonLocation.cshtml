@@ -31,8 +31,10 @@
                         <th data-field="locationType" data-sortable="true">Location Type</th>
                         <th data-field="commonName" data-sortable="true">Common Name</th>
                         <th data-field="street" data-sortable="true">Street</th>
+                        <th data-field="suburb" data-sortable="true">Suburb</th>
+                        <th data-field="postcode" data-sortable="true">Postcode</th>
                         <th data-field="city" data-sortable="true">City</th>
-                        <th ata-field="deleteButton" data-sortable="false"></th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +52,12 @@
                             </td>
                             <td>
                                 @location.Street
+                            </td>
+                            <td>
+                                @location.Suburb
+                            </td>
+                            <td>
+                                @location.Postcode
                             </td>
                             <td>
                                 @location.City
@@ -166,11 +174,14 @@
                    data-show-jump-to="true">
                 <thead>
                     <tr>
-                        <th data-field="restoreButton" data-sortable="false"></th>
+                        <th data-field="editButton" data-sortable="false"></th>
                         <th data-field="locationType" data-sortable="true">Location Type</th>
                         <th data-field="commonName" data-sortable="true">Common Name</th>
                         <th data-field="street" data-sortable="true">Street</th>
+                        <th data-field="suburb" data-sortable="true">Suburb</th>
+                        <th data-field="postcode" data-sortable="true">Postcode</th>
                         <th data-field="city" data-sortable="true">City</th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -188,6 +199,12 @@
                             </td>
                             <td>
                                 @location.Street
+                            </td>
+                            <td>
+                                @location.Suburb
+                            </td>
+                            <td>
+                                @location.Postcode
                             </td>
                             <td>
                                 @location.City

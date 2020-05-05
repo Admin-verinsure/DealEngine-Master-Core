@@ -129,18 +129,18 @@
         try {
             //all rules go here
             DefaultRule(Value, Name);
-            if (Rule === "clear") {
+            if (Rule === "Clear") {
                 if (Value == 2) {
                     ClearObject(DataItem);
                 }
             }
-            if (Rule === "contractingservice") {
+            if (Rule === "ContractingService") {
                 if (Value != "10" && Value != "") {
                     Value = "1";
                     DefaultRule(Value, Name);
                 }
             }
-            if (Rule === "reverse") {
+            if (Rule === "Reverse") {
                 if (Value == "2") {
                     Value = "1";
                 } else {
@@ -187,7 +187,7 @@
                 obj.setAttribute('data-onsubmititem', ids[1]);
                 DefaultRule(Value, Name);
             }
-            if (Rule === "reverseValidateOnSubmit") {
+            if (Rule === "ReverseValidateOnSubmit") {
                 var tempVal = Value
                 var ids = DataItem.split(',');
                 if (tempVal == "1") {
