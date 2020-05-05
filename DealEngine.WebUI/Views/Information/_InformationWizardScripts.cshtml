@@ -6,11 +6,12 @@
 
 <script type="text/javascript">
 
-   $(document).ready(function () {
-           $('#smartwizard').smartWizard({
+    $(document).ready(function () {
+
+        $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
-            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-            autoAdjustHeight:false, // Automatically adjust content height
+            keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            autoAdjustHeight: false, // Automatically adjust content height
             cycleSteps: false, // Allows to cycle the navigation of steps
             backButtonSupport: true, // Enable the back button support
             useURLhash: true, // Enable selection of the step based on url hash
@@ -37,7 +38,7 @@
             theme: 'dots',
             transitionEffect: 'fade', // Effect on navigation, none/slide/fade
             transitionSpeed: '400'
-           });
+        });
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
 
@@ -54,8 +55,10 @@
 
            if (stepNumber === 0) {
                if (informationsheetstatus != "Submitted") {
-
-                   //<--!Boostrap validation method
+                  
+                   event.preventDefault();
+                   if (stepDirection == "forward") {
+                       //<--!Boostrap validation method
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
                    var formIds = [];
                    for (var i = 0; i < forms.length; i++) {
@@ -185,9 +188,6 @@
 
                    //!-->
 
-                   event.preventDefault();
-                   if (stepDirection == "forward") {
-
                    var vesselExists = document.getElementById("Vessel");
                    var namedPartyExists = document.getElementById("Insured Details / Named Parties");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
@@ -195,8 +195,7 @@
                        var Isnamedpartyexist = document.querySelector('[aria-describedby="PMINZNamedParties_OrganisationType"]') !== null;
                        var IsDANZnamedpartyexist = document.querySelector('[aria-describedby="DANZNamedParties_OrganisationType"]') !== null;
                        var Isnamedpartycount = 0;
-                       var IsLocationCount = 0;
-                       var value = "";
+
 
                        $('#tblLocation tr').each(function () {
                            var $tds = $(this).find('td'),
@@ -356,13 +355,6 @@
                                          alert("Please select cover options for all products");
                                          return false;
                             }
-
-                            
-                                 //if (validaterowdata == 0 && rownum > 1) {
-                                 //        isvalid++;
-                                 //        alert("Please select cover options for all products");
-                                 //        return false;
-                                 //}
                                  
                             if (isvalid != 0) {
                                      break;
@@ -558,6 +550,7 @@
         $('body').on('hidden.bs.modal', '.modal', function () {
             $(this).removeData('bs.modal');
         });
+
         $("input[data-type='currency']").on({
             keyup: function () {
                 formatCurrency($(this));

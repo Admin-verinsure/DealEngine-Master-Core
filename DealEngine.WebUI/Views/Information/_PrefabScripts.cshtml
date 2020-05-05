@@ -1,12 +1,11 @@
 ﻿<script type="text/javascript">
     $(function () {
         //get all forms on load
-        debugger;
         var forms = document.getElementsByClassName('is-valid');
         var formIds = [];
         for (var f = 0; f < forms.length; f++) {
             //get each form id
-            if (forms[f].id != "RevenueDataViewModel" && forms[i].id != "LocationViewModel" && forms[i].id != "ProjectViewModel" ) {
+            if (forms[f].id != "RevenueDataViewModel" && forms[f].id != "LocationViewModel" && forms[f].id != "ProjectViewModel" ) {
                 formIds.push(forms[f].id);
             }
 
@@ -71,22 +70,27 @@
     }
 
     function InputValidation(obj, value) {
-        if (obj.type == "number") {
-            if (value >= 0) {
-                obj.classList.add("is-valid");
-                obj.classList.remove("is-invalid");
+        if (obj.required == true) {
+            if (obj.type == "number") {
+                if (value >= 0) {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
             } else {
-                obj.classList.remove("is-valid");
-                obj.classList.add("is-invalid");
+                if (value != "") {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
             }
         } else {
-            if (value != "") {
-                obj.classList.add("is-valid");
-                obj.classList.remove("is-invalid");
-            } else {
-                obj.classList.remove("is-valid");
-                obj.classList.add("is-invalid");
-            }
+            obj.classList.add("is-valid");
+            obj.classList.remove("is-invalid");
         }
     }
 

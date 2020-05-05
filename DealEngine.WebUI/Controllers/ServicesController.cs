@@ -898,9 +898,16 @@ namespace DealEngine.WebUI.Controllers
                 }
                 var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
                 location.OrganisationalUnits.Add(OUList);
-                sheet.Locations.Add(location);
-                await _clientInformationService.UpdateInformation(sheet);
 
+                if (sheet.Locations.Contains(location))
+                {
+                    await _locationService.UpdateLocation(location);
+                }
+                else
+                {
+                    sheet.Locations.Add(location);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
 
                 return Ok();
             }
@@ -4058,6 +4065,10 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(id));
+                    businessContract.ProjectDirector = false;
+                    businessContract.ProjectEngineer = false;
+                    businessContract.ProjectManager = false;
+                    businessContract.ProjectCoordinator = false;
                 }
                 var type = businessContract.GetType();
                 foreach (var keyField in projectForm)
@@ -4065,43 +4076,27 @@ namespace DealEngine.WebUI.Controllers
                     if (keyField != "ProjectViewModel.ProjectId")
                     {
                         var propertyName = keyField.Split('.').ToList();
-                        if (propertyName.LastOrDefault() == "ResponsibilityOptions")
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        if (typeof(string) == property.PropertyType)
                         {
-                            var responsibilites = collection[keyField].ToList();
-                            foreach(var responsibility in responsibilites)
-                            {
-                                if(responsibility == "1")
-                                {
-                                    var property = type.GetProperty("ProjectDirector");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "2")
-                                {
-                                    var property = type.GetProperty("ProjectManager");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "3")
-                                {
-                                    var property = type.GetProperty("ProjectCoordinator");
-                                    property.SetValue(businessContract, true);
-                                }
-                                if (responsibility == "4")
-                                {
-                                    var property = type.GetProperty("ProjectEngineer");
-                                    property.SetValue(businessContract, true);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            var property = type.GetProperty(propertyName.LastOrDefault());
                             property.SetValue(businessContract, collection[keyField].ToString());
+                        }
+                        if (typeof(bool) == property.PropertyType)
+                        {
+                            property.SetValue(businessContract, bool.Parse(collection[keyField].ToString()));
                         }
                     }
                 }
 
-                sheet.BusinessContracts.Add(businessContract);
-                await _clientInformationService.UpdateInformation(sheet);
+                if (sheet.BusinessContracts.Contains(businessContract))
+                {
+                    await _businessContractService.Update(businessContract);
+                }
+                else
+                {
+                    sheet.BusinessContracts.Add(businessContract);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
 
                 return Ok();
             }
