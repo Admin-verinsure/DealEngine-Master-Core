@@ -5,13 +5,13 @@
     <input id="LocationId" name="LocationViewModel.LocationId" hidden form="LocationViewModel" />
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" id="tab1">
-            <a class="nav-link active" href="#locationtab1" data-toggle="tab"> List All </a>
+            <a class="nav-link active" href="#locationtab1" data-toggle="tab" onclick="ResetFormView('LocationViewModel', 'locationtab3','locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> List All </a>
         </li>
         <li class="nav-item" id="tab2">
             <a class="nav-link" href="#locationtab2" data-toggle="tab"> Edit </a>
         </li>
         <li class="nav-item" id="tab2">
-            <a class="nav-link" href="#locationtab3" data-toggle="tab" onclick="ResetFormView('LocationViewModel', 'locationtab3','locationtab2', 'LocationAddButton')"> Add </a>
+            <a class="nav-link" href="#locationtab3" data-toggle="tab" onclick="ResetFormView('LocationViewModel', 'locationtab3','locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> Add </a>
         </li>
         <li class="nav-item" id="tab3">
             <a class="nav-link" href="#locationtab4" data-toggle="tab"> List Removed </a>
@@ -63,7 +63,7 @@
             </table>
         </div>
         <div id="locationtab2" class="tab-pane" role="tabpanel">
-                
+            Select a Location from the 'List All' Tab and Click Edit Button
         </div>
         <div id="locationtab3" class="tab-pane" role="tabpanel">
             <div class="row"><br /></div>
@@ -154,7 +154,7 @@
 
             <div class="form-group">
                 <a class="btn btn-sm btn-success text-light" id="LocationAddButton" onclick="AddLocation()"> Add </a>
-                <a class="btn btn-sm btn-danger text-light" onclick="Cancel('LocationViewModel','locationtab1')"> Clear and Cancel </a>
+                <a class="btn btn-sm btn-danger text-light" id="LocationCancelButton" onclick="Cancel('LocationViewModel','locationtab1')"> Clear and Cancel </a>
             </div>
         </div>
         <div id="locationtab4" class="tab-pane" role="tabpanel">
