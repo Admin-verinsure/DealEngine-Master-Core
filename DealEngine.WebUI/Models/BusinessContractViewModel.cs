@@ -23,7 +23,7 @@ namespace DealEngine.WebUI.Models
         public Boolean ProjectCoordinator { get; set; }
         public Boolean ProjectEngineer { get; set; }
         public string ConstructionValue { get; set; }
-
+        public string Country { get; set; }
         public string Fees { get; set; }
 
         public string ContractType { get; set; }
@@ -48,6 +48,7 @@ namespace DealEngine.WebUI.Models
             businessContract.ProjectCoordinator = ProjectCoordinator;
             businessContract.ProjectEngineer = ProjectEngineer;
             businessContract.ProjectDuration = ProjectDuration;
+            businessContract.Country = Country;
             return businessContract;
         }
 
