@@ -30,7 +30,12 @@ namespace DealEngine.WebUI.Models
 		private IList<SelectListItem> GetLocationTypes()
 		{
 			return new List<SelectListItem>()
-			{
+			{  
+				new SelectListItem()
+				{
+					Value="0",
+					Text="--Select--"
+				},
 				new SelectListItem()
 				{
 					Value="Residential",
@@ -74,7 +79,9 @@ namespace DealEngine.WebUI.Models
 		public string City { get; set; }
 		public string Country { get; set; }
 		public string CommonName { get; set; }
-        public IList<SelectListItem> LocationType { get; set; }
+		public string Suburb { get; set; }
+		public string Postcode { get; set; }
+		public IList<SelectListItem> LocationType { get; set; }
     }
 
 }

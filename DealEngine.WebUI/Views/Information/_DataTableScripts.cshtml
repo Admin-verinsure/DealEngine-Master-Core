@@ -21,36 +21,40 @@
         SetCurrentTab(Tab);
     }
 
-    function AddLocation() {
-        var locationForm = [];
-        locationForm.push("locationtypeoptions");
-        locationForm.push("commonnamedetails");
-        locationForm.push("streetdetails");
-        locationForm.push("citydetails");
-        locationForm.push("countrydetails");
-        var formValid = true;
-
-
-        for (var i = 0; i < locationForm.length; i++) {
-            var obj = document.getElementById(locationForm[i]);
-            if (obj.value == "") {
-                formValid = false;
-                obj.classList.add("is-invalid");
-                window.alert("Please complete location details");
-                break;
-            }
+    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId,) {
+        var editTabHTML = document.getElementById(EditTabId);
+        if (editTabHTML.children.length != 0) {
+            document.getElementById(Form).reset();
+            var addTabHTML = document.getElementById(AddTabId);
+            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            editTabHTML.innerHTML = "Select a "+Object+" from the 'List All' Tab and Click Edit Button";
+            document.getElementById(AddButtonId).innerText = "Add";
+            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
+    }
 
+    function CloneFormView(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
+        var editTabHTML = document.getElementById(EditTabId);
+        var addTabHTML = document.getElementById(AddTabId);  
+        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        addTabHTML.innerHTML = "";
+        document.getElementById(AddButtonId).innerText = "Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+    }
+
+    function AddLocation() {
+        var form = document.getElementById("LocationViewModel");
+        var formValid = TableFormValidation(form , "location");
         if (formValid) {
+            sessionStorage.setItem('accordianTrigger', 'Location');
             $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
                 type: "POST",
-                data: $("#tab_1 :input").serialize({ json: true }),
-                async: false
+                data: $("#tab_1 :input").serialize({ json: true })
             })
                 .done(function () {
                     //Save the session and reload
-                    localStorage.setItem('accordianTrigger', 'Location');
+                    form.reset();
                     location.reload();
                 })
                 .fail(function (a, s, d) {
@@ -60,16 +64,15 @@
     }
 
     function RemoveLocation(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Location');
         var postData = { LocationId: Id };
         $.ajax({
             url: '@Url.Action("RemoveLocation", "Services")',
             type: "POST",
-            data: postData, 
-            async: false
+            data: postData
         })
             .done(function () {
-                //Save the session and reload
-                localStorage.setItem('accordianTrigger', 'Location');
+                //Save the session and reload                
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -78,16 +81,15 @@
     }
 
     function RestoreLocation(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Location');
         var postData = { LocationId: Id };
         $.ajax({
             url: '@Url.Action("RestoreLocation", "Services")',
             type: "POST",
-            data: postData, 
-            async: false
+            data: postData
         })
             .done(function () {
-                //Save the session and reload
-                localStorage.setItem('accordianTrigger', 'Location');
+                //Save the session and reload                
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -95,21 +97,26 @@
             });
     }
 
-    function EditLocation(Data) {
-        var array = Data.split(',');
-        document.getElementById("LocationId").value = array[0];
-        document.getElementById("locationtypeoptions").value = array[1];
-        document.getElementById("commonnamedetails").value = array[2];
-        document.getElementById("streetdetails").value = array[3];
-        document.getElementById("citydetails").value = array[4];
-        document.getElementById("countrydetails").value = array[5];
+    function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
+        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
+
+        document.getElementById("LocationId").value = Id;
+        document.getElementById("locationtypeoptions").value = LocationType;
+        document.getElementById("commonnamedetails").value = CommonName;
+        document.getElementById("streetdetails").value = Street;
+        document.getElementById("citydetails").value = City;
+        document.getElementById("countrydetails").value = Country;
+        document.getElementById("suburbdetails").value = Suburb;
+        document.getElementById("postcodedetails").value = Postcode;        
+
         SetCurrentTab("locationtab2");
     }
 
     function AddProject() {
         var form = document.getElementById("ProjectViewModel");
-        var formValid = TableFormValidation(form);
+        var formValid = TableFormValidation(form, "project");
         if (formValid) {
+            sessionStorage.setItem('accordianTrigger', 'Projects');
             $.ajax({
                 url: '@Url.Action("AddProject", "Services")',
                 type: "POST",
@@ -117,8 +124,8 @@
                 async: false
             })
                 .done(function () {
-                    //Save the session and reload
-                    localStorage.setItem('accordianTrigger', 'Projects');
+                    //Save the session and reload 
+                    form.reset();
                     location.reload();
                 })
                 .fail(function (a, s, d) {
@@ -128,16 +135,15 @@
     }
 
     function RemoveProject(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Projects');
         var postData = { ProjectId: Id };
         $.ajax({
             url: '@Url.Action("RemoveProject", "Services")',
             type: "POST",
-            data: postData, 
-            async: false
+            data: postData
         })
             .done(function () {
-                //Save the session and reload
-                localStorage.setItem('accordianTrigger', 'Projects');
+                //Save the session and reload                
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -146,16 +152,15 @@
     }
 
     function RestoreProject(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Projects');
         var postData = { ProjectId: Id };
         $.ajax({
             url: '@Url.Action("RestoreProject", "Services")',
             type: "POST",
-            data: postData, 
-            async: false
+            data: postData
         })
             .done(function () {
-                //Save the session and reload
-                localStorage.setItem('accordianTrigger', 'Projects');
+                //Save the session and reload                
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -163,22 +168,33 @@
             });
     }
 
-    function EditProject(Data) {
-        var array = Data.split(',');
-        document.getElementById("ProjectId").value = array[0];
-        document.getElementById("projectdetails").value = array[1];
-        document.getElementById("projectfees").value = array[2];
-        document.getElementById("contractdetails").value = array[3];
-        document.getElementById("durationdetails").value = array[4];
+    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectResponsibilityData) {
+        event.preventDefault();
+        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
+
+        document.getElementById("ProjectId").value = Id;
+        document.getElementById("projectdetails").value = ProjectDescription;
+        document.getElementById("projectfees").value = Fees;
+        document.getElementById("contractdetails").value = ConstructionValue;
+        document.getElementById("durationdetails").value = ProjectDuration;
+
+        var array = ProjectResponsibilityData.split(',');
+        for (var i = 0; i < array.length; i++) {
+            var cb = document.getElementById("responsibility."+i);
+            if (array[i] == "True") {
+                cb.setAttribute("checked","true");
+            }
+        }
+
         SetCurrentTab("projecttab2");
     }
 
-    function TableFormValidation(form) {
-        for (var e = 0; e < form.length; e++) {
+    function TableFormValidation(Form, SectionName) {
+        for (var e = 0; e < Form.length; e++) {
             var element = null;
             try {
-                if (form[e].id != "") {
-                    element = document.getElementById(form[e].id);
+                if (Form[e].id != "") {
+                    element = document.getElementById(Form[e].id);
                 }
             }
             catch (ex) {
@@ -189,7 +205,7 @@
                 if ((element.classList.contains("is-invalid") || element.classList.contains("is-up")) && element.hidden == false) {
                     event.preventDefault();
                     event.stopPropagation();
-                    window.alert("Please complete project details");
+                    window.alert("Please complete "+SectionName+" details");
                     return false;
                 }
             }            

@@ -715,7 +715,7 @@ namespace DealEngine.WebUI.Controllers
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
                 model.ClientInformationAnswers = informationAnswers;
 
-                ViewBag.Title = "Programme Email Template ";
+                ViewBag.Title = " View Information Sheet ";
                 return View(model);
             }
             catch (Exception ex)
@@ -1541,7 +1541,7 @@ namespace DealEngine.WebUI.Controllers
                     //sheet owner is null
                     await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                     //send out information sheet submission notification email
-                    await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                     //send out agreement refer notification email
                     foreach (ClientAgreement agreement in clientProgramme.Agreements)
                     {
