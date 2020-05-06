@@ -175,171 +175,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> StartInformation(Guid id)
-        //{
-        //    User user = null;
-        //    try
-        //    {
-        //        ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
-        //        ClientInformationSheet sheet = clientProgramme.InformationSheet;
-        //        InformationViewModel model = await GetInformationViewModel(clientProgramme);
-        //        user = await CurrentUser();
-        //        model.ClientInformationSheet = sheet;
-        //        model.ClientProgramme = clientProgramme;
-        //        model.CompanyName = _appSettingService.GetCompanyTitle;
-
-        //        using (var uow = _unitOfWork.BeginUnitOfWork())
-        //        {
-        //            if (sheet.Status == "Not Started")
-        //            {
-        //                sheet.Status = "Started";
-        //            }
-        //            foreach (var section in model.Sections)
-        //                foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-        //                {
-        //                    var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-        //                    if (answer != null)
-        //                        item.Value = answer.Value;
-        //                    else
-        //                        sheet.AddAnswer(item.Name, "");
-        //                }
-        //            await uow.Commit();
-        //        }
-
-        //        var boats = new List<BoatViewModel>();
-        //        foreach (Boat b in sheet.Boats)
-        //        {
-        //            boats.Add(BoatViewModel.FromEntity(b));
-        //        }
-        //        model.Boats = boats;
-
-        //        var operators = new List<OrganisationViewModel>();
-        //        var organisationList = await _organisationService.GetAllOrganisations();
-        //        foreach (Organisation skipper in organisationList.Where(o => o.OrganisationType.Name == "Skipper"))
-        //        {
-        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipper);
-        //            ovm.OrganisationName = skipper.Name;
-        //            ovm.OrganisationEmail = skipper.Email;
-        //            operators.Add(ovm);
-        //        }
-        //        model.Operators = operators;
-
-        //        var claims = new List<ClaimViewModel>();
-        //        foreach (ClaimNotification cl in sheet.ClaimNotifications)
-        //        {
-        //            claims.Add(ClaimViewModel.FromEntity(cl));
-        //        }
-        //        model.Claims = claims;
-
-        //        var boatUses = new List<BoatUseViewModel>();
-        //        foreach (BoatUse bu in sheet.BoatUses)
-        //        {
-        //            boatUses.Add(BoatUseViewModel.FromEntity(bu));
-        //        }
-        //        model.BoatUse = boatUses;
-
-        //        // TODO - find a better way to pass these in
-        //        model.HasVehicles = sheet.Vehicles.Count > 0;
-        //        var vehicles = new List<VehicleViewModel>();
-        //        foreach (Vehicle v in sheet.Vehicles)
-        //        {
-        //            vehicles.Add(VehicleViewModel.FromEntity(v));
-        //        }
-        //        model.AllVehicles = vehicles;
-        //        model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-        //        model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
-
-        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
-        //        model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-        //        model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-        //        var locations = new List<LocationViewModel>();
-        //        var buildings = new List<BuildingViewModel>();
-        //        var waterLocations = new List<WaterLocationViewModel>();
-        //        foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
-        //        {
-        //            organisationalUnits.Add(new OrganisationalUnitViewModel
-        //            {
-        //                OrganisationalUnitId = ou.Id,
-        //                Name = ou.Name
-        //            });
-
-        //            model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-
-        //            foreach (Location loc in ou.Locations)
-        //            {
-        //                //locations.Add(LocationViewModel.FromEntity(loc));
-
-        //                foreach (Building bui in loc.Buildings)
-        //                {
-        //                    buildings.Add(BuildingViewModel.FromEntity(bui));
-        //                }
-
-        //                foreach (WaterLocation wl in loc.WaterLocations)
-        //                {
-        //                    waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
-        //                }
-        //            }
-        //        }
-
-        //        var interestedParties = new List<OrganisationViewModel>();
-        //        var orgList = await _organisationService.GetAllOrganisations();
-        //        foreach (Organisation org in orgList.Where(o => o.OrganisationType != null))
-        //        {
-        //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-        //            ovm.OrganisationName = org.Name;
-        //            interestedParties.Add(ovm);
-        //        }
-
-        //        var boatUse = new List<BoatUse>();
-        //        foreach (BoatUse bu in sheet.BoatUses)
-        //        {
-        //            boatUse.Add(bu);
-
-        //        }
-
-        //        //var availableProducts = new List<ProductItem>();
-        //        // TODO verify that this is no longer needed with the Programme Implementation
-        //        //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
-        //        //	// skip any information sheet that has been renewed or updated
-        //        //	if (otherSheet.NextInformationSheet != null)
-        //        //		continue;
-        //        //	availableProducts.Add (new ProductItem {
-        //        //		Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
-        //        //		Status = otherSheet.Status,
-        //        //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-        //        //	});
-        //        //}
-
-        //        var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
-        //        userDetails.PostalAddress = user.Address;
-        //        userDetails.StreetAddress = user.Address;
-
-        //        var organisationDetails = new OrganisationDetailsVM
-        //        {
-        //            Name = sheet.Owner.Name,
-        //            Phone = sheet.Owner.Phone,
-        //            Website = sheet.Owner.Domain
-        //        };
-
-        //        model.OrganisationalUnits = organisationalUnits;
-        //        //model.Locations = locations;
-        //        model.Buildings = buildings;
-        //        model.WaterLocations = waterLocations;
-        //        model.InterestedParties = interestedParties;
-        //        //model.AvailableProducts = availableProducts;
-        //        model.OrganisationDetails = organisationDetails;
-        //        model.UserDetails = userDetails;
-
-        //        return View("InformationWizard", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-
         [HttpPost]
         public async Task<IActionResult> EditPanel(Guid panelId, string panelName, int panelPosition)
         {
@@ -411,6 +246,7 @@ namespace DealEngine.WebUI.Controllers
 
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
+                await GetRoleViewModel(model, sheet.RoleData);
 
                 //build models from answers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
@@ -423,8 +259,6 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
 
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
-                model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
@@ -723,8 +557,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
+        }        
 
         [HttpPost]
         public async Task<IActionResult> GetProductName(Guid id)
@@ -891,6 +724,7 @@ namespace DealEngine.WebUI.Controllers
 
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
+                await GetRoleViewModel(model, sheet.RoleData);
 
                 //build models from answers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
@@ -903,8 +737,6 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
 
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
-                model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
@@ -1262,6 +1094,22 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        private async Task GetRoleViewModel(InformationViewModel model, RoleData roleData)
+        {
+            try
+            {
+                if (roleData.DataRoles.Count > 0)
+                {
+                    model.RoleDataViewModel = _mapper.Map<RoleDataViewModel>(roleData);
+                    model.RoleDataViewModel.AdditionalRoleInformationViewModel = _mapper.Map<AdditionalRoleInformationViewModel>(roleData.AdditionalRoleInformation);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         private async Task GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
         {
             try
@@ -1297,68 +1145,6 @@ namespace DealEngine.WebUI.Controllers
                 steps.Add("Documents");
             }
             return steps;
-        }
-
-        private async Task<SharedRoleViewModel> GetSharedRoleViewModel(ClientInformationSheet sheet)
-        {
-            SharedRoleViewModel sharedRoleViewModel = new SharedRoleViewModel();
-            var clientProgramme = sheet.Programme;
-            var roleList = new List<SharedDataRoleTemplate>();
-            var roleListCount = 0;
-            var sharedRoles = new List<SelectListItem>();
-            var programmeSharedRoles = await _sharedDataRoleService.GetSharedRoleTemplatesByProgramme(clientProgramme.BaseProgramme);
-
-            if (sheet.SharedDataRoles.Count != 0)
-            {
-                foreach (var sharedRole in sheet.SharedDataRoles)
-                {
-                    var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateByRoleName(sharedRole.Name);
-                    if (sharedRoleTemplate != null)
-                    {
-                        roleList.Add(sharedRoleTemplate);
-                    }
-
-                    if (sharedRole.AdditionalRoleInformation != null)
-                    {
-                        sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
-                    }
-
-                    sharedRoleViewModel.SharedDataRoles.Add(sharedRole);
-                }
-                roleListCount = roleList.Count;
-            }
-
-            foreach (var sharedRoleTemplate in programmeSharedRoles)
-            {
-                if (!roleList.Contains(sharedRoleTemplate))
-                {
-                    roleList.Add(sharedRoleTemplate);
-                }
-            }
-
-            foreach (var template in roleList)
-            {
-                if (roleList.IndexOf(template) <= roleListCount)
-                {
-                    sharedRoles.Add(new SelectListItem
-                    {
-                        Text = template.Name,
-                        Value = template.Id.ToString(),
-                        Selected = true
-                    });
-                }
-                else
-                {
-                    sharedRoles.Add(new SelectListItem
-                    {
-                        Text = template.Name,
-                        Value = template.Id.ToString(),
-                        Selected = false
-                    });
-                }
-            }
-
-            return sharedRoleViewModel;
         }
 
         [HttpGet]
@@ -1671,130 +1457,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveSharedRoleTabOne(string[] SharedDataRoles, string ClientInformationSheetId)
-        {
-            User user = null;
-
-            try
-            {
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-                user = await CurrentUser();
-                sheet.SharedDataRoles.Clear();
-                foreach (var id in SharedDataRoles)
-                {
-                    var template = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(id));
-                    var newSharedRole = new SharedDataRole(user);
-                    newSharedRole.Name = template.Name;
-                    await _sharedDataRoleService.CreateSharedDataRole(newSharedRole);
-                    sheet.SharedDataRoles.Add(newSharedRole);
-                }
-
-                await _clientInformationService.UpdateInformation(sheet);
-
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveSharedRoleTabTwo(string TableSerialised, string ClientInformationSheetId)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-                foreach (var sharedRole in sheet.SharedDataRoles)
-                {
-                    string[] tableRow = TableSerialised.Split('&');
-                    foreach (var str in tableRow)
-                    {
-                        string[] valueId = str.Split('=');
-                        var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
-                        if (sharedRoleTemplate != null)
-                        {
-                            if (sharedRoleTemplate.Name == sharedRole.Name)
-                            {
-                                sharedRole.Count = int.Parse(valueId[1]);
-                            }
-                        }
-                        else
-                        {
-                            if (valueId[0] == sharedRole.Id.ToString())
-                            {
-                                sharedRole.Count = int.Parse(valueId[1]);
-                            }
-                        }
-                        await _sharedDataRoleService.UpdateSharedRole(sharedRole);
-                    }
-                }
-
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveSharedRoleTabThree(IFormCollection form)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
-                var additionalRoleInformation = new AdditionalRoleInformation(user);
-                var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalRoleInformationTable"].ToString();
-                var FormString = serialisedAdditionalInformationTableFormString.Split('&');
-                if (sheet.SharedDataRoles.Count == 0)
-                {
-                    throw new Exception("Please complete Activities Tab");
-                }
-
-                //loop through form
-                foreach (var questionFormString in FormString)
-                {
-                    var questionSplit = questionFormString.Split("=");
-                    switch (questionSplit[0])
-                    {
-                        case "OtherProfessionId":
-                            additionalRoleInformation.OtherProfessionId = questionSplit[1];
-                            break;
-                        default:
-                            throw new Exception("Add more form question 'cases'");
-                    }
-                }
-
-                foreach (var role in sheet.SharedDataRoles)
-                {
-                    if (role.Name == "Other Professions")
-                    {
-                        role.AdditionalRoleInformation = additionalRoleInformation;
-                        await _sharedDataRoleService.UpdateSharedRole(role);
-                    }
-                }
-
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        }        
 
         public async Task<InformationViewModel> GetInformationViewModel(ClientProgramme clientProgramme)
         {

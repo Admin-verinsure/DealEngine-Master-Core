@@ -275,6 +275,15 @@ namespace DealEngine.Services.Impl
         {
             await _programmeRepository.UpdateAsync(programmes);
         }
+
+        public async Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template)
+        {
+            if (!programme.SharedDataRoleTemplates.Contains(template))
+            {
+                programme.SharedDataRoleTemplates.Add(template);
+                await _programmeRepository.UpdateAsync(programme);
+            }
+        }
     }
 }
 
