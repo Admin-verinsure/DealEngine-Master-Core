@@ -2318,7 +2318,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2338,7 +2340,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2874,8 +2878,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
                         }
 
                     }
@@ -2894,7 +2899,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -3052,9 +3057,10 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
                     }
@@ -3072,8 +3078,10 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
                     }
