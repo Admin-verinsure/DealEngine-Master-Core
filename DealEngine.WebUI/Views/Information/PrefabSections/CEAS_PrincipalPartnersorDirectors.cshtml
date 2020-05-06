@@ -83,7 +83,7 @@
                     @*<div class="row">*@
                         <input data-type="TEXTBOX" data-name="sharedOrgName" id="CEASOwnerType" class="hidden" placeholder="Organisation Name" value="">
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
                             <label class=" label required">Type</label>
                             <label class="input">
                                 <select id="CEASEditPrincial13" onchange="EditPrincipal13Selected('CEASEditPrincial13')" class="form-control b" name="Type">
@@ -101,7 +101,7 @@
                         </section>
 
                         <div id="EditNotPrincipalsec" style="display:none">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
                                 <label class="label required">Organisation Type</label>
                                 <label class="input">
                                     <select id="CEASEditPrincial14" onchange="EditPrincipal14Selected('CEASEditPrincial14')" class="form-control b" name="OrganisationTypeName">
@@ -122,7 +122,7 @@
 
                             <div class="hidden" id="CEASEditOrgnamesec">
 
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec">
                                     <label class="label required">Organisation Name</label>
                                     <label class="input">
                                         <i></i>
@@ -131,7 +131,7 @@
                                     <p class="validationContainer" id="ValidateCEASEditPrincial17"></p>
                                 </section>
 
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
                                     <label class="label required">Activities</label>
                                     <label class="input">
                                         <i></i>
@@ -159,7 +159,7 @@
                                 <p class="validationContainer" id="ValidateCEASEditPrincial2"></p>
 
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditIndividual3">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec" id="CEASEditIndividual3">
                                 <label class="label required">Email</label>
                                 <label class="input">
                                     <i></i>
@@ -375,7 +375,7 @@
                                 <label class="label required">Qualification</label>
                                 <label class="input">
                                     <i></i>
-                                    <input data-type="TEXTBOX" data-name="Qualifications" id="CEASEditPrincial23" name="Qualifications" placeholder="NZIA Membership Type" value="">
+                                    <input data-type="TEXTBOX" data-name="Qualifications" id="CEASEditPrincial23" name="Qualifications" placeholder="Qualification" value="">
                                 </label>
                                 <p class="validationContainer" id="ValidateCEASEditPrincial23"></p>
 
@@ -434,7 +434,7 @@
                         </div>
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <button onclick="ValidateCEASEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ValidateCEASEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#CEASPrincipaltabs2','CEASPrincipaltabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 
@@ -742,7 +742,7 @@
                                 <label class="label required">Qualification</label>
                                 <label class="input">
                                     <i></i>
-                                    <input data-type="TEXTBOX" data-name="Qualifications" id="CEASAddPrincial23" name="Qualifications" placeholder="NZIA Membership Type" value="">
+                                    <input data-type="TEXTBOX" data-name="Qualifications" id="CEASAddPrincial23" name="Qualifications" placeholder="Qualification" value="">
                                 </label>
                                 <p class="validationContainer" id="ValidateCEASAddPrincial23"></p>
 
@@ -1139,11 +1139,18 @@
                  $('#CEASEditPrincial14').addClass('hidden');
                  $('#CEASOwnerType').val(data.type);                                 
                  $('#EditCEASPrincipalsec').hide();
+                 $('.ownersec').removeClass('hidden');
+                 $('.nonownersec').addClass('hidden');
+
+                 
+
              } else {
                  $('#EditCEASPrincipalsec').show();
                  $('#CEASPrincipalPartnersId').val(data.id);
                  $('#CEASEditOrgnamesec').addClass('hidden');
                  $('#CEASEditIndividual3').addClass('hidden');
+                 $('.ownersec').addClass('hidden');
+                 $('.nonownersec').removeClass('hidden');
              }
 
              if (data.type != "Owner") {

@@ -129,7 +129,8 @@ namespace DealEngine.Services.Impl
         private async Task BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection)
         {
             //find a faster way of getting all models
-            AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));            
+            AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));
+            AnswerFromRole(sheet, collection, collection.Keys.Where(s => s.StartsWith("RoleDataViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
@@ -138,6 +139,59 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture))); 
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
+        }
+
+        private void AnswerFromRole(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
+        {
+            sheet.RoleData = new RoleData(sheet);
+            string modelLocation = "DealEngine.WebUI.Models.{1}, DealEngine.WebUI";
+            foreach (string key in enumerable)
+            {
+                int value = 0;
+                var modelArray = key.Split('.').ToList();
+                Guid id = Guid.Empty;
+                var modelType = modelLocation.Replace("{1}", modelArray.FirstOrDefault());
+                Type type = Type.GetType(modelType);
+                try
+                {
+                    int percent = 0;
+                    var model = Activator.CreateInstance(type);
+                    var ModelProperty = model.GetType().GetProperty(modelArray.ElementAt(1));
+                    if (ModelProperty.Name == "DataRoles")
+                    {
+                        SharedDataRole sharedDataRole;
+                        if (modelArray.Count > 2)
+                        {
+                            Guid.TryParse(modelArray.ElementAt(2), out id);
+                            sharedDataRole = sheet.RoleData.DataRoles.FirstOrDefault(t => t.TemplateId == id);
+                            try
+                            {
+                                sharedDataRole.Selected = true;
+                                sharedDataRole.PrincipalTotal = int.Parse(collection[key].ToString());
+                                sharedDataRole.ProfessionalTotal = int.Parse(collection[key].ToString());
+                                sharedDataRole.OtherTotal = int.Parse(collection[key].ToString());
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                        }
+                    }
+                    else if (ModelProperty.Name == "AdditionalRoleInformationViewModel")
+                    {
+                        var variabletype = sheet.RoleData.AdditionalRoleInformation.GetType();
+                        var field = variabletype.GetProperty(modelArray.LastOrDefault());
+                        
+                        field.SetValue(sheet.RoleData.AdditionalRoleInformation, collection[key].ToString());
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            }
         }
 
         private void SaveAnswer(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)

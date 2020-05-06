@@ -24,7 +24,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Boat> Boats { get; protected set; }
         public virtual IList<BoatUse> BoatUses { get; protected set; }
         public virtual IList<Organisation> Organisation { get; set; }
-		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }        
+		public virtual RoleData RoleData { get; set; }        
         public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
         public virtual RevenueData RevenueData { get; set; }
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
@@ -49,7 +49,6 @@ namespace DealEngine.Domain.Entities
 		{
             SubClientInformationSheets = new List<SubClientInformationSheet>();
             Organisation = new List<Organisation>();
-            SharedDataRoles = new List<SharedDataRole>();
             Answers = new List<ClientInformationAnswer> ();
 			Vehicles = new List<Vehicle> ();
 			Locations = new List<Location> ();

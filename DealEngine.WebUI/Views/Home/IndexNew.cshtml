@@ -250,6 +250,14 @@
                                                 <td><a class="btn btn-success btn-sm" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
+                                        @if (User.IsInRole("TCUser"))
+                                        {
+                                            <tr>
+                                                <td>Roles</td>
+                                                <td>Roles</td>
+                                                <td><a class="btn btn-success btn-sm" href="/Product/CreateRole"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
+                                        }
                                         @if (User.HasClaim("ViewEmploymentPrincipals", "ViewEmploymentPrincipals"))
                                         {
                                             <tr>

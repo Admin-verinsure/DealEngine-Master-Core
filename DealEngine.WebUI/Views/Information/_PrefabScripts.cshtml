@@ -95,6 +95,8 @@
     }
 
     function SelectValidation(obj, value) {
+                    debugger;
+
         if (!obj.multiple) {
             if (value != "0") {
                 obj.classList.add("is-valid");
@@ -153,6 +155,11 @@
                 Value = "1";
                 DefaultRule(Value, Name);
             }
+            if (Rule === "BuildRoleTable") {
+                BuildRoleTable(DataItem, Name);
+                Value = "1";
+                DefaultRule(Value, Name);
+            }
             if (Rule === "CyberLabel") {
                 var Value = DoubleConditional(DataItem);
                 var ids = DataItem.split(',');
@@ -200,7 +207,7 @@
                 }
                 DefaultRule(Value, Name);
             }
-            if (Rule === "ValidateRevenueTable") {
+            if (Rule === "ValidateSharedTable") {
                 if (DataItem === "validatetableactivities") {
                     var activities = document.getElementById("activities");
                     var element;
@@ -230,6 +237,8 @@
             }
             
         } catch (ex) {
+                        debugger;
+
             //these rules need to be re-run regardless of the catch
             
             //console.log(ex);
@@ -256,7 +265,37 @@
             return "0";
     }
 
+    function BuildRoleTable(DataItem, Name) {
+        var array = DataItem.split(',');
+        var list = document.getElementById(array[0]);
+        var tableElement = document.getElementById(array[1]);
+        if (tableElement.children.length == 2) {
+            tableElement.removeChild(tableElement.children[1]);
+        }
+        var tbdy = document.createElement('tbody');
+        for (var t = 0; t < list.options.length; t++) {
+            if (list.options[t].selected === true) {
+                var tr = document.createElement('tr');
+                var td1 = document.createElement('td');
+                td1.appendChild(document.createTextNode(list[t].text));
+                tr.appendChild(td1);
+                var td2 = document.createElement('td');
+                td2.innerHTML = CreateSharedInput(Name, list.options[t]);
+                tr.appendChild(td2);
+                var td3 = document.createElement('td');
+                td3.innerHTML = CreateSharedInput(Name, list.options[t]);
+                tr.appendChild(td3);
+                var td4 = document.createElement('td');
+                td4.innerHTML = CreateSharedInput(Name, list.options[t]);
+                tr.appendChild(td4);
+                tbdy.appendChild(tr);
+            }
+        }
+        tableElement.appendChild(tbdy);
+    }
+
     function BuildSharedTable(DataItem, Name) {
+        debugger;
         var array = DataItem.split(',');
         var list = document.getElementById(array[0]);
         var tableElement = document.getElementById(array[1]);
@@ -284,7 +323,8 @@
         input.setAttribute("name", Id + "." + element.value);
         input.setAttribute("id", element.text);
         input.setAttribute("class", "form-control");
-        input.setAttribute("data-rule", "ValidateRevenueTable");
+        input.setAttribute("type", "number");
+        input.setAttribute("data-rule", "ValidateSharedTable");
         input.setAttribute("data-item", "validatetable" + element.parentElement.id);
         input.setAttribute("onchange", "OnChange(this.id, this.name)");
         return input.outerHTML;

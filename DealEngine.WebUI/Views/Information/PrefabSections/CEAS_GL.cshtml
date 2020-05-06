@@ -12,12 +12,12 @@
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="HasGL" class="label required">
                         Would you like General Liability Insurance?
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="HasGL" name="GLViewModel.HasGLOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.GLViewModel.HasGLOptions)
                         {
@@ -28,46 +28,7 @@
             </div>
         </div>
         <div id="GLViewModel.HasGLOptions" hidden>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="haslimit" class="label required">
-                            Please select the limit you require:
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="haslimit" name="GLViewModel.HasLimitOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.GLViewModel.HasLimitOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id="GLViewModel.HasLimitOptions">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-9">
-                            <label for="alternativelimit" class="label required">
-                                Higher or alternative limits will be quoted upon application. Please indicate any higher or alternative limits for which you require a quotation
-                            </label>
-                        </div>
-                        <div class="col-3">
-                            @Html.TextBoxFor(m => m.GLViewModel.AlternativeLimit, new { @class = "form-control", @id = "alternativelimit", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-12">
-                        <label class="label">
-                            The amount of the Deductible applying to each and every claim is <strong>$500</strong>
-                        </label>
-                    </div>
-                </div>
-            </div>
+            
             <div class="form-group">
                 <div class="row">
                     <div class="col-12">
@@ -80,36 +41,36 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="equipmentdetails" class="label required">
+                        <label for="equipmentdetails" class="label">
                             Passener or goods elevators, escalators, hoist, cranes or other lifting equipment
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.GLViewModel.EquipmentDetails, new { @class = "form-control", @id = "alternativelimit", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.GLViewModel.EquipmentDetails, new { @class = "form-control", @id = "alternativelimit", @type = "text"})
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="vehicledetails" class="label required">
+                        <label for="vehicledetails" class="label">
                             Unregistered mechanically propelled vehicles
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.GLViewModel.VehicleDetails, new { @class = "form-control", @id = "vehicledetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.GLViewModel.VehicleDetails, new { @class = "form-control", @id = "vehicledetails", @type = "text" })
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="carparkdetails" class="label required">
-                            Unregistered mechanically propelled vehicles
+                        <label for="carparkdetails" class="label">
+                            Car Parks
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextAreaFor(m => m.GLViewModel.CarParkDetails, new { @class = "form-control", @id = "carparkdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                        @Html.TextAreaFor(m => m.GLViewModel.CarParkDetails, new { @class = "form-control", @id = "carparkdetails", @type = "text"})
                     </div>
                 </div>
             </div>
@@ -155,13 +116,13 @@
             </div>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
-                        <label for="hasexistingpolicy" class="label required">
+                    <div class="col-9">
+                        <label for="hasexistingGLpolicy" class="label required">
                             Is this a renewal of an existing policy placed with @Model.Name ?
                         </label>
                     </div>
-                    <div class="col-6">
-                        <select id="hasexistingpolicy" name="GLViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <div class="col-3">
+                        <select id="hasexistingGLpolicy" name="GLViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
                             @foreach (var option in Model.GLViewModel.HasExistingPolicyOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
