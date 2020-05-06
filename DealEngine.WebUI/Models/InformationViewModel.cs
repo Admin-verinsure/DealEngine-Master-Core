@@ -701,6 +701,7 @@ namespace DealEngine.WebUI.Models
             HasThirdPartyOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             HasDANZOptions = GetSelectListOptions();
+            HasComplaintAlternativeOptions = GetAlternativeSelectListOptions();
             HasSalesRelateOptions = GetSelectListOptions();
             HasSubstantialChangeOptions = GetSelectListOptions();
             IsFormInPracticeOptions = GetSelectListOptions();
@@ -721,6 +722,7 @@ namespace DealEngine.WebUI.Models
             HasLossDocumentsOptions = GetSelectListOptions();
             HasLegalCouncelOptions = GetSelectListOptions();
             HasFormalProceduresOptions = GetSelectListOptions();
+
         }
 
        
