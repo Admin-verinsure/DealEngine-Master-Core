@@ -315,9 +315,7 @@ namespace DealEngine.WebUI.Models
                 {
                     TemplateId = template.Id,
                     Name = template.Name,
-                    PrincipalTotal = 0,
-                    OtherTotal = 0,
-                    ProfessionalTotal = 0,
+                    Total = 0,
                     Selected = false
                 });
             }
@@ -383,54 +381,7 @@ namespace DealEngine.WebUI.Models
         {
             HasSLOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
-        }
-
-        private IList<SelectListItem> GetLimitSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$250,000", Value = "1"
-                },                
-                new SelectListItem
-                {
-                    Text = "$500,000", Value = "2"
-                },
-                new SelectListItem
-                {
-                    Text = "$1,000,000", Value = "3"
-                },
-                new SelectListItem
-                { Text = "Other", Value = "10" }
-            };
-        }
-        private IList<SelectListItem> GetDeductibleSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$500", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "$1,000", Value = "2"
-                },
-                new SelectListItem
-                {
-                    Text = "$5,000", Value = "3"
-                }
-            };
-        }
+        }               
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -460,57 +411,7 @@ namespace DealEngine.WebUI.Models
         {
             HasELOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
-        }
-
-        private IList<SelectListItem> GetDeductibleSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$5000", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "$1,000", Value = "2"
-                },
-                new SelectListItem
-                {
-                    Text = "$5,000", Value = "3"
-                }
-            };
-        }
-
-        private IList<SelectListItem> GetLimitSelectOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$250,000", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "$500,000", Value = "2"
-                },
-                new SelectListItem
-                {
-                    Text = "$1,000,000", Value = "3"
-                },
-                new SelectListItem
-                {
-                    Text = "Other", Value = "-1"
-                }
-            };
-        }
+        }                
         
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -553,47 +454,6 @@ namespace DealEngine.WebUI.Models
             HasExistingPolicyOptions = GetSelectListOptions();
         }
 
-        private IList<SelectListItem> GetDeductibleSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$2,500", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "$5,000", Value = "2"
-                }
-            };
-        }
-
-        private IList<SelectListItem> GetLimitSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$250,000", Value = "1"
-                },
-                new SelectListItem
-                { 
-                    Text = "$500,000", Value = "2" 
-                },
-                new SelectListItem
-                {
-                    Text = "Other", Value = "3"
-                },
-            };
-        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -788,7 +648,7 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "None of the above", Value = "-1"
+                    Text = "None of the above", Value = "10"
                 },
             };
         }
@@ -1050,28 +910,6 @@ namespace DealEngine.WebUI.Models
             HasAssumeLiabilityOptions = GetSelectListOptions();
         }
 
-        private IList<SelectListItem> GetLimitSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "$1,000,000", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "$2,000,000", Value = "2"
-                },
-                new SelectListItem
-                { 
-                    Text = "$5,000,000", Value = "3" 
-                }
-            };
-        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()

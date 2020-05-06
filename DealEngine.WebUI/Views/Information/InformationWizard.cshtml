@@ -9,6 +9,21 @@
             <article class="container">
                 <!-- Widget ID (each widget will need unique ID)-->
                 <div id="container" class="container-fluid">
+                    <div aria-live="polite" aria-atomic="true">
+                        <div class="toast" id="toast" style="position: absolute; top: 0; right: 0;" data-delay="3000">
+                            <div class="toast-header">
+                                <i class="fa fa-globe">
+                                    <strong class="mr-auto"> Success </strong>
+                                    <small class="text-muted"> just now </small>
+                                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </i>
+                            </div>
+                            <div class="toast-body" id="toastbody">
+                            </div>
+                        </div>
+                    </div>
                     <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
                          data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
@@ -33,7 +48,7 @@
 
                             }
                             <div class="widget-body">
-                                <form class="is-valid" id="LocationViewModel"></form>
+                                <form id="LocationViewModel"></form>
                                 <form action="#" class="" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8">
 
                                     <!-- SmartWizard html -->

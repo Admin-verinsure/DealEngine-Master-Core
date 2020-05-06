@@ -9,21 +9,21 @@
     <form class="is-valid" id="RoleDataViewModel">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="tab1">
-                <a class="nav-link active" href="#RoleTabs1" data-toggle="tab"> Roles </a>
+                <a class="nav-link active" href="#RoleTab1" data-toggle="tab"> Roles </a>
             </li>
             <li class="nav-item" id="tab2">
-                <a class="nav-link" href="#RoleTabs2" data-toggle="tab"> Additional Information </a>
+                <a class="nav-link" href="#RoleTab2" data-toggle="tab"> Additional Information </a>
             </li>
         </ul>
         <div class="tab-content">
-            <div id="RoleTabs1" class="tab-pane active" role="tabpanel">
+            <div id="RoleTab1" class="tab-pane active" role="tabpanel">
                 <div class="form-group">
                     <div class="row">
                         <div class="col-4">
-                            <label for="roles" class="label required">Please select the roles applicable</label>
+                            <label for="roles" class="label required">Select principals and staff in each applicable category and indicate the number:</label>
                         </div>
                         <div class="col-8">
-                            <select id="roles" name="RoleDataViewModel.Roles" form="RoleDataViewModel" class="chosen-select form-control b" multiple data-rule="BuildRoleTable" data-item="roles,rolestable" onchange="OnChange(this.id, this.name)" required>
+                            <select id="dataroles" name="RoleDataViewModel.DataRoles" class="chosen-select form-control b" multiple data-rule="BuildSharedTable" data-item="dataroles,rolestable" onchange="OnChange(this.id, this.name)" required>
                                 @foreach (var option in Model.RoleDataViewModel.DataRoles)
                                 {
                                     <option selected="@option.Selected" value="@option.TemplateId.ToString()">@option.Name</option>
@@ -38,9 +38,7 @@
                             <thread class="thead-dark">
                                 <tr>
                                     <th>Roles</th>
-                                    <th>Principals</th>
-                                    <th>Professionals</th>
-                                    <th>Other</th>
+                                    <th>Total</th>
                                 </tr>
                             </thread>
                             <tbody>
@@ -51,13 +49,7 @@
                                         @select.Name
                                     </td>
                                     <td>
-                                        <input class="form-control" type="number" id="@select.Name" form="RoleDataViewModel" name="RoleDataViewModel.Roles.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateRevenueTable" data-item="validatetableterritories" value="@select.PrincipalTotal" />
-                                    </td>
-                                    <td>
-                                        <input class="form-control" type="number" id="@select.Name" form="RoleDataViewModel" name="RoleDataViewModel.Roles.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateRevenueTable" data-item="validatetableterritories" value="@select.ProfessionalTotal" />
-                                    </td>
-                                    <td>
-                                        <input class="form-control" type="number" id="@select.Name" form="RoleDataViewModel" name="RoleDataViewModel.Roles.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateRevenueTable" data-item="validatetableterritories" value="@select.OtherTotal" />
+                                        <input class="form-control" type="number" id="@select.Name" form="RoleDataViewModel" name="RoleDataViewModel.DataRoles.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable"  data-item="validatetabledataroles" value="@select.Total.ToString()" />
                                     </td>
                                 </tr>
                                 }
@@ -65,24 +57,24 @@
                         </table>
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(1);">  Continue  </a>
+                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateRoleForm(1);">  Continue  </a>
                     </div>
                 </div>
             </div>
-            <div id="RoleTabs2" class="tab-pane" role="tabpanel">
-                <div id="noadditionalinfolabel">
+            <div id="RoleTab2" class="tab-pane" role="tabpanel">
+                <div id="noadditionalroleinfolabel">
                     <div class="form-control">
                         <label>No Additional Information Required</label>
                     </div>
                 </div>
-                <div id="Other" hidden>
+                <div id="RoleOther" hidden>
                     <div class="form-group">
                         <div class="row">
                             <div class="col-9">
-                                <label for="otherdetails">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                                <label for="otherroledetails">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextAreaFor(t => t.RoleDataViewModel.AdditionalRoleInformationViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextAreaFor(t => t.RoleDataViewModel.AdditionalRoleInformationViewModel.OtherDetails, new { @class = "form-control", @id = "otherroledetails", onchange = "OnChange(this.id, this.name)", @required = "" })
                             </div>
                         </div>
                     </div>

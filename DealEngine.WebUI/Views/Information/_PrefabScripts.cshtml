@@ -5,10 +5,9 @@
         var formIds = [];
         for (var f = 0; f < forms.length; f++) {
             //get each form id
-            if (forms[f].id != "RevenueDataViewModel" && forms[f].id != "LocationViewModel" && forms[f].id != "ProjectViewModel" ) {
+            if (forms[f].id != "RevenueDataViewModel" && forms[f].id != "RoleDataViewModel") {
                 formIds.push(forms[f].id);
             }
-
         }
         for (var i = 0; i < formIds.length; i++) {
             var form = document.getElementById(formIds[i]);
@@ -36,6 +35,15 @@
             for (var c = 0; c < activitiesTable.rows[r].cells.length; c++) {
                 if (activitiesTable.rows[r].cells[c].firstElementChild != null) {
                     OnChange(activitiesTable.rows[r].cells[c].firstElementChild.id, activitiesTable.rows[r].cells[c].firstElementChild.name)                    
+                }               
+            }
+        }
+        //hardcoded for sharedrole - relook once form is converted
+        var roleTable = document.getElementById('rolestable');
+        for (var r = 1; r < roleTable.rows.length; r++) {
+            for (var c = 0; c < roleTable.rows[r].cells.length; c++) {
+                if (roleTable.rows[r].cells[c].firstElementChild != null) {
+                    OnChange(roleTable.rows[r].cells[c].firstElementChild.id, roleTable.rows[r].cells[c].firstElementChild.name)                    
                 }               
             }
         }
@@ -154,11 +162,6 @@
                 Value = "1";
                 DefaultRule(Value, Name);
             }
-            if (Rule === "BuildRoleTable") {
-                BuildRoleTable(DataItem, Name);
-                Value = "1";
-                DefaultRule(Value, Name);
-            }
             if (Rule === "CyberLabel") {
                 var Value = DoubleConditional(DataItem);
                 var ids = DataItem.split(',');
@@ -208,39 +211,62 @@
             }
             if (Rule === "ValidateSharedTable") {
                 if (DataItem === "validatetableactivities") {
-                    var activities = document.getElementById("activities");
-                    var element;
-                    for (var i = 0; i < activities.options.length; i++) {
-                        var additionalactivityId = activities.options[i].value;
-                        if (activities.options[i].selected === true) {
-                            hasItem = true;
-                            element = document.getElementById(additionalactivityId);
-                            if (element != null) {
-                                element.hidden = false;
-                            }
-                        } else {
-                            element = document.getElementById(additionalactivityId);
-                            if (element != null) {
-                                element.hidden = true;
-                            }
-                        }
-                    }
-                    document.getElementById("noadditionalinfolabel").hidden = false;
-                    var additionalinfotab = document.getElementById("RevenueTabs3");
-                    for (var d = 1; d < additionalinfotab.children.length; d++) {
-                        if (additionalinfotab.children[d].hidden == false) {
-                            document.getElementById("noadditionalinfolabel").hidden = true;
-                        }
-                    }
+                    AdditionalActivityInformation("activities");                    
+                }
+                if (DataItem === "validatetabledataroles") {
+                    AdditionalRoleInformation("dataroles");
                 }
             }
             
         } catch (ex) {
-
             //these rules need to be re-run regardless of the catch
             
             //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
+        }
+    }
+
+    function AdditionalActivityInformation(Id) {
+        var activities = document.getElementById(Id);
+        var element;
+        for (var i = 0; i < activities.options.length; i++) {
+            var additionalactivityId = activities.options[i].value;
+            if (activities.options[i].selected === true) {
+                hasItem = true;
+                element = document.getElementById(additionalactivityId);
+                if (element != null) {
+                    element.hidden = false;
+                }
+            } else {
+                element = document.getElementById(additionalactivityId);
+                if (element != null) {
+                    element.hidden = true;
+                }
+            }
+        }
+        document.getElementById("noadditionalactivityinfolabel").hidden = false;
+        var additionalinfotab = document.getElementById("RevenueTab3");
+        for (var d = 1; d < additionalinfotab.children.length; d++) {
+            if (additionalinfotab.children[d].hidden == false) {
+                document.getElementById("noadditionalactivityinfolabel").hidden = true;
+            }
+        }
+    }
+
+    function AdditionalRoleInformation(Id) {
+        var roles = document.getElementById(Id);
+
+        document.getElementById("noadditionalroleinfolabel").hidden = false;
+        document.getElementById("RoleOther").hidden = true;        
+        for (var i = 0; i < roles.options.length; i++) {
+            if (roles.options[i].selected === true) {
+                var strArray = roles.options[i].text.split('-');
+                var other = strArray[strArray.length - 1];
+                if (other === " Other") {
+                    document.getElementById("noadditionalroleinfolabel").hidden = true;
+                    document.getElementById("RoleOther").hidden = false;  
+                }
+            }
         }
     }
 
@@ -263,37 +289,7 @@
             return "0";
     }
 
-    function BuildRoleTable(DataItem, Name) {
-        var array = DataItem.split(',');
-        var list = document.getElementById(array[0]);
-        var tableElement = document.getElementById(array[1]);
-        if (tableElement.children.length == 2) {
-            tableElement.removeChild(tableElement.children[1]);
-        }
-        var tbdy = document.createElement('tbody');
-        for (var t = 0; t < list.options.length; t++) {
-            if (list.options[t].selected === true) {
-                var tr = document.createElement('tr');
-                var td1 = document.createElement('td');
-                td1.appendChild(document.createTextNode(list[t].text));
-                tr.appendChild(td1);
-                var td2 = document.createElement('td');
-                td2.innerHTML = CreateSharedInput(Name, list.options[t]);
-                tr.appendChild(td2);
-                var td3 = document.createElement('td');
-                td3.innerHTML = CreateSharedInput(Name, list.options[t]);
-                tr.appendChild(td3);
-                var td4 = document.createElement('td');
-                td4.innerHTML = CreateSharedInput(Name, list.options[t]);
-                tr.appendChild(td4);
-                tbdy.appendChild(tr);
-            }
-        }
-        tableElement.appendChild(tbdy);
-    }
-
-    function BuildSharedTable(DataItem, Name) {
-        debugger;
+    function BuildSharedTable(DataItem, Name) {        
         var array = DataItem.split(',');
         var list = document.getElementById(array[0]);
         var tableElement = document.getElementById(array[1]);
@@ -325,6 +321,7 @@
         input.setAttribute("data-rule", "ValidateSharedTable");
         input.setAttribute("data-item", "validatetable" + element.parentElement.id);
         input.setAttribute("onchange", "OnChange(this.id, this.name)");
+        input.setAttribute("value", 0);
         return input.outerHTML;
     }
 
@@ -410,36 +407,24 @@
             if (!hasItem) {
                 isValid = false;
                 alert("Please select territories.");
-            }
-            isValid = ValidateTableValues(territoryVals);
+            } else {
+                isValid = ValidateTableValues(territoryVals);
+            }            
         }
         else if (tab == 2) {
             var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
             var activities = document.getElementById("activities");
-            var element;
             for (var i = 0; i < activities.options.length; i++) {
-                var additionalactivityId = activities.options[i].value;
                 if (activities.options[i].selected === true) {
-                    hasItem = true;
-                    element = document.getElementById(additionalactivityId);
-                    if (element != null) {
-                        element.hidden = false;
-                    }
-                } else {
-                    element = document.getElementById(additionalactivityId);
-                    if (element != null) {
-                        element.hidden = true;
-                    }
+                    hasItem = true;                    
                 }
             }
-            document.getElementById("noadditionalinfolabel").hidden = false;
-            var additionalinfotab = document.getElementById("RevenueTabs3");
-            for (var d = 1; d < additionalinfotab.children.length; d++) {
-                if (additionalinfotab.children[d].hidden == false) {
-                    document.getElementById("noadditionalinfolabel").hidden = true;
-                }
-            }
-            isValid = ValidateTableValues(activityVals);
+            if (!hasItem) {
+                isValid = false;
+                alert("Please select activities.");
+            } else {
+                isValid = ValidateTableValues(activityVals);
+            }            
         }
         else if (tab == 3) {
             var contruction = document.getElementById("E");
@@ -450,7 +435,7 @@
         }
         if (isValid) {
             tab += 1;
-            SetCurrentTab('RevenueTabs' + tab);
+            SetCurrentTab('RevenueTab' + tab);
         }
     }
     

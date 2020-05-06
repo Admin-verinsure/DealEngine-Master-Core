@@ -21,13 +21,23 @@
         SetCurrentTab(Tab);
     }
 
+    function CreateEditLabel(ObjectLabel) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "form-group");
+        var label = document.createElement("label");
+        label.innerHTML = "Select a " + ObjectLabel + " from the 'List All' Tab and Click Edit Button";
+        div.appendChild(label);
+        return div;
+    }
+
     function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId,) {
         var editTabHTML = document.getElementById(EditTabId);
-        if (editTabHTML.children.length != 0) {
+        if (editTabHTML.children.length != 1) {
             document.getElementById(Form).reset();
             var addTabHTML = document.getElementById(AddTabId);
             addTabHTML.innerHTML = editTabHTML.innerHTML;
-            editTabHTML.innerHTML = "Select a "+Object+" from the 'List All' Tab and Click Edit Button";
+            addTabHTML.editTabHTML = "";
+            editTabHTML.appendChild(CreateEditLabel(Object));
             document.getElementById(AddButtonId).innerText = "Add";
             document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }

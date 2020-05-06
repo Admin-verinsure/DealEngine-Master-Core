@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div id="Location" class="container-fluid">
+<div id="CommonLocation" class="container-fluid">
     @*<form class="is-valid" id="LocationViewModel">*@
     <input id="LocationId" name="LocationViewModel.LocationId" hidden form="LocationViewModel" />
     <ul class="nav nav-tabs" role="tablist">
@@ -71,7 +71,9 @@
             </table>
         </div>
         <div id="locationtab2" class="tab-pane" role="tabpanel">
-            Select a Location from the 'List All' Tab and Click Edit Button
+            <div class="form-group">
+                <label>Select a Location from the 'List All' Tab and Click Edit Button</label>
+            </div>
         </div>
         <div id="locationtab3" class="tab-pane" role="tabpanel">
             <div class="row"><br /></div>
