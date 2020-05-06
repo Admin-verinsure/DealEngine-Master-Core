@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="chchrebuilddetails" class="label required">
-                                Please provide details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -55,7 +55,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="substantialchangedetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -86,7 +86,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="aluminiumdetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -153,7 +153,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="associatedpracticedetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -184,7 +184,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="engageconsortiumdetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -215,7 +215,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="significantshareholderdetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -246,7 +246,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="industrialsoftwaredetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -277,7 +277,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="engagementsoftwaredetails" class="label required">
-                                Please give full details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -286,52 +286,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasbasiclimit" class="label required">
-                            Please indicate the basic limit of indemnity you require:
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasbasiclimit" name="PIViewModel.HasBasicLimitOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PIViewModel.HasBasicLimitOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id="PIViewModel.HasBasicLimitOptions" hidden>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-9">
-                            <label for="basiclimitdetails" class="label required">
-                                Please indicate the basic limit of indemnity:
-                                Higher or alternative limits will be quoted upon application.
-                            </label>
-                        </div>
-                        <div class="col-3">
-                            @Html.TextBoxFor(m => m.PIViewModel.BasicLimit, new { @class = "form-control", @id = "basiclimitdetails", @type = "number", onchange = "OnChange(this.id, this.name)" })
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="alternativelimitdetails" class="label required">
-                            Please indicate any higher or alternative limits for which you require a quotation
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <div class="col-3">
-                            @Html.TextBoxFor(m => m.PIViewModel.AlternativeLimit, new { @class = "form-control", @id = "alternativelimitdetails", @type = "number", onchange = "OnChange(this.id, this.name)" })
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -343,95 +298,85 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="haslossdocuments">
+                            <label for="haslossdocuments" required>
                                 Loss of Documents (including Computer System Records)
                             </label>
                         </div>
                         <div class="col-3">
-                            <div class="col-3">
                                 <select id="haslossdocuments" name="PIViewModel.HasLossDocumentsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.PIViewModel.HasLossDocumentsOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
                                 </select>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasemployeefidelity">
+                            <label for="hasemployeefidelity"  class="label required">
                                 Employees Fidelity
                             </label>
                         </div>
                         <div class="col-3">
-                            <div class="col-3">
                                 <select id="haslossdocuments" name="PIViewModel.HasEmployeeFidelityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.PIViewModel.HasEmployeeFidelityOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
                                 </select>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasdishonesty">
+                            <label for="hasdishonesty"  class="label required">
                                 Dishonesty of Principals/Directors
                             </label>
                         </div>
                         <div class="col-3">
-                            <div class="col-3">
                                 <select id="hasdishonesty" name="PIViewModel.HasDishonestyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.PIViewModel.HasDishonestyOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
                                 </select>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasjurisdiction">
+                            <label for="hasjurisdiction"  class="label required">
                                 USA/Canada Jurisdiction
                             </label>
                         </div>
                         <div class="col-3">
-                            <div class="col-3">
                                 <select id="hasjurisdiction" name="PIViewModel.HasJurisdictionOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.PIViewModel.HasJurisdictionOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
                                 </select>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hascomputersoftware">
+                            <label for="hascomputersoftware"  class="label required">
                                 Computer Software
                             </label>
                         </div>
                         <div class="col-3">
-                            <div class="col-3">
                                 <select id="hascomputersoftware" name="PIViewModel.HasComputerSoftwareOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.PIViewModel.HasComputerSoftwareOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
                                 </select>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -440,7 +385,7 @@
                         <div class="row">
                             <div class="col-9">
                                 <label for="computersoftwareactivitydetails" class="label required">
-                                    Please provide details of your activities:
+                                    If Yes, please provide details of your activities:
                                 </label>
                             </div>
                             <div class="col-3">
@@ -484,7 +429,7 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="legalcounceldetails" class="label required">
-                                Please provide details:
+                                If Yes, please provide details:
                             </label>
                         </div>
                         <div class="col-3">
@@ -506,15 +451,16 @@
                 <div class="row">
                     <div class="col-9">
                         <label for="hasformalprocedures" class="label required">
-                            a) Defining scope and engagement conditions with clients.
-                            b) Assessment of new clients and new engagement conditions including identification and management of any conflict of interest.
-                            c) Do you use the limitation of liability clause in your engagement contracts
-                            d) Briefing staff and engaging sub consultants.
-                            e) Internal reviewing and checking drawings, specifications, reports and other professional documents or services to be provided.
-                            f) Managing construction and supply contracts on behalf of clients.
+                            a) Defining scope and engagement conditions with clients.<br />
+                            b) Assessment of new clients and new engagement conditions including identification and management of any conflict of interest.<br />
+                            c) Do you use the limitation of liability clause in your engagement contracts<br />
+                            d) Briefing staff and engaging sub consultants.<br />
+                            e) Internal reviewing and checking drawings, specifications, reports and other professional documents or services to be provided.<br />
+                            f) Managing construction and supply contracts on behalf of clients.<br />
                             g) The identification and notification of facts that may lead to a professional liability claim.
-                            h) Other risk management and quality control procedures.
-                            i) When were the above procedures put in place, how regularly they are reviewed and who they are reviewed by.
+                            h) Other risk management and quality control procedures.<br /><br />
+
+                             Were above procedures reviewed regularly ?
                         </label>
                     </div>
                     <div class="col-3">
@@ -532,7 +478,8 @@
                     <div class="row">
                         <div class="col-9">
                             <label for="proceduremanageddetails" class="label required">
-                                If such procedures are not in place, please advise how these exposures are managed
+                                please provide details , How regularly these procedures were reviewed and who reviewed them.
+                                
                             </label>
                         </div>
                         <div class="col-3">

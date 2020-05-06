@@ -95,6 +95,8 @@
     }
 
     function SelectValidation(obj, value) {
+                    debugger;
+
         if (!obj.multiple) {
             if (value != "0") {
                 obj.classList.add("is-valid");
@@ -230,6 +232,8 @@
             }
             
         } catch (ex) {
+                        debugger;
+
             //these rules need to be re-run regardless of the catch
             
             //console.log(ex);

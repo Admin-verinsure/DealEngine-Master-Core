@@ -5,12 +5,9 @@
         <div class="row">
             <div class="col-12">
                 <label for="HasSL" class="label required">
-                    <strong>Statutory Liability Insurance</strong>
-                    Legal defence costs, certain fines and penalties under various statutes - Claims Made & Notified Basis of Insurance.
-                    <strong>Acts Included</strong>
-                    Any act of the New Zealand Parliament or any amendment to or re-enactment including the statutory regulations of such Acts, other than certain Acts as may be excluded under the Policy.
-                    <strong>Special Legal Defence Extension</strong>
-                    The coverage also includes additional legal defence costs up to $50,000 any one claim and in the aggregate for all claims during the period of insurance if a Partner, Director or Employee is wrongly sued or charged with certain types of work related criminal offences, other than offences or circumstances that are excluded under the policy.
+                    Statutory Liability Insurance - Legal defence costs, certain fines and penalties under various statutes - Claims Made & Notified Basis of Insurance. <br/>
+                    Acts Included - Any act of the New Zealand Parliament or any amendment to or re-enactment including the statutory regulations of such Acts, other than certain Acts as may be excluded under the Policy.<br />
+                    Special Legal Defence Extension - The coverage also includes additional legal defence costs up to $50,000 any one claim and in the aggregate for all claims during the period of insurance if a Partner, Director or Employee is wrongly sued or charged with certain types of work related criminal offences, other than offences or circumstances that are excluded under the policy.
                     <strong>Please note </strong>that the policy exclusions include:
                     Those Acts enforced by any revenue collecting authority
                     Acts that are against public policy and are uninsurable
@@ -36,54 +33,7 @@
             </div>
         </div>
         <div id="SLViewModel.HasSLOptions" hidden>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="haslimit" class="label required">
-                            Please select the limit you require:
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="haslimit" name="SLViewModel.HasLimitOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.SLViewModel.HasLimitOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id="SLViewModel.HasLimitOptions" hidden>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-9">
-                            <label for="alternativelimit" class="label required">
-                                Higher or alternative limits will be quoted upon application. Please indicate any higher or alternative limits for which you require a quotation
-                            </label>
-                        </div>
-                        <div class="col-3">
-                            @Html.TextBoxFor(m => m.SLViewModel.AlternativeLimit, new { @class = "form-control", @id = "alternativelimit", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasdeductible" class="label required">
-                            Please select the deductible you require:
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasdeductible" name="SLViewModel.HasDeductibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.SLViewModel.HasDeductibleOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
+           
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">

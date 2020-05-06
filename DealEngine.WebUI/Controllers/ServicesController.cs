@@ -3270,6 +3270,8 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+       
+
 
         [HttpPost]
         public async Task<IActionResult> GetPrincipalPartners(Guid answerSheetId, Guid partyID)
@@ -4182,6 +4184,39 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCEASProject(BusinessContractViewModel model)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                if (sheet == null)
+                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(model.BusinessContractId);
+                if (businessContract == null)
+                    businessContract = model.ToEntity(user);
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    model.UpdateEntity(businessContract);
+                    await uow.Commit();
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetCEASProject(Guid answerSheetId, Guid CEASProjectId)

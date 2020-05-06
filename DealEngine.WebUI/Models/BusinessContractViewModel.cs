@@ -68,6 +68,7 @@ namespace DealEngine.WebUI.Models
                 ProjectEngineer = businessContract.ProjectEngineer,
                 ProjectDuration = businessContract.ProjectDuration,
                 ProjectDirector = businessContract.ProjectDirector,
+                Country = businessContract.Country,
                 Fees = businessContract.Fees,
             };
             return model;
