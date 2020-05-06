@@ -788,7 +788,7 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "None of the above", Value = "-1"
+                    Text = "None of the above", Value = "10"
                 },
             };
         }
