@@ -20,6 +20,7 @@ namespace DealEngine.WebUI.Models
             SLViewModel = new SLViewModel(); //Statutory Liability
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
+            RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(ClientInformationSheet);
             ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
         }
@@ -61,7 +62,7 @@ namespace DealEngine.WebUI.Models
         public string Advisory { get; set; }
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueDataViewModel RevenueDataViewModel { get; set; }
-        public SharedRoleViewModel SharedRoleViewModel { get; set; }
+        public RoleDataViewModel RoleDataViewModel { get; set; }
         public ClaimsHistoryViewModel ClaimsHistoryViewModel { get; set; }
         public EPLViewModel EPLViewModel { get; set; }
         public ELViewModel ELViewModel { get; set; }
@@ -297,17 +298,41 @@ namespace DealEngine.WebUI.Models
         public string ConstructionEngineerDetails { get; set; }
         
     }
-    public class SharedRoleViewModel
+    public class RoleDataViewModel
     {
-        public SharedRoleViewModel()
+        public RoleDataViewModel() { }
+        public RoleDataViewModel(Domain.Entities.Programme programme)
         {
-            SharedRoles = new List<SelectListItem>();
-            SharedDataRoles = new List<SharedDataRole>();
+            DataRoles = GetRoles(programme);            
         }
-        public string OtherProfessionId { get; set; }
-        public IList<SelectListItem> SharedRoles { get; set; }
-        public IList<SharedDataRole> SharedDataRoles { get; set; }
+
+        private IList<SharedDataRole> GetRoles(Domain.Entities.Programme programme)
+        {
+            DataRoles = new List<SharedDataRole>();
+            foreach (var template in programme.SharedDataRoleTemplates)
+            {
+                DataRoles.Add(new SharedDataRole(null)
+                {
+                    TemplateId = template.Id,
+                    Name = template.Name,
+                    PrincipalTotal = 0,
+                    OtherTotal = 0,
+                    ProfessionalTotal = 0,
+                    Selected = false
+                });
+            }
+            return DataRoles;
+        }
+
+        public AdditionalRoleInformationViewModel AdditionalRoleInformationViewModel { get; set; }
+        public IList<SharedDataRole> DataRoles { get; set; }
     }
+
+    public class AdditionalRoleInformationViewModel
+    {
+        public string OtherDetails { get; set; }
+    }
+
     public class BusinessActivityViewModel
     {
         public int Classification { get; set; }
@@ -605,7 +630,6 @@ namespace DealEngine.WebUI.Models
         public int TotalEmployees { get; set; }
         public string InsuredClaimDetails { get; set; }
     }
-
     public class CLIViewModel
     {
         public CLIViewModel()

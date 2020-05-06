@@ -73,7 +73,9 @@ namespace DealEngine.WebUI.Models
             CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
 
             CreateMap<RevenueData, RevenueDataViewModel>();
+            CreateMap<RoleData, RoleDataViewModel>();
 
+            CreateMap<AdditionalRoleInformation, AdditionalRoleInformationViewModel>();
             CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
                 .IncludeAllDerived();
                 
