@@ -35,9 +35,7 @@ namespace DealEngine.Domain.Entities
                     {
                         TemplateId = role.TemplateId,
                         Name = role.Name,
-                        ProfessionalTotal = 0,
-                        PrincipalTotal = 0,
-                        OtherTotal = 0,
+                        Total = 0,
                         Selected = false                  
                     });
                 }
@@ -53,9 +51,7 @@ namespace DealEngine.Domain.Entities
                         {
                             TemplateId = template.Id,
                             Name = template.Name,
-                            ProfessionalTotal = 0,
-                            PrincipalTotal = 0,
-                            OtherTotal = 0,
+                            Total = 0,
                             Selected = false
                         });
                     }
@@ -76,9 +72,7 @@ namespace DealEngine.Domain.Entities
         public virtual Guid TemplateId { get; set; }
         public virtual bool Selected { get; set; }
         public virtual string Name { get; set; }
-        public virtual int PrincipalTotal { get; set; }
-        public virtual int OtherTotal { get; set; }
-        public virtual int ProfessionalTotal { get; set; }
+        public virtual int Total { get; set; }
     }
 
 

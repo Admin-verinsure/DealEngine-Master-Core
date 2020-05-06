@@ -73,17 +73,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Calculation
             foreach (var uISSharedDataRoles in agreement.ClientInformationSheet.RoleData.DataRoles.Where(sdr => sdr.DateDeleted == null))
             {
-                if (uISSharedDataRoles.ProfessionalTotal > 0)
+                if (uISSharedDataRoles.Total > 0)
                 {
-                    employeenumber += uISSharedDataRoles.ProfessionalTotal;
-                }
-                if (uISSharedDataRoles.PrincipalTotal > 0)
-                {
-                    employeenumber += uISSharedDataRoles.PrincipalTotal;
-                }
-                if (uISSharedDataRoles.OtherTotal > 0)
-                {
-                    employeenumber += uISSharedDataRoles.OtherTotal;
+                    employeenumber += uISSharedDataRoles.Total;
                 }
             }
 

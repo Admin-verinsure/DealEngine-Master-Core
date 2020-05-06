@@ -62,7 +62,7 @@
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
                    var formIds = [];
                    for (var i = 0; i < forms.length; i++) {
-                       if (forms[i].id != "myForm" && forms[i].id != "RevenueDataViewModel" && forms[i].id != "ProjectViewModel") {
+                       if (forms[i].id != "myForm" && forms[i].id != "RevenueDataViewModel" && forms[i].id != "RoleDataViewModel") {
                            formIds.push(forms[i].id);
                        }
                    }
@@ -499,8 +499,11 @@
         $(".chosen-select").chosen({ width: "95%" });
         $('#Nonregisteredtabs').tabs();
         $('#tabs').tabs();
-        $('#Boattabs').tabs();
+        $('#Boattabs').tabs();        
         $('#SharedRole').tabs();
+        $('#SharedRevenue').tabs();
+        $('#CommonLocation').tabs();
+        $('#Project').tabs();
         $('#PMINZNamedPartiestabs').tabs();        
         $('#registeredtrailertabs').tabs();
         $('#Landtabs').tabs();
@@ -637,17 +640,19 @@
 
 
         $("#accordion").on("accordionactivate", function (e, ui) {
-            if (ui.oldPanel != null) {          
+            if (ui.oldPanel != null) {  
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
                 data: $("#tab_1 :input").serialize({ json:true })
             })
-           .done(function (data) {
+                .done(function (data) {
+                    document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " panel has saved";
+                    $('.toast').toast('show');
                $('#tblBuilding').trigger('reloadGrid');
                $('#Principal,Partners or Directors').trigger('reloadGrid');
                $('#tblWaterLocation').trigger('reloadGrid');
-               $('#tblLocation').trigger('reloadGrid');
+
                $('#tblRegisteredMV').trigger('reloadGrid');
                $('#tblOperator').trigger('reloadGrid');
                $('#tblBoatUse').trigger('reloadGrid');

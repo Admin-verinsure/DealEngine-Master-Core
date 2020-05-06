@@ -167,9 +167,7 @@ namespace DealEngine.Services.Impl
                             try
                             {
                                 sharedDataRole.Selected = true;
-                                sharedDataRole.PrincipalTotal = int.Parse(collection[key].ToString());
-                                sharedDataRole.ProfessionalTotal = int.Parse(collection[key].ToString());
-                                sharedDataRole.OtherTotal = int.Parse(collection[key].ToString());
+                                sharedDataRole.Total = int.Parse(collection[key].ToString());
                             }
                             catch (Exception ex)
                             {
