@@ -59,22 +59,24 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-                   var forms = document.getElementsByClassName('needs-validation');   //invalid forms
-                   var formIds = [];
-                       for (var i = 0; i < forms.length; i++) {
-                       formIds.push(forms[i].id);
-                   }
-                   for (var f = 0; f < formIds.length; f++) {
-                       var form = document.getElementById(formIds[f]);
-                       var element = null;
-                       for (var e = 0; e < form.length; e++) {
-                           //for (var e = form.length-1; e > 0; e--) {
-                           try {
-                               if (form[e].id != "") {
-                                   element = document.getElementById(form[e].id);
+                       var forms = document.getElementsByClassName('needs-validation');   //invalid forms
+                       var formIds = [];
+                       for (var f = 0; f < forms.length; f++) {
+                           //get each form id
+                           formIds.push(forms[f].id);
+                       }
+                       debugger;
+                       for (var i = 0; i < formIds.length; i++) {
+                           var form = document.getElementById(formIds[i]);
+                           var element = null;
+                           for (var e = 0; e < form.length; e++) {
+                               //for (var e = form.length-1; e > 0; e--) {
+                               try {
+                                   if (form[e].id != "") {
+                                       element = document.getElementById(form[e].id);
+                                   }
                                }
-                           }
-                           catch (ex) {
+                               catch (ex) {
                                //will have to add further function for forms with added elements
                            }
                            if (element != null) {
@@ -85,8 +87,7 @@
                                        for (var v = 0; v < element.selectedOptions.length; v++) {
                                            var value = parseInt(document.getElementById(element.selectedOptions[v].text).value);
                                            totalPercentage += value;
-                                       }
-                                       debugger;
+                                       }                                       
                                        if (totalPercentage != 100) {
                                            event.preventDefault();
                                            event.stopPropagation();
@@ -100,6 +101,9 @@
                                    }
                                }
                                else {
+                                   if (form.id == "ELViewModel") {
+                                       debugger;
+                                   }
                                    OnChange(element.id, element.name);
 
                                    //hardcoded to find the div visibility

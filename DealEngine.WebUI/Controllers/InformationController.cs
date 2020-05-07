@@ -253,6 +253,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
@@ -736,6 +737,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
 
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -1248,8 +1250,6 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
-            ClientInformationSheet sheet1 = null;
-
             User user = null;
 
             try
@@ -1267,10 +1267,8 @@ namespace DealEngine.WebUI.Controllers
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
                         await _clientInformationService.SaveAnswersFor(sheet, collection);
-                    }
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             //UWM
                             _uWMService.UWM(user, sheet, reference);
