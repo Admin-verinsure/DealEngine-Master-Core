@@ -55,11 +55,11 @@
 
            if (stepNumber === 0) {
                if (informationsheetstatus != "Submitted") {
-                  
+
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-                   var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
+                   var forms = document.getElementsByClassName('needs-validation');   //invalid forms
                    var formIds = [];
                        for (var i = 0; i < forms.length; i++) {
                        formIds.push(forms[i].id);
@@ -80,14 +80,14 @@
                            if (element != null) {
                                if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
                                    //need to cancel event for build tables i.e role/revenue
-                                   if (form.id == "RevenueDataViewModel") {                                       
+                                   if (form.id == "RevenueDataViewModel") {
                                        var totalPercentage = 0;
-                                       for (var v = 0; v < element.selectedOptions.length; v++) { 
+                                       for (var v = 0; v < element.selectedOptions.length; v++) {
                                            var value = parseInt(document.getElementById(element.selectedOptions[v].text).value);
                                            totalPercentage += value;
                                        }
                                        debugger;
-                                       if (totalPercentage != 100) {                                           
+                                       if (totalPercentage != 100) {
                                            event.preventDefault();
                                            event.stopPropagation();
                                            $("#more").trigger("click");
@@ -223,7 +223,7 @@
                        $(prevbutton).hide();
                    }
 
-                  }               
+                  }
                }
 
                $.ajax({
@@ -232,14 +232,14 @@
                    data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
-                       $("#agreementView").load(url, function () {                           
+                       $("#agreementView").load(url, function () {
                        });
                    })
                    .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();                       
+                       $('#getAgreementModal').hide();
                    });
 
-              
+
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
@@ -249,7 +249,7 @@
                }
 
                $('.sw-btn-prev').hide();
-               //$('#getAgreementDecModal').show();               
+               //$('#getAgreementDecModal').show();
                 var isvalid = 0;
                var ID = $('#Id').val();
                var answerid= $('#AnswerSheetId').val();
@@ -266,9 +266,9 @@
                     async: false,
                    data: postdata
                })
-                    .done(function (data) {                        
+                    .done(function (data) {
                          proddata = data;
-                        
+
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         alert("There was an error getting ProductName.");
                     });
@@ -300,13 +300,13 @@
                                     }
 
                                 });
-                            
+
                             } else {
                                 isvalid++;
                                          alert("Please select cover options for all products");
                                          return false;
                             }
-                                 
+
                             if (isvalid != 0) {
                                      break;
                             }
@@ -314,7 +314,7 @@
                             CoverOptions[i] = optionsselected;
                         }
 
-                        
+
                         if (isvalid == 0) {
                             var progId = $('#ClientProgrammeId').val();
                             var postData = { Answers: CoverOptions, ProgrammeId: progId };
@@ -359,7 +359,7 @@
                    $(prevbutton).hide();
                }
 
-               
+
            } else if (stepNumber === 2) {
                if (!$('#agreementAccept').is(":checked")) {
                    document.getElementById("advisoryModal").hidden = false;
@@ -443,19 +443,19 @@
                 }
             }, 450);
         });
-        
+
         $('.AccordionTab').tabs();
         $('#Principaltabs').tabs();
         $('#ceasprojecttabs').tabs();
         $(".chosen-select").chosen({ width: "95%" });
         $('#Nonregisteredtabs').tabs();
         $('#tabs').tabs();
-        $('#Boattabs').tabs();        
+        $('#Boattabs').tabs();
         $('#SharedRole').tabs();
         $('#SharedRevenue').tabs();
         $('#CommonLocation').tabs();
         $('#Project').tabs();
-        $('#PMINZNamedPartiestabs').tabs();        
+        $('#PMINZNamedPartiestabs').tabs();
         $('#registeredtrailertabs').tabs();
         $('#Landtabs').tabs();
         $('#Claimtabs').tabs();
@@ -492,13 +492,10 @@
             "opacity": "1"
         });
 
-      
-
         $('#AddClearBoat').click(function () {
             var mode = "Edit";
         });
-        $('.modal').on('hidden.bs.modal', function (e)
-        {
+        $('.modal').on('hidden.bs.modal', function (e) {
             $(this).removeData();
         });
         $('body').on('hidden.bs.modal', '.modal', function () {
@@ -514,19 +511,19 @@
             },
         });
 
-        
-         $('.Calenderdate').datepicker({
+
+        $('.Calenderdate').datepicker({
             dateFormat: "dd/mm/yy",
-         });
+        });
 
         $('.Effectivedate').datepicker({
             maxDate: "+30d",
             dateFormat: "dd/mm/yy",
             minDate: 0
         });
-         $('.Birthdate').datepicker({
-             dateFormat: "dd/mm/yy",
-             maxDate: 0
+        $('.Birthdate').datepicker({
+            dateFormat: "dd/mm/yy",
+            maxDate: 0
         });
 
         $('.Startdate').datepicker({
@@ -541,80 +538,64 @@
             $('#MarshCoastGuardMotor').on('load', 'Html.Partial("PrefabSections/CommonClaim" , _sheetId);');
         };
 
-    function formatNumber(n) {
-        return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    }
-
-    function formatCurrency(input, blur) {
-        var input_val = input.val();
-        if (input_val === "") { return; }
-        var original_len = input_val.length;
-        var caret_pos = input.prop("selectionStart");
-        if (input_val.indexOf(".") >= 0) {
-            var decimal_pos = input_val.indexOf(".");
-            var left_side = input_val.substring(0, decimal_pos);
-            var right_side = input_val.substring(decimal_pos);
-            left_side = formatNumber(left_side);
-            right_side = formatNumber(right_side);
-            if (blur === "blur") {
-                right_side += "00";
-            }
-            right_side = right_side.substring(0, 2);
-            input_val = "$" + left_side + "." + right_side;
-        } else {
-            input_val = formatNumber(input_val);
-            input_val = "$" + input_val;
-            if (blur === "blur") {
-                input_val += ".00";
-            }
+        function formatNumber(n) {
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }
-        input.val(input_val);
-        var updated_len = input_val.length;
-        caret_pos = updated_len - original_len + caret_pos;
-        input[0].setSelectionRange(caret_pos, caret_pos);
-    }
 
-    var accordionIcons = {
-        header: "fa fa-circle-o",           // custom icon class
-        activeHeader: "fa fa-dot-circle-o"  // custom icon class
-    };
+        function formatCurrency(input, blur) {
+            var input_val = input.val();
+            if (input_val === "") { return; }
+            var original_len = input_val.length;
+            var caret_pos = input.prop("selectionStart");
+            if (input_val.indexOf(".") >= 0) {
+                var decimal_pos = input_val.indexOf(".");
+                var left_side = input_val.substring(0, decimal_pos);
+                var right_side = input_val.substring(decimal_pos);
+                left_side = formatNumber(left_side);
+                right_side = formatNumber(right_side);
+                if (blur === "blur") {
+                    right_side += "00";
+                }
+                right_side = right_side.substring(0, 2);
+                input_val = "$" + left_side + "." + right_side;
+            } else {
+                input_val = formatNumber(input_val);
+                input_val = "$" + input_val;
+                if (blur === "blur") {
+                    input_val += ".00";
+                }
+            }
+            input.val(input_val);
+            var updated_len = input_val.length;
+            caret_pos = updated_len - original_len + caret_pos;
+            input[0].setSelectionRange(caret_pos, caret_pos);
+        }
 
-    $("#accordion").accordion({
-        autoHeight: false,
-        heightStyle: "content",
-        collapsible: false,
-        animate: 300,
-        icons: accordionIcons,
-        header: "h4",
-        activate: function (event, ui) { }
-    });
+        var accordionIcons = {
+            header: "fa fa-circle-o",           // custom icon class
+            activeHeader: "fa fa-dot-circle-o"  // custom icon class
+        };
 
+        $("#accordion").accordion({
+            autoHeight: false,
+            heightStyle: "content",
+            collapsible: false,
+            animate: 300,
+            icons: accordionIcons,
+            header: "h4",
+            activate: function (event, ui) { }
+        });
 
         $("#accordion").on("accordionactivate", function (e, ui) {
-            if (ui.oldPanel != null) {  
+            if (ui.oldPanel != null) {
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",                
+                type: "POST",
                 data: $("#tab_1 :input").serialize({ json:true })
             })
                 .done(function (data) {
                     document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " panel has saved";
                     $('.toast').toast('show');
-               $('#tblBuilding').trigger('reloadGrid');
-               $('#Principal,Partners or Directors').trigger('reloadGrid');
-               $('#tblWaterLocation').trigger('reloadGrid');
-
-               $('#tblRegisteredMV').trigger('reloadGrid');
-               $('#tblOperator').trigger('reloadGrid');
-               $('#tblBoatUse').trigger('reloadGrid');
-               $('#tblOU').trigger('reloadGrid');
-               $('#NamedParties').trigger('reloadGrid');
-               $('#tblBoat').trigger('reloadGrid');
-               $('#boatTabs-3').trigger('chosen:updated');
-               $('#ui-accordion-accordion-header-3').trigger('chosen:updated');
-               $('#BoatLandLocation').trigger('chosen:updated');
-               $('#tblBusinessContract').trigger('reloadGrid');
-               $('#PrincipalDirectors').trigger('reloadGrid');
            })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     debugger;
@@ -644,47 +625,8 @@
         $(e.currentTarget).find('input[name="PanelName2"]').val(PanelName);
         $(e.currentTarget).find('input[name="PanelPosition2"]').val(PanelPositon);
     });
-
-    $('input[data-conditional-for]').each(function() {
-        console.log(this);
-        var target = $(this).attr('data-conditional-for');
-        $(this).change(function() {
-            toggleVisible(target, this.checked);
-        });
     });
 
-    $('input[data-onchange-for]').each(function() {
-        var targets = $(this).attr('data-onchange-for').split(':');
-        $(this).change(function() {
-            toggleVisible(targets[0], this.checked, this);
-            toggleVisible(targets[1], !this.checked, this);
-        });
-    });
-
-    var model = jsonSerializer.Serialize(Model);
-    $.each(model.Sections, function() {
-        $.each(this.Items, function() {
-            if (this.Conditional.TriggerValue != null) {
-                var id = "#" + this.Name;
-                var targets = this.Conditional.Targets;
-                var triggerValue = this.Conditional.TriggerValue;
-                var visible = this.Conditional.VisibilityOnTrigger;
-                $(id).change(function() {
-                    var selectValue = $(id).val();
-                    $.each(targets, function() {
-                        // Show if selected value equals conditional & behaviour is show, OR show if selected value doesn't equal conditional and behaviour is hide
-                        var visibility = (selectValue == triggerValue) == (visible == 1);	// simulate a XNOR gate to do this.
-                        toggleVisible($("#" + this.Name).closest("section"), visibility, $(id));
-                    });
-                });
-                $.each(targets, function() {
-                    var visibility = (visible != 1);
-                    toggleVisible($("#" + this.Name).closest("section"), visibility, $(id));
-                });
-            }
-        });
-    });
-});
     $('#boatForm').submit(function (event) {
         if (!this.checkValidity()) {
             event.preventDefault();
@@ -743,7 +685,7 @@
         })
     });
 
-    
+
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
         var validity = true;
         if (claim1 == "") {
@@ -922,7 +864,7 @@
           var pMINZPI = document.getElementById(PMINZPI);
           var sec = "#" + PMINZPI + "Sec";
         if (pMINZPI.options[pMINZPI.selectedIndex].value == "true" ) {
-           
+
             $("#" + PMINZPI + "Sec").removeClass('hidden');
         } else {
             $("#" + PMINZPI + "Sec").addClass('hidden');
@@ -1935,12 +1877,12 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function ToggleSharedRevenueTab2Button() {        
+    function ToggleSharedRevenueTab2Button() {
         ValidateSharedRevenueForm(0);
         BuildRevenuesTable('false');
     }
 
-     function ToggleSharedRevenueTab1Button() {        
+     function ToggleSharedRevenueTab1Button() {
         BuildRevenuesTable('true')
     }
 
@@ -1953,7 +1895,7 @@ function showAccordionPanel(id, panelNo) {
         }
         else {
             var isvalid = ValidateSharedRevenueForm(1);
-            if (isvalid) {                
+            if (isvalid) {
                 form = $('#revenue1').serialize();
                 var clientInformationSheetId = $('#AnswerSheetId').val();
                 var postData = { form, ClientInformationSheetId: clientInformationSheetId }
@@ -2075,28 +2017,28 @@ function showAccordionPanel(id, panelNo) {
 
         var tabList = document.getElementById("sharedRevenTabs");
         var showTabs = 0;
-        
+
         for (var i = 0; i < tabList.children.length; i++) {
-            tabList.children[i].hidden = true;            
+            tabList.children[i].hidden = true;
             var index = tabList.children[i].getAttribute("tabindex");
             if (index == 0) {
-                showTabs = i;                
-            }            
+                showTabs = i;
+            }
         }
 
         //checks which tab view
         var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-        if (typeof tradingOutsideNZValue === 'undefined') {            
-            for (var i = 1; i <= showTabs; i++) {                
+        if (typeof tradingOutsideNZValue === 'undefined') {
+            for (var i = 1; i <= showTabs; i++) {
                 tabList.children[i].hidden = false;
             }
         }
         else {
-            for (var i = 0; i <= showTabs; i++) {         
+            for (var i = 0; i <= showTabs; i++) {
                 tabList.children[i].hidden = false;
             }
         }
-                
+
     }
 
     function ValidateSharedRoleForm(tabs) {
@@ -2113,7 +2055,7 @@ function showAccordionPanel(id, panelNo) {
 
                 var arr = ValidateTable("sharedRoleTable");
                 for (var i = 0; i < arr.length; i++) {
-                    
+
                     if (!wholeNumberCheck(parseInt(arr[i]))) {
                         alert("Please enter a whole number");
                         return false;
@@ -2137,7 +2079,7 @@ function showAccordionPanel(id, panelNo) {
     //function ValidateSharedRevenueForm(tabs) {
     //    for (var i = 0; i <= tabs; i++) {
     //        if (i == 0) {
-                
+
     //            UpdateSharedRevenueView();
     //            $('#submitTab4').show();
     //            $('#additionalInfomation').hide();
@@ -2152,14 +2094,14 @@ function showAccordionPanel(id, panelNo) {
     //            $('#Construction').hide();
 
     //            var activitiesStr = GetActivitiesForRevenue('value');
-    //            if (activitiesStr.length != 0) {                    
-    //                ShowAdditionalInfomation();                                        
+    //            if (activitiesStr.length != 0) {
+    //                ShowAdditionalInfomation();
     //            }
     //        }
     //        else if (i == 1) {
                var territories = GetTerritoriesForRevenue('value');
     //            var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-                
+
     //            if (tradingOutsideNZValue == 'true') {
     //                if (territories.length == 0) {
     //                    alert("Please select territories.");
@@ -2181,7 +2123,7 @@ function showAccordionPanel(id, panelNo) {
     //            if (totalSharedRevenue != 100) {
     //                alert("Percentage calculation does not equal to 100%");
     //                return false;
-    //            }   
+    //            }
     //        }
     //        else if (i == 2) {
     //            var businessActivities = GetActivitiesForRevenue('value');
@@ -2215,7 +2157,7 @@ function showAccordionPanel(id, panelNo) {
     //        else if (i == 3) {
     //            var activitiesStr = GetActivitiesForRevenue('text');
 
-    //            activitiesStr.forEach(function (item) {                    
+    //            activitiesStr.forEach(function (item) {
     //                if (item.trim() === "Other Work not listed above") {
     //                    if (document.getElementById("OtherActivitiesTextId").value == "") {
     //                        alert("Please provide details");
@@ -2246,13 +2188,13 @@ function showAccordionPanel(id, panelNo) {
     //                        return false;
     //                    }
     //                }
-    //                if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {                        
+    //                if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {
     //                    if (document.getElementById("SchoolsDesignWorkBoolId").value === '') {
     //                        alert("Please select an option");
     //                        return false;
     //                    }
     //                    if (document.getElementById("SchoolsDesignWorkBoolId2").value === '') {
-    //                        alert("Please select an option");                            
+    //                        alert("Please select an option");
     //                        return false;
     //                    }
     //                    if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex === '') {
@@ -2277,32 +2219,32 @@ function showAccordionPanel(id, panelNo) {
     //}
 
     function CopyTableValues(currentTable, newTable) {
-        
+
         var overViewTable = document.getElementById(newTable);
         var arr = ValidateTable(currentTable);
         var count = 0;
 
         overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        var tableBody = overViewTable.lastElementChild;                   
+        var tableBody = overViewTable.lastElementChild;
 
         if (tableBody.childElementCount == 1) {
             var tableRows = tableBody.lastElementChild;
             for (var i = 0; i < tableRows.children.length; i++) {
-                
+
                 try {
                     tableRows.children[i].lastElementChild.value = arr[count];
-                    tableRows.children[i].lastElementChild.readOnly = true; 
+                    tableRows.children[i].lastElementChild.readOnly = true;
                     count++;
                 } catch{
                     tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value = arr[i];
                     tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.readOnly = true;
-                }                
+                }
             }
         } else {
             for (var k = 0; k < tableBody.children.length; k++) {
-                
+
                 try {
-                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value = arr[k]; 
+                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value = arr[k];
                     tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.readOnly = true;
                 } catch{
                     tableBody.children[k].lastElementChild.value = arr[count];
@@ -2361,7 +2303,7 @@ function showAccordionPanel(id, panelNo) {
                 .done(function (Data) {
                     SetCurrentTab('sharedRoleTabs1');
                 });
-        }        
+        }
     }
 
     function SaveRoleTable() {
@@ -2777,10 +2719,10 @@ function showAccordionPanel(id, panelNo) {
         var claimant = $('#Claimant').val();
         var claimDateOfLoss = $('#ClaimDateOfLoss').val();
         var claimNotifiedDate = $('#ClaimNotifiedDate').val();
-      
+
         var result = true;
         debugger;
-      
+
         if (claimInsurerName == "") {
             $('#validateclaimInsurerName').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2846,7 +2788,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#validateclaimStatus').html("<font></font>");
         }
-        
+
         if (claimPolicyReference == "") {
             $('#validateclaimPolicyReference').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2855,7 +2797,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#validateclaimPolicyReference').html("<font></font>");
         }
-        
+
         if (result) {
             AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
@@ -2881,7 +2823,7 @@ function showAccordionPanel(id, panelNo) {
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var result = true;
         debugger;
-        
+
         if (claimInsurerName == "") {
             $('#AddvalidateclaimInsurerName').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2947,7 +2889,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#AddvalidateclaimStatus').html("<font></font>");
         }
-      
+
         if (claimPolicyReference == "") {
             $('#AddvalidateclaimPolicyReference').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2956,7 +2898,7 @@ function showAccordionPanel(id, panelNo) {
         } else {
             $('#AddvalidateclaimPolicyReference').html("<font></font>");
         }
-       
+
 
         if (result) {
             AddClaim(tabId, tableId);

@@ -1,4 +1,5 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
+    <div>
         <form id="PIViewModel" class="is-valid" data-accordianId="Professional Indemnity">
             <div class="form-group">
                 <div class="row">
@@ -284,7 +285,7 @@
                     </div>
                 </div>
             </div>
-           
+
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -301,80 +302,80 @@
                             </label>
                         </div>
                         <div class="col-3">
-                                <select id="haslossdocuments" name="PIViewModel.HasLossDocumentsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.PIViewModel.HasLossDocumentsOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
+                            <select id="haslossdocuments" name="PIViewModel.HasLossDocumentsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.HasLossDocumentsOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasemployeefidelity"  class="label required">
+                            <label for="hasemployeefidelity" class="label required">
                                 Employees Fidelity
                             </label>
                         </div>
                         <div class="col-3">
-                                <select id="haslossdocuments" name="PIViewModel.HasEmployeeFidelityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.PIViewModel.HasEmployeeFidelityOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
+                            <select id="haslossdocuments" name="PIViewModel.HasEmployeeFidelityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.HasEmployeeFidelityOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasdishonesty"  class="label required">
+                            <label for="hasdishonesty" class="label required">
                                 Dishonesty of Principals/Directors
                             </label>
                         </div>
                         <div class="col-3">
-                                <select id="hasdishonesty" name="PIViewModel.HasDishonestyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.PIViewModel.HasDishonestyOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
+                            <select id="hasdishonesty" name="PIViewModel.HasDishonestyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.HasDishonestyOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hasjurisdiction"  class="label required">
+                            <label for="hasjurisdiction" class="label required">
                                 USA/Canada Jurisdiction
                             </label>
                         </div>
                         <div class="col-3">
-                                <select id="hasjurisdiction" name="PIViewModel.HasJurisdictionOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.PIViewModel.HasJurisdictionOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
+                            <select id="hasjurisdiction" name="PIViewModel.HasJurisdictionOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.HasJurisdictionOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
-                            <label for="hascomputersoftware"  class="label required">
+                            <label for="hascomputersoftware" class="label required">
                                 Computer Software
                             </label>
                         </div>
                         <div class="col-3">
-                                <select id="hascomputersoftware" name="PIViewModel.HasComputerSoftwareOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.PIViewModel.HasComputerSoftwareOptions)
-                                    {
-                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                    }
-                                </select>
+                            <select id="hascomputersoftware" name="PIViewModel.HasComputerSoftwareOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.HasComputerSoftwareOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -436,12 +437,12 @@
                     </div>
                 </div>
             </div>
-           
+
             <div class="form-group">
                 <div class="row">
                     <div class="col-12">
                         <label>
-                            Describe the formal procedures in place relating to the following: <br/>
+                            Describe the formal procedures in place relating to the following: <br />
                             a) Defining scope and engagement conditions with clients.<br />
                             b) Assessment of new clients and new engagement conditions including identification and management of any conflict of interest.<br />
                             c) Do you use the limitation of liability clause in your engagement contracts<br />
@@ -476,7 +477,7 @@
                         <div class="col-9">
                             <label for="proceduremanageddetails" class="label required">
                                 Please provide details,How regularly these procedures were reviewed and who reviewed them.
-                                
+
                             </label>
                         </div>
                         <div class="col-3">
@@ -487,3 +488,4 @@
             </div>
 
         </form>
+    </div>
