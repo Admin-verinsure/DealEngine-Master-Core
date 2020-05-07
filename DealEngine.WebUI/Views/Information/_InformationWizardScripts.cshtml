@@ -61,10 +61,8 @@
                        //<--!Boostrap validation method
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms      
                    var formIds = [];
-                   for (var i = 0; i < forms.length; i++) {
-                       if (forms[i].id != "myForm" && forms[i].id != "RevenueDataViewModel" && forms[i].id != "RoleDataViewModel") {
-                           formIds.push(forms[i].id);
-                       }
+                       for (var i = 0; i < forms.length; i++) {
+                       formIds.push(forms[i].id);
                    }
                    for (var f = 0; f < formIds.length; f++) {
                        var form = document.getElementById(formIds[f]);
@@ -80,44 +78,69 @@
                                //will have to add further function for forms with added elements
                            }
                            if (element != null) {
-                               OnChange(element.id, element.name);
-                               //hardcoded to find the div visibility
-                               var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
-                               var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
-
-                               //onsubmitfunction trigger
-                               var validationelement = document.getElementById(hasOnsubmitValidation);
-                               if (validationelement != null) {
-                                   var tag = validationelement.tagName;
-                                   //hardcoded for project table
-                                   if (tag == "TABLE") {
-                                       if (validationelement.rows.length < 2) {
+                               if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
+                                   //need to cancel event for build tables i.e role/revenue
+                                   if (form.id == "RevenueDataViewModel") {                                       
+                                       var totalPercentage = 0;
+                                       for (var v = 0; v < element.selectedOptions.length; v++) { 
+                                           var value = parseInt(document.getElementById(element.selectedOptions[v].text).value);
+                                           totalPercentage += value;
+                                       }
+                                       debugger;
+                                       if (totalPercentage != 100) {                                           
                                            event.preventDefault();
                                            event.stopPropagation();
                                            $("#more").trigger("click");
-                                           //go back to div// go back to accordion to get id
-                                           var accordianId = "Projects";
-                                           window.alert("Please provide a project");
-                                           $("[id='" + accordianId + "']").trigger("click");
+                                           var accordianId = form.getAttribute('data-accordianId');
+                                           $("[id='Fee Income / Activities']").trigger("click");
+                                           window.alert("Please complete this section Fee Income");
                                            element.scrollIntoView();
                                            throw accordianId + " incomplete";
                                        }
-                                   }                                                                     
-                               }
-                               if (element.classList.contains("is-invalid") && isHidden == false) {
-                                   //write a message here or stop the process
-                                   event.preventDefault();
-                                   event.stopPropagation();
-                                   $("#more").trigger("click");
-                                   //go back to div// go back to accordion to get id
-                                   var accordianId = form.parentElement.getAttribute("aria-labelledby");                                       
-                                   if (accordianId == null) {
-                                       debugger;
                                    }
-                                   window.alert("Please complete this section " + accordianId);
-                                   $("[id='" + accordianId + "']").trigger("click");
-                                   element.scrollIntoView();
-                                   throw accordianId + " incomplete";
+                               }
+                               else {
+                                   OnChange(element.id, element.name);
+
+                                   //hardcoded to find the div visibility
+                                   var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                                   var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
+
+                                   //onsubmitfunction trigger
+                                   var validationelement = document.getElementById(hasOnsubmitValidation);
+                                   if (validationelement != null) {
+                                       var tag = validationelement.tagName;
+                                       //hardcoded for project table
+                                       if (tag == "TABLE") {
+                                           if (validationelement.rows.length < 2) {
+                                               event.preventDefault();
+                                               event.stopPropagation();
+                                               $("#more").trigger("click");
+                                               //go back to div// go back to accordion to get id
+                                               var accordianId = form.getAttribute('data-accordianId');
+                                               window.alert("Please provide a project");
+                                               $("[id='" + accordianId + "']").trigger("click");
+                                               element.scrollIntoView();
+                                               throw accordianId + " incomplete";
+                                           }
+                                       }
+                                   }
+                                   if (element.classList.contains("is-invalid") && isHidden == false) {
+                                       //write a message here or stop the process
+                                       event.preventDefault();
+                                       event.stopPropagation();
+                                       $("#more").trigger("click");
+                                       //go back to div// go back to accordion to get id
+                                       var accordianId = form.getAttribute('data-accordianId');
+                                       if (accordianId == null) {
+                                           throw "update form accordianId " + form.id;
+                                           debugger;
+                                       }
+                                       window.alert("Please complete this section " + accordianId);
+                                       $("[id='" + accordianId + "']").trigger("click");
+                                       element.scrollIntoView();
+                                       throw accordianId + " incomplete";
+                                   }
                                }
                            }
                        }
@@ -125,68 +148,6 @@
                        form.classList.add("was-validated");
                    }
 
-
-                   //hardcoded shared revenue
-                   var IsFeeIncomeexist = document.querySelector('[aria-labelledby="Fee Income / Activities"]') !== null;
-                   debugger;
-                   if (IsFeeIncomeexist == true) {
-
-                       var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
-                       var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
-                       var territories = document.getElementById('territories');
-                       var activities = document.getElementById('activities');
-                       var hasItem = false;
-                       var percentage = 0;
-                       var hasPercent = true;
-
-                       for (var i = 0; i < territories.options.length; i++) {
-                           if (territories.options[i].selected === true) {
-                               hasItem = true;
-                               break;
-                           }
-                       }
-                       for (var v = 0; v < territoryVals.length; v++) {
-                           percentage += parseInt(territoryVals[v].value);
-                       }
-                       if (percentage != 100) {
-                           hasPercent = false;
-                       }
-                       if (!hasItem || !hasPercent) {
-                           event.preventDefault();
-                           event.stopPropagation();
-                           var accordianId = "Fee Income / Activities";
-                           $("[id='" + accordianId + "']").trigger("click");
-                           //SetCurrentTab('RevenueTabs' + 1);
-                           window.alert("Please complete this section " + accordianId + " Territories Section");
-                           throw accordianId + " incomplete";
-                       }
-                       var percentage = 0;
-                       hasPercent = true
-                       hasItem = false;
-                       for (var i = 0; i < activities.options.length; i++) {
-                           if (activities.options[i].selected === true) {
-                               hasItem = true;
-                               break;
-                           }
-                       }
-                       for (var v = 0; v < activityVals.length; v++) {
-                           percentage += parseInt(activityVals[v].value);
-                       }
-                       if (percentage != 100) {
-                           hasPercent = false;
-                       }
-                       if (!hasItem || !hasPercent) {
-                           event.preventDefault();
-                           event.stopPropagation();
-                           var accordianId = "Fee Income / Activities";
-                           $("[id='" + accordianId + "']").trigger("click");
-                           //SetCurrentTab('RevenueTabs' + 1);
-                           window.alert("Please complete this section " + accordianId + " Activities Section");
-                           throw accordianId + " incomplete";
-                       }
-                   }
-
-                   //!-->
 
                    var vesselExists = document.getElementById("Vessel");
                    var namedPartyExists = document.getElementById("Insured Details / Named Parties");
@@ -252,15 +213,6 @@
                            $("[id='Insured Details / Named Parties']").trigger("click");
                            return false;
                        }
-                   //} else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
-                   //    //$("#Vessel").trigger("click");
-                   //    window.alert("Please Add Claims Experience to proceed for policy. ");
-
-                   //    $("#more").trigger("click");
-                   //    $("[id='Claims Experience / Insurance History']").trigger("click");
-                   //    return false;
-
-                   //}
 
                    if ($('#CompanyName').val() === "AON") {
                        var nextbutton = document.getElementsByClassName("next");
@@ -278,7 +230,6 @@
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
                    data: $("#tab_1 :input").serialize({ json: true })
-                   //data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#agreementView").load(url, function () {                           
