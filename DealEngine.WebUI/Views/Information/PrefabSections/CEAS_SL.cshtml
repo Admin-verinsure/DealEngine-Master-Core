@@ -1,39 +1,41 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<form id="SLViewModel" class="is-valid">
-    <div class="form-group">
-        <div class="row">
-            <div class="col-12">
-                <label for="HasSL" class="label required">
-                    Statutory Liability Insurance - Legal defence costs, certain fines and penalties under various statutes - Claims Made & Notified Basis of Insurance. <br/>
-                    Acts Included - Any act of the New Zealand Parliament or any amendment to or re-enactment including the statutory regulations of such Acts, other than certain Acts as may be excluded under the Policy.<br />
-                    Special Legal Defence Extension - The coverage also includes additional legal defence costs up to $50,000 any one claim and in the aggregate for all claims during the period of insurance if a Partner, Director or Employee is wrongly sued or charged with certain types of work related criminal offences, other than offences or circumstances that are excluded under the policy.
-                    <strong>Please note </strong>that the policy exclusions include:
-                    Those Acts enforced by any revenue collecting authority
-                    Acts that are against public policy and are uninsurable
-                    any fines, penalties or infringement fees imposed under the Health & Safety at Work Act 2015.
-                </label>
+    <form id="SLViewModel" class="is-valid">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-12">
+                    <label for="HasSL" class="label required">
+                        Statutory Liability Insurance - Legal defence costs, certain fines and penalties under various statutes - Claims Made & Notified Basis of Insurance. <br />
+                        Acts Included - Any act of the New Zealand Parliament or any amendment to or re-enactment including the statutory regulations of such Acts, other than certain Acts as may be excluded under the Policy.<br />
+                        Special Legal Defence Extension - The coverage also includes additional legal defence costs up to $50,000 any one claim and in the aggregate for all claims during the period of insurance if a Partner, Director or Employee is wrongly sued or charged with certain types of work related criminal offences, other than offences or circumstances that are excluded under the policy.
+                        <strong>Please note </strong>that the policy exclusions include:
+                        Those Acts enforced by any revenue collecting authority
+                        Acts that are against public policy and are uninsurable
+                        any fines, penalties or infringement fees imposed under the Health & Safety at Work Act 2015.
+                    </label>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label for="HasSL" class="label">
-                    Would you like Statutory Liability Insurance?
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="HasSL" name="SLViewModel.HasSLOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.SLViewModel.HasSLOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="HasSL" class="label">
+                        Would you like Statutory Liability Insurance?
+                    </label>
+                </div>
+                <div class="col-3">
+                    <select id="HasSL" name="SLViewModel.HasSLOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.SLViewModel.HasSLOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
             </div>
         </div>
         <div id="SLViewModel.HasSLOptions" hidden>
-           
+
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -103,5 +105,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</form>    
+
+    </form>    
