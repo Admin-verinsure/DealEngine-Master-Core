@@ -63,7 +63,9 @@
                        var formIds = [];
                        for (var f = 0; f < forms.length; f++) {
                            //get each form id
-                           formIds.push(forms[f].id);
+                           if (forms[f].id != "myForm") {
+                               formIds.push(forms[f].id);
+                           }                           
                        }
                        debugger;
                        for (var i = 0; i < formIds.length; i++) {
