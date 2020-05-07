@@ -1,12 +1,13 @@
-﻿@model DealEngine.WebUI.Models.InformationViewModel   
+﻿@model DealEngine.WebUI.Models.InformationViewModel
 @using DealEngine.Domain.Entities
 @{
     IList<Territory> SelectedTerritories = Model.RevenueDataViewModel.Territories.Where(t => t.Selected == true).ToList();
     IList<BusinessActivity> SelectedActivities = Model.RevenueDataViewModel.Activities.Where(t => t.Selected == true).ToList();
 }
 
-    <div id="SharedRevenue" class="container-fluid">
-        @*<form class="is-valid" id="RevenueDataViewModel">*@
+
+    <form class="is-valid" id="RevenueDataViewModel" data-accordianId="Fee Income / Activities">
+        <div id="SharedRevenue">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" id="tab1">
                     <a class="nav-link active" href="#RevenueTab1" data-toggle="tab"> Territory </a>
@@ -60,7 +61,7 @@
                             </table>
                         </div>
                         <div class="form-group">
-                            <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(1);">  Continue  </a>
+                            <a class="btn btn-sm btn-primary text-light" onclick="RevenueDataOnSubmit('territories', 'RevenueDataViewModel');">  Continue  </a>
                         </div>
                     </div>
                 </div>
@@ -73,7 +74,7 @@
                                         <label for="lastFinancialYear" class="label required">Last completed financial year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required="" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
                                     </div>
                                 </div>
                                 <div class="row">
@@ -81,7 +82,7 @@
                                         <label for="currentYear">Estimate of current year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
                                     </div>
                                 </div>
                                 <div class="row">
@@ -89,7 +90,7 @@
                                         <label for="nextFinancialYear">Estimate of next financial year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +130,7 @@
                             </table>
                         </div>
                         <div class="form-group">
-                            <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(2);">  Continue  </a>
+                            <a class="btn btn-sm btn-primary text-light" onclick="RevenueDataOnSubmit('activities', 'RevenueDataViewModel');">  Continue  </a>
                         </div>
                     </div>
                 </div>
@@ -173,7 +174,7 @@
                                     <label for="valuationdetails">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ValuationDetails, new { @class = "form-control", @id = "valuationdetails", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ValuationDetails, new { @class = "form-control", @id = "valuationdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -183,7 +184,7 @@
                                     <label for="qualificationdetails">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.QualificationDetails, new { @class = "form-control", @id = "qualificationdetails", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.QualificationDetails, new { @class = "form-control", @id = "qualificationdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -277,7 +278,7 @@
                                     <label for="otherdetails">You have specified Other Work not listed above, please provide further details:</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -289,7 +290,7 @@
                                     <label for="rebuilddetails">If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.RebuildDetails, new { @class = "form-control", @id = "rebuilddetails",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.RebuildDetails, new { @class = "form-control", @id = "rebuilddetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -301,7 +302,7 @@
                                     <label for="otherprojectmanagementdetails">Please provide details of your Other Project Management activities:</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherProjectManagementDetails, new { @class = "form-control", @id = "otherprojectmanagementdetails",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherProjectManagementDetails, new { @class = "form-control", @id = "otherprojectmanagementdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -313,7 +314,7 @@
                                     <label for="nonprojectmanagementdetails">Please provide details of your non Project Management activities:</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.NonProjectManagementDetails, new { @class = "form-control", @id = "nonprojectmanagementdetails", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.NonProjectManagementDetails, new { @class = "form-control", @id = "nonprojectmanagementdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
@@ -332,7 +333,7 @@
                                                     Commercial
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -340,7 +341,7 @@
                                                     Dwellings
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionDwellingDetails, new { @id = "constructiondwellingdetails", @class = "form-control",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionDwellingDetails, new { @id = "constructiondwellingdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -348,7 +349,7 @@
                                                     Industrial
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionIndustrialDetails, new { @id = "constructionindustrialdetails", @class = "form-control",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionIndustrialDetails, new { @id = "constructionindustrialdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -356,7 +357,7 @@
                                                     Infrastructure
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionInfrastructureDetails, new { @id = "constructioninfrastructuredetails", @class = "form-control",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionInfrastructureDetails, new { @id = "constructioninfrastructuredetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -364,7 +365,7 @@
                                                     School
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control",  @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -378,12 +379,12 @@
                                     <label for="constructionengineerdetails">Please provide your best estimate of a percentage of your construction revenue where you undertook the role as Engineer to the Contract</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionEngineerDetails, new { @class = "form-control", @id = "constructionengineerdetails", @form="RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionEngineerDetails, new { @class = "form-control", @id = "constructionengineerdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "" })
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        @*</form>*@
-    </div>
+        </div>
+    </form>

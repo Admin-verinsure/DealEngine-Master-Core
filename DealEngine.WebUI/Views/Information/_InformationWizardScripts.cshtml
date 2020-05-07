@@ -65,9 +65,8 @@
                            //get each form id
                            if (forms[f].id != "myForm") {
                                formIds.push(forms[f].id);
-                           }                           
+                           }
                        }
-                       debugger;
                        for (var i = 0; i < formIds.length; i++) {
                            var form = document.getElementById(formIds[i]);
                            var element = null;
@@ -79,80 +78,49 @@
                                    }
                                }
                                catch (ex) {
-                               //will have to add further function for forms with added elements
-                           }
-                           if (element != null) {
-                               if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
-                                   //need to cancel event for build tables i.e role/revenue
-                                   if (form.id == "RevenueDataViewModel") {
-                                       var totalPercentage = 0;
-                                       for (var v = 0; v < element.selectedOptions.length; v++) {
-                                           var value = parseInt(document.getElementById(element.selectedOptions[v].text).value);
-                                           totalPercentage += value;
-                                       }                                       
-                                       if (totalPercentage != 100) {
-                                           event.preventDefault();
-                                           event.stopPropagation();
-                                           $("#more").trigger("click");
-                                           var accordianId = form.getAttribute('data-accordianId');
-                                           $("[id='Fee Income / Activities']").trigger("click");
-                                           window.alert("Please complete this section Fee Income");
-                                           element.scrollIntoView();
-                                           throw accordianId + " incomplete";
+                                   //will have to add further function for forms with added elements
+                               }
+                               if (element != null) {
+                                   if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
+                                       //need to cancel event for build tables i.e role/revenue
+                                       if (form.id == "RevenueDataViewModel") {
+                                           RevenueDataOnSubmit(element.id, form);
                                        }
                                    }
-                               }
-                               else {
-                                   if (form.id == "ELViewModel") {
-                                       debugger;
-                                   }
-                                   OnChange(element.id, element.name);
-
-                                   //hardcoded to find the div visibility
-                                   var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
-                                   var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
-
-                                   //onsubmitfunction trigger
-                                   var validationelement = document.getElementById(hasOnsubmitValidation);
-                                   if (validationelement != null) {
-                                       var tag = validationelement.tagName;
-                                       //hardcoded for project table
-                                       if (tag == "TABLE") {
-                                           if (validationelement.rows.length < 2) {
+                                   else {
+                                       //hardcoded to find the div visibility - need to find a better way
+                                       var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                                       if (isHidden == false) {
+                                           OnChange(element.id, element.name);
+                                           //onsubmitfunction trigger
+                                           var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
+                                           var validationelement = document.getElementById(hasOnsubmitValidation);
+                                           if (validationelement != null) {
+                                               ElementOnSubmit(element, validationelement, form)
+                                           }
+                                           if (element.classList.contains("is-invalid")) {
+                                               //write a message here or stop the process
                                                event.preventDefault();
                                                event.stopPropagation();
                                                $("#more").trigger("click");
                                                //go back to div// go back to accordion to get id
                                                var accordianId = form.getAttribute('data-accordianId');
-                                               window.alert("Please provide a project");
+                                               if (accordianId == null) {
+                                                   throw "update form accordianId " + form.id;
+                                                   debugger;
+                                               }
+                                               window.alert("Please complete this section " + accordianId);
                                                $("[id='" + accordianId + "']").trigger("click");
                                                element.scrollIntoView();
                                                throw accordianId + " incomplete";
                                            }
                                        }
                                    }
-                                   if (element.classList.contains("is-invalid") && isHidden == false) {
-                                       //write a message here or stop the process
-                                       event.preventDefault();
-                                       event.stopPropagation();
-                                       $("#more").trigger("click");
-                                       //go back to div// go back to accordion to get id
-                                       var accordianId = form.getAttribute('data-accordianId');
-                                       if (accordianId == null) {
-                                           throw "update form accordianId " + form.id;
-                                           debugger;
-                                       }
-                                       window.alert("Please complete this section " + accordianId);
-                                       $("[id='" + accordianId + "']").trigger("click");
-                                       element.scrollIntoView();
-                                       throw accordianId + " incomplete";
-                                   }
                                }
                            }
+                           form.classList.remove("needs-validation");
+                           form.classList.add("was-validated");
                        }
-                       form.classList.remove("needs-validation");
-                       form.classList.add("was-validated");
-                   }
 
 
                    var vesselExists = document.getElementById("Vessel");
@@ -582,6 +550,27 @@
             activeHeader: "fa fa-dot-circle-o"  // custom icon class
         };
 
+        $('#accordionId').on('show.bs.collapse', function () {
+            //get the current tab
+            var section = document.getElementsByClassName("collapse show")[0];
+            //get form of section if it exists
+            debugger;
+            var form = section.lastElementChild.lastElementChild;
+            try {
+                if (form.checkValidity() === false) {
+                    document.getElementById("toastbody").innerHTML = " section has is incomplete";
+                    $('.toast').toast('show');
+                }
+                else {
+                    document.getElementById("toastbody").innerHTML = " section was completed";
+                    $('.toast').toast('show');
+                }
+            } catch (ex) {
+
+            }
+
+        });
+
         $("#accordion").accordion({
             autoHeight: false,
             heightStyle: "content",
@@ -594,20 +583,35 @@
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {
-            $.ajax({
-                url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",
-                data: $("#tab_1 :input").serialize({ json:true })
-            })
-                .done(function (data) {
-                    document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " panel has saved";
-                    $('.toast').toast('show');
-           })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-           });
-        }
-    });
+                $.ajax({
+                    url: '@Url.Action("SaveInformation", "Information")',
+                    type: "POST",
+                    data: $("#tab_1 :input").serialize({ json: true })
+                })
+                    .done(function (data) {
+                        document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
+                        $('.toast').toast('show');
+                        $('#tblBuilding').trigger('reloadGrid');
+                        $('#Principal,Partners or Directors').trigger('reloadGrid');
+                        $('#tblWaterLocation').trigger('reloadGrid');
+                        $('#tblLocation').trigger('reloadGrid');
+                        $('#tblRegisteredMV').trigger('reloadGrid');
+                        $('#tblOperator').trigger('reloadGrid');
+                        $('#tblBoatUse').trigger('reloadGrid');
+                        $('#tblOU').trigger('reloadGrid');
+                        $('#NamedParties').trigger('reloadGrid');
+                        $('#tblBoat').trigger('reloadGrid');
+                        $('#boatTabs-3').trigger('chosen:updated');
+                        $('#ui-accordion-accordion-header-3').trigger('chosen:updated');
+                        $('#BoatLandLocation').trigger('chosen:updated');
+                        $('#tblBusinessContract').trigger('reloadGrid');
+                        $('#PrincipalDirectors').trigger('reloadGrid');
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                    });
+            }
+        });
 
     $('.AddButton').click(function () {
           $('#Addipeffectivedatesection').addClass('hidden');
@@ -1792,7 +1796,7 @@ function UpdateChosen() {
                 //alert("Status true");
             }
         });
-};
+    };
 
     function SetVehicleTransferedStatus(event,vehicleId, status, sourceTable, destTable) {
             event.preventDefault();
@@ -1818,7 +1822,7 @@ function UpdateChosen() {
                     //alert("Status true");
                 }
             });
-};
+    };
 
 function GetOUDetails(event,elementBaseName) {
     var _sheetId = $('#AnswerSheetId').val();
@@ -1874,682 +1878,6 @@ function showAccordionPanel(id, panelNo) {
     $(id).accordion('option', 'active', panelNo);
 };
 
-    function toggleTerritoriesVisible(value) {
-        $('#tradingButton').show();
-        if (value == 'active') {
-            $('#sharedRevenueTerritories').show();
-        } else {
-            $('#sharedRevenueTerritories').hide();
-        }
-    }
-
-    function ToggleSharedRevenueTab2Button() {
-        ValidateSharedRevenueForm(0);
-        BuildRevenuesTable('false');
-    }
-
-     function ToggleSharedRevenueTab1Button() {
-        BuildRevenuesTable('true')
-    }
-
-    function SaveRevenueTabOne() {
-        event.preventDefault();
-        var form = document.getElementById('revenue1');
-        form.classList.add('was-validated');
-        if (form.checkValidity() === false) {
-            return;
-        }
-        else {
-            var isvalid = ValidateSharedRevenueForm(1);
-            if (isvalid) {
-                form = $('#revenue1').serialize();
-                var clientInformationSheetId = $('#AnswerSheetId').val();
-                var postData = { form, ClientInformationSheetId: clientInformationSheetId }
-                $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
-                type: "POST",
-                data: postData
-                })
-                    .done(function (Data) {
-                        SetCurrentTab('RevenueTabs2');
-                    });
-            }
-        }
-    }
-
-    function SaveRevenueTabTwo(type) {
-        event.preventDefault();
-        var form = document.getElementById('revenue2');
-        form.classList.add('was-validated');
-        if (form.checkValidity() === false) {
-            return;
-        }
-        if (ValidateSharedRevenueForm(2)) {
-            form = $('#revenue2').serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { form, ClientInformationSheetId: clientInformationSheetId }
-            $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabTwo", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {
-                    if (type == 'additionalInfo') {
-                        SetCurrentTab('RevenueTabs3');
-                    } else if (type == 'newSummary') {
-                        BuildRevenueOverview();
-                        SetCurrentTab('RevenueTabs4');
-                    } else {
-                        debugger;
-                        BuildRevenueOverview();
-                        SetCurrentTab('RevenueTabs0');
-                    }
-                });
-        }
-    }
-
-    function SaveRevenueTabThree() {
-        event.preventDefault();
-        var form = document.getElementById('revenue3');
-        form.classList.add('was-validated');
-        if (form.checkValidity() === false) {
-            return;
-        }
-        if (ValidateSharedRevenueForm(3)) {
-            form = $('#revenue3').serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = {form, ClientInformationSheetId: clientInformationSheetId };
-            $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {
-                    location.reload();
-                });
-        }
-    }
-
-    function ShowAdditionalInfomation() {
-        $('#additionalActivitySubmit').show();
-        var activitiesStr = GetActivitiesForRevenue('text');
-        debugger;
-
-        activitiesStr.forEach(function (item) {
-            if (item.trim() === "Other Work not listed above") {
-                $('#OtherActivities').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Inspection Reports") {
-                $('#InspectionReport').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Valuations") {
-                $('#Valuation').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {
-                $('#SchoolsDesignWork').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-                $('#CanterburyEarthquakeRebuildWork').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Other Project Management Activities") {
-                $('#OtherProjectManagement').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Non Project Management Activities") {
-                $('#NonProjectManagement').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-            if (item.trim() === "Construction") {
-                $('#Construction').show();
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            }
-        });
-    }
-
-    function UpdateSharedRevenueView() {
-
-        var tabList = document.getElementById("sharedRevenTabs");
-        var showTabs = 0;
-
-        for (var i = 0; i < tabList.children.length; i++) {
-            tabList.children[i].hidden = true;
-            var index = tabList.children[i].getAttribute("tabindex");
-            if (index == 0) {
-                showTabs = i;
-            }
-        }
-
-        //checks which tab view
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-        if (typeof tradingOutsideNZValue === 'undefined') {
-            for (var i = 1; i <= showTabs; i++) {
-                tabList.children[i].hidden = false;
-            }
-        }
-        else {
-            for (var i = 0; i <= showTabs; i++) {
-                tabList.children[i].hidden = false;
-            }
-        }
-
-    }
-
-    function ValidateSharedRoleForm(tabs) {
-        for (var i = 0; i <= tabs; i++) {
-            if (i == 0) {
-                //do nothing for now
-            }
-            else if (i == 1) {
-                var roles = GetRoles('text');
-                if (roles.length == 0) {
-                    alert("Please select Role");
-                    return false;
-                }
-
-                var arr = ValidateTable("sharedRoleTable");
-                for (var i = 0; i < arr.length; i++) {
-
-                    if (!wholeNumberCheck(parseInt(arr[i]))) {
-                        alert("Please enter a whole number");
-                        return false;
-                    }
-                    if (parseInt(arr[i]) < 0) {
-                        alert("Please enter a whole number above '0'");
-                        return false;
-                    }
-                }
-            }
-            else if (i == 2) {
-                if (document.getElementById("OtherProfessionId").value == "") {
-                    alert("Please provide details");
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    //function ValidateSharedRevenueForm(tabs) {
-    //    for (var i = 0; i <= tabs; i++) {
-    //        if (i == 0) {
-
-    //            UpdateSharedRevenueView();
-    //            $('#submitTab4').show();
-    //            $('#additionalInfomation').hide();
-    //            $('#CanterburyEarthquakeRebuildWork').hide();
-    //            $('#SchoolsDesignWork').hide();
-    //            $('#InspectionReport').hide();
-    //            $('#Valuation').hide();
-    //            $('#OtherActivities').hide();
-    //            $('#additionalActivitySubmit').hide();
-    //            $('#OtherProjectManagement').hide();
-    //            $('#NonProjectManagement').hide();
-    //            $('#Construction').hide();
-
-    //            var activitiesStr = GetActivitiesForRevenue('value');
-    //            if (activitiesStr.length != 0) {
-    //                ShowAdditionalInfomation();
-    //            }
-    //        }
-    //        else if (i == 1) {
-               var territories = GetTerritoriesForRevenue('value');
-    //            var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-
-    //            if (tradingOutsideNZValue == 'true') {
-    //                if (territories.length == 0) {
-    //                    alert("Please select territories.");
-    //                    return false;
-    //                }
-    //            }
-    //            if (territories.length == 0) {
-    //                alert("Please select territories.");
-    //                return false;
-    //            }
-
-    //            var arr = ValidateTable("sharedRevenueTerritoriesTable");
-    //            var totalSharedRevenue = 0;
-
-    //            for (var k = 0; k < arr.length; k++) {
-    //                totalSharedRevenue += parseInt(arr[k]);
-    //            }
-
-    //            if (totalSharedRevenue != 100) {
-    //                alert("Percentage calculation does not equal to 100%");
-    //                return false;
-    //            }
-    //        }
-    //        else if (i == 2) {
-    //            var businessActivities = GetActivitiesForRevenue('value');
-    //            var revenueTotal = parseInt(document.getElementById("currentYear").value);
-
-    //            if (revenueTotal <= 0) {
-    //                alert("Please enter a fee income greater than '0'");
-    //                return false;
-    //            }
-
-    //            if (revenueTotal % 1 != 0) {
-    //                alert("Please enter a fee income with no decimals");
-    //                return false;
-    //            }
-    //            if (businessActivities.length == 0) {
-    //                alert("Please select activities.");
-    //                return false;
-    //            }
-    //            var arr = ValidateTable("sharedRevenueActivityTable");
-    //            var totalSharedRevenue = 0;
-
-    //            for (var l = 0; l < arr.length; l++) {
-    //                totalSharedRevenue += parseInt(arr[l]);
-    //            }
-
-    //            if (totalSharedRevenue != 100) {
-    //                alert("Percentage calculation does not equal to 100%");
-    //                return false;
-    //            }
-    //        }
-    //        else if (i == 3) {
-    //            var activitiesStr = GetActivitiesForRevenue('text');
-
-    //            activitiesStr.forEach(function (item) {
-    //                if (item.trim() === "Other Work not listed above") {
-    //                    if (document.getElementById("OtherActivitiesTextId").value == "") {
-    //                        alert("Please provide details");
-    //                        return false;
-    //                    }
-    //                }
-    //                if (item.trim() === "Inspection Reports") {
-    //                    if (document.getElementById("InspectionReportTextId").value == "") {
-    //                        alert("Please provide details");
-    //                        return false;
-    //                    }
-    //                    if (document.getElementById("InspectionReportBoolId").value === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                }
-    //                if (item.trim() === "Valuations") {
-    //                    if (document.getElementById("ValuationTextId").value == "") {
-    //                        alert("Please provide details");
-    //                        return false;
-    //                    }
-    //                    if(document.getElementById("ValuationTextId2").value == "") {
-    //                        alert("Please provide details");
-    //                        return false;
-    //                    }
-    //                    if (document.getElementById("ValuationBoolId").value === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                }
-    //                if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {
-    //                    if (document.getElementById("SchoolsDesignWorkBoolId").value === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                    if (document.getElementById("SchoolsDesignWorkBoolId2").value === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                    if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                    if (document.getElementById("SchoolsDesignWorkBoolId4").value === '') {
-    //                        alert("Please select an option");
-    //                        return false;
-    //                    }
-    //                }
-    //                if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-    //                    if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
-    //                        alert("Please provide details");
-    //                        return false;
-    //                    }
-    //                }
-    //            });
-    //        }
-    //    }
-    //    return true;
-    //}
-
-    function CopyTableValues(currentTable, newTable) {
-
-        var overViewTable = document.getElementById(newTable);
-        var arr = ValidateTable(currentTable);
-        var count = 0;
-
-        overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        var tableBody = overViewTable.lastElementChild;
-
-        if (tableBody.childElementCount == 1) {
-            var tableRows = tableBody.lastElementChild;
-            for (var i = 0; i < tableRows.children.length; i++) {
-
-                try {
-                    tableRows.children[i].lastElementChild.value = arr[count];
-                    tableRows.children[i].lastElementChild.readOnly = true;
-                    count++;
-                } catch{
-                    tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value = arr[i];
-                    tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.readOnly = true;
-                }
-            }
-        } else {
-            for (var k = 0; k < tableBody.children.length; k++) {
-
-                try {
-                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value = arr[k];
-                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.readOnly = true;
-                } catch{
-                    tableBody.children[k].lastElementChild.value = arr[count];
-                    tableBody.children[k].lastElementChild.readOnly = true;
-                    count++;
-                }
-            }
-        }
-    }
-
-
-
-    function BuildRevenueOverview() {
-        $('#SharedRevenueTab1').hide();
-        $('#SharedRevenueTab2').hide();
-        $('#SharedRevenueTab3').hide();
-        $('#SharedRevenueTab4').hide();
-        $('#SharedRevenueTab5').hide();
-
-        $('#revenueTab1').hide();
-        $('#revenueTab2').hide();
-        $('#revenueTab3').hide();
-        $('#revenueTab4').hide();
-        $('#revenueTab5').hide();
-
-        CopyTableValues("sharedRevenueTerritoriesTable", "ListSharedRevenueTerritories");
-        CopyTableValues("sharedRevenueActivityTable", "ListSharedRevenueActivities");
-        document.getElementById("sharedcurrentYear").value = $('#currentYear').val();
-        document.getElementById("sharedlastFinancialYear").value = $('#lastFinancialYear').val();
-        document.getElementById("sharednextFinancialYear").value = $('#nextFinancialYear').val();
-    }
-
-    function UpdateSharedRevenue() {
-        event.preventDefault();
-        $('#revenueTab1').show();
-        $('#revenueTab2').show();
-        $('#revenueTab3').show();
-        $('#revenueTab4').show();
-        $('#revenueTab5').show();
-        ValidateSharedRevenueForm(0);
-        SetCurrentTab('RevenueTabs1');
-    }
-
-    function SaveRoleTabTwo(){
-        event.preventDefault();
-        if (ValidateSharedRoleForm(2)) {
-            var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { SerialisedAdditionalRoleInformationTable: serialisedAdditionalRoleInformationTable, ClientInformationSheetId: clientInformationSheetId };
-
-            $.ajax({
-                url: '@Url.Action("SaveSharedRoleTabThree", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {
-                    SetCurrentTab('sharedRoleTabs1');
-                });
-        }
-    }
-
-    function SaveRoleTable() {
-        var tableSerialised = $("#sharedRoleTable :input").serialize();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
-        var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
-
-            $.ajax({
-                url: '@Url.Action("SaveSharedRoleTabTwo", "Information")',
-                type: "POST",
-                data: postData
-            })
-    }
-
-    function SharedRoleOnChange() {
-        BuildRolesTable();
-        var roles = GetRoles('text');
-        $('#btnSharedRoleSubmit').show();
-        $('#additionalRoleInfomationBtn').hide();
-        roles.forEach(function (item) {
-            if (item.trim() === "Other Professions") {
-                $('#btnSharedRoleSubmit').hide();
-                $('#additionalRoleInfomationBtn').show();
-            }
-        });
-    }
-
-    function SaveRoleTabOne(hasAddInfo) {
-        event.preventDefault();
-        if (ValidateSharedRoleForm(1)) {
-            var sharedDataRoles = GetRoles('val');
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
-
-            $.ajax({
-                url: '@Url.Action("SaveSharedRoleTabOne", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {
-                    SaveRoleTable();
-                    if (hasAddInfo) {
-                        SetCurrentTab('sharedRoleTabs2');
-                    }
-                });
-        }
-    }
-
-    function GetActivitiesForRevenue(type) {
-        var activitiesArray = [];
-        if (type == 'value') {
-            $('#sharedRevenueActivities option:selected').each(function (index) {
-                activitiesArray.push($(this).val());
-            });
-        } else {
-            $('#sharedRevenueActivities option:selected').each(function (index) {
-                activitiesArray.push($(this).text());
-            });
-        }
-        return activitiesArray;
-    };
-
-    function GetTerritoriesForRevenue(type) {
-        var territoriesArray = [];
-        if (type == 'value') {
-            $('#SharedTerritories option:selected').each(function (index) {
-                territoriesArray.push($(this).val());
-            })
-        } else {
-            $('#SharedTerritories option:selected').each(function (index) {
-                territoriesArray.push($(this).text());
-            })
-        }
-        return territoriesArray;
-    };
-
-    function GetRoles(type) {
-        var roles = [];
-        if (type == 'text') {
-            $('#sharedRoleTemplates option:selected').each(function (index) {
-                roles.push($(this).text());
-            });
-        } else {
-            $('#sharedRoleTemplates option:selected').each(function (index) {
-                roles.push($(this).val());
-            });
-        }
-
-        return roles;
-    };
-
-
-    function BuildRolesTable() {
-        var roleTable = $('#sharedRoleTable');
-        if (roleTable != null) {
-        // clear previous table
-        roleTable.empty();
-        // create table sections
-        var thead = $('<thead>');
-        var tbody = $('<tbody>');
-        roleTable.append(thead, tbody);
-            var lista = GetRoles('text');
-            var listb = ['New Zealand'];
-            var listd = GetRoles('val');
-        var header = $('<tr>');
-        header.append($('<th>'));
-        listb.forEach( function(countryName) {
-            header.append($('<th>').text(countryName));
-        });
-            thead.append(header);
-            var count = 0;
-            lista.forEach(function (role) {
-            var row = $('<tr>');
-            row.append($('<td>').text(role));
-                listb.forEach(function (Index) {
-                    var name = listd[count];
-                    row.append($('<td>').append(
-                        $('<section>').append(
-                            $('<label>', { class: 'input' }).append(
-                                $('<input>', { type: 'text', class: 'form-control', name: name, id: name, placeholder: 'Number of People' }
-                                )
-                            )
-                        )
-                    ));
-                });
-                count++;
-                tbody.append(row);
-        });
-
-        };
-    };
-
-    function BuildRevenuesTable(TableType, Table) {
-        var revenueTable = Table;
-        var listc = ['Breakdown'];
-        var formName = "";
-        if (TableType == 'true') {
-            listc = ['Territory Breakdown'];
-            if (typeof revenueTable === 'undefined') {
-                revenueTable = $('#sharedRevenueTerritoriesTable');
-                formName = "revenue1";
-            }
-        } else {
-            listc = ['Revenue Breakdown'];
-            if (typeof revenueTable === 'undefined') {
-                revenueTable = $('#sharedRevenueActivityTable');
-                formName = "revenue2";
-            }
-        }
-
-        if (revenueTable != null) {
-        // clear previous table
-            if (revenueTable.className != "table") {
-                revenueTable.empty();
-            }
-
-        // create table sections
-        var thead = $('<thead>');
-        var tbody = $('<tbody>');
-        revenueTable.append(thead, tbody);
-        var lista = GetActivitiesForRevenue('Text');
-        var listb = GetActivitiesForRevenue('value');
-        if (TableType == 'true') {
-            lista = GetTerritoriesForRevenue('Text');
-            listb = GetTerritoriesForRevenue('value');
-            if (lista.length == 0) {
-                lista = ['New Zealand'];
-                listb = ['New Zealand'];
-            }
-            //else {
-            //    var hasNZ = false;
-            //    lista.forEach(function (terrName, Index) {
-            //        if (terrName == 'New Zealand') {
-            //            hasNZ = true;
-            //        }
-            //    });
-
-            //    if (hasNZ == false) {
-            //        lista.push('New Zealand');
-            //    }
-            //}
-        }
-        var header = $('<tr>');
-        header.append($('<th>'));
-        listc.forEach( function(countryName) {
-            header.append($('<th>').text(countryName));
-        });
-            thead.append(header);
-            var count = 0;
-            lista.forEach(function (activityName) {
-                var row = $('<tr>');
-                row.append($('<td>').text(activityName));
-                listc.forEach(function (value, Index) {
-                    var name = listb[count];
-                    row.append($('<td>').append(
-                        $('<section>').append(
-                        $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name,  max:'100', pattern:'^[0-9]$', placeholder: '%'}).attr("form", formName)
-                            ))));
-                });
-                count++;
-            tbody.append(row);
-        });
-
-    };
-    };
-
-    function ValidateTable(table) {
-        var inputTable = document.getElementById(table);
-        var arr = [];
-        var tableBody = inputTable.lastElementChild;
-        var value;
-
-        if (tableBody.childElementCount == 1) {
-            var tableRows = tableBody.lastElementChild;
-            for (var i = 0; i < tableRows.children.length; i++) {
-                try {
-                    value = tableRows.children[i].lastElementChild.value;
-                } catch{
-                    value = tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value;
-                }
-                if (typeof value !== 'undefined') {
-                    arr.push(value);
-                }
-            }
-
-        } else {
-            for (var i = 0; i < tableBody.children.length; i++) {
-                try {
-                    value = tableBody.children[i].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value;
-                } catch{
-                    value = tableBody.children[i].lastElementChild.value;
-                }
-                if (typeof value !== 'undefined') {
-                    arr.push(value);
-                }
-            }
-        }
-        return arr;
-    }
 
     function wholeNumberCheck(n) {
         return (n % 1) === 0;
@@ -7192,15 +6520,6 @@ async: true
         selectedTrailerChoice = "";
     }
 
-    function toggleLocationsVisible(value) {
-        if (value == 'active') {
-            $('#RoleLocation').show();
-
-        } else {
-            $('#RoleLocation').hide();
-        }
-
-    }
 
     function submitPayment() {
          event.preventDefault();
