@@ -565,8 +565,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-                foreach (var clientProg in clientList)
-                {
+               // foreach (var clientProg in clientList)
+               // {
                     //foreach (var sub in clientProg.SubClientProgrammes)
                     //{
                     //    if (clientProg.Owner == user.PrimaryOrganisation)
@@ -574,7 +574,7 @@ namespace DealEngine.WebUI.Controllers
                     //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
                     //    }
                     //}
-                }
+               // }
 
                 model = await GetClientProgrammeListModel(user, clientList);
 

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
+using DealEngine.Infrastructure.Email;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -243,6 +244,91 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> IssuetoBroker(Guid programmeId, Guid agreementId)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            model.Referrals = new List<ClientAgreementReferral>();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(agreementId);
+                ClientProgramme clientprog =  await _programmeService.GetClientProgrammebyId(programmeId);
+                Programme programme = clientprog.BaseProgramme;
+                //model.InformationSheetId = sheetId;
+                model.ClientAgreementId = agreementId;
+                model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+                model.ProgrammeName = programme.Name;
+                List<SelectListItem> usrlist = new List<SelectListItem>();
+                foreach (var org in programme.Parties)
+                {
+                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
+
+                    foreach (var userOrg in userList)
+                    {
+                        usrlist.Add(new SelectListItem()
+                        {
+                            Selected = false, 
+                            Text = userOrg.FullName,
+                            Value = userOrg.Email,
+                        });
+                    }
+                }
+                usrlist.Add(new SelectListItem()
+                {
+                    Selected = false,
+                    Text = programme.BrokerContactUser.FullName,
+                    Value = programme.BrokerContactUser.Email,
+                });
+
+                model.UserList = usrlist;
+                
+                ViewBag.Title = "Issue - To Broker ";
+
+                return View("ReferBacktoBroker", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IssuetoBroker(ViewAgreementViewModel model)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementId);
+                //var clientAgreementendorsement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(model.ClientAgreementEndorsementID);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(model.ClientProgrammeId);
+                
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if (model.Content != null)
+                    {
+                        agreement.IssuedToBroker = DateTime.UtcNow;
+                        agreement.issuetobrokerby = user.FullName;
+                        agreement.SelectedBroker =  await _userService.GetUserByEmail( model.issuetobrokerto);
+                        agreement.issuetobrokercomment = model.Content;
+                    }
+                    await uow.Commit();
+                }
+                await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement);
+                return RedirectToAction("ViewAcceptedAgreement", new { id = model.ClientProgrammeId });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
@@ -2971,7 +3057,7 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
-                    model.ClientProgrammeId = id;                    
+                    model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {
                         agreeDocList = agreement.GetDocuments();

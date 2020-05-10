@@ -51,13 +51,13 @@ namespace DealEngine.Domain.Entities
         public virtual bool CustomInceptionDate { get; set; }
         public virtual string AgreementReference { get; set; }
         public virtual string ReferenceId { get; set; }
+        public virtual string Content { get; set; }
         public virtual DateTime InceptionDate { get; set; }
         public virtual DateTime ExpiryDate { get; set; }
         public virtual DateTime QuoteDate { get; set; }
         public virtual bool SentOnlineAcceptance { get; set; }
         public virtual decimal Brokerage { get; set; }
         public virtual decimal BrokerFee { get; set; }
-        public virtual DateTime IssuedToBroker { get; protected set; }
         public virtual string InsurerQuoteIssueComment { get; protected set; }
         public virtual string BreachProfDuty { get; protected set; }
         public virtual bool EnableRetroactiveDate { get; set; }
@@ -97,6 +97,11 @@ namespace DealEngine.Domain.Entities
         public virtual bool MasterAgreement { get; set; }
         public virtual ClientAgreement PreviousAgreement { get; set; }
         public virtual IList<ClientAgreementTermCancel> ClientAgreementTermsCancel { get; set; }
+        public virtual string issuetobrokercomment { get; set; }
+        public virtual DateTime IssuedToBroker { get; set; }
+        public virtual string issuetobrokerby { get; set; }
+        public virtual string issuetobrokerto { get; set; }
+        public virtual User SelectedBroker { get; set; }
 
         public virtual List<Document> GetDocuments()
         {

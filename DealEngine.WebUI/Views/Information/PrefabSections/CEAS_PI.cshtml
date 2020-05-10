@@ -290,7 +290,7 @@
                 <div class="row">
                     <div class="col-6">
                         <label class="label">
-                            Do you require the following extensions to the insurance:
+                            Do you require the following Professional Indemity insurance for the extensions to the insurance:
                         </label>
                     </div>
                 </div>
@@ -394,18 +394,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="deductableamount" class="label required">
-                            The amount of the deductible applying to each claim (or series of claims arising from the same incident) payable by your firm shall be:
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        @Html.TextAreaFor(m => m.PIViewModel.DeductableAmount, new { @class = "form-control", @id = "deductableamount", @type = "number", onchange = "OnChange(this.id, this.name)" })
-                    </div>
-                </div>
-            </div>
+           
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">

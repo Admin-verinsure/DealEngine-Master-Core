@@ -186,6 +186,45 @@ namespace DealEngine.Services.Impl
 			email.Send ();
         }
 
+
+        public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
+        {
+            var user = await _userService.GetUserByEmail(recipent);
+            List<KeyValuePair<string, string>> mergeFields;
+
+            if (clientInformationSheet != null)
+            {
+                if (clientAgreement != null)
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, clientAgreement);
+                }
+                else
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, null);
+                }
+
+            }
+            else
+            {
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
+            }
+            string systememailsubject = "Issue to Broker Email";
+            string systememailbody = System.Net.WebUtility.HtmlDecode(EmailContent);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            email.WithSubject(systememailsubject);
+            email.WithBody(systememailbody);
+            email.UseHtmlBody(true);          
+            email.Send();
+        }
+
+
         public async Task ContactSupport (string sender, string subject, string body)
 		{
 			string subjectPrefix = "Support Request: ";

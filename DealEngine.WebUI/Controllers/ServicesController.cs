@@ -3059,6 +3059,18 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
+
                             //var userList = await _userService.GetAllUsers();
                             //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
@@ -3080,6 +3092,19 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
+                               
+
                             //var userList = await _userService.GetAllUsers();
                             //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
@@ -3100,6 +3125,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (organisation != null)
                         {
+                            
                             organisation.ChangeOrganisationName(organisationName);
                             organisation.Qualifications = model.Qualifications;
                             organisation.Type = model.Type;
@@ -3253,7 +3279,6 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> EditPrincipalDirectorsOwner(OrganisationViewModel model)
         {
             User user = null;
-
             try
             {
                 user = await CurrentUser();
@@ -3261,16 +3286,19 @@ namespace DealEngine.WebUI.Controllers
                     throw new ArgumentNullException(nameof(model));
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 Organisation org = await _organisationService.GetOrganisation(sheet.Owner.Id);
-                User userattach = await _userService.GetUserByEmail(org.Email);
+                List<User> userlist = await _userService.GetAllUserByOrganisation(org);
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    userattach.Email = model.Email;
+                    foreach (var owneruser in userlist)
+                    {
+                        if (owneruser != null && owneruser.PrimaryOrganisation.Id == model.ID)
+                            owneruser.Email = model.Email;
+                    }
+                   
                     org.Email = model.Email;
                     org.ChangeOrganisationName(model.OrganisationName);
                     await uow.Commit();
-
                 }
-
                 return Json(model);
             }
             catch (Exception ex)
