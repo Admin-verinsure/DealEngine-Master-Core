@@ -52,7 +52,7 @@
         document.getElementById(CancelButtonId).innerText = "Cancel Update";
     }
 
-    function AddLocation() {
+    function AddLocation() {        
         var form = document.getElementById("LocationViewModel");
         var formValid = TableFormValidation(form , "location");
         if (formValid) {
@@ -108,6 +108,7 @@
     }
 
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
+        event.preventDefault();
         CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
 
         document.getElementById("LocationId").value = Id;
@@ -122,11 +123,12 @@
         SetCurrentTab("locationtab2");
     }
 
-    function AddProject() {
+    function AddProject(SectionName) {
         var form = document.getElementById("ProjectViewModel");
         var formValid = TableFormValidation(form, "project");
         if (formValid) {
-            sessionStorage.setItem('accordianTrigger', 'Projects');
+            //add section name here
+            sessionStorage.setItem('accordianTrigger', SectionName);
             $.ajax({
                 url: '@Url.Action("AddProject", "Services")',
                 type: "POST",
@@ -178,21 +180,40 @@
             });
     }
 
-    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectResponsibilityData) {
+    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectYear, ProjectTitle, ProjectType, ProjectResponsibilityData) {
         event.preventDefault();
         CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
         document.getElementById("ProjectId").value = Id;
-        document.getElementById("projectdetails").value = ProjectDescription;
-        document.getElementById("projectfees").value = Fees;
-        document.getElementById("contractdetails").value = ConstructionValue;
-        document.getElementById("durationdetails").value = ProjectDuration;
+        if (document.getElementById("projectdetails") != null) {
+            document.getElementById("projectdetails").value = ProjectDescription;
+        }
+        if (document.getElementById("projectfees") != null) {
+            document.getElementById("projectfees").value = Fees;
+        }
+        if (document.getElementById("contractdetails") != null) {
+            document.getElementById("contractdetails").value = ConstructionValue;
+        }
+        if (document.getElementById("durationdetails") != null) {
+            document.getElementById("durationdetails").value = ProjectDuration;
+        }
+        if (document.getElementById("projectyear") != null) {
+            document.getElementById("projectyear").value = ProjectYear;
+        }
+        if (document.getElementById("projecttitle") != null) {
+            document.getElementById("projecttitle").value = ProjectTitle;
+        }
+        if (document.getElementById("hascontracttype") != null) {
+            document.getElementById("hascontracttype").value = ProjectType;
+        }
 
         var array = ProjectResponsibilityData.split(',');
         for (var i = 0; i < array.length; i++) {
-            var cb = document.getElementById("responsibility."+i);
-            if (array[i] == "True") {
-                cb.setAttribute("checked","true");
+            if(document.getElementById("responsibility." + i) != null) {
+                var cb = document.getElementById("responsibility." + i);
+                if (array[i] == "True") {
+                    cb.setAttribute("checked", "true");
+                }
             }
         }
 

@@ -909,7 +909,7 @@ namespace DealEngine.WebUI.Controllers
                     await _clientInformationService.UpdateInformation(sheet);
                 }
 
-                return Ok();
+                return new JsonResult(location.Id);
             }
             catch (Exception ex)
             {
@@ -3261,9 +3261,10 @@ namespace DealEngine.WebUI.Controllers
                     throw new ArgumentNullException(nameof(model));
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 Organisation org = await _organisationService.GetOrganisation(sheet.Owner.Id);
-
+                User userattach = await _userService.GetUserByEmail(org.Email);
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
+                    userattach.Email = model.Email;
                     org.Email = model.Email;
                     org.ChangeOrganisationName(model.OrganisationName);
                     await uow.Commit();

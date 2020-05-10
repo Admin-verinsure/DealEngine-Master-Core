@@ -5,9 +5,7 @@
         var formIds = [];
         for (var f = 0; f < forms.length; f++) {
             //get each form id
-            if (forms[f].id != "RevenueDataViewModel" && forms[f].id != "RoleDataViewModel") {
-                formIds.push(forms[f].id);
-            }
+            formIds.push(forms[f].id);
         }
         for (var i = 0; i < formIds.length; i++) {
             var form = document.getElementById(formIds[i]);
@@ -20,31 +18,20 @@
                 catch (ex) {
                     //will have to add further function for forms with added elements
                 }
+
                 if (element != null) {
-                    OnChange(element.id, element.name);
+                    if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
+                        //need to cancel event for build tables i.e role/revenue
+                    }
+                    else {
+                        OnChange(element.id, element.name);
+                    }
+
                     //after first load change to default view
                     element.classList.remove("is-valid");
                     element.classList.remove("is-invalid");
                     element.classList.add("is-up");
                 }
-            }
-        }
-        //hardcoded for sharedrevenue - relook once form is converted
-        var activitiesTable = document.getElementById('activitiestable');
-        for (var r = 1; r < activitiesTable.rows.length; r++) {
-            for (var c = 0; c < activitiesTable.rows[r].cells.length; c++) {
-                if (activitiesTable.rows[r].cells[c].firstElementChild != null) {
-                    OnChange(activitiesTable.rows[r].cells[c].firstElementChild.id, activitiesTable.rows[r].cells[c].firstElementChild.name)                    
-                }               
-            }
-        }
-        //hardcoded for sharedrole - relook once form is converted
-        var roleTable = document.getElementById('rolestable');
-        for (var r = 1; r < roleTable.rows.length; r++) {
-            for (var c = 0; c < roleTable.rows[r].cells.length; c++) {
-                if (roleTable.rows[r].cells[c].firstElementChild != null) {
-                    OnChange(roleTable.rows[r].cells[c].firstElementChild.id, roleTable.rows[r].cells[c].firstElementChild.name)                    
-                }               
             }
         }
     });
@@ -166,9 +153,9 @@
                 var Value = DoubleConditional(DataItem);
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
-                
+
                 Value = CreateCyberLabelInput(Value, element, ids[2]);
-                DefaultRule(Value, element.name);                
+                DefaultRule(Value, element.name);
             }
             if (Rule === "CyberOptional") {
                 Value = DoubleConditional(DataItem);
@@ -181,7 +168,7 @@
             }
             if (Rule === "DNOOptional") {
                 Value = DoubleConditional(DataItem);
-                if (Value =="both") {
+                if (Value == "both") {
                     Value = "1";
                 }
                 else {
@@ -211,16 +198,16 @@
             }
             if (Rule === "ValidateSharedTable") {
                 if (DataItem === "validatetableactivities") {
-                    AdditionalActivityInformation("activities");                    
+                    AdditionalActivityInformation("activities");
                 }
                 if (DataItem === "validatetabledataroles") {
                     AdditionalRoleInformation("dataroles");
                 }
             }
-            
+
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
-            
+
             //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
@@ -229,6 +216,7 @@
     function AdditionalActivityInformation(Id) {
         var activities = document.getElementById(Id);
         var element;
+        //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
             if (activities.options[i].selected === true) {
@@ -257,14 +245,15 @@
         var roles = document.getElementById(Id);
 
         document.getElementById("noadditionalroleinfolabel").hidden = false;
-        document.getElementById("RoleOther").hidden = true;        
+        document.getElementById("RoleOther").hidden = true;
+        //convert to use selectedOptions
         for (var i = 0; i < roles.options.length; i++) {
             if (roles.options[i].selected === true) {
                 var strArray = roles.options[i].text.split('-');
                 var other = strArray[strArray.length - 1];
                 if (other === " Other") {
                     document.getElementById("noadditionalroleinfolabel").hidden = true;
-                    document.getElementById("RoleOther").hidden = false;  
+                    document.getElementById("RoleOther").hidden = false;
                 }
             }
         }
@@ -274,7 +263,7 @@
         var ids = DataItem.split(',');
         var q1 = document.getElementById(ids[0]);
         var q2 = document.getElementById(ids[1]);
-        
+
         if (q1.value == "1" && q2.value == "1") {
             return "1";
         }
@@ -289,7 +278,7 @@
             return "0";
     }
 
-    function BuildSharedTable(DataItem, Name) {        
+    function BuildSharedTable(DataItem, Name) {
         var array = DataItem.split(',');
         var list = document.getElementById(array[0]);
         var tableElement = document.getElementById(array[1]);
@@ -325,8 +314,8 @@
         return input.outerHTML;
     }
 
-    function CreateCyberLabelInput(Value, Element, LabelId) {               
-        var conditional = "As you have answered no to one or both of the above questions then NZI are not able to provide Cyber Ultra cover and you will not be provided with an automatic quotation. Please contact your broker for more information.";        
+    function CreateCyberLabelInput(Value, Element, LabelId) {
+        var conditional = "As you have answered no to one or both of the above questions then NZI are not able to provide Cyber Ultra cover and you will not be provided with an automatic quotation. Please contact your broker for more information.";
         var label = document.getElementById(LabelId);
         if (Value == "2" || Value == "both") {
             if (label == null) {
@@ -355,14 +344,14 @@
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = true;
-        }   
+        }
     }
 
     function ShowElement(id) {
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = false;
-        }        
+        }
     }
 
     function ClearObject(Id) {
@@ -393,52 +382,54 @@
         return true;
     }
 
-    function ValidateSharedRevenueForm(tab) {
-        var isValid = true;
-        var hasItem = false;
-        if (tab == 1) {
-            var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
-            var territories = document.getElementById("territories");
-            for (var i = 0; i < territories.options.length; i++) {
-                if (territories.options[i].selected === true) {
-                    hasItem = true;
-                }
+    function ElementOnSubmit(Element, TargetElement, Form, Panel) {
+        var tag = TargetElement.tagName;
+        //hardcoded for project table
+        if (tag == "TABLE") {
+            if (TargetElement.rows.length < 2) {
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                //go back to div// go back to accordion to get id
+                var accordianId = Form.getAttribute('data-accordianId');
+                window.alert("Please provide a project");
+                $("[id='" + accordianId + "']").trigger("click");
+                Element.scrollIntoView();
+                throw accordianId + " incomplete";
             }
-            if (!hasItem) {
-                isValid = false;
-                alert("Please select territories.");
-            } else {
-                isValid = ValidateTableValues(territoryVals);
-            }            
-        }
-        else if (tab == 2) {
-            var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
-            var activities = document.getElementById("activities");
-            for (var i = 0; i < activities.options.length; i++) {
-                if (activities.options[i].selected === true) {
-                    hasItem = true;                    
-                }
-            }
-            if (!hasItem) {
-                isValid = false;
-                alert("Please select activities.");
-            } else {
-                isValid = ValidateTableValues(activityVals);
-            }            
-        }
-        else if (tab == 3) {
-            var contruction = document.getElementById("E");
-            if (contruction.hidden == false) {
-                var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
-                isValid = ValidateTableValues(contructionlist);
-            }
-        }
-        if (isValid) {
-            tab += 1;
-            SetCurrentTab('RevenueTab' + tab);
         }
     }
-    
+
+    function RevenueDataOnSubmit(ElementId, Form) {
+        var element = document.getElementById(ElementId);
+        var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
+        var totalPercentage = 0;
+        var tableElement;
+        for (var v = 0; v < element.selectedOptions.length; v++) {
+            tableElement = document.getElementById(element.selectedOptions[v].text);
+            var value = parseInt(tableElement.value);
+            totalPercentage += value;
+        }
+        if (totalPercentage != 100) {
+            tableElement.classList.remove("is-valid");
+            tableElement.classList.add("is-invalid");
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            var accordianId = Form.getAttribute('data-accordianId');
+            $("[id='Fee Income / Activities']").trigger("click");
+            window.alert("Activities or Territories percentage calculation does not equal to 100%");
+            SetCurrentTab(tabId);
+            element.scrollIntoView();
+            throw accordianId + " incomplete";
+        }
+        else {
+            var tabNo = parseInt(tabId.substring(tabId.length-1))+1;
+            var nextTab = tabId.substring(0, tabId.length - 1);
+            SetCurrentTab(nextTab+tabNo);
+        }
+    }
+
 </script>
 <style>
     .required:after {
