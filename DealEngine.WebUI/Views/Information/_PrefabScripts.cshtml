@@ -19,9 +19,9 @@
                     //will have to add further function for forms with added elements
                 }
 
-                if (element != null) {                    
+                if (element != null) {
                     if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
-                        //need to cancel event for build tables i.e role/revenue                      
+                        //need to cancel event for build tables i.e role/revenue
                     }
                     else {
                         OnChange(element.id, element.name);
@@ -30,7 +30,7 @@
                     //after first load change to default view
                     element.classList.remove("is-valid");
                     element.classList.remove("is-invalid");
-                    element.classList.add("is-up");                    
+                    element.classList.add("is-up");
                 }
             }
         }
@@ -382,49 +382,51 @@
         return true;
     }
 
-    function ValidateSharedRevenueForm(tab) {
-        var isValid = true;
-        var hasItem = false;
-        if (tab == 1) {
-            var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
-            var territories = document.getElementById("territories");
-            for (var i = 0; i < territories.options.length; i++) {
-                if (territories.options[i].selected === true) {
-                    hasItem = true;
-                }
-            }
-            if (!hasItem) {
-                isValid = false;
-                alert("Please select territories.");
-            } else {
-                isValid = ValidateTableValues(territoryVals);
+    function ElementOnSubmit(Element, TargetElement, Form, Panel) {
+        var tag = TargetElement.tagName;
+        //hardcoded for project table
+        if (tag == "TABLE") {
+            if (TargetElement.rows.length < 2) {
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                //go back to div// go back to accordion to get id
+                var accordianId = Form.getAttribute('data-accordianId');
+                window.alert("Please provide a project");
+                $("[id='" + accordianId + "']").trigger("click");
+                Element.scrollIntoView();
+                throw accordianId + " incomplete";
             }
         }
-        else if (tab == 2) {
-            var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
-            var activities = document.getElementById("activities");
-            for (var i = 0; i < activities.options.length; i++) {
-                if (activities.options[i].selected === true) {
-                    hasItem = true;
-                }
-            }
-            if (!hasItem) {
-                isValid = false;
-                alert("Please select activities.");
-            } else {
-                isValid = ValidateTableValues(activityVals);
-            }
+    }
+
+    function RevenueDataOnSubmit(ElementId, Form) {
+        var element = document.getElementById(ElementId);
+        var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
+        var totalPercentage = 0;
+        var tableElement;
+        for (var v = 0; v < element.selectedOptions.length; v++) {
+            tableElement = document.getElementById(element.selectedOptions[v].text);
+            var value = parseInt(tableElement.value);
+            totalPercentage += value;
         }
-        else if (tab == 3) {
-            var contruction = document.getElementById("E");
-            if (contruction.hidden == false) {
-                var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
-                isValid = ValidateTableValues(contructionlist);
-            }
+        if (totalPercentage != 100) {
+            tableElement.classList.remove("is-valid");
+            tableElement.classList.add("is-invalid");
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            var accordianId = Form.getAttribute('data-accordianId');
+            $("[id='Fee Income / Activities']").trigger("click");
+            window.alert("Activities or Territories percentage calculation does not equal to 100%");
+            SetCurrentTab(tabId);
+            element.scrollIntoView();
+            throw accordianId + " incomplete";
         }
-        if (isValid) {
-            tab += 1;
-            SetCurrentTab('RevenueTab' + tab);
+        else {
+            var tabNo = parseInt(tabId.substring(tabId.length-1))+1;
+            var nextTab = tabId.substring(0, tabId.length - 1);
+            SetCurrentTab(nextTab+tabNo);
         }
     }
 

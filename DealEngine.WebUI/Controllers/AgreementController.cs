@@ -319,7 +319,10 @@ namespace DealEngine.WebUI.Controllers
                     }
                     await uow.Commit();
                 }
-                await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement);
+                if (model.Content != null)
+                {
+                    await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement);
+                }
                 return RedirectToAction("ViewAcceptedAgreement", new { id = model.ClientProgrammeId });
             }
             catch (Exception ex)
@@ -2500,13 +2503,13 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SendPolicyDocuments(Guid id)
+        public async Task<IActionResult> SendPolicyDocuments(Guid id, bool sendUser)
         {
             User user = null;
             try
             {
                 ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
-
+                user = await CurrentUser();
                 // TODO - rewrite to save templates on a per programme basis
 
                 ClientProgramme programme = sheet.Programme;
@@ -2555,7 +2558,14 @@ namespace DealEngine.WebUI.Controllers
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                             if (emailTemplate != null)
                             {
-                                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
+                                if (sendUser)
+                                {
+                                    await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, null, null);
+                                }
+                                else
+                                {
+                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
+                                }                                
                             }
                         }
                     }

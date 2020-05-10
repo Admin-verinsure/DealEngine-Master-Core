@@ -58,9 +58,13 @@
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>
-                                </li>
+                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                {
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>
+                                    </li>
+                                }
+
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     @if (item.SentOnlineAcceptance != true)
@@ -167,28 +171,29 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
 
-                <div class="form-group">
-                    @foreach (var item in Model)
-                    {
+            <div class="form-group">
+                @foreach (var item in Model)
+                {
 
-                        @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
 (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                    {
+                        <h3><strong>Documents </strong></h3>
+
+                        @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
+
+                        @if (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer)
                         {
-                            <h3><strong>Documents </strong></h3>
-
-                            @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
-
-                            @if (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer)
-                            {
-                                <h3><strong>Options </strong></h3>
-                                <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                                <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
-                            }
+                            <h3><strong>Options </strong></h3>
+                            <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
+                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Insurer Documents</a>
+                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Me Documents</a>
                         }
-                        <!-- loop through process once only!! -->
-                        break;
                     }
-                </div>
+                    <!-- loop through process once only!! -->
+                    break;
+                }
+            </div>
 
                 @if (@multiCoverOptionsStatus && (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer))
                 {

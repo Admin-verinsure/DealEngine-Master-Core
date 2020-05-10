@@ -909,7 +909,7 @@ namespace DealEngine.WebUI.Controllers
                     await _clientInformationService.UpdateInformation(sheet);
                 }
 
-                return Ok();
+                return new JsonResult(location.Id);
             }
             catch (Exception ex)
             {
