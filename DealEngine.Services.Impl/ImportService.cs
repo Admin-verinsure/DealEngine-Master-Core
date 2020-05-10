@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
-            WorkingDirectory = "/tmp/";
-            //WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
+            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
@@ -540,6 +540,65 @@ namespace DealEngine.Services.Impl
                                 throw new Exception(ex.Message);
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportCEASServiceUpdateUsers(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "CEASClients2019.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
+            StreamReader reader;
+            User user = null;
+            bool readFirstLine = false;
+            string line;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[8]))
+                        {
+                            user = await _userService.GetUserByUserName(parts[8]);
+                        }
+
+                        if (user != null)
+                        {
+                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            {
+
+                                user.FirstName = parts[2];
+                                user.LastName = parts[3];
+                                user.FullName = parts[2] + " " + parts[3];
+                                try
+                                {
+                                    await uow.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception(ex.Message);
+                                }
+                            }
+                        }
+
                     }
                     catch (Exception ex)
                     {
