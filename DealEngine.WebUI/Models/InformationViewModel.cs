@@ -945,6 +945,7 @@ namespace DealEngine.WebUI.Models
         public ProjectViewModel(ClientInformationSheet clientInformationSheet)
         {
             BusinessContracts = GetBusinessContracts(clientInformationSheet);
+            ContractTypeOptions = GetContractType();
             ResponsibilityOptions = GetResponsibilityOptions();
         }
 
@@ -958,6 +959,32 @@ namespace DealEngine.WebUI.Models
             return BusinessContracts;
         }
 
+        private IList<SelectListItem> GetContractType()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "Residential", Value = "Residential"
+                },
+                new SelectListItem
+                {
+                    Text = "Commercial", Value = "Commercial"
+                },
+                new SelectListItem
+                { 
+                    Text = "New", Value = "New"
+                },
+                new SelectListItem
+                {
+                    Text = "Alteration", Value = "Alteration"
+                },
+                new SelectListItem
+                {
+                    Text = "Other", Value = "Other"
+                }
+            };
+        }
         private IList<SelectListItem> GetResponsibilityOptions()
         {
             return new List<SelectListItem>()
@@ -971,7 +998,7 @@ namespace DealEngine.WebUI.Models
                     Text = "Proj. Manager", Value = "ProjectViewModel.ProjectManager"
                 },
                 new SelectListItem
-                { 
+                {
                     Text = "Proj. Coordinator/Administrator", Value = "ProjectViewModel.ProjectCoordinator"
                 },
                 new SelectListItem
@@ -980,11 +1007,13 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
-
         public IList<BusinessContract> BusinessContracts { get; set; }
+        public IList<SelectListItem> ContractTypeOptions { get; set; }
         public IList<SelectListItem> ResponsibilityOptions { get; set; }
         public string ProjectDescription { get; set; }
         public string Fees { get; set; }
+        public string Year { get; set; }
+        public string ContractTitle { get; set; }        
         public string ConstructionValue { get; set; }
         public string ProjectDuration { get; set; }
         

@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-@{ 
+@{
     int count = 0;
 }
 <div id="Project" class="container-fluid">
@@ -66,12 +66,36 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <label for="projectdetails" class="label required">
-                                Description of Project:
+                            <label for="projectyear" class="label required">
+                                Year
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextAreaFor(m => m.ProjectViewModel.ProjectDescription, new { id = "projectdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextAreaFor(m => m.ProjectViewModel.Year, new { id = "projectyear", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="projecttitle" class="label required">
+                                Contract Title
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.ProjectViewModel.ContractTitle, new { id = "projecttitle", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="contractdetails" class="label required">
+                                Construction Value
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.ProjectViewModel.ConstructionValue, new { id = "contractdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -79,7 +103,7 @@
                     <div class="row">
                         <div class="col-6">
                             <label for="projectfees" class="label required">
-                                Fees Earned:
+                                Fees
                             </label>
                         </div>
                         <div class="col-6">
@@ -90,53 +114,22 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <label for="contractdetails" class="label">
-                                Contract Value:
+                            <label for="hascontracttype" class="label required">
+                                Contract Type
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.ConstructionValue, new { id = "contractdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
+                            <select id="hascontracttype" name="ProjectViewModel.ContractType" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.ProjectViewModel.ContractTypeOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="durationdetails" class="label">
-                                Duration (Months):
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDuration, new { id = "durationdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="label required">
-                                Your Major Responsibilities
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            
-                            @foreach (var responsibility in Model.ProjectViewModel.ResponsibilityOptions)
-                            {
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" id="responsibility.@count" name="@responsibility.Value" aria-label="checkbox button for following text input" value="true">
-                                        </div>
-                                    </div>
-                                    <input type="text" class="form-control" aria-label="Text input with radio button" value="@responsibility.Text" readonly>
-                                </div>
-                                count++;
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <a class="btn btn-sm btn-success text-light" id="ProjectAddButton" onclick="AddProject('Projects')"> Add </a>
+                    <a class="btn btn-sm btn-success text-light" id="ProjectAddButton" onclick="AddProject('Contracts (5 Largest Contracts in the Last 5 Years)')"> Add </a>
                     <a class="btn btn-sm btn-danger text-light" id="ProjectCancelButton" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Clear and Cancel </a>
                 </div>
             </div>
@@ -176,4 +169,6 @@
         </div>
     </form>
 </div>
+
+
 

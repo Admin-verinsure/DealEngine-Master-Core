@@ -897,7 +897,7 @@
                                                                         <button onclick="$('#addLocModal').hide()" type="button" class="close">&times;</button>
                                                                         <h4 class="modal-title">Add Location</h4>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" id="locationModelBody">
                                                                         <div class="row">
 
                                                                             <input id="LocationId" name="LocationId" type="hidden" />
@@ -962,7 +962,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="validateLocModal('#StreetModal','#SuburbModal','#PostcodeModal','#CityModal','#CountryModal','#CommonNameModal','#LocationTypeModal','#SelectedOrganisationalUnitsModal'); " class="btn btn-success">Add</button>
+                                                                            <button onclick="validateLocModal('StreetModal','SuburbModal','PostcodeModal','CityModal','CountryModal','CommonNameModal','LocationTypeModal'); " class="btn btn-success">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
@@ -1151,6 +1151,10 @@
         $(document).ready(function () {
             var accordianPanel = sessionStorage.getItem("accordianTrigger");
             if (accordianPanel != null) {
+                var section = document.getElementById(accordianPanel);
+                if (section.parentElement.id == "later") {
+                    $("#more").trigger("click");
+                }
                 debugger;
                 $("[id='" + accordianPanel + "']").trigger("click");
                 sessionStorage.removeItem("accordianTrigger");
