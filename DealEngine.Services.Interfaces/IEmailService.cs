@@ -34,7 +34,7 @@ namespace DealEngine.Services.Interfaces
         Task SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg);
         Task SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemEmailEGlobalTCNotify(string XMLBody);
-        Task IssueToBrokerSendEmail(string recipent, string EmailContent, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement);
+        Task IssueToBrokerSendEmail(string recipent, string EmailContent, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender);
 
     }
 }

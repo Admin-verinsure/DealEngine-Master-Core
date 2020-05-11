@@ -2,6 +2,14 @@
 
 @{
     int count = 0;
+
+    string issuetobrokerdetails = "";
+
+    if (!string.IsNullOrEmpty(Model.issuetobrokercomment))
+    {
+        issuetobrokerdetails = @"This agreement has been issued to " + Model.SelectedBroker.FullName + " by " + Model.issuetobrokerby + " on " + Model.IssuedToBroker.GetValueOrDefault().ToString("dd/MM/yyyy");
+
+    }
 }
 <div id="content" class="container">
 
@@ -44,6 +52,8 @@
                     <br />
                     <div> <label style="color:green"> Click <strong>send</strong> to issue this agreement to broker </label></div>
                     <br />
+                    <div> <label style="color:green"> @issuetobrokerdetails </label></div>
+                    <br />
                     <table class="table table-responsive-md table-striped table-bordered" id="referrallodingvalue">
                         <thread class="thead-dark">
                             <tr>
@@ -68,7 +78,7 @@
                             </td>
                             <td>
                                 <select class="form-control b" id="selectParty" name="issuetobrokerto">
-                                    <option selected="selected" value="">-- Select Party --</option>
+                                    @*<option selected="selected" value="">-- Select Party --</option>*@
                                     @foreach (var blloc in Model.UserList)
                                     {
                                         <option value="@blloc.Value"> @blloc.Text</option>

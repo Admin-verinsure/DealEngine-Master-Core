@@ -261,24 +261,32 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
                 model.ProgrammeName = programme.Name;
-                List<SelectListItem> usrlist = new List<SelectListItem>();
-                foreach (var org in programme.Parties)
-                {
-                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
 
-                    foreach (var userOrg in userList)
+                if (!string.IsNullOrEmpty(agreement.issuetobrokercomment))
+                {
+                    model.issuetobrokercomment = agreement.issuetobrokercomment;
+                    model.issuetobrokerby = agreement.issuetobrokerby;
+                    model.SelectedBroker = agreement.SelectedBroker;
+                    model.IssuedToBroker = agreement.IssuedToBroker;
+                }
+
+                var org = programme.BrokerContactUser.PrimaryOrganisation;
+
+                List<SelectListItem> usrlist = new List<SelectListItem>();
+                List<User> userList = await _userService.GetAllUserByOrganisation(org);
+
+                foreach (var userOrg in userList)
+                {
+                    usrlist.Add(new SelectListItem()
                     {
-                        usrlist.Add(new SelectListItem()
-                        {
-                            Selected = false, 
-                            Text = userOrg.FullName,
-                            Value = userOrg.Email,
-                        });
-                    }
+                        Selected = false,
+                        Text = userOrg.FullName,
+                        Value = userOrg.Email,
+                    });
                 }
                 usrlist.Add(new SelectListItem()
                 {
-                    Selected = false,
+                    Selected = true,
                     Text = programme.BrokerContactUser.FullName,
                     Value = programme.BrokerContactUser.Email,
                 });
@@ -321,7 +329,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (model.Content != null)
                 {
-                    await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement);
+                    await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement, user);
                 }
                 return RedirectToAction("ViewAcceptedAgreement", new { id = model.ClientProgrammeId });
             }
