@@ -87,9 +87,11 @@ namespace DealEngine.WebUI.Models
 		public string LocalDateSubmitted { get; set; }
         public Boolean NextInfoSheet { get; set; }
         public Boolean ProgrammeAllowUsesChange { get; set; }
-        public IList<SubClientProgramme> SubClientProgrammes { get; set; }
+		
+		public IList<SubClientProgramme> SubClientProgrammes { get; set; }
+		public string AgreementStatus { get; set; }
 
-        public string GetStatusDisplay ()
+		public string GetStatusDisplay ()
 		{
 			List<string> statusDisplay = new List<string> ();
 
@@ -100,6 +102,8 @@ namespace DealEngine.WebUI.Models
 
 			return string.Join(", ", statusDisplay);
 		}
+		
+		
 	}
 
 	public class ProgrammeItem : BaseViewModel
