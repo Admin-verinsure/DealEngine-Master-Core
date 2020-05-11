@@ -425,7 +425,15 @@ namespace DealEngine.WebUI.Controllers
                         string referenceId = client.InformationSheet.ReferenceId;
                         bool nextInfoSheet = false;
                         bool programmeAllowUsesChange = false;
-
+                        string agreementSatus = "";
+                        foreach (ClientAgreement agreement in client.Agreements)
+                        {
+                            if (agreement.Status == "Referred")
+                            {
+                                agreementSatus = "Referred";
+                                break;
+                            }
+                        }
                         if (client.BaseProgramme.AllowUsesChange)
                         {
                             programmeAllowUsesChange = true;
@@ -454,7 +462,9 @@ namespace DealEngine.WebUI.Controllers
                             LocalDateSubmitted = localDateSubmitted,
                             Status = status,
                             ReferenceId = referenceId,// Move into ClientProgramme?
-                            SubClientProgrammes = client.SubClientProgrammes
+                            SubClientProgrammes = client.SubClientProgrammes,
+                            AgreementStatus = agreementSatus
+
                         });
                     }
 
@@ -472,7 +482,14 @@ namespace DealEngine.WebUI.Controllers
                     bool programmeAllowUsesChange = false;
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
-
+                    string agreementSatus = "";
+                    foreach (ClientAgreement agreement in client.Agreements)
+                    {
+                        if (agreement.Status == "Referred")
+                        {
+                            agreementSatus = "Referred";
+                        }
+                    }
                     if (client.BaseProgramme.AllowUsesChange)
                     {
                         programmeAllowUsesChange = true;
@@ -498,7 +515,8 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
-                        SubClientProgrammes = client.SubClientProgrammes
+                        SubClientProgrammes = client.SubClientProgrammes,
+                        AgreementStatus = agreementSatus
                     });
                 }
             }
