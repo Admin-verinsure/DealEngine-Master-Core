@@ -91,7 +91,7 @@ namespace DealEngine.WebUI.Models
 		public IList<SubClientProgramme> SubClientProgrammes { get; set; }
 		public string AgreementStatus { get; set; }
 
-		public string GetStatusDisplay ()
+		public string GetStatusDisplay (string agreementstatus)
 		{
 			List<string> statusDisplay = new List<string> ();
 
@@ -99,7 +99,11 @@ namespace DealEngine.WebUI.Models
 				statusDisplay.Add ("Created on " + LocalDateCreated);
 			if (!string.IsNullOrWhiteSpace (LocalDateSubmitted))
 				statusDisplay.Add ("Submitted on " + LocalDateSubmitted);
+			if(agreementstatus != "")
+			{
+				statusDisplay.Add("AgreementStatus " + agreementstatus);
 
+			}
 			return string.Join(", ", statusDisplay);
 		}
 		
