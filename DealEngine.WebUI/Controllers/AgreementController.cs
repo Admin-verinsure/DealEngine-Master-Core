@@ -348,6 +348,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+                var sheet = agreement.ClientInformationSheet;
                 user = await CurrentUser();
                 var premium = 0.0m;
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -421,7 +422,10 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     if (agreement.Status != "Quoted")
+                    {
                         agreement.Status = "Quoted";
+                        await _milestoneService.CompleteMilestoneFor("Agreement Status – Referred", user, sheet);
+                    }
 
                     string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
