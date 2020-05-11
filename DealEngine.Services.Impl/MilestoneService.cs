@@ -154,7 +154,7 @@ namespace DealEngine.Services.Impl
             //task process      
             task.Milestone = milestone;
             task.Activity = activity;
-            task.Details = "UIS Referral: " + sheet.ReferenceId;
+            task.Details = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
             task.Description = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
 
             await _taskingService.CreateTask(task);            
