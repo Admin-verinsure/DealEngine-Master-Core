@@ -279,24 +279,24 @@ namespace DealEngine.WebUI.Controllers
                     milestone = await _milestoneService.CreateMilestone(user, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
                 }
 
-                if (model.EmailTemplate != null)
-                {
-                    await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), Guid.Parse(model.ActivityId), Guid.Parse(model.ProgrammeProcessId));
-                }
+                //if (model.EmailTemplate != null)
+                //{
+                //    await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), Guid.Parse(model.ActivityId), Guid.Parse(model.ProgrammeProcessId));
+                //}
 
                 if (model.AdvisoryContent != null)
                 {
                     await _milestoneService.CreateAdvisory(user, milestone, activity, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
                 }
 
-                if (model.UserTask != null)
-                {
-                    var dateDue = model.UserTask.DueDate;
-                    DateTime date = DateTime.Now;
-                    var milestoneDueDate = date.AddDays(dateDue);
-                    await _milestoneService.CreateMilestoneUserTask(user, user.PrimaryOrganisation, milestoneDueDate, milestone, activity,
-                        model.UserTask.Priority, model.UserTask.Description, model.UserTask.Details);
-                }
+                //if (model.UserTask != null)
+                //{
+                //    var dateDue = model.UserTask.DueDate;
+                //    DateTime date = DateTime.Now;
+                //    var milestoneDueDate = date.AddDays(dateDue);
+                //    await _milestoneService.CreateMilestoneUserTask(user, user.PrimaryOrganisation, milestoneDueDate, milestone, activity,
+                //        model.UserTask.Priority, model.UserTask.Description, model.UserTask.Details);
+                //}
 
                 return Ok();
             }

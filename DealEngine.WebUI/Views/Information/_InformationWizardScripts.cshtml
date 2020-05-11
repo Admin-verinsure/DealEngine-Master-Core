@@ -556,20 +556,37 @@
             var section = document.getElementsByClassName("collapse show")[0];
             //get form of section if it exists
             debugger;
-            var form = section.lastElementChild.lastElementChild;
-            try {
-                if (form.checkValidity() === false) {
-                    document.getElementById("toastbody").innerHTML = " section has is incomplete";
-                    $('.toast').toast('show');
-                }
-                else {
-                    document.getElementById("toastbody").innerHTML = " section was completed";
-                    $('.toast').toast('show');
-                }
-            } catch (ex) {
+            if (section != null) {
+                var splitstr = section.id.split('_');
+                var icon = document.getElementById("icon_" + splitstr[1]);
+                debugger;
+                icon.classList.remove("fa-rotate-180");
+                var form = section.lastElementChild.lastElementChild;
+                try {
+                    if (form.checkValidity() === false) {
+                        document.getElementById("toastbody").innerHTML = " section has is incomplete";
+                        $('.toast').toast('show');
+                    }
+                    else {
+                        document.getElementById("toastbody").innerHTML = " section was completed";
+                        $('.toast').toast('show');
+                    }
+                } catch (ex) {
 
+                }
             }
+        });
 
+        $('#accordionId').on('shown.bs.collapse', function () {
+            //get the current tab
+            var section = document.getElementsByClassName("collapse show")[0];
+            //get form of section if it exists
+            if (section != null) {
+                var splitstr = section.id.split('_');
+                var icon = document.getElementById("icon_" + splitstr[1]);
+                debugger;
+                icon.classList.add("fa-rotate-180");
+            }
         });
 
         $("#accordion").accordion({

@@ -13,9 +13,7 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual bool HasTriggered { get; set; }
-        public virtual Programme Programme { get; set; }
-        public virtual string Method { get; set; }
-
+        public virtual Programme Programme { get; set; }       
     }
 
     public class Advisory : EntityBase, IAggregateRoot
@@ -34,36 +32,24 @@ namespace DealEngine.Domain.Entities
     {
         public virtual Organisation For { get; protected set; }
         public virtual Milestone Milestone { get; set; }
-
-        public virtual UserTask SuccessorTask { get; set; }
-
         public virtual string Description { get; set; }
-
         public virtual string Details { get; set; }
-
-        public virtual int Priority { get; set; }
-
         public virtual DateTime DueDate { get; set; }
-
-        public virtual bool Completed { get; protected set; }
-
-        public virtual User CompletedBy { get; protected set; }
-
-        public virtual DateTime CompletedOn { get; protected set; }
-
-        public virtual IList<Organisation> InterestedOrganisations { get; protected set; }
+        public virtual bool Completed { get; set; }
+        public virtual User CompletedBy { get; set; }
+        public virtual DateTime CompletedOn { get; set; }
         public virtual bool IsActive { get; set; }
         public virtual Activity Activity { get; set; }
 
         protected UserTask() : base(null) { }
 
-        public UserTask(User createdBy, Organisation createdFor, DateTime dueDate)
+        public UserTask(User createdBy, Organisation createdFor)
             : base(createdBy)
         {
             For = createdFor;
-            DueDate = dueDate;
-            InterestedOrganisations = new List<Organisation>();
-            InterestedOrganisations.Add(createdFor);
+            DateTime today = DateTime.Now;
+            DueDate = today.AddDays(7);
+            IsActive = true;
         }
 
         public virtual void Complete(User completedBy)
@@ -71,6 +57,7 @@ namespace DealEngine.Domain.Entities
             Completed = true;
             CompletedBy = completedBy;
             CompletedOn = DateTime.UtcNow;
+            IsActive = false;
         }
     }
 }

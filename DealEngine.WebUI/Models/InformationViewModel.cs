@@ -945,8 +945,23 @@ namespace DealEngine.WebUI.Models
         public ProjectViewModel(ClientInformationSheet clientInformationSheet)
         {
             BusinessContracts = GetBusinessContracts(clientInformationSheet);
+            Territories = GetTerritories(clientInformationSheet);
             ContractTypeOptions = GetContractType();
             ResponsibilityOptions = GetResponsibilityOptions();
+        }
+
+        private IList<SelectListItem> GetTerritories(ClientInformationSheet clientInformationSheet)
+        {
+            Territories = new List<SelectListItem>();
+            foreach(var territory in clientInformationSheet.Programme.BaseProgramme.TerritoryTemplates)
+            {
+                Territories.Add(new SelectListItem
+                {
+                    Text = territory.Location,
+                    Value = territory.Location
+                });
+            }
+            return Territories;
         }
 
         private IList<BusinessContract> GetBusinessContracts(ClientInformationSheet clientInformationSheet)
@@ -1008,8 +1023,10 @@ namespace DealEngine.WebUI.Models
             };
         }
         public IList<BusinessContract> BusinessContracts { get; set; }
+        public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> ContractTypeOptions { get; set; }
         public IList<SelectListItem> ResponsibilityOptions { get; set; }
+        public string MajorResponsibilities { get; set; }
         public string ProjectDescription { get; set; }
         public string Fees { get; set; }
         public string Year { get; set; }

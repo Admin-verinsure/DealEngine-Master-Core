@@ -7,20 +7,12 @@ namespace DealEngine.WebUI.Models
 	public class DashboardViewModel : BaseViewModel
 	{
 		public bool DisplayProducts { get; set; }
-
 		public bool DisplayDeals { get; set; }
-
 		public IList<ProductItemV2> ProductItems { get; set; }
-
 		public IList<ProductItem> DealItems { get; set; }
-
 		public IList<ProgrammeItem> ProgrammeItems { get; set; }
-
-		public IList<TaskItem> CriticalTaskItems { get; set; }
-
-		public IList<TaskItem> ImportantTaskItems { get; set; }
-
-        public string CurrentUserType { get; set; }
+		public IList<UserTask> UserTasks { get; set; }
+		public string CurrentUserType { get; set; }
     }
 
 	public class ButtonItem
@@ -126,24 +118,6 @@ namespace DealEngine.WebUI.Models
 
         public string CurrentUserIsTC { get; set; }
 		public string ProgrammeClaim { get; set; }
-	}
-
-	public class TaskItem : BaseViewModel
-    {
-        public Guid Id { get; set; }
-        public string ClientName { get; set; }
-
-		public string Description { get; set; }
-
-		public string Details { get; set; }
-
-		public string TaskUrl { get; set; }
-
-		public int Priority { get; set; }
-
-		public string DueDate { get; set; }
-
-		public bool Completed { get; set; }
 	}
 }
     

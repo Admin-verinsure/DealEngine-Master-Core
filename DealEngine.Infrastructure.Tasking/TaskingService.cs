@@ -17,54 +17,12 @@ namespace DealEngine.Infrastructure.Tasking
 			_taskRespository = taskRespository;
 		}
 
-        public async Task<UserTask> CreateTaskFor(User createdBy, Organisation createdFor, DateTime dueDate)
-        {
-            if (createdBy == null)
-                throw new ArgumentNullException(nameof(createdBy));
-            if (createdFor == null)
-                throw new ArgumentNullException(nameof(createdFor));
-            if (dueDate == null)
-                throw new ArgumentNullException(nameof(dueDate));
-
-            UserTask task = new UserTask(createdBy, createdFor, dueDate);
-            await _taskRespository.AddAsync(task);
-            return task;
-        }
-
-        public async Task<List<UserTask>> GetAllTasksFor(Organisation organisation)
+        public async Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation)
 		{
 			if (organisation == null)
 				throw new ArgumentNullException (nameof (organisation));
-			
-			return await _taskRespository.FindAll().Where(t => t.For == organisation).ToListAsync();			
-		}
 
-		public async Task<List<UserTask>> GetAllTasksFor(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException(nameof (user));
-
-			List<UserTask> tasks = new List<UserTask>();
-            List<UserTask> list;
-            foreach (Organisation org in user.Organisations)
-            {
-                list = await GetAllTasksFor(org);
-                tasks.AddRange(list);
-            }
-                                
-            return tasks;
-		}
-
-        public async Task<UserTask> GetTask(Guid Id)
-        {
-            return await _taskRespository.GetByIdAsync(Id);            
-        }
-
-		public async Task CreateTaskFor(UserTask task)
-		{
-			if (task == null)
-				throw new ArgumentNullException (nameof (task));
-            await _taskRespository.AddAsync(task);			
+            return await _taskRespository.FindAll().Where(t => t.For == organisation && t.Completed == false).ToListAsync();		
 		}
 
         public async Task<List<UserTask>> GetUserTasksByMilestone(Milestone milestone)
@@ -77,6 +35,10 @@ namespace DealEngine.Infrastructure.Tasking
            await _taskRespository.UpdateAsync(userTask);
         }
 
+        public async Task CreateTask(UserTask task)
+        {
+            await _taskRespository.AddAsync(task);
+        }
     }
 }
 
