@@ -9,6 +9,7 @@
     <thead>
         <tr>
             <th data-field="name" data-sortable="true">Client Name</th>
+            @*<th data-field="agreementstatus" data-sortable="true">Agreement Status</th>*@
             <th data-field="status" data-sortable="true">Status</th>
             <th data-sortable="false"></th>
         </tr>
@@ -92,7 +93,8 @@
                 }
 
 
-                <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
+                @*<td>@(item.AgreementStatus)</td>*@
+                <td>@(item.Status + "  (" + item.GetStatusDisplay(item.AgreementStatus) + ") ")</td>
                 <td>
                     <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
                         @if (item.Status.StartsWith("Bound"))
@@ -147,3 +149,4 @@
         }
     </tbody>
 </table>
+
