@@ -428,7 +428,7 @@ namespace DealEngine.WebUI.Controllers
                         string agreementSatus = "";
                         foreach (ClientAgreement agreement in client.Agreements)
                         {
-                            if (agreement.Status == "Referred")
+                            if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
                             {
                                 agreementSatus = "Referred";
                                 break;
@@ -485,9 +485,10 @@ namespace DealEngine.WebUI.Controllers
                     string agreementSatus = "";
                     foreach (ClientAgreement agreement in client.Agreements)
                     {
-                        if (agreement.Status == "Referred")
+                        if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
                         {
                             agreementSatus = "Referred";
+                            break;
                         }
                     }
                     if (client.BaseProgramme.AllowUsesChange)

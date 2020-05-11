@@ -101,7 +101,7 @@ namespace DealEngine.WebUI.Models
 				statusDisplay.Add ("Submitted on " + LocalDateSubmitted);
 			if(agreementstatus != "")
 			{
-				statusDisplay.Add("AgreementStatus " + agreementstatus);
+				statusDisplay.Add(" Agreement Status: " + agreementstatus);
 
 			}
 			return string.Join(", ", statusDisplay);

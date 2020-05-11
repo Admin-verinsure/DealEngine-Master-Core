@@ -12,15 +12,19 @@
                             <li class="nav-item">
                                 <a class="btn btn-primary btn-xs" href="~/Home/Index"><i class="fa fa-home"></i>Back to Dashboard</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
-                            </li>
+                            @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                            {
+                                <li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
+                                </li>
+                            }
+
                         </ul>
                     </td>
                 </tr>
