@@ -77,6 +77,9 @@
                                    if (form[e].id != "") {
                                        element = document.getElementById(form[e].id);
                                    }
+                                   else {
+                                       element = null;
+                                   }
                                }
                                catch (ex) {
                                    //will have to add further function for forms with added elements
@@ -555,11 +558,9 @@
             //get the current tab
             var section = document.getElementsByClassName("collapse show")[0];
             //get form of section if it exists
-            debugger;
             if (section != null) {
                 var splitstr = section.id.split('_');
                 var icon = document.getElementById("icon_" + splitstr[1]);
-                debugger;
                 icon.classList.remove("fa-rotate-180");
                 var form = section.lastElementChild.lastElementChild;
                 try {
@@ -584,7 +585,6 @@
             if (section != null) {
                 var splitstr = section.id.split('_');
                 var icon = document.getElementById("icon_" + splitstr[1]);
-                debugger;
                 icon.classList.add("fa-rotate-180");
             }
         });
