@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using DealEngine.Domain.Entities;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DealEngine.WebUI.Models.Agreement
 {
@@ -11,6 +11,7 @@ namespace DealEngine.WebUI.Models.Agreement
     {
         public IEnumerable<InsuranceRoleViewModel> InsuranceRoles { get; set; }
         public string ProductName { get; set; }
+        public string ProgrammeName { get; set; }
         public string Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? IssuedToCustomer { get; set; }
@@ -18,6 +19,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public Boolean NextInfoSheet { get; set; }
         public Boolean IsChange { get; set; }
         public string StartDate { get; set; }
+        public string Content { get; set; }
         public string Sheetstatus { get; set; }
         public string EndDate { get; set; }
         public string CurrencySymbol { get; set; }
@@ -38,6 +40,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public bool IsMultipleOption { get; set; }
         public bool IsOptionalProduct { get; set; }
         public Guid ClientProgrammeId { get; set; }
+        public Guid ProgrammeId { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; set; }
         public bool HasBoats { get; set; }
         public IEnumerable<BoatViewModel> Boats { get; set; }
@@ -53,7 +56,9 @@ namespace DealEngine.WebUI.Models.Agreement
         public List<EditTermsCancelViewModel> BVTermsCan { get; internal set; }
         public List<EditTermsCancelViewModel> MVTermsCan { get; internal set; }
         public List<ClientAgreementReferral> Referrals { get; set; }
+        public IList<SelectListItem> UserList { get; set; }
         public User CurrentUser { get; set; }
+        public User SelectedBroker { get; set; }
         public DateTime CancellEffectiveDate { get; set; }
         public string InformationSheetStatus { get; set; }
         public decimal ReferralAmount { get; set; }
@@ -74,6 +79,10 @@ namespace DealEngine.WebUI.Models.Agreement
         public string TerritoryLimit { get; set; }
         public string Jurisdiction { get; set; }
         public string ProfessionalBusiness { get; set; }
+        public string issuetobrokercomment { get; set; }
+        public DateTime? IssuedToBroker { get; set; }
+        public string issuetobrokerby { get; set; }
+        public string issuetobrokerto { get; set; }
     }
 
     public class InsuranceInclusion

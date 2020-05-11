@@ -59,6 +59,7 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
+
                        var forms = document.getElementsByClassName('needs-validation');   //invalid forms
                        var formIds = [];
                        for (var f = 0; f < forms.length; f++) {
@@ -2047,9 +2048,6 @@ function showAccordionPanel(id, panelNo) {
         var claimTitle = $('#ClaimTitle').val();
         var claimDescription = $('#ClaimDescription').val();
         var claimStatus = $('#ClaimStatus').val();
-        var claimPolicyReference = $('#ClaimPolicyReference').val();
-        var claimInsurerName = $('#ClaimInsurerName').val();
-        var claimInsuredName = $('#ClaimInsuredName').val();
         var claimant = $('#Claimant').val();
         var claimDateOfLoss = $('#ClaimDateOfLoss').val();
         var claimNotifiedDate = $('#ClaimNotifiedDate').val();
@@ -2057,22 +2055,6 @@ function showAccordionPanel(id, panelNo) {
         var result = true;
         debugger;
 
-        if (claimInsurerName == "") {
-            $('#validateclaimInsurerName').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateclaimInsurerName').html("<font></font>");
-        }
-        if (claimInsuredName == "") {
-            $('#validateclaimInsuredName').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateclaimInsuredName').html("<font></font>");
-        }
         if (claimant == "") {
             $('#validateclaimant').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2123,15 +2105,6 @@ function showAccordionPanel(id, panelNo) {
             $('#validateclaimStatus').html("<font></font>");
         }
 
-        if (claimPolicyReference == "") {
-            $('#validateclaimPolicyReference').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateclaimPolicyReference').html("<font></font>");
-        }
-
         if (result) {
             AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
@@ -2149,31 +2122,14 @@ function showAccordionPanel(id, panelNo) {
         var claimDescription = $('#AddClaimDescription').val();
         var claimStatus = $('#AddClaimStatus').val();
         //var claimReference = $('#AddClaimReference').val();
-        var claimPolicyReference = $('#AddClaimPolicyReference').val();
-        var claimInsurerName = $('#AddClaimInsurerName').val();
-        var claimInsuredName = $('#AddClaimInsuredName').val();
+     
         var claimant = $('#AddClaimant').val();
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var result = true;
         debugger;
 
-        if (claimInsurerName == "") {
-            $('#AddvalidateclaimInsurerName').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateclaimInsurerName').html("<font></font>");
-        }
-        if (claimInsuredName == "") {
-            $('#AddvalidateclaimInsuredName').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateclaimInsuredName').html("<font></font>");
-        }
+       
         if (claimant == "") {
             $('#Addvalidateclaimant').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2224,14 +2180,7 @@ function showAccordionPanel(id, panelNo) {
             $('#AddvalidateclaimStatus').html("<font></font>");
         }
 
-        if (claimPolicyReference == "") {
-            $('#AddvalidateclaimPolicyReference').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#AddvalidateclaimPolicyReference').html("<font></font>");
-        }
+       
 
 
         if (result) {
