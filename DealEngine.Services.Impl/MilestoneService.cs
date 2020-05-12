@@ -142,22 +142,31 @@ namespace DealEngine.Services.Impl
 
         private async Task ReferredMilestone(string activityType, User user, ClientInformationSheet sheet)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            UserTask task;
             var activity = await _activityService.GetActivityByName(activityType);
-            var task = new UserTask(user, user.PrimaryOrganisation);
+            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
             if (milestone == null)
             {
                 milestone = new Milestone(user);
                 milestone.Programme = sheet.Programme.BaseProgramme;
             }
 
-            //task process      
-            task.Milestone = milestone;
-            task.Activity = activity;
-            task.Details = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
-            task.Description = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
+            var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
+            if (tasks.Count() != 0)
+            {
+                task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
+                if(task == null)
+                {
+                    //task process 
+                    task = new UserTask(user, user.PrimaryOrganisation);                         
+                    task.Milestone = milestone;
+                    task.Activity = activity;
+                    task.Details = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
+                    task.Description = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
 
-            await _taskingService.CreateTask(task);            
+                    await _taskingService.CreateTask(task);
+                }
+            }         
         }
 
         public async Task CompleteMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
@@ -171,12 +180,24 @@ namespace DealEngine.Services.Impl
         private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
         {
             var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            if (milestone == null)
+            {
+                milestone = new Milestone(user);
+                milestone.Programme = sheet.Programme.BaseProgramme;
+            }
+
             var activity = await _activityService.GetActivityByName(activityType);
             var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
-            var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
 
-            task.Complete(user);
-            await _taskingService.UpdateUserTask(task);
+            if(tasks.Count() != 0)
+            {
+                var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
+                if (task != null)
+                {                   
+                    task.Complete(user);
+                    await _taskingService.UpdateUserTask(task);
+                }
+            }
         }
     }
 }
