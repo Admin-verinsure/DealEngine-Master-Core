@@ -123,7 +123,7 @@ namespace DealEngine.WebUI.Controllers
                                 }
 
                                 // Fix Image Alignment issue
-                                /*string centerImage = "<figure class=\"image\"><img src=\"";
+                                string centerImage = "<figure class=\"image\"><img src=\"";
                                 string leftImage = "<figure class=\"image image-style - align - left\"><img src=\"";
                                 string rightImage = "<figure class=\"image image-style - align - right\"><img src=\"";
 
@@ -138,7 +138,7 @@ namespace DealEngine.WebUI.Controllers
                                 if (html.Contains(rightImage))
                                 {
                                     html = html.Replace(rightImage, "<img style=\"display:block;margin-left:auto;margin-right:0;\"");
-                                }*/
+                                }
 
                                 HtmlConverter converter = new HtmlConverter(mainPart);
                                 converter.ImageProcessing = ImageProcessing.ManualProvisioning;

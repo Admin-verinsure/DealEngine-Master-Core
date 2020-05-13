@@ -1,43 +1,46 @@
-using System.Linq;
-using System.Net;
+
 using System;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Data;
-using System.Xml;
-using System.Security.AccessControl;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using DealEngine.WebUI.Models.Report;
-using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
-using DealEngine.Infrastructure.FluentNHibernate;
-using Microsoft.AspNetCore.Http;
+using DealEngine.WebUI.Models.Report;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Npgsql;
 using FastReport;
 using FastReport.Data;
-using FastReport.Dialog;
-using FastReport.Barcode;
-using FastReport.Table;
-using FastReport.Utils ;
 using FastReport.Export.Html;
-using System.Diagnostics;
 using FastReport.Export.Image;
-using FastReport.Export.PdfSimple;
-using FastReport.Web;
-using System.Xml.Serialization;
-using System.Text;
-// using FastReport.Data.JsonConnection;
+using Npgsql;
+
+//using System.Diagnostics;
+//using System.Xml.Serialization;
+//using System.Text;
+//using System.Xml;
+//using System.Security.AccessControl;
+//using System.Security.Cryptography.X509Certificates;
+//using System.Security.Cryptography;
+//using System.Drawing;
+//using System.Windows.Forms;
+//using System.Linq;
+//using System.Net;
+//using DealEngine.Domain.Entities;
+//using DealEngine.Infrastructure.FluentNHibernate;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.Extensions.Logging;
+//using FastReport.Dialog;
+//using FastReport.Barcode;
+//using FastReport.Table;
+//using FastReport.Utils ;
+//using FastReport.Export.PdfSimple;
+//using FastReport.Web;
 
 
 namespace DealEngine.WebUI.Controllers
 {
+    [Authorize]
+
     public class ReportController : BaseController
     {
         private readonly IWebHostEnvironment _hostingEnv;
