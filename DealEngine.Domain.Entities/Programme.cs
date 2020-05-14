@@ -28,6 +28,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<User> PaymentConfigNotifyUsers { get; set; }
         public virtual IList<User> InvoiceConfigNotifyUsers { get; set; }
         public virtual bool StopAgreement { get; set; }
+        public virtual bool StopDeclaration { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public virtual string StopAgreementMessage { get; set; }
         public virtual string SubsystemMessage { get; set; }

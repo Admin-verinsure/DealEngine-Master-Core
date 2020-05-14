@@ -1902,8 +1902,23 @@ namespace DealEngine.WebUI.Controllers
                         models.Add(model);
                     }
                     
+                }                               
+
+                try
+                {
+                    if (clientProgramme.BaseProgramme.StopDeclaration)
+                    {
+                        ViewAgreementViewModel model = new ViewAgreementViewModel();
+                        model.AgreementMessage = clientProgramme.BaseProgramme.StopAgreementMessage;
+                        return PartialView("_ViewStopAgreementMessage", model);
+                    }
                 }
-                
+                catch (Exception ex)
+                {
+                    clientProgramme.BaseProgramme.StopDeclaration = false;
+                    await _programmeService.Update(clientProgramme.BaseProgramme);
+                }
+
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 return PartialView("_ViewAgreementDeclaration", models);
