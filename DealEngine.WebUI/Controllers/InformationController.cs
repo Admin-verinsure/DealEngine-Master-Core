@@ -356,12 +356,12 @@ namespace DealEngine.WebUI.Controllers
 
                 model.Claims = claims;
 
-                var businessContracts = new List<BusinessContractViewModel>();
-                for (var i = 0; i < sheet.BusinessContracts.Count; i++)
-                {
-                    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
-                }
-                model.BusinessContracts = businessContracts;
+                //var businessContracts = new List<BusinessContractViewModel>();
+                //for (var i = 0; i < sheet.BusinessContracts.Count; i++)
+                //{
+                //    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
+                //}
+                //model.BusinessContracts = businessContracts;
 
                 var interestedParties = new List<OrganisationViewModel>();
 
@@ -1017,10 +1017,10 @@ namespace DealEngine.WebUI.Controllers
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
-                model.Status = sheet.Status;
-                List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
-                informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-                model.ClientInformationAnswers = informationAnswers;
+                //model.Status = sheet.Status;
+                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }

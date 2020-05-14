@@ -62,43 +62,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-9">
-                    <label for="hastraditionallicence" class="label required">
-                        Are you coming under NZFSG/Loan Market's Transitional Licence?
-                    </label>
-                </div>
-                <div class="col-3">
-                    <select id="hastraditionallicence" name="PIViewModel.HasTraditionalLicenceOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PIViewModel.HasTraditionalLicenceOptions)
-                        {
-                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                        }
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div id="PIViewModel.HasTraditionalLicenceOptions" hidden>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasadditionaltraditionallicence" class="label required">
-                            Please select from the following options
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasadditionaltraditionallicence" name="PIViewModel.HasAdditionalTraditionalLicenceOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PIViewModel.HasAdditionalTraditionalLicenceOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div>        
         <div class="form-group">
             <div class="row">
                 <div class="col-9">

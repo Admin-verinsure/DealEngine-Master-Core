@@ -18,6 +18,7 @@ namespace DealEngine.WebUI.Models
             DAOLIViewModel = new DAOLIViewModel(); //Directors officers liability
             GLViewModel = new GLViewModel(); //General liability 
             SLViewModel = new SLViewModel(); //Statutory Liability
+            FAPViewModel = new FAPViewModel(); //Financial Advisor
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
@@ -71,6 +72,7 @@ namespace DealEngine.WebUI.Models
         public DAOLIViewModel DAOLIViewModel { get; set; }
         public GLViewModel GLViewModel { get; set; }
         public SLViewModel SLViewModel { get; set; }
+        public FAPViewModel FAPViewModel { get; set; }
         public ProjectViewModel ProjectViewModel { get;set;}
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
@@ -548,6 +550,56 @@ namespace DealEngine.WebUI.Models
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }        
     }
+
+    public class FAPViewModel
+    {
+        public FAPViewModel()
+        {
+            HasTraditionalLicenceOptions = GetSelectListOptions();
+            HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetAdditionalTraditionalLicenceSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I am taking my own Transitional Licence with no other advisers working under my license", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I will be coming under someone else's Transitional Licence", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Undecided", Value = "3"
+                }
+            };
+        }
+        public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
+        public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
+    }
     public class PIViewModel
     {
         public PIViewModel()
@@ -607,9 +659,7 @@ namespace DealEngine.WebUI.Models
             HasLegalCouncelOptions = GetSelectListOptions();
             HasFormalProceduresOptions = GetSelectListOptions();
             HasMortageOptions = GetSelectListOptions();
-            HasBusinessChangesOptions = GetSelectListOptions();
-            HasTraditionalLicenceOptions = GetSelectListOptions();
-            HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
+            HasBusinessChangesOptions = GetSelectListOptions();            
         }
 
         private IList<SelectListItem> GetContractingServicesOptions()
@@ -743,29 +793,7 @@ namespace DealEngine.WebUI.Models
                     Text = "Don't know", Value = "3"
                 }
             };
-        }
-        private IList<SelectListItem> GetAdditionalTraditionalLicenceSelectListOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem
-                {
-                    Text = "-- Select --", Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "I am taking my own Transitional Licence with no other advisers working under my license", Value = "1"
-                },
-                new SelectListItem
-                {
-                    Text = "I will be coming under someone else's Transitional Licence", Value = "2"
-                },
-                new SelectListItem
-                {
-                    Text = "Undecided", Value = "3"
-                }
-            };
-        }
+        }        
         public IList<SelectListItem> ContractingServicesOptions { get; set; }
         public IList<SelectListItem> HasMortageOptions { get; set; }
         public IList<SelectListItem> HasStandardTermsOptions { get; set; }
@@ -821,10 +849,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasIndustrialSoftwareOptions { get; set; }
         public IList<SelectListItem> HasComputerSoftwareOptions { get; set; }
         public IList<SelectListItem> HasFormalProceduresOptions { get; set; }
-        public IList<SelectListItem> HasBusinessChangesOptions { get; set; }
-        public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
-        public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
-        
+        public IList<SelectListItem> HasBusinessChangesOptions { get; set; }        
 
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
