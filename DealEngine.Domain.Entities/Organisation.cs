@@ -228,6 +228,8 @@ namespace DealEngine.Domain.Entities
         #endregion
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
+        public virtual string RegisteredStatus { get; set; }
+        public virtual string Duration { get; set; }
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)
         {

@@ -62,28 +62,82 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = 0m;
-            decimal TermBrokerage1mil = 0m;
-
-
-            int TermExcess = 0;
+            int TermLimit500k = 500000;
+            decimal TermPremiumDEFAULT = 0m;
+            decimal TermBrokerageDEFAULT = 0m;
+            int TermExcess = 500;
             decimal feeincome = 0;
 
-            //Return terms based on the limit options
-
-            TermExcess = 500;
 
             //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
-            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess);
-            termsl1millimitoption.TermLimit = TermLimit1mil;
-            termsl1millimitoption.Premium = TermPremium1mil;
-            termsl1millimitoption.Excess = TermExcess;
-            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
-            termsl1millimitoption.Brokerage = TermBrokerage1mil;
-            termsl1millimitoption.DateDeleted = null;
-            termsl1millimitoption.DeletedBy = null;
+            ClientAgreementTerm terms500klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit500k, TermExcess);
+            terms500klimitoption.TermLimit = TermLimit500k;
+            terms500klimitoption.Premium = TermPremiumDEFAULT;
+            terms500klimitoption.Excess = TermExcess;
+            terms500klimitoption.BrokerageRate = agreement.Brokerage;
+            terms500klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms500klimitoption.DateDeleted = null;
+            terms500klimitoption.DeletedBy = null;
 
+            int TermLimit1000k = 1000000;
+
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm terms1000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1000k, TermExcess);
+            terms1000klimitoption.TermLimit = TermLimit1000k;
+            terms1000klimitoption.Premium = TermPremiumDEFAULT;
+            terms1000klimitoption.Excess = TermExcess;
+            terms1000klimitoption.BrokerageRate = agreement.Brokerage;
+            terms1000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms1000klimitoption.DateDeleted = null;
+            terms1000klimitoption.DeletedBy = null;
+
+            int TermLimit2000k = 2000000;
+
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm terms2000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2000k, TermExcess);
+            terms2000klimitoption.TermLimit = TermLimit2000k;
+            terms2000klimitoption.Premium = TermPremiumDEFAULT;
+            terms2000klimitoption.Excess = TermExcess;
+            terms2000klimitoption.BrokerageRate = agreement.Brokerage;
+            terms2000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms2000klimitoption.DateDeleted = null;
+            terms2000klimitoption.DeletedBy = null;
+            
+            int TermLimit5000k = 5000000;
+
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm terms5000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit5000k, TermExcess);
+            terms5000klimitoption.TermLimit = TermLimit5000k;
+            terms5000klimitoption.Premium = TermPremiumDEFAULT;
+            terms5000klimitoption.Excess = TermExcess;
+            terms5000klimitoption.BrokerageRate = agreement.Brokerage;
+            terms5000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms5000klimitoption.DateDeleted = null;
+            terms5000klimitoption.DeletedBy = null;
+            
+            int TermLimit10000k = 10000000;
+
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm terms10000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit10000k, TermExcess);
+            terms10000klimitoption.TermLimit = TermLimit10000k;
+            terms10000klimitoption.Premium = TermPremiumDEFAULT;
+            terms10000klimitoption.Excess = TermExcess;
+            terms10000klimitoption.BrokerageRate = agreement.Brokerage;
+            terms10000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms10000klimitoption.DateDeleted = null;
+            terms10000klimitoption.DeletedBy = null;
+            
+            int TermLimit20000k = 20000000;
+
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm terms20000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit20000k, TermExcess);
+            terms20000klimitoption.TermLimit = TermLimit20000k;
+            terms20000klimitoption.Premium = TermPremiumDEFAULT;
+            terms20000klimitoption.Excess = TermExcess;
+            terms20000klimitoption.BrokerageRate = agreement.Brokerage;
+            terms20000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            terms20000klimitoption.DateDeleted = null;
+            terms20000klimitoption.DeletedBy = null;
 
 
             ////Referral points per agreement
