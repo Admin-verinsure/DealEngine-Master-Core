@@ -252,11 +252,13 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         alert("There was an error getting ProductName.");
                     });
 
-          };
+        };
 
-        $(window).on("load", function () {
-            if ($("#Sheetstatus").val() != "Started") {
+         $(window).on("load", function () {
+            debugger;
+            if ("@ViewBag.Sheetstatus" != "Started") {
                 debugger;
+
                 var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
                 var postData = { ProgrammeId: progId };
@@ -279,24 +281,54 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                             //$('#' + arr[count+1]).val(arr[count + 1]);
                         }
                     }
-                }).fail(function (a, s, d) {
-                    debugger;
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
                 });
 
+             }
+
+              if ("@ViewBag.Sheetstatus" == "Started") {
+                debugger;
+
+                var ID = "@ViewBag.Id";
+               var postdata = {
+                     id : ID
+                }
+                $.ajax({
+                   url: '@Url.Action("GetProductName", "Information")',
+                   type: "POST",
+                   data: postdata
+                })
+                    .done(function (data) {
+                        var prodname = data;
+                        for (var i = 0; i < prodname.length; i++) {
+                            var ProdName = prodname[i];
+                             if (ProdName.length == 1) {
+                             var queryselector = "" + "input[name=\'" + ProdName + "\']";
+
+                               $(queryselector).attr('checked', true);
+                             }
+                        }
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                    });
+
+              }
 
 
-            }
 
-            if ("@ViewBag.Status.Contains("Bound")" == "True") {
+              if ("@ViewBag.Status.Contains("Bound")" == "True") {
                 debugger;
                 //var coveroptiontable = document.querySelector('[type="radio"]');
                 $("#Coveroptionssec :input").prop("disabled", true);
-            } else {
+              } else {
                 $("#Coveroptionssec :input").prop("disabled", false);
-            }
+              }
 
 
         });
 
     </script>
+
 }

@@ -216,13 +216,17 @@
 
 
            } else if (stepNumber === 1) {
+               debugger;
                var status = $('#Status').val();
-               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
-               }
-               else {
-                   return false;
-               }
 
+               if (status == "Started") {
+               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
+                   }
+                   else {
+                   return false;
+                   }
+               }
+ 
                $('.sw-btn-prev').hide();
                //$('#getAgreementDecModal').show();
                 var isvalid = 0;

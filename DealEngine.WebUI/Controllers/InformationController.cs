@@ -651,11 +651,13 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
 
                 String[][] OptionItems = new String[clientProgramme.Agreements.Count][];
+                var chosenoption = 0;
                 foreach (var agreement in clientProgramme.Agreements)
                 {
-
+                    chosenoption = 0;
                     foreach (var term in agreement.ClientAgreementTerms)
                     {
+                        
                         OptionItem = new String[2];
                         if (term.Bound)
                         {
@@ -663,7 +665,17 @@ namespace DealEngine.WebUI.Controllers
                             OptionItem[1] = "" + term.Id;
                             OptionItems[count] = OptionItem;
                             count++;
+                            chosenoption++;
                         }
+                      
+                    }
+                    if (chosenoption == 0)
+                    {
+                        OptionItem = new String[2];
+                        OptionItem[0] = agreement.Product.Name;
+                        OptionItem[1] = "None";
+                        OptionItems[count] = OptionItem;
+                        count++;
                     }
                 }
                 return Json(OptionItems);
@@ -1322,16 +1334,19 @@ namespace DealEngine.WebUI.Controllers
 
                 if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                 {
-                    //sheet owner is null
-                    await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    //send out information sheet submission notification email
-                    await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    //send out agreement refer notification email
-                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                    if (sheet.Status == "Started")
                     {
-                        if (agreement.Status == "Referred")
+                        //sheet owner is null
+                        await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                        //send out information sheet submission notification email
+                        await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                        //send out agreement refer notification email
+                        foreach (ClientAgreement agreement in clientProgramme.Agreements)
                         {
-                            await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
+                            if (agreement.Status == "Referred")
+                            {
+                                await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
+                            }
                         }
                     }
                 }

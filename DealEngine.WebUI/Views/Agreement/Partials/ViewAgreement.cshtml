@@ -520,7 +520,7 @@ else
     });
 
     $(window).on("load", function () {
-        if (@Model.InformationSheetStatus.StartsWith("Bound")) {
+        if ("@Model.InformationSheetStatus.StartsWith("Bound")" == "True") {
             $("#Coveroptionssec :input").prop("disabled", true);
         } else {
             $("#Coveroptionssec :input").prop("disabled", false);

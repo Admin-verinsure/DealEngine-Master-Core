@@ -18,41 +18,41 @@ using Microsoft.AspNetCore.Http;
 #endregion
 
 namespace DealEngine.WebUI.Controllers
-{    
+{
     [Authorize]
     public class HomeController : BaseController
     {
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
-        ITaskingService _taskingService;        
+        ITaskingService _taskingService;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
         IHttpClientService _httpClientService;
         IMapper _mapper;
-        IEmailService _emailService;        
+        IEmailService _emailService;
         IProgrammeService _programmeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
-        IApplicationLoggingService _applicationLoggingService;       
+        IApplicationLoggingService _applicationLoggingService;
 
-        public HomeController(            
+        public HomeController(
             IEmailService emailService,
             IMapper mapper,
             IApplicationLoggingService applicationLoggingService,
             ILogger<HomeController> logger,
             IProductService productService,
             IProgrammeService programmeService,
-            IUserService userRepository, 
+            IUserService userRepository,
             IHttpClientService httpClientService,
-            ITaskingService taskingService, 
-            IClientInformationService customerInformationService, 
-            IPrivateServerService privateServerService, 
-            IClientAgreementService clientAgreementService, 
+            ITaskingService taskingService,
+            IClientInformationService customerInformationService,
+            IPrivateServerService privateServerService,
+            IClientAgreementService clientAgreementService,
             IClientInformationService clientInformationService
             )
 
-            : base (userRepository)
-        {            
+            : base(userRepository)
+        {
             _emailService = emailService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
@@ -62,9 +62,9 @@ namespace DealEngine.WebUI.Controllers
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             _taskingService = taskingService;
-            _clientInformationService = clientInformationService;            
+            _clientInformationService = clientInformationService;
             _clientAgreementService = clientAgreementService;
-            _mapper = mapper;            
+            _mapper = mapper;
         }
 
         // GET: home/index
@@ -72,7 +72,7 @@ namespace DealEngine.WebUI.Controllers
         {
             return View();
         }
-        
+
         public async Task<IActionResult> Index()
         {
             ViewBag.Title = "Proposalonline Dashboard";
@@ -111,10 +111,10 @@ namespace DealEngine.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
                 {
-                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp=>bp.BaseProgramme);                    
+                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme);
                     foreach (var clientProgramme in clientProgList)
                     {
-                        programmeList.Add(clientProgramme.Key);                     
+                        programmeList.Add(clientProgramme.Key);
                     }
                 }
                 else
@@ -154,7 +154,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> ViewProgramme(IFormCollection collection)
-        {                       
+        {
             //enum 
             //1-Reference No
             //2-Insured First Name
@@ -163,7 +163,7 @@ namespace DealEngine.WebUI.Controllers
             var searchTerm = collection["SearchTerm"].ToString();
             var searchValue = collection["SearchValue"].ToString();
 
-            ProgrammeItem model = new ProgrammeItem();            
+            ProgrammeItem model = new ProgrammeItem();
             User user = null;
 
             var isValidInput = ValidateSearchInput(searchTerm, searchValue);
@@ -185,8 +185,8 @@ namespace DealEngine.WebUI.Controllers
                             searchValue = searchValue.Replace(" ", string.Empty);
                             model.Deals = await GetInsuredNameSearch(user, searchValue);
                         }
-                        else if(searchTerm == "4")
-                        {                            
+                        else if (searchTerm == "4")
+                        {
                             model.Deals = await GetBoatNameSearch(user, searchValue);
                         }
                     }
@@ -267,7 +267,7 @@ namespace DealEngine.WebUI.Controllers
         private bool ValidateSearchInput(string value1, string value2)
         {
             var list = new List<string>();
-            if(!string.IsNullOrWhiteSpace(value1))
+            if (!string.IsNullOrWhiteSpace(value1))
             {
                 list.Add(value1);
             }
@@ -275,8 +275,8 @@ namespace DealEngine.WebUI.Controllers
             {
                 list.Add(value2);
             }
-            
-            if(list.Count != 2)
+
+            if (list.Count != 2)
             {
                 return false;
             }
@@ -286,9 +286,9 @@ namespace DealEngine.WebUI.Controllers
         private async Task<IList<DealItem>> GetInsuredNameSearch(User user, string searchValue)
         {
             List<DealItem> deals = new List<DealItem>();
-            List<ClientProgramme>  clients = await _programmeService.FindByOwnerName(searchValue);
+            List<ClientProgramme> clients = await _programmeService.FindByOwnerName(searchValue);
 
-            if(clients.Count != 0)
+            if (clients.Count != 0)
             {
                 foreach (var client in clients)
                 {
@@ -394,7 +394,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(clientProgrammeId);
-                foreach(var client in clientprogramme.SubClientProgrammes)
+                foreach (var client in clientprogramme.SubClientProgrammes)
                 {
                     clientList.Add(client);
                 }
@@ -562,7 +562,7 @@ namespace DealEngine.WebUI.Controllers
                 SubClientProgramme subClientprogramme = await _programmeService.GetSubClientProgrammebyId(subClientProgrammeId);
                 clientList.Add(subClientprogramme);
                 model = await GetClientProgrammeListModel(user, clientList);
-               
+
                 return View(model);
             }
             catch (Exception ex)
@@ -583,16 +583,16 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-               // foreach (var clientProg in clientList)
-               // {
-                    //foreach (var sub in clientProg.SubClientProgrammes)
-                    //{
-                    //    if (clientProg.Owner == user.PrimaryOrganisation)
-                    //    {
-                    //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
-                    //    }
-                    //}
-               // }
+                // foreach (var clientProg in clientList)
+                // {
+                //foreach (var sub in clientProg.SubClientProgrammes)
+                //{
+                //    if (clientProg.Owner == user.PrimaryOrganisation)
+                //    {
+                //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
+                //    }
+                //}
+                // }
 
                 model = await GetClientProgrammeListModel(user, clientList);
 
@@ -626,7 +626,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                model.ClientProgrammes = clientProgrammes;     
+                model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
 
                 return View(model);
@@ -635,7 +635,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }                       
+            }
         }
 
         [HttpGet]
@@ -673,11 +673,11 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
         {
             User user = null;
-            Programme programme = null;            
+            Programme programme = null;
             string email = null;
 
             try
-            {                
+            {
                 user = await CurrentUser();
                 programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
                 foreach (var key in formCollection.Keys)
@@ -707,7 +707,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                                            
+
                 return await RedirectToLocal();
             }
             catch (Exception ex)
@@ -760,7 +760,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }        
+        }
 
     }
 }

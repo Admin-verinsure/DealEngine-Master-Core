@@ -21,6 +21,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
 
+
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
@@ -3081,6 +3082,9 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+                 ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
+                ViewBag.Sheetstatus = programme1.InformationSheet.Status;
+
 
                 return View("ViewAcceptedAgreementList", models);
             }
