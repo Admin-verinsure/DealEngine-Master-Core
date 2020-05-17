@@ -1151,7 +1151,7 @@ namespace DealEngine.WebUI.Controllers
                     programme.StopAgreementMessage = model.StopAgreementMessage;
                     programme.Declaration = model.Declaration;
                     programme.NoPaymentRequiredMessage = model.NoPaymentRequiredMessage;
-                    programme.BrokerContactUser = model.BrokerContactUser;
+                    //programme.BrokerContactUser = model.BrokerContactUser;
                     programme.Claim = "";
                     if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
                     {

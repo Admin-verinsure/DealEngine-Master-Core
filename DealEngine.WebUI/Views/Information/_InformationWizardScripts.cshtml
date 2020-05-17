@@ -90,6 +90,9 @@
                                        if (form.id == "RevenueDataViewModel") {
                                            RevenueDataOnSubmit(element.id, form);
                                        }
+                                       if (form.id == "RoleDataViewModel") {
+                                           RoleDataOnSubmit(element.id, form);
+                                       }
                                    }
                                    else {
                                        //hardcoded to find the div visibility - need to find a better way
@@ -104,6 +107,7 @@
                                            }
                                            if (element.classList.contains("is-invalid")) {
                                                //write a message here or stop the process
+                                               debugger;
                                                event.preventDefault();
                                                event.stopPropagation();
                                                $("#more").trigger("click");

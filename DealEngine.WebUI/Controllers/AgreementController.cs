@@ -1726,14 +1726,14 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                else if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                 {
                     model = new ViewAgreementViewModel();
                     model.ProgrammeStopAgreement = true;
                     var message = clientProgramme.BaseProgramme.SubsystemMessage;
                     if (string.IsNullOrWhiteSpace(message))
                     {
-                        message = "subsystem invoked";
+                        message = " TEMPLATE: subsystem invoked";
                     }
                     model.AgreementMessage = message;
 
