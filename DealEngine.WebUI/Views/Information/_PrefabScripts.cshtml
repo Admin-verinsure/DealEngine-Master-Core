@@ -165,6 +165,17 @@
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
                 DefaultRule(Value, element.name);
+            } 
+            if (Rule === "FABConditional") {
+                var ids = DataItem.split(',');
+                document.getElementById(ids[0]).hidden = true;
+                document.getElementById(ids[1]).hidden = true;
+                if (Value == "1") {
+                    document.getElementById(ids[0]).hidden = false;
+                }
+                else {
+                    document.getElementById(ids[1]).hidden = false;
+                }
             }
             if (Rule === "DNOOptional") {
                 Value = DoubleConditional(DataItem);

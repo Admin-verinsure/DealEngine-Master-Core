@@ -556,7 +556,27 @@ namespace DealEngine.WebUI.Models
         public FAPViewModel()
         {
             HasTraditionalLicenceOptions = GetSelectListOptions();
+            HasAdvisersOptions = GetHasAdvisersOptions();
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetHasAdvisersOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I do not have any other advisers working under my license", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other advisers working under my license", Value = "2"
+                }
+            };
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -597,6 +617,7 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
+        public IList<SelectListItem> HasAdvisersOptions { get; set; }        
         public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
         public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
     }

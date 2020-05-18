@@ -12,9 +12,11 @@ using Claim = System.Security.Claims.Claim;
 using NHibernate.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
+    [Authorize]
     public class AuthorizeController : BaseController
     {
         IClaimService _claimService;
