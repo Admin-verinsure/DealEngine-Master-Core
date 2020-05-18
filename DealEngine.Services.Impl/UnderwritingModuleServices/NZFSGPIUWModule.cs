@@ -67,219 +67,110 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             decimal feeincome = 0;
 
-            decimal decBSS = 0M;
-            decimal decArchRSD = 0M;
-            decimal decArchRMD = 0M;
-            decimal decArchCB = 0M;
-            decimal decArchI = 0M;
-            decimal decIR = 0M;
-            decimal decQS = 0M;
-            decimal decSE = 0M;
-            decimal decTP = 0M;
-            decimal decVal = 0M;
-            decimal decUP = 0M;
-            decimal decProjM = 0M;
-            decimal decEP = 0M;
-            decimal decRM = 0M;
+            decimal decMBR = 0M;
+            decimal decMBC = 0M;
+            decimal decIns = 0M;
+            decimal decFP = 0M;
+            decimal decKS = 0M;
+            decimal decBA = 0M;
+            decimal decAF = 0M;
+            decimal decRFG = 0M;
+            decimal decBFG = 0M;
             decimal decOther = 0M;
 
-            decimal decBSSTopUpPre = 0M;
-            decimal decIRTopUpPre = 0M;
-            decimal decQSTopUpPre = 0M;
-            decimal decSETopUpPre = 0M;
-            decimal decTPTopUpPre = 0M;
-            decimal decValTopUpPre = 0M;
-            decimal decUPTopUpPre = 0M;
-            decimal decProjMTopUpPre = 0M;
-            decimal decEPTopUpPre = 0M;
-            decimal decRMTopUpPre = 0M;
+            decimal decBFG1To10PerExtraPre = 0M;
+            decimal decFP1To10PerExtraPre = 0M;
+            decimal decPEF0To70PerExtraPre = 0M;
+            decimal decPEF71To100PerExtraPre = 0M;
+            decimal decRFG10To20PerExtraPre = 0M;
 
             decimal decPIPremiumTopUp = 0M;
-            decimal totalfeeincome = 0M;
-            int numberoffeeincome = 1;
-            bool bolworkoutsidenz = false;
-            bool bolsitelicensecategory3 = false;
-            decimal extpremium = 0m;
-
-            if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-                {
-                    if (!bolsitelicensecategory3 && uisorg.SiteLicensed == "Category 3")
-                    {
-                        bolsitelicensecategory3 = true;
-                    }
-                }
-            }
-
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
-
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0 &&
-                    (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal))
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
-                    numberoffeeincome += 1;
+                    feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                } else if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0) 
+                {
+                    feeincome = agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
                 }
 
-                feeincome = totalfeeincome / numberoffeeincome;
-
-                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
-                {
-                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Percentage > 0) //Work outside New Zealand Check
-                    {
-                        bolworkoutsidenz = true;
-                    }
-                }
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
                 {
-                    if (uISActivity.AnzsciCode == "E322") //Building Structure Services
+                    if (uISActivity.AnzsciCode == "CUS0020") //Mortgage Broking (Residential)
                     {
-                        decBSS = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decBSSTopUpPre = rates["piBSSTopUpPremium"];
+                        decMBR = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M692121") //Architecture - residential single dwellings
+                    else if (uISActivity.AnzsciCode == "CUS0021") //Mortgage Broking (Commercial)
                     {
-                        decArchRSD = uISActivity.Percentage;
+                        decMBC = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M692122") //Architecture - residential multi dwellings
+                    else if (uISActivity.AnzsciCode == "CUS0022") //Insurance (Life, medical, disability only)
                     {
-                        decArchRMD = uISActivity.Percentage;
+                        decIns = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M692123") //Architecture - commercial building
+                    else if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
                     {
-                        decArchCB = uISActivity.Percentage;
+                        decFP = uISActivity.Percentage;
+                        if (uISActivity.Percentage > 0 && uISActivity.Percentage <= 10)
+                            decFP1To10PerExtraPre = rates["piFP1To10PerExtraPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M692124") //Architecture - interior
+                    else if (uISActivity.AnzsciCode == "CUS0024") //Kiwisaver
                     {
-                        decArchI = uISActivity.Percentage;
+                        decKS = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M692160") //Inspection Reports 
+                    else if (uISActivity.AnzsciCode == "CUS0025") //Budget Advice
                     {
-                        decIR = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decIRTopUpPre = rates["piIRTopUpPremium"];
+                        decBA = uISActivity.Percentage;
                     }
-                    else if (uISActivity.AnzsciCode == "M692170") //Quantity Surveying 
+                    else if (uISActivity.AnzsciCode == "CUS0026") //Asset Finance 
                     {
-                        decQS = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decQSTopUpPre = rates["piQSTopUpPremium"];
+                        decAF = uISActivity.Percentage;
+                        if (uISActivity.Percentage > 0 && uISActivity.Percentage <= 70)
+                            decPEF0To70PerExtraPre = rates["piPEF0To70PerExtraPremium"];
+                        if (uISActivity.Percentage > 70 && uISActivity.Percentage <= 100)
+                            decPEF71To100PerExtraPre = rates["piPEF71To100PerExtraPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M692180") //Structural Engineering 
+                    else if (uISActivity.AnzsciCode == "CUS0027") //Referred Fire and General (i.e. Tower, Aon) 
                     {
-                        decSE = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decSETopUpPre = rates["piSETopUpPremium"];
+                        decRFG = uISActivity.Percentage;
+                        if (uISActivity.Percentage >= 10 && uISActivity.Percentage <= 20)
+                            decRFG10To20PerExtraPre = rates["piRFG10To20PerExtraPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M692190") //Town Planning 
+                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
                     {
-                        decTP = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decTPTopUpPre = rates["piTPTopUpPremium"];
+                        decBFG = uISActivity.Percentage;
+                        if (uISActivity.Percentage > 0 && uISActivity.Percentage <= 10)
+                            decBFG1To10PerExtraPre = rates["piBFG1To10PerExtraPremium"];
                     }
-                    else if (uISActivity.AnzsciCode == "M692210") //Valuations 
-                    {
-                        decVal = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decValTopUpPre = rates["piValTopUpPremium"];
-                    }
-                    else if (uISActivity.AnzsciCode == "M692211") //Urban planning 
-                    {
-                        decUP = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decUPTopUpPre = rates["piUPTopUpPremium"];
-                    }
-                    else if (uISActivity.AnzsciCode == "M692212") //Environmental planning 
-                    {
-                        decEP = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decEPTopUpPre = rates["piEPTopUpPremium"];
-                    }
-                    else if (uISActivity.AnzsciCode == "M692213") //Resource management 
-                    {
-                        decRM = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decRMTopUpPre = rates["piRMTopUpPremium"];
-                    }
-                    else if (uISActivity.AnzsciCode == "M692214") //Project management 
-                    {
-                        decProjM = uISActivity.Percentage;
-                        if (uISActivity.Percentage > 0)
-                            decProjMTopUpPre = rates["piProjMTopUpPremium"];
-                    }
-                    else if (uISActivity.AnzsciCode == "S") //Other Services
+                    else if (uISActivity.AnzsciCode == "CUS0029") //Other 
                     {
                         decOther = uISActivity.Percentage;
                     }
 
+
                 }
 
-                decPIPremiumTopUp = Math.Max(decBSSTopUpPre, Math.Max(decIRTopUpPre, Math.Max(decQSTopUpPre, Math.Max(decSETopUpPre, Math.Max(decTPTopUpPre, Math.Max(decValTopUpPre, Math.Max(decUPTopUpPre, Math.Max(decProjMTopUpPre, Math.Max(decEPTopUpPre, decRMTopUpPre)))))))));
+                decPIPremiumTopUp = decBFG1To10PerExtraPre + decFP1To10PerExtraPre + decPEF0To70PerExtraPre + decPEF71To100PerExtraPre + decRFG10To20PerExtraPre;
             }
 
-            ClientAgreementEndorsement cAEIR = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Pre Purchase Inspections and Building Surveying Exclusion");
-            if (cAEIR != null)
-            {
-                cAEIR.DateDeleted = DateTime.UtcNow;
-                cAEIR.DeletedBy = underwritingUser;
-            }
-            if (decIR > 0)
-            {
-                if (cAEIR != null)
-                {
-                    cAEIR.DateDeleted = null;
-                    cAEIR.DeletedBy = null;
-                }
-            }
-            ClientAgreementEndorsement cAEQS = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Quantity Surveying Exclusion");
-            if (cAEQS != null)
-            {
-                cAEQS.DateDeleted = DateTime.UtcNow;
-                cAEQS.DeletedBy = underwritingUser;
-            }
-            if (decQS > 0)
-            {
-                if (cAEQS != null)
-                {
-                    cAEQS.DateDeleted = null;
-                    cAEQS.DeletedBy = null;
-                }
-            }
-            ClientAgreementEndorsement cAEProjM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers Endorsement");
-            if (cAEProjM != null)
-            {
-                cAEProjM.DateDeleted = DateTime.UtcNow;
-                cAEProjM.DeletedBy = underwritingUser;
-            }
-            if (decProjM > 0)
-            {
-                if (cAEProjM != null)
-                {
-                    cAEProjM.DateDeleted = null;
-                    cAEProjM.DeletedBy = null;
-                }
-            }
-            ClientAgreementEndorsement cAEWTExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits");
-            if (cAEWTExt != null)
-            {
-                cAEWTExt.DateDeleted = DateTime.UtcNow;
-                cAEWTExt.DeletedBy = underwritingUser;
-            }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value != null &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasLeakyBuildingCoverOptions").First().Value == "1")
-            {
-                extpremium = rates["piwwextpremium"];
-                if (cAEWTExt != null)
-                {
-                    cAEWTExt.DateDeleted = null;
-                    cAEWTExt.DeletedBy = null;
-                }
-            }
+            //ClientAgreementEndorsement cAEProjM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers Endorsement");
+            //if (cAEProjM != null)
+            //{
+            //    cAEProjM.DateDeleted = DateTime.UtcNow;
+            //    cAEProjM.DeletedBy = underwritingUser;
+            //}
+            //if (decProjM > 0)
+            //{
+            //    if (cAEProjM != null)
+            //    {
+            //        cAEProjM.DateDeleted = null;
+            //        cAEProjM.DeletedBy = null;
+            //    }
+            //}
+
 
             bool bolcustomendorsementrenew = false;
             string strretrodate = "";
@@ -327,7 +218,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage500k5000Excess = 0m;
             decimal TermBrokerage500k10kExcess = 0m;
 
-            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium + decPIPremiumTopUp;
+            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + decPIPremiumTopUp;
             TermPremium500k5000Excess = TermPremium500k2500Excess - TermExcess5000Discount;
             TermPremium500k10kExcess = TermPremium500k2500Excess - TermExcess10kDiscount;
             TermBrokerage500k2500Excess = TermPremium500k2500Excess * agreement.Brokerage / 100;
@@ -368,7 +259,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil5000Excess = 0m;
             decimal TermBrokerage1mil10kExcess = 0m;
 
-            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium + decPIPremiumTopUp;
+            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + decPIPremiumTopUp;
             TermPremium1mil5000Excess = TermPremium1mil2500Excess - TermExcess5000Discount;
             TermPremium1mil10kExcess = TermPremium1mil2500Excess - TermExcess10kDiscount;
             TermBrokerage1mil2500Excess = TermPremium1mil2500Excess * agreement.Brokerage / 100;
@@ -409,7 +300,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage2mil5000Excess = 0m;
             decimal TermBrokerage2mil10kExcess = 0m;
 
-            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium + decPIPremiumTopUp;
+            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + decPIPremiumTopUp;
             TermPremium2mil5000Excess = TermPremium2mil2500Excess - TermExcess5000Discount;
             TermPremium2mil10kExcess = TermPremium2mil2500Excess - TermExcess10kDiscount;
             TermBrokerage2mil2500Excess = TermPremium2mil2500Excess * agreement.Brokerage / 100;
