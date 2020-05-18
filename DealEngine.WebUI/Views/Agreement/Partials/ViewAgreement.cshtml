@@ -519,12 +519,80 @@ else
 
     });
 
+    
+
+
     $(window).on("load", function () {
-        if (@Model.InformationSheetStatus.StartsWith("Bound")) {
+        debugger;
+        if ("@Model.InformationSheetStatus.StartsWith("Bound")" == "True") {
             $("#Coveroptionssec :input").prop("disabled", true);
         } else {
             $("#Coveroptionssec :input").prop("disabled", false);
         }
+
+
+          if ("@Model.InformationSheetStatus.StartsWith("Started")" == "True") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                    url: '@Url.Action("GetCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
+                    }
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
+                });
+
+             }
+
+
+
+
+          @*if ("@Model.InformationSheetStatus.StartsWith("Started")" == "True") {
+                debugger;
+
+                var ID = $("#ClientProgrammeId").val();
+               var postdata = {
+                     id : ID
+               }
+                $.ajax({
+                   url: '@Url.Action("GetProductName", "Information")',
+                   type: "POST",
+                   data: postdata
+                }).done(function (data) {
+                        var prodname = data;
+                        for (var i = 0; i < prodname.length; i++) {
+                            var ProdName = prodname[i];
+                             if (ProdName.length == 1) {
+                             var queryselector = "" + "input[name=\'" + ProdName + "\']";
+
+                               $(queryselector).attr('checked', true);
+                             }
+                        }
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                });
+
+          }*@
+
 
 
     });

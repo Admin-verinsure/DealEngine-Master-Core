@@ -21,6 +21,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
 
+
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
@@ -1726,14 +1727,14 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                else if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                 {
                     model = new ViewAgreementViewModel();
                     model.ProgrammeStopAgreement = true;
                     var message = clientProgramme.BaseProgramme.SubsystemMessage;
                     if (string.IsNullOrWhiteSpace(message))
                     {
-                        message = "subsystem invoked";
+                        message = " TEMPLATE: subsystem invoked";
                     }
                     model.AgreementMessage = message;
 
@@ -2230,7 +2231,21 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientAgreementEndorsements = null;
                 }
 
-                ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Endorsements for " + insured.Name;
+                var availableEndorsementTitles = new List<SelectListItem>();
+
+                foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted != null).OrderBy(ce => ce.OrderNumber))
+                {
+
+                    availableEndorsementTitles.Add(new SelectListItem
+                        {
+                            Selected = false,
+                            Value =ce.Id.ToString(),
+                            Text = ce.Name
+                        });
+                }
+
+                model.AvailableEndorsementTitles = availableEndorsementTitles;
+                    ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Endorsements for " + insured.Name;
 
                 return View("ViewAgreementEndorsement", model);
             }
@@ -2267,10 +2282,7 @@ namespace DealEngine.WebUI.Controllers
                                 var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
                                 cev.Value = clientAgreement.Value;
                             }
-
-
                             await uow.Commit();
-
                         }
 
                     }
@@ -2281,6 +2293,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         clientAgreementendorsement.Name = model.EndorsementNameToAdd;
                         clientAgreementendorsement.Value = model.Content;
+                        clientAgreementendorsement.DateDeleted = null;
                         await uow.Commit();
 
                     }
@@ -3108,6 +3121,9 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+                 ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
+                ViewBag.Sheetstatus = programme1.InformationSheet.Status;
+
 
                 return View("ViewAcceptedAgreementList", models);
             }

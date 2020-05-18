@@ -203,6 +203,9 @@ namespace DealEngine.Domain.Entities
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
+        public virtual string RegisteredStatus { get; set; }
+        public virtual bool ConfirmAAA { get; set; }
+        public virtual string Duration { get; set; }
         public virtual IList<Programme> Programmes { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
 
@@ -228,8 +231,7 @@ namespace DealEngine.Domain.Entities
         #endregion
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
-        public virtual string RegisteredStatus { get; set; }
-        public virtual string Duration { get; set; }
+       
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)
         {

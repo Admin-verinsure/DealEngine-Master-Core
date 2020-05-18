@@ -2966,13 +2966,13 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
-
-        [HttpPost]
+        
+         [HttpPost]
         public async Task<IActionResult> AddCommonNamedParty(OrganisationViewModel model)
         {
             User currentUser = null;
 
-            try
+            try 
             {
                 if (model == null)
                     throw new ArgumentNullException(nameof(model));
@@ -2981,12 +2981,12 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
+                
                 model.OrganisationTypeName = "Person - Individual";
                 string orgTypeName = "Person - Individual";
                 try
                 {
-
+                   
                     InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                     if (insuranceAttribute == null)
                     {
@@ -3045,7 +3045,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     var organisationName = model.FirstName + " " + model.LastName;
-
+                  
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (organisation != null)
@@ -3056,6 +3056,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Qualifications = model.Qualifications;
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3073,6 +3074,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Qualifications = model.Qualifications;
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3239,6 +3241,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Qualifications = model.Qualifications;
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3254,6 +3257,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Qualifications = model.Qualifications;
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));

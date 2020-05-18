@@ -90,6 +90,9 @@
                                        if (form.id == "RevenueDataViewModel") {
                                            RevenueDataOnSubmit(element.id, form);
                                        }
+                                       if (form.id == "RoleDataViewModel") {
+                                           RoleDataOnSubmit(element.id, form);
+                                       }
                                    }
                                    else {
                                        //hardcoded to find the div visibility - need to find a better way
@@ -104,6 +107,7 @@
                                            }
                                            if (element.classList.contains("is-invalid")) {
                                                //write a message here or stop the process
+                                               debugger;
                                                event.preventDefault();
                                                event.stopPropagation();
                                                $("#more").trigger("click");
@@ -219,13 +223,17 @@
 
 
            } else if (stepNumber === 1) {
+               debugger;
                var status = $('#Status').val();
-               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
-               }
-               else {
-                   return false;
-               }
 
+               if (status == "Started") {
+               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
+                   }
+                   else {
+                   return false;
+                   }
+               }
+ 
                $('.sw-btn-prev').hide();
                //$('#getAgreementDecModal').show();
                 var isvalid = 0;
