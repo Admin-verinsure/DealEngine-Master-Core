@@ -53,7 +53,7 @@
                                                 @select.Location
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Location" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableterritories" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Location.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableterritories" value="@select.Percentage" />
                                             </td>
                                         </tr>
                                     }
@@ -97,13 +97,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="activities">Select Activites</label>
-                        <select id="activities" name="RevenueDataViewModel.Activities" multiple class="chosen-select form-control b" form="RevenueDataViewModel" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.RevenueDataViewModel.Activities)
-                            {
-                                <option selected="@option.Selected" value="@option.AnzsciCode">@option.Description</option>
-                            }
-                        </select>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="activities">Select Activites</label>
+                            </div>
+                            <div class="col-8">
+                                <select id="activities" name="RevenueDataViewModel.Activities" multiple class="chosen-select form-control b" form="RevenueDataViewModel" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.Activities)
+                                    {
+                                        <option selected="@option.Selected" value="@option.AnzsciCode">@option.Description.Trim()</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div id="RevenueDataViewModel.Activities">
                         <div class="form-group">
@@ -122,7 +128,7 @@
                                                 @select.Description
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Description" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableactivities" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Description.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableactivities" value="@select.Percentage" />
                                             </td>
                                         </tr>
                                     }

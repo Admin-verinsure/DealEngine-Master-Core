@@ -180,7 +180,9 @@
             });
     }
 
-    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectYear, ProjectTitle, ProjectType, ProjectResponsibilityData) {
+    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectYear,
+        ProjectTitle, ProjectType, ProjectCountry, ProjectMajorResponsibilities, ProjectResponsibilityData) {
+
         event.preventDefault();
         CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
@@ -205,6 +207,12 @@
         }
         if (document.getElementById("hascontracttype") != null) {
             document.getElementById("hascontracttype").value = ProjectType;
+        }
+        if (document.getElementById("projectcountry") != null) {
+            document.getElementById("projectcountry").value = ProjectCountry;
+        }
+        if (document.getElementById("projectmajorresponsibilities") != null) {
+            document.getElementById("projectmajorresponsibilities").value = ProjectMajorResponsibilities;
         }
 
         var array = ProjectResponsibilityData.split(',');

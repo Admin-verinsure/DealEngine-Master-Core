@@ -7,21 +7,18 @@ namespace DealEngine.WebUI.Models
 	public class DashboardViewModel : BaseViewModel
 	{
 		public bool DisplayProducts { get; set; }
-
 		public bool DisplayDeals { get; set; }
-
 		public IList<ProductItemV2> ProductItems { get; set; }
-
 		public IList<ProductItem> DealItems { get; set; }
-
 		public IList<ProgrammeItem> ProgrammeItems { get; set; }
-
 		public IList<TaskItem> CriticalTaskItems { get; set; }
 
 		public IList<TaskItem> ImportantTaskItems { get; set; }
 
 		public string CurrentUserType { get; set; }
+		public IList<UserTask> UserTasks { get; set; }
 	}
+
 
 	public class ButtonItem
 	{
@@ -102,7 +99,7 @@ namespace DealEngine.WebUI.Models
 				statusDisplay.Add("Submitted on " + LocalDateSubmitted);
 			if (agreementstatus != "")
 			{
-				statusDisplay.Add("AgreementStatus " + agreementstatus);
+				statusDisplay.Add(" Agreement Status: " + agreementstatus);
 
 			}
 			return string.Join(", ", statusDisplay);
@@ -146,4 +143,5 @@ namespace DealEngine.WebUI.Models
 
 		public bool Completed { get; set; }
 	}
+
 }

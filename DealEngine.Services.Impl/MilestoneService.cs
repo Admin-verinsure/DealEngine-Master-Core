@@ -111,26 +111,15 @@ namespace DealEngine.Services.Impl
                 await _taskingService.UpdateUserTask(userTask);                
             }
 
-            userTask = new UserTask(user, createdFor, dueDate)
+            userTask = new UserTask(user, createdFor)
             {
-                Priority = priority,
                 Description = description,
                 Details = details,
-                IsActive = false,
                 Milestone = milestone,
                 Activity = activity
             };
 
-            await _taskingService.CreateTaskFor(userTask);
-        }
-
-        public async Task CloseMileTask(Guid id, string method)
-        {
-            Milestone milestone = await _milestoneRepository.GetByIdAsync(id);
-            milestone.Method = method;
-            milestone.HasTriggered = true;
-
-            await _milestoneRepository.UpdateAsync(milestone);
+            await _taskingService.CreateTask(userTask);
         }
 
         public async Task<Milestone> GetMilestoneByBaseProgramme(Guid programmeId)
@@ -141,6 +130,74 @@ namespace DealEngine.Services.Impl
         public async Task UpdateMilestone(Milestone milestone)
         {
             await _milestoneRepository.UpdateAsync(milestone);
+        }
+
+        public async Task SetMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
+        {
+            if(activityType == "Agreement Status – Referred")
+            {
+                await ReferredMilestone(activityType, user, sheet);
+            }
+        }
+
+        private async Task ReferredMilestone(string activityType, User user, ClientInformationSheet sheet)
+        {
+            UserTask task;
+            var activity = await _activityService.GetActivityByName(activityType);
+            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            if (milestone == null)
+            {
+                milestone = new Milestone(user);
+                milestone.Programme = sheet.Programme.BaseProgramme;
+            }
+
+            var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
+            if (tasks.Count() != 0)
+            {
+                task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
+                if(task == null)
+                {
+                    //task process 
+                    task = new UserTask(user, user.PrimaryOrganisation);                         
+                    task.Milestone = milestone;
+                    task.Activity = activity;
+                    task.Details = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
+                    task.Description = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
+
+                    await _taskingService.CreateTask(task);
+                }
+            }         
+        }
+
+        public async Task CompleteMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
+        {
+            if (activityType == "Agreement Status – Referred")
+            {
+                await ReferredComplete(activityType, user, sheet);
+            }
+        }
+
+        private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
+        {
+            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            if (milestone == null)
+            {
+                milestone = new Milestone(user);
+                milestone.Programme = sheet.Programme.BaseProgramme;
+            }
+
+            var activity = await _activityService.GetActivityByName(activityType);
+            var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
+
+            if(tasks.Count() != 0)
+            {
+                var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
+                if (task != null)
+                {                   
+                    task.Complete(user);
+                    await _taskingService.UpdateUserTask(task);
+                }
+            }
         }
     }
 }

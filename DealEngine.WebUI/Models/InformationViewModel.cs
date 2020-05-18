@@ -18,6 +18,7 @@ namespace DealEngine.WebUI.Models
             DAOLIViewModel = new DAOLIViewModel(); //Directors officers liability
             GLViewModel = new GLViewModel(); //General liability 
             SLViewModel = new SLViewModel(); //Statutory Liability
+            FAPViewModel = new FAPViewModel(); //Financial Advisor
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
@@ -71,6 +72,7 @@ namespace DealEngine.WebUI.Models
         public DAOLIViewModel DAOLIViewModel { get; set; }
         public GLViewModel GLViewModel { get; set; }
         public SLViewModel SLViewModel { get; set; }
+        public FAPViewModel FAPViewModel { get; set; }
         public ProjectViewModel ProjectViewModel { get;set;}
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
@@ -548,6 +550,56 @@ namespace DealEngine.WebUI.Models
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }        
     }
+
+    public class FAPViewModel
+    {
+        public FAPViewModel()
+        {
+            HasTraditionalLicenceOptions = GetSelectListOptions();
+            HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetAdditionalTraditionalLicenceSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I am taking my own Transitional Licence with no other advisers working under my license", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I will be coming under someone else's Transitional Licence", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Undecided", Value = "3"
+                }
+            };
+        }
+        public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
+        public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
+    }
     public class PIViewModel
     {
         public PIViewModel()
@@ -606,10 +658,10 @@ namespace DealEngine.WebUI.Models
             HasLossDocumentsOptions = GetSelectListOptions();
             HasLegalCouncelOptions = GetSelectListOptions();
             HasFormalProceduresOptions = GetSelectListOptions();
-
+            HasMortageOptions = GetSelectListOptions();
+            HasBusinessChangesOptions = GetSelectListOptions();            
         }
 
-       
         private IList<SelectListItem> GetContractingServicesOptions()
         {
             return new List<SelectListItem>()
@@ -741,8 +793,9 @@ namespace DealEngine.WebUI.Models
                     Text = "Don't know", Value = "3"
                 }
             };
-        }
+        }        
         public IList<SelectListItem> ContractingServicesOptions { get; set; }
+        public IList<SelectListItem> HasMortageOptions { get; set; }
         public IList<SelectListItem> HasStandardTermsOptions { get; set; }
         public IList<SelectListItem> HasNegotiateOptions { get; set; }
         public IList<SelectListItem> HasNoAgreementOptions { get; set; }
@@ -796,8 +849,10 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasIndustrialSoftwareOptions { get; set; }
         public IList<SelectListItem> HasComputerSoftwareOptions { get; set; }
         public IList<SelectListItem> HasFormalProceduresOptions { get; set; }
+        public IList<SelectListItem> HasBusinessChangesOptions { get; set; }        
 
         public string ProcedureManagedDetails { get; set; }
+        public string BusinessChangesDetails { get; set; }        
         public string LegalCouncelDetails { get; set; }
         public string ComputerSoftwareActivityDetails { get; set; }
         public int DeductableAmount { get; set; }
@@ -806,6 +861,8 @@ namespace DealEngine.WebUI.Models
         public string EngageConsortiumDetails { get; set; }
         public string SignificantShareholderDetails { get; set; }        
         public string AssociatedPracticeDetails { get; set; }
+        public string MortageDetails { get; set; }
+        
         public string EngageDetails { get; set; }
         public string AluminiumDetails { get; set; }
         public string DisciplinaryDetails { get; set; }
@@ -866,7 +923,12 @@ namespace DealEngine.WebUI.Models
 
         public int ShareholderTotal { get; set; }
         public int AssetTotal { get; set; }
+        public int LiabilityTotal { get; set; }
+        public int AssetCurrent { get; set; }
+        public int LiabilityCurrent{ get; set; }
+        public int AfterTaxNumber { get; set; }
         public int DebtTotal { get; set; }
+
         public DateTime FormDate { get; set; }
         public string CompanyNameDetails { get; set; }
         public string CircumstanceDetails { get; set; }
@@ -945,8 +1007,23 @@ namespace DealEngine.WebUI.Models
         public ProjectViewModel(ClientInformationSheet clientInformationSheet)
         {
             BusinessContracts = GetBusinessContracts(clientInformationSheet);
+            Territories = GetTerritories(clientInformationSheet);
             ContractTypeOptions = GetContractType();
             ResponsibilityOptions = GetResponsibilityOptions();
+        }
+
+        private IList<SelectListItem> GetTerritories(ClientInformationSheet clientInformationSheet)
+        {
+            Territories = new List<SelectListItem>();
+            foreach(var territory in clientInformationSheet.Programme.BaseProgramme.TerritoryTemplates)
+            {
+                Territories.Add(new SelectListItem
+                {
+                    Text = territory.Location,
+                    Value = territory.Location
+                });
+            }
+            return Territories;
         }
 
         private IList<BusinessContract> GetBusinessContracts(ClientInformationSheet clientInformationSheet)
@@ -1008,8 +1085,10 @@ namespace DealEngine.WebUI.Models
             };
         }
         public IList<BusinessContract> BusinessContracts { get; set; }
+        public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> ContractTypeOptions { get; set; }
         public IList<SelectListItem> ResponsibilityOptions { get; set; }
+        public string MajorResponsibilities { get; set; }
         public string ProjectDescription { get; set; }
         public string Fees { get; set; }
         public string Year { get; set; }

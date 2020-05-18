@@ -77,23 +77,169 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit250k = 250000;
-            decimal TermPremium250k = 0m;
-            decimal TermBrokerage250k = 0m;
 
+            //terms hardcoded 
+            #region terms
+            int TermLimit300k = 300000;
+            decimal TermPremiumDEFAULT = 0m;
+            decimal TermBrokerageDEFAULT = 0m;
             int TermExcess = 0;
             decimal feeincome = 0;
 
-            //TermPremium250k = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremium250k;
-            termsl250klimitoption.Excess = TermExcess;
-            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerage250k;
-            termsl250klimitoption.DateDeleted = null;
-            termsl250klimitoption.DeletedBy = null;
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl300klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit300k, TermExcess);
+            termsl300klimitoption.TermLimit = TermLimit300k;
+            termsl300klimitoption.Premium = TermPremiumDEFAULT;
+            termsl300klimitoption.Excess = TermExcess;
+            termsl300klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl300klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl300klimitoption.DateDeleted = null;
+            termsl300klimitoption.DeletedBy = null;
 
+            int TermLimit500k = 500000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess);
+            termsl500klimitoption.TermLimit = TermLimit500k;
+            termsl500klimitoption.Premium = TermPremiumDEFAULT;
+            termsl500klimitoption.Excess = TermExcess;
+            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl500klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl500klimitoption.DateDeleted = null;
+            termsl500klimitoption.DeletedBy = null;
+            
+            int TermLimit750k = 750000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl750klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit750k, TermExcess);
+            termsl750klimitoption.TermLimit = TermLimit750k;
+            termsl750klimitoption.Premium = TermPremiumDEFAULT;
+            termsl750klimitoption.Excess = TermExcess;
+            termsl750klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl750klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl750klimitoption.DateDeleted = null;
+            termsl750klimitoption.DeletedBy = null;
+            
+            int TermLimit1000k = 1000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl1000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1000k, TermExcess);
+            termsl1000klimitoption.TermLimit = TermLimit1000k;
+            termsl1000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl1000klimitoption.Excess = TermExcess;
+            termsl1000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl1000klimitoption.DateDeleted = null;
+            termsl1000klimitoption.DeletedBy = null;
+            
+            int TermLimit1500k = 1500000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl1500klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1500k, TermExcess);
+            termsl1500klimitoption.TermLimit = TermLimit1500k;
+            termsl1500klimitoption.Premium = TermPremiumDEFAULT;
+            termsl1500klimitoption.Excess = TermExcess;
+            termsl1500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1500klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl1500klimitoption.DateDeleted = null;
+            termsl1500klimitoption.DeletedBy = null;
+            
+            int TermLimit2000k = 2000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl2000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2000k, TermExcess);
+            termsl2000klimitoption.TermLimit = TermLimit2000k;
+            termsl2000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl2000klimitoption.Excess = TermExcess;
+            termsl2000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl2000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl2000klimitoption.DateDeleted = null;
+            termsl2000klimitoption.DeletedBy = null;
+
+            int TermLimit2500k = 2500000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl2500klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2500k, TermExcess);
+            termsl2500klimitoption.TermLimit = TermLimit2500k;
+            termsl2500klimitoption.Premium = TermPremiumDEFAULT;
+            termsl2500klimitoption.Excess = TermExcess;
+            termsl2500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl2500klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl2500klimitoption.DateDeleted = null;
+            termsl2500klimitoption.DeletedBy = null;
+
+            int TermLimit3000k = 3000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl3000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit300k, TermExcess);
+            termsl3000klimitoption.TermLimit = TermLimit3000k;
+            termsl3000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl3000klimitoption.Excess = TermExcess;
+            termsl3000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl3000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl3000klimitoption.DateDeleted = null;
+            termsl3000klimitoption.DeletedBy = null;
+            
+            int TermLimit4000k = 4000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl4000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4000k, TermExcess);
+            termsl4000klimitoption.TermLimit = TermLimit4000k;
+            termsl4000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl4000klimitoption.Excess = TermExcess;
+            termsl4000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl4000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl4000klimitoption.DateDeleted = null;
+            termsl4000klimitoption.DeletedBy = null;
+            
+            int TermLimit5000k = 5000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl5000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5000k, TermExcess);
+            termsl5000klimitoption.TermLimit = TermLimit5000k;
+            termsl5000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl5000klimitoption.Excess = TermExcess;
+            termsl5000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl5000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl5000klimitoption.DateDeleted = null;
+            termsl5000klimitoption.DeletedBy = null;
+            
+            int TermLimit6000k = 6000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl6000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit6000k, TermExcess);
+            termsl6000klimitoption.TermLimit = TermLimit6000k;
+            termsl6000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl6000klimitoption.Excess = TermExcess;
+            termsl6000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl6000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl6000klimitoption.DateDeleted = null;
+            termsl6000klimitoption.DeletedBy = null;
+            
+            int TermLimit8000k = 8000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl8000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit8000k, TermExcess);
+            termsl8000klimitoption.TermLimit = TermLimit8000k;
+            termsl8000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl8000klimitoption.Excess = TermExcess;
+            termsl8000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl8000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl8000klimitoption.DateDeleted = null;
+            termsl8000klimitoption.DeletedBy = null;
+            
+            int TermLimit10000k = 10000000;
+
+            //TermPremiumDEFAULT = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            ClientAgreementTerm termsl10000klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit10000k, TermExcess);
+            termsl10000klimitoption.TermLimit = TermLimit10000k;
+            termsl10000klimitoption.Premium = TermPremiumDEFAULT;
+            termsl10000klimitoption.Excess = TermExcess;
+            termsl10000klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl10000klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl10000klimitoption.DateDeleted = null;
+            termsl10000klimitoption.DeletedBy = null;           
+            #endregion
 
             ////Referral points per agreement
 

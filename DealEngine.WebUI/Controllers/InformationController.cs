@@ -14,6 +14,7 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
+using DealEngine.WebUI.Models.Agreement;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -259,6 +260,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
 
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -355,12 +357,12 @@ namespace DealEngine.WebUI.Controllers
 
                 model.Claims = claims;
 
-                var businessContracts = new List<BusinessContractViewModel>();
-                for (var i = 0; i < sheet.BusinessContracts.Count; i++)
-                {
-                    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
-                }
-                model.BusinessContracts = businessContracts;
+                //var businessContracts = new List<BusinessContractViewModel>();
+                //for (var i = 0; i < sheet.BusinessContracts.Count; i++)
+                //{
+                //    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
+                //}
+                //model.BusinessContracts = businessContracts;
 
                 var interestedParties = new List<OrganisationViewModel>();
 
@@ -750,6 +752,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
 
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -1028,10 +1031,10 @@ namespace DealEngine.WebUI.Controllers
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
-                model.Status = sheet.Status;
-                List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
-                informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-                model.ClientInformationAnswers = informationAnswers;
+                //model.Status = sheet.Status;
+                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }
@@ -1318,8 +1321,9 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                user = await CurrentUser();
+                user = await CurrentUser();                
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
+                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 var sheet = clientProgramme.InformationSheet;
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
@@ -1331,7 +1335,7 @@ namespace DealEngine.WebUI.Controllers
                         await uow.Commit();
                     }
                 }
-
+                            
                 if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                 {
                     if (sheet.Status == "Started")
@@ -1347,6 +1351,8 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
+                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);                            
+                            await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                         }
                     }
                 }
@@ -1587,167 +1593,167 @@ namespace DealEngine.WebUI.Controllers
             return await RedirectToLocal();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateInformationSheet(IFormCollection form)
-        {
-            User currentUser = null;
-            //Add User, Organisation, Information Sheet, Quick Term saving process here
-            string organisationName = null;
-            string ouname = null;
-            string orgTypeName = null;
+        //[HttpPost]
+        //public async Task<IActionResult> CreateInformationSheet(IFormCollection form)
+        //{
+        //    User currentUser = null;
+        //    //Add User, Organisation, Information Sheet, Quick Term saving process here
+        //    string organisationName = null;
+        //    string ouname = null;
+        //    string orgTypeName = null;
 
-            try
-            {
-                var orgType = form["cgradioselect"];
-                var orgName = form["fname"].ToList().First();
-                var firstName = form["fname"].ToList().Last();
-                var lastName = form["lname"];
-                var mobilePhone = form["mphon"];
-                var programmeList = await _programmeService.GetAllProgrammes();
-                var programme = programmeList.LastOrDefault();
-                var email = form["email"];
-                var membershipNumber = form["memno"];
+        //    try
+        //    {
+        //        var orgType = form["cgradioselect"];
+        //        var orgName = form["fname"].ToList().First();
+        //        var firstName = form["fname"].ToList().Last();
+        //        var lastName = form["lname"];
+        //        var mobilePhone = form["mphon"];
+        //        var programmeList = await _programmeService.GetAllProgrammes();
+        //        var programme = programmeList.LastOrDefault();
+        //        var email = form["email"];
+        //        var membershipNumber = form["memno"];
 
-                currentUser = await CurrentUser();
-                if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
-                {
-                    organisationName = firstName + " " + lastName;
-                    ouname = "Home";
-                }
-                else
-                {
-                    organisationName = orgName;
-                    ouname = "Head Office";
-                }
-                switch (orgType)
-                {
-                    case "Private":
-                        {
-                            orgTypeName = "Person - Individual";
-                            break;
-                        }
-                    case "Company":
-                        {
-                            orgTypeName = "Corporation – Limited liability";
-                            break;
-                        }
-                    case "Trust":
-                        {
-                            orgTypeName = "Trust";
-                            break;
-                        }
-                    case "Partnership":
-                        {
-                            orgTypeName = "Partnership";
-                            break;
-                        }
-                    default:
-                        {
-                            throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
-                        }
-                }
-                string phonenumber = null;
+        //        currentUser = await CurrentUser();
+        //        if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
+        //        {
+        //            organisationName = firstName + " " + lastName;
+        //            ouname = "Home";
+        //        }
+        //        else
+        //        {
+        //            organisationName = orgName;
+        //            ouname = "Head Office";
+        //        }
+        //        switch (orgType)
+        //        {
+        //            case "Private":
+        //                {
+        //                    orgTypeName = "Person - Individual";
+        //                    break;
+        //                }
+        //            case "Company":
+        //                {
+        //                    orgTypeName = "Corporation – Limited liability";
+        //                    break;
+        //                }
+        //            case "Trust":
+        //                {
+        //                    orgTypeName = "Trust";
+        //                    break;
+        //                }
+        //            case "Partnership":
+        //                {
+        //                    orgTypeName = "Partnership";
+        //                    break;
+        //                }
+        //            default:
+        //                {
+        //                    throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
+        //                }
+        //        }
+        //        string phonenumber = null;
 
-                phonenumber = mobilePhone;
+        //        phonenumber = mobilePhone;
 
-                OrganisationType organisationType = null;
-                organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
-                if (organisationType == null)
-                {
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
-                }
-                Organisation organisation = null;
-                organisation = await _organisationService.GetOrganisationByEmail(email);
-                organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
-                organisation.Phone = phonenumber;
-                organisation.Email = email;
-                await _organisationService.CreateNewOrganisation(organisation);
-                User user = null;
-                User user2 = null;
+        //        OrganisationType organisationType = null;
+        //        organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+        //        if (organisationType == null)
+        //        {
+        //            organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
+        //        }
+        //        Organisation organisation = null;
+        //        organisation = await _organisationService.GetOrganisationByEmail(email);
+        //        organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+        //        organisation.Phone = phonenumber;
+        //        organisation.Email = email;
+        //        await _organisationService.CreateNewOrganisation(organisation);
+        //        User user = null;
+        //        User user2 = null;
 
-                try
-                {
-                    user = await _userService.GetUserByEmail(email);
-                    if (!user.Organisations.Contains(organisation))
-                        user.Organisations.Add(organisation);
-                    var username = user.FirstName;
-                }
-                catch (Exception ex)
-                {
-                    string username = firstName + "_" + lastName;
+        //        try
+        //        {
+        //            user = await _userService.GetUserByEmail(email);
+        //            if (!user.Organisations.Contains(organisation))
+        //                user.Organisations.Add(organisation);
+        //            var username = user.FirstName;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            string username = firstName + "_" + lastName;
 
-                    try
-                    {
-                        user2 = await _userService.GetUser(username);
+        //            try
+        //            {
+        //                user2 = await _userService.GetUser(username);
 
-                        if (user2 != null && user == user2)
-                        {
-                            Random random = new Random();
-                            int randomNumber = random.Next(10, 99);
-                            username = username + randomNumber.ToString();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // create personal organisation
-                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
-                        //_organisationService.CreateNewOrganisation (personalOrganisation);
-                        // create user object
-                        user = new User(null, Guid.NewGuid(), username);
-                        user.FirstName = firstName;
-                        user.LastName = lastName;
-                        user.FullName = firstName + " " + lastName;
-                        user.Email = email;
-                        user.MobilePhone = mobilePhone;
-                        user.Password = "";
-                        //user.Organisations.Add (personalOrganisation);
-                        // save the new user
-                        // creates a new user in the system along with a default organisation
-                        await _userService.Create(user);
-                        //Console.WriteLine ("Created User " + user.FullName);
-                    }
-                }
-                finally
-                {
-                    if (!user.Organisations.Contains(organisation))
-                        user.Organisations.Add(organisation);
+        //                if (user2 != null && user == user2)
+        //                {
+        //                    Random random = new Random();
+        //                    int randomNumber = random.Next(10, 99);
+        //                    username = username + randomNumber.ToString();
+        //                }
+        //            }
+        //            catch (Exception)
+        //            {
+        //                // create personal organisation
+        //                //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
+        //                //_organisationService.CreateNewOrganisation (personalOrganisation);
+        //                // create user object
+        //                user = new User(null, Guid.NewGuid(), username);
+        //                user.FirstName = firstName;
+        //                user.LastName = lastName;
+        //                user.FullName = firstName + " " + lastName;
+        //                user.Email = email;
+        //                user.MobilePhone = mobilePhone;
+        //                user.Password = "";
+        //                //user.Organisations.Add (personalOrganisation);
+        //                // save the new user
+        //                // creates a new user in the system along with a default organisation
+        //                await _userService.Create(user);
+        //                //Console.WriteLine ("Created User " + user.FullName);
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            if (!user.Organisations.Contains(organisation))
+        //                user.Organisations.Add(organisation);
 
-                    user.SetPrimaryOrganisation(organisation);
-                    await _userService.Update(user);
+        //            user.SetPrimaryOrganisation(organisation);
+        //            await _userService.Update(user);
 
-                    var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-                    var reference = await _referenceService.GetLatestReferenceId();
-                    var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-                    await _referenceService.CreateClientInformationReference(sheet);
+        //            var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+        //            var reference = await _referenceService.GetLatestReferenceId();
+        //            var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+        //            await _referenceService.CreateClientInformationReference(sheet);
 
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
-                        organisation.OrganisationalUnits.Add(ou);
-                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                        if (!string.IsNullOrWhiteSpace(membershipNumber))
-                        {
-                            clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                        }
-                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
-                        try
-                        {
-                            await uow.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception(ex.Message);
-                        }
-                    }
-                }
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //            using (var uow = _unitOfWork.BeginUnitOfWork())
+        //            {
+        //                OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+        //                organisation.OrganisationalUnits.Add(ou);
+        //                clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+        //                if (!string.IsNullOrWhiteSpace(membershipNumber))
+        //                {
+        //                    clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+        //                }
+        //                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+        //                try
+        //                {
+        //                    await uow.Commit();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    throw new Exception(ex.Message);
+        //                }
+        //            }
+        //        }
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         // Important Notices - CK Editor
 

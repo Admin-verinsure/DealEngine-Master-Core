@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class CEASELUWModule : IUnderwritingModule
+    public class NZFSGPLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public CEASELUWModule()
+        public NZFSGPLUWModule()
         {
-            Name = "CEAS_EL";
+            Name = "NZFSG_PL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -33,17 +33,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm elterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm plterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null))
                 {
-                    elterm.Delete(underwritingUser);
+                    plterm.Delete(underwritingUser);
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "el250klimitminpremium", "el500klimitminpremium", "el1millimitminpremium",
-            //    "el250klimitunder6employeerate", "el500klimitunder6employeerate", "el1millimitunder6employeerate", "el250klimit6to10employeerate", "el500klimit6to10employeerate",
-            //    "el1millimit6to10employeerate", "el250klimitover10employeerate", "el500klimitover10employeerate", "el1millimitover10employeerate");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitpremium", "pl2millimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -62,51 +60,49 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit250k = 250000;
-            decimal TermPremiumDEFAULT = 0m;
-            decimal TermBrokerageDEFAULT = 0m;
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+                        {
+                            strretrodate = preRenewOrRefData.GLRetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "GL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
+            int TermLimit10mil = 10000000;
+            decimal TermPremium10mil = 0m;
+            decimal TermBrokerage10mil = 0m;
+
             int TermExcess = 0;
-            TermExcess = 500;
+            TermExcess = 250;
 
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremiumDEFAULT;
-            termsl250klimitoption.Excess = TermExcess;
-            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl250klimitoption.DateDeleted = null;
-            termsl250klimitoption.DeletedBy = null;
+            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
 
-            int TermLimit500k = 500000;
-            int TermExcess1k = 1000;
+            ClientAgreementTerm termpl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit10mil, TermExcess);
+            termpl10millimitoption.TermLimit = TermLimit10mil;
+            termpl10millimitoption.Premium = TermPremium10mil;
+            termpl10millimitoption.Excess = TermExcess;
+            termpl10millimitoption.BrokerageRate = agreement.Brokerage;
+            termpl10millimitoption.Brokerage = TermBrokerage10mil;
+            termpl10millimitoption.DateDeleted = null;
+            termpl10millimitoption.DeletedBy = null;
 
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit500k, TermExcess1k);
-            termsl500klimitoption.TermLimit = TermLimit500k;
-            termsl500klimitoption.Premium = TermPremiumDEFAULT;
-            termsl500klimitoption.Excess = TermExcess1k;
-            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl500klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl500klimitoption.DateDeleted = null;
-            termsl500klimitoption.DeletedBy = null;
-
-            int TermLimit1000k = 1000000;
-            int TermExcess5k = 5000;
-
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl000klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit1000k, TermExcess5k);
-            termsl000klimitoption.TermLimit = TermLimit1000k;
-            termsl000klimitoption.Premium = TermPremiumDEFAULT;
-            termsl000klimitoption.Excess = TermExcess5k;
-            termsl000klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl000klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl000klimitoption.DateDeleted = null;
-            termsl000klimitoption.DeletedBy = null;
-
-
-
-            ////Referral points per agreement
+            //Referral points per agreement
 
 
             //Update agreement status
@@ -119,8 +115,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            agreement.ProfessionalBusiness = "";
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
 
-            string auditLogDetail = "CEAS EL UW created/modified";
+            string auditLogDetail = "NZFSG PL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -193,9 +192,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        
+
 
 
     }
 }
-

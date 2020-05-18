@@ -187,7 +187,7 @@ namespace DealEngine.Services.Impl
         }
 
 
-        public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
+        public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {
             var user = await _userService.GetUserByEmail(recipent);
             List<KeyValuePair<string, string>> mergeFields;
@@ -208,7 +208,7 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
             }
-            string systememailsubject = "Issue to Broker Email";
+            string systememailsubject = "Issue to Broker Email (reference: " + clientInformationSheet.ReferenceId + ")";
             string systememailbody = System.Net.WebUtility.HtmlDecode(EmailContent);
             foreach (KeyValuePair<string, string> field in mergeFields)
             {
@@ -218,6 +218,7 @@ namespace DealEngine.Services.Impl
 
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
+            email.ReplyTo(sender.Email);
             email.WithSubject(systememailsubject);
             email.WithBody(systememailbody);
             email.UseHtmlBody(true);          

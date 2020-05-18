@@ -400,6 +400,27 @@
         }
     }
 
+    function RoleDataOnSubmit(ElementId, Form) {
+        var element = document.getElementById(ElementId);
+        var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
+        var multiElement = element.selectedOptions.length;
+        if (multiElement == 0) {
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            var accordianId = Form.getAttribute('data-accordianId');
+            $("[id='Roles']").trigger("click");
+            window.alert("Roles not selected");
+            SetCurrentTab(tabId);
+            element.scrollIntoView();
+            throw accordianId + " incomplete";
+        } else {
+            var tabNo = parseInt(tabId.substring(tabId.length - 1)) + 1;
+            var nextTab = tabId.substring(0, tabId.length - 1);
+            SetCurrentTab(nextTab + tabNo);
+        }
+    }
+
     function RevenueDataOnSubmit(ElementId, Form) {
         var element = document.getElementById(ElementId);
         var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
@@ -411,17 +432,32 @@
             totalPercentage += value;
         }
         if (totalPercentage != 100) {
-            tableElement.classList.remove("is-valid");
-            tableElement.classList.add("is-invalid");
-            event.preventDefault();
-            event.stopPropagation();
-            $("#more").trigger("click");
-            var accordianId = Form.getAttribute('data-accordianId');
-            $("[id='Fee Income / Activities']").trigger("click");
-            window.alert("Activities or Territories percentage calculation does not equal to 100%");
-            SetCurrentTab(tabId);
-            element.scrollIntoView();
-            throw accordianId + " incomplete";
+            try {
+                tableElement.classList.remove("is-valid");
+                tableElement.classList.add("is-invalid");
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                var accordianId = Form.getAttribute('data-accordianId');
+                $("[id='Fee Income / Activities']").trigger("click");
+                window.alert("Activities or Territories percentage calculation does not equal to 100%");
+                SetCurrentTab(tabId);
+                element.scrollIntoView();
+                throw accordianId + " incomplete";
+            }
+            catch (ex) {
+                //assume the drop down is empty so divert back to income
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                var accordianId = Form.getAttribute('data-accordianId');
+                $("[id='Fee Income / Activities']").trigger("click");
+                window.alert("Activities or Territories not selected");
+                SetCurrentTab(tabId);
+                element.scrollIntoView();
+                throw accordianId + " incomplete";
+            }
+
         }
         else {
             var tabNo = parseInt(tabId.substring(tabId.length-1))+1;

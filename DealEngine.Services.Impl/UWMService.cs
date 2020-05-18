@@ -146,6 +146,15 @@ namespace DealEngine.Services.Impl
                 new DANZEDUWModule(),
                 new DANZELUWModule(),
                 new DANZCLUWModule(),
+                new NZFSGPIUWModule(),
+                new NZFSGPLUWModule(),
+                new NZFSGSLUWModule(),
+                new NZFSGDOUWModule(),
+                new NZFSGEDUWModule(),
+                new NZFSGELUWModule(),
+                new NZFSGCLUWModule(),
+                new NZFSGFIDUWModule(),
+                new NZFSGLPDUWModule(),
 
             };
             return modules;

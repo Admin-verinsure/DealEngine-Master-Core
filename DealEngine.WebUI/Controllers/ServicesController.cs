@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Domain.Entities;
@@ -29,18 +31,18 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationalUnitService _organisationalUnitService;
         ILocationService _locationService;
         IMapperSession<WaterLocation> _waterLocationRepository;
-        IMapperSession<Boat> _boatRepository;        
+        IMapperSession<Boat> _boatRepository;
         IBoatUseService _boatUseService;
         IVehicleService _vehicleService;
-        IOrganisationService _organisationService;        
-        IMapperSession<Building> _buildingRepository;              
+        IOrganisationService _organisationService;
+        IMapperSession<Building> _buildingRepository;
         IMapperSession<BusinessInterruption> _businessInterruptionRepository;
-        IMapperSession<MaterialDamage> _materialDamageRepository;        
+        IMapperSession<MaterialDamage> _materialDamageRepository;
         IClaimNotificationService _claimNotificationService;
-        IProductService _productService;        
+        IProductService _productService;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
-        IUnitOfWork _unitOfWork;        
+        IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IEmailService _emailService;
         IAppSettingService _appSettingService;
@@ -56,27 +58,27 @@ namespace DealEngine.WebUI.Controllers
             ILogger<ServicesController> logger,
             IApplicationLoggingService applicationLoggingService,
             IBusinessContractService businessContractService,
-            IUserService userService, 
-            IClientAgreementService clientAgreementService, 
-            IAppSettingService appSettingService,             
-            IClientInformationService clientInformationService,            
-            IOrganisationalUnitService organisationalUnitService,            
+            IUserService userService,
+            IClientAgreementService clientAgreementService,
+            IAppSettingService appSettingService,
+            IClientInformationService clientInformationService,
+            IOrganisationalUnitService organisationalUnitService,
             ILocationService locationService,
-            IMapperSession<WaterLocation> waterLocationRepository, 
-            IMapperSession<Building> buildingRepository, 
+            IMapperSession<WaterLocation> waterLocationRepository,
+            IMapperSession<Building> buildingRepository,
             IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository,
             IClaimNotificationService claimNotificationService,
             IProductService productService,
-            IVehicleService vehicleService, 
+            IVehicleService vehicleService,
             IMapperSession<Boat> boatRepository,
-            IOrganisationService organisationService, 
-            IBoatUseService boatUseService, 
-            IProgrammeService programeService, 
-            IOrganisationTypeService organisationTypeService,             
-            IEmailService emailService,             
-            IUnitOfWork unitOfWork, 
-            IInsuranceAttributeService insuranceAttributeService, 
+            IOrganisationService organisationService,
+            IBoatUseService boatUseService,
+            IProgrammeService programeService,
+            IOrganisationTypeService organisationTypeService,
+            IEmailService emailService,
+            IUnitOfWork unitOfWork,
+            IInsuranceAttributeService insuranceAttributeService,
             IReferenceService referenceService
             )
 
@@ -86,13 +88,13 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _clientAgreementService = clientAgreementService;
-            _appSettingService = appSettingService;            
+            _appSettingService = appSettingService;
             _clientInformationService = clientInformationService;
-            _organisationalUnitService = organisationalUnitService;            
+            _organisationalUnitService = organisationalUnitService;
             _vehicleService = vehicleService;
             _locationService = locationService;
             _waterLocationRepository = waterLocationRepository;
-            _boatRepository = boatRepository;            
+            _boatRepository = boatRepository;
             _organisationService = organisationService;
             _boatUseService = boatUseService;
             _buildingRepository = buildingRepository;
@@ -102,9 +104,9 @@ namespace DealEngine.WebUI.Controllers
             _productService = productService;
             _programmeService = programeService;
             _organisationTypeService = organisationTypeService;
-            _unitOfWork = unitOfWork;            
+            _unitOfWork = unitOfWork;
             _referenceService = referenceService;
-            _emailService = emailService;            
+            _emailService = emailService;
             _insuranceAttributeService = insuranceAttributeService;
             _businessContractService = businessContractService;
 
@@ -144,7 +146,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -191,7 +193,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }                       
+            }
         }
 
         [HttpPost]
@@ -217,7 +219,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -304,7 +306,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -325,7 +327,7 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
-                
+
                 if (_search)
                 {
                     switch (searchOper)
@@ -394,10 +396,10 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                 foreach ( var org in sheet.Organisation.Where(o => o.Removed == true))
-                        {
-                            organisations.Add(org);
-                        }
+                foreach (var org in sheet.Organisation.Where(o => o.Removed == true))
+                {
+                    organisations.Add(org);
+                }
 
                 if (_search)
                 {
@@ -442,11 +444,11 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
-        
+
         [HttpGet]
         public async Task<IActionResult> GetPminzNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
@@ -467,7 +469,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     organisations.Add(org);
                 }
-                
+
 
                 if (_search)
                 {
@@ -584,7 +586,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -608,7 +610,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -745,13 +747,13 @@ namespace DealEngine.WebUI.Controllers
                 }
                 model.OrganisationalUnitId = ou.Id;
 
-                return Json(model);                
+                return Json(model);
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -887,9 +889,9 @@ namespace DealEngine.WebUI.Controllers
                     location = await _locationService.GetLocationById(Guid.Parse(id));
                 }
                 var type = location.GetType();
-                foreach(var keyField in locationForm)
+                foreach (var keyField in locationForm)
                 {
-                    if(keyField != "LocationViewModel.LocationId")
+                    if (keyField != "LocationViewModel.LocationId")
                     {
                         var propertyName = keyField.Split('.').ToList();
                         var property = type.GetProperty(propertyName.LastOrDefault());
@@ -974,7 +976,7 @@ namespace DealEngine.WebUI.Controllers
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     org.Removed = status;
-                  
+
                     await uow.Commit();
                 }
 
@@ -1229,7 +1231,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1279,7 +1281,7 @@ namespace DealEngine.WebUI.Controllers
                 foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
                 {
                     model.Locations.Add(loc);
-                }                
+                }
 
                 return Json(model);
             }
@@ -1288,7 +1290,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         //removing this through new bootstrap
@@ -1360,7 +1362,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -1468,7 +1470,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1560,7 +1562,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1656,7 +1658,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -1783,7 +1785,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -1826,7 +1828,7 @@ namespace DealEngine.WebUI.Controllers
                     boat.OtherMarina = false;
 
                 }
-                if (model.SelectedBoatUse != null )
+                if (model.SelectedBoatUse != null)
                 {
 
                     List<string> boatuselist = new List<string>();
@@ -1844,7 +1846,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if (model.SelectedInterestedParty != null )
+                if (model.SelectedInterestedParty != null)
                 {
 
                     List<string> interestedpartylist = new List<string>();
@@ -1878,7 +1880,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -1904,7 +1906,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1992,7 +1994,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -2004,7 +2006,7 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                user = await CurrentUser(); 
+                user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
 
@@ -2081,7 +2083,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-                if(boat.BoatTrailer != null)
+                if (boat.BoatTrailer != null)
                 {
                     hasTrailer = true;
                 }
@@ -2091,7 +2093,7 @@ namespace DealEngine.WebUI.Controllers
                     boat.Removed = status;
                     await uow.Commit();
                 }
-                return Json(new { HasTrailer = hasTrailer, Success = true });                
+                return Json(new { HasTrailer = hasTrailer, Success = true });
             }
             catch (Exception ex)
             {
@@ -2124,7 +2126,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }           
+            }
         }
 
         [HttpPost]
@@ -2203,7 +2205,7 @@ namespace DealEngine.WebUI.Controllers
                 // get existing boat (if any)
                 if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                 {
-                     boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
+                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
                     if (boatUse == null)
                         boatUse = model.ToEntity(user);
                 }
@@ -2214,7 +2216,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model.UpdateEntity(boatUse);
 
-               
+
                 //if (model.BoatUseBoat != Guid.Empty)
                 //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
 
@@ -2238,7 +2240,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -2499,7 +2501,7 @@ namespace DealEngine.WebUI.Controllers
                         else
                         {
                             //var userList = await _userService.GetAllUsers();
-                           
+
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
@@ -2589,7 +2591,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -2653,7 +2655,7 @@ namespace DealEngine.WebUI.Controllers
 
                     User userdb = null;
                     Organisation organisation = null;
-                    if(model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                    if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                     {
                         organisation = await _organisationService.GetOrganisation(model.ID);
 
@@ -2675,13 +2677,16 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
 
-                        }else {
+                        }
+                        else
+                        {
 
-                        var userList = await _userService.GetAllUsers();
-                        userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
-                         }
+                            var userList = await _userService.GetAllUsers();
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                        }
 
-                    }catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                         if (orgTypeName == "Person - Individual")
@@ -2741,7 +2746,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                          
+
                             organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
                             organisation.Qualifications = model.Qualifications;
                             organisation.IsNZIAmember = model.IsNZIAmember;
@@ -2770,7 +2775,7 @@ namespace DealEngine.WebUI.Controllers
                             userdb.Organisations.Add(organisation);
                             sheet.Organisation.Add(organisation);
                             model.ID = organisation.Id;
-                                
+
                         }
                         await uow.Commit();
                     }
@@ -2787,7 +2792,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -3306,12 +3311,12 @@ namespace DealEngine.WebUI.Controllers
                     model.RegisteredStatus = org.RegisteredStatus;
                     model.Duration = org.Duration;
                     model.Qualifications = org.Qualifications;
-                   
+
                     if (org.DateofBirth != null)
                     {
                         model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
-                   
+
                     model.OrganisationTypeName = org.OrganisationType.Name;
                     model.AnswerSheetId = answerSheetId;
                 }
@@ -3473,7 +3478,7 @@ namespace DealEngine.WebUI.Controllers
                                         user.Email = model.Email;
                                 }
                             }
-                               
+
 
                             //var userList = await _userService.GetAllUsers();
                             //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
@@ -3495,7 +3500,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (organisation != null)
                         {
-                            
+
                             organisation.ChangeOrganisationName(organisationName);
                             organisation.Qualifications = model.Qualifications;
                             organisation.Type = model.Type;
@@ -3590,12 +3595,12 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
 
                     model.ID = partyID;
-                    if(userdb != null)
+                    if (userdb != null)
                     {
                         model.FirstName = userdb.FirstName;
                         model.LastName = userdb.LastName;
                     }
-                    
+
                     model.Email = org.Email;
                     model.Qualifications = org.Qualifications;
                     model.isaffiliation = org.IsAffiliation;
@@ -3619,7 +3624,7 @@ namespace DealEngine.WebUI.Controllers
                     model.DesignLicensed = org.DesignLicensed;
                     model.SiteLicensed = org.SiteLicensed;
                     model.Othercompanyname = org.OtherCompanyname;
-                    model.YearofPractice = org.YearofPractice;            
+                    model.YearofPractice = org.YearofPractice;
                     model.AnswerSheetId = answerSheetId;
                 }
                 else
@@ -3664,7 +3669,7 @@ namespace DealEngine.WebUI.Controllers
                         if (owneruser != null && owneruser.PrimaryOrganisation.Id == model.ID)
                             owneruser.Email = model.Email;
                     }
-                   
+
                     org.Email = model.Email;
                     org.ChangeOrganisationName(model.OrganisationName);
                     await uow.Commit();
@@ -3677,7 +3682,7 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-       
+
 
 
         [HttpPost]
@@ -3753,7 +3758,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-       
+
         [HttpPost]
         public async Task<IActionResult> AddNamedParty(OrganisationViewModel model)
         {
@@ -3825,7 +3830,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -3863,7 +3868,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ID = organisation.Id;
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    sheet.Organisation.Add(organisation);                    
+                    sheet.Organisation.Add(organisation);
                     await uow.Commit();
                 }
 
@@ -3969,71 +3974,71 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute);
-                    if (insuranceAttribute == null)
-                    {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, model.InsuranceAttribute);
-                    }
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute);
+                if (insuranceAttribute == null)
+                {
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, model.InsuranceAttribute);
+                }
 
-                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
-                    if (organisationType == null)
-                    {
-                        organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
-                    }
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+                if (organisationType == null)
+                {
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
+                }
 
-                    Organisation organisation = null;
-                    User userDb = null;
-                    //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
-                    //{
-                    organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
-                    if (organisation == null)
-                    {
-                        organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
-                        organisation.Phone = model.OrganisationPhone;
-                        organisation.Email = model.OrganisationEmail;
-                        await _organisationService.CreateNewOrganisation(organisation);
-                        organisation.InsuranceAttributes.Add(insuranceAttribute);
-                        insuranceAttribute.IAOrganisations.Add(organisation);
-                    }
-                    //}
+                Organisation organisation = null;
+                User userDb = null;
+                //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
+                //{
+                organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
+                if (organisation == null)
+                {
+                    organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
+                    organisation.Phone = model.OrganisationPhone;
+                    organisation.Email = model.OrganisationEmail;
+                    await _organisationService.CreateNewOrganisation(organisation);
+                    organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    insuranceAttribute.IAOrganisations.Add(organisation);
+                }
+                //}
 
-                    if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
+                if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
+                {
+                    try
                     {
-                        try
+                        if (model.IsAdmin.EqualsIgnoreCase("Yes"))
                         {
-                            if (model.IsAdmin.EqualsIgnoreCase("Yes"))
-                            {
-                                user = await _userService.GetUserByEmail(user.Email);
-                            }
-                            else
-                            {
-                                user = await _userService.GetUserByEmail(model.Email);
-                            }
+                            user = await _userService.GetUserByEmail(user.Email);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            user = new User(user, Guid.NewGuid(), model.FirstName);
-                            user.FirstName = model.FirstName;
-                            user.LastName = model.LastName;
-                            user.FullName = model.FirstName + " " + model.LastName;
-                            user.Email = model.Email;
-                            user.Phone = model.Phone;
-                            user.Password = "";
-                            await _userService.Create(user);
-
+                            user = await _userService.GetUserByEmail(model.Email);
                         }
-
                     }
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    catch (Exception ex)
                     {
-                        user.Organisations.Add(organisation);
-                        sheet.Organisation.Add(organisation);
-                        model.ID = organisation.Id;
+                        user = new User(user, Guid.NewGuid(), model.FirstName);
+                        user.FirstName = model.FirstName;
+                        user.LastName = model.LastName;
+                        user.FullName = model.FirstName + " " + model.LastName;
+                        user.Email = model.Email;
+                        user.Phone = model.Phone;
+                        user.Password = "";
+                        await _userService.Create(user);
 
-                        await uow.Commit();
                     }
-                    
+
+                }
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    user.Organisations.Add(organisation);
+                    sheet.Organisation.Add(organisation);
+                    model.ID = organisation.Id;
+
+                    await uow.Commit();
+                }
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -4137,7 +4142,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -4239,7 +4244,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -4252,7 +4257,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                ClientProgramme clientProgramme =  sheet.Programme;
+                ClientProgramme clientProgramme = sheet.Programme;
                 ClaimNotification claim = sheet.ClaimNotifications.FirstOrDefault(c => c.Id == claimId);
                 if (claim != null)
                 {
@@ -4261,7 +4266,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 var claimProducts = new List<Product>();
                 List<SelectListItem> ClaimProducts = new List<SelectListItem>();
-               
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -4319,7 +4324,7 @@ namespace DealEngine.WebUI.Controllers
 
                     ClaimNotification claim = claims[i];
                     JqGridRow row = new JqGridRow(claim.Id);
-                    if(claim.ClaimStatus != "Precautionary notification only")
+                    if (claim.ClaimStatus != "Precautionary notification only")
                     {
                         row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant);
                     }
@@ -4438,7 +4443,7 @@ namespace DealEngine.WebUI.Controllers
                         model.ID = organisation.Id;
                         await uow.Commit();
                     }
-                    
+
                 }
                 return Json(model);
             }
@@ -4782,7 +4787,7 @@ namespace DealEngine.WebUI.Controllers
 
                     BusinessContract businessContract = businessContracts[i];
                     JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.ContractTitle, businessContract.ProjectDescription, businessContract.Fees,  businessContract.Id);
+                    row.AddValues(businessContract.Id, businessContract.ContractTitle, businessContract.ProjectDescription, businessContract.Fees, businessContract.Id);
                     model.AddRow(row);
                 }
 
@@ -4807,7 +4812,7 @@ namespace DealEngine.WebUI.Controllers
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
             User currentUser = null;
-            bool hasAccount = true;            
+            bool hasAccount = true;
             string organisationName = null;
             string ouname = null;
             string orgTypeName = null;
@@ -4986,13 +4991,13 @@ namespace DealEngine.WebUI.Controllers
                                 //send out information sheet issue notification email
                                 await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                             }
-                            
+
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);                            
+                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                         }
-                        
+
                     }
                 }
                 else
@@ -5015,7 +5020,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         #endregion
@@ -5188,7 +5193,7 @@ namespace DealEngine.WebUI.Controllers
                                 if (!string.IsNullOrWhiteSpace(membershipNumber))
                                 {
                                     clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                                }                                
+                                }
 
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
@@ -5237,7 +5242,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -5274,8 +5279,10 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
     }
 }
+
+

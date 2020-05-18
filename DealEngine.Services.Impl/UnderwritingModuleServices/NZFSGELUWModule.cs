@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class CEASELUWModule : IUnderwritingModule
+    public class NZFSGELUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public CEASELUWModule()
+        public NZFSGELUWModule()
         {
-            Name = "CEAS_EL";
+            Name = "NZFSG_EL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -62,49 +62,48 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit250k = 250000;
-            decimal TermPremiumDEFAULT = 0m;
-            decimal TermBrokerageDEFAULT = 0m;
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.ELRetro))
+                        {
+                            strretrodate = preRenewOrRefData.ELRetro;
+                        }
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "EL")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        {
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                        }
+                    }
+                }
+            }
+
+            int TermLimit1mil = 1000000;
+            decimal TermPremium1mil = 0m;
+            decimal TermBrokerage1mil = 0m;
+
             int TermExcess = 0;
+
+            //Return terms based on the limit options
+
             TermExcess = 500;
 
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremiumDEFAULT;
-            termsl250klimitoption.Excess = TermExcess;
-            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl250klimitoption.DateDeleted = null;
-            termsl250klimitoption.DeletedBy = null;
-
-            int TermLimit500k = 500000;
-            int TermExcess1k = 1000;
-
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit500k, TermExcess1k);
-            termsl500klimitoption.TermLimit = TermLimit500k;
-            termsl500klimitoption.Premium = TermPremiumDEFAULT;
-            termsl500klimitoption.Excess = TermExcess1k;
-            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl500klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl500klimitoption.DateDeleted = null;
-            termsl500klimitoption.DeletedBy = null;
-
-            int TermLimit1000k = 1000000;
-            int TermExcess5k = 5000;
-
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl000klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit1000k, TermExcess5k);
-            termsl000klimitoption.TermLimit = TermLimit1000k;
-            termsl000klimitoption.Premium = TermPremiumDEFAULT;
-            termsl000klimitoption.Excess = TermExcess5k;
-            termsl000klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl000klimitoption.Brokerage = TermBrokerageDEFAULT;
-            termsl000klimitoption.DateDeleted = null;
-            termsl000klimitoption.DeletedBy = null;
-
-
+            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit1mil, TermExcess);
+            termsl1millimitoption.TermLimit = TermLimit1mil;
+            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Excess = TermExcess;
+            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1millimitoption.Brokerage = TermBrokerage1mil;
+            termsl1millimitoption.DateDeleted = null;
+            termsl1millimitoption.DeletedBy = null;
 
             ////Referral points per agreement
 
@@ -119,8 +118,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            agreement.ProfessionalBusiness = "";
+            string retrodate = agreement.InceptionDate.ToShortDateString();
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
-            string auditLogDetail = "CEAS EL UW created/modified";
+            string auditLogDetail = "NZFSG EL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -193,7 +201,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        
+
 
 
     }

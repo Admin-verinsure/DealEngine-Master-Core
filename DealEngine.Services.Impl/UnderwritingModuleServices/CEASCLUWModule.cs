@@ -64,35 +64,35 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.QuoteDate = DateTime.UtcNow;
 
 
-            int TermLimit250k = 250000;
-            decimal TermPremium250k = 0m;
-            decimal TermBrokerage250k = 0m;
-
-
-            int TermExcess = 0;
+            int TermLimit500k = 500000;
+            decimal TermPremiumDEFAULT = 0m;
+            decimal TermBrokerageDEFAULT = 0m;
+            int TermExcess = 2500;
             decimal feeincome = 0;
-
-
-            //Return terms based on the limit options
-
             TermExcess = 2500;
 
 
             //TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremium250k;
+            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit500k, TermExcess);
+            termsl500klimitoption.TermLimit = TermLimit500k;
+            termsl500klimitoption.Premium = TermPremiumDEFAULT;
+            termsl500klimitoption.Excess = TermExcess;
+            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl500klimitoption.Brokerage = TermBrokerageDEFAULT;
+            termsl500klimitoption.DateDeleted = null;
+            termsl500klimitoption.DeletedBy = null;
+
+            int TermLimit1000k = 1000000;
+
+            //TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
+            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit1000k, TermExcess);
+            termsl250klimitoption.TermLimit = TermLimit1000k;
+            termsl250klimitoption.Premium = TermPremiumDEFAULT;
             termsl250klimitoption.Excess = TermExcess;
             termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerage250k;
+            termsl250klimitoption.Brokerage = TermBrokerageDEFAULT;
             termsl250klimitoption.DateDeleted = null;
             termsl250klimitoption.DeletedBy = null;
-
-
-
-
-            ////Referral points per agreement
-
 
 
             //Update agreement status

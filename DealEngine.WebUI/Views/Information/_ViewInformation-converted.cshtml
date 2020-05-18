@@ -17,15 +17,13 @@
                     if (informationSection.Position == 1)
                     {
                         <div class="card">
-                            <button class="text-white" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="true" aria-controls="section_@informationSection.Position" style="height:70px;background-color:#00A8C8; text-align:left;">
-                                <div class="card-header" id="header_@informationSection.Position">
-                                    <h2 class="mb-0">
-                                        <i class="fa fa-circle-o"></i>
-                                        @informationSection.Name
-                                    </h2>
-                                </div>
-                            </button>
 
+                            <div class="card-header text-white" id="header_@informationSection.Position" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="true" aria-controls="section_@informationSection.Position" style="background-color:#00A8C8; text-align:left;">
+                                <h2 class="mb-0">
+                                    <i id="icon_@informationSection.Position" class="fa fa-angle-down fa-rotate-180"></i>
+                                    @informationSection.Name
+                                </h2>
+                            </div>
 
                             <div id="section_@informationSection.Position" class="collapse show" aria-labelledby="header_@informationSection.Position" data-parent="#accordionId">
                                 <div class="card-body">
@@ -37,14 +35,13 @@
                     else
                     {
                         <div class="card">
-                            <button class="collapsed text-white" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="false" aria-controls="section_@informationSection.Position" style="height:70px;background-color:#00A8C8; text-align:left;">
-                                <div class="card-header" id="header_@informationSection.Position">
-                                    <h2 class="mb-0">
-                                        <i class="fa fa-circle-o"></i>
-                                        @informationSection.Name
-                                    </h2>
-                                </div>
-                            </button>
+
+                            <div class="card-header text-white" id="header_@informationSection.Position" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="false" aria-controls="section_@informationSection.Position" style="background-color:#00A8C8; text-align:left;">
+                                <h2 class="mb-0">
+                                    <i id="icon_@informationSection.Position" class="fa fa-angle-down"></i>
+                                    @informationSection.Name
+                                </h2>
+                            </div>
 
                             <div id="section_@informationSection.Position" class="collapse" aria-labelledby="header_@informationSection.Position" data-parent="#accordionId">
                                 <div class="card-body">
@@ -56,30 +53,29 @@
 
                 }
             }
-            <div id="later" class="hidden">
-                @foreach (var informationSection in Model.Sections.OrderBy(s => s.Position).Where(s => s.Position > 5))
-                {
-                    @if (!string.IsNullOrWhiteSpace(informationSection.CustomView))
-                    {
-                        <div class="card">
-                            <button class="collapsed text-white" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="false" aria-controls="section_@informationSection.Position" style="height:70px;background-color:#00A8C8; text-align:left;">
-                                <div class="card-header" id="header_@informationSection.Position">
-                                    <h2 class="mb-0">
-                                        <i class="fa fa-circle-o"></i>
-                                        @informationSection.Name
-                                    </h2>
-                                </div>
-                            </button>
+    <div id="later" class="hidden">
+        @foreach (var informationSection in Model.Sections.OrderBy(s => s.Position).Where(s => s.Position > 5))
+        {
+            @if (!string.IsNullOrWhiteSpace(informationSection.CustomView))
+            {
+                <div class="card">
 
-                            <div id="section_@informationSection.Position" class="collapse" aria-labelledby="header_@informationSection.Position" data-parent="#accordionId">
-                                <div class="card-body">
-                                    @await Html.PartialAsync("PrefabSections/" + informationSection.CustomView, Model)
-                                </div>
-                            </div>
+                    <div class="card-header text-white" id="header_@informationSection.Position" type="button" data-toggle="collapse" data-target="#section_@informationSection.Position" aria-expanded="false" aria-controls="section_@informationSection.Position" style="background-color:#00A8C8; text-align:left;">
+                        <h2 class="mb-0">
+                            <i id="icon_@informationSection.Position" class="fa fa-angle-down"></i>
+                            @informationSection.Name
+                        </h2>
+                    </div>
+
+                    <div id="section_@informationSection.Position" class="collapse" aria-labelledby="header_@informationSection.Position" data-parent="#accordionId">
+                        <div class="card-body">
+                            @await Html.PartialAsync("PrefabSections/" + informationSection.CustomView, Model)
                         </div>
-                    }
-                }
-            </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
         }
         @*@else
         {

@@ -682,14 +682,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value != null)
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Length >= 2)
-                        {
-                            var result = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Substring(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value.Length - 2);
-                            if (result != "10")
-                            {
-                                agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
-                            }
-                        } else
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.ContractingServicesOptions").First().Value != "10")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
                         }

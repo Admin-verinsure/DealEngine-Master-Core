@@ -262,24 +262,32 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
                 model.ProgrammeName = programme.Name;
-                List<SelectListItem> usrlist = new List<SelectListItem>();
-                foreach (var org in programme.Parties)
-                {
-                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
 
-                    foreach (var userOrg in userList)
+                if (!string.IsNullOrEmpty(agreement.issuetobrokercomment))
+                {
+                    model.issuetobrokercomment = agreement.issuetobrokercomment;
+                    model.issuetobrokerby = agreement.issuetobrokerby;
+                    model.SelectedBroker = agreement.SelectedBroker;
+                    model.IssuedToBroker = agreement.IssuedToBroker;
+                }
+
+                var org = programme.BrokerContactUser.PrimaryOrganisation;
+
+                List<SelectListItem> usrlist = new List<SelectListItem>();
+                List<User> userList = await _userService.GetAllUserByOrganisation(org);
+
+                foreach (var userOrg in userList)
+                {
+                    usrlist.Add(new SelectListItem()
                     {
-                        usrlist.Add(new SelectListItem()
-                        {
-                            Selected = false, 
-                            Text = userOrg.FullName,
-                            Value = userOrg.Email,
-                        });
-                    }
+                        Selected = false,
+                        Text = userOrg.FullName,
+                        Value = userOrg.Email,
+                    });
                 }
                 usrlist.Add(new SelectListItem()
                 {
-                    Selected = false,
+                    Selected = true,
                     Text = programme.BrokerContactUser.FullName,
                     Value = programme.BrokerContactUser.Email,
                 });
@@ -322,7 +330,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (model.Content != null)
                 {
-                    await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement);
+                    await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement, user);
                 }
                 return RedirectToAction("ViewAcceptedAgreement", new { id = model.ClientProgrammeId });
             }
@@ -341,6 +349,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+                var sheet = agreement.ClientInformationSheet;
                 user = await CurrentUser();
                 var premium = 0.0m;
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -414,7 +423,10 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     if (agreement.Status != "Quoted")
+                    {
                         agreement.Status = "Quoted";
+                        await _milestoneService.CompleteMilestoneFor("Agreement Status – Referred", user, sheet);
+                    }
 
                     string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
@@ -1715,14 +1727,14 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                else if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                 {
                     model = new ViewAgreementViewModel();
                     model.ProgrammeStopAgreement = true;
                     var message = clientProgramme.BaseProgramme.SubsystemMessage;
                     if (string.IsNullOrWhiteSpace(message))
                     {
-                        message = "subsystem invoked";
+                        message = " TEMPLATE: subsystem invoked";
                     }
                     model.AgreementMessage = message;
 
@@ -1891,8 +1903,23 @@ namespace DealEngine.WebUI.Controllers
                         models.Add(model);
                     }
                     
+                }                               
+
+                try
+                {
+                    if (clientProgramme.BaseProgramme.StopDeclaration)
+                    {
+                        ViewAgreementViewModel model = new ViewAgreementViewModel();
+                        model.AgreementMessage = clientProgramme.BaseProgramme.StopAgreementMessage;
+                        return PartialView("_ViewStopAgreementMessage", model);
+                    }
                 }
-                
+                catch (Exception ex)
+                {
+                    clientProgramme.BaseProgramme.StopDeclaration = false;
+                    await _programmeService.Update(clientProgramme.BaseProgramme);
+                }
+
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 return PartialView("_ViewAgreementDeclaration", models);
@@ -2204,7 +2231,21 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientAgreementEndorsements = null;
                 }
 
-                ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Endorsements for " + insured.Name;
+                var availableEndorsementTitles = new List<SelectListItem>();
+
+                foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted != null).OrderBy(ce => ce.OrderNumber))
+                {
+
+                    availableEndorsementTitles.Add(new SelectListItem
+                        {
+                            Selected = false,
+                            Value =ce.Id.ToString(),
+                            Text = ce.Name
+                        });
+                }
+
+                model.AvailableEndorsementTitles = availableEndorsementTitles;
+                    ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Endorsements for " + insured.Name;
 
                 return View("ViewAgreementEndorsement", model);
             }
@@ -2241,10 +2282,7 @@ namespace DealEngine.WebUI.Controllers
                                 var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
                                 cev.Value = clientAgreement.Value;
                             }
-
-
                             await uow.Commit();
-
                         }
 
                     }
@@ -2255,6 +2293,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         clientAgreementendorsement.Name = model.EndorsementNameToAdd;
                         clientAgreementendorsement.Value = model.Content;
+                        clientAgreementendorsement.DateDeleted = null;
                         await uow.Commit();
 
                     }
@@ -2561,12 +2600,12 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 if (sendUser)
                                 {
-                                    await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, null, null);
+                                    await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
                                 }
                                 else
                                 {
-                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
-                                }                                
+                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                }
                             }
                         }
                     }

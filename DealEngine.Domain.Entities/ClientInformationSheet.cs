@@ -103,53 +103,6 @@ namespace DealEngine.Domain.Entities
 				Answers.Add (new ClientInformationAnswer (CreatedBy, itemName, value));
 		}
 
-		public virtual void AddVehicle (Vehicle vehicle)
-		{
-			Vehicles.Add (vehicle);
-		}
-
-        public virtual void AddBoat(Boat boat)
-        {
-            Boats.Add(boat);
-        }
-
-        public virtual void AddClaim(ClaimNotification claim)
-        {
-            ClaimNotifications.Add(claim);
-        }
-
-        public virtual void AddBuilding(Building building)
-        {
-            Buildings.Add(building);
-        }
-
-        public virtual void AddWaterLocation(WaterLocation waterLocation)
-        {
-            WaterLocations.Add(waterLocation);
-        }
-
-        public virtual void AddLocation (Location location)
-		{
-			Locations.Add (location);
-		}
-
-        public virtual void AddBoatUse(BoatUse boatUse)
-        {
-            BoatUses.Add(boatUse);
-        }
-
-        public virtual void AddClientInformationSheetAuditLog(AuditLog clientInformationSheetAuditLog)
-        {
-            ClientInformationSheetAuditLogs.Add(clientInformationSheetAuditLog);
-        }
-        public virtual void AddPreRenewOrRefData(PreRenewOrRefData preRenewOrRefData)
-        {
-            PreRenewOrRefDatas.Add(preRenewOrRefData);
-        }
-        public virtual void AddBusinessContract(BusinessContract businessContract)
-        {
-            BusinessContracts.Add(businessContract);
-        }
         public virtual ClientInformationSheet CloneForUpdate (User cloningUser, IMapper mapper)
 		{
 			ClientInformationSheet newSheet = new ClientInformationSheet (cloningUser, Owner, null);

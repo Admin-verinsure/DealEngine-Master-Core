@@ -10,6 +10,7 @@ namespace DealEngine.Services.Interfaces
         Task<User> GetUser (string username);
         Task<User> GetUserById (Guid userId);
         Task<User> GetUserByEmail (string email);
+        Task<User> GetUserByUserName(string userName);
         Task<List<User>> GetAllUsers ();
         Task ApplicationCreateUser(User user);
         Task Create(User user);
