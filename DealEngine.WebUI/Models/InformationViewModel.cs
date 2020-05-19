@@ -625,6 +625,7 @@ namespace DealEngine.WebUI.Models
     {
         public PIViewModel()
         {
+            HasCEASMembershipOptions = GetCEASMembershipSelectListOptions();
             HasIndustrialSoftwareOptions = GetSelectListOptions();
             HasEngageSoftwareOptions = GetSelectListOptions();
             HasSignificantShareholderOptions = GetSelectListOptions();
@@ -681,6 +682,33 @@ namespace DealEngine.WebUI.Models
             HasFormalProceduresOptions = GetSelectListOptions();
             HasMortageOptions = GetSelectListOptions();
             HasBusinessChangesOptions = GetSelectListOptions();            
+        }
+
+        private IList<SelectListItem> GetCEASMembershipSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "AGM Attendance Only", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "Standard Insurance Programme (SIP2)", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Incl. options on SIP1 for > deductibles (SIP2)", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "Incl. options on SIP2 for run-off (SIP3)", Value = "4"
+                }
+            };
         }
 
         private IList<SelectListItem> GetContractingServicesOptions()
@@ -814,7 +842,8 @@ namespace DealEngine.WebUI.Models
                     Text = "Don't know", Value = "3"
                 }
             };
-        }        
+        }
+        public IList<SelectListItem> HasCEASMembershipOptions { get; set; }        
         public IList<SelectListItem> ContractingServicesOptions { get; set; }
         public IList<SelectListItem> HasMortageOptions { get; set; }
         public IList<SelectListItem> HasStandardTermsOptions { get; set; }

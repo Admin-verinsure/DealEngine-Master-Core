@@ -43,15 +43,21 @@
         var dataItem = obj.getAttribute('data-item');
         var tag = obj.tagName;
         obj.classList.remove("is-up");
+
         //validation
-        if (tag == "SELECT") {
-            SelectValidation(obj, value);
-        } else if (tag == "INPUT") {
-            InputValidation(obj, value);
+        if (obj.hasAttribute('required')) {
+            if (tag == "SELECT") {
+                SelectValidation(obj, value);
+            } else if (tag == "INPUT") {
+                InputValidation(obj, value);
+            }
+            else if (tag == "TEXTAREA") {
+                InputValidation(obj, value);
+            }
+        } else {
+            obj.classList.remove("is-valid");
         }
-        else if (tag == "TEXTAREA") {
-            InputValidation(obj, value);
-        }
+
         //trigger
         TriggerHandler(obj, Name, value, dataRule, dataItem);
         try {
