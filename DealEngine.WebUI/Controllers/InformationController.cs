@@ -1030,7 +1030,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
-                //model.Status = sheet.Status;
+                model.Status = sheet.Status;
                 //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
                 //model.ClientInformationAnswers = informationAnswers;
@@ -1324,6 +1324,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
                 var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 var sheet = clientProgramme.InformationSheet;
+
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1333,11 +1334,8 @@ namespace DealEngine.WebUI.Controllers
                         sheet.SubmittedBy = user;
                         await uow.Commit();
                     }
-                }
-                            
-                if (sheet.Programme.BaseProgramme.ProgEnableEmail)
-                {
-                    if (sheet.Status == "Started")
+
+                    if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                     {
                         //sheet owner is null
                         await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
@@ -1350,9 +1348,10 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
-                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);                            
+                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
                             await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                         }
+
                     }
                 }
 
