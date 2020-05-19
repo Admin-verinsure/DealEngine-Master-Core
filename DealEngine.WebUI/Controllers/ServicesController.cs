@@ -20,10 +20,11 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-
+    [Authorize]
     public class ServicesController : BaseController
     {
         IClientInformationService _clientInformationService;

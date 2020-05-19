@@ -16,7 +16,6 @@ using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
 
 namespace DealEngine.WebUI.Controllers
 {

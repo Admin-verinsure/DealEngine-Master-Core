@@ -14,7 +14,6 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
-using DealEngine.WebUI.Models.Agreement;
 
 namespace DealEngine.WebUI.Controllers
 {

@@ -9,9 +9,11 @@ using DealEngine.WebUI.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
+    [Authorize]
     public class OrganisationController : BaseController
     {
         IOrganisationService _organisationService;
