@@ -113,6 +113,35 @@
                         </label>
                     </section>
 
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden " id="CommonEditAdvisorsec">
+                        <label class="label required">This Person has retired or deceased ?</label>
+                        <label class="input">
+                            <select id="CommonEditIsRetiredorDecieved" onchange="Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')" class="form-control b" name="IsRetiredorDecieved">
+                                <option selected="selected" value="">-- Select --</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </label>
+                        <p class="validationContainer" id="ValidateCommonEditIsRetiredorDecieved"></p>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
+                        <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                        <label class="input">
+                            <i></i>
+                            <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonEditDateofRetirement" type="text">
+                        </label>
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
+                        <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                        <label class="input">
+                            <i></i>
+                            <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonEditDateofDeceased" type="text">
+                        </label>
+                    </section>
+
+
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec ">
                         <label class="label required">First Name</label>
                         <label class="input">
@@ -250,6 +279,33 @@
 
                     </section>
 
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden " id="CommonAdvisorsec">
+                        <label class="label required">This Person has retired or deceased ?</label>
+                        <label class="input">
+                            <select id="CommonIsRetiredorDecieved" onchange="Isretiredselected('CommonIsRetiredorDecieved','Common')" class="form-control b" name="IsRetiredorDecieved">
+                                <option selected="selected" value="">-- Select --</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </label>
+                        <p class="validationContainer" id="ValidateCommonIsRetiredorDecieved"></p>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec">
+                        <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                        <label class="input">
+                            <i></i>
+                            <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofRetirement" type="text">
+                        </label>
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec">
+                        <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                        <label class="input">
+                            <i></i>
+                            <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofDeceased" type="text">
+                        </label>
+                    </section>
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
                         <label class="label required">First Name</label>
@@ -325,22 +381,22 @@
                     </section>
                     @if (@Model.Name == "PMINZ Programme")
                     {
-                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
-                    <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
-                    <label class="input">
-                        <i></i>
-                        <select id="CommonConfirmAAA" class="form-control b" name="ConfirmAAA">
-                            <option selected="selected" value="">-- Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                           
-                        </select>
-                    </label>
-                    <p class="validationContainer" id="ValidateCommonConfirmAAA"></p>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
+                            <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
+                            <label class="input">
+                                <i></i>
+                                <select id="CommonConfirmAAA" class="form-control b" name="ConfirmAAA">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
 
-                </section>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonConfirmAAA"></p>
+
+                        </section>
                     }
-                   
+
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <button onclick="ValidateCommonNamedParty(event,'Common')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                         <button onclick="ClearBoats(event,'#CommonNamedPartyTabs3','CommonNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
@@ -412,14 +468,25 @@
 
 <script type="text/javascript">
 
+    function Isretiredselected(TypeSelected,type) {
+        var typeSelected = document.getElementById(TypeSelected);
+        if (typeSelected.options[typeSelected.selectedIndex].value == "true") {
+            $("#" + type + "retirementsec").removeClass('hidden');
+        } else {
+           $("#" + type + "retirementsec").addClass('hidden');
+        }
+    }
 
     function CommonTypeSelected(TypeSelected,type) {
         var typeSelected = document.getElementById(TypeSelected);
         if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor") {
             $("#" + type + "Advisor").removeClass('hidden');
+            $("#" + type + "Advisorsec").removeClass('hidden');
             $("#" + type +"Duration").val('');
         } else {
-           $("#" + type + "Advisor").addClass('hidden');
+            $("#" + type + "Advisor").addClass('hidden');
+            $("#" + type + "Advisorsec").addClass('hidden');
+
         }
     }
 

@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ServicesController : BaseController
     {
         IClientInformationService _clientInformationService;
@@ -4809,7 +4809,7 @@ namespace DealEngine.WebUI.Controllers
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public async Task<IActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async Task<IActionResult> CoastGuardSelfReg(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
             User currentUser = null;
