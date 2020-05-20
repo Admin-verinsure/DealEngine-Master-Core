@@ -413,12 +413,24 @@ namespace DealEngine.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
-                if(resultCode == 0)
+                if (resultCode == 0)
                 {
                     var result = await DealEngineIdentityUserLogin(user, password);
-                    if (result.Succeeded)
+                    if (!result.Succeeded)
+                    {
+
+                        var deUser = await _userManager.FindByNameAsync(userName);
+                        await _userManager.RemovePasswordAsync(deUser);
+                        await _userManager.AddPasswordAsync(deUser, password);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    }
+                    else
                     {
                         var deUser = await _userManager.FindByNameAsync(userName);
+                        await _signInManager.SignOutAsync();
+                        deUser = await _userManager.FindByNameAsync(userName);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+
 
                         MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
                         MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
@@ -427,11 +439,11 @@ namespace DealEngine.WebUI.Controllers
                         rsaUser.Username = user.UserName; //try as Marsh RSA team advised
                         rsaUser.HttpReferer = "~Account/LoginMarsh";
                         rsaUser.OrgName = "Marsh_Model";
-                        rsaUser.RsaStatus = RsaStatus.Deny;                        
-                        rsaUser = await rsaAuth.Analyze(rsaUser);                                                
+                        rsaUser.RsaStatus = RsaStatus.Deny;
+                        rsaUser = await rsaAuth.Analyze(rsaUser);
 
                         if (rsaUser.RsaStatus == RsaStatus.Allow)
-                        {                            
+                        {
                             _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
                             return RedirectToAction("Index", "Home");
                         }
@@ -446,7 +458,7 @@ namespace DealEngine.WebUI.Controllers
                                 TransactionId = rsaUser.CurrentTransactionId
                             });
                         }
-                    }                    
+                    }                
                 }
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);

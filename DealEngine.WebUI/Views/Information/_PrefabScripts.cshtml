@@ -43,15 +43,21 @@
         var dataItem = obj.getAttribute('data-item');
         var tag = obj.tagName;
         obj.classList.remove("is-up");
+
         //validation
-        if (tag == "SELECT") {
-            SelectValidation(obj, value);
-        } else if (tag == "INPUT") {
-            InputValidation(obj, value);
+        if (obj.hasAttribute('required')) {
+            if (tag == "SELECT") {
+                SelectValidation(obj, value);
+            } else if (tag == "INPUT") {
+                InputValidation(obj, value);
+            }
+            else if (tag == "TEXTAREA") {
+                InputValidation(obj, value);
+            }
+        } else {
+            obj.classList.remove("is-valid");
         }
-        else if (tag == "TEXTAREA") {
-            InputValidation(obj, value);
-        }
+
         //trigger
         TriggerHandler(obj, Name, value, dataRule, dataItem);
         try {
@@ -165,6 +171,17 @@
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
                 DefaultRule(Value, element.name);
+            } 
+            if (Rule === "FABConditional") {
+                var ids = DataItem.split(',');
+                document.getElementById(ids[0]).hidden = true;
+                document.getElementById(ids[1]).hidden = true;
+                if (Value == "1") {
+                    document.getElementById(ids[0]).hidden = false;
+                }
+                else {
+                    document.getElementById(ids[1]).hidden = false;
+                }
             }
             if (Rule === "DNOOptional") {
                 Value = DoubleConditional(DataItem);

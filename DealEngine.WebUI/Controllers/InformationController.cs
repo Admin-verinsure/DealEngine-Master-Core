@@ -14,7 +14,6 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
-using DealEngine.WebUI.Models.Agreement;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -1325,6 +1324,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
                 var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 var sheet = clientProgramme.InformationSheet;
+
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1334,11 +1334,8 @@ namespace DealEngine.WebUI.Controllers
                         sheet.SubmittedBy = user;
                         await uow.Commit();
                     }
-                }
-                            
-                if (sheet.Programme.BaseProgramme.ProgEnableEmail)
-                {
-                    if (sheet.Status == "Started")
+
+                    if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                     {
                         //sheet owner is null
                         await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
@@ -1354,6 +1351,7 @@ namespace DealEngine.WebUI.Controllers
                             await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
                             await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                         }
+
                     }
                 }
 

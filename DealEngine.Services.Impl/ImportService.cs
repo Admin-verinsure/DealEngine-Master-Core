@@ -443,7 +443,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "ceas//CEASClients2019.csv";
+            var fileName = WorkingDirectory + "CEASClients2020.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -457,11 +457,11 @@ namespace DealEngine.Services.Impl
                 while (!reader.EndOfStream)
                 {
                     //if has a title row
-                    if (!readFirstLine)
-                    {
-                        line = reader.ReadLine();
-                        readFirstLine = true;
-                    }
+                    //if (!readFirstLine)
+                    //{
+                    //    line = reader.ReadLine();
+                    //    readFirstLine = true;
+                    //}
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
                     user = null;
@@ -471,7 +471,7 @@ namespace DealEngine.Services.Impl
                     {
                         if (string.IsNullOrWhiteSpace(parts[4]))
                         {
-                            email = parts[8] + "@techcertain.com";
+                            email = parts[4] + "_" + parts[3] + "@techcertain.com";
                             user = await _userService.GetUserByEmail(email);
                         }
                         else
@@ -483,7 +483,7 @@ namespace DealEngine.Services.Impl
 
                         if (user == null)
                         {
-                            user = new User(currentUser, Guid.NewGuid(), parts[8]);
+                            user = new User(currentUser, Guid.NewGuid(), parts[2] + "_" + parts[3]);
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
                         if (parts[0] == "f")
@@ -500,14 +500,14 @@ namespace DealEngine.Services.Impl
                             if (organisation == null)
                             {
                                 var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, parts[4]);
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, email);
                                 await _organisationService.CreateNewOrganisation(organisation);
                             }
                         }
 
-                        user.FirstName = parts[3];
-                        user.LastName = parts[4];
-                        user.FullName = parts[3] + " " + parts[4];
+                        user.FirstName = parts[2];
+                        user.LastName = parts[3];
+                        user.FullName = parts[2] + " " + parts[3];
                         user.Email = email;
                         user.Address = "";
                         user.Phone = "12345";
@@ -728,7 +728,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "ceas//CEASPrincipals2019.csv";
+            var fileName = WorkingDirectory + "CEASPrincipals2020.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
@@ -755,7 +755,7 @@ namespace DealEngine.Services.Impl
 
                             if (string.IsNullOrWhiteSpace(parts[5]))
                             {
-                                email = parts[2] + "@techcertain.com";
+                                email = userName + "@techcertain.com";
                             }
                             else
                             {
@@ -1035,7 +1035,7 @@ namespace DealEngine.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;            
-            var fileName = WorkingDirectory + "ceas//CEASClaims2019.csv";
+            var fileName = WorkingDirectory + "CEASClaims2020.csv";
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -1050,12 +1050,15 @@ namespace DealEngine.Services.Impl
                         line = reader.ReadLine();
                         string[] parts = line.Split(',');
                         claimNotification = new ClaimNotification(currentUser);
-                        claimNotification.ClaimMembershipNumber = parts[2];
-                        claimNotification.ClaimTitle = parts[3];
-                        claimNotification.ClaimReference = parts[4];
-                        claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[5]);
-                        claimNotification.Claimant = parts[6];
-                        claimNotification.ClaimStatus = parts[8];
+                        claimNotification.ClaimMembershipNumber = parts[0];
+                        claimNotification.ClaimTitle = parts[1];
+                        claimNotification.ClaimReference = parts[2];
+                        if (!string.IsNullOrWhiteSpace(parts[3]))
+                        {
+                            claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[3]);
+                        }                        
+                        claimNotification.Claimant = parts[4];
+                        claimNotification.ClaimStatus = parts[5];
 
                         await _programmeService.AddClaimNotificationByMembership(claimNotification);
                     }
@@ -1073,7 +1076,7 @@ namespace DealEngine.Services.Impl
             BusinessContract businessContract;
             bool readFirstLine = false;
             string line;
-            var fileName = WorkingDirectory + "ceas//CEASContracts2019.csv";
+            var fileName = WorkingDirectory + "CEASContracts2019.csv";
 
             using (reader = new StreamReader(fileName))
             {

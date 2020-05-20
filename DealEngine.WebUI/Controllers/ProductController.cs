@@ -11,10 +11,11 @@ using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-	//[Authorize]
+	[Authorize]
 	public class ProductController : BaseController
 	{		
 		IInformationTemplateService _informationService;        		
