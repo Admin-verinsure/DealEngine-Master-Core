@@ -2774,7 +2774,89 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }       
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ResumeGeneratePxPayment(Guid id)
+        {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
+            User user = null;
+            try
+            {
+                sheet = await _customerInformationService.GetInformation(id);
+                
+                ClientProgramme programme = sheet.Programme;
+                programme.PaymentType = "Credit Card";
+
+                //var active = _httpClientService.GetEglobalStatus().Result;
+
+                //Hardcoded variables
+                decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+                Merchant merchant = await _merchantService.GetMerchant(programme.BaseProgramme.Id);
+                Payment payment = await _paymentService.GetPayment(programme.Id);
+                if (payment == null)
+                {
+                    payment = await _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
+                }
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    programme.PaymentType = "Credit Card";
+                    programme.Payment = payment;
+                    programme.InformationSheet.Status = "Bound";
+                    await uow.Commit();
+                }
+
+                //add check to count how many failed payments
+                var ProgrammeId = sheetId;
+                foreach (ClientAgreement clientAgreement in programme.Agreements)
+                {
+                    ProgrammeId = programme.Id;
+                    brokerFee += clientAgreement.BrokerFee;
+                    var terms = await _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+                    foreach (ClientAgreementTerm clientAgreementTerm in terms)
+                    {
+                        if (programme.InformationSheet.IsChange && programme.InformationSheet.PreviousInformationSheet != null)
+                        {
+                            totalPremium += clientAgreementTerm.PremiumDiffer;
+                        }
+                        else
+                        {
+                            totalPremium += clientAgreementTerm.Premium;
+                        }
+
+                    }
+                }
+                totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
+
+                PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
+
+                string domainQueryString = _appSettingService.domainQueryString;
+                Guid progid = Guid.NewGuid();
+                RequestInput input = new RequestInput
+                {
+                    AmountInput = totalPayment.ToString("0.00"),
+                    CurrencyInput = "NZD",
+                    TxnType = "Purchase",
+                    UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
+                    UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+                    TxnId = progid.ToString("N").Substring(0, 16),
+                };
+
+                RequestOutput requestOutput = pxPay.GenerateRequest(input);
+                //opens on same page - hard to return back to current process
+                return Redirect(requestOutput.Url);
+                //return Json(new { url = requestOutput.Url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GenerateEGlobal(IFormCollection collection)

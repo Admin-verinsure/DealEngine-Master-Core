@@ -1031,7 +1031,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
-                //model.Status = sheet.Status;
+                model.Status = sheet.Status;
                 //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
                 //model.ClientInformationAnswers = informationAnswers;
@@ -1351,7 +1351,7 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
-                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);                            
+                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
                             await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                         }
                     }
