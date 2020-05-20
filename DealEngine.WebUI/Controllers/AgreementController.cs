@@ -1412,7 +1412,7 @@ namespace DealEngine.WebUI.Controllers
                 Organisation insured = clientProgramme.Owner;
                 ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
                 var insuranceRoles = new List<InsuranceRoleViewModel>();
-
+                ViewBag.progid = clientProgramme.Id;
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
                 currencyFormat.CurrencyNegativePattern = 2;
 

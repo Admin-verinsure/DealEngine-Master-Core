@@ -303,13 +303,13 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
            
               @*if ("@ViewBag.Sheetstatus" == "Bound") { // changed for pending payment next button issue*@
 
-              if ("@ViewBag.Status.Contains("Bound")" == "True" ) {
+              @*if ("@ViewBag.Status.Contains("Bound")" == "True" ) {
                 debugger;
                 //var coveroptiontable = document.querySelector('[type="radio"]');
                 $("#Coveroptionssec :input").prop("disabled", true);
               } else {
                 $("#Coveroptionssec :input").prop("disabled", false);
-              }
+              }*@
 
              
 
