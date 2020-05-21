@@ -1724,58 +1724,60 @@ namespace DealEngine.WebUI.Controllers
                         }
 
                     }
-
-                    return PartialView("_ViewStopAgreementMessage", model);
-                }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
-                {
-                    model = new ViewAgreementViewModel();
-                    model.ProgrammeStopAgreement = true;
-                    var message = clientProgramme.BaseProgramme.SubsystemMessage;
-                    if (string.IsNullOrWhiteSpace(message))
+                    if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                     {
-                        message = " TEMPLATE: subsystem invoked";
-                    }
-                    model.AgreementMessage = message;
-
-                    var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
-                    if (isBaseClientProgramme)
-                    {
-                        bool isComplete;
-                        if (clientProgramme.SubClientProgrammes.Count != 0)
+                        model = new ViewAgreementViewModel();
+                        model.ProgrammeStopAgreement = true;
+                        var message = clientProgramme.BaseProgramme.SubsystemMessage;
+                        if (string.IsNullOrWhiteSpace(message))
                         {
-                            isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
-                            if (isComplete)
+                            message = " TEMPLATE: subsystem invoked";
+                        }
+                        model.AgreementMessage = message;
+
+                        var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
+                        if (isBaseClientProgramme)
+                        {
+                            bool isComplete;
+                            if (clientProgramme.SubClientProgrammes.Count != 0)
                             {
-                                return PartialView("_ViewAgreementList", models);
+                                isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
+                                if (isComplete)
+                                {
+                                    return PartialView("_ViewAgreementList", models);
+                                }
+                                else
+                                {
+                                    model.AgreementMessage = "not all subsystem client information sheets have been completed";
+                                    return PartialView("_ViewStopAgreementMessage", model);
+                                }
                             }
                             else
                             {
-                                model.AgreementMessage = "not all subsystem client information sheets have been completed";
-                                return PartialView("_ViewStopAgreementMessage", model);
+                                try
+                                {
+                                    await _subsystemService.CreateSubObjects(clientProgramme.Id, answerSheet);
+                                    return PartialView("_ViewStopAgreementMessage", model);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Create Sub Objects failed", ex);
+                                }
                             }
                         }
                         else
                         {
-                            try
-                            {
-                                await _subsystemService.CreateSubObjects(clientProgramme.Id, answerSheet);
-                                return PartialView("_ViewStopAgreementMessage", model);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Create Sub Objects failed", ex);
-                            }
+                            message = "subsystem client information sheet completed and have notified the broker";
+                            //Notify broker 
+                            return PartialView("_ViewStopAgreementMessage", model);
                         }
+
                     }
                     else
                     {
-                        message = "subsystem client information sheet completed and have notified the broker";
-                        //Notify broker 
                         return PartialView("_ViewStopAgreementMessage", model);
-                    }
-
-                }
+                    }                    
+                }                
                 else
                 {
                     return PartialView("_ViewAgreementList", models);
