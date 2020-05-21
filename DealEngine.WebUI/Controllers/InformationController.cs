@@ -1150,7 +1150,7 @@ namespace DealEngine.WebUI.Controllers
             if (wizardType == "Standard")
             {
                 steps.Add("Details");
-                steps.Add("Steptwo");
+                steps.Add("Declaration");
             }
             else if (wizardType == "Subsystem")
             {
