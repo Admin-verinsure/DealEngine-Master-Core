@@ -71,13 +71,9 @@
 
             <label style="font-size:20px; color:#395ca2"> @User.Identity.Name</label>
 
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        @await Html.PartialAsync("_TopRight")
-                    </div>
-                </div>
-            </nav>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                @await Html.PartialAsync("_TopRight")
+            </div>
         </nav>
     </div>   
 </header>
