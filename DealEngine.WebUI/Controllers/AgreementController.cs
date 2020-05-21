@@ -3008,28 +3008,29 @@ namespace DealEngine.WebUI.Controllers
 
                         }
 
-                        EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                        //if (emailTemplate == null)
+                        //{
+                        //    //default email or send them somewhere??
 
-                        if (emailTemplate == null)
-                        {
-                            //default email or send them somewhere??
-
-                            using (var uow = _unitOfWork.BeginUnitOfWork())
-                            {
-                                emailTemplate = new EmailTemplate(user, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
-                                programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-                                await uow.Commit();
-                            }
-                        }
+                        //    using (var uow = _unitOfWork.BeginUnitOfWork())
+                        //    {
+                        //        emailTemplate = new EmailTemplate(user, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
+                        //        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
+                        //        await uow.Commit();
+                        //    }
+                        //}
 
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
-                            await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
+                            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                            }
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
-
-                    
+                                       
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

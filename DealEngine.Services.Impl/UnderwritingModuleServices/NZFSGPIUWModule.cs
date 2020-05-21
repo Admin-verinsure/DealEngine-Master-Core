@@ -86,6 +86,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             decimal decPIPremiumTopUp = 0M;
 
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
                 if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
@@ -114,8 +116,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     else if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
                     {
                         decFP = uISActivity.Percentage;
+                        if (uISActivity.Percentage > 0)
+                        {
+                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+                        }
+
                         if (uISActivity.Percentage > 0 && uISActivity.Percentage <= 10)
+                        {
                             decFP1To10PerExtraPre = rates["piFP1To10PerExtraPremium"];
+                        }
                     }
                     else if (uISActivity.AnzsciCode == "CUS0024") //Kiwisaver
                     {
@@ -142,6 +151,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
                     {
                         decBFG = uISActivity.Percentage;
+                        if (uISActivity.Percentage > 0)
+                        {
+                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                        }
                         if (uISActivity.Percentage > 0 && uISActivity.Percentage <= 10)
                             decBFG1To10PerExtraPre = rates["piBFG1To10PerExtraPremium"];
                     }
@@ -199,140 +212,50 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-
-
-            int TermLimit500k = 500000;
-            int TermLimit1mil = 1000000;
             int TermLimit2mil = 2000000;
+            int TermLimit3mil = 3000000;
+            int TermLimit5mil = 5000000;
 
-            int TermExcess2500 = 2500;
-            int TermExcess5000 = 5000;
-            decimal TermExcess5000Discount = rates["pitermexcess5000discount"];
-            int TermExcess10k = 10000;
-            decimal TermExcess10kDiscount = rates["pitermexcess10kdiscount"];
+            decimal TermPremium2mil = 0M;
+            decimal TermPremium3mil = 0M;
+            decimal TermPremium5mil = 0M;
 
-            decimal TermPremium500k2500Excess = 0m;
-            decimal TermPremium500k5000Excess = 0m;
-            decimal TermPremium500k10kExcess = 0m;
-            decimal TermBrokerage500k2500Excess = 0m;
-            decimal TermBrokerage500k5000Excess = 0m;
-            decimal TermBrokerage500k10kExcess = 0m;
+            decimal TermBrokerage2mil = 0M;
+            decimal TermBrokerage3mil = 0M;
+            decimal TermBrokerage5mil = 0M;
 
-            TermPremium500k2500Excess = GetPremiumFor(rates, feeincome, TermLimit500k) + decPIPremiumTopUp;
-            TermPremium500k5000Excess = TermPremium500k2500Excess - TermExcess5000Discount;
-            TermPremium500k10kExcess = TermPremium500k2500Excess - TermExcess10kDiscount;
-            TermBrokerage500k2500Excess = TermPremium500k2500Excess * agreement.Brokerage / 100;
-            TermBrokerage500k5000Excess = TermPremium500k5000Excess * agreement.Brokerage / 100;
-            TermBrokerage500k10kExcess = TermPremium500k10kExcess * agreement.Brokerage / 100;
+            int TermExcess = 0;
+            TermExcess = 1000;
 
-            ClientAgreementTerm term500klimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess2500);
-            term500klimit2500excessoption.TermLimit = TermLimit500k;
-            term500klimit2500excessoption.Premium = TermPremium500k2500Excess;
-            term500klimit2500excessoption.Excess = TermExcess2500;
-            term500klimit2500excessoption.BrokerageRate = agreement.Brokerage;
-            term500klimit2500excessoption.Brokerage = TermBrokerage500k2500Excess;
-            term500klimit2500excessoption.DateDeleted = null;
-            term500klimit2500excessoption.DeletedBy = null;
+            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil);
+            ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
+            term2millimitpremiumoption.TermLimit = TermLimit2mil;
+            term2millimitpremiumoption.Premium = TermPremium2mil;
+            term2millimitpremiumoption.Excess = TermExcess;
+            term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
+            term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
+            term2millimitpremiumoption.DateDeleted = null;
+            term2millimitpremiumoption.DeletedBy = null;
 
-            ClientAgreementTerm term500klimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess5000);
-            term500klimit5000excessoption.TermLimit = TermLimit500k;
-            term500klimit5000excessoption.Premium = TermPremium500k5000Excess;
-            term500klimit5000excessoption.Excess = TermExcess5000;
-            term500klimit5000excessoption.BrokerageRate = agreement.Brokerage;
-            term500klimit5000excessoption.Brokerage = TermBrokerage500k5000Excess;
-            term500klimit5000excessoption.DateDeleted = null;
-            term500klimit5000excessoption.DeletedBy = null;
+            TermPremium3mil = GetPremiumFor(rates, feeincome, TermLimit3mil);
+            ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
+            term3millimitpremiumoption.TermLimit = TermLimit3mil;
+            term3millimitpremiumoption.Premium = TermPremium3mil;
+            term3millimitpremiumoption.Excess = TermExcess;
+            term3millimitpremiumoption.BrokerageRate = agreement.Brokerage;
+            term3millimitpremiumoption.Brokerage = TermBrokerage3mil;
+            term3millimitpremiumoption.DateDeleted = null;
+            term3millimitpremiumoption.DeletedBy = null;
 
-            ClientAgreementTerm term500klimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess10k);
-            term500klimit10kexcessoption.TermLimit = TermLimit500k;
-            term500klimit10kexcessoption.Premium = TermPremium500k10kExcess;
-            term500klimit10kexcessoption.Excess = TermExcess10k;
-            term500klimit10kexcessoption.BrokerageRate = agreement.Brokerage;
-            term500klimit10kexcessoption.Brokerage = TermBrokerage500k10kExcess;
-            term500klimit10kexcessoption.DateDeleted = null;
-            term500klimit10kexcessoption.DeletedBy = null;
-
-            decimal TermPremium1mil2500Excess = 0m;
-            decimal TermPremium1mil5000Excess = 0m;
-            decimal TermPremium1mil10kExcess = 0m;
-            decimal TermBrokerage1mil2500Excess = 0m;
-            decimal TermBrokerage1mil5000Excess = 0m;
-            decimal TermBrokerage1mil10kExcess = 0m;
-
-            TermPremium1mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit1mil) + decPIPremiumTopUp;
-            TermPremium1mil5000Excess = TermPremium1mil2500Excess - TermExcess5000Discount;
-            TermPremium1mil10kExcess = TermPremium1mil2500Excess - TermExcess10kDiscount;
-            TermBrokerage1mil2500Excess = TermPremium1mil2500Excess * agreement.Brokerage / 100;
-            TermBrokerage1mil5000Excess = TermPremium1mil5000Excess * agreement.Brokerage / 100;
-            TermBrokerage1mil10kExcess = TermPremium1mil10kExcess * agreement.Brokerage / 100;
-
-            ClientAgreementTerm term1millimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess2500);
-            term1millimit2500excessoption.TermLimit = TermLimit1mil;
-            term1millimit2500excessoption.Premium = TermPremium1mil2500Excess;
-            term1millimit2500excessoption.Excess = TermExcess2500;
-            term1millimit2500excessoption.BrokerageRate = agreement.Brokerage;
-            term1millimit2500excessoption.Brokerage = TermBrokerage1mil2500Excess;
-            term1millimit2500excessoption.DateDeleted = null;
-            term1millimit2500excessoption.DeletedBy = null;
-
-            ClientAgreementTerm term1millimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess5000);
-            term1millimit5000excessoption.TermLimit = TermLimit1mil;
-            term1millimit5000excessoption.Premium = TermPremium1mil5000Excess;
-            term1millimit5000excessoption.Excess = TermExcess5000;
-            term1millimit5000excessoption.BrokerageRate = agreement.Brokerage;
-            term1millimit5000excessoption.Brokerage = TermBrokerage1mil5000Excess;
-            term1millimit5000excessoption.DateDeleted = null;
-            term1millimit5000excessoption.DeletedBy = null;
-
-            ClientAgreementTerm term1millimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess10k);
-            term1millimit10kexcessoption.TermLimit = TermLimit1mil;
-            term1millimit10kexcessoption.Premium = TermPremium1mil10kExcess;
-            term1millimit10kexcessoption.Excess = TermExcess10k;
-            term1millimit10kexcessoption.BrokerageRate = agreement.Brokerage;
-            term1millimit10kexcessoption.Brokerage = TermBrokerage1mil10kExcess;
-            term1millimit10kexcessoption.DateDeleted = null;
-            term1millimit10kexcessoption.DeletedBy = null;
-
-            decimal TermPremium2mil2500Excess = 0m;
-            decimal TermPremium2mil5000Excess = 0m;
-            decimal TermPremium2mil10kExcess = 0m;
-            decimal TermBrokerage2mil2500Excess = 0m;
-            decimal TermBrokerage2mil5000Excess = 0m;
-            decimal TermBrokerage2mil10kExcess = 0m;
-
-            TermPremium2mil2500Excess = GetPremiumFor(rates, feeincome, TermLimit2mil) + decPIPremiumTopUp;
-            TermPremium2mil5000Excess = TermPremium2mil2500Excess - TermExcess5000Discount;
-            TermPremium2mil10kExcess = TermPremium2mil2500Excess - TermExcess10kDiscount;
-            TermBrokerage2mil2500Excess = TermPremium2mil2500Excess * agreement.Brokerage / 100;
-            TermBrokerage2mil5000Excess = TermPremium2mil5000Excess * agreement.Brokerage / 100;
-            TermBrokerage2mil10kExcess = TermPremium2mil10kExcess * agreement.Brokerage / 100;
-
-            ClientAgreementTerm term2millimit2500excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess2500);
-            term2millimit2500excessoption.TermLimit = TermLimit2mil;
-            term2millimit2500excessoption.Premium = TermPremium2mil2500Excess;
-            term2millimit2500excessoption.Excess = TermExcess2500;
-            term2millimit2500excessoption.BrokerageRate = agreement.Brokerage;
-            term2millimit2500excessoption.Brokerage = TermBrokerage2mil2500Excess;
-            term2millimit2500excessoption.DateDeleted = null;
-            term2millimit2500excessoption.DeletedBy = null;
-
-            ClientAgreementTerm term2millimit5000excessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess5000);
-            term2millimit5000excessoption.TermLimit = TermLimit2mil;
-            term2millimit5000excessoption.Premium = TermPremium2mil5000Excess;
-            term2millimit5000excessoption.Excess = TermExcess5000;
-            term2millimit5000excessoption.BrokerageRate = agreement.Brokerage;
-            term2millimit5000excessoption.Brokerage = TermBrokerage2mil5000Excess;
-            term2millimit5000excessoption.DateDeleted = null;
-            term2millimit5000excessoption.DeletedBy = null;
-
-            ClientAgreementTerm term2millimit10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess10k);
-            term2millimit10kexcessoption.TermLimit = TermLimit2mil;
-            term2millimit10kexcessoption.Premium = TermPremium2mil10kExcess;
-            term2millimit10kexcessoption.Excess = TermExcess10k;
-            term2millimit10kexcessoption.BrokerageRate = agreement.Brokerage;
-            term2millimit10kexcessoption.Brokerage = TermBrokerage2mil10kExcess;
-            term2millimit10kexcessoption.DateDeleted = null;
-            term2millimit10kexcessoption.DeletedBy = null;
+            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil);
+            ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
+            term5millimitpremiumoption.TermLimit = TermLimit5mil;
+            term5millimitpremiumoption.Premium = TermPremium5mil;
+            term5millimitpremiumoption.Excess = TermExcess;
+            term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
+            term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
+            term5millimitpremiumoption.DateDeleted = null;
+            term5millimitpremiumoption.DeletedBy = null;
 
 
             ////Referral points per agreement
@@ -372,10 +295,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
-            string retrodate = "Policy Inception";
-            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
-            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+            agreement.TerritoryLimit = "Worldwide";
+            agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {
@@ -460,54 +383,33 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         {
             decimal premiumoption = 0M;
 
+            if (feeincome >= 0 && feeincome <= 500000)
+            {
+                premiumoption = rates["pi2millimitincomeunder500kpremium"];
+            }
+            else if (feeincome > 500000 && feeincome <= 600000)
+            {
+                premiumoption = rates["pi2millimitincome500kto600kpremium"];
+            }
+            else if (feeincome > 600000 && feeincome <= 800000)
+            {
+                premiumoption = rates["pi2millimitincome600kto800kpremium"];
+            }
+            else if (feeincome > 800000 && feeincome <= 1000000)
+            {
+                premiumoption = rates["pi2millimitincome800kto1milpremium"];
+            }
+
             switch (limitoption)
             {
-                case 500000:
+                case 3000000:
                     {
-                        if (feeincome >= 0 && feeincome <= 100000)
-                        {
-                            premiumoption = rates["pi500klimitincomeunder100kpremium"];
-                        }
-                        else if (feeincome > 100000 && feeincome <= 200000)
-                        {
-                            premiumoption = rates["pi500klimitincome100kto200kpremium"];
-                        }
-                        else if (feeincome > 200000 && feeincome <= 500000)
-                        {
-                            premiumoption = rates["pi500klimitincome200kto500kpremium"];
-                        }
+                        premiumoption += rates["pi3millimitextrapremium"];
                         break;
                     }
-                case 1000000:
+                case 5000000:
                     {
-                        if (feeincome >= 0 && feeincome <= 100000)
-                        {
-                            premiumoption = rates["pi1millimitincomeunder100kpremium"];
-                        }
-                        else if (feeincome > 100000 && feeincome <= 200000)
-                        {
-                            premiumoption = rates["pi1millimitincome100kto200kpremium"];
-                        }
-                        else if (feeincome > 200000 && feeincome <= 500000)
-                        {
-                            premiumoption = rates["pi1millimitincome200kto500kpremium"];
-                        }
-                        break;
-                    }
-                case 2000000:
-                    {
-                        if (feeincome >= 0 && feeincome <= 100000)
-                        {
-                            premiumoption = rates["pi2millimitincomeunder100kpremium"];
-                        }
-                        else if (feeincome > 100000 && feeincome <= 200000)
-                        {
-                            premiumoption = rates["pi2millimitincome100kto200kpremium"];
-                        }
-                        else if (feeincome > 200000 && feeincome <= 500000)
-                        {
-                            premiumoption = rates["pi2millimitincome200kto500kpremium"];
-                        }
+                        premiumoption += rates["pi5millimitextrapremium"];
                         break;
                     }
                 default:

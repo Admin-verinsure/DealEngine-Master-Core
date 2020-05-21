@@ -710,7 +710,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/Services/CoastGuardSelfReg",
+                url: "/Services/CoastGuardSelfRegAsync",
                 data: { craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] },
                 traditional: true,
             })
