@@ -103,43 +103,84 @@ namespace DealEngine.Domain.Entities
 				Answers.Add (new ClientInformationAnswer (CreatedBy, itemName, value));
 		}
 
-        public virtual ClientInformationSheet CloneForUpdate (User cloningUser, IMapper mapper)
+
+        public virtual void AddVehicle(Vehicle vehicle)
+        {
+            Vehicles.Add(vehicle);
+        }
+
+        public virtual void AddBoat(Boat boat)
+        {
+            Boats.Add(boat);
+        }
+
+        public virtual void AddClaim(ClaimNotification claim)
+        {
+            ClaimNotifications.Add(claim);
+        }
+
+        public virtual void AddBuilding(Building building)
+        {
+            Buildings.Add(building);
+        }
+
+        public virtual void AddWaterLocation(WaterLocation waterLocation)
+        {
+            WaterLocations.Add(waterLocation);
+        }
+
+        public virtual void AddLocation(Location location)
+        {
+            Locations.Add(location);
+        }
+
+        public virtual void AddBoatUse(BoatUse boatUse)
+        {
+            BoatUses.Add(boatUse);
+        }
+
+
+        public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
 		{
 			ClientInformationSheet newSheet = new ClientInformationSheet (cloningUser, Owner, null);
-            newSheet = mapper.Map<ClientInformationSheet>(this);
+            try { 
+            //newSheet = mapper.Map<ClientInformationSheet>(this);
             newSheet.PreviousInformationSheet = this;
 			newSheet.Product = Product;
 			NextInformationSheet = newSheet;
-            
 
+                foreach (ClientInformationAnswer answer in Answers)
+                    newSheet.Answers.Add(answer.CloneForNewSheet(newSheet));
 
-   //         foreach (ClientInformationAnswer answer in Answers)
-			//	newSheet.Answers.Add (answer.CloneForNewSheet (newSheet));
+                foreach (Location location in Locations)
+                    newSheet.AddLocation(location.CloneForNewSheet(newSheet));
 
-			//foreach (Location location in Locations)
-			//	newSheet.AddLocation (location.CloneForNewSheet (newSheet));
+                foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
+                    newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
 
-   //         foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
-   //             newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
+                foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
+                    newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
 
-   //         foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
-   //             newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
+                foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
+                    newSheet.AddVehicle(vehicle.CloneForNewSheet(newSheet));
 
-   //         foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
-			//	newSheet.AddVehicle (vehicle.CloneForNewSheet (newSheet));
+                foreach (Boat boat in Boats.Where(b => !b.Removed && b.DateDeleted == null))
+                    newSheet.AddBoat(boat.CloneForNewSheet(newSheet));
 
-   //         foreach (Boat boat in Boats.Where(b => !b.Removed && b.DateDeleted == null))
-   //             newSheet.AddBoat(boat.CloneForNewSheet(newSheet));
+                foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                    newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
 
-   //         foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
-   //             newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
-
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return newSheet;
 		}
 
 		public virtual ClientInformationSheet CloneForRenewal (User renewingUser, IMapper mapper)
 		{
-			ClientInformationSheet sheet = CloneForUpdate(renewingUser, mapper);
+			ClientInformationSheet sheet = CloneForUpdate(renewingUser);
 			sheet.IsRenewawl = true;
 			return sheet;
 		}

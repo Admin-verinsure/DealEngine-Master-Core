@@ -6489,9 +6489,16 @@ async: true
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
                 data: $("#tab_1 :input").serialize({ json: true }),
                 complete: function (data) {
+                    debugger;
                     window.location = data.responseJSON.url;
                 },
-            })
+            }) .done(function (data) {
+                debugger;
+                  
+                }).fail(function (a, s, d) {
+                    debugger;
+                               alert("Unable to process payment.");
+                 });
         }
         else if ($('#paymentEGlobal').is(":checked")) {
             $.ajax({

@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ServicesController : BaseController
     {
         IClientInformationService _clientInformationService;
@@ -3058,9 +3058,18 @@ namespace DealEngine.WebUI.Controllers
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
 
                         }
@@ -3075,10 +3084,19 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Qualifications = model.Qualifications;
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             organisation.ConfirmAAA = model.ConfirmAAA;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
@@ -3243,9 +3261,18 @@ namespace DealEngine.WebUI.Controllers
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
 
                         }
@@ -3259,9 +3286,18 @@ namespace DealEngine.WebUI.Controllers
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
@@ -4809,7 +4845,7 @@ namespace DealEngine.WebUI.Controllers
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public async Task<IActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async Task<IActionResult> CoastGuardSelfReg(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
             User currentUser = null;

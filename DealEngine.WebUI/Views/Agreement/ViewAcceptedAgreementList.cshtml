@@ -165,6 +165,13 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
                             }
 
+                            @if (@item.Status == "Bound and pending payment")
+                            {
+                                <li class="nav-item">
+                                    <a href="~/Agreement/ResumeGeneratePxPayment/@item.ClientInformationSheet.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Payment Option</a>
+                                </li>
+                            }
+
                         </ul>
                     </div>
 
@@ -293,45 +300,18 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
              }
 
-              @*if ("@ViewBag.Sheetstatus" != "Started") {
-                debugger;
+           
+              @*if ("@ViewBag.Sheetstatus" == "Bound") { // changed for pending payment next button issue*@
 
-                var ID = "@ViewBag.Id";
-               var postdata = {
-                     id : ID
-                }
-                $.ajax({
-                   url: '@Url.Action("GetProductName", "Information")',
-                   type: "POST",
-                   data: postdata
-                })
-                    .done(function (data) {
-                        var prodname = data;
-                        for (var i = 0; i < prodname.length; i++) {
-                            var ProdName = prodname[i];
-                             if (ProdName.length == 1) {
-                             var queryselector = "" + "input[name=\'" + ProdName + "\']";
-
-                               $(queryselector).attr('checked', true);
-                             }
-                        }
-
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        alert("There was an error getting ProductName.");
-                    });
-
-              }*@
-
-
-
-              if ("@ViewBag.Status.Contains("Bound")" == "True") {
+              @*if ("@ViewBag.Status.Contains("Bound")" == "True" ) {
                 debugger;
                 //var coveroptiontable = document.querySelector('[type="radio"]');
                 $("#Coveroptionssec :input").prop("disabled", true);
               } else {
                 $("#Coveroptionssec :input").prop("disabled", false);
-              }
+              }*@
 
+             
 
         });
 
