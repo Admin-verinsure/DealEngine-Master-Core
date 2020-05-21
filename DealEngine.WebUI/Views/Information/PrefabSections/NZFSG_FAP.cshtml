@@ -9,7 +9,7 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hastraditionallicence" name="FAPViewModel.HasTraditionalLicenceOptions" class="custom-select" data-rule="FABConditional" data-item="FAPViewModel.HasAdvisersOptions,FAPViewModel.HasAdditionalTraditionalLicenceOptions" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hastraditionallicence" name="FAPViewModel.HasTraditionalLicenceOptions" class="custom-select" data-rule="FABConditional" data-item="FAB.HasAdvisersOptions,FAB.HasAdditionalTraditionalLicenceOptions" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.FAPViewModel.HasTraditionalLicenceOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div id="FAPViewModel.HasAdvisersOptions" hidden>
+        <div id="FAB.HasAdvisersOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div id="FAPViewModel.HasAdditionalTraditionalLicenceOptions" hidden>
+        <div id="FAB.HasAdditionalTraditionalLicenceOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
