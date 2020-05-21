@@ -639,35 +639,37 @@ namespace DealEngine.WebUI.Controllers
                 model.clientprogramme = programme;
                 model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
 
-                foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
+                if (programme.ClientAgreementEGlobalSubmissions != null)
                 {
-                    string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
-
-                    if (esubmission.EGlobalResponse != null)
+                    foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
                     {
-                        submissiondiscription += " - response received";
-                        if (esubmission.EGlobalResponse.ResponseType == "update")
+                        string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+
+                        if (esubmission.EGlobalResponse != null)
                         {
-                            submissiondiscription += "(success) - " + esubmission.EGlobalResponse.TranCode + " - invoice #:" + esubmission.EGlobalResponse.InvoiceNumber;
+                            submissiondiscription += " - response received";
+                            if (esubmission.EGlobalResponse.ResponseType == "update")
+                            {
+                                submissiondiscription += "(success) - " + esubmission.EGlobalResponse.TranCode + " - invoice #:" + esubmission.EGlobalResponse.InvoiceNumber;
+                            }
+                            else
+                            {
+                                submissiondiscription += "(error)";
+                            }
                         }
                         else
                         {
-                            submissiondiscription += "(error)";
+                            submissiondiscription += " - no response";
                         }
-                    }
-                    else
-                    {
-                        submissiondiscription += " - no response";
-                    }
 
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        esubmission.SubmissionDesc = submissiondiscription;
-                        await uow.Commit();
+                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            esubmission.SubmissionDesc = submissiondiscription;
+                            await uow.Commit();
+                        }
+
                     }
-                    
                 }
-
                 var active = await _httpClientService.GetEglobalStatus();
                 model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 

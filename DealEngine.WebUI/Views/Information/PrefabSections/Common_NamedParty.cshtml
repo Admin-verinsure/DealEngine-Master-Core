@@ -223,7 +223,7 @@
                         <p class="validationContainer" id="ValidateCommonEditDuration"></p>
 
                     </section>
-                    @if (@Model.Name == "PMINZ Programme")
+                    @if (@Model.Name == "AAA Programme")
                     {
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
@@ -379,7 +379,7 @@
                         <p class="validationContainer" id="ValidateCommonDuration"></p>
 
                     </section>
-                    @if (@Model.Name == "PMINZ Programme")
+                    @if (@Model.Name == "AAA Programme")
                     {
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
@@ -468,12 +468,14 @@
 
 <script type="text/javascript">
 
-    function Isretiredselected(TypeSelected,type) {
+    function Isretiredselected(TypeSelected, type) {
+        debugger;
+        var hj = "." + type + "retirementsec";
         var typeSelected = document.getElementById(TypeSelected);
         if (typeSelected.options[typeSelected.selectedIndex].value == "true") {
-            $("#" + type + "retirementsec").removeClass('hidden');
+            $("." + type + "retirementsec").removeClass('hidden');
         } else {
-           $("#" + type + "retirementsec").addClass('hidden');
+           $("." + type + "retirementsec").addClass('hidden');
         }
     }
 
