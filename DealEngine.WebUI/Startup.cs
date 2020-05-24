@@ -15,6 +15,8 @@ using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using AutoMapper;
 using ReflectionIT.Mvc.Paging;
+using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace DealEngine.WebUI
 {
@@ -43,6 +45,12 @@ namespace DealEngine.WebUI
             {
                 //https://stackoverflow.com/questions/41289737/get-the-current-culture-in-a-controller-asp-net-core
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
+            });
+
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                //https://github.com/dotnet/aspnetcore/issues/12166
+                options.ValidationInterval = TimeSpan.FromHours(8);
             });
 
             services.AddAutoMapper(typeof(Startup).Assembly);
