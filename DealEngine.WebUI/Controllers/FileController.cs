@@ -123,9 +123,9 @@ namespace DealEngine.WebUI.Controllers
                                 }
 
                                 // Fix Image Alignment issue
-                                string centerImage = "<figure class=\"image\"><img src=\"";
-                                string leftImage = "<figure class=\"image image-style - align - left\"><img src=\"";
-                                string rightImage = "<figure class=\"image image-style - align - right\"><img src=\"";
+                                centerImage = "<figure class=\"image\"><img src=\"";
+                                leftImage = "<figure class=\"image image-style - align - left\"><img src=\"";
+                                rightImage = "<figure class=\"image image-style - align - right\"><img src=\"";
 
                                 if (html.Contains(centerImage))
                                 {
