@@ -217,6 +217,12 @@ namespace DealEngine.WebUI.Controllers
 
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientProgramme = clientProgramme;
+                List<string> sections = new  List<string>();
+                foreach(var Section in model.Section.OrderBy(s => s.Position))
+                {
+                    sections.Add(Section.CustomView);
+                }
+                model.ListSection = sections;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
             }
@@ -227,8 +233,38 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> ProgrammeDetailsReport(Guid id , List<string> ListView)
+        //{
+        //    User user = null;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+        //        ClientInformationSheet sheet = clientProgramme.InformationSheet;
+
+        //        InformationViewModel model = await GetInformationViewModel(clientProgramme);
+        //        model.ClientProgramme = clientProgramme;
+        //        List<string> sections = new List<string>();
+        //        //foreach (var Section in ListView)
+        //        //{
+        //        //    sections.Add(Section.CustomView);
+        //        //}
+        //        model.ListSection = ListView;
+        //        ViewBag.Title = "View Information Sheet ";
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
+
+
+
         [HttpGet]
-        public async Task<IActionResult> PartialViewProgramme(String name, Guid id)
+        public async Task<IActionResult> PartialViewProgramme(Guid id, String name = "",List<string> viewlist  = null)
         {
             //var MarinaLocations = new List<OrganisationViewModel>();
             User user = null;
@@ -240,7 +276,20 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientInformationSheet = sheet;
+                //if(name != "")
+                //{
+                //    viewlist.Add(name);
+                //}
+                //if(viewlist > 0)
+                //{
+
+                //}
+                //else
+                //{
+                //    //model.SectionView = name;
+                //}
                 model.SectionView = name;
+                model.ListSection = viewlist;
                 model.ClientProgramme = clientProgramme;
                 user = await CurrentUser();
 
@@ -552,7 +601,15 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientInformationAnswers = informationAnswers;
 
                 ViewBag.Title = " View Information Sheet ";
-                return View(model);
+                if(model.SectionView == "" )
+                {
+                    return View("ProgrammeDetailsReport",model);
+                }
+                else
+                {
+                    return View(model);
+                }
+                
             }
             catch (Exception ex)
             {

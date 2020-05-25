@@ -208,6 +208,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Duration { get; set; }
         public virtual IList<Programme> Programmes { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
+        public virtual bool IsPrincipalAdvisor { get; set; }
 
         #endregion
 

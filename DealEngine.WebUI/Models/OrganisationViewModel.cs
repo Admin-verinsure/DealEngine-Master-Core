@@ -87,6 +87,7 @@ namespace DealEngine.WebUI.Models
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
         public string RegisteredStatus { get; set; }
         public string Duration { get; internal set; }
+        public  bool IsPrincipalAdvisor { get; set; }
 
         public static OrganisationViewModel FromEntity(OrganisationViewModel organisationViewModel)
         {
