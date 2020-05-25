@@ -112,7 +112,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess = 0;
             TermExcess = 250;
 
-            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
+            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit10mil, TermExcess);
             termpl10millimitoption.TermLimit = TermLimit10mil;
@@ -136,8 +136,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "NZFSG PL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

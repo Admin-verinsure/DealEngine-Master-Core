@@ -41,12 +41,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piBSSTopUpPremium", "piIRTopUpPremium", "piQSTopUpPremium", "piSETopUpPremium",
-                "piTPTopUpPremium", "piValTopUpPremium", "piUPTopUpPremium", "piEPTopUpPremium", "piRMTopUpPremium",
-                "piProjMTopUpPremium", "pitermexcess5000discount", "pitermexcess10kdiscount",
-                "pi500klimitincomeunder100kpremium", "pi500klimitincome100kto200kpremium", "pi500klimitincome200kto500kpremium",
-                "pi1millimitincomeunder100kpremium", "pi1millimitincome100kto200kpremium", "pi1millimitincome200kto500kpremium",
-                "pi2millimitincomeunder100kpremium", "pi2millimitincome100kto200kpremium", "pi2millimitincome200kto500kpremium", "piwwextpremium", "maximumfeeincome");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piFP1To10PerExtraPremium", "piPEF0To70PerExtraPremium", "piPEF71To100PerExtraPremium", "piRFG10To20PerExtraPremium",
+                "piBFG1To10PerExtraPremium", "pi2millimitincomeunder500kdiscountpremium", "pi2millimitincome500kto600kdiscountpremium", "pi2millimitincome600kto800kdiscountpremium",
+                "pi2millimitincome800kto1mildiscountpremium", "pi2millimitincomeunder500kpremium", "pi2millimitincome500kto600kpremium",
+                "pi2millimitincome600kto800kpremium", "pi2millimitincome800kto1milpremium", "pi3millimitextrapremium", "pi5millimitextrapremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -169,6 +167,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decPIPremiumTopUp = decBFG1To10PerExtraPre + decFP1To10PerExtraPre + decPEF0To70PerExtraPre + decPEF71To100PerExtraPre + decRFG10To20PerExtraPre;
             }
 
+            int intnumberofadvisors = 0;
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    {
+                        intnumberofadvisors += 1;
+                    }
+                }
+            }
+
             //ClientAgreementEndorsement cAEProjM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers Endorsement");
             //if (cAEProjM != null)
             //{
@@ -227,7 +237,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess = 0;
             TermExcess = 1000;
 
-            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil);
+            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors);
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
             term2millimitpremiumoption.Premium = TermPremium2mil;
@@ -237,7 +247,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimitpremiumoption.DateDeleted = null;
             term2millimitpremiumoption.DeletedBy = null;
 
-            TermPremium3mil = GetPremiumFor(rates, feeincome, TermLimit3mil);
+            TermPremium3mil = GetPremiumFor(rates, feeincome, TermLimit3mil, intnumberofadvisors);
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
             term3millimitpremiumoption.Premium = TermPremium3mil;
@@ -247,7 +257,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term3millimitpremiumoption.DateDeleted = null;
             term3millimitpremiumoption.DeletedBy = null;
 
-            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil);
+            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, intnumberofadvisors);
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
             term5millimitpremiumoption.Premium = TermPremium5mil;
@@ -379,37 +389,64 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption)
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors)
         {
+            decimal indadvisorpremiumoption = 0M;
             decimal premiumoption = 0M;
 
-            if (feeincome >= 0 && feeincome <= 500000)
+            if (intnumberofadvisors >= 4)
             {
-                premiumoption = rates["pi2millimitincomeunder500kpremium"];
-            }
-            else if (feeincome > 500000 && feeincome <= 600000)
+                if (feeincome >= 0 && feeincome <= 500000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincomeunder500kdiscountpremium"];
+                }
+                else if (feeincome > 500000 && feeincome <= 600000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"];
+                }
+                else if (feeincome > 600000 && feeincome <= 800000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"];
+                }
+                else if (feeincome > 800000 && feeincome <= 1000000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"];
+                }
+            } else
             {
-                premiumoption = rates["pi2millimitincome500kto600kpremium"];
-            }
-            else if (feeincome > 600000 && feeincome <= 800000)
-            {
-                premiumoption = rates["pi2millimitincome600kto800kpremium"];
-            }
-            else if (feeincome > 800000 && feeincome <= 1000000)
-            {
-                premiumoption = rates["pi2millimitincome800kto1milpremium"];
+                if (feeincome >= 0 && feeincome <= 500000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincomeunder500kpremium"];
+                }
+                else if (feeincome > 500000 && feeincome <= 600000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"];
+                }
+                else if (feeincome > 600000 && feeincome <= 800000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"];
+                }
+                else if (feeincome > 800000 && feeincome <= 1000000)
+                {
+                    indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"];
+                }
             }
 
             switch (limitoption)
             {
+                case 2000000:
+                    {
+                        indadvisorpremiumoption += 0;
+                        break;
+                    }
                 case 3000000:
                     {
-                        premiumoption += rates["pi3millimitextrapremium"];
+                        indadvisorpremiumoption += rates["pi3millimitextrapremium"];
                         break;
                     }
                 case 5000000:
                     {
-                        premiumoption += rates["pi5millimitextrapremium"];
+                        indadvisorpremiumoption += rates["pi5millimitextrapremium"];
                         break;
                     }
                 default:
@@ -417,6 +454,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         throw new Exception(string.Format("Can not calculate premium for PI"));
                     }
             }
+
+            premiumoption = indadvisorpremiumoption * intnumberofadvisors;
 
             return premiumoption;
         }

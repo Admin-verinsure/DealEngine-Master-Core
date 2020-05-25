@@ -84,6 +84,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                    }
+                }
+            }
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
+
             int TermLimit100k = 100000;
             decimal TermPremium100k = 0m;
             decimal TermBrokerage100k = 0m;
@@ -115,8 +136,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "";
-            string retrodate = agreement.InceptionDate.ToShortDateString();
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
