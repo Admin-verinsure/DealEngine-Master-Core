@@ -1346,10 +1346,9 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (agreement.Status == "Referred")
                             {
+                                await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
-                            await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
-                            await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                         }
 
                     }
