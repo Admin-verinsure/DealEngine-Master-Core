@@ -23,29 +23,29 @@
                     <td>
                         <div class="accordion" id="subsystemAccodion">
                             <div class="card">
-                                <div class="card-header" id="headingOne">
+                                <div class="card-header" id="heading_@item.Id">
                                     <h2 class="mb-0">
-                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_@item.Id" aria-expanded="true" aria-controls="collapse_@item.Id">
                                             Master Client Programme
                                         </button>
                                     </h2>
                                 </div>
 
-                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#subsystemAccodion">
+                                <div id="collapse_@item.Id" class="collapse show" aria-labelledby="heading_@item.Id" data-parent="#subsystemAccodion">
                                     <div class="card-body">
                                         @(item.Name + "  (Reference: " + item.ReferenceId + ") ")
                                     </div>
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-header" id="headingTwo">
+                                <div class="card-header" id="heading_@item.SubClientProgrammes.FirstOrDefault().Id">
                                     <h2 class="mb-0">
-                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse_@item.SubClientProgrammes.FirstOrDefault().Id" aria-expanded="false" aria-controls="collapse_@item.SubClientProgrammes.FirstOrDefault().Id">
                                             Subclients
                                         </button>
                                     </h2>
                                 </div>
-                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#subsystemAccodion">
+                                <div id="collapse_@item.SubClientProgrammes.FirstOrDefault().Id" class="collapse" aria-labelledby="heading_@item.SubClientProgrammes.FirstOrDefault().Id" data-parent="#subsystemAccodion">
                                     <div class="card-body">
                                         <table class="table table-striped">
                                             <thead class="thead-light">

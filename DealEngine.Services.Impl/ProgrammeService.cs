@@ -47,12 +47,6 @@ namespace DealEngine.Services.Impl
 			return await _clientProgrammeRepository.GetByIdAsync(id);
 		}
 
-        public async Task<Programme> GetClientProgrammebyName(string programmeName)
-        {
-            return await _programmeRepository.FindAll().FirstOrDefaultAsync(p => p.Name == "NZACS Programme");
-        }
-
-
         public async Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
@@ -273,6 +267,7 @@ namespace DealEngine.Services.Impl
                     return false;
                 }
             }
+
             return true;
         }
 
