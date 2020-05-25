@@ -52,7 +52,7 @@ namespace DealEngine.Services.Impl
                     var subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
                     sheet.SubClientInformationSheets.Add(subClientSheet);
                 }
-                sheet.Status = "Started";                
+                sheet.Status = "Submitted";                
                 await _clientInformationService.UpdateInformation(sheet);
             }
             catch(Exception ex)
@@ -136,7 +136,7 @@ namespace DealEngine.Services.Impl
                 }
                 //search any section using a where statement     
                 int count = 1;
-                var selectSections = sections.Where(s => s.Position == 1 || s.Position == 15).ToList();
+                var selectSections = sections.Where(s => s.Position == 1 || s.Position == 9 || s.Position == 11).ToList();
                 foreach(var section in selectSections)
                 {
                     var newSection = _mapper.Map<InformationSection>(section);

@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "maximumassetsize");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "maximumassetsize");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -83,6 +83,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
                 }
             }
+
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+                        
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                    }
+                }
+            }
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
@@ -132,11 +153,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo500klimitoption.DateDeleted = null;
             termdo500klimitoption.DeletedBy = null;
 
-            ////Referral points per agreement
-            ////Asset Size
-            //uwrfassetsize(underwritingUser, agreement, rates);
-            ////D&O Issues
-            //uwrdoissue(underwritingUser, agreement);
+            //Referral points per agreement
+            //D&O Issues
+            uwrdoissue(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -148,8 +167,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
-            string retrodate = agreement.InceptionDate.ToShortDateString();
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "Worldwide";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
@@ -231,32 +249,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        void uwrfassetsize(User underwritingUser, ClientAgreement agreement, IDictionary<string, decimal> rates)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
-                    {
-                        if (Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value) > rates["maximumassetsize"])
-                        {
-                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status = "Pending";
-                        }
-                    }
-                }
-            }
-        }
-
         void uwrdoissue(User underwritingUser, ClientAgreement agreement)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null) == null)
@@ -272,19 +264,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDebtsOptions").First().Value == "2")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasClaimOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasCircumstanceOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDeclinedOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasReceivershipOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasObligationOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasInvestigationOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasProcecutionOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasCriminalOptions").First().Value == "1")
-                        {
-                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
-                        }
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }

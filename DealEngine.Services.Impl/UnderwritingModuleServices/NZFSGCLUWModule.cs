@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "clsocialengineeringextpremium");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -84,6 +84,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                    }
+                }
+            }
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
+
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
@@ -96,57 +117,55 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 5000;
 
-            ////ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
-            //ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
-            //ClientAgreementEndorsement cAECLUPM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Unencrypted Portable Media Exclusion (UPM)");
+            //ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+            ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
+            ClientAgreementEndorsement cAECLUPM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Unencrypted Portable Media Exclusion (UPM)");
 
-            ////if (cAECLExt != null)
-            ////{
-            ////    cAECLExt.DateDeleted = DateTime.UtcNow;
-            ////    cAECLExt.DeletedBy = underwritingUser;
-            ////}
-            //if (cAECLDRB != null)
+            //if (cAECLExt != null)
             //{
-            //    cAECLDRB.DateDeleted = DateTime.UtcNow;
-            //    cAECLDRB.DeletedBy = underwritingUser;
+            //    cAECLExt.DateDeleted = DateTime.UtcNow;
+            //    cAECLExt.DeletedBy = underwritingUser;
             //}
-            //if (cAECLUPM != null)
-            //{
-            //    cAECLUPM.DateDeleted = DateTime.UtcNow;
-            //    cAECLUPM.DeletedBy = underwritingUser;
-            //}
+            if (cAECLDRB != null)
+            {
+                cAECLDRB.DateDeleted = DateTime.UtcNow;
+                cAECLDRB.DeletedBy = underwritingUser;
+            }
+            if (cAECLUPM != null)
+            {
+                cAECLUPM.DateDeleted = DateTime.UtcNow;
+                cAECLUPM.DeletedBy = underwritingUser;
+            }
 
-            ////if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
-            ////    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
-            ////    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
-            ////    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
-            ////{
-            ////    extpremium = rates["clsocialengineeringextpremium"];
-
-            ////    if (cAECLExt != null)
-            ////    {
-            ////        cAECLExt.DateDeleted = null;
-            ////        cAECLExt.DeletedBy = null;
-            ////    }
-            ////}
             //if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
-            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "2")
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
             //{
-            //    if (cAECLUPM != null)
+            //    extpremium = rates["clsocialengineeringextpremium"];
+
+            //    if (cAECLExt != null)
             //    {
-            //        cAECLUPM.DateDeleted = null;
-            //        cAECLUPM.DeletedBy = null;
+            //        cAECLExt.DateDeleted = null;
+            //        cAECLExt.DeletedBy = null;
             //    }
             //}
-            //if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
-            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBackupOptions").First().Value == "2")
-            //{
-            //    if (cAECLDRB != null)
-            //    {
-            //        cAECLDRB.DateDeleted = null;
-            //        cAECLDRB.DeletedBy = null;
-            //    }
-            //}
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "2")
+            {
+                if (cAECLUPM != null)
+                {
+                    cAECLUPM.DateDeleted = null;
+                    cAECLUPM.DeletedBy = null;
+                }
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBackupOptions").First().Value == "2")
+            {
+                if (cAECLDRB != null)
+                {
+                    cAECLDRB.DateDeleted = null;
+                    cAECLDRB.DeletedBy = null;
+                }
+            }
 
             ClientAgreementTerm termcl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
             termcl250klimitoption.TermLimit = TermLimit250k;
@@ -157,11 +176,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl250klimitoption.DateDeleted = null;
             termcl250klimitoption.DeletedBy = null;
 
-            ////Referral points per agreement
-            ////Not a renewal of an existing policy
-            //uwrfnotrenewalcl(underwritingUser, agreement);
-            //////Cyber Issue
-            ////uwrclissue(underwritingUser, agreement, feeincome);
+            //Referral points per agreement
+            //Cyber Issue
+            uwrclissue(underwritingUser, agreement);
 
 
             //Update agreement status
@@ -174,10 +191,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "";
-            string retrodate = "Policy Inception";
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "Worldwide";
-            agreement.Jurisdiction = "Worldwide";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {
@@ -257,33 +273,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        void uwrfnotrenewalcl(User underwritingUser, ClientAgreement agreement)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalcl") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalcl").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalcl").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalcl").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalcl").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
-                    {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasExistingPolicyOptions").First().Value == "2")
-                        {
-                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null).Status = "Pending";
-                        }
-                    }
-                }
-            }
-        }
-
-        void uwrclissue(User underwritingUser, ClientAgreement agreement, decimal feeincome)
+        void uwrclissue(User underwritingUser, ClientAgreement agreement)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null) == null)
             {
@@ -298,12 +288,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasSecurityOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProhibitAccessOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasLocationOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasActivityOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasConfidencialOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBreachesOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasKnowledgeOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "2" || 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "2")
                     {
-                        if (feeincome > 2500000)
-                        {
-                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
-                        }
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }

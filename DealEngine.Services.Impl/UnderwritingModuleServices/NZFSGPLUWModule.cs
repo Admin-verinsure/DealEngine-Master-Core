@@ -84,6 +84,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                    {
+                        if (uISActivity.Percentage > 0)
+                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                    }
+                }
+            }
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
+
             int TermLimit10mil = 10000000;
             decimal TermPremium10mil = 0m;
             decimal TermBrokerage10mil = 0m;
@@ -91,7 +112,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess = 0;
             TermExcess = 250;
 
-            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
+            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit10mil, TermExcess);
             termpl10millimitoption.TermLimit = TermLimit10mil;
@@ -115,9 +136,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "";
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
+            if (!String.IsNullOrEmpty(strretrodate))
+            {
+                agreement.RetroactiveDate = strretrodate;
+            }
 
             string auditLogDetail = "NZFSG PL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
