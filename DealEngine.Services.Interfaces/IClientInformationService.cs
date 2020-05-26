@@ -21,6 +21,8 @@ namespace DealEngine.Services.Interfaces
         Task<List<ClientInformationSheet>> FindByBoatName(string searchValue);
         Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet);
         Task<bool> IsBaseClass(ClientInformationSheet sheet);
+        Task UnlockSheet(ClientInformationSheet sheet, User user);
+        Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
     }
 }
 

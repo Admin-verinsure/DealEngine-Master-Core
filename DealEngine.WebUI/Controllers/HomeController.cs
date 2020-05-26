@@ -414,9 +414,14 @@ namespace DealEngine.WebUI.Controllers
         {
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
-
-            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
+            var clientProgramme = clientList.FirstOrDefault();
+            var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+            if (isBaseClientProg)
             {
+                clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+            }
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
+            {                
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
@@ -473,7 +478,7 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {
-                clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
+                //clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     model.ProgrammeId = client.BaseProgramme.Id.ToString();
@@ -584,20 +589,13 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
-                var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-                // foreach (var clientProg in clientList)
-                // {
-                //foreach (var sub in clientProg.SubClientProgrammes)
-                //{
-                //    if (clientProg.Owner == user.PrimaryOrganisation)
-                //    {
-                //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
-                //    }
-                //}
-                // }
+                var clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
+                if(clientList.Count == 0)
+                {
+                    clientList = await _programmeService.GetClientProgrammesForProgramme(id);
+                }
 
                 model = await GetClientProgrammeListModel(user, clientList);
-
                 model.ProgrammeId = id.ToString();
 
                 return View(model);

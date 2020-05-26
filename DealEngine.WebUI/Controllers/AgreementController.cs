@@ -20,7 +20,7 @@ using System.Net;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
-
+using ServiceStack;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -1410,7 +1410,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewAgreementViewModel model;
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(id);
                 Organisation insured = clientProgramme.Owner;
-                ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
+                ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 var insuranceRoles = new List<InsuranceRoleViewModel>();
                 ViewBag.progid = clientProgramme.Id;
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
@@ -1420,7 +1420,7 @@ namespace DealEngine.WebUI.Controllers
                 insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(apa => apa.DateDeleted == null).OrderBy(apa => apa.Product.OrderNumber))
                 {
-                    model = new ViewAgreementViewModel
+                    model = new ViewAgreementViewModel(agreement, sheet, UserCulture)
                     {
                         EditEnabled = true,
                         ClientAgreementId = agreement.Id,
@@ -1428,183 +1428,17 @@ namespace DealEngine.WebUI.Controllers
                         SentOnlineAcceptance = agreement.SentOnlineAcceptance
                     };
 
-                    var insuranceInclusion = new List<InsuranceInclusion>();
-                    var insuranceExclusion = new List<InsuranceExclusion>();
-                    var riskPremiums = new List<RiskPremiumsViewModel>();
-                    var multiCoverOptions = new List<MultiCoverOptions>();
-                    string riskname = null;
-
-                    // List Agreement Inclusions
-                    if (agreement.Product.IsMultipleOption)
-                    {
-                        if (agreement.Product.Id == new Guid("79dc8bcd-01f2-4551-9caa-aa9200f1d659")) //NZACS DO
-                        {
-                            insuranceInclusion.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below / Extension Covers" });
-                        }
-                        else
-                        {
-                            insuranceInclusion.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below" });
-                        }
-                        insuranceExclusion.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
-
-                    }
-                    else
-                    {
-                        foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                        {
-                            if (term.SubTermType == "MV")
-                            {
-                                riskname = "Motor Vehicle";
-                            }
-                            else if (term.SubTermType == "BV")
-                            {
-                                riskname = "Vessel";
-                            }
-                            else
-                            {
-                                riskname = agreement.Product.Name;
-                            }
-                            insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = term.TermLimit.ToString("C0", UserCulture) });
-                        }
-
-                        // List Agreement Exclusions
-                        if (agreement.Product.Id == new Guid("107c38d6-0d46-4ec1-b3bd-a73b0021f2e3")) //HIANZ
-                        {
-                            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                            {
-                                insuranceExclusion.Add(new InsuranceExclusion
-                                {
-                                    RiskName = "Motor Vehicle",
-                                    Exclusion = "Excess: <br /> - 1% of Sum Insured subject to a minimum of $500 " +
-                                                                    "<br /> - theft excess 1 % of the sum insured with a minimum of $1,000 including whilst on hire, non return from hire and from the clients yard " +
-                                                                    "<br /> - theft excess nil for any vehicle or item insured fitted with a GPS tracking device " +
-                                                                    "<br /> PLUS " +
-                                                                    "<br /> - Whilst being driven by any person under 25 years of age $500 " +
-                                                                    "<br /> - Breach of Warranty / Invalidation Clause $1, 000"
-                                });
-                            }
-                        }
-                        else if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
-                        { //Arcco
-                            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                            {
-                                insuranceExclusion.Add(new InsuranceExclusion
-                                {
-                                    RiskName = "Motor Vehicle",
-                                    Exclusion = "Excess: <br /> $2,000 each and every claim. " +
-                                                                    "<br /> An additional $1,000 excess applies when the vehicle is on hire and is being driven by an under 21 year old driver or has held a full licence less than 12 months. " +
-                                                                    "<br /> $500 excess on trailers. "
-                                });
-                            }
-                        }
-                        else if (agreement.Product.Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a"))
-                        { //CoastGuard
-                            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                            {
-                                insuranceExclusion.Add(new InsuranceExclusion
-                                {
-                                    RiskName = "Vessel",
-                                    Exclusion = "Excess: refer to vessel excess "
-                                });
-                            }
-                        }
-                        else
-                        {
-                            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                            {
-                                insuranceExclusion.Add(new InsuranceExclusion
-                                {
-                                    RiskName = agreement.Product.Name,
-                                    Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture)
-                                });
-                            }
-                        }
-                    }
-
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
-                    {
-                        if (null != agreement.Product.DependableProduct)
-                        {
-                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
-
-                        }
-                        else
-                        {
-                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = "NonDependable" });
-
-                        }
-                    }
-
-                    // List Agreement Premiums
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null))
-                    {
-                        if (answerSheet.IsChange && answerSheet.PreviousInformationSheet != null)
-                        {
-                            riskPremiums.Add(new RiskPremiumsViewModel
-                            {
-                                RiskName = riskname,
-                                Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture),
-                                FSL = term.FSLDiffer.ToString("C", UserCulture),
-                                TotalPremium = term.PremiumDiffer.ToString("C", UserCulture),
-                                TotalPremiumIncFeeGST = ((term.PremiumDiffer + agreement.BrokerFee) * agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", UserCulture),
-                                TotalPremiumIncFeeIncGST = ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", UserCulture)
-                            });
-                        }
-                        else
-                        {
-                            riskPremiums.Add(new RiskPremiumsViewModel
-                            {
-                                RiskName = riskname,
-                                Premium = (term.Premium - term.FSL).ToString("C", UserCulture),
-                                FSL = term.FSL.ToString("C", UserCulture),
-                                TotalPremium = term.Premium.ToString("C", UserCulture),
-                                TotalPremiumIncFeeGST = ((term.Premium + agreement.BrokerFee) * agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", UserCulture),
-                                TotalPremiumIncFeeIncGST = ((term.Premium + agreement.BrokerFee) * (1 + agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", UserCulture)
-                            });
-                        }
-                    }
-
                     // Populate the ViewModel
-                    model.Sheetstatus = answerSheet.Status;
                     model.InsuranceRoles = insuranceRoles;
-                    model.Inclusions = insuranceInclusion;
-                    model.Exclusions = insuranceExclusion;
-                    model.RiskPremiums = riskPremiums;
-                    model.MultiCoverOptions = multiCoverOptions;
-                    model.Status = answerSheet.Status;
-
-                    // Status
                     model.ProductName = agreement.Product.Name;
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
                     model.IsOptionalProduct = agreement.Product.IsOptionalProduct;
                     model.Status = agreement.Status;
-                    if (agreement.Status == "Referred")
-                    {
-                        var milestone = await _milestoneService.GetMilestoneByBaseProgramme(answerSheet.Programme.BaseProgramme.Id);
-                        if (milestone != null)
-                        {
-                            var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                            var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status – Referred" && a.DateDeleted == null);
-                            var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
-                            var userTask = userTaskList.LastOrDefault(t => t.Activity.Name == "Agreement Status – Referred" && t.DateDeleted == null);
-                            if (userTask != null)
-                            {
-                                userTask.IsActive = true;
-                                await _taskingService.UpdateUserTask(userTask);
-                            }
-                            if (advisory != null)
-                            {
-                                model.Advisory = advisory.Description;
-                            }
-
-                        }
-                        //_emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
-                    }
-                    model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
+                    model.InformationSheetStatus = sheet.Status;
                     Boolean nextInfoSheet = false;
                     Boolean IsChange = false;
 
-                    if (null != agreement.ClientInformationSheet.NextInformationSheet)
+                    if (null != sheet.NextInformationSheet)
                     {
                         model.NextInfoSheet = true;
                     }
@@ -1613,9 +1447,9 @@ namespace DealEngine.WebUI.Controllers
                         model.NextInfoSheet = false;
                     }
 
-                    if (null != agreement.ClientInformationSheet.IsChange)
+                    if (null != sheet.IsChange)
                     {
-                        model.IsChange = agreement.ClientInformationSheet.IsChange;
+                        model.IsChange = sheet.IsChange;
                     }
 
                     model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
@@ -1623,89 +1457,23 @@ namespace DealEngine.WebUI.Controllers
                     model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                     model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                     model.CurrencySymbol = "fa fa-dollar";
-                    model.ClientInformationSheet = agreement.ClientInformationSheet;
-                    if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal &&
-                        agreement.ClientInformationSheet.Programme.EGlobalBranchCode != null && agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null)
+                    model.ClientInformationSheet = sheet;
+                    if (sheet.Programme.BaseProgramme.UsesEGlobal &&
+                        sheet.Programme.EGlobalBranchCode != null && sheet.Programme.EGlobalClientNumber != null)
                     {
-                        model.ClientNumber = agreement.ClientInformationSheet.Programme.EGlobalBranchCode + "-" + agreement.ClientInformationSheet.Programme.EGlobalClientNumber;
+                        model.ClientNumber = sheet.Programme.EGlobalBranchCode + "-" + sheet.Programme.EGlobalClientNumber;
                     }
                     else
                     {
                         model.ClientNumber = agreement.ClientNumber;
                     }
                     model.PolicyNumber = agreement.PolicyNumber;
-
-                    // MV
-                    model.HasVehicles = answerSheet.Vehicles.Count > 0;
-                    if (model.HasVehicles)
-                    {
-                        var vehicles = new List<VehicleViewModel>();
-                        foreach (Vehicle v in answerSheet.Vehicles)
-                        {
-                            if (!v.Removed && v.DateDeleted == null && v.VehicleCeaseDate == DateTime.MinValue)
-                            {
-                                vehicles.Add(new VehicleViewModel { VehicleCategory = v.VehicleCategory, Make = v.Make, Year = v.Year, Registration = v.Registration, FleetNumber = v.FleetNumber, VehicleModel = v.Model, SumInsured = v.GroupSumInsured });
-                            }
-                        }
-                        model.Vehicles = vehicles;
-                    }
-
-                    // BV
-                    model.HasBoats = answerSheet.Boats.Count > 0;
-                    try
-                    {
-                        if (model.HasBoats)
-                        {
-                            var boats = new List<BoatViewModel>();
-                            foreach (Boat b in answerSheet.Boats)
-                            {
-                                if (!b.Removed && b.DateDeleted == null && b.BoatCeaseDate == DateTime.MinValue)
-                                {
-                                    boats.Add(new BoatViewModel { BoatName = b.BoatName, BoatMake = b.BoatMake, BoatModel = b.BoatModel, MaxSumInsured = b.MaxSumInsured, BoatQuoteExcessOption = b.BoatQuoteExcessOption });
-                                }
-                            }
-                            model.Boats = boats;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.InnerException);
-                    }
-
-                    try
-                    {
-                        if (model.HasBoats)
-                        {
-                            var bvterms = new List<EditTermsViewModel>();
-                            foreach (ClientAgreementBVTerm bt in
-                                agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null).BoatTerms)
-                            {
-                                if (bt.DateDeleted == null)
-                                {
-                                    bvterms.Add(new EditTermsViewModel
-                                    {
-                                        BoatName = bt.BoatName,
-                                        BoatMake = bt.BoatMake,
-                                        BoatModel = bt.BoatModel,
-                                        TermLimit = bt.TermLimit,
-                                        Excess = bt.Excess
-                                    });
-                                }
-                            }
-                            model.BVTerms = bvterms;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.InnerException);
-                    }
-
-                    model.InformationSheetId = answerSheet.Id;
+                    model.InformationSheetId = sheet.Id;
                     models.Add(model);
                 }
 
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
-                ViewBag.Status = answerSheet.Status;
+                ViewBag.Status = sheet.Status;
                 ClientAgreement masterclientagreement = clientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault();
                 if (clientProgramme.BaseProgramme.StopAgreement && masterclientagreement.DateCreated >= clientProgramme.BaseProgramme.StopAgreementDateTime)
                 {
@@ -1722,75 +1490,66 @@ namespace DealEngine.WebUI.Controllers
                             clientProgramme.InformationSheet.SubmittedBy = user;
                             await uow.Commit();
                         }
-
-                    }
-                    if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
-                    {
-                        model = new ViewAgreementViewModel();
-                        model.ProgrammeStopAgreement = true;
-                        var message = clientProgramme.BaseProgramme.SubsystemMessage;
-                        if (string.IsNullOrWhiteSpace(message))
-                        {
-                            message = " TEMPLATE: subsystem invoked";
-                        }
-                        model.AgreementMessage = message;
-
-                        var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
-                        if (isBaseClientProgramme)
-                        {
-                            bool isComplete;
-                            if (clientProgramme.SubClientProgrammes.Count != 0)
-                            {
-                                isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
-                                if (isComplete)
-                                {
-                                    return PartialView("_ViewAgreementList", models);
-                                }
-                                else
-                                {
-                                    model.AgreementMessage = "not all subsystem client information sheets have been completed";
-                                    return PartialView("_ViewStopAgreementMessage", model);
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    await _subsystemService.CreateSubObjects(clientProgramme.Id, answerSheet);
-                                    return PartialView("_ViewStopAgreementMessage", model);
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw new Exception("Create Sub Objects failed", ex);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            message = "subsystem client information sheet completed and have notified the broker";
-                            //Notify broker 
-                            return PartialView("_ViewStopAgreementMessage", model);
-                        }
-
-                    }
-                    else
-                    {
-                        return PartialView("_ViewStopAgreementMessage", model);
                     }                    
-                }                
+
+                    return PartialView("_ViewStopAgreementMessage", model);
+                }
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                {
+                   return await ViewAgreementSubsystem(clientProgramme, models);
+                }
                 else
                 {
                     return PartialView("_ViewAgreementList", models);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }                       
+            }
         }
 
-        
+        private async Task<IActionResult> ViewAgreementSubsystem(ClientProgramme clientProgramme, BaseListViewModel<ViewAgreementViewModel> models)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            model.ProgrammeStopAgreement = true;
+            var message = clientProgramme.BaseProgramme.SubsystemMessage;
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                message = " The other advisors are now being notified so that they can login and complete their own declaration.";
+            }
+            model.AgreementMessage = message;
+
+            var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
+            if (isBaseClientProgramme)
+            {
+                bool isComplete;
+                if (clientProgramme.SubClientProgrammes.Count != 0)
+                {
+                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet);
+                    isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
+                }
+                else
+                {
+                    await _subsystemService.CreateSubObjects(clientProgramme.Id, clientProgramme.InformationSheet);
+                    isComplete = clientProgramme.SubClientProgrammes.Count == 0;
+                }
+                if (isComplete)
+                {
+                    return PartialView("_ViewAgreementList", models);
+                }
+                else
+                {
+                    return PartialView("_ViewStopAgreementMessage", model);
+                }
+            }
+            else
+            {
+                //Notify broker 
+                return PartialView("_ViewStopAgreementMessage", model);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> SaveDate(Guid id , string Startdate)

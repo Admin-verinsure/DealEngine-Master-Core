@@ -63,7 +63,7 @@ const Default = {
   trigger           : 'hover focus',
   title             : '',
   delay             : 0,
-  html              : true,
+  html              : false,
   selector          : false,
   placement         : 'top',
   offset            : 0,

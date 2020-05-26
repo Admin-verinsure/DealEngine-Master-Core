@@ -122,7 +122,6 @@ namespace DealEngine.Services.Impl
                 throw new ArgumentNullException(nameof(collection));
 
             await BuildAnswerFromModel(sheet, collection);
-
             await UpdateInformation(sheet);
         }
 
@@ -300,6 +299,23 @@ namespace DealEngine.Services.Impl
         {
             SubClientInformationSheet sheet = _mapper.Map<SubClientInformationSheet>(clientInformationSheet);
             return sheet;
+        }
+
+        public async Task UnlockSheet(ClientInformationSheet sheet, User user)
+        {
+            if (sheet.Status == "Submitted")
+            {
+                sheet.Status = "Started";
+                sheet.UnlockDate = DateTime.UtcNow;
+                sheet.UnlockedBy = user;
+
+                await UpdateInformation(sheet);
+            }
+        }
+
+        public async Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal)
+        {
+            return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);                     
         }
     }
 }

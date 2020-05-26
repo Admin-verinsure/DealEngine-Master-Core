@@ -19,10 +19,6 @@
       "destination": "wwwroot/bootstrap-multiselect/"
     },
     {
-      "library": "twitter-bootstrap@4.3.1",
-      "destination": "wwwroot/twitter-bootstrap/"
-    },
-    {
       "library": "popper.js@1.15.0",
       "destination": "wwwroot/lib/popper.js/"
     },
@@ -42,11 +38,10 @@
       "provider": "unpkg",
       "library": "bootstrap@4.4.1",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "bootstrap-table@1.16.0",
+      "destination": "wwwroot/bootstrap-table/"
     }
-  ,
-{
-  "library": "bootstrap-table@1.16.0",
-  "destination": "wwwroot/bootstrap-table/"
-}
-]
+  ]
 }

@@ -319,7 +319,8 @@ namespace DealEngine.WebUI.Controllers
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";               
+                string resultMessage = "";
+                IdentityUser deUser;
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
@@ -328,18 +329,18 @@ namespace DealEngine.WebUI.Controllers
                     var identityResult = await DealEngineIdentityUserLogin(user, password);
                     if (!identityResult.Succeeded)
                     {
-                        var deUser = await _userManager.FindByNameAsync(userName);
+                        deUser = await _userManager.FindByNameAsync(userName);
                         await _userManager.RemovePasswordAsync(deUser);
-                        await _userManager.AddPasswordAsync(deUser, password);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                        await _userManager.AddPasswordAsync(deUser, password);                        
                     }
                     else
                     {
-                        var deUser = await _userManager.FindByNameAsync(userName);
+                        deUser = await _userManager.FindByNameAsync(userName);
                         await _signInManager.SignOutAsync();
                         deUser = await _userManager.FindByNameAsync(userName);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                        
                     }
+                    await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
 
                     return LocalRedirect("~/Home/Index");
                 }

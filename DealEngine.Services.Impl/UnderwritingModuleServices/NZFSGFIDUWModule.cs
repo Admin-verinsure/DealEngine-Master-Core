@@ -113,7 +113,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermExcess = 0;
 
-            TermExcess = 2500;
+            TermExcess = 5000;
 
             ClientAgreementTerm termfid100klimitoption = GetAgreementTerm(underwritingUser, agreement, "FID", TermLimit100k, TermExcess);
             termfid100klimitoption.TermLimit = TermLimit100k;
