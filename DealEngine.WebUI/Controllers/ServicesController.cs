@@ -378,6 +378,74 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetCommonPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                         string searchField, string searchString, string searchOper, string filters)
+        {
+            User user = null;
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+
+                if (sheet == null)
+                    throw new Exception("No valid information for id " + informationId);
+
+                var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false");
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
+
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName,organisation.IsPrincipalAdvisor, organisation.Id);
+                    }
+                    model.AddRow(row);
+                }
+
+
+                //// convert model to XDocument for rendering.
+                document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                        string searchField, string searchString, string searchOper, string filters)
@@ -3071,6 +3139,15 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach(var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
 
                         }
                         else
@@ -3098,6 +3175,16 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
                             await _organisationService.CreateNewOrganisation(organisation);
@@ -3274,6 +3361,15 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
 
                         }
                         else
@@ -3299,6 +3395,15 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                             }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
                             organisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(organisation);
                             await _organisationService.CreateNewOrganisation(organisation);
@@ -3348,11 +3453,26 @@ namespace DealEngine.WebUI.Controllers
                     model.RegisteredStatus = org.RegisteredStatus;
                     model.Duration = org.Duration;
                     model.Qualifications = org.Qualifications;
-
+                    model.IsRetiredorDecieved = org.IsRetiredorDecieved;
+                    model.IsPrincipalAdvisor = org.IsPrincipalAdvisor;
                     if (org.DateofBirth != null)
                     {
                         model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
+
+                    if (org.DateofRetirement != null)
+                    {
+                        model.DateofRetirement =(org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    }
+                    if (model.DateofDeceased != null)
+                    {
+                        model.DateofDeceased = (org.DateofRetirement > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    }
+
+                    model.Email = org.Email;
+                    model.RegisteredStatus = org.RegisteredStatus;
+                    model.Duration = org.Duration;
+
 
                     model.OrganisationTypeName = org.OrganisationType.Name;
                     model.AnswerSheetId = answerSheetId;

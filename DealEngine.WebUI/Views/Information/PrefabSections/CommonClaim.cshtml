@@ -21,7 +21,7 @@
 
             <div id="clTabs1" class="tab-content">
 
-                <fieldset>
+                <fieldset id="listallfieldset">
                     <div class="row">
                         <section class="col col-xs-12">
                             @*<script src="~/jquery/jquery.min.js"></script>*@
@@ -252,10 +252,10 @@
                             <label class="input form-group">
 
                                 <select data-placeholder="Choose Primary Policy Product..." id="PrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
+                                    <option selected="selected" value="">-- Select here --</option>
 
                                     @foreach (var bwloc in Model.ClaimProducts)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -271,10 +271,9 @@
                             <label class="input form-group">
 
                                 <select data-placeholder="Choose Responsible Principal..." id="ResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
-
+                                    <option selected="selected" value="">-- Select here --</option>
                                     @foreach (var bwloc in Model.AvailableOrganisations)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -454,9 +453,10 @@
 
                                 <select data-placeholder="Choose Primary Policy Product..." id="AddPrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
 
+                                    <option selected="selected" value="">-- Select here --</option>
+
                                     @foreach (var bwloc in Model.ClaimProducts)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -473,9 +473,10 @@
 
                                 <select data-placeholder="Choose Responsible Principal..." id="AddResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
 
+                                    <option selected="selected" value="">-- Select here --</option>
+
                                     @foreach (var bwloc in Model.AvailableOrganisations)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 

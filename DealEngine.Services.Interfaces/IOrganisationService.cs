@@ -17,6 +17,7 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
         Task UpdateOrganisation(Organisation organisation);
         Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet);
+        Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet);
     }
 }
 

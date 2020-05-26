@@ -11,7 +11,6 @@ namespace DealEngine.Services.Interfaces
         Task<Programme> GetCoastGuardProgramme();
         Task<List<Programme>> GetProgrammesByOwner (Guid ownerOrganisationId);
 		Task<ClientProgramme> GetClientProgramme (Guid id);
-        Task<Programme> GetClientProgrammebyName(string programmeName);
         Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
 		Task<List<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);
         Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);

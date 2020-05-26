@@ -8,6 +8,22 @@
             <tbody>
                 <tr>
                     <td>
+                        @*<div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-primary btn-xs" href="~/Home/Index"><i class="fa fa-home"></i>Back to Dashboard</a>
+                            @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                            {
+                                <a class="btn btn-primary btn-xs more" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+                                <a class="btn btn-primary btn-xs more" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>
+                                <a class="btn btn-primary btn-xs more"  href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
+                                <a class="btn btn-primary btn-xs less" href="~/Home/EditClient?ProgrammeId=@Model.ProgrammeId" aria-hidden="true" style="color:white;display:none;" data-toggle="modal"><i class="fa fa-pencil"></i> Edit Client</a>
+                                <a class="btn btn-primary btn-xs less" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId" style="color:white;display:none;"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
+                                <a class="btn btn-primary btn-xs less" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId" style="color:white;display:none;"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
+                            }
+                                <a class="btn btn-primary btn-xs more" style="color:white" onclick="$('.more').hide();$('.less').show()"><i class="fa fa-home"></i>More</a>
+                                <a class="btn btn-primary btn-xs less" onclick="$('.less').hide();$('.more').show()" style="display:none; color:white"><i class="fa fa-home"></i>less</a>
+
+                        </div>*@
+
                         <ul class="nav">
                             <li class="nav-item">
                                 <a class="btn btn-primary btn-xs" href="~/Home/Index"><i class="fa fa-home"></i>Back to Dashboard</a>
@@ -23,6 +39,15 @@
                                 <li class="nav-item">
                                     <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
                                 </li>
+                                @*<li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create 2nd UIS</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
+                                </li>*@
                             }
 
                         </ul>

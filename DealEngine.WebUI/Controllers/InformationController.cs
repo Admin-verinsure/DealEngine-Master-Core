@@ -14,6 +14,7 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
+using System.Linq.Dynamic;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -217,6 +218,12 @@ namespace DealEngine.WebUI.Controllers
 
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientProgramme = clientProgramme;
+                List<string> sections = new  List<string>();
+                foreach(var Section in model.Section.OrderBy(s => s.Position))
+                {
+                    sections.Add(Section.CustomView);
+                }
+                model.ListSection = sections;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
             }
@@ -227,20 +234,22 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> PartialViewProgramme(String name, Guid id)
+        public async Task<IActionResult> PartialViewProgramme(Guid id, String name = "",List<string> viewlist  = null)
         {
-            //var MarinaLocations = new List<OrganisationViewModel>();
+
             User user = null;
 
             try
             {
-
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.ClientInformationSheet = sheet;
+
                 model.SectionView = name;
+                model.ListSection = viewlist;
                 model.ClientProgramme = clientProgramme;
                 user = await CurrentUser();
 
@@ -552,7 +561,15 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientInformationAnswers = informationAnswers;
 
                 ViewBag.Title = " View Information Sheet ";
-                return View(model);
+                if(model.SectionView == "" )
+                {
+                    return View("ProgrammeDetailsReport",model);
+                }
+                else
+                {
+                    return View(model);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -1174,18 +1191,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 if (sheet != null)
                 {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        if (sheet.Status == "Submitted")
-                        {
-                            sheet.Status = "Started";
-                            //sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
-                            sheet.UnlockDate = DateTime.UtcNow;
-                            sheet.UnlockedBy = user;
-                        }
-                        await uow.Commit();
-
-                    }
+                    await _clientInformationService.UnlockSheet(sheet, user);
                 }
 
                 var url = "/Information/EditInformation/" + id;
@@ -1269,7 +1275,6 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                //sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
                 sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
 
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
@@ -1281,26 +1286,15 @@ namespace DealEngine.WebUI.Controllers
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
                         await _clientInformationService.SaveAnswersFor(sheet, collection);
-
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            //UWM
-                            _uWMService.UWM(user, sheet, reference);
-
-                            //sheet.Status = "Submitted";
-                            await uow.Commit();
-                        }
-                    }
-
-                    foreach (ClientAgreement agreement in sheet.Programme.Agreements)
-                    {
-                        await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
+                        await GenerateUWM(user, sheet, reference);                        
                     }
 
                     return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
                 }
                 else
                 {
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+
                     return Redirect("/Information/QuoteToAgree?id=" + sheet.Programme.Id);
                 }
 
@@ -1312,6 +1306,23 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        private async Task GenerateUWM(User user, ClientInformationSheet sheet, string reference)
+        {
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                //UWM
+                _uWMService.UWM(user, sheet, reference);
+
+                //sheet.Status = "Submitted";
+                await uow.Commit();
+            }
+
+            foreach (ClientAgreement agreement in sheet.Programme.Agreements)
+            {
+                await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> QuoteToAgree(string id)
         {
@@ -1320,10 +1331,11 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                user = await CurrentUser();                
+                user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
                 var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 var sheet = clientProgramme.InformationSheet;
+                var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
 
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
@@ -1333,6 +1345,19 @@ namespace DealEngine.WebUI.Controllers
                         sheet.SubmitDate = DateTime.UtcNow;
                         sheet.SubmittedBy = user;
                         await uow.Commit();
+                    }
+
+                    if (!isBaseSheet)
+                    {
+                        SubClientInformationSheet subSheet = (SubClientInformationSheet)sheet;
+                        var baseSheet = subSheet.BaseClientInformationSheet;
+
+                        if (baseSheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
+                        {
+                            await GenerateUWM(user, baseSheet, baseSheet.ReferenceId);
+                        }
+
+                        sheet = baseSheet;
                     }
 
                     if (sheet.Programme.BaseProgramme.ProgEnableEmail)
@@ -1350,7 +1375,6 @@ namespace DealEngine.WebUI.Controllers
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
                         }
-
                     }
                 }
 
@@ -1436,7 +1460,7 @@ namespace DealEngine.WebUI.Controllers
 
                 await _programmeService.Update(newClientProgramme);
 
-                return Redirect("/Information/StartInformation/" + newClientProgramme.Id);
+                return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
             }
             catch (Exception ex)
             {

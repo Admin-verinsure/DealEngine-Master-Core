@@ -18,18 +18,18 @@
             </ul>
 
             <div id="CommonNamedPartyTabs1" class="tab-content">
-                <fieldset>
+                <fieldset >
                     <div class="row">
                         <section class="col col-xs-12">
                             @*<script src="~/jquery/jquery.min.js"></script>*@
                             <script type="text/javascript">
                                 $(window).on('load',function () {
                             $("#CommonNamedParties").jqGrid({
-                                url: "/Services/GetPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+                                url: "/Services/GetCommonPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
-                                colNames: ["","Organisation Name","Organisation Type", "Remove"],
+                                colNames: ["","Organisation Name","Organisation Type","IsPrincipalAdvisor", "Remove"],
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
@@ -37,6 +37,7 @@
                                         }
                                     },
                                     { name: "OrganisationName", align: 'center' },
+                                    { name: "IsPrincipalAdvisor", align: 'center' },
                                     { name: "OrganisationType", align: 'center' },
                                      {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
@@ -164,13 +165,13 @@
                         <label class="label required">DOB</label>
                         <label class="input">
                             <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonEditDOB" name="DateofBirth" placeholder="Date of Birth" value="">
+                            <input name="DateofBirth" placeholder="Date of Birth" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonEditDOB" type="text">
                         </label>
 
                         <p class="validationContainer" id="ValidateCommonEditDOB"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="label required">Email</label>
                         <label class="input">
                             <i></i>
@@ -205,7 +206,7 @@
                     </section>
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
-                        <label class="label required">Qualifications</label>
+                        <label class="label required">List any industrial qualifications</label>
                         <label class="input">
                             <i></i>
                             <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonEditQualification" name="Qualifications" placeholder="Qualifications" value="">
@@ -218,7 +219,7 @@
                         <label class="label required">Duration Of Time as Adviser</label>
                         <label class="input">
                             <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonEditDuration" name="Duration" placeholder="Duration" value="">
+                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonEditAdvisorDuration" name="Duration" placeholder="Duration" value="">
                         </label>
                         <p class="validationContainer" id="ValidateCommonEditDuration"></p>
 
@@ -240,6 +241,16 @@
 
                         </section>
                     }
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input type="checkbox" id="CommonEditIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
+
+                        </section>
+
+                    </section>
+
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <button onclick="ValidateCommonNamedParty(event,'CommonEdit')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                         <button onclick="ClearBoats(event,'#CommonNamedPartyTabs2','CommonNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
@@ -329,7 +340,8 @@
                         <label class="label required">DOB</label>
                         <label class="input">
                             <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonDOB" name="DateofBirth" placeholder="Date of Birth" value="">
+                            <input name="DateofBirth" placeholder="Date of Birth" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDOB" type="text">
+                            @*<input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonDOB" name="DateofBirth" placeholder="Date of Birth" value="">*@
                         </label>
 
                         <p class="validationContainer" id="ValidateCommonDOB"></p>
@@ -361,7 +373,7 @@
                     </section>
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <label class="label required">Qualifications</label>
+                        <label class="label required">List any industrial qualifications</label>
                         <label class="input">
                             <i></i>
                             <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonQualification" name="Qualifications" placeholder="Qualifications" value="">
@@ -374,7 +386,7 @@
                         <label class="label required">Duration Of Time as Adviser</label>
                         <label class="input">
                             <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonDuration" name="Duration" placeholder="Duration" value="">
+                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonAdvisorDuration" name="Duration" placeholder="Duration" value="">
                         </label>
                         <p class="validationContainer" id="ValidateCommonDuration"></p>
 
@@ -396,6 +408,15 @@
 
                         </section>
                     }
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input type="checkbox" id="CommonIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
+
+                        </section>
+
+                    </section>
 
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <button onclick="ValidateCommonNamedParty(event,'Common')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
@@ -527,9 +548,16 @@
                  $('#CommonEditDOB').val(data.dateofBirth);
                  $('#CommonEditRegStatus').val(data.registeredStatus);
                  $('#CommonEditQualification').val(data.qualifications);
-                 $('#CommonEditDuration').val(data.duration);
-                 $('#CommonConfirmAAA').val(data.confirmAAA);
-                 CommonTypeSelected('CommonType','CommonEdit')
+                 $('#CommonEditAdvisorDuration').val(data.duration);
+                 $('#CommonEditIsRetiredorDecieved').val(""+data.isRetiredorDecieved);
+                 $('#CommonEditDateofRetirement').val(data.dateofRetirement);
+                 $('#CommonEditDateofDeceased').val(data.dateofDeceased);
+                 $('#CommonEditConfirmAAA').val(data.confirmAAA);
+                 $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
+                  UpdateChosen();
+                 //CommonTypeSelected('CommonType','CommonEdit')
+                 CommonTypeSelected('CommonEditType','CommonEdit')
+                 Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')
              }
 
           
@@ -550,7 +578,7 @@
         var email = $('#' + validatortype + 'Email').val();
         var regstatus = $('#' + validatortype + 'RegStatus').val();
         var qualification = $('#' + validatortype + 'Qualification').val();
-        var duration = $('#' + validatortype + 'Duration').val();
+        var duration = $('#' + validatortype + 'AdvisorDuration').val();
         var orgname = $('#' + validatortype + 'OrgName').val();
         var ownercheck = $('#' + validatortype + 'Ownercheck').val();
 
@@ -665,7 +693,10 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+         var Orgname = $('#CommonDuration').val(); 
+         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+         var proddata = proddata + "&Duration=" + Orgname;
+
         $.ajax({
             url: '@Url.Action("AddCommonNamedParty", "Services")',
             type: "POST",
@@ -692,9 +723,9 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
+        var Orgname = $('#CommonEditDuration').val(); 
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-
-        var proddata = proddata ;
+        var proddata = proddata + "&Duration=" + Orgname;
         $.ajax({
             url: '@Url.Action("EditCommonNamedParty", "Services")',
             type: "POST",

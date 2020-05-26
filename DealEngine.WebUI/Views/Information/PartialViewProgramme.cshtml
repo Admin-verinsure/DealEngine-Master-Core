@@ -1,46 +1,52 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="content">
+        <!-- Bread crumb is created dynamically -->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-        <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
-            > <span>
-                <a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
-                > View Client Information Sheet Section
-            </span>
-        </h1>
-    </div>
-    <span>
-        <a onclick="location.href='@Url.Action("ViewProgrammeDetails", "Information",new { Id =@Model.ClientProgramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-    </span>
-
-
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-8">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    @Html.HiddenFor(m => m.AnswerSheetId)
-                    @Html.HiddenFor(m => m.ClientProgramme.Owner.Id)
-
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2>Client Information Sheet Section</h2>
-                    </header>
-                    <!-- widget div-->
-                    @Html.Partial("PrefabSections/" + Model.SectionView, Model)
-
-
-                </div>
-            </article>
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
+                > <span>
+                    <a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
+                    > View Client Information Sheet Section
+                </span>
+            </h1>
         </div>
-    </section>
-</div>
+        <span>
+            @*<a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { model=@Model , id=@Model.Id})'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>*@
+
+            <a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { id=@Model.Id,ListView =@Model.ListSectionView })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+      
+
+
+        <!-- widget grid -->
+        <section id="widget-grid" class="">
+            <div class="row">
+                <article class="col-sm-12 col-md-12 col-lg-8">
+                    <!-- new widget -->
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                        @Html.HiddenFor(m => m.AnswerSheetId)
+                        @Html.HiddenFor(m => m.ClientProgramme.Owner.Id)
+
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                            <h2>Client Information Sheet Section</h2>
+                        </header>
+                        <!-- widget div-->
+                        if(@Model.SectionView != ""){
+                        @Html.Partial("PrefabSections/" + Model.SectionView, Model)
+
+                        }
+
+
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
 
 
 @section pagespecific {
