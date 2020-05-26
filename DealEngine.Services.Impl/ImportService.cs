@@ -721,7 +721,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = "C:\\Users\\temp\\NZFSGClientupload.csv";
+            var fileName = "C:\\Users\\temp\\NZFSGClientupload1.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
@@ -768,16 +768,18 @@ namespace DealEngine.Services.Impl
                             user = new User(currentUser, Guid.NewGuid(), username);
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
-                       
-                            if (organisation == null)
+
+                        var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                        if (organisationType == null)
+                        {
+                            organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                        }
+
+                        if (organisation == null)
                             {
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                            if (organisationType == null)
-                            {
-                                organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                            }
+                              
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[4], organisationType, parts[10]);
-                            organisation.IsPrincipalAdvisor = true;
+                          //  organisation.IsPrincipalAdvisor = true;
                             organisation.OfcPhoneno = parts[6];
 
                             await _organisationService.CreateNewOrganisation(organisation);
@@ -805,15 +807,18 @@ namespace DealEngine.Services.Impl
 
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
-                            sheet.Organisation.Add(organisation);
+                            
                             InsuranceAttribute insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
                             if (insuranceAttribute == null)
                             {
                                 insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
                             }
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            insuranceAttribute.IAOrganisations.Add(organisation);
-
+                            Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], organisationType, parts[10]);
+                            organisation.IsPrincipalAdvisor = true;
+                            await _organisationService.CreateNewOrganisation(advisororganisation);
+                            advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
+                            insuranceAttribute.IAOrganisations.Add(advisororganisation);
+                            sheet.Organisation.Add(advisororganisation);
                             clientProgramme.BrokerContactUser = programme.BrokerContactUser;
                             clientProgramme.ClientProgrammeMembershipNumber = parts[5];
                             sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));

@@ -702,9 +702,9 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-         var Orgname = $('#CommonDuration').val(); 
+         //var Orgname = $('#CommonAdvisorDuration').val(); 
          var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-         var proddata = proddata + "&Duration=" + Orgname;
+         //var proddata = proddata + "& Duration =" + Orgname;
 
         $.ajax({
             url: '@Url.Action("AddCommonNamedParty", "Services")',
@@ -732,9 +732,10 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var Orgname = $('#CommonEditDuration').val(); 
+        //var Orgname = $('#CommonEditAdvisorDuration').val(); 
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&Duration=" + Orgname;
+        //var proddata = proddata + "& Duration =" + Orgname;
+
         $.ajax({
             url: '@Url.Action("EditCommonNamedParty", "Services")',
             type: "POST",
