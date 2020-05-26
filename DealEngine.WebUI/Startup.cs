@@ -63,7 +63,6 @@ namespace DealEngine.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
             services.AddMvc();
-            services.AddPaging();
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)

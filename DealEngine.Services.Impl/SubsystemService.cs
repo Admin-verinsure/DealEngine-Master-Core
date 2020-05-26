@@ -73,10 +73,15 @@ namespace DealEngine.Services.Impl
             }
             else
             {
-                if (subClientSheet.DateDeleted != null)
+                if (subClientSheet.DateDeleted.HasValue || subClientSheet.DeletedBy != null)
                 {
+                    SubClientProgramme subProg = (SubClientProgramme)subClientSheet.Programme;
                     subClientSheet.DateDeleted = null;
                     subClientSheet.Programme.DateDeleted = null;
+                    subClientSheet.DeletedBy = null;
+                    subClientSheet.Programme.DeletedBy = null;
+
+                    clientProgramme.SubClientProgrammes.Add(subProg);
                 }
             }
 
