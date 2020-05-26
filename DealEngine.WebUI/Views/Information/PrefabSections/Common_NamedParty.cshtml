@@ -114,7 +114,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden " id="CommonEditAdvisorsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditAdvisorsec ">
                         <label class="label required">This Person has retired or deceased ?</label>
                         <label class="input">
                             <select id="CommonEditIsRetiredorDecieved" onchange="Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')" class="form-control b" name="IsRetiredorDecieved">
@@ -188,6 +188,14 @@
                         </label>
                         <p class="validationContainer" id="ValidateCommonEditOrgName"></p>
                     </section>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec">
+                        <label class="label">Office Phone</label>
+                        <label class="input">
+                            <i></i>
+                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonEditOfcPhone" name="OfcPhoneno" placeholder="Office Phone" value="">
+                        </label>
+                        <p class="validationContainer" id="ValidateCommonEditOfcPhone"></p>
+                    </section>
 
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
@@ -226,7 +234,7 @@
                     </section>
                     @if (@Model.Name == "AAA Programme")
                     {
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
                             <label class="input">
                                 <i></i>
@@ -242,7 +250,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonEditAdvisorsec">
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                             <input type="checkbox" id="CommonEditIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
@@ -290,7 +298,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden " id="CommonAdvisorsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec ">
                         <label class="label required">This Person has retired or deceased ?</label>
                         <label class="input">
                             <select id="CommonIsRetiredorDecieved" onchange="Isretiredselected('CommonIsRetiredorDecieved','Common')" class="form-control b" name="IsRetiredorDecieved">
@@ -393,7 +401,7 @@
                     </section>
                     @if (@Model.Name == "AAA Programme")
                     {
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="CommonAdvisor">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
                             <label class="input">
                                 <i></i>
@@ -409,7 +417,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonAdvisorsec">
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                             <input type="checkbox" id="CommonIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
@@ -504,11 +512,11 @@
         var typeSelected = document.getElementById(TypeSelected);
         if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor") {
             $("#" + type + "Advisor").removeClass('hidden');
-            $("#" + type + "Advisorsec").removeClass('hidden');
+            $("." + type + "Advisorsec").removeClass('hidden');
             $("#" + type +"Duration").val('');
         } else {
             $("#" + type + "Advisor").addClass('hidden');
-            $("#" + type + "Advisorsec").addClass('hidden');
+            $("." + type + "Advisorsec").addClass('hidden');
 
         }
     }
@@ -553,6 +561,7 @@
                  $('#CommonEditDateofRetirement').val(data.dateofRetirement);
                  $('#CommonEditDateofDeceased').val(data.dateofDeceased);
                  $('#CommonEditConfirmAAA').val(data.confirmAAA);
+                 $('#CommonEditOfcPhone').val(data.ofcPhoneno);
                  $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
                   UpdateChosen();
                  //CommonTypeSelected('CommonType','CommonEdit')
@@ -764,5 +773,21 @@
                 }
             });
     }
+
+            $('input[type="checkbox"]').click(function(){
+
+            if($(this).prop("checked") == true){
+                debugger;
+                if (!confirm("this will set this advisor as principal advisor.Other principal advisor if any will be set to non principal advisor")) {
+                                    debugger;
+                                    // $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
+
+                    $(this).prop("checked",false);
+                }
+
+            }
+
+            });
+
 </script>
 

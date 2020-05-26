@@ -60,7 +60,7 @@ namespace DealEngine.Domain.Entities
         public virtual string MobilePhone { get; set; }
 
         public virtual DateTime? DateOfBirth { get; protected set; }
-
+        //public virtual string OfcPhoneno { get; set; }
         /// <summary>
         /// Gets or sets the users primary organisation.
         /// The primary organisation is defined as the users current organisation for the purposes of tracking organisation ownership and related permissions.
