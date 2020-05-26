@@ -113,36 +113,52 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermExcess = 0;
 
-            //decimal decDOAssets = 0m;
-            //decimal decDOLiabs = 0m;
+            decimal decDOTotalAssets = 0m;
+            decimal decDOTotalLiabilities = 0m;
+            decimal decDOCurrentAssets = 0m;
+            decimal decDOCurrentLiabilities = 0m;
+            decimal decDOAftertaxProfitOrLoss = 0m;
 
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
-            //{
-            //    decDOAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
-            //}
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value != null)
-            //{
-            //    decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
-            //}
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            {
+                decDOTotalAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityTotal").First().Value != null)
+            {
+                decDOTotalLiabilities = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityTotal").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetCurrent").First().Value != null)
+            {
+                decDOCurrentAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetCurrent").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityCurrent").First().Value != null)
+            {
+                decDOCurrentLiabilities = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityCurrent").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").First().Value != null)
+            {
+                decDOAftertaxProfitOrLoss = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").First().Value);
+            }
 
             //Return terms based on the limit options
 
             TermExcess = 2500;
 
-            //ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
-            //if (cAEDOInsExcl != null)
-            //{
-            //    cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
-            //    cAEDOInsExcl.DeletedBy = underwritingUser;
-            //}
-            //if ((decDOAssets < decDOLiabs) || (intCompanyAge < 730))
-            //{
-            //    if (cAEDOInsExcl != null)
-            //    {
-            //        cAEDOInsExcl.DateDeleted = null;
-            //        cAEDOInsExcl.DeletedBy = null;
-            //    }
-            //}
+            ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
+            if (cAEDOInsExcl != null)
+            {
+                cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
+                cAEDOInsExcl.DeletedBy = underwritingUser;
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasExistingPolicyOptions").First().Value == "2" || 
+                (decDOTotalAssets <= 0 && decDOTotalLiabilities <= 0 && decDOCurrentAssets <= 0 && decDOCurrentLiabilities <= 0 && decDOAftertaxProfitOrLoss <= 0))
+            {
+                if (cAEDOInsExcl != null)
+                {
+                    cAEDOInsExcl.DateDeleted = null;
+                    cAEDOInsExcl.DeletedBy = null;
+                }
+            }
 
             ClientAgreementTerm termdo500klimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit500k, TermExcess);
             termdo500klimitoption.TermLimit = TermLimit500k;
@@ -155,7 +171,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             //Referral points per agreement
             //D&O Issues
-            uwrdoissue(underwritingUser, agreement);
+            uwrdoissue(underwritingUser, agreement, decDOTotalAssets, decDOTotalLiabilities, decDOCurrentAssets, decDOCurrentLiabilities, decDOAftertaxProfitOrLoss);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -249,7 +265,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        void uwrdoissue(User underwritingUser, ClientAgreement agreement)
+        void uwrdoissue(User underwritingUser, ClientAgreement agreement, decimal decDOTotalAssets, decimal decDOTotalLiabilities, decimal decDOCurrentAssets, decimal decDOCurrentLiabilities, decimal decDOAftertaxProfitOrLoss)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null) == null)
             {
@@ -264,7 +280,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDebtsOptions").First().Value == "2")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDebtsOptions").First().Value == "2" ||
+                       (decDOTotalAssets <= 0 && decDOTotalLiabilities <= 0 && decDOCurrentAssets <= 0 && decDOCurrentLiabilities <= 0 && decDOAftertaxProfitOrLoss <= 0))
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
                     }
