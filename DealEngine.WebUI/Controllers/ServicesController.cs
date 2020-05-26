@@ -3228,23 +3228,31 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
                 string orgTypeName = "";
-                if (model.OrganisationTypeName == "Person - Individual")
-                {
-                    orgTypeName = "Person - Individual";
-                }
+                //if (model.OrganisationTypeName == "Person - Individual")
+                //{
+                //    orgTypeName = "Person - Individual";
+                //}
                 try
                 {
                     InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
-                    if (insuranceAttribute == null)
+
+                    if (model.Type != null)
                     {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
-                    }
-                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
-                    if (organisationType == null)
-                    {
-                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
+                        if (insuranceAttribute == null)
+                        {
+                            insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
+                        }
                     }
 
+                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+
+                    if (model.OrganisationTypeName != null)
+                    {
+                        if (organisationType == null)
+                        {
+                            organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, model.OrganisationTypeName);
+                        }
+                    }
                     User userdb = null;
                     Organisation organisation = null;
                     if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
@@ -3327,7 +3335,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     var organisationName = "";
-                    if (orgTypeName == "Person - Individual")
+                    if (model.OrganisationTypeName == "Person - Individual")
                     {
                         organisationName = model.FirstName + " " + model.LastName;
                     }
@@ -3348,6 +3356,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.OfcPhoneno = model.OfcPhoneno;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             if (model.DateofBirth != null)
                             {
@@ -3383,6 +3392,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.OfcPhoneno = model.OfcPhoneno;
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3455,6 +3465,7 @@ namespace DealEngine.WebUI.Controllers
                     model.Qualifications = org.Qualifications;
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                     model.IsPrincipalAdvisor = org.IsPrincipalAdvisor;
+                    
                     if (org.DateofBirth != null)
                     {
                         model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
@@ -3485,6 +3496,7 @@ namespace DealEngine.WebUI.Controllers
                         model.OrganisationName = sheet.Owner.Name;
                         model.Type = "Owner";
                         model.Email = sheet.Owner.Email;
+                        model.OfcPhoneno = sheet.Owner.OfcPhoneno;
                         model.AnswerSheetId = answerSheetId;
                     }
                 }
