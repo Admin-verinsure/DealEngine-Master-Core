@@ -3465,7 +3465,7 @@ namespace DealEngine.WebUI.Controllers
                     model.Qualifications = org.Qualifications;
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                     model.IsPrincipalAdvisor = org.IsPrincipalAdvisor;
-                    model.OfcPhoneno = org.OfcPhoneno;
+                    
                     if (org.DateofBirth != null)
                     {
                         model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
@@ -3496,6 +3496,7 @@ namespace DealEngine.WebUI.Controllers
                         model.OrganisationName = sheet.Owner.Name;
                         model.Type = "Owner";
                         model.Email = sheet.Owner.Email;
+                        model.OfcPhoneno = sheet.Owner.OfcPhoneno;
                         model.AnswerSheetId = answerSheetId;
                     }
                 }
