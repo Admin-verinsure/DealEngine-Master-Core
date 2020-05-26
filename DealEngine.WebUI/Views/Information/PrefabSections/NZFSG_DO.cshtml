@@ -13,60 +13,60 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="assettotal" class="label required">
+                    <label for="assettotal" class="label">
                         Total Assets:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.AssetTotal, new { @class = "form-control", @id = "assettotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.AssetTotal, new { @class = "form-control", @id = "assettotal", @type = "number", onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="liabilitytotal" class="label required">
+                    <label for="liabilitytotal" class="label">
                         Total Liabilities:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.LiabilityTotal, new { @class = "form-control", @id = "liabilitytotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.LiabilityTotal, new { @class = "form-control", @id = "liabilitytotal", @type = "number", onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="assetcurrent" class="label required">
+                    <label for="assetcurrent" class="label">
                         Current Assets:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.AssetCurrent, new { @class = "form-control", @id = "assetcurrent", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.AssetCurrent, new { @class = "form-control", @id = "assetcurrent", @type = "number", onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="liabilitycurrent" class="label required">
+                    <label for="liabilitycurrent" class="label">
                         Current Liabilities:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.LiabilityCurrent, new { @class = "form-control", @id = "liabilitycurrent", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.LiabilityCurrent, new { @class = "form-control", @id = "liabilitycurrent", @type = "number", onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
-                    <label for="aftertaxnumber" class="label required">
+                    <label for="aftertaxnumber" class="label">
                         After-tax profit or loss for the last financial year:
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.AfterTaxNumber, new { @class = "form-control", @id = "aftertaxnumber", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.AfterTaxNumber, new { @class = "form-control", @id = "aftertaxnumber", @type = "number", onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
         </div>

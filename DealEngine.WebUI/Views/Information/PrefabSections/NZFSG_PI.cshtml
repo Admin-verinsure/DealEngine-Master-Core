@@ -9,7 +9,7 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hasmortage" name="PIViewModel.HasMortageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasmortage" name="PIViewModel.HasMortageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
                         @foreach (var option in Model.PIViewModel.HasMortageOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
