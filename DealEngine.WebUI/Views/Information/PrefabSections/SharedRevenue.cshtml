@@ -71,7 +71,7 @@
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-9">
-                                        <label for="lastFinancialYear" class="label required">Last completed financial year</label>
+                                        <label for="lastFinancialYear" class="label required">Estimated commission / fees for Last completed financial year</label>
                                     </div>
                                     <div class="col-3">
                                         @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-9">
-                                        <label for="currentYear" class="label required">Estimate of current year</label>
+                                        <label for="currentYear" class="label required">Estimated commission / fees for Current year</label>
                                     </div>
                                     <div class="col-3">
                                         @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
@@ -87,7 +87,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-9">
-                                        <label for="nextFinancialYear">Estimate of next financial year</label>
+                                        <label for="nextFinancialYear">Estimated commission / fees for Next financial year</label>
                                     </div>
                                     <div class="col-3">
                                         @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
