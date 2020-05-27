@@ -821,6 +821,10 @@ namespace DealEngine.Services.Impl
                             }
                             Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
                             advisororganisation.IsPrincipalAdvisor = true;
+                            if (!string.IsNullOrEmpty(parts[7]))
+                            {
+                                advisororganisation.MyCRMId = parts[7];
+                            }
                             await _organisationService.CreateNewOrganisation(advisororganisation);
                             advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(advisororganisation);
