@@ -210,6 +210,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
+        public virtual string MyCRMId { get; set; }
 
         #endregion
 

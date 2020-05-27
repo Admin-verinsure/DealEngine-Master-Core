@@ -36,41 +36,42 @@
                         <h3>Information Sheet for :  @Model.ClientProgramme.Owner.Name </h3>
                         <h3>UIS No:  @Model.ClientInformationSheet.ReferenceId </h3>
                     </div>
-                    <div id="ReportView" hidden>
-                        @foreach (var Section in Model.ListSection)
-                        {
 
-                            @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
-                        if (Section != "CommonLocation" && Section != "SharedRevenue" && Section != "PMINZ_Project" && Section != "Common_NamedParty" && Section != "CommonClaim")
+
+
+                    @foreach (var Section in Model.ListSection)
+                    {
+
+                        @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
+                        if (Section == "CommonYou")
                         {
+                            <div id="ReportCommonyouView" hidden>
                                 @Html.Partial("PrefabSections/" + Section, Model)
+                            </div>
                         }
-                                @*<td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new {id = Model.ClientProgramme.Id , name = Section.CustomView })'" style="cursor:pointer" align="left">
-                        @Section.Name
-                    </td>*@
-
-                            }
-                    </div>
-
-                    <div id="objectReportView" hidden >
-                        @foreach (var Section in Model.ListSection)
+                        if (Section != "CommonYou" && Section != "CommonLocation" && Section != "SharedRevenue" && Section != "PMINZ_Project" && Section != "Common_NamedParty" && Section != "CommonClaim")
+                        {
+                            <div class="ReportView "hidden>
+                                @Html.Partial("PrefabSections/" + Section, Model)
+                            </div>
+                        }
+                    }
+                    <div class="objectReportView " hidden>
+                    @foreach (var Section in Model.ListSection)
+                    {
+                        if (Section == "CommonLocation" || Section == "SharedRevenue" || Section == "PMINZ_Project" || Section == "Common_NamedParty" || Section == "CommonClaim")
                         {
 
-                            @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
-                            if (Section == "CommonLocation" || Section == "SharedRevenue" || Section == "PMINZ_Project" || Section == "Common_NamedParty" || Section == "CommonClaim")
-                            {
-                                @Html.Partial("PrefabSections/" + Section, Model)
-                            }
-
-                            @*<td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new {id = Model.ClientProgramme.Id , name = Section.CustomView })'" style="cursor:pointer" align="left">
-                @Section.Name
-            </td>*@
+                            @Html.Partial("PrefabSections/" + Section, Model)
 
                         }
+
+                    }
                     </div>
+
 
                 </div>
-            </article>
+             </article> 
         </div>
     </section>
 </div>
@@ -83,21 +84,52 @@
             window.setTimeout(viewreport, 2000);
             //$('a link').css({"color": "green" });
             function viewreport() {
-    
+
+            var commonyou = $("#ReportCommonyouView").html();
             var divtitledetails = $("#titledetails").html();
-            var divContents = $("#ReportView").html();
+            var divContents = $(".ReportView").html();
             var projectdetails = $("#projecttab1").html();
             var commonloc = $("#locationtab1").html();
-            var divobjectContents = $("#listallfieldset").html();
+            var commonclaim = $(".listclaimreport").html();
+            var commonnamedparty = $(".listnamedpartyreport").html();
 
-            var printWindow = window.open('', '', 'height=5000,width=800');
+            var printWindow = window.open('', '', 'height=15000,width=800');
             printWindow.document.write('<html><head><title>DIV Contents</title>');
             printWindow.document.write('</head><body >');
+
+            printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(divtitledetails);
-            printWindow.document.write(divContents);
-            printWindow.document.write(projectdetails);
+            printWindow.document.write("<br/>");
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(commonyou);
+            printWindow.document.write("<br/>");
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonloc);
-            printWindow.document.write(divobjectContents);
+            printWindow.document.write("<br/>");
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(commonnamedparty);
+            printWindow.document.write("<br/>");
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(projectdetails);
+            printWindow.document.write("<br/>");
+             printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(commonclaim);
+            printWindow.document.write("<br/>");
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(divContents);
+            printWindow.document.write("</div>");
             //printWindow.document.write(namedparty);
             printWindow.document.write('</body></html>');
             printWindow.document.close();

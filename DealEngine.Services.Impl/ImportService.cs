@@ -721,7 +721,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = "C:\\Users\\temp\\NZFSGClientupload1.csv";
+            var fileName = "C:\\Users\\temp\\NZFSGClientupload2.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
@@ -775,6 +775,12 @@ namespace DealEngine.Services.Impl
                             organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
                         }
 
+                        var AdvisororganisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                        if (AdvisororganisationType == null)
+                        {
+                            AdvisororganisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
+                        }
+
                         if (organisation == null)
                             {
                               
@@ -796,7 +802,7 @@ namespace DealEngine.Services.Impl
                             user.Organisations.Add(organisation);
                         user.SetPrimaryOrganisation(organisation);
 
-                        await _userService.Create(user);
+                        await _userService.ApplicationCreateUser(user);
 
                         var programme = await _programmeService.GetProgramme(programmeID);
                         var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
@@ -813,8 +819,8 @@ namespace DealEngine.Services.Impl
                             {
                                 insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
                             }
-                            Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], organisationType, parts[10]);
-                            organisation.IsPrincipalAdvisor = true;
+                            Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
+                            advisororganisation.IsPrincipalAdvisor = true;
                             await _organisationService.CreateNewOrganisation(advisororganisation);
                             advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(advisororganisation);
@@ -1152,6 +1158,126 @@ namespace DealEngine.Services.Impl
             }
         }
 
+
+        public async Task ImportNZFSGServicePrincipals(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string userName;
+            //addresses need to be on one line            
+           var fileName = "C:\\Users\\temp\\NZFSGClientupload3.csv";
+
+            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    try
+                    {
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[5]);
+                        var fullname = parts[0] + " " + parts[1];
+                        if (hasProgramme)
+                        {
+                            userName = parts[0].Replace(" ", string.Empty) + "_" + parts[1].Replace(" ", string.Empty);
+
+                            if (string.IsNullOrWhiteSpace(parts[10]))
+                            {
+                                email = parts[0].Replace(" ", string.Empty) + parts[1].Replace(" ", string.Empty) + "@techcertain.com";
+                            }
+                            else
+                            {
+                                email = parts[10];
+                            }
+
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            organisation.NZIAmembership = parts[5];
+                            organisation.Email = email;
+                            organisation.Phone = "12345";
+
+                            if (!string.IsNullOrEmpty(parts[6]))
+                            {
+                                organisation.OfcPhoneno = parts[6];
+                            }
+                            if (!string.IsNullOrEmpty(parts[7]))
+                            {
+                                organisation.MyCRMId = parts[7];
+                            }
+                           
+
+                            
+                            using (var uom = _unitOfWork.BeginUnitOfWork())
+                            {
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                try
+                                {
+                                    await uom.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await uom.Rollback();
+                                }
+                            }
+
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            await _programmeService.AddOrganisationByMembership(organisation);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user == null)
+                            {
+                                try
+                                {
+                                    user = await _userService.GetUser(userName);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    userName = userName + randomNumber.ToString();
+                                }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[0];
+                                user.LastName = parts[1];
+                                user.FullName = fullname;
+                                user.Email = email;
+                                user.Address = "Import Address";
+                                user.Phone = "12345";
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                user.SetPrimaryOrganisation(organisation);
+                                await _userService.ApplicationCreateUser(user);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+        }
         public async Task ImportCEASServiceClaims(User CreatedUser)
         {
             var currentUser = CreatedUser;

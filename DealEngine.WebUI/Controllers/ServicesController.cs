@@ -3456,7 +3456,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     User userdb = await _userService.GetUserByEmail(org.Email);
                     model.ID = partyID;
-                    model.Type = org.Type;
+                    model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.FirstName = userdb.FirstName;
                     model.LastName = userdb.LastName;
                     model.Email = org.Email;
@@ -4782,6 +4782,30 @@ namespace DealEngine.WebUI.Controllers
                 await _businessContractService.Update(businessContract);
 
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(businessContractId);
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    businessContract.Removed = status;
+                    await uow.Commit();
+                }
+
+                return new JsonResult(true);
             }
             catch (Exception ex)
             {

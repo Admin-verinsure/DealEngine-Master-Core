@@ -25,6 +25,7 @@ namespace DealEngine.Services.Interfaces
         Task ImportDANZServicePersonnel(User user);
         Task ImportDANZServiceClaims(User user);
         Task ImportNZFSGServiceIndividuals(User user);
-        
+        Task ImportNZFSGServicePrincipals(User user);
+
     }
 }
