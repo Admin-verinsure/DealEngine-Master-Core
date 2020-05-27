@@ -94,7 +94,7 @@ namespace DealEngine.WebUI.Controllers
                     string noBorder = "<figure class=\"table\"><table><tbody><tr>";
 
                     // array of elements that need
-                    string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2 };
+                    string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
                     if (!(format == "docx"))
                     {
                         foreach (string ele in badHtml)
