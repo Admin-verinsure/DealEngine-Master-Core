@@ -48,25 +48,37 @@
                             <div id="ReportCommonyouView" hidden>
                                 @Html.Partial("PrefabSections/" + Section, Model)
                             </div>
+                            <br />
+
                         }
-                        if (Section != "CommonYou" && Section != "CommonLocation" && Section != "SharedRevenue" && Section != "PMINZ_Project" && Section != "Common_NamedParty" && Section != "CommonClaim")
-                        {
-                            <div class="ReportView "hidden>
-                                @Html.Partial("PrefabSections/" + Section, Model)
-                            </div>
-                        }
-                    }
-                    <div class="objectReportView " hidden>
-                    @foreach (var Section in Model.ListSection)
-                    {
+
                         if (Section == "CommonLocation" || Section == "SharedRevenue" || Section == "PMINZ_Project" || Section == "Common_NamedParty" || Section == "CommonClaim")
                         {
-
-                            @Html.Partial("PrefabSections/" + Section, Model)
+                            <div class="objectReportView" hidden>
+                                @Html.Partial("PrefabSections/" + Section, Model)
+                            </div>
+                            <br />
 
                         }
 
                     }
+
+                    <div class="ReportView" hidden>
+
+                        @foreach (var Section in Model.ListSection)
+                        {
+
+
+                            if (Section != "CommonYou" && Section != "CommonLocation" && Section != "SharedRevenue" && Section != "PMINZ_Project" && Section != "Common_NamedParty" && Section != "CommonClaim")
+                            {
+                                <div style='border-style : groove'>
+                                    @Html.Partial("PrefabSections/" + Section, Model)
+                                </div>
+                                <br />
+
+                            }
+
+                        }
                     </div>
 
 
@@ -93,7 +105,7 @@
             var commonclaim = $(".listclaimreport").html();
             var commonnamedparty = $(".listnamedpartyreport").html();
 
-            var printWindow = window.open('', '', 'height=15000,width=800');
+            var printWindow = window.open('', '', 'height=10000,width=800');
             printWindow.document.write('<html><head><title>DIV Contents</title>');
             printWindow.document.write('</head><body >');
 
@@ -104,32 +116,27 @@
 
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonyou);
-            printWindow.document.write("<br/>");
             printWindow.document.write("</div>");
 
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonloc);
-            printWindow.document.write("<br/>");
             printWindow.document.write("</div>");
 
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonnamedparty);
-            printWindow.document.write("<br/>");
             printWindow.document.write("</div>");
 
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(projectdetails);
-            printWindow.document.write("<br/>");
-             printWindow.document.write("</div>");
+            printWindow.document.write("</div>");
+
+             printWindow.document.write(divContents);
 
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonclaim);
-            printWindow.document.write("<br/>");
             printWindow.document.write("</div>");
 
-            printWindow.document.write("<div style='border-style : groove' >");
-            printWindow.document.write(divContents);
-            printWindow.document.write("</div>");
+
             //printWindow.document.write(namedparty);
             printWindow.document.write('</body></html>');
             printWindow.document.close();
