@@ -503,10 +503,75 @@ namespace DealEngine.Services.Impl
                 //    strFinancialIP = strFinancialIPList + " is";
                 //}
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
-            }            
+            }
 
-			// merge the configured merge feilds into the document
-			string content = FromBytes (template.Contents);
+            string advisorlist = "";
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    {
+                        if (string.IsNullOrEmpty(advisorlist))
+                        {
+                            advisorlist = uisorg.Name;
+                        }
+                        else
+                        {
+                            advisorlist += ", " + uisorg.Name;
+                        }
+                    }
+                }
+            }
+            mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorsName]]", advisorlist));
+
+            string customeactivity = "";
+            string customeactivityexcess = "";
+            if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG Custome Excess for PI
+            {
+                if (agreement.ClientInformationSheet.RevenueData != null)
+                {
+                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                    {
+                        if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                        {
+                            if (uISActivity.Percentage > 0)
+                            {
+                                if (string.IsNullOrEmpty(customeactivity))
+                                {
+                                    customeactivity = "Financial Planning";
+                                    customeactivityexcess = "$2,500 each and every Claim, costs inclusive";
+                                } else
+                                {
+                                    customeactivity += Environment.NewLine + "Financial Planning";
+                                    customeactivityexcess += Environment.NewLine + "$2,500 each and every Claim, costs inclusive";
+                                }
+                            }
+                        }
+                        else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                        {
+                            if (uISActivity.Percentage > 0)
+                            {
+                                if (string.IsNullOrEmpty(customeactivity))
+                                {
+                                    customeactivity = "Broking Fire and General";
+                                    customeactivityexcess = "$5,000 each and every Claim, costs inclusive";
+                                }
+                                else
+                                {
+                                    customeactivity += Environment.NewLine + "Broking Fire and General";
+                                    customeactivityexcess += Environment.NewLine + "$5,000 each and every Claim, costs inclusive";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivity]]", customeactivity));
+            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivityexcess]]", customeactivityexcess));
+
+            // merge the configured merge feilds into the document
+            string content = FromBytes (template.Contents);
 			foreach (KeyValuePair<string, string> field in mergeFields)
 				content = content.Replace (field.Key, field.Value);
 

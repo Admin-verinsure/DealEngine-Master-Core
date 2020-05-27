@@ -478,7 +478,7 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {
-                //clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
+                clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     model.ProgrammeId = client.BaseProgramme.Id.ToString();
