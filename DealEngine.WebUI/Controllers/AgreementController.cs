@@ -1637,7 +1637,7 @@ namespace DealEngine.WebUI.Controllers
                 if(!isBaseSheet)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel();
-                    model.AgreementMessage = "Process Finished";
+                    model.AgreementMessage = " Process Finished";
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
                 else

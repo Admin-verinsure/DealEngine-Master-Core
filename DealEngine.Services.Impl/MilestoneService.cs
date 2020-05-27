@@ -18,15 +18,18 @@ namespace DealEngine.Services.Impl
         IProgrammeProcessService _programmeProcessService;
         IActivityService _activityService;
         IAdvisoryService _advisoryService;
+        IMilestoneTemplateService _milestoneTemplateService;
 
         public MilestoneService(IMapperSession<Milestone> milestoneRepository,
                                 IAdvisoryService advisoryService,
                                 ISystemEmailService systemEmailService,
                                 IProgrammeProcessService programmeProcessService,
                                 IActivityService activityService,
-                                ITaskingService taskingService
+                                ITaskingService taskingService,
+                                IMilestoneTemplateService milestoneTemplateService
                                 )
         {
+            _milestoneTemplateService = milestoneTemplateService;
             _advisoryService = advisoryService;
             _activityService = activityService;
             _programmeProcessService = programmeProcessService;
@@ -64,13 +67,6 @@ namespace DealEngine.Services.Impl
                 systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
                 await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
             }
-            //else
-            //{
-            //    systemEmailTemplate.DateDeleted = DateTime.Now;
-            //    systemEmailTemplate.DeletedBy = user;
-            //    await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
-            //}
-
 
             systemEmailTemplate.Milestone = milestone;
             systemEmailTemplate.Activity = activity;
@@ -134,6 +130,13 @@ namespace DealEngine.Services.Impl
 
         public async Task SetMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
         {
+            var hasActivity = _activityService.GetActivityByName(activityType);
+
+            if(hasActivity == null)
+            {
+                await _milestoneTemplateService.CreateMilestoneTemplate(user);
+            }
+
             if(activityType == "Agreement Status – Referred")
             {
                 await ReferredMilestone(activityType, user, sheet);
@@ -141,7 +144,7 @@ namespace DealEngine.Services.Impl
         }
 
         private async Task ReferredMilestone(string activityType, User user, ClientInformationSheet sheet)
-        {
+        {            
             UserTask task;
             var activity = await _activityService.GetActivityByName(activityType);
             var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
