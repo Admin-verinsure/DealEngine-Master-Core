@@ -775,6 +775,12 @@ namespace DealEngine.Services.Impl
                             organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
                         }
 
+                        var AdvisororganisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                        if (AdvisororganisationType == null)
+                        {
+                            AdvisororganisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
+                        }
+
                         if (organisation == null)
                             {
                               
@@ -813,7 +819,7 @@ namespace DealEngine.Services.Impl
                             {
                                 insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
                             }
-                            Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], organisationType, parts[10]);
+                            Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
                             advisororganisation.IsPrincipalAdvisor = true;
                             await _organisationService.CreateNewOrganisation(advisororganisation);
                             advisororganisation.InsuranceAttributes.Add(insuranceAttribute);

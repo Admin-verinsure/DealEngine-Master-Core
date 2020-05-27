@@ -4791,6 +4791,30 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(businessContractId);
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    businessContract.Removed = status;
+                    await uow.Commit();
+                }
+
+                return new JsonResult(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddCEASProject(BusinessContractViewModel model)
         {
             User user = null;

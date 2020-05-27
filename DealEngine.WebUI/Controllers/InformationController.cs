@@ -1309,12 +1309,12 @@ namespace DealEngine.WebUI.Controllers
         private async Task GenerateUWM(User user, ClientInformationSheet sheet, string reference)
         {
             using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
+            {        
                 //UWM
                 _uWMService.UWM(user, sheet, reference);
-
+                
                 //sheet.Status = "Submitted";
-                await uow.Commit();
+                await uow.Commit();                
             }
 
             foreach (ClientAgreement agreement in sheet.Programme.Agreements)
@@ -1355,9 +1355,8 @@ namespace DealEngine.WebUI.Controllers
                         if (baseSheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
                             await GenerateUWM(user, baseSheet, baseSheet.ReferenceId);
-                        }
-
-                        sheet = baseSheet;
+                            sheet = baseSheet;
+                        }                        
                     }
 
                     if (sheet.Programme.BaseProgramme.ProgEnableEmail)
@@ -1378,7 +1377,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
+                return Content("/Agreement/ViewAgreementDeclaration/" + id);
             }
             catch (Exception ex)
             {
