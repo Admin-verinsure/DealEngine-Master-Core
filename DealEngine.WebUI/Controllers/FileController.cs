@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 using ServiceStack;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -75,79 +76,223 @@ namespace DealEngine.WebUI.Controllers
                 {
                     extension = ".html";
                     string html = _fileService.FromBytes(doc.Contents);
-                    string oldhtml = html; //for testing purposes
-
+                    string html2 = html; 
+                    
+                    // Image resize/positioning
                     string centerImage = "<figure class=\"image\"><img src=\"";
+                    string centerResize = "<figure class=\"image image_resized\" style=";
                     string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
-                    string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
+                    string leftResize = "<figure class=\"image image-style-align-left image_resized\" style=";
+                    string leftResize2 = "<figure class=\"image image_resized image-style-align-left\" style=";
+                    string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";                    
+                    string rightResize = "<figure class=\"image image-style-align-right image_resized\" style=";
+                    string rightResize2 = "<figure class=\"image image_resized image-style-align-right\" style=";
 
-                    if (html.Contains(centerImage))
+                    // Border
+                    string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                    string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+                    // array for getting a series of beginningIndex's from html relating to occurences of the following strings.. so we can process multiple in a for loop :) 
+                    string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2 };
+
+                    foreach (string ele in badHtml)
+                    {
+                        int x = CountStringOccurrences(html2, ele);
+
+                        for (int j = 0; j < x; j++)
+                        {
+                            if (ele.Contains("image_resized") == false)
+                            {
+
+                            }
+                            else
+                            {
+                                int widthIndex = ele.Length;                                                            // length of figure tag up until style=
+                                string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
+                                width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99% etc)
+                                int srcEndIndex = html2.IndexOf(ele) + widthIndex;                                      // where src ends in original tag
+
+                                if (width.Length < 5)
+                                {
+                                    html2 = html2.Remove(srcEndIndex, 25);                                                  // remove the extra src and style tags
+                                }
+                                else
+                                {
+                                    html2 = html2.Remove(srcEndIndex, 26);                                                  // remove the extra src and style tags
+                                }
+
+                                // should probably also remove the closing figure tags...? (may break other elements if inside another <figure> (base it on srcEndIndex?)
+
+                                var regex = new Regex(Regex.Escape(ele));
+                                if (ele.Equals(centerResize) == true)
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:0;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:0;\" src=\"", 1);
+                                }
+                            }
+                        }
+                        html = html2;
+                    }
+
+                    #region old code
+                    // Resized Image to HTML use cases                  
+                    /*
+                    if (html.Contains(centerResize) & !(format == "docx"))
+                    {
+                        // TODO Make work for multiple resized centered images in the html...
+
+                        int widthIndex = centerResize.Length;                                               // length of figure tag up until style=
+                        string width = html.Substring(html.IndexOf(centerResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                        width = width.Replace("%", "");                                                     // Handle when % is in the string (ie. <10%, 9.99% etc)
+                        int srcEndIndex = html.IndexOf(centerResize) + widthIndex;                          // where src ends in original tag
+                        html = html.Remove(srcEndIndex, 26);                                                // remove the extra src and style tags
+
+                        // replace with working html
+                        html = html.Replace(centerResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"");
+                    }
+                    if (html.Contains(rightResize) & !(format == "docx"))
+                    {
+                        // TODO Make work for multiple resized centered images in the html...
+
+                        int widthIndex = rightResize.Length;                                               // length of figure tag up until style=
+                        string width = html.Substring(html.IndexOf(rightResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                        width = width.Replace("%", "");                                                     // Handle when % is in the string (ie. <10%, 9.99% etc)
+                        int srcEndIndex = html.IndexOf(rightResize) + widthIndex;                          // where src ends in original tag
+                        html = html.Remove(srcEndIndex, 26);                                               // remove the extra src and style tags
+
+                        // replace with working html
+                        html = html.Replace(rightResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:0;\" src=\"");
+                    }
+                    if (html.Contains(leftResize) & !(format == "docx"))
+                    {
+                        // TODO Make work for multiple resized centered images in the html...
+
+                        int widthIndex = leftResize.Length;                                               // length of figure tag up until style=
+                        string width = html.Substring(html.IndexOf(leftResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                        width = width.Replace("%", "");                                                   // Handle when % is in the string (ie. <10%, 9.99% etc)
+                        int srcEndIndex = html.IndexOf(leftResize) + widthIndex;                          // where src ends in original tag
+                        html = html.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
+
+                        // replace with working html
+                        html = html.Replace(leftResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:0;margin-right:auto;\" src=\"");
+                    }
+                    */
+                    #endregion
+
+                    // Image to HTML use cases
+                    if (html.Contains(centerImage) & !(format == "docx"))
                     {
                         html = html.Replace(centerImage, "<img style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"");
                     }
-                    if (html.Contains(leftImage))
+                    if (html.Contains(leftImage) & !(format == "docx"))
                     {
                         html = html.Replace(leftImage, "<img style=\"display:block;margin-left:0;margin-right:auto;\" src=\"");
                     }
-                    if (html.Contains(rightImage))
+                    if (html.Contains(rightImage) & !(format == "docx"))
                     {
                         html = html.Replace(rightImage, "<img style=\"display:block;margin-left:auto;margin-right:0;\" src=\"");
                     }
-                    
+
+                    // Put document contents back in for HTML output (see return)
                     docContents = _fileService.ToBytes(html);
-                    // put document contents back in
 
                     if (format == "docx")
                     {
-                        // Testing HtmlToOpenXml
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
-                            //using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(virtualFile, false))
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
-                                // Add a main document part. 
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
                                 
-                                // Fix border issue
-                                string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
-                                string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+                                // html.Split(badHtml,  );
+                                // html.
+                                
+                                // Border Fix (show & no border use cases)
                                 if (html.Contains(showBorder))
                                 {
-                                    html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
-                                    // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
+                                    html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");                 // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
                                 }
                                 if (html.Contains(noBorder))
                                 {
                                     html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                                 }
 
-                                // Fix Image Alignment issue
-                                centerImage = "<figure class=\"image\"><img src=\"";
-                                leftImage = "<figure class=\"image image-style - align - left\"><img src=\"";
-                                rightImage = "<figure class=\"image image-style - align - right\"><img src=\"";
+                                if (html.Contains(centerResize))
+                                {
+                                    int widthIndex = centerResize.Length;                                               // length of figure tag up until style=
+                                    string width = html.Substring(html.IndexOf(centerResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                                    width = width.Replace("%", "");                                                     // Handle when % is in the string (ie. <10%, 9.99% etc)
+                                    int srcEndIndex = html.IndexOf(centerResize) + widthIndex;                          // where src ends in original tag
 
+                                    html = html.Replace(centerResize, "<div style=\"text-align:center\"; width:10%;> <img src=\""); //" + width + "px\" setting width on image doesn't work
+                                    html = html.Replace(".png\"></figure>", ".png\"></div>"); // need smarter way of doing close tags to include jpg...
+                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
+                                    // replace with working html
+                                    // html = html.Remove(srcEndIndex, 26);                                                // remove the extra src and style tags
+                                    // html = html.Replace(centerResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"");
+                                }
+                                if (html.Contains(rightResize))
+                                {
+                                    int widthIndex = rightResize.Length;                                               // length of figure tag up until style=
+                                    string width = html.Substring(html.IndexOf(rightResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                                    width = width.Replace("%", "");                                                    // Handle when % is in the string (ie. <10%, 9.99% etc)
+                                    int srcEndIndex = html.IndexOf(rightResize) + widthIndex;                          // where src ends in original tag
+
+                                    // replace with working html
+                                    // html = html.Remove(srcEndIndex, 26);                                               // remove the extra src and style tags
+                                    // html = html.Replace(rightResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:0;\" src=\"");
+                                }
+                                if (html.Contains(leftResize))
+                                {
+                                    int widthIndex = leftResize.Length;                                               // length of figure tag up until style=
+                                    string width = html.Substring(html.IndexOf(leftResize) + widthIndex + 7, 5);      // the actual width value in %                       
+                                    width = width.Replace("%", "");                                                   // Handle when % is in the string (ie. <10%, 9.99% etc)
+                                    int srcEndIndex = html.IndexOf(leftResize) + widthIndex;                          // where src ends in original tag
+
+                                    // replace with working html
+                                    // html = html.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
+                                    // html = html.Replace(leftResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:0;margin-right:auto;\" src=\"");
+                                }
+
+                                // Image align & Resize Fix
                                 if (html.Contains(centerImage))
                                 {
-                                    html = html.Replace(centerImage, "<img style=\"display:block;margin-left:auto;margin-right:auto;\"");
+                                    // No center tag for horizontal alignment http://www.tagindex.net/html/img/img_align.html and style doesn't work for this... so wrapped in div (where you can text-align) 
+                                    html = html.Replace(centerImage, "<div style=\"text-align:center\"</div> <img src=\"");
+                                    html = html.Replace(".png\"></figure>", ".png\"></div>"); // need smarter way of doing close tags to include jpg...
+                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
                                 }
                                 if (html.Contains(leftImage))
                                 {
-                                    html = html.Replace(leftImage, "<img style=\"display:block;margin-left:0;margin-right:auto;\"");
+                                    html = html.Replace(leftImage, "<div style=\"text-align:left\"</div> <img src=\"");
+                                    html = html.Replace(".png\"></figure>", ".png\"></div>");
+                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
                                 }
                                 if (html.Contains(rightImage))
                                 {
-                                    html = html.Replace(rightImage, "<img style=\"display:block;margin-left:auto;margin-right:0;\"");
+                                    html = html.Replace(rightImage, "<div style=\"text-align:right\"</div> <img src=\""); 
+                                    html = html.Replace(".png\"></figure>", ".png\"></div>");
+                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
                                 }
 
-                                HtmlConverter converter = new HtmlConverter(mainPart);
+                                HtmlConverter converter = new HtmlConverter(mainPart); // refer to this: https://github.com/onizet/html2openxml/wiki/Tags-Supported
                                 converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-                                //converter.ProvisionImage = converter.OnProvisionImage;
+                                Body body = mainPart.Document.Body;
+                                converter.ParseHtml(html);
+
+                                #region CSStesting code
                                 // Need to figure out how to add classes to style the document... (adding to the top of HTML document doesn't work, also lots of the table styling css doesn't actually work. Just the old way works where style isn't specified e.g <table width=\"100%\" border=\"0\"><tr style=\"font-weight: bold\"><td>Studio</td><td colspan=\"2\")
                                 // converter.HtmlStyles.DefaultStyle = converter.HtmlStyles.GetStyle("testClass");
                                 // converter.RefreshStyles();
-                                Body body = mainPart.Document.Body;
-                                converter.ParseHtml(html);
+                                #endregion 
                             }
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
@@ -375,5 +520,20 @@ namespace DealEngine.WebUI.Controllers
             //}
             //return null;
         }
+
+        // helper
+        public static int CountStringOccurrences(string text, string pattern)
+        {
+            // Loop through all instances of the string 'text'.
+            int count = 0;
+            int i = 0;
+            while ((i = text.IndexOf(pattern, i)) != -1)
+            {
+                i += pattern.Length;
+                count++;
+            }
+            return count;
+        }
     }
 }
+

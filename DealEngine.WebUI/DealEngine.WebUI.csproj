@@ -22,6 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="reportHTMLTEST.html" />
+    <None Remove="reportJPGTEST.jpg" />
+    <None Remove="reportPNGTEST.2.png" />
+    <None Remove="reportPNGTEST.3.png" />
+    <None Remove="reportPNGTEST.4.png" />
+    <None Remove="reportPNGTEST.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="bundleconfig.json" />
   </ItemGroup>
 
