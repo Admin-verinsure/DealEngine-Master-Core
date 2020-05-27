@@ -361,14 +361,14 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (var terms in agreement.ClientAgreementTerms)
                     {
-                        if (terms.BoatTerms.Count() > 0)
+                        if (terms.BoatTerms.Any())
                         {
                             foreach (var bvterm in terms.BoatTerms)
                             {
                                 premium = premium + bvterm.Premium;
                             }
                         }
-                        if (terms.MotorTerms.Count() > 0)
+                        if (terms.MotorTerms.Any())
                         {
                             foreach (var mvterm in terms.MotorTerms)
                             {
@@ -1496,7 +1496,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                 {
-                   return await ViewAgreementSubsystem(clientProgramme, models);
+                   return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
                 else
                 {
@@ -1510,7 +1510,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task<IActionResult> ViewAgreementSubsystem(ClientProgramme clientProgramme, BaseListViewModel<ViewAgreementViewModel> models)
+        private async Task<IActionResult> ViewAgreementSubsystem(ClientProgramme clientProgramme, BaseListViewModel<ViewAgreementViewModel> models, User user)
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
             model.ProgrammeStopAgreement = true;
@@ -1532,7 +1532,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    await _subsystemService.CreateSubObjects(clientProgramme.Id, clientProgramme.InformationSheet);
+                    await _subsystemService.CreateSubObjects(clientProgramme.Id, clientProgramme.InformationSheet, user);
                     isComplete = clientProgramme.SubClientProgrammes.Count == 0;
                 }
                 if (isComplete)

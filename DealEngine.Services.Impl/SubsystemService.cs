@@ -16,6 +16,7 @@ namespace DealEngine.Services.Impl
         IClientInformationService _clientInformationService;
         IInformationTemplateService _informationTemplateService;
         IInformationSectionService _informationSectionService;
+        IReferenceService _referenceService;
         IMapper _mapper;
 
         public SubsystemService(
@@ -25,8 +26,11 @@ namespace DealEngine.Services.Impl
             IOrganisationService organisationService,
             IProgrammeService programmeService,            
             IClientInformationService clientInformationService,
-            IInformationTemplateService informationTemplateService)
+            IInformationTemplateService informationTemplateService,
+            IReferenceService referenceService
+            )
         {
+            _referenceService = referenceService;
             _mapper = mapper;
             _productService = productService;
             _informationSectionService = informationSectionService;
@@ -36,7 +40,7 @@ namespace DealEngine.Services.Impl
             _clientInformationService = clientInformationService;
         }
 
-        public async Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet)
+        public async Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
             var principalOrganisations = await _organisationService.GetSubsystemOrganisationPrincipals(sheet);
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
@@ -51,6 +55,8 @@ namespace DealEngine.Services.Impl
                 if(principalOrganisations.Count != 0)
                 {
                     sheet.Status = "Submitted";
+                    sheet.SubmitDate = DateTime.Now;
+                    sheet.SubmittedBy = user;
                 }
                              
                 await _clientInformationService.UpdateInformation(sheet);
@@ -97,6 +103,7 @@ namespace DealEngine.Services.Impl
                 subSheet.Programme = subClientProgramme;
                 subSheet.Status = "Not Started";
                 subSheet.Owner = organisation;
+                subSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
                 await _clientInformationService.UpdateInformation(subSheet);
                 
                 subClientProgramme.InformationSheet = subSheet;

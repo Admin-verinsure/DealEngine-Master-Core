@@ -958,7 +958,7 @@ namespace DealEngine.WebUI.Controllers
                 //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
                 //}
 
-                for (var i = 0; i < sheet.Buildings.Count(); i++)
+                for (var i = 0; i < sheet.Buildings.Count; i++)
                 {
                     buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
 
@@ -981,7 +981,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model.MarinaLocations = MarinaLocations;
 
-                for (var i = 0; i < sheet.WaterLocations.Count(); i++)
+                for (var i = 0; i < sheet.WaterLocations.Count; i++)
                 {
                     waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
                 }
@@ -1131,7 +1131,7 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if (roleData.DataRoles.Count > 0)
+                if (roleData.DataRoles.Any())
                 {
                     model.RoleDataViewModel = _mapper.Map<RoleDataViewModel>(roleData);
                     model.RoleDataViewModel.AdditionalRoleInformationViewModel = _mapper.Map<AdditionalRoleInformationViewModel>(roleData.AdditionalRoleInformation);
@@ -1147,7 +1147,7 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if (revenueData.Activities.Count > 0 || revenueData.Territories.Count > 0)
+                if (revenueData.Activities.Any() || revenueData.Territories.Any())
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);

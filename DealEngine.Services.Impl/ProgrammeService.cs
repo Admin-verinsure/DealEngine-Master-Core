@@ -50,19 +50,7 @@ namespace DealEngine.Services.Impl
         public async Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
-            var clientList = new List<ClientProgramme>();
-            foreach (var client in list)
-            {
-                var isBaseClass = await IsBaseClass(client);
-                if (isBaseClass)
-                {
-                    if (client.DateDeleted == null)
-                    {
-                        clientList.Add(client);
-                    }
-                }
-            }
-            return clientList;
+            return list;
         }
 
 		public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
