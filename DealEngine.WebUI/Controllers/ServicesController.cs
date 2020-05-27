@@ -3456,7 +3456,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     User userdb = await _userService.GetUserByEmail(org.Email);
                     model.ID = partyID;
-                    model.Type = org.Type;
+                    model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.FirstName = userdb.FirstName;
                     model.LastName = userdb.LastName;
                     model.Email = org.Email;
