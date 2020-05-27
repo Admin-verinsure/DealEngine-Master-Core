@@ -1547,6 +1547,7 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 //Notify broker 
+                model.AgreementMessage = " Process complete.";
                 return PartialView("_ViewStopAgreementMessage", model);
             }
         }
@@ -1616,6 +1617,8 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(id);
                 Organisation insured = clientProgramme.Owner;
                 ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
+                var isBaseSheet = await _programmeService.IsBaseClass(clientProgramme);
+                ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
                 var advisoryDesc = "";
@@ -1631,20 +1634,11 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                //subsystem check
-                if(clientProgramme.Agreements.Count == 0)
+                if(!isBaseSheet)
                 {
-                    ViewAgreementViewModel model = new ViewAgreementViewModel
-                    {
-                        EditEnabled = true,
-                        ClientProgrammeId = clientProgramme.Id,
-                        Declaration = "Declaration for subsystem"
-                    };
-
-                    model.Advisory = advisoryDesc;
-                    model.Status = answerSheet.Status;
-                    model.InformationSheetId = answerSheet.Id;
-                    models.Add(model);
+                    ViewAgreementViewModel model = new ViewAgreementViewModel();
+                    model.AgreementMessage = "Process Finished";
+                    return PartialView("_ViewStopAgreementMessage", model);
                 }
                 else
                 {
@@ -1679,9 +1673,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     clientProgramme.BaseProgramme.StopDeclaration = false;
                     await _programmeService.Update(clientProgramme.BaseProgramme);
-                }
-
-                ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
+                }                
 
                 return PartialView("_ViewAgreementDeclaration", models);
             }
