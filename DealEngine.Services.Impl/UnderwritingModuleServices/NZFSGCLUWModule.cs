@@ -289,14 +289,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status != "Pending")
                 {
                     if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasSecurityOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProhibitAccessOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasLocationOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasActivityOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasConfidencialOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBreachesOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasKnowledgeOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "2" || 
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "2")
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProhibitAccessOptions").First().Value == "2")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
                     }
