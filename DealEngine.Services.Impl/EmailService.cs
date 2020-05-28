@@ -446,6 +446,63 @@ namespace DealEngine.Services.Impl
 
         }
 
+        public async Task SendSystemEmailAllSubUISInstruction(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet)
+        {
+            var recipent = new List<string>();
+            recipent.Add(insuredOrg.Email);
+
+            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
+
+            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("SendSubInformationSheetInstruction");
+            if (systemEmailTemplate == null)
+            {
+                throw new Exception("SendSubInformationSheetInstruction is null");
+            }
+            string systememailsubject = systemEmailTemplate.Subject;
+            string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
+            systememail.From(DefaultSender);
+            systememail.To(recipent.ToArray());
+            systememail.WithSubject(systememailsubject);
+            systememail.WithBody(systememailbody);
+            systememail.UseHtmlBody(true);
+            systememail.Send();
+        }
+
+        public async Task SendSystemEmailAllSubUISComplete(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet)
+        {
+            var recipent = new List<string>();
+
+            recipent.Add(insuredOrg.Email);
+
+            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
+
+            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("SendSubInformationSheetCompletion");
+            if (systemEmailTemplate == null)
+            {
+                throw new Exception("SendSubInformationSheetCompletion is null");
+            }
+            string systememailsubject = systemEmailTemplate.Subject;
+            string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
+            systememail.From(DefaultSender);
+            systememail.To(recipent.ToArray());
+            systememail.WithSubject(systememailsubject);
+            systememail.WithBody(systememailbody);
+            systememail.UseHtmlBody(true);
+            systememail.Send();
+        }
+
         public async Task SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();

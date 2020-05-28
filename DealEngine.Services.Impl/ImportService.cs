@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
-            //WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
+            WorkingDirectory = "/tmp/";
+            //WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
@@ -721,7 +721,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = "C:\\Users\\temp\\NZFSGClientupload2.csv";
+            var fileName = "C:\\Users\\temp\\NZFSGClientDataPrincipaluploadtest.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
@@ -821,6 +821,10 @@ namespace DealEngine.Services.Impl
                             }
                             Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
                             advisororganisation.IsPrincipalAdvisor = true;
+                            if (!string.IsNullOrEmpty(parts[7]))
+                            {
+                                advisororganisation.MyCRMId = parts[7];
+                            }
                             await _organisationService.CreateNewOrganisation(advisororganisation);
                             advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
                             insuranceAttribute.IAOrganisations.Add(advisororganisation);
@@ -1170,7 +1174,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-           var fileName = "C:\\Users\\temp\\NZFSGClientupload3.csv";
+           var fileName = "C:\\Users\\temp\\NZFSGClientDataAdvisoruploadtest.csv";
 
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");

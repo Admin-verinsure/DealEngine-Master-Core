@@ -610,7 +610,82 @@ else
                 alert("There was an error while trying to save the Vehicle.");
                 });
 
-          }
+        }
+
+          if ("@Model.InformationSheetStatus" == "Started") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                    url: '@Url.Action("GetdefaultCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                alert("There was an error while trying to save the Vehicle.");
+                });
+
+             }
+
+
+
+        @*if ( "@Model.InformationSheetStatus" == "Started") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                var proddata = "";
+               $.ajax({
+                   url: '@Url.Action("GetdefaulProductSelect", "Information")',
+                   type: "POST",
+                    async: false,
+                   data: postData
+               })
+                    .done(function (data) {
+                         proddata = data;
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                    });
+
+              var CoverOptions = new Array(proddata.length);
+                        for (var i = 0; i < proddata.length; i++) {
+                               var ProdName = proddata[i];
+                            var producttable = "[id='" + ProdName + "'] tr";
+                            //var table = document.getElementById(ProdName);
+                            //var table1 = $('#producttable');
+                             count = 0;
+                                $(producttable).each(function () {
+                                    debugger;
+                                    count++;
+                                    var $tds = $(this).find('td'),
+                                        value = $tds.eq(3).text().trim();
+                                    value1 = $tds.eq(1).text().trim();
+                                    if(count == 2)
+                                    $tds.eq(0).checked = true;
+                                  
+                                });
+                        }
+          }*@
 
     });
 

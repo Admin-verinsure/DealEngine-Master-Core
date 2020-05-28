@@ -89,8 +89,9 @@ namespace DealEngine.WebUI.Models
         public string Duration { get;  set; }
         public  bool IsPrincipalAdvisor { get; set; }
         public  string OfcPhoneno { get; set; }
-
-
+        public  string MyCRMId { get; set; }
+        public  string TradingName { get; set; }
+        
         public static OrganisationViewModel FromEntity(OrganisationViewModel organisationViewModel)
         {
             OrganisationViewModel model = new OrganisationViewModel

@@ -211,6 +211,8 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
         public virtual string MyCRMId { get; set; }
+        public virtual string TradingName { get; set; }
+
 
         #endregion
 
