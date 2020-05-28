@@ -212,6 +212,8 @@ namespace DealEngine.Domain.Entities
         public virtual string OfcPhoneno { get; set; }
         public virtual string MyCRMId { get; set; }
         public virtual string TradingName { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
 
 
         #endregion

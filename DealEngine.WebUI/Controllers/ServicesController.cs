@@ -3511,6 +3511,7 @@ namespace DealEngine.WebUI.Controllers
                         model.Email = sheet.Owner.Email;
                         model.OfcPhoneno = sheet.Owner.OfcPhoneno;
                         model.AnswerSheetId = answerSheetId;
+                        model.TradingName = sheet.Owner.TradingName;
                     }
                 }
 

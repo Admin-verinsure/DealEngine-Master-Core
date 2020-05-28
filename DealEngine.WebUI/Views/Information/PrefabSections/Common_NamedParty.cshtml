@@ -575,7 +575,8 @@
                  $('#CommonEditOwnercheck').val(data.type);
                 
                 if (data.type == "Owner") {
-                  $('#CommonEditOfcPhone').val(data.ofcPhoneno);
+                    $('#CommonEditOfcPhone').val(data.ofcPhoneno);
+                    $('#CommonEditTradingName').val(data.tradingName);
                  $('#CommonEditOrgName').val(data.organisationName);
                  $('.ownersec').removeClass("hidden");
                  $('.nonownersec').addClass("hidden");
@@ -596,7 +597,7 @@
                  $('#CommonEditDateofDeceased').val(data.dateofDeceased);
                  $('#CommonEditConfirmAAA').val(data.confirmAAA);
                  $('#CommonEditCRMID').val(data.myCRMId);
-                 $('#CommonEditTradingName').val(data.tradingName);
+                 
                  $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
                   UpdateChosen();
                  //CommonTypeSelected('CommonType','CommonEdit')

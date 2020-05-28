@@ -722,8 +722,8 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            //var fileName = "C:\\Users\\temp\\NZFSGClientDataPrincipaluploadtest.csv";
-            var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
+            var fileName = "C:\\Users\\temp\\NZFSGFirstDataUploadtest.csv";
+            //var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
@@ -823,6 +823,8 @@ namespace DealEngine.Services.Impl
                             }
                             Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
                             advisororganisation.IsPrincipalAdvisor = true;
+                            advisororganisation.PIRetroactivedate = parts[8];
+                            advisororganisation.DORetroactivedate = parts[9];
                             if (!string.IsNullOrEmpty(parts[7]))
                             {
                                 advisororganisation.MyCRMId = parts[7];
@@ -1217,6 +1219,8 @@ namespace DealEngine.Services.Impl
                             organisation.NZIAmembership = parts[5];
                             organisation.Email = email;
                             organisation.Phone = "12345";
+                            organisation.PIRetroactivedate = parts[8];
+                            organisation.DORetroactivedate = parts[9]; 
 
                             if (!string.IsNullOrEmpty(parts[6]))
                             {
