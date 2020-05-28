@@ -1547,7 +1547,9 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 //Notify broker 
-                model.AgreementMessage = " Process complete.";
+                model.AgreementMessage = @" <li>I declare that the information and answers given in this proposal have been checked and are true and complete in every respect and the applicant is not aware of any other information that may be material in considering this proposal.</li>
+                                            <li>I acknowledge that this proposal, declaration and any other information supplied in support of this proposal constitutes representations to, and will be relied on as the basis of contract by, insurers requested to quote on this proposal. We undertake to inform these insurers through our broker of any material alteration to this information whether occurring before or after the completion of any insurance contract.</li>
+                                            <li>I acknowledge that misrepresentations or material non-disclosure of relevant information, whether made through this proposal or otherwise, may result in the insurance not being available to meet a claim and/ or cancellation of relevant insurance contract(s), in addition to other remedies.</li> ";
                 return PartialView("_ViewStopAgreementMessage", model);
             }
         }
