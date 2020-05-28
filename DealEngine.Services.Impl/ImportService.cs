@@ -52,7 +52,8 @@ namespace DealEngine.Services.Impl
         {
             //addresses need to be on one line
             //var userFileName = "C:\\tmp\\testclientdata\\NZACSUsers2018.csv";
-            var userFileName = "/tmp/nzfsg test spreadsheet.csv";
+            //var userFileName = "/tmp/nzfsg test spreadsheet.csv";
+            var userFileName = "/tmp/NZACSUsers2018.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("214efe24-552d-46a3-a666-6bede7c88ca1");
             StreamReader reader;
@@ -721,7 +722,8 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = "C:\\Users\\temp\\NZFSGClientDataPrincipaluploadtest.csv";
+            //var fileName = "C:\\Users\\temp\\NZFSGClientDataPrincipaluploadtest.csv";
+            var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
@@ -1174,7 +1176,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-           var fileName = "C:\\Users\\temp\\NZFSGClientDataAdvisoruploadtest.csv";
+             var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
 
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
