@@ -124,7 +124,7 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     int widthIndex = ele.Length;                                                            // length of figure tag up until style=
                                     string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
-                                    width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99% etc)
+                                    width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99%, 10.5% etc)
                                     int srcEndIndex = html2.IndexOf(ele) + widthIndex;                                      // where src ends in original tag
 
                                     if (width.Length < 5)
@@ -213,9 +213,6 @@ namespace DealEngine.WebUI.Controllers
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
                                 
-                                // html.Split(badHtml,  );
-                                // html.
-                                
                                 // Border Fix (show & no border use cases)
                                 if (html.Contains(showBorder))
                                 {
@@ -226,62 +223,68 @@ namespace DealEngine.WebUI.Controllers
                                     html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                                 }
 
-                                if (html.Contains(centerResize))
+                                foreach (string ele in badHtml)
                                 {
-                                    int widthIndex = centerResize.Length;                                               // length of figure tag up until style=
-                                    string width = html.Substring(html.IndexOf(centerResize) + widthIndex + 7, 5);      // the actual width value in %                       
-                                    width = width.Replace("%", "");                                                     // Handle when % is in the string (ie. <10%, 9.99% etc)
-                                    int srcEndIndex = html.IndexOf(centerResize) + widthIndex;                          // where src ends in original tag
+                                    int x = CountStringOccurrences(html2, ele);
+                                    var regex = new Regex(Regex.Escape(ele));
+                                    var regex2 = new Regex(Regex.Escape("</figure>"));
 
-                                    html = html.Replace(centerResize, "<div style=\"text-align:center\"; width:10%;> <img src=\""); //" + width + "px\" setting width on image doesn't work
-                                    html = html.Replace(".png\"></figure>", ".png\"></div>"); // need smarter way of doing close tags to include jpg...
-                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
-                                    // replace with working html
-                                    // html = html.Remove(srcEndIndex, 26);                                                // remove the extra src and style tags
-                                    // html = html.Replace(centerResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"");
-                                }
-                                if (html.Contains(rightResize))
-                                {
-                                    int widthIndex = rightResize.Length;                                               // length of figure tag up until style=
-                                    string width = html.Substring(html.IndexOf(rightResize) + widthIndex + 7, 5);      // the actual width value in %                       
-                                    width = width.Replace("%", "");                                                    // Handle when % is in the string (ie. <10%, 9.99% etc)
-                                    int srcEndIndex = html.IndexOf(rightResize) + widthIndex;                          // where src ends in original tag
+                                    for (int j = 0; j < x; j++)
+                                    {
+                                        if (ele.Contains("image_resized") == false)
+                                        {
+                                            // Image to HTML use cases
+                                            if (ele.Equals(centerImage))
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:center\"</div> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1); 
+                                                // problem with this is html2 could be using <figure> tags before this <img> occurs so to avoid this you need to substring html2 from the starting index to the first occurence of <figure> after starting index
+                                            }
+                                            else if (ele.Equals(leftImage))
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:left\"</div> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1);
+                                            }
+                                            else if (ele.Equals(rightImage))
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:right\"</div> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            int widthIndex = ele.Length;                                                            // length of figure tag up until style=
+                                            string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
+                                            width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99%, 10.5% etc)
+                                            int srcEndIndex = html2.IndexOf(ele) + widthIndex;                                      // where src ends in original tag
 
-                                    // replace with working html
-                                    // html = html.Remove(srcEndIndex, 26);                                               // remove the extra src and style tags
-                                    // html = html.Replace(rightResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:0;\" src=\"");
-                                }
-                                if (html.Contains(leftResize))
-                                {
-                                    int widthIndex = leftResize.Length;                                               // length of figure tag up until style=
-                                    string width = html.Substring(html.IndexOf(leftResize) + widthIndex + 7, 5);      // the actual width value in %                       
-                                    width = width.Replace("%", "");                                                   // Handle when % is in the string (ie. <10%, 9.99% etc)
-                                    int srcEndIndex = html.IndexOf(leftResize) + widthIndex;                          // where src ends in original tag
+                                            if (width.Length < 5)
+                                            {
+                                                html2 = html2.Remove(srcEndIndex, 25);                                              // remove the extra src and style tags
+                                            }
+                                            else
+                                            {
+                                                html2 = html2.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
+                                            }
 
-                                    // replace with working html
-                                    // html = html.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
-                                    // html = html.Replace(leftResize, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:0;margin-right:auto;\" src=\"");
-                                }
-
-                                // Image align & Resize Fix
-                                if (html.Contains(centerImage))
-                                {
-                                    // No center tag for horizontal alignment http://www.tagindex.net/html/img/img_align.html and style doesn't work for this... so wrapped in div (where you can text-align) 
-                                    html = html.Replace(centerImage, "<div style=\"text-align:center\"</div> <img src=\"");
-                                    html = html.Replace(".png\"></figure>", ".png\"></div>"); // need smarter way of doing close tags to include jpg...
-                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
-                                }
-                                if (html.Contains(leftImage))
-                                {
-                                    html = html.Replace(leftImage, "<div style=\"text-align:left\"</div> <img src=\"");
-                                    html = html.Replace(".png\"></figure>", ".png\"></div>");
-                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
-                                }
-                                if (html.Contains(rightImage))
-                                {
-                                    html = html.Replace(rightImage, "<div style=\"text-align:right\"</div> <img src=\""); 
-                                    html = html.Replace(".png\"></figure>", ".png\"></div>");
-                                    html = html.Replace(".jpg\"></figure>", ".jpg\"></div>");
+                                            if (ele.Equals(centerResize) == true)
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:center\"; width:"+ width + "%;> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1);
+                                            }
+                                            else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:left\"; width:" + width + "%;> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1);
+                                            }
+                                            else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
+                                            {
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:right\"; width:" + width + "%;> <img src=\"", 1);
+                                                html2 = regex2.Replace(html2, "</div>", 1);
+                                            }
+                                        }
+                                    }
+                                    html = html2;
                                 }
 
                                 HtmlConverter converter = new HtmlConverter(mainPart); // refer to this: https://github.com/onizet/html2openxml/wiki/Tags-Supported
