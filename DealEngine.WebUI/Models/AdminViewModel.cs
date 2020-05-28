@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NHibernate.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Models
 {
@@ -10,5 +12,6 @@ namespace DealEngine.WebUI.Models
         public IList<PaymentGatewayViewModel> PaymentGateways { get; set; }
         public IList<MerchantViewModel> Merchants { get; set; }
         public IList<SelectListItem> LockedUsers { get; set; }
+        public List<IdentityUser> Users { get; internal set; }
     }
 }

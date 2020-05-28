@@ -14,18 +14,6 @@
                     <div class="card-body">
                         <div class="container" id="AddRoleForm">
                             <form>
-                                @if (User.IsInRole("TCUser"))
-                                {
-                                    <div class="form-group container">
-                                        <select class="custom-select col-6 custom-select-lg" id="organisationId">
-                                            <option value="" selected>empty</option>
-                                            @foreach (var org in Model.Organisations)
-                                            {
-                                                <option value="@org.Id">@org.Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                }
                                 <div class="form-group">
                                     @await Html.PartialAsync("AddRoleForm", Model)
                                 </div>
