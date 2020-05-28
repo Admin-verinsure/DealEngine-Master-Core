@@ -3126,7 +3126,10 @@ namespace DealEngine.WebUI.Controllers
                             organisation.RegisteredStatus = model.RegisteredStatus;
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.MyCRMId = model.MyCRMId;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.TradingName = model.TradingName;
+
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3163,6 +3166,8 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Duration = model.Duration;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.TradingName = model.TradingName;
+
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3357,7 +3362,10 @@ namespace DealEngine.WebUI.Controllers
                             organisation.Duration = model.Duration;
                             organisation.ConfirmAAA = model.ConfirmAAA;
                             organisation.OfcPhoneno = model.OfcPhoneno;
+                            organisation.MyCRMId = model.MyCRMId;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.TradingName = model.TradingName;
+
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3393,6 +3401,9 @@ namespace DealEngine.WebUI.Controllers
                             organisation.ConfirmAAA = model.ConfirmAAA;
                             organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             organisation.OfcPhoneno = model.OfcPhoneno;
+                            organisation.MyCRMId = model.MyCRMId;
+                            organisation.TradingName = model.TradingName;
+
                             if (model.DateofBirth != null)
                             {
                                 organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -3465,7 +3476,9 @@ namespace DealEngine.WebUI.Controllers
                     model.Qualifications = org.Qualifications;
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                     model.IsPrincipalAdvisor = org.IsPrincipalAdvisor;
-                    
+                    model.MyCRMId = org.MyCRMId;
+                    model.TradingName = org.TradingName;
+
                     if (org.DateofBirth != null)
                     {
                         model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";

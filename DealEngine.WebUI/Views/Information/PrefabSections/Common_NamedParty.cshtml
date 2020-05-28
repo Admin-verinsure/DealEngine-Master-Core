@@ -180,6 +180,17 @@
                         <p class="validationContainer" id="ValidateCommonEditEmail"></p>
 
                     </section>
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec">
+
+                        <label class="label">Trading Name</label>
+                        <label class="input">
+                            <i></i>
+                            <input data-type="TEXTBOX" id="CommonEditTradingName" name="TradingName" placeholder="Trading Name" value="">
+                        </label>
+
+                    </section>
+
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec">
                         <label class="label required">Organisation Name</label>
                         <label class="input">
@@ -249,6 +260,16 @@
 
                         </section>
                     }
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditAdvisorsec">
+
+                        <label class="label required">MyCRMID</label>
+                        <label class="input">
+                            <i></i>
+                            <input data-type="TEXTBOX" id="CommonEditCRMID" name="MyCRMId" placeholder="Your CRM ID" value="">
+                        </label>
+
+                    </section>
 
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonEditAdvisorsec">
 
@@ -365,6 +386,7 @@
 
                     </section>
 
+
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="label required">Registered Status AFA,RFA or N/A</label>
                         <label class="input">
@@ -416,6 +438,17 @@
 
                         </section>
                     }
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditAdvisorsec">
+
+                        <label class="label required">MyCRMID</label>
+                        <label class="input">
+                            <i></i>
+                            <input data-type="TEXTBOX" id="CommonCRMID" name="MyCRMId" placeholder="Your CRM ID" value="">
+                        </label>
+
+                    </section>
+
 
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonAdvisorsec">
 
@@ -562,6 +595,8 @@
                  $('#CommonEditDateofRetirement').val(data.dateofRetirement);
                  $('#CommonEditDateofDeceased').val(data.dateofDeceased);
                  $('#CommonEditConfirmAAA').val(data.confirmAAA);
+                 $('#CommonEditCRMID').val(data.myCRMId);
+                 $('#CommonEditTradingName').val(data.tradingName);
                  $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
                   UpdateChosen();
                  //CommonTypeSelected('CommonType','CommonEdit')
