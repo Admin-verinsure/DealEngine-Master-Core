@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
-            //WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
+            WorkingDirectory = "/tmp/";
+            //WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
