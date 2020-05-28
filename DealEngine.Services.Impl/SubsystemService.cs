@@ -17,9 +17,11 @@ namespace DealEngine.Services.Impl
         IInformationTemplateService _informationTemplateService;
         IInformationSectionService _informationSectionService;
         IReferenceService _referenceService;
+        IEmailService _emailService;
         IMapper _mapper;
 
         public SubsystemService(
+            IEmailService emailService,
             IMapper mapper,
             IProductService productService,
             IInformationSectionService informationSectionService,
@@ -30,6 +32,7 @@ namespace DealEngine.Services.Impl
             IReferenceService referenceService
             )
         {
+            _emailService = emailService;
             _referenceService = referenceService;
             _mapper = mapper;
             _productService = productService;
@@ -107,7 +110,9 @@ namespace DealEngine.Services.Impl
                 await _clientInformationService.UpdateInformation(subSheet);
                 
                 subClientProgramme.InformationSheet = subSheet;
+
                 await _programmeService.Update(subClientProgramme);
+                await _emailService.SendSystemEmailAllSubUISInstruction(organisation, subClientProgramme.BaseProgramme, subSheet);
 
                 return subSheet;
 
