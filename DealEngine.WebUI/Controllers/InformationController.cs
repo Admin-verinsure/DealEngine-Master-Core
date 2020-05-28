@@ -578,24 +578,35 @@ namespace DealEngine.WebUI.Controllers
             }
         }        
 
-        [HttpPost]
-        public async Task<IActionResult> GetProductName(Guid id)
-        {
-            List<string> productname = new List<string>();
-            User user = null;
+       
 
+        [HttpPost]
+        public async Task<IActionResult> GetdefaulProductSelect(string[] Answers, Guid ProgrammeId)
+        {
+            User user = null;
             try
             {
                 user = await CurrentUser();
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
-                ClientInformationSheet sheet = clientProgramme.InformationSheet;
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
 
-                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    productname.Add(agreement.Product.Name);
+                    foreach (var option in Answers)
+                    {
+                        if (option != "None")
+                        {
+                            var clientAgreementTerm = await _clientAgreementTermService.GetAllClientAgreementTerm();
+                            List<ClientAgreementTerm> listClientAgreementerm = clientAgreementTerm.Where(cagt => cagt.Id == Guid.Parse(option)).ToList();
+                            foreach (var term in listClientAgreementerm)
+                            {
+                                term.Bound = true;
+                                await uow.Commit();
+                            }
+                        }
+                    }
                 }
 
-                return Json(productname);
+                return Json(true);
             }
             catch (Exception ex)
             {
@@ -603,6 +614,8 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> SaveCoverOptions(string[] Answers, Guid ProgrammeId)
@@ -653,6 +666,71 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetProductName(Guid id)
+        {
+            List<string> productname = new List<string>();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+                ClientInformationSheet sheet = clientProgramme.InformationSheet;
+
+                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
+                {
+                    productname.Add(agreement.Product.Name);
+                }
+
+                return Json(productname);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetdefaultCoverOptions(Guid ProgrammeId)
+        {
+            List<ClientAgreementTerm> listClientAgreementerm = new List<ClientAgreementTerm>();
+            List<Guid> listClientAgreementermid = new List<Guid>();
+            String[] OptionItem;
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
+
+                String[][] OptionItems = new String[clientProgramme.Agreements.Count][];
+                var count = 0;
+                foreach (var agreement in clientProgramme.Agreements)
+                {
+                    //count = 0;
+                    var term = agreement.ClientAgreementTerms.FirstOrDefault();
+                   
+                        OptionItem = new String[2];
+                        
+                            OptionItem[0] = agreement.Product.Name;
+                            OptionItem[1] = "" + term.Id;
+                            OptionItems[count] = OptionItem;
+                            count++;
+                }
+                return Json(OptionItems);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> GetCoverOptions(Guid ProgrammeId)
