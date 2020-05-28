@@ -305,6 +305,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfnotrenewal(underwritingUser, agreement);
             //Advisor Claims / Insurance History
             uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
+            //Broker Referral
+            uwrfbrokerreferral(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -403,6 +405,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, decimal decPIPremiumTopUp)
         {
             decimal indadvisorpremiumoption = 0M;
+            decimal decbrokerfee = 50M;
             decimal clextrapremium = 0M;
             decimal premiumoption = 0M;
 
@@ -543,7 +546,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
             }
 
-            premiumoption = (indadvisorpremiumoption + clextrapremium + decPIPremiumTopUp) * intnumberofadvisors;
+            premiumoption = (indadvisorpremiumoption + clextrapremium + decPIPremiumTopUp + decbrokerfee) * intnumberofadvisors;
 
             return premiumoption;
         }
@@ -735,6 +738,26 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisorpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+            }
+        }
+
+        void uwrfbrokerreferral(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status = "Pending";
                 }
             }
         }

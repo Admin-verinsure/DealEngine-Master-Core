@@ -155,7 +155,7 @@ namespace DealEngine.Services.Impl
             }
 
             var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
-            if (tasks.Count() != 0)
+            if (tasks.Any())
             {
                 task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
                 if(task == null)
@@ -192,7 +192,7 @@ namespace DealEngine.Services.Impl
             var activity = await _activityService.GetActivityByName(activityType);
             var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
 
-            if(tasks.Count() != 0)
+            if(tasks.Any())
             {
                 var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
                 if (task != null)

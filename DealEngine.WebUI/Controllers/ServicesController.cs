@@ -3036,7 +3036,7 @@ namespace DealEngine.WebUI.Controllers
 
         }
         
-         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> AddCommonNamedParty(OrganisationViewModel model)
         {
             User currentUser = null;

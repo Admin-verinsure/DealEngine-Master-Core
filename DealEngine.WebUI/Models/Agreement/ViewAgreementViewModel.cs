@@ -114,12 +114,24 @@ namespace DealEngine.WebUI.Models.Agreement
             {
                 if (null != agreement.Product.DependableProduct)
                 {
-                    MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                    } else
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                    }
 
                 }
                 else
                 {
-                    MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                    } else
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                    }
                 }
             }
         }

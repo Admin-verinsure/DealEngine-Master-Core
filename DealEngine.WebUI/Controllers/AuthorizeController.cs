@@ -63,7 +63,6 @@ namespace DealEngine.WebUI.Controllers
 
                 var userList = await _userService.GetAllUsers();
                 var roleList = new List<IdentityRole>();
-                var organisationList = await _organisationService.GetAllOrganisations();
 
                 var claimList = await _claimService.GetClaimsAllClaimsList();
                 if (claimList.Count == 0)
@@ -77,7 +76,6 @@ namespace DealEngine.WebUI.Controllers
                 model.RoleList = new List<IdentityRole>();
                 model.UserList = new List<User>();
                 model.ClaimList = claimList;
-                model.Organisations = organisationList;
 
                 if (user.PrimaryOrganisation.IsTC)
                 {

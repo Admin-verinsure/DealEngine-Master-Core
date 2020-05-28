@@ -111,7 +111,7 @@ namespace DealEngine.WebUI.Controllers
                 IList<Programme> programmeList = new List<Programme>();
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
-                {
+                {                    
                     var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme);
                     foreach (var clientProgramme in clientProgList)
                     {
