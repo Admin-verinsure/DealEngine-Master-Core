@@ -1457,6 +1457,16 @@ namespace DealEngine.WebUI.Controllers
                             emailtemplatename = "Information Sheet Instruction";
                             break;
                         }
+                    case "SendSubInformationSheetInstruction":
+                        {
+                            emailtemplatename = "SubInformation Sheet Instruction";
+                            break;
+                        }
+                    case "SendSubInformationSheetCompletion":
+                        {
+                            emailtemplatename = "SubInformation Sheet Completion";
+                            break;
+                        }
                     case "SendInformationSheetReminder":
                         {
                             emailtemplatename = "Information Sheet Reminder";
