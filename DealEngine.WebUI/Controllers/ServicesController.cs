@@ -3194,6 +3194,7 @@ namespace DealEngine.WebUI.Controllers
                             insuranceAttribute.IAOrganisations.Add(organisation);
                             await _organisationService.CreateNewOrganisation(organisation);
                             userdb.Organisations.Add(organisation);
+                            userdb.SetPrimaryOrganisation(organisation);
                             sheet.Organisation.Add(organisation);
                             model.ID = organisation.Id;
 

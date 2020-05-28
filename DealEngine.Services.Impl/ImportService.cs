@@ -722,8 +722,8 @@ namespace DealEngine.Services.Impl
         public async Task ImportNZFSGServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = "C:\\Users\\temp\\NZFSGFirstDataUploadtest.csv";
-            //var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
+            //var fileName = "C:\\Users\\temp\\NZFSGFirstDataUploadtest.csv";
+            var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //PMINZ Programme ID
             StreamReader reader;
