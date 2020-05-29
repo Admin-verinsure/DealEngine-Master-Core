@@ -1142,7 +1142,6 @@
 
 
 @section pagespecific {
-    <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     @await Html.PartialAsync("_InformationWizardScripts")
     @await Html.PartialAsync("_DataTableScripts")
     @await Html.PartialAsync("_PrefabScripts")
@@ -1176,6 +1175,18 @@
                 $("#accordion :input").prop("disabled", true);
             }
         });
+
+        function AccordionShow() {
+            document.getElementById('later').hidden = false;
+            document.getElementById('less').hidden = false;
+            document.getElementById('more').hidden = true;
+        }
+
+        function AccordionHide() {
+            document.getElementById('later').hidden = true;
+            document.getElementById('less').hidden = true;
+            document.getElementById('more').hidden = false;
+        }
 
 
         function CloseAdvisory(clientInformationSheetId) {
