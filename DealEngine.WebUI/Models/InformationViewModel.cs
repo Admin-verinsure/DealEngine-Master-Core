@@ -26,7 +26,6 @@ namespace DealEngine.WebUI.Models
             ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
         }
         public Domain.Entities.Programme Programme;
-        public string CompanyName { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
         public string Status { get; set; }

@@ -273,7 +273,7 @@ namespace DealEngine.WebUI.Controllers
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
-                model.CompanyName = _appSettingService.GetCompanyTitle;
+
                 //testing dynamic wizard here
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 if (isSubsystem)
@@ -851,7 +851,6 @@ namespace DealEngine.WebUI.Controllers
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
-                model.CompanyName = _appSettingService.GetCompanyTitle;
                 //testing dynamic wizard here
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 if (isSubsystem)

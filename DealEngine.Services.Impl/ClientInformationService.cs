@@ -16,14 +16,17 @@ namespace DealEngine.Services.Impl
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
         IMapperSession<Boat> _boatRepository;
+        IMapperSession<Organisation> _organisationRepository;
         IMapper _mapper;
 
         public ClientInformationService(
+            IMapperSession<Organisation> organisationRepository,
             IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
             IMapper mapper
             )
         {
+            _organisationRepository = organisationRepository;
             _mapper = mapper;
             _customerInformationRepository = customerInformationRepository;
             _boatRepository = boatRepository;
@@ -316,6 +319,17 @@ namespace DealEngine.Services.Impl
         public async Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal)
         {
             return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);                     
+        }
+
+        public async Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue)
+        {
+            var clientList = new List<ClientInformationSheet>();
+            var orgs = await _organisationRepository.FindAll().Where(b => b.Name == searchValue).ToListAsync();
+            foreach (var org in orgs)
+            {
+                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(org)).ToList());
+            }
+            return clientList;
         }
     }
 }
