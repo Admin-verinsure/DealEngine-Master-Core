@@ -75,7 +75,7 @@ namespace DealEngine.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.Title = "Proposalonline Dashboard";
+            ViewBag.Title = "DealEngine Dashboard";
 
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
