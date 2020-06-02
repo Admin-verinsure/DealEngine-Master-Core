@@ -3194,6 +3194,7 @@ namespace DealEngine.WebUI.Controllers
                             insuranceAttribute.IAOrganisations.Add(organisation);
                             await _organisationService.CreateNewOrganisation(organisation);
                             userdb.Organisations.Add(organisation);
+                            userdb.SetPrimaryOrganisation(organisation);
                             sheet.Organisation.Add(organisation);
                             model.ID = organisation.Id;
 
@@ -3451,6 +3452,33 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
+        
+        [HttpPost]
+        public async Task<IActionResult> CheckEmail(Guid answerSheetId,  string Email)
+        {
+            User userdb = null;
+
+            try
+            {
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                Organisation org = sheet.Organisation.FirstOrDefault(o => o.Email == Email);
+               // userdb = await _userService.GetUserByEmail(Email);
+                if (org != null)
+                {
+                    return new JsonResult(false);
+                }
+                else
+                {
+                    return new JsonResult(true);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, userdb, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetCommonNamedPArty(Guid answerSheetId, Guid partyID)
