@@ -327,7 +327,7 @@ namespace DealEngine.Services.Impl
             var orgs = await _organisationRepository.FindAll().Where(b => b.Name == searchValue).ToListAsync();
             foreach (var org in orgs)
             {
-                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(org)).ToList());
+                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
             }
             return clientList;
         }
