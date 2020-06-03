@@ -453,7 +453,7 @@ namespace DealEngine.Services.Impl
 
             List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
-            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("SendSubInformationSheetInstruction");
+            EmailTemplate systemEmailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction");
             if (systemEmailTemplate == null)
             {
                 throw new Exception("SendSubInformationSheetInstruction is null");
@@ -482,7 +482,7 @@ namespace DealEngine.Services.Impl
 
             List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
-            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("SendSubInformationSheetCompletion");
+            EmailTemplate systemEmailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetCompletion");
             if (systemEmailTemplate == null)
             {
                 throw new Exception("SendSubInformationSheetCompletion is null");

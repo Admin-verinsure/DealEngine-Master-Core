@@ -1,55 +1,28 @@
-﻿<div class="container">
-    <form id="proposalcreate-form" class="client-form" novalidate="novalidate" action="ViewProgramme" method="post">        
-            <div class="card">
-                <div class="card-header">
-                    <h5>
-                        Search
-                    </h5>
-                </div>
+﻿@model DealEngine.WebUI.Models.SearchViewModel
+<div class="container">
+    <form id="SearchForm" class="client-form" action="ViewProgramme" method="post">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    Search
+                </h5>
             </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <select class="form-control b" id="SearchTerm" name="SearchTerm">
-                        <option selected="selected" value="">-- Search Option --</option>
-                        <option value="1">Reference Number</option>
-                        <option value="2">Insured First Name</option>
-                        <option value="3">Insured Last Name</option>
-                        <option value="4">Boat Name</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="SearchValue" id="SearchValue" placeholder="Search Value">
-                </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <select id="SearchId" name="SearchTerm" class="custom-select" required>
+                    @foreach (var option in Model.SearchOptions)
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                </select>
             </div>
-            <div class="card-footer">
-                <button class="btn btn-success" type="submit">Search</button>
-            </div>        
+            <div class="form-group">
+                <input type="text" class="form-control" name="SearchValue" id="SearchValue" placeholder="Search Value">
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-success" type="submit">Search</button>
+        </div>
     </form>
 </div>
-
-<script type="text/javascript">
-    function Search() {
-        var val = $('#SearchValue').val();
-
-     var postData = { Value: val };
-
-        $.ajax({
-				type: "POST",
-				url: '@Url.Action("Search", "Home")',
-			    data: postData 
-			})
-            .done(function (url) {
-
-                window.location.href = url;
-                console.log(json);
-	        })
-            .fail(function (err, ajaxOptions, thrownError) {
-                debugger;
-
-				alert("Unable to save." + err.responseText );
-				console.log(err);
-				console.log(ajaxOptions);
-				console.log(thrownError);
-            });
-    };
-</script>
