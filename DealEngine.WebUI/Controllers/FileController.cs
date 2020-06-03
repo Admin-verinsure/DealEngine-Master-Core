@@ -256,8 +256,9 @@ namespace DealEngine.WebUI.Controllers
                                             int widthIndex = ele.Length;                                                            // length of figure tag up until style=
                                             string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
                                             width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99%, 10.5% etc)
-                                            int srcEndIndex = html2.IndexOf(ele) + widthIndex;                                      // where src ends in original tag
-
+                                            int srcEndIndex = html2.IndexOf(ele) + widthIndex;
+                                            // where src ends in original tag
+                        
                                             if (width.Length < 5)
                                             {
                                                 html2 = html2.Remove(srcEndIndex, 25);                                              // remove the extra src and style tags
@@ -266,20 +267,55 @@ namespace DealEngine.WebUI.Controllers
                                             {
                                                 html2 = html2.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
                                             }
+                                            string url = html2.Substring(srcEndIndex);
+
+                                            if (url.Contains(".jpg") == true)
+                                            {
+                                                if (url.Contains(".png") == true)
+                                                {
+                                                    if (url.IndexOf(".jpg") < url.IndexOf(".png"))
+                                                    {
+                                                        url = url.Substring(0, url.IndexOf(".jpg") + 3);
+
+                                                    }
+                                                    else
+                                                    {
+                                                        url = url.Substring(0, url.IndexOf(".png") + 3);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    url = url.Substring(0, url.IndexOf(".jpg") + 3);
+                                                }
+                                            }
+                                            else if (url.Contains(".png") == true)
+                                            {
+                                                url = url.Substring(0, url.IndexOf(".png") + 3);
+                                            }
+                                            else
+                                            {
+                                                // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
+                                            }
+
+                                            // now you have the url you can execute plan https://stackoverflow.com/questions/41436113/get-size-image-from-link
+
+                                            // do the thing hereeeee
+
+
 
                                             if (ele.Equals(centerResize) == true)
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:center\"; width:"+ width + "%;> <img src=\"", 1);
+                                            { //width="100" //+ width +"%; if you can get the image pixel width you can do the % based size
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:center;\"> <img width=\"100\" src=\"", 1);
                                                 html2 = regex2.Replace(html2, "</div>", 1);
                                             }
                                             else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
                                             {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:left\"; width:" + width + "%;> <img src=\"", 1);
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:left; width:" + width + "%;\"> <img src=\"", 1);
                                                 html2 = regex2.Replace(html2, "</div>", 1);
                                             }
                                             else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
                                             {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:right\"; width:" + width + "%;> <img src=\"", 1);
+                                                html2 = regex.Replace(html2, "<div style=\"text-align:right; width:" + width + "%;\"> <img src=\"", 1);
                                                 html2 = regex2.Replace(html2, "</div>", 1);
                                             }
                                         }
