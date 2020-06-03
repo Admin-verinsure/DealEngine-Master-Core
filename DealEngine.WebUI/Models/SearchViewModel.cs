@@ -21,7 +21,7 @@ namespace DealEngine.WebUI.Models
                 SearchOptions.Add(new SelectListItem
                 {
                     Text = "Boat Name",
-                    Value = "1"
+                    Value = "Boat"
                 });
             }
             if (companyName == "AIB")
@@ -29,9 +29,25 @@ namespace DealEngine.WebUI.Models
                 SearchOptions.Add(new SelectListItem
                 {
                     Text = "Advisory Name",
-                    Value = "1"
+                    Value = "Advisory"
                 });
             }
+            SearchOptions.Add(new SelectListItem
+            {
+                Text = "Reference Number",
+                Value = "Reference"
+            });
+            SearchOptions.Add(new SelectListItem
+            {
+                Text = "Insured First Name",
+                Value = "Name"
+            });
+            SearchOptions.Add(new SelectListItem
+            {
+                Text = "Insured Last Name",
+                Value = "Name"
+            });
+
             return SearchOptions;
         }
 

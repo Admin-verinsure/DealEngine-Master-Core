@@ -290,7 +290,7 @@ namespace DealEngine.Services.Impl
         public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
         {
             var clientList = new List<ClientInformationSheet>();
-            var boats = await _boatRepository.FindAll().Where(b => b.BoatName ==searchValue).ToListAsync();
+            var boats = await _boatRepository.FindAll().Where(b => b.BoatName == searchValue).ToListAsync();
             foreach(var boat in boats)
             {
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(boat)).ToList());
@@ -324,7 +324,7 @@ namespace DealEngine.Services.Impl
         public async Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue)
         {
             var clientList = new List<ClientInformationSheet>();
-            var orgs = await _organisationRepository.FindAll().Where(b => b.Name == searchValue).ToListAsync();
+            var orgs = await _organisationRepository.FindAll().Where(b => b.Name.ToLower() == searchValue.ToLower()).ToListAsync();
             foreach (var org in orgs)
             {
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
