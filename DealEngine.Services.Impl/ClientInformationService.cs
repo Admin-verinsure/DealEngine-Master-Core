@@ -17,15 +17,18 @@ namespace DealEngine.Services.Impl
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
         IMapperSession<Boat> _boatRepository;
         IMapperSession<Organisation> _organisationRepository;
+        IMapperSession<User> _userRepository;
         IMapper _mapper;
 
         public ClientInformationService(
+            IMapperSession<User> userRepository,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
             IMapper mapper
             )
         {
+            _userRepository = userRepository;
             _organisationRepository = organisationRepository;
             _mapper = mapper;
             _customerInformationRepository = customerInformationRepository;
@@ -117,22 +120,23 @@ namespace DealEngine.Services.Impl
             await _customerInformationRepository.UpdateAsync(sheet);
         }
 
-        public async Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
+        public async Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection, User user)
         {
             if (sheet == null)
                 throw new ArgumentNullException(nameof(sheet));
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            await BuildAnswerFromModel(sheet, collection);
+            await BuildAnswerFromModel(sheet, collection, user);
             await UpdateInformation(sheet);
         }
 
-        private async Task BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection)
+        private async Task BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection, User user)
         {
             //find a faster way of getting all models
+            AnswerFromUserDetails(user, collection, collection.Keys.Where(s => s.StartsWith("UserDetails", StringComparison.CurrentCulture)));
             AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));
-            AnswerFromRole(sheet, collection, collection.Keys.Where(s => s.StartsWith("RoleDataViewModel", StringComparison.CurrentCulture)));
+            AnswerFromRole(sheet, collection, collection.Keys.Where(s => s.StartsWith("RoleDataViewModel", StringComparison.CurrentCulture)));            
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
@@ -143,6 +147,24 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture))); 
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
+        }
+
+        private async void AnswerFromUserDetails(User user, IFormCollection collection, IEnumerable<string> enumerable)
+        {
+            foreach(string key in enumerable)
+            {
+                try
+                {
+                    var userFieldAttribute = key.Split('.').ToList().LastOrDefault();
+                    var userProperty = user.GetType().GetProperty(userFieldAttribute);
+                    userProperty.SetValue(user, collection[key].ToString());
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            await _userRepository.UpdateAsync(user);
         }
 
         private void AnswerFromRole(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
