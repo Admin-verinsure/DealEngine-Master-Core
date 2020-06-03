@@ -847,6 +847,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
 
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -1331,7 +1332,7 @@ namespace DealEngine.WebUI.Controllers
 
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
-                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    await _clientInformationService.SaveAnswersFor(sheet, collection, user);
                 }
 
                 return Json("Success");
@@ -1362,7 +1363,7 @@ namespace DealEngine.WebUI.Controllers
 
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
-                        await _clientInformationService.SaveAnswersFor(sheet, collection);
+                        await _clientInformationService.SaveAnswersFor(sheet, collection, user);
                         await GenerateUWM(user, sheet, reference);                        
                     }
 
@@ -1370,7 +1371,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    await _clientInformationService.SaveAnswersFor(sheet, collection, user);
 
                     return Redirect("/Information/QuoteToAgree?id=" + sheet.Programme.Id);
                 }

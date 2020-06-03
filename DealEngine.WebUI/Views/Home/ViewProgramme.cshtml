@@ -34,20 +34,24 @@
                                     <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>
+                                    @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
+                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-xs" style="color:white" > <i class="fa fa-pencil"></i> Issue UIS </a>
+
                                 </li>
                                 <li class="nav-item">
                                     <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
                                 </li>
+
                                 @*<li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create 2nd UIS</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
+                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="EditClient"})'"class="btn btn-primary btn-xs" style="color:white" > <i class="fa fa-pencil"></i> Edit Client </a>
                                 </li>*@
+
+                                @*<li class="nav-item">
+                <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
+            </li>*@
                             }
 
                         </ul>
@@ -303,8 +307,9 @@
         $(document).ready(function () {
             $.noConflict();
             $('#tableProgrammeItems').bootstrapTable();
-           
+
             $('#subsystemAccodion').accordion;
+
         });
 
         $('#myChangeModal').on('show.bs.modal', function (e) {
@@ -432,6 +437,8 @@
                 return validation;
         }
 
+       
+
         function postCGData() {
             debugger;
               $('#CreateUISProcess').show();
@@ -477,9 +484,34 @@
                 });
             document.getElementById('next').style.visibility = 'show';
         }
+
+        @*function EditClient() {
+            event.preventDefault();
+               debugger;
+            var deals=  @Model.Deals; 
+             var postData = { Model: deals};
+
+            //var programmeId = $('#ProgrammeId').val();
+            //var postData = { ProgrammeId: programmeId };
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EditClient1", "Home")',
+                data: postData
+            })
+                .done(function (data) {
+                    debugger;
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+        }*@
+
+       
+       
     </script>
 @*<script>
-     $(window).on('load', function () {
+     $(window).on('load', function () {@
             debugger;
          var agreementstatuscolumn = document.querySelector('[data-field="agreementstatus"]');
          $('#AgreementStatus').addClass('hidden');
