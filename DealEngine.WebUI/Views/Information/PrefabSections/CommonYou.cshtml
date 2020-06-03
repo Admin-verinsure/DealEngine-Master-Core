@@ -1,39 +1,36 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div class="padding-10">
-    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
-        <fieldset>
-            <div class="row">
-                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <label class="label">First Name (Read-Only)</label>
-                    <label class="input ">
-                        <i></i>
-                        <input data-type="TEXTBOX" data-name="sharedFirstName" id="sharedFirstName" name="sharedFirstName" placeholder="First Name (Read-Only)" value="@Model.UserDetails.FirstName" readonly="true">
-                    </label>
-                </section>
-                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <label class="label">Last Name (Read-Only)</label>
-                    <label class="input">
-                        <i></i>
-                        <input data-type="TEXTBOX" data-name="sharedLastName" id="sharedLastName" name="sharedLastName" placeholder="Last Name (Read-Only)" value="@Model.UserDetails.LastName" readonly="true">
-                    </label>
-                </section>
-                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <label class="label">E-mail (Read-Only)</label>
-                    <label class="input">
-                        <i></i>
-                        <input data-type="TEXTBOX" data-name="sharedEmail" id="sharedEmail" name="sharedEmail" placeholder="E-mail (Read-Only)" value="@Model.UserDetails.Email" readonly="true">
-                    </label>
-                </section>
-                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <label class="label">Phone (Read-Only)</label>
-                    <label class="input">
-                        <i></i>
-                        <input data-type="TEXTBOX" data-name="sharedPhone" id="sharedPhone" name="sharedPhone" placeholder="Phone (Read-Only)" value="@Model.UserDetails.Phone" readonly="true">
-                    </label>
-                </section>
+<form>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-2">
+                <label class="label">First Name </label>
             </div>
-
-        </fieldset>
+            <div class="col-3">
+                <input id="sharedFirstName" class="form-control" name="UserDetails.FirstName" placeholder="First Name (Read-Only)" value="@Model.UserDetails.FirstName">
+            </div>
+            <div class="col-2">
+                <label class="label">Last Name </label>
+            </div>
+            <div class="col-3">
+                <input id="sharedLastName" class="form-control" name="UserDetails.LastName" placeholder="Last Name (Read-Only)" value="@Model.UserDetails.LastName">
+            </div>
+        </div>
     </div>
-</div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-2">
+                <label class="label">E-mail </label>
+            </div>
+            <div class="col-3">
+                <input id="sharedEmail" class="form-control" name="UserDetails.Email" placeholder="E-mail (Read-Only)" value="@Model.UserDetails.Email">
+            </div>
+            <div class="col-2">
+                <label class="label">Phone </label>
+            </div>
+            <div class="col-3">
+                <input id="sharedPhone" class="form-control" name="UserDetails.Phone" placeholder="Phone (Read-Only)" value="@Model.UserDetails.Phone">
+            </div>
+        </div>
+    </div>
+</form>
