@@ -169,6 +169,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
             int intnumberofadvisors = 0;
+            bool advisorhasnocrmid = false;
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
@@ -176,6 +177,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
                     {
                         intnumberofadvisors += 1;
+
+                        if (!advisorhasnocrmid && string.IsNullOrEmpty(uisorg.MyCRMId))
+                        {
+                            advisorhasnocrmid = true;
+                        }
                     }
                 }
             }
@@ -307,6 +313,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
             //Broker Referral
             uwrfbrokerreferral(underwritingUser, agreement);
+            //Advisor has no CRMID
+            uwrfadvisorhasnocrmid(underwritingUser, agreement, advisorhasnocrmid);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -758,6 +766,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status != "Pending")
                 {
                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status = "Pending";
+                }
+            }
+        }
+
+        void uwrfadvisorhasnocrmid(User underwritingUser, ClientAgreement agreement, bool advisorhasnocrmid)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisorhasnocrmid" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisorhasnocrmid") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisorhasnocrmid").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisorhasnocrmid").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisorhasnocrmid").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisorhasnocrmid").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisorhasnocrmid" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (advisorhasnocrmid)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisorhasnocrmid" && cref.DateDeleted == null).Status = "Pending";
+                    }
                 }
             }
         }
