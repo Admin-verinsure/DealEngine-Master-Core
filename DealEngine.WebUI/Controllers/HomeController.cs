@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 #endregion
 
@@ -34,6 +35,9 @@ namespace DealEngine.WebUI.Controllers
         IProductService _productService;
         ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;
+        IOrganisationService _organisationService;
+        IUnitOfWork _unitOfWork;
+
 
         public HomeController(
             IEmailService emailService,
@@ -48,7 +52,10 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService customerInformationService,
             IPrivateServerService privateServerService,
             IClientAgreementService clientAgreementService,
-            IClientInformationService clientInformationService
+            IClientInformationService clientInformationService,
+            IUnitOfWork unitOfWork,
+            IOrganisationService organisationService
+
             )
 
             : base(userRepository)
@@ -64,6 +71,8 @@ namespace DealEngine.WebUI.Controllers
             _taskingService = taskingService;
             _clientInformationService = clientInformationService;
             _clientAgreementService = clientAgreementService;
+            _unitOfWork = unitOfWork;
+            _organisationService = organisationService;
             _mapper = mapper;
         }
 
@@ -608,7 +617,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> IssueUIS(string ProgrammeId)
+        public async Task<IActionResult> IssueUIS(string ProgrammeId,string actionname)
         {
             User user = null;
             try
@@ -629,7 +638,15 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
 
-                return View(model);
+                if(actionname == "IssueUIS")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    //if (action == "EditClient")
+                        return View("EditClient", model);
+                }
             }
             catch (Exception ex)
             {
@@ -669,6 +686,30 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> EditClient(Guid ProgrammeId ,IList<DealItem> Deals)
+        //{
+        //    User user = null;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ProgrammeItem model = new ProgrammeItem();
+
+        //        model.Deals =Deals;
+        //        var clientProgrammes = new List<ClientProgramme>();
+               
+               
+
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
+       
+
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
         {
@@ -703,6 +744,100 @@ namespace DealEngine.WebUI.Controllers
                             }
                             //send out uis issue notification email
                             //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
+                        }
+                    }
+
+                }
+
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        
+             [HttpPost]
+        public async Task<IActionResult> getClientDetails(Guid OwnerId)
+        {
+            User user = null;
+            Organisation ownerorg= null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                ownerorg = await _organisationService.GetOrganisation(OwnerId);
+                orgmodel.OrganisationName = ownerorg.Name;
+                var userList = await _userService.GetAllUserByOrganisation(ownerorg);
+                //user = userList.FirstOrDefault(user => user.PrimaryOrganisation == ownerorg);
+                orgmodel.ID = OwnerId;
+                orgmodel.Users = userList;
+                //orgmodel.FirstName = user.FirstName;
+                //orgmodel.LastName = user.LastName;
+                //orgmodel.Email = user.Email;
+                //orgmodel.Phone = user.Phone;
+
+                return Json(orgmodel);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditClient(IFormCollection formCollection)
+        {
+            User user = null;
+            Programme programme = null;
+            Organisation organisation = null;
+            string email = null;
+
+            try
+            {
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+
+                foreach (var key in formCollection.Keys)
+                {
+                    organisation = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
+                    var userList = await _userService.GetAllUserByOrganisation(organisation);
+                    user = userList.FirstOrDefault(user => user.PrimaryOrganisation == organisation);
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        organisation.ChangeOrganisationName(formCollection["OrganisationName"]);
+                        organisation.Email = formCollection["Email"];
+                        organisation.Phone = formCollection["Phone"];
+                        user.FirstName = formCollection["FirstName"];
+                        user.LastName = formCollection["LastName"];
+                        user.Email = formCollection["Email"];
+                        await uow.Commit();
+                    }
+
+
+
+                    var correctEmail = await _userService.GetUserByEmail(email);
+                    if (correctEmail != null)
+                    {
+                        if (programme.ProgEnableEmail)
+                        {
+                            var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
+                            clientProgramme.ReminderDate = DateTime.Now;
+                            await _programmeService.Update(clientProgramme);
+
+                            //send out login instruction email
+                            await _emailService.SendSystemEmailLogin(email);
+                            //send out information sheet instruction email
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetReminder");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            }
                         }
                     }
 
