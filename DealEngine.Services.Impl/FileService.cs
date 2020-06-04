@@ -505,25 +505,49 @@ namespace DealEngine.Services.Impl
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
             }
 
-            string advisorlist = "";
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
+                DataTable dtadvisor = new DataTable();
+                dtadvisor.Columns.Add("Advisor");
+                dtadvisor.Columns.Add("RetroactiveDate");
+
+                DataTable dtadvisor1 = new DataTable();
+                dtadvisor1.Columns.Add("Advisor");
+                dtadvisor1.Columns.Add("RetroactiveDate");
+
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
                     if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
                     {
-                        if (string.IsNullOrEmpty(advisorlist))
-                        {
-                            advisorlist = uisorg.Name;
-                        }
-                        else
-                        {
-                            advisorlist += ", " + uisorg.Name;
-                        }
+                        DataRow dradvisor = dtadvisor.NewRow();
+
+                        dradvisor["Advisor"] = uisorg.Name;
+                        dradvisor["RetroactiveDate"] = uisorg.PIRetroactivedate;
+
+                        dtadvisor.Rows.Add(dradvisor);
+
+                        DataRow dradvisor1 = dtadvisor1.NewRow();
+
+                        dradvisor1["Advisor"] = uisorg.Name;
+                        dradvisor1["RetroactiveDate"] = uisorg.DORetroactivedate;
+
+                        dtadvisor1.Rows.Add(dradvisor1);
                     }
+
+                    dtadvisor.TableName = "AdvisorDetailsTablePI";
+                    dtadvisor1.TableName = "AdvisorDetailsTableDO";
+
+                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", ConvertDataTableToHTML(dtadvisor)));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", ConvertDataTableToHTML(dtadvisor1)));
+
                 }
             }
-            mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorsName]]", advisorlist));
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
+            }
+
 
             string customeactivity = "";
             string customeactivityexcess = "";
@@ -603,6 +627,15 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
             }
+            if (agreement.ClientInformationSheet != null)
+            {
+                if (agreement.ClientInformationSheet.Programme.Owner != null)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", agreement.ClientInformationSheet.Programme.Owner.TradingName));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));
+                }
+            }
+
             //Eglobal merge fields
             if (agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Count > 0)
             {

@@ -11,6 +11,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         public void Override(AutoMapping<ClientAgreement> mapping)
         {
             mapping.Map(x => x.issuetobrokercomment).Length(10000);
+            mapping.Map(x => x.ProfessionalBusiness).Length(10000);
         }
     }
 }
