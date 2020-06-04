@@ -94,6 +94,8 @@ namespace DealEngine.Services.Impl
                 }
             }
 
+            await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+
             return subClientSheet;
         }
 
@@ -112,7 +114,6 @@ namespace DealEngine.Services.Impl
                 subClientProgramme.InformationSheet = subSheet;
 
                 await _programmeService.Update(subClientProgramme);
-                await _emailService.SendSystemEmailAllSubUISInstruction(organisation, subClientProgramme.BaseProgramme, subSheet);
 
                 return subSheet;
 
@@ -195,6 +196,12 @@ namespace DealEngine.Services.Impl
         public async Task ValidateSubObjects(ClientInformationSheet informationSheet)
         {
             var principalOrganisations = await _organisationService.GetSubsystemOrganisationPrincipals(informationSheet);
+
+            for (var i = informationSheet.SubClientInformationSheets.Count - 1; i >= 0; i--)
+            {
+                RemoveSubObjects(informationSheet, informationSheet.SubClientInformationSheets[i]);
+            }
+            
             if(principalOrganisations.Count > 0)
             {
                 List<SubClientInformationSheet> subSheets = new List<SubClientInformationSheet>();
@@ -206,32 +213,10 @@ namespace DealEngine.Services.Impl
                     subSheets.Add(subSheet);
                 }
 
-                for (var i = 0; i < informationSheet.SubClientInformationSheets.Count; i++)
-                {
-                    if (!subSheets.Contains(informationSheet.SubClientInformationSheets[i]))
-                    {
-                        RemoveSubObjects(informationSheet, informationSheet.SubClientInformationSheets[i]);
-                    }
-                    else if (subSheets.Contains(informationSheet.SubClientInformationSheets[i]))
-                    {
-                        subSheets.Remove(informationSheet.SubClientInformationSheets[i]);
-                    }
-                }
-
                 foreach (var subsheet in subSheets)
                 {
                     informationSheet.SubClientInformationSheets.Add(subsheet);
                 }
-            }
-            else
-            {
-                for(var i =0; i < informationSheet.SubClientInformationSheets.Count; i++)
-                {
-                    RemoveSubObjects(informationSheet, informationSheet.SubClientInformationSheets[i]);
-                }
-                
-                informationSheet.SubClientInformationSheets.Clear();
-                informationSheet.Programme.SubClientProgrammes.Clear();
             }
 
             await _clientInformationService.UpdateInformation(informationSheet);

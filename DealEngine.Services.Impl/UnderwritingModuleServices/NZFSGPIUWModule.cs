@@ -85,7 +85,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             decimal decPIPremiumTopUp = 0M;
 
-            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire & general referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
