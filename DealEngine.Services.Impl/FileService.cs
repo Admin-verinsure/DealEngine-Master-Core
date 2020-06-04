@@ -632,6 +632,7 @@ namespace DealEngine.Services.Impl
                 if (agreement.ClientInformationSheet.Programme.Owner != null)
                 {
                     mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", agreement.ClientInformationSheet.Programme.Owner.TradingName));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));
                 }
             }
 
