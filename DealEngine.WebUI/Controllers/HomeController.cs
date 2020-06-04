@@ -657,31 +657,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        //[HttpGet]
-        //public async Task<IActionResult> EditClient(Guid ProgrammeId ,IList<DealItem> Deals)
-        //{
-        //    User user = null;
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        ProgrammeItem model = new ProgrammeItem();
-
-        //        model.Deals =Deals;
-        //        var clientProgrammes = new List<ClientProgramme>();
-               
-               
-
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-       
+        }       
 
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
@@ -746,27 +722,18 @@ namespace DealEngine.WebUI.Controllers
                 ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
                 orgmodel.OrganisationName = ownerorg.Name;
                 var userList = await _userService.GetAllUserByOrganisation(ownerorg);
-                //user = userList.FirstOrDefault(user => user.PrimaryOrganisation == ownerorg);
                 orgmodel.ID = Guid.Parse(OwnerId);
-               
-                //orgmodel.FirstName = user.FirstName;
-                //orgmodel.LastName = user.LastName;
                 orgmodel.Email = ownerorg.Email;
-                //orgmodel.Phone = user.Phone;
                 if(actionName == "ClientDetails")
                 {
                     return Json(orgmodel);
-
                 }
                 else
                 {
                     orgmodel.Users = userList;
                     var id = OwnerId;
                     List<User> userlist = userList;
-                    //return Json(orgmodel);
-
                     return View("getClientDetails", orgmodel);
-                    //return RedirectToAction("DisplayClientUser", new { Id = id , UserList= userlist });
                 }
             }
             catch (Exception ex)
@@ -781,7 +748,6 @@ namespace DealEngine.WebUI.Controllers
         {
             OrganisationViewModel orgmodel = new OrganisationViewModel();
             return View("getClientDetails", orgmodel);
-
         }
 
 
@@ -795,13 +761,8 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                //user = await CurrentUser();
-                //ownerorg = await _organisationService.GetOrganisation(OwnerId);
-                //orgmodel.OrganisationName = ownerorg.Name;
-                 user = await _userService.GetUserById(UserID);
-                //user = userList.FirstOrDefault(user => user.PrimaryOrganisation == ownerorg);
+                user = await _userService.GetUserById(UserID);
                 orgmodel.ID = user.Id;
-                //orgmodel.Users = userList;
                 orgmodel.FirstName = user.FirstName;
                 orgmodel.LastName = user.LastName;
                 orgmodel.Email = user.Email;
@@ -881,14 +842,11 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> EditClient(IFormCollection formCollection)
         {
             User user = null;
-            //Programme programme = null;
             Organisation organisation = null;
             string email = null;
 
             try
             {
-                //programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
-
                 foreach (var key in formCollection.Keys)
                 {
                     organisation = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
@@ -901,11 +859,6 @@ namespace DealEngine.WebUI.Controllers
                         organisation.Phone = formCollection["Phone"];
                         if(user != null)
                         user.Email= formCollection["Email"];
-                        //user.FirstName = formCollection["FirstName"];
-                        //user.LastName = formCollection["LastName"];
-                        //user.Email = formCollection["Email"];
-                        //user = userList.FirstOrDefault(user => user.PrimaryOrganisation == organisation);
-
                         await uow.Commit();
                     }
                 }
