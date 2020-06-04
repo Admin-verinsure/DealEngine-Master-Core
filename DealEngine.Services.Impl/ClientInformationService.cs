@@ -127,29 +127,30 @@ namespace DealEngine.Services.Impl
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            await BuildAnswerFromModel(sheet, collection, user);
+            BuildAnswerFromModel(sheet, collection, user);
             await UpdateInformation(sheet);
+            await _userRepository.UpdateAsync(user);
         }
 
-        private async Task BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection, User user)
+        private async void BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection, User user)
         {
             //find a faster way of getting all models
             AnswerFromUserDetails(user, collection, collection.Keys.Where(s => s.StartsWith("UserDetails", StringComparison.CurrentCulture)));
             AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));
-            AnswerFromRole(sheet, collection, collection.Keys.Where(s => s.StartsWith("RoleDataViewModel", StringComparison.CurrentCulture)));            
+            AnswerFromRole(sheet, collection, collection.Keys.Where(s => s.StartsWith("RoleDataViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ELViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("EPLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture))); 
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture))); 
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
         }
 
-        private async void AnswerFromUserDetails(User user, IFormCollection collection, IEnumerable<string> enumerable)
+        private void AnswerFromUserDetails(User user, IFormCollection collection, IEnumerable<string> enumerable)
         {
             foreach(string key in enumerable)
             {
@@ -164,7 +165,6 @@ namespace DealEngine.Services.Impl
                     Console.WriteLine(ex.Message);
                 }
             }
-            await _userRepository.UpdateAsync(user);
         }
 
         private void AnswerFromRole(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
@@ -346,7 +346,7 @@ namespace DealEngine.Services.Impl
         public async Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue)
         {
             var clientList = new List<ClientInformationSheet>();
-            var orgs = await _organisationRepository.FindAll().Where(b => b.Name.ToLower() == searchValue.ToLower()).ToListAsync();
+            var orgs = await _organisationRepository.FindAll().Where(b => b.Name.Contains(searchValue)).ToListAsync();
             foreach (var org in orgs)
             {
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
