@@ -145,6 +145,6 @@ namespace DealEngine.Services.Impl
 		}
 
 	}
-	
+
 }
 

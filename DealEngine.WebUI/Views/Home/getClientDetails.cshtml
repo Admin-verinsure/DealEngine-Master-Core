@@ -1,0 +1,163 @@
+﻿@model OrganisationViewModel
+<div class="container">
+    <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+
+        <form method="POST" action="~/Home/AddClientUser" novalidate>
+            <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
+            <div class="card">
+                @Html.HiddenFor(m => m.ID)
+
+                <div>
+                    <table class="container">
+                        <thread>
+                            <tr>
+                                <th>
+                                    User List
+                                </th>
+
+                            </tr>
+                        </thread>
+                        <tbody>
+
+                            <tr>
+                                <td>
+                                    <select id="UserIdSelect" onchange="UserEditDetails('UserIdSelect')" class="form-control b" name="Type">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        @foreach (var clientProg in Model.Users)
+                                        {
+                                            <option value="@clientProg.Id">@clientProg.FullName</option>
+                                        }
+                                        <option  value="AddNew">Add New User</option>
+                                    </select>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="UserDetailtabel" style="display:none">
+
+                    <table class="container">
+                        <thread>
+                            <tr>
+                                <th>
+                                    Edit User Details
+                                </th>
+                              
+                            </tr>
+                        </thread>
+                        <tbody>
+
+                            <tr>
+                                <td hidden>
+                                    <input data-type="TEXTBOX" id="UserId" name ="UserId"value="">
+
+                                </td>
+                                <td hidden>
+                                    <input data-type="TEXTBOX" id="Action" name="Action" value="">
+
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="label">User FirstName</label>
+
+                                </td>
+                                <td>
+                                    <input data-type="TEXTBOX" id="ClientUserFirstName" name="FirstName" value="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="label">User LastName</label>
+
+                                </td>
+                                <td>
+                                    <input data-type="TEXTBOX" id="ClientUserLastName" name="LastName" value="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="label">Email</label>
+
+                                </td>
+                                <td>
+                                    <input data-type="TEXTBOX" id="ClientUserEmail" name="Email" value="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="label">Phone Number</label>
+
+                                </td>
+                                <td>
+                                    <input data-type="TEXTBOX" id="ClientPhoneNumber" name="Phone" value="">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="card-footer update">
+                        <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                    </div>
+
+                    <div class="card-footer AddNew" style="display:none">
+                        <button class="btn btn-primary btn-xs" type="submit">Add New</button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+    </section>
+</div>
+
+    @section pagespecific {
+        <script type="text/javascript">
+
+        function UserEditDetails(TypeSelected) {
+            debugger;
+            var typeSelected = document.getElementById(TypeSelected);
+            var userIdId = typeSelected.options[typeSelected.selectedIndex].value;
+            $('#UserDetailtabel').show();
+
+            if (userIdId != "AddNew") {
+                postData = { UserID: userIdId }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetUserDetails", "Home")',
+                    data: postData
+                })
+                    .done(function (data) {
+                        debugger;
+
+                        $('#UserId').val(data.id);
+                        $('#ClientUserFirstName').val(data.firstName);
+                        $('#ClientUserLastName').val(data.lastName);
+                        $('#ClientPhoneNumber').val(data.phone);
+                        $('#ClientUserEmail').val(data.email);
+                        $(".update").show();
+                        $(".AddNew").hide();
+                        $("#Action").val("Edit");
+
+                    })
+                    .fail(function (jqXhr, textStatus, errorThrown) {
+                        debugger;
+                        console.log(errorThrown);
+                    });
+            } else {
+                 $('#UserDetailtabel').show();
+            $(".update").hide();
+            $(".AddNew").show();
+            $("#UserDetailtabel" + " :input").val("");
+             $("#Action").val("Add");
+            }
+        }
+
+     
+        </script>
+
+    }
