@@ -1115,20 +1115,12 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
-                //model.Locations = locations;
                 model.Buildings = buildings;
-                //model.Buildings.
                 model.WaterLocations = waterLocations;
-                //model.InterestedParties = interestedParties;
-
-
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;
-                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
-                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }

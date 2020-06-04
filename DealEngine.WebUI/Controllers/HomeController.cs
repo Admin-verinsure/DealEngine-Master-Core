@@ -657,31 +657,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        //[HttpGet]
-        //public async Task<IActionResult> EditClient(Guid ProgrammeId ,IList<DealItem> Deals)
-        //{
-        //    User user = null;
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        ProgrammeItem model = new ProgrammeItem();
-
-        //        model.Deals =Deals;
-        //        var clientProgrammes = new List<ClientProgramme>();
-               
-               
-
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-       
+        }       
 
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
@@ -732,8 +708,8 @@ namespace DealEngine.WebUI.Controllers
         }
 
         
-             [HttpPost]
-        public async Task<IActionResult> getClientDetails(Guid OwnerId)
+             [HttpGet]
+        public async Task<IActionResult> GetClientDetails(String OwnerId , string actionName)
         {
             User user = null;
             Organisation ownerorg= null;
@@ -743,18 +719,22 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                ownerorg = await _organisationService.GetOrganisation(OwnerId);
+                ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
                 orgmodel.OrganisationName = ownerorg.Name;
                 var userList = await _userService.GetAllUserByOrganisation(ownerorg);
-                //user = userList.FirstOrDefault(user => user.PrimaryOrganisation == ownerorg);
-                orgmodel.ID = OwnerId;
-                orgmodel.Users = userList;
-                //orgmodel.FirstName = user.FirstName;
-                //orgmodel.LastName = user.LastName;
-                //orgmodel.Email = user.Email;
-                //orgmodel.Phone = user.Phone;
-
-                return Json(orgmodel);
+                orgmodel.ID = Guid.Parse(OwnerId);
+                orgmodel.Email = ownerorg.Email;
+                if(actionName == "ClientDetails")
+                {
+                    return Json(orgmodel);
+                }
+                else
+                {
+                    orgmodel.Users = userList;
+                    var id = OwnerId;
+                    List<User> userlist = userList;
+                    return View("getClientDetails", orgmodel);
+                }
             }
             catch (Exception ex)
             {
@@ -763,57 +743,124 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DisplayClientUser(Guid Id , List<User> UserList)
+        {
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+            return View("getClientDetails", orgmodel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetUserDetails(Guid UserID)
+        {
+            User user = null;
+            Organisation ownerorg = null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+
+            try
+            {
+                user = await _userService.GetUserById(UserID);
+                orgmodel.ID = user.Id;
+                orgmodel.FirstName = user.FirstName;
+                orgmodel.LastName = user.LastName;
+                orgmodel.Email = user.Email;
+                orgmodel.Phone = user.Phone;
+                return Json(orgmodel);
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddClientUser(IFormCollection formCollection)
+        {
+            User Currentuser = null;
+            Organisation ownerorg = null;
+            Organisation primaryorg = null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+            User userdb = null;
+            var jsdkf = formCollection["Id"];
+            try
+            {
+                Currentuser = await CurrentUser();
+                ownerorg = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    var Action  = formCollection["Action"];
+                    var FirstName = formCollection["FirstName"];
+                    var LastName = formCollection["LastName"];
+                    var Email = formCollection["Email"];
+                    if (Action == "Edit")
+                    {
+                        userdb = await _userService.GetUserById(Guid.Parse(formCollection["UserId"]));
+                        primaryorg = await _organisationService.GetOrganisation(userdb.PrimaryOrganisation.Id);
+                        primaryorg.Email = Email;
+                        userdb.FirstName = FirstName;
+                        userdb.LastName = LastName;
+                        userdb.FullName = FirstName + " " + LastName;
+                        userdb.Email = Email;
+                        await uow.Commit();
+
+
+                    }
+                    else
+                    {
+                        if (Action == "Add") {
+                        userdb = new User(Currentuser, Guid.NewGuid(), FirstName);
+                            userdb.FirstName = FirstName;
+                            userdb.LastName = LastName;
+                            userdb.FullName = FirstName + " " + LastName;
+                            userdb.Email = Email;
+                            await _userService.Create(userdb);
+                            userdb.Organisations.Add(ownerorg);
+                            userdb.SetPrimaryOrganisation(ownerorg);
+                            await uow.Commit();
+                        }
+                    }
+
+                }
+               
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, Currentuser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> EditClient(IFormCollection formCollection)
         {
             User user = null;
-            Programme programme = null;
             Organisation organisation = null;
             string email = null;
 
             try
             {
-                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
-
                 foreach (var key in formCollection.Keys)
                 {
                     organisation = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
                     var userList = await _userService.GetAllUserByOrganisation(organisation);
-                    user = userList.FirstOrDefault(user => user.PrimaryOrganisation == organisation);
+                    user = userList.Last(user => user.PrimaryOrganisation == organisation);
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
                         organisation.ChangeOrganisationName(formCollection["OrganisationName"]);
                         organisation.Email = formCollection["Email"];
                         organisation.Phone = formCollection["Phone"];
-                        user.FirstName = formCollection["FirstName"];
-                        user.LastName = formCollection["LastName"];
-                        user.Email = formCollection["Email"];
+                        if(user != null)
+                        user.Email= formCollection["Email"];
                         await uow.Commit();
                     }
-
-
-
-                    var correctEmail = await _userService.GetUserByEmail(email);
-                    if (correctEmail != null)
-                    {
-                        if (programme.ProgEnableEmail)
-                        {
-                            var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
-                            clientProgramme.ReminderDate = DateTime.Now;
-                            await _programmeService.Update(clientProgramme);
-
-                            //send out login instruction email
-                            await _emailService.SendSystemEmailLogin(email);
-                            //send out information sheet instruction email
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetReminder");
-                            if (emailTemplate != null)
-                            {
-                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-                            }
-                        }
-                    }
-
                 }
 
                 return await RedirectToLocal();
