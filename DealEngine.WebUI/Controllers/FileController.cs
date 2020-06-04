@@ -276,7 +276,6 @@ namespace DealEngine.WebUI.Controllers
                                                     if (url.IndexOf(".jpg") < url.IndexOf(".png"))
                                                     {
                                                         url = url.Substring(0, url.IndexOf(".jpg") + 3);
-
                                                     }
                                                     else
                                                     {
