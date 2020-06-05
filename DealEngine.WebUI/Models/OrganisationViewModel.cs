@@ -82,11 +82,16 @@ namespace DealEngine.WebUI.Models
         public  string DesignLicensed { get; set; }
         public  string SiteLicensed { get; set; }
         public  bool IsRegisteredLicensed { get; set; }
-
+        public  bool ConfirmAAA { get; set; }
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
-
-
+        public string RegisteredStatus { get; set; }
+        public string Duration { get;  set; }
+        public  bool IsPrincipalAdvisor { get; set; }
+        public  string OfcPhoneno { get; set; }
+        public  string MyCRMId { get; set; }
+        public  string TradingName { get; set; }
+        
         public static OrganisationViewModel FromEntity(OrganisationViewModel organisationViewModel)
         {
             OrganisationViewModel model = new OrganisationViewModel
@@ -101,4 +106,8 @@ namespace DealEngine.WebUI.Models
         }
 
     }
+
+
 }
+
+

@@ -1,6 +1,5 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-
 <!-- MAIN CONTENT -->
     <div id="content">
         <!-- Bread crumb is created dynamically -->
@@ -9,13 +8,18 @@
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
                 <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
-                > <span><a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
-                > View Client Information Sheet Section</span>
+                > <span>
+                    <a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
+                    > View Client Information Sheet Section
+                </span>
             </h1>
         </div>
         <span>
-            <a onclick="location.href='@Url.Action("ViewProgrammeDetails", "Information",new { Id =@Model.ClientProgramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            @*<a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { model=@Model , id=@Model.Id})'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>*@
+
+            <a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { id=@Model.Id,ListView =@Model.ListSectionView })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
+      
 
 
         <!-- widget grid -->
@@ -32,7 +36,10 @@
                             <h2>Client Information Sheet Section</h2>
                         </header>
                         <!-- widget div-->
+                        if(@Model.SectionView != ""){
                         @Html.Partial("PrefabSections/" + Model.SectionView, Model)
+
+                        }
 
 
                     </div>
@@ -46,10 +53,16 @@
     <script>
         $(window).on("load", function () {
             debugger;
+
+            //$('a link').css({"color": "green" });
+
+            $('#proposalcreate-form li').css({ "color": "green" });
+
+
             if (document.getElementById("fieldset") != null) {
                 document.getElementById("fieldset").disabled = true;
             }
-           
+
             //$('#boatForm :input').prop('disabled', 'disabled');
             var updatebutton = document.getElementById("update");
             $(updatebutton).addClass("hidden");
@@ -74,10 +87,10 @@
             var tr = document.getElementsByName("update");
             $(tr).addClass("hidden");
             $(tr).hide();
-           
+
              if ("@Model.Status" == "Submitted") {
                 debugger;
-               
+
                  $('#updateBoat').addClass("hidden");
                  $('#ClearBoat').addClass("hidden");
                  $("select").attr("disabled", "disabled");
@@ -85,11 +98,11 @@
 
              }
 
-            
+
         });
     </script>
 
-
-    @Html.Partial("_InformationWizardScripts")
+    @await Html.PartialAsync("_PrefabScripts")
+    @await Html.PartialAsync("_InformationWizardScripts")
 
 }

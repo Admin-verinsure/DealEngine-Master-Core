@@ -40,7 +40,7 @@
                                     {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
-                                                        return ('<button onclick="SetPMINZNamedPartyRemovedStatus(\'' + cellvalue + '\', \'true\', \'#DANZNamedParties\', \'#tblDANZRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                                        return ('<button onclick="SetDANZNamedPartyRemovedStatus(\'' + cellvalue + '\', \'true\', \'#DANZNamedParties\', \'#tblDANZRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                          }
                                      }
 
@@ -116,7 +116,7 @@
                     </section>
 
 
-                    <div class="hidden Editnonprivate EditNonProjectPersonnelSec">
+                    <div class="hidden Editnonprivate EditNonProjectPersonnelSec owner">
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Organisation Name</label>
@@ -146,7 +146,7 @@
                         <p class="validationContainer" id="validateEditDANZLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden EditPersonnelSec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden EditPersonnelSec owner">
                         <label class="label">Email:</label>
                         <label class="input">
                             <i></i>
@@ -797,8 +797,11 @@
 
                 if (data.type == "Owner") {
                     $('.nonowner').addClass('hidden');
+                    $('.owner').removeClass('hidden');
                 } else {
                     $('.nonowner').removeClass('hidden');
+                    $('.owner').addClass('hidden');
+
                 }
 
                  $('#EditDANZType').val(data.type);
@@ -814,11 +817,11 @@
                  $('#EditDANZIsCurrentMembership').val("" + data.isCurrentMembership);
                  $('#EditDANZSiteLicensed').val(data.siteLicensed);
                  $('#EditDANZAssociation').val(data.othercompanyname);
-                $('#EditDANZYearsOfExp').val(data.yearofPractice);
-
-                  if (data.type == "project management personnel") {
+                 $('#EditDANZYearsOfExp').val(data.yearofPractice);
+                 $('#EditDANZOrgName').val(data.organisationName);
+                  //if (data.type == "project management personnel") {
                    DANZTypeSelected('DANZType', 'Edit' );
-                }
+                  //}
                 AssociationMembershipSelected('DANZIsCurrentMembership', 'Edit');
 
                   UpdateChosen();
@@ -826,7 +829,7 @@
     };
 
 
-    function EditPMINZNamedParty(event, tabId, tableId, currenttab) {
+    function EditDANZNamedParty(event, tabId, tableId, currenttab) {
                 debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
@@ -853,7 +856,7 @@
             });
     };
 
-     function SetPMINZNamedPartyRemovedStatus(PrincipalId, status, sourceTable, destTable) {
+     function SetDANZNamedPartyRemovedStatus(PrincipalId, status, sourceTable, destTable) {
         var AnswersheetId = $('#AnswerSheetId').val();
         var postData = {
             'answersheetId': AnswersheetId,

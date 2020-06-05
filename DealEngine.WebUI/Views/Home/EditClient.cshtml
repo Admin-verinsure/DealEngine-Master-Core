@@ -1,0 +1,194 @@
+﻿@model IssueUISViewModel
+
+    <div class="container">
+        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+            <form method="POST" action="~/Home/EditClient" novalidate>
+                <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
+                <div class="card">
+
+                    <div>
+                        <table class="container">
+                            <thread>
+                                <tr>
+                                    <th>
+                                        Client Name
+                                    </th>
+
+                                </tr>
+                            </thread>
+                            <tbody>
+
+                                <tr>
+                                    <td>
+                                        <select id="OwnerIdSelect" onchange="ClientEditDetails('OwnerIdSelect')" class="form-control b" name="Type">
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var clientProg in Model.ClientProgrammes)
+                                            {
+                                                <option value="@clientProg.Owner.Id">@clientProg.Owner.Name</option>
+                                            }
+                                        </select>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="Clientdetailtabel" style="display:none">
+
+                        <table class="container">
+                            <thread>
+                                <tr>
+                                    <th>
+                                        Edit Organisation Details
+                                    </th>
+                                    <th id="Editusers" style="display:none">
+                                        <a class="btn btn-primary btn-xs" href="javascript:;" onclick="this.href='/Home/GetClientDetails?OwnerId=' + document.getElementById('ClientOwnerId').value ">Edit Users </a>
+
+                                    </th>
+
+                                </tr>
+                            </thread>
+                            <tbody>
+
+                                <tr>
+                                    <td hidden>
+                                        <label class="input">
+                                            <i></i>
+                                            <input data-type="TEXTBOX" id="ClientOwnerId" name="Id" value="">
+                                        </label>
+
+                                    </td>
+                                   
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="label">Organisation Name</label>
+                                    </td>
+                                    <td>
+                                        <input data-type="TEXTBOX" id="ClientOrganisationName" name="OrganisationName" value="">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="label">Email</label>
+                                    </td>
+                                    <td>
+                                        <input data-type="TEXTBOX" id="ClientEmail" name="Email" value="">
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </div>
+
+                        @*<label> Edit Organisation Details </label>*@
+                        @*<a class="btn btn-primary btn-xs" id="EditClientUser">Edit Users</a>*@
+                        @*<button onclick="location.href='@Url.Action("GetClientDetails", "Home",new { OwnerId="document.getElementById('qta_field').value" ,actionname="EditClient"})'" class="btn btn-primary btn-xs" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </button>*@
+
+                        @*<a href="javascript:;" onclick="this.href='/Home/GetClientDetails?OwnerId=' + document.getElementById('ClientOwnerId').value ">Edit Users </a>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" id="ClientOwnerId" name="Id" value="">
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label">Organisation Name</label>
+
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" id="ClientOrganisationName" name="OrganisationName" value="">
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label">Email</label>
+
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" id="ClientEmail" name="Email" value="">
+                                </label>
+                            </section>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </div>*@
+
+                    </div>
+                </div>
+
+            </form>
+        </section>
+    </div>
+
+
+
+@section pagespecific {
+    <script type="text/javascript">
+
+        function ClientEditDetails(TypeSelected) {
+            debugger;
+                    
+            var typeSelected = document.getElementById(TypeSelected);
+            var ownerId = typeSelected.options[typeSelected.selectedIndex].value;
+            postData = { OwnerId : ownerId ,actionName : "ClientDetails" }
+            $.ajax({
+                type: 'Get',
+                url: '@Url.Action("GetClientDetails", "Home")',
+                data: postData
+            })
+                .done(function (data) {
+                    debugger;
+                    $('#Clientdetailtabel').show();
+                    $('#Editusers').show();
+                    $('#ClientOwnerId').val(data.id);
+                    $('#ClientOrganisationName').val(data.organisationName);
+                    $('#ClientEmail').val(data.email);
+                   
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+        }
+
+        //$("#EditClientUser").click(function () {
+        //    debugger;
+        //     var orgSelected = document.getElementById("OwnerIdSelect");
+        //    var ownerId = orgSelected.options[orgSelected.selectedIndex].value;
+        //    postData = { OwnerId : ownerId, actionname : "Edit User"}
+
+        //    $.ajax({
+        //        type: 'POST',
+        //    //    url: '@Url.Action("GetClientDetails", "Home")',
+            //    data: postData,
+            //    asyn:false
+            //})
+            //    .done(function (response) {
+            //        debugger;
+        //    //        @*@await Html.PartialAsync("getClientDetails", @Model)*@
+        ////$('#mydiv').html(response);
+        //            //$('#ClientOwnerId').val(data.id);
+        //            //$('#ClientOrganisationName').val(data.organisationName);
+        //            ////$('#ClientUserFirstName').val(data.firstName);
+        //            ////$('#ClientUserLastName').val(data.lastName);
+        //            ////$('#ClientPhoneNumber').val(data.phone);
+        //            //$('#ClientEmail').val(data.email);
+
+        //        })
+        //        .fail(function (jqXhr, textStatus, errorThrown) {
+        //            debugger;
+        //            console.log(errorThrown);
+        //        });
+
+
+       // })
+
+
+    </script>
+
+}

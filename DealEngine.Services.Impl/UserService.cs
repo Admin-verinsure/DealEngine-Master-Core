@@ -120,9 +120,41 @@ namespace DealEngine.Services.Impl
 				await Create (user);				
 			}
             return user;
-        }        
+        }
 
-        public async Task<List<User>> GetAllUsers ()
+		public async Task<User> GetUserByUserName(string userName)
+		{
+			User user = null;
+			try
+			{
+				user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == userName);
+
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+
+			// have a repo user? Return them
+			if (user != null)
+				return user;
+			user = _ldapService.GetUser(userName);
+			// have a ldap user but no repo? Update NHibernate & return them
+			if (user != null)
+			{
+				await Update(user);
+				return user;
+			}
+			//user = _legacyLdapService.GetLegacyUserByEmail (email);
+			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
+			if (user != null)
+			{
+				await Create(user);
+			}
+			return user;
+		}
+
+		public async Task<List<User>> GetAllUsers ()
 		{
 			return await _userRepository.FindAll().ToListAsync();
 		}
@@ -223,9 +255,16 @@ namespace DealEngine.Services.Impl
 			return await _userRepository.FindAll().Where(u => u.Locked == true).ToListAsync();
 		}
 
-		public async Task<User> GetUserByOrganisation(Organisation org)
+		public async Task<List<User>> GetBrokerUsers()
 		{
-			return _userRepository.FindAll().FirstOrDefault(u => u.PrimaryOrganisation == org);
+			var users = await _userRepository.FindAll().Where(u => u.PrimaryOrganisation.IsBroker == true).ToListAsync();
+			return users;			
 		}
+
+		public async Task<List<User>> GetAllUserByOrganisation(Organisation org)
+		{
+			return _userRepository.FindAll().Where(u => u.PrimaryOrganisation == org).ToList();
+		}
+
 	}
 }

@@ -409,7 +409,7 @@
                                             If you forgot your password click 'Reset Password' to retrieve a new password.
                                         </p>
                                         <p class="lead">
-                                            If you require further assistance please contact DealEngine on 09 377 6564 or email us at <a href="mailto:support@DealEngine.com">support@DealEngine.com</a>.
+                                            If you require further assistance please contact DealEngine on 09 377 6564 or email us at <a href="mailto:support@techcertain.com">support@techcertain.com</a>.
                                         </p>
                                         <br />
                                         <button type="Reset" value="Submit" class="btn-sm" id="btnPanelSubmit" onclick="ResetPassword()">
@@ -707,10 +707,11 @@
         function postCGData() {
             debugger;
               $('#getQuoteModal').show();
+            var datae = {craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] };
 
             $.ajax({
                 type: "POST",
-                url: "/Services/CoastGuardSelfReg",
+                url: '@Url.Action("CoastGuardSelfReg", "Services")',
                 data: { craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] },
                 traditional: true,
             })
@@ -820,6 +821,7 @@
         }
 
         function quickQuote() {
+            debugger;
             var insVal = document.getElementById("vival").value;
             var craftType = document.getElementById("CraftType").innerHTML;
             var qref = document.getElementById("qref");
@@ -835,7 +837,7 @@
             var newQuote = document.getElementById("newQuote");
             var water = ["Berthed", "Moored"];
             var badCount = 0;
-            var badTypes = ["Trimaran", "Other", "Swing", "Carbon fibre"];
+            var badTypes = ["Trimaran", "Other", "Swing", "Carbon fibre","Ferro cement/ cement"];
             var curTypes = [];
             var minPrem = 0;
 

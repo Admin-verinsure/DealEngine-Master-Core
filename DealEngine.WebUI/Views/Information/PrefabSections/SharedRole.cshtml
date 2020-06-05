@@ -1,15 +1,85 @@
 ﻿
 @model DealEngine.WebUI.Models.InformationViewModel
+@using DealEngine.Domain.Entities
+@{
+    IList<SharedDataRole> SelectedRoles = Model.RoleDataViewModel.DataRoles.Where(t => t.Selected == true).ToList();
+}
 
-    <div id="SharedRole">
-        <form class="client-form" name="SharedRoleForm">
-            @if (Model.SharedRoleViewModel != null)
-            {
-                @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRole/Existing.cshtml", Model.SharedRoleViewModel)
-            }
-            else
-            {
-                throw new Exception("empty model");
-            }
-            </form>
-    </div>
+    <form class="is-valid" id="RoleDataViewModel" data-accordianId="Roles">
+        <div id="SharedRole">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" id="tab1">
+                <a class="nav-link active" href="#RoleTab1" data-toggle="tab"> Roles </a>
+            </li>
+            <li class="nav-item" id="tab2">
+                <a class="nav-link" href="#RoleTab2" data-toggle="tab"> Additional Information </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="RoleTab1" class="tab-pane active" role="tabpanel">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="roles" class="label required">Select principals and staff in each applicable category and indicate the number:</label>
+                        </div>
+                        <div class="col-8">
+                            <select id="dataroles" name="RoleDataViewModel.DataRoles" class="chosen-select form-control b" form="RoleDataViewModel" multiple data-rule="BuildSharedTable" data-item="dataroles,rolestable" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.RoleDataViewModel.DataRoles)
+                                {
+                                    <option selected="@option.Selected" value="@option.TemplateId.ToString()">@option.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="RoleDataViewModel.Roles">
+                    <div class="form-group">
+                        <table id="rolestable" class="table">
+                            <thread class="thead-dark">
+                                <tr>
+                                    <th>Roles</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thread>
+                            <tbody>
+                                @foreach (var select in SelectedRoles)
+                                {
+                                    <tr>
+                                        <td>
+                                            @select.Name
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="number" id="@select.Name" form="RoleDataViewModel" name="RoleDataViewModel.DataRoles.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetabledataroles" value="@select.Total.ToString()" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-sm btn-primary text-light" onclick="RoleDataOnSubmit('dataroles', 'RoleDataViewModel');">  Continue  </a>
+                    </div>
+                </div>
+            </div>
+            <div id="RoleTab2" class="tab-pane" role="tabpanel">
+                <div id="noadditionalroleinfolabel">
+                    <div class="form-control">
+                        <label>No Additional Information Required</label>
+                    </div>
+                </div>
+                <div id="RoleOther" hidden>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-9">
+                                <label for="otherroledetails">You have specified Other Role, please provide further details:</label>
+                            </div>
+                            <div class="col-3">
+                                @Html.TextAreaFor(t => t.RoleDataViewModel.AdditionalRoleInformationViewModel.OtherDetails, new { @class = "form-control", @id = "otherroledetails", @form = "RoleDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </form>

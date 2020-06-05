@@ -12,6 +12,7 @@ namespace DealEngine.Services.Interfaces
         Task ImportAOEServiceClaims(User user);
         Task ImportActivities(User user);
         Task ImportCEASServiceIndividuals(User user);
+        Task ImportCEASServiceUpdateUsers(User user);
         Task ImportPMINZServiceIndividuals(User user);
         Task ImportCEASServiceClaims(User user);
         Task ImportCEASServiceContract(User user);
@@ -23,5 +24,8 @@ namespace DealEngine.Services.Interfaces
         Task ImportDANZServiceIndividuals(User user);
         Task ImportDANZServicePersonnel(User user);
         Task ImportDANZServiceClaims(User user);
+        Task ImportNZFSGServiceIndividuals(User user);
+        Task ImportNZFSGServicePrincipals(User user);
+
     }
 }

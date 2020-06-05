@@ -14,6 +14,9 @@ using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using AutoMapper;
+using ReflectionIT.Mvc.Paging;
+using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace DealEngine.WebUI
 {
@@ -44,6 +47,12 @@ namespace DealEngine.WebUI
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
             });
 
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                //https://github.com/dotnet/aspnetcore/issues/12166
+                options.ValidationInterval = TimeSpan.FromHours(8);
+            });
+
             services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddRepositories();
             services.AddBaseLdap();
@@ -53,7 +62,7 @@ namespace DealEngine.WebUI
             });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
-            services.AddMvc();            
+            services.AddMvc();
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)

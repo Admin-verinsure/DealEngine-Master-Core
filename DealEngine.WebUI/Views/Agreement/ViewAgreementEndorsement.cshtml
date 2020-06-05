@@ -74,6 +74,34 @@
                         </tr>
                         <tr>
                             <td>
+                                <label class="col-md-2 control-label">Endorsement Title: </label>
+                            </td>
+                            <td>
+                                    <label class="input form-group">
+
+                                        <select data-placeholder="Choose Primary Policy Product..." onchange="onSelect('endorsementtitle')" id="endorsementtitle" name="SelectedClaimProducts" class="form-control b">
+                                            <option selected="selected" value="">-- Select here --</option>
+                                            @foreach (var bwloc in Model.AvailableEndorsementTitles)
+                                            {
+                                                <option value="@bwloc.Value"> @bwloc.Text</option>
+                                            }
+                                            <option value="Add New"> Add New</option>
+                                        </select>
+                                    </label>
+
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle"
+                                       data-placement="bottom"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="Please select the Existing Endorsement Title to Add Endorsement Back or use Endorsement Name and Text Field directly to add new Endorsement.">
+
+                                    </i>
+                               
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <label class="col-md-2 control-label">Endorsement Name: </label>
                             </td>
                             <td>
@@ -113,6 +141,20 @@
     <script src="~/js/ckeditorPlugin.js"></script>
 
     <script type="text/javascript">
+
+        function onSelect(endorsementtitle) {
+            debugger;
+            event.preventDefault();
+            var Endorsement = document.getElementById(endorsementtitle);
+            var EndorsementId = Endorsement.options[Endorsement.selectedIndex].value;
+
+            if (EndorsementId != "Add New") {
+                getEndorsement(EndorsementId);
+            } else {
+                $("#EndorsementNameToAdd").focus();
+            }
+      
+        };
 
       function getEndorsement(endorsemnetID) {
         debugger;
@@ -158,6 +200,32 @@
          }
 
     </script>
+
+<script>
+
+    $(document).ready(function () {
+        debugger;
+        $('[data-toggle="popover"]').popover({
+            trigger: 'manual',
+            html: true,
+            animation: false
+        }).on('mouseenter', function () {
+
+            var _this = this;
+            $(this).popover('show');
+            $('.popover').on('mouseleave', function () {
+                $(_this).popover('hide');
+            });
+        }).on('mouseleave', function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$('.popover:hover').length) {
+                    $(_this).popover('hide');
+                }
+            }, 450);
+        });
+    });
+</script>
 
 }
 

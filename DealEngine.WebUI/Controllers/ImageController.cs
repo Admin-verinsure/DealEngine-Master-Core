@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
-
     public class ImageController : BaseController
     {
         IMapperSession<CKImage> _ckimageRepository;

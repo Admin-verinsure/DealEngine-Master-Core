@@ -203,8 +203,18 @@ namespace DealEngine.Domain.Entities
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
+        public virtual string RegisteredStatus { get; set; }
+        public virtual bool ConfirmAAA { get; set; }
+        public virtual string Duration { get; set; }
         public virtual IList<Programme> Programmes { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
+        public virtual bool IsPrincipalAdvisor { get; set; }
+        public virtual string OfcPhoneno { get; set; }
+        public virtual string MyCRMId { get; set; }
+        public virtual string TradingName { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
+
 
         #endregion
 
@@ -228,6 +238,7 @@ namespace DealEngine.Domain.Entities
         #endregion
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
+       
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)
         {

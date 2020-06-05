@@ -11,10 +11,11 @@ using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-	//[Authorize]
+	[Authorize]
 	public class ProductController : BaseController
 	{		
 		IInformationTemplateService _informationService;        		
@@ -196,7 +197,77 @@ namespace DealEngine.WebUI.Controllers
 			}
 		}
 
-        [HttpGet]
+		[HttpGet]
+		public async Task<IActionResult> CreateRole()
+		{
+			RoleViewModel model = new RoleViewModel();
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				model.Builder = new RoleBuilderVM();
+
+				List<SelectListItem> proglist = new List<SelectListItem>();
+				var progList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
+				if (user.PrimaryOrganisation.IsTC)
+				{
+					progList = await _programmeService.GetAllProgrammes();
+				}
+				foreach (Programme programme in progList)
+				{
+					proglist.Add(new SelectListItem
+					{
+						Selected = false,
+						Text = programme.Name,
+						Value = programme.Id.ToString(),
+					});
+
+				}
+
+				model.RoleAttach = new RoleAttachVM
+				{
+					BaseProgList = proglist
+				};
+
+				return View("RoleBuilder", model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> CreateRoleForProgramme(string Role, string ProgrammeId)
+		{
+			if (!ModelState.IsValid)
+			{
+				ModelState.AddModelError("", "Form has not been completed");
+				throw new Exception("Form has not been completed");
+			}
+
+			User user = null;
+			try
+			{
+				user = await CurrentUser();
+				var programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+
+				SharedDataRoleTemplate template = new SharedDataRoleTemplate();
+				template.Name = Role;
+				await _programmeService.AttachProgrammeToDataRole(programme, template);
+
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
+		}
+
+		[HttpGet]
         public async Task<IActionResult> CreateTerritory()
         {
             TerritoryViewModel model = new TerritoryViewModel();

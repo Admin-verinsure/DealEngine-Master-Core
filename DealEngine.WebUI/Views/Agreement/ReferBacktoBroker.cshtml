@@ -1,0 +1,122 @@
+﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
+
+@{
+    int count = 0;
+
+    string issuetobrokerdetails = "";
+
+    if (!string.IsNullOrEmpty(Model.issuetobrokercomment))
+    {
+        issuetobrokerdetails = @"This agreement has been issued to " + Model.SelectedBroker.FullName + " by " + Model.issuetobrokerby + " on " + Model.IssuedToBroker.GetValueOrDefault().ToString("dd/MM/yyyy");
+
+    }
+}
+<div id="content" class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+            >
+            <span>Issue to Broker</span>
+        </h1>
+    </div>
+
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    <div class="row">
+        <div class="jarviswidget container-fluid" id="wid-id-1"
+             data-widget-colorbutton="false"
+             data-widget-editbutton="false"
+             data-widget-togglebutton="false"
+             data-widget-deletebutton="false"
+             data-widget-custombutton="false"
+             data-widget-sortable="false">
+
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2 style="color:black">@ViewBag.Title </h2>
+            </header>
+
+            
+
+            <form action="~/Agreement/IssuetoBroker" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+                @Html.HiddenFor(m => m.InformationSheetId)
+                @Html.HiddenFor(m => m.ClientAgreementId)
+                @Html.HiddenFor(m => m.ClientProgrammeId)
+                <div class="form-group">
+                    <br />
+                    <div> <label style="color:green"> Click <strong>send</strong> to issue this agreement to broker </label></div>
+                    <br />
+                    <div> <label style="color:green"> @issuetobrokerdetails </label></div>
+                    <br />
+                    <table class="table table-responsive-md table-striped table-bordered" id="referrallodingvalue">
+                        <thread class="thead-dark">
+                            <tr>
+                                <th>
+                                </th>
+                                <th></th>
+
+                            </tr>
+                        </thread>
+                        <tr>
+                            <td width="20%">
+                                <strong>Broker: </strong>
+                            </td>
+                            <td>
+                                <strong>@Model.ProgrammeName</strong>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Issue quote to:</label>
+                            </td>
+                            <td>
+                                <select class="form-control b" id="selectParty" name="issuetobrokerto">
+                                    @*<option selected="selected" value="">-- Select Party --</option>*@
+                                    @foreach (var blloc in Model.UserList)
+                                    {
+                                        <option value="@blloc.Value"> @blloc.Text</option>
+                                    }
+                                </select>
+                            </td>
+
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="form-group">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>
+                                <label class="label"><strong>Authorisation notes: </strong></label>
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(m => m.Content, new { @class = "form-control" })
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-sm">Send</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section pagespecific {
+    <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
+    <script src="~/js/ckeditorPlugin.js"></script>
+    @await Html.PartialAsync("_AgreementScripts")
+}

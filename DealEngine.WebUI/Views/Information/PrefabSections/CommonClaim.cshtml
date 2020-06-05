@@ -21,7 +21,7 @@
 
             <div id="clTabs1" class="tab-content">
 
-                <fieldset>
+                <fieldset class="listclaimreport">
                     <div class="row">
                         <section class="col col-xs-12">
                             @*<script src="~/jquery/jquery.min.js"></script>*@
@@ -154,7 +154,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Reference</label>
+                            <label class="label">Policy Reference</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimPolicyReference" id="ClaimPolicyReference" name="ClaimPolicyReference" placeholder="Policy Reference" value="">
@@ -163,7 +163,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Insurer Name</label>
+                            <label class="label">Policy Insurer Name</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsurerName" id="ClaimInsurerName" name="ClaimInsurerName" placeholder="Policy Insurer Name" value="">
@@ -172,7 +172,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Insured Name</label>
+                            <label class="label">Policy Insured Name</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsuredName" id="ClaimInsuredName" name="ClaimInsuredName" placeholder="Policy Insured Name" value="">
@@ -252,10 +252,10 @@
                             <label class="input form-group">
 
                                 <select data-placeholder="Choose Primary Policy Product..." id="PrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
+                                    <option selected="selected" value="">-- Select here --</option>
 
                                     @foreach (var bwloc in Model.ClaimProducts)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -271,10 +271,9 @@
                             <label class="input form-group">
 
                                 <select data-placeholder="Choose Responsible Principal..." id="ResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
-
+                                    <option selected="selected" value="">-- Select here --</option>
                                     @foreach (var bwloc in Model.AvailableOrganisations)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -384,7 +383,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Reference</label>
+                            <label class="label">Policy Reference</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimPolicyReference" id="AddClaimPolicyReference" name="ClaimPolicyReference" placeholder="Policy Reference" value="">
@@ -393,7 +392,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Insurer Name</label>
+                            <label class="label">Policy Insurer Name</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsurerName" id="AddClaimInsurerName" name="ClaimInsurerName" placeholder="Policy Insurer Name" value="">
@@ -402,7 +401,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Policy Insured Name</label>
+                            <label class="label ">Policy Insured Name</label>
                             <label class="input">
                                 <i></i>
                                 <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsuredName" id="AddClaimInsuredName" name="ClaimInsuredName" placeholder="Policy Insured Name" value="">
@@ -454,9 +453,10 @@
 
                                 <select data-placeholder="Choose Primary Policy Product..." id="AddPrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
 
+                                    <option selected="selected" value="">-- Select here --</option>
+
                                     @foreach (var bwloc in Model.ClaimProducts)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 
@@ -473,9 +473,10 @@
 
                                 <select data-placeholder="Choose Responsible Principal..." id="AddResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
 
+                                    <option selected="selected" value="">-- Select here --</option>
+
                                     @foreach (var bwloc in Model.AvailableOrganisations)
                                     {
-                                        <option selected="selected" value="">-- Select here --</option>
                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                     }
 

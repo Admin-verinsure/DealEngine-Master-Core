@@ -1,5 +1,4 @@
-﻿using System;
-using System.Configuration;
+using System;
 using System.Net.Mail;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
@@ -7,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DealEngine.Domain.Entities;
 using SystemDocument = DealEngine.Domain.Entities.Document;
+using File = System.IO.File;
 using System.Net.Mime;
 using System.IO;
-using File = System.IO.File;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -17,9 +16,6 @@ using DealEngine.Infrastructure.Email;
 using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using MimeKit;
-using NLog.LayoutRenderers;
-using Microsoft.AspNetCore.Authentication;
 
 namespace DealEngine.Services.Impl
 {
@@ -122,19 +118,29 @@ namespace DealEngine.Services.Impl
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
             email.WithSubject ("Deal Engine Password Reset");
+			email.WithBody (body);
+			email.UseHtmlBody (true);
             
-            // For testing purposes of attaching pdf
-            /*
-            Guid newGuid = Guid.Parse("put your uploaded pdf's guid here");
+            /*         
+            Guid newGuid = Guid.Parse("85578a21-d383-45fb-8e71-aba300363f4b");
             SystemDocument test = await _fileService.GetDocumentByID(newGuid);
-            List<SystemDocument> docList = new List<SystemDocument>();
-            docList.Add(test);
-            var documentsList = await ToAttachments(docList);
-            email.Attachments(documentsList.ToArray());
+            var testPath = test.Path;
+            //if (File.Exists(testPath))
+            //{
+            //    FileStream fileStream = File.OpenRead(testPath);
+            //}
+            //Attachment document = new Attachment(new MemoryStream(fileBytes), file.FileName);         
+            You can try this multi-step approach.
+            //First create FileContent
+            FileContentResult fileContent = File(fileName, "application/pdf", "file.pdf");
+            MemoryStream ms = new MemoryStream(fileContent.FileContents); 
+            // Create an in-memory System.IO.Stream
+            ContentType ct = new ContentType(fileContent.ContentType);
+            Attachment a = new Attachment(ms, ct);
+            sender.SendMail("email", "email", "subject", "Body", a);                     
+            email.Attachments();
             */
-            
-            email.WithBody(body);
-            email.UseHtmlBody(true);
+
             email.Send ();
 		}
 
@@ -180,11 +186,51 @@ namespace DealEngine.Services.Impl
 			email.Send ();
         }
 
+
+        public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
+        {
+            var user = await _userService.GetUserByEmail(recipent);
+            List<KeyValuePair<string, string>> mergeFields;
+
+            if (clientInformationSheet != null)
+            {
+                if (clientAgreement != null)
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, clientAgreement);
+                }
+                else
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, null);
+                }
+
+            }
+            else
+            {
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
+            }
+            string systememailsubject = "Issue to Broker Email (reference: " + clientInformationSheet.ReferenceId + ")";
+            string systememailbody = System.Net.WebUtility.HtmlDecode(EmailContent);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            email.ReplyTo(sender.Email);
+            email.WithSubject(systememailsubject);
+            email.WithBody(systememailbody);
+            email.UseHtmlBody(true);          
+            email.Send();
+        }
+
+
         public async Task ContactSupport (string sender, string subject, string body)
 		{
 			string subjectPrefix = "Support Request: ";
 
-			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@DealEngine.com");
+			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
 			email.From (sender);
             email.WithSubject (subjectPrefix + subject);
             email.WithBody (body);
@@ -398,6 +444,63 @@ namespace DealEngine.Services.Impl
                 await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
+        }
+
+        public async Task SendSystemEmailAllSubUISInstruction(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet)
+        {
+            var recipent = new List<string>();
+            recipent.Add(insuredOrg.Email);
+
+            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
+
+            EmailTemplate systemEmailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction");
+            if (systemEmailTemplate == null)
+            {
+                throw new Exception("SendSubInformationSheetInstruction is null");
+            }
+            string systememailsubject = systemEmailTemplate.Subject;
+            string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
+            systememail.From(DefaultSender);
+            systememail.To(recipent.ToArray());
+            systememail.WithSubject(systememailsubject);
+            systememail.WithBody(systememailbody);
+            systememail.UseHtmlBody(true);
+            systememail.Send();
+        }
+
+        public async Task SendSystemEmailAllSubUISComplete(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet)
+        {
+            var recipent = new List<string>();
+
+            recipent.Add(insuredOrg.Email);
+
+            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
+
+            EmailTemplate systemEmailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetCompletion");
+            if (systemEmailTemplate == null)
+            {
+                throw new Exception("SendSubInformationSheetCompletion is null");
+            }
+            string systememailsubject = systemEmailTemplate.Subject;
+            string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
+            systememail.From(DefaultSender);
+            systememail.To(recipent.ToArray());
+            systememail.WithSubject(systememailsubject);
+            systememail.WithBody(systememailbody);
+            systememail.UseHtmlBody(true);
+            systememail.Send();
         }
 
         public async Task SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
@@ -643,7 +746,7 @@ namespace DealEngine.Services.Impl
 
             if (uISIssued != null)
             {
-                recipent.Add("support@DealEngine.com");
+                recipent.Add("support@techcertain.com");
 
                 List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet, null);
 
@@ -726,7 +829,6 @@ namespace DealEngine.Services.Impl
 
         public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
-
 			if (document.ContentType == MediaTypeNames.Text.Html) {
 				// Testing HtmlToOpenXml
 				string html = _fileService.FromBytes (document.Contents);
@@ -764,7 +866,6 @@ namespace DealEngine.Services.Impl
                         HtmlConverter converter = new HtmlConverter (mainPart);
                         converter.ImageProcessing = ImageProcessing.ManualProvisioning;
 						converter.ParseHtml (html);
-                        // var test = "test";
 					}
 					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
@@ -790,11 +891,10 @@ namespace DealEngine.Services.Impl
                 return null;
 
             }
-            return null;
+			return null;
+		}
 
-        }
-
-        public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
+		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)

@@ -207,9 +207,9 @@
                                     <select onchange="addTrailerLoc()" class="form-control rmv" id="VehicleLocation" name="VehicleLocation">
                                         <option selected="selected" value="">-- Select --</option>
 
-                                        @foreach (var tloc in Model.Locations)
+                                        @foreach (var tloc in Model.LocationViewModel.Locations)
                                         {
-                                            <option value="@tloc.LocationId">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
+                                            <option value="@tloc.Id">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
                                         }
                                         <option value="add">Add Location</option>
 
@@ -359,9 +359,9 @@
                                 <label class="input">
                                     <select onchange="AddaddTrailerLoc()" class="form-control rmv" id="AddVehicleLocation" name="VehicleLocation">
                                         <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var tloc in Model.Locations)
+                                        @foreach (var tloc in Model.LocationViewModel.Locations)
                                         {
-                                            <option value="@tloc.LocationId">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
+                                            <option value="@tloc.Id">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
                                         }
                                         <option value="add">Add Location</option>
 

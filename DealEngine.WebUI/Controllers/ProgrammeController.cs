@@ -639,37 +639,39 @@ namespace DealEngine.WebUI.Controllers
                 model.clientprogramme = programme;
                 model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
 
-                foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
+                if (programme.ClientAgreementEGlobalSubmissions != null)
                 {
-                    string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
-
-                    if (esubmission.EGlobalResponse != null)
+                    foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
                     {
-                        submissiondiscription += " - response received";
-                        if (esubmission.EGlobalResponse.ResponseType == "update")
+                        string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+
+                        if (esubmission.EGlobalResponse != null)
                         {
-                            submissiondiscription += "(success) - " + esubmission.EGlobalResponse.TranCode + " - invoice #:" + esubmission.EGlobalResponse.InvoiceNumber;
+                            submissiondiscription += " - response received";
+                            if (esubmission.EGlobalResponse.ResponseType == "update")
+                            {
+                                submissiondiscription += "(success) - " + esubmission.EGlobalResponse.TranCode + " - invoice #:" + esubmission.EGlobalResponse.InvoiceNumber;
+                            }
+                            else
+                            {
+                                submissiondiscription += "(error)";
+                            }
                         }
                         else
                         {
-                            submissiondiscription += "(error)";
+                            submissiondiscription += " - no response";
                         }
-                    }
-                    else
-                    {
-                        submissiondiscription += " - no response";
-                    }
 
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        esubmission.SubmissionDesc = submissiondiscription;
-                        await uow.Commit();
+                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            esubmission.SubmissionDesc = submissiondiscription;
+                            await uow.Commit();
+                        }
+
                     }
-                    
                 }
-
-                var active = await _httpClientService.GetEglobalStatus();
-                model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
+                //var active = await _httpClientService.GetEglobalStatus();
+                //model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 
                 return View(model);
             }
@@ -979,13 +981,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
-                model.Brokers.Add(
-                    new SelectListItem
-                    {
-                        Text = programme.BrokerContactUser.FirstName + " " + programme.BrokerContactUser.Email,
-                        Value = programme.BrokerContactUser.Id.ToString(),
-                        Selected = true
-                    });                               
+                //model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;                              
                 model.Id = Id;
                 model.programmeName = programme.Name;
                 model.IsPublic = programme.IsPublic;
@@ -994,6 +990,9 @@ namespace DealEngine.WebUI.Controllers
                 model.StopAgreement = programme.StopAgreement;
                 model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
                 model.HasSubsystemEnabled = programme.HasSubsystemEnabled;
+                model.Declaration = programme.Declaration;
+                model.StopAgreementMessage = programme.StopAgreementMessage;
+                model.NoPaymentRequiredMessage = programme.NoPaymentRequiredMessage;
                 model.ProgrammeClaim = programme.Claim;
 
                 return View("EditProgramme", model);
@@ -1023,7 +1022,7 @@ namespace DealEngine.WebUI.Controllers
         private async Task<ProgrammeInfoViewModel> GetProgrammeInfoViewModel()
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            var brokers = await _userService.GetAllUsers();
+            var brokers = await _userService.GetBrokerUsers();            
             var brokerList = new List<SelectListItem>();
             foreach (var broker in brokers)
             {
@@ -1154,6 +1153,7 @@ namespace DealEngine.WebUI.Controllers
                     programme.StopAgreementMessage = model.StopAgreementMessage;
                     programme.Declaration = model.Declaration;
                     programme.NoPaymentRequiredMessage = model.NoPaymentRequiredMessage;
+                    //programme.BrokerContactUser = model.BrokerContactUser;
                     programme.Claim = "";
                     if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
                     {
@@ -1191,6 +1191,7 @@ namespace DealEngine.WebUI.Controllers
                 string userType = "";
                 var title = collection["Name"];
                 var selectedParty = collection["selectedEmail"];
+                var PartyName = collection["selectedparty"];
                 if (programme != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1314,12 +1315,13 @@ namespace DealEngine.WebUI.Controllers
 
                 if ("organisation" != null)
                 {
-                    var userList = await _userService.GetAllUsers();
-                    foreach (var userOrg in userList.Where(p => p.PrimaryOrganisation == organisation))
+                    List<User> userList = await _userService.GetAllUserByOrganisation(organisation);
+
+                    foreach (var userOrg in userList)
                     {
                         userPartyList.Add(new PartyUserViewModel()
                         {
-                            Name = userOrg.FirstName,
+                            Name = userOrg.FullName,
                             Id = userOrg.Id.ToString(),
                             Email = userOrg.Email,
                         });
@@ -1351,6 +1353,33 @@ namespace DealEngine.WebUI.Controllers
                 model.Id = Id;
                 model.Name = Title;
                 model.Parties = programme.Parties;
+                //model.OrgUser = programme.UISIssueNotifyUsers;
+                List<SelectListItem> usrlist = new List<SelectListItem>();
+                foreach(var org in programme.Parties)
+                {
+                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
+
+                    foreach (var userOrg in userList)
+                    {
+                        usrlist.Add(new SelectListItem()
+                        {
+                            Selected = false,
+                            Text = userOrg.FullName,
+                            Value = userOrg.Email,
+                        });
+                    }
+                }
+                //foreach (var useroption in programme.UISIssueNotifyUsers)
+                //{
+                //    usrlist.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Text = useroption.FullName,
+                //        Value = useroption.Email,
+                //    });
+
+                //}
+                model.OrgUser = usrlist;
                 ViewBag.Title = "Add/Edit Programme Email Template";
 
                 return View("IssueNotification", model);
@@ -1426,6 +1455,16 @@ namespace DealEngine.WebUI.Controllers
                     case "SendInformationSheetInstruction":
                         {
                             emailtemplatename = "Information Sheet Instruction";
+                            break;
+                        }
+                    case "SendSubInformationSheetInstruction":
+                        {
+                            emailtemplatename = "SubInformation Sheet Instruction";
+                            break;
+                        }
+                    case "SendSubInformationSheetCompletion":
+                        {
+                            emailtemplatename = "SubInformation Sheet Completion";
                             break;
                         }
                     case "SendInformationSheetReminder":

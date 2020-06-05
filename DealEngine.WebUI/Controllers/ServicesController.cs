@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Domain.Entities;
@@ -17,10 +19,12 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-
+    //[Authorize]
     public class ServicesController : BaseController
     {
         IClientInformationService _clientInformationService;
@@ -28,18 +32,18 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationalUnitService _organisationalUnitService;
         ILocationService _locationService;
         IMapperSession<WaterLocation> _waterLocationRepository;
-        IMapperSession<Boat> _boatRepository;        
+        IMapperSession<Boat> _boatRepository;
         IBoatUseService _boatUseService;
         IVehicleService _vehicleService;
-        IOrganisationService _organisationService;        
-        IMapperSession<Building> _buildingRepository;              
+        IOrganisationService _organisationService;
+        IMapperSession<Building> _buildingRepository;
         IMapperSession<BusinessInterruption> _businessInterruptionRepository;
-        IMapperSession<MaterialDamage> _materialDamageRepository;        
+        IMapperSession<MaterialDamage> _materialDamageRepository;
         IClaimNotificationService _claimNotificationService;
-        IProductService _productService;        
+        IProductService _productService;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
-        IUnitOfWork _unitOfWork;        
+        IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IEmailService _emailService;
         IAppSettingService _appSettingService;
@@ -55,27 +59,27 @@ namespace DealEngine.WebUI.Controllers
             ILogger<ServicesController> logger,
             IApplicationLoggingService applicationLoggingService,
             IBusinessContractService businessContractService,
-            IUserService userService, 
-            IClientAgreementService clientAgreementService, 
-            IAppSettingService appSettingService,             
-            IClientInformationService clientInformationService,            
-            IOrganisationalUnitService organisationalUnitService,            
+            IUserService userService,
+            IClientAgreementService clientAgreementService,
+            IAppSettingService appSettingService,
+            IClientInformationService clientInformationService,
+            IOrganisationalUnitService organisationalUnitService,
             ILocationService locationService,
-            IMapperSession<WaterLocation> waterLocationRepository, 
-            IMapperSession<Building> buildingRepository, 
+            IMapperSession<WaterLocation> waterLocationRepository,
+            IMapperSession<Building> buildingRepository,
             IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository,
             IClaimNotificationService claimNotificationService,
             IProductService productService,
-            IVehicleService vehicleService, 
+            IVehicleService vehicleService,
             IMapperSession<Boat> boatRepository,
-            IOrganisationService organisationService, 
-            IBoatUseService boatUseService, 
-            IProgrammeService programeService, 
-            IOrganisationTypeService organisationTypeService,             
-            IEmailService emailService,             
-            IUnitOfWork unitOfWork, 
-            IInsuranceAttributeService insuranceAttributeService, 
+            IOrganisationService organisationService,
+            IBoatUseService boatUseService,
+            IProgrammeService programeService,
+            IOrganisationTypeService organisationTypeService,
+            IEmailService emailService,
+            IUnitOfWork unitOfWork,
+            IInsuranceAttributeService insuranceAttributeService,
             IReferenceService referenceService
             )
 
@@ -85,13 +89,13 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _clientAgreementService = clientAgreementService;
-            _appSettingService = appSettingService;            
+            _appSettingService = appSettingService;
             _clientInformationService = clientInformationService;
-            _organisationalUnitService = organisationalUnitService;            
+            _organisationalUnitService = organisationalUnitService;
             _vehicleService = vehicleService;
             _locationService = locationService;
             _waterLocationRepository = waterLocationRepository;
-            _boatRepository = boatRepository;            
+            _boatRepository = boatRepository;
             _organisationService = organisationService;
             _boatUseService = boatUseService;
             _buildingRepository = buildingRepository;
@@ -101,9 +105,9 @@ namespace DealEngine.WebUI.Controllers
             _productService = productService;
             _programmeService = programeService;
             _organisationTypeService = organisationTypeService;
-            _unitOfWork = unitOfWork;            
+            _unitOfWork = unitOfWork;
             _referenceService = referenceService;
-            _emailService = emailService;            
+            _emailService = emailService;
             _insuranceAttributeService = insuranceAttributeService;
             _businessContractService = businessContractService;
 
@@ -143,7 +147,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -190,7 +194,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }                       
+            }
         }
 
         [HttpPost]
@@ -216,7 +220,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -303,7 +307,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -324,7 +328,7 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
-                
+
                 if (_search)
                 {
                     switch (searchOper)
@@ -374,6 +378,74 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetCommonPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                         string searchField, string searchString, string searchOper, string filters)
+        {
+            User user = null;
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+
+                if (sheet == null)
+                    throw new Exception("No valid information for id " + informationId);
+
+                var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false");
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
+
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName,organisation.IsPrincipalAdvisor, organisation.Id);
+                    }
+                    model.AddRow(row);
+                }
+
+
+                //// convert model to XDocument for rendering.
+                document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                        string searchField, string searchString, string searchOper, string filters)
@@ -393,10 +465,10 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                 foreach ( var org in sheet.Organisation.Where(o => o.Removed == true))
-                        {
-                            organisations.Add(org);
-                        }
+                foreach (var org in sheet.Organisation.Where(o => o.Removed == true))
+                {
+                    organisations.Add(org);
+                }
 
                 if (_search)
                 {
@@ -441,11 +513,11 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
-        
+
         [HttpGet]
         public async Task<IActionResult> GetPminzNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
@@ -466,7 +538,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     organisations.Add(org);
                 }
-                
+
 
                 if (_search)
                 {
@@ -583,7 +655,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -607,7 +679,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -744,13 +816,13 @@ namespace DealEngine.WebUI.Controllers
                 }
                 model.OrganisationalUnitId = ou.Id;
 
-                return Json(model);                
+                return Json(model);
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -865,219 +937,50 @@ namespace DealEngine.WebUI.Controllers
         #region Locations
 
         [HttpPost]
-        public async Task<IActionResult> SearchLocationStreet(Guid answerSheetId, string street)
+        public async Task<IActionResult> AddLocation(IFormCollection collection)
         {
-            LocationViewModel model = new LocationViewModel();
             User user = null;
-
             try
             {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
                 user = await CurrentUser();
-                model.Street = street;
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                Location location = await _locationService.GetLocationByStreet(street);
-                if (location != null)
+                Location location = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var locationForm = collection.Keys.Where(s => s.StartsWith("LocationViewModel", StringComparison.CurrentCulture));
+                var id = collection["LocationViewModel.LocationId"];
+                if (string.IsNullOrWhiteSpace(id))
                 {
-                    model = LocationViewModel.FromEntity(location);
+                    location = new Location(user);
                 }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddLocation(LocationViewModel model)
-        {
-            User user = null;
-
-            try
-            {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
-
-                Location location = await _locationService.GetLocationById(model.LocationId);
-                if (location == null)
-                    location = model.ToEntity(user);
-                model.UpdateEntity(location);
-                var OUList = new List<OrganisationalUnit>();
-
-                if (sheet.Owner.OrganisationalUnits.Count > 0)
-                    OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
-
-                location.OrganisationalUnits = OUList;
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                else
                 {
-                    sheet.Locations.Add(location);
-                    await uow.Commit();
+                    location = await _locationService.GetLocationById(Guid.Parse(id));
                 }
-
-                model.LocationId = location.Id;
-
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }                        
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetLocation(Guid answerSheetId, Guid locationId)
-        {
-            LocationViewModel model = new LocationViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                Location location = sheet.Locations.FirstOrDefault(loc => loc.Id == locationId);
-                if (location != null)
+                var type = location.GetType();
+                foreach (var keyField in locationForm)
                 {
-                    model = LocationViewModel.FromEntity(location);
-                    model.AnswerSheetId = answerSheetId;
-                    //model.SelectedOrganisationalUnits = location.OrganisationalUnits.Select(ou => ou.Id).ToArray();
-                }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var locations = sheet.Owner.OrganisationalUnits.SelectMany(ou => ou.Locations).Distinct().ToList();
-
-                locations = sheet.Locations.Where(loc => loc.Removed == removed && loc.DateDeleted == null).ToList();
-
-                if (_search)
-                {
-                    switch (searchOper)
+                    if (keyField != "LocationViewModel.LocationId")
                     {
-                        case "eq":
-                            locations = locations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            locations = locations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            locations = locations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        property.SetValue(location, collection[keyField].ToString());
                     }
                 }
-                //locations = locations.OrderBy(sidx + " " + sord).ToList();
-                locations = locations.ToList();
+                var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
+                location.OrganisationalUnits.Add(OUList);
 
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = locations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
+                if (sheet.Locations.Contains(location))
                 {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    Location location = locations[i];
-                    JqGridRow row = new JqGridRow(location.Id);
-                    row.AddValues(location.Id, location.LocationType, location.CommonName, location.Street, location.Suburb, location.Postcode, location.City, location.Id);
-                    model.AddRow(row);
+                    await _locationService.UpdateLocation(location);
+                }
+                else
+                {
+                    sheet.Locations.Add(location);
+                    await _clientInformationService.UpdateInformation(sheet);
                 }
 
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-           
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetLocationss(Guid informationId, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var locations = sheet.Owner.OrganisationalUnits.SelectMany(ou => ou.Locations).Distinct().ToList();
-
-                locations = sheet.Locations.Where(loc => loc.Removed == false && loc.DateDeleted == null).ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = locations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    Location location = locations[i];
-                    JqGridRow row = new JqGridRow(location.Id);
-                    row.AddValues(location.Id, location.LocationType, location.CommonName, location.Street, location.Suburb, location.Postcode, location.City, location.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetLocationStreet(string term)
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                var locationStreetList = await _locationService.GetLocationStreetList();
-                var results = locationStreetList.Where(n => n.ToLower().Contains(term.ToLower()));
-                return new JsonResult(results.ToArray());
+                return new JsonResult(location.Id);
             }
             catch (Exception ex)
             {
@@ -1087,70 +990,38 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetLocationList(Guid answerSheetId)
+        public async Task<IActionResult> RemoveLocation(string locationId)
         {
-            List<LocationViewModel> models = new List<LocationViewModel>();
             User user = null;
-
             try
             {
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                foreach (var location in sheet.Locations)
-                    models.Add(LocationViewModel.FromEntity(location));
+                Location location = await _locationService.GetLocationById(Guid.Parse(locationId));
+                location.Removed = true;
+                await _locationService.UpdateLocation(location);
 
-                return new JsonResult(models.ToArray());
+                return Ok();
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetLocationsByCountry(Guid answerSheetId)
+        public async Task<IActionResult> RestoreLocation(string locationId)
         {
             User user = null;
-            List<LocationViewModel> models = new List<LocationViewModel>();
-
             try
             {
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                List<Location> countries = sheet.Locations.GroupBy(loc => loc.Country)
-                                              .Select(grp => grp.First())
-                                              .ToList();
+                Location location = await _locationService.GetLocationById(Guid.Parse(locationId));
+                location.Removed = false;
+                await _locationService.UpdateLocation(location);
 
-                foreach (var location in countries)
-                    models.Add(LocationViewModel.FromEntity(location));
-
-                return new JsonResult(models.ToArray());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SetLocationRemovedStatus(Guid locationId, bool status)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Location location = await _locationService.GetLocationById(locationId);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    location.Removed = status;
-                    await uow.Commit();
-                }
-
-                return new JsonResult(true);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -1174,7 +1045,7 @@ namespace DealEngine.WebUI.Controllers
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     org.Removed = status;
-                  
+
                     await uow.Commit();
                 }
 
@@ -1429,7 +1300,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1478,14 +1349,8 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
                 {
-                    Locations.Add(new LocationViewModel
-                    {
-                        LocationId = loc.Id,
-                        Street = loc.Street
-                    });
+                    model.Locations.Add(loc);
                 }
-
-                model.lLocation = Locations;
 
                 return Json(model);
             }
@@ -1494,7 +1359,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         //removing this through new bootstrap
@@ -1566,7 +1431,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -1674,7 +1539,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1766,7 +1631,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1862,7 +1727,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpGet]
@@ -1989,7 +1854,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -2032,7 +1897,7 @@ namespace DealEngine.WebUI.Controllers
                     boat.OtherMarina = false;
 
                 }
-                if (model.SelectedBoatUse != null )
+                if (model.SelectedBoatUse != null)
                 {
 
                     List<string> boatuselist = new List<string>();
@@ -2050,7 +1915,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if (model.SelectedInterestedParty != null )
+                if (model.SelectedInterestedParty != null)
                 {
 
                     List<string> interestedpartylist = new List<string>();
@@ -2084,7 +1949,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -2110,7 +1975,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -2198,7 +2063,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -2210,7 +2075,7 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                user = await CurrentUser(); 
+                user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
 
@@ -2287,7 +2152,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-                if(boat.BoatTrailer != null)
+                if (boat.BoatTrailer != null)
                 {
                     hasTrailer = true;
                 }
@@ -2297,7 +2162,7 @@ namespace DealEngine.WebUI.Controllers
                     boat.Removed = status;
                     await uow.Commit();
                 }
-                return Json(new { HasTrailer = hasTrailer, Success = true });                
+                return Json(new { HasTrailer = hasTrailer, Success = true });
             }
             catch (Exception ex)
             {
@@ -2330,7 +2195,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }           
+            }
         }
 
         [HttpPost]
@@ -2409,7 +2274,7 @@ namespace DealEngine.WebUI.Controllers
                 // get existing boat (if any)
                 if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                 {
-                     boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
+                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
                     if (boatUse == null)
                         boatUse = model.ToEntity(user);
                 }
@@ -2420,7 +2285,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model.UpdateEntity(boatUse);
 
-               
+
                 //if (model.BoatUseBoat != Guid.Empty)
                 //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
 
@@ -2444,7 +2309,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -2524,7 +2389,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2544,7 +2411,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2700,7 +2569,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            //var userList = await _userService.GetAllUsers();
+
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -2737,22 +2608,22 @@ namespace DealEngine.WebUI.Controllers
                         organisationName = model.OrganisationName;
                     }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                    organisation = _mapper.Map<Organisation>(model);
-                    //organisation.Qualifications = model.Qualifications;
-                    //organisation.IsNZIAmember = model.IsNZIAmember;
-                    //organisation.NZIAmembership = model.NZIAmembership;
-                    //organisation.IsADNZmember = model.IsADNZmember;
-                    //organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                    //organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                    //organisation.YearofPractice = model.YearofPractice;
-                    //organisation.PrevPractice = model.prevPractice;
-                    //organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                    //organisation.OtherCompanyname = model.Othercompanyname;
-                    //organisation.Activities = model.Activities;
-                    //organisation.Email = userdb.Email;
-                    //organisation.Type = model.Type;
-                    //organisation.IsIPENZmember = model.IsIPENZmember;
-                    //organisation.CPEngQualified = model.CPEngQualified;
+                    //organisation = _mapper.Map<Organisation>(model);
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.IsNZIAmember = model.IsNZIAmember;
+                    organisation.NZIAmembership = model.NZIAmembership;
+                    organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    organisation.YearofPractice = model.YearofPractice;
+                    organisation.PrevPractice = model.prevPractice;
+                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    organisation.OtherCompanyname = model.Othercompanyname;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    organisation.IsIPENZmember = model.IsIPENZmember;
+                    organisation.CPEngQualified = model.CPEngQualified;
                     if (model.DateofBirth != null)
                     {
                         organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -2789,7 +2660,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -2853,7 +2724,7 @@ namespace DealEngine.WebUI.Controllers
 
                     User userdb = null;
                     Organisation organisation = null;
-                    if(model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                    if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                     {
                         organisation = await _organisationService.GetOrganisation(model.ID);
 
@@ -2875,13 +2746,16 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
 
-                        }else {
+                        }
+                        else
+                        {
 
-                        var userList = await _userService.GetAllUsers();
-                        userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
-                         }
+                            var userList = await _userService.GetAllUsers();
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                        }
 
-                    }catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                         if (orgTypeName == "Person - Individual")
@@ -2941,7 +2815,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                          
+
                             organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
                             organisation.Qualifications = model.Qualifications;
                             organisation.IsNZIAmember = model.IsNZIAmember;
@@ -2970,7 +2844,7 @@ namespace DealEngine.WebUI.Controllers
                             userdb.Organisations.Add(organisation);
                             sheet.Organisation.Add(organisation);
                             model.ID = organisation.Id;
-                                
+
                         }
                         await uow.Commit();
                     }
@@ -2987,7 +2861,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -3078,8 +2952,9 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
                         }
 
                     }
@@ -3098,7 +2973,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
@@ -3160,10 +3035,522 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddCommonNamedParty(OrganisationViewModel model)
+        {
+            User currentUser = null;
+
+            try 
+            {
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+
+                currentUser = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                if (sheet == null)
+                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+                
+                model.OrganisationTypeName = "Person - Individual";
+                string orgTypeName = "Person - Individual";
+                try
+                {
+                   
+                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
+                    if (insuranceAttribute == null)
+                    {
+                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
+                    }
+                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+                    if (organisationType == null)
+                    {
+                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
+                    }
+
+                    User userdb = null;
+                    Organisation organisation = null;
+                    if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                    {
+                        organisation = await _organisationService.GetOrganisation(model.ID);
+
+                    }
+                    try
+                    {
+                        if (orgTypeName == "Person - Individual")
+                        {
+                            userdb = await _userService.GetUserByEmail(model.Email);
+                            if (userdb == null)
+                            {
+                                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    userdb.FirstName = model.FirstName;
+                                    userdb.LastName = model.LastName;
+                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.Email = model.Email;
+                                    await uow.Commit();
+                                }
+                            }
+
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        if (orgTypeName == "Person - Individual")
+                        {
+                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                            userdb.FirstName = model.FirstName;
+                            userdb.LastName = model.LastName;
+                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            userdb.Email = model.Email;
+                            await _userService.Create(userdb);
+                        }
+                        else
+                        {
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                        }
+                    }
+
+                    var organisationName = model.FirstName + " " + model.LastName;
+                  
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (organisation != null)
+                        {
+                            organisation.ChangeOrganisationName(organisationName);
+                            organisation.Type = model.Type;
+                            organisation.Email = model.Email;
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.RegisteredStatus = model.RegisteredStatus;
+                            organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.MyCRMId = model.MyCRMId;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.TradingName = model.TradingName;
+
+                            if (model.DateofBirth != null)
+                            {
+                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach(var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
+                        }
+                        else
+                        {
+
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.ChangeOrganisationName(organisationName);
+                            organisation.Type = model.Type;
+                            organisation.Email = model.Email;
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.RegisteredStatus = model.RegisteredStatus;
+                            organisation.Duration = model.Duration;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.TradingName = model.TradingName;
+
+                            if (model.DateofBirth != null)
+                            {
+                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            insuranceAttribute.IAOrganisations.Add(organisation);
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            userdb.Organisations.Add(organisation);
+                            userdb.SetPrimaryOrganisation(organisation);
+                            sheet.Organisation.Add(organisation);
+                            model.ID = organisation.Id;
+
+                        }
+                        await uow.Commit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                }
+
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
 
 
+        [HttpPost]
+        public async Task<IActionResult> EditCommonNamedParty(OrganisationViewModel model)
+        {
+            User currentUser = null;
+
+            try
+            {
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+
+                currentUser = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                if (sheet == null)
+                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+
+                string orgTypeName = "";
+                //if (model.OrganisationTypeName == "Person - Individual")
+                //{
+                //    orgTypeName = "Person - Individual";
+                //}
+                try
+                {
+                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
+
+                    if (model.Type != null)
+                    {
+                        if (insuranceAttribute == null)
+                        {
+                            insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
+                        }
+                    }
+
+                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+
+                    if (model.OrganisationTypeName != null)
+                    {
+                        if (organisationType == null)
+                        {
+                            organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, model.OrganisationTypeName);
+                        }
+                    }
+                    User userdb = null;
+                    Organisation organisation = null;
+                    if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                    {
+                        organisation = await _organisationService.GetOrganisation(model.ID);
+
+                    }
+                    try
+                    {
+                        if (orgTypeName == "Person - Individual")
+                        {
+                            userdb = await _userService.GetUserByEmail(model.Email);
+                            if (userdb == null)
+                            {
+                                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    userdb.FirstName = model.FirstName;
+                                    userdb.LastName = model.LastName;
+                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.Email = model.Email;
+                                    await uow.Commit();
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
+
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        if (orgTypeName == "Person - Individual")
+                        {
+                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                            userdb.FirstName = model.FirstName;
+                            userdb.LastName = model.LastName;
+                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            userdb.Email = model.Email;
+                            await _userService.Create(userdb);
+                        }
+                        else
+                        {
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
 
 
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                        }
+
+                    }
+
+                    var organisationName = "";
+                    if (model.OrganisationTypeName == "Person - Individual")
+                    {
+                        organisationName = model.FirstName + " " + model.LastName;
+                    }
+                    else
+                    {
+                        organisationName = model.OrganisationName;
+                    }
+
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (organisation != null)
+                        {
+
+                            organisation.ChangeOrganisationName(organisationName);
+                            organisation.Type = model.Type;
+                            organisation.Email = model.Email;
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.RegisteredStatus = model.RegisteredStatus;
+                            organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.OfcPhoneno = model.OfcPhoneno;
+                            organisation.MyCRMId = model.MyCRMId;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.TradingName = model.TradingName;
+
+                            if (model.DateofBirth != null)
+                            {
+                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
+                        }
+                        else
+                        {
+
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                            organisation.Type = model.Type;
+                            organisation.Email = model.Email;
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.RegisteredStatus = model.RegisteredStatus;
+                            organisation.Duration = model.Duration;
+                            organisation.ConfirmAAA = model.ConfirmAAA;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.OfcPhoneno = model.OfcPhoneno;
+                            organisation.MyCRMId = model.MyCRMId;
+                            organisation.TradingName = model.TradingName;
+
+                            if (model.DateofBirth != null)
+                            {
+                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                            }
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
+                            if (model.IsPrincipalAdvisor)
+                            {
+                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                                {
+                                    org.IsPrincipalAdvisor = false;
+                                }
+                            }
+                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            insuranceAttribute.IAOrganisations.Add(organisation);
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            userdb.Organisations.Add(organisation);
+                            sheet.Organisation.Add(organisation);
+                            model.ID = organisation.Id;
+
+                        }
+                        await uow.Commit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                }
+
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+        
+        [HttpPost]
+        public async Task<IActionResult> CheckEmail(Guid answerSheetId,  string Email)
+        {
+            User userdb = null;
+
+            try
+            {
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                Organisation org = sheet.Organisation.FirstOrDefault(o => o.Email == Email);
+               // userdb = await _userService.GetUserByEmail(Email);
+                if (org != null)
+                {
+                    return new JsonResult(false);
+                }
+                else
+                {
+                    return new JsonResult(true);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, userdb, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCommonNamedPArty(Guid answerSheetId, Guid partyID)
+        {
+            OrganisationViewModel model = new OrganisationViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                Organisation org = sheet.Organisation.FirstOrDefault(o => o.Id == partyID);
+                if (org != null)
+                {
+                    User userdb = await _userService.GetUserByEmail(org.Email);
+                    model.ID = partyID;
+                    model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
+                    model.FirstName = userdb.FirstName;
+                    model.LastName = userdb.LastName;
+                    model.Email = org.Email;
+                    model.RegisteredStatus = org.RegisteredStatus;
+                    model.Duration = org.Duration;
+                    model.Qualifications = org.Qualifications;
+                    model.IsRetiredorDecieved = org.IsRetiredorDecieved;
+                    model.IsPrincipalAdvisor = org.IsPrincipalAdvisor;
+                    model.MyCRMId = org.MyCRMId;
+                    model.TradingName = org.TradingName;
+
+                    if (org.DateofBirth != null)
+                    {
+                        model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    }
+
+                    if (org.DateofRetirement != null)
+                    {
+                        model.DateofRetirement =(org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    }
+                    if (model.DateofDeceased != null)
+                    {
+                        model.DateofDeceased = (org.DateofRetirement > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    }
+
+                    model.Email = org.Email;
+                    model.RegisteredStatus = org.RegisteredStatus;
+                    model.Duration = org.Duration;
+
+
+                    model.OrganisationTypeName = org.OrganisationType.Name;
+                    model.AnswerSheetId = answerSheetId;
+                }
+                else
+                {
+                    if (partyID == sheet.Owner.Id)
+                    {
+                        model.ID = partyID;
+                        model.OrganisationName = sheet.Owner.Name;
+                        model.Type = "Owner";
+                        model.Email = sheet.Owner.Email;
+                        model.OfcPhoneno = sheet.Owner.OfcPhoneno;
+                        model.AnswerSheetId = answerSheetId;
+                        model.TradingName = sheet.Owner.TradingName;
+                    }
+                }
+
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> EditPMINZNamedParty(OrganisationViewModel model)
@@ -3256,9 +3643,22 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
+
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
                     }
@@ -3276,8 +3676,23 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            var userList = await _userService.GetAllUsers();
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                            if (organisation != null)
+                            {
+                                List<User> userlist = await _userService.GetAllUserByOrganisation(organisation);
+
+                                foreach (var user in userlist)
+                                {
+                                    if (user != null && user.PrimaryOrganisation.Id == model.ID)
+                                        user.Email = model.Email;
+                                }
+                            }
+
+
+                            //var userList = await _userService.GetAllUsers();
+                            //userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                         }
 
                     }
@@ -3296,6 +3711,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (organisation != null)
                         {
+
                             organisation.ChangeOrganisationName(organisationName);
                             organisation.Qualifications = model.Qualifications;
                             organisation.Type = model.Type;
@@ -3390,12 +3806,12 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
 
                     model.ID = partyID;
-                    if(userdb != null)
+                    if (userdb != null)
                     {
                         model.FirstName = userdb.FirstName;
                         model.LastName = userdb.LastName;
                     }
-                    
+
                     model.Email = org.Email;
                     model.Qualifications = org.Qualifications;
                     model.isaffiliation = org.IsAffiliation;
@@ -3419,7 +3835,7 @@ namespace DealEngine.WebUI.Controllers
                     model.DesignLicensed = org.DesignLicensed;
                     model.SiteLicensed = org.SiteLicensed;
                     model.Othercompanyname = org.OtherCompanyname;
-                    model.YearofPractice = org.YearofPractice;            
+                    model.YearofPractice = org.YearofPractice;
                     model.AnswerSheetId = answerSheetId;
                 }
                 else
@@ -3449,7 +3865,6 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> EditPrincipalDirectorsOwner(OrganisationViewModel model)
         {
             User user = null;
-
             try
             {
                 user = await CurrentUser();
@@ -3457,15 +3872,19 @@ namespace DealEngine.WebUI.Controllers
                     throw new ArgumentNullException(nameof(model));
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 Organisation org = await _organisationService.GetOrganisation(sheet.Owner.Id);
-
+                List<User> userlist = await _userService.GetAllUserByOrganisation(org);
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
+                    foreach (var owneruser in userlist)
+                    {
+                        if (owneruser != null && owneruser.PrimaryOrganisation.Id == model.ID)
+                            owneruser.Email = model.Email;
+                    }
+
                     org.Email = model.Email;
                     org.ChangeOrganisationName(model.OrganisationName);
                     await uow.Commit();
-
                 }
-
                 return Json(model);
             }
             catch (Exception ex)
@@ -3474,6 +3893,8 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> GetPrincipalPartners(Guid answerSheetId, Guid partyID)
@@ -3548,7 +3969,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-       
+
         [HttpPost]
         public async Task<IActionResult> AddNamedParty(OrganisationViewModel model)
         {
@@ -3620,7 +4041,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
 
@@ -3658,7 +4079,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ID = organisation.Id;
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    sheet.Organisation.Add(organisation);                    
+                    sheet.Organisation.Add(organisation);
                     await uow.Commit();
                 }
 
@@ -3708,7 +4129,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> OUSelected(Guid OUselect)
         {
             OrganisationalUnit orgunit = null;
-            var locations = new List<LocationViewModel>();
+            var location = new LocationViewModel();
             User user = null;
 
             try
@@ -3717,14 +4138,10 @@ namespace DealEngine.WebUI.Controllers
                 orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
                 foreach (Location ou in orgunit.Locations)
                 {
-                    locations.Add(new LocationViewModel
-                    {
-                        LocationId = ou.Id,
-                        Street = ou.Street
-                    });
+                    location.Locations.Add(ou);
                 }
 
-                return Json(locations);
+                return Json(location);
             }
             catch (Exception ex)
             {
@@ -3768,71 +4185,71 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute);
-                    if (insuranceAttribute == null)
-                    {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, model.InsuranceAttribute);
-                    }
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute);
+                if (insuranceAttribute == null)
+                {
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, model.InsuranceAttribute);
+                }
 
-                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
-                    if (organisationType == null)
-                    {
-                        organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
-                    }
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+                if (organisationType == null)
+                {
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
+                }
 
-                    Organisation organisation = null;
-                    User userDb = null;
-                    //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
-                    //{
-                    organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
-                    if (organisation == null)
-                    {
-                        organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
-                        organisation.Phone = model.OrganisationPhone;
-                        organisation.Email = model.OrganisationEmail;
-                        await _organisationService.CreateNewOrganisation(organisation);
-                        organisation.InsuranceAttributes.Add(insuranceAttribute);
-                        insuranceAttribute.IAOrganisations.Add(organisation);
-                    }
-                    //}
+                Organisation organisation = null;
+                User userDb = null;
+                //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
+                //{
+                organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
+                if (organisation == null)
+                {
+                    organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
+                    organisation.Phone = model.OrganisationPhone;
+                    organisation.Email = model.OrganisationEmail;
+                    await _organisationService.CreateNewOrganisation(organisation);
+                    organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    insuranceAttribute.IAOrganisations.Add(organisation);
+                }
+                //}
 
-                    if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
+                if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
+                {
+                    try
                     {
-                        try
+                        if (model.IsAdmin.EqualsIgnoreCase("Yes"))
                         {
-                            if (model.IsAdmin.EqualsIgnoreCase("Yes"))
-                            {
-                                user = await _userService.GetUserByEmail(user.Email);
-                            }
-                            else
-                            {
-                                user = await _userService.GetUserByEmail(model.Email);
-                            }
+                            user = await _userService.GetUserByEmail(user.Email);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            user = new User(user, Guid.NewGuid(), model.FirstName);
-                            user.FirstName = model.FirstName;
-                            user.LastName = model.LastName;
-                            user.FullName = model.FirstName + " " + model.LastName;
-                            user.Email = model.Email;
-                            user.Phone = model.Phone;
-                            user.Password = "";
-                            await _userService.Create(user);
-
+                            user = await _userService.GetUserByEmail(model.Email);
                         }
-
                     }
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    catch (Exception ex)
                     {
-                        user.Organisations.Add(organisation);
-                        sheet.Organisation.Add(organisation);
-                        model.ID = organisation.Id;
+                        user = new User(user, Guid.NewGuid(), model.FirstName);
+                        user.FirstName = model.FirstName;
+                        user.LastName = model.LastName;
+                        user.FullName = model.FirstName + " " + model.LastName;
+                        user.Email = model.Email;
+                        user.Phone = model.Phone;
+                        user.Password = "";
+                        await _userService.Create(user);
 
-                        await uow.Commit();
                     }
-                    
+
+                }
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    user.Organisations.Add(organisation);
+                    sheet.Organisation.Add(organisation);
+                    model.ID = organisation.Id;
+
+                    await uow.Commit();
+                }
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -3936,7 +4353,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            
+
         }
 
         [HttpPost]
@@ -4038,7 +4455,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -4051,7 +4468,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                ClientProgramme clientProgramme =  sheet.Programme;
+                ClientProgramme clientProgramme = sheet.Programme;
                 ClaimNotification claim = sheet.ClaimNotifications.FirstOrDefault(c => c.Id == claimId);
                 if (claim != null)
                 {
@@ -4060,7 +4477,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 var claimProducts = new List<Product>();
                 List<SelectListItem> ClaimProducts = new List<SelectListItem>();
-               
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -4118,7 +4535,7 @@ namespace DealEngine.WebUI.Controllers
 
                     ClaimNotification claim = claims[i];
                     JqGridRow row = new JqGridRow(claim.Id);
-                    if(claim.ClaimStatus != "Precautionary notification only")
+                    if (claim.ClaimStatus != "Precautionary notification only")
                     {
                         row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant);
                     }
@@ -4237,7 +4654,7 @@ namespace DealEngine.WebUI.Controllers
                         model.ID = organisation.Id;
                         await uow.Commit();
                     }
-                    
+
                 }
                 return Json(model);
             }
@@ -4252,35 +4669,185 @@ namespace DealEngine.WebUI.Controllers
         #endregion
 
         #region BusinessContracts
-
-        [HttpPost]
-        public async Task<IActionResult> AddBusinessContract(BusinessContractViewModel model)
+        [HttpGet]
+        public async Task<IActionResult> GetBusinessContracts(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                          string searchField, string searchString, string searchOper, string filters)
         {
             User user = null;
 
             try
             {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
                 user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
                 if (sheet == null)
-                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+                    throw new Exception("No valid information for id " + informationId);
 
-                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(model.BusinessContractId);
-                if (businessContract == null)
-                    businessContract = model.ToEntity(user);
-                model.UpdateEntity(businessContract);
+                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == removed && bc.DateDeleted == null).ToList();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            businessContracts = businessContracts.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            businessContracts = businessContracts.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            businessContracts = businessContracts.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                businessContracts = businessContracts.ToList();
+
+                XDocument document = null;
+                JqGridViewModel model = new JqGridViewModel();
+                model.Page = 1;
+                model.TotalRecords = businessContracts.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+
+                    BusinessContract businessContract = businessContracts[i];
+                    JqGridRow row = new JqGridRow(businessContract.Id);
+                    row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
+                    model.AddRow(row);
+                }
+
+                // convert model to XDocument for rendering
+                document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProject(IFormCollection collection)
+        {
+            User user = null;
+            try
+            {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
+                user = await CurrentUser();
+                BusinessContract businessContract = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var projectForm = collection.Keys.Where(s => s.StartsWith("ProjectViewModel", StringComparison.CurrentCulture));
+                var id = collection["ProjectViewModel.ProjectId"];
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    businessContract = new BusinessContract(user);
+                }
+                else
+                {
+                    businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(id));
+                    businessContract.ProjectDirector = false;
+                    businessContract.ProjectEngineer = false;
+                    businessContract.ProjectManager = false;
+                    businessContract.ProjectCoordinator = false;
+                }
+                var type = businessContract.GetType();
+                foreach (var keyField in projectForm)
+                {
+                    if (keyField != "ProjectViewModel.ProjectId")
+                    {
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        if (typeof(string) == property.PropertyType)
+                        {
+                            property.SetValue(businessContract, collection[keyField].ToString());
+                        }
+                        if (typeof(bool) == property.PropertyType)
+                        {
+                            property.SetValue(businessContract, bool.Parse(collection[keyField].ToString()));
+                        }
+                    }
+                }
+
+                if (sheet.BusinessContracts.Contains(businessContract))
+                {
+                    await _businessContractService.Update(businessContract);
+                }
+                else
                 {
                     sheet.BusinessContracts.Add(businessContract);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveProject(string projectId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(projectId));
+                businessContract.Removed = true;
+                await _businessContractService.Update(businessContract);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreProject(string projectId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(Guid.Parse(projectId));
+                businessContract.Removed = false;
+                await _businessContractService.Update(businessContract);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(businessContractId);
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    businessContract.Removed = status;
                     await uow.Commit();
                 }
 
-                model.BusinessContractId = businessContract.Id;
-
-                return Json(model);
+                return new JsonResult(true);
             }
             catch (Exception ex)
             {
@@ -4324,6 +4891,39 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCEASProject(BusinessContractViewModel model)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                if (sheet == null)
+                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(model.BusinessContractId);
+                if (businessContract == null)
+                    businessContract = model.ToEntity(user);
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    model.UpdateEntity(businessContract);
+                    await uow.Commit();
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetCEASProject(Guid answerSheetId, Guid CEASProjectId)
@@ -4422,7 +5022,7 @@ namespace DealEngine.WebUI.Controllers
 
                     BusinessContract businessContract = businessContracts[i];
                     JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.ContractTitle, businessContract.ProjectDescription, businessContract.Fees,  businessContract.Id);
+                    row.AddValues(businessContract.Id, businessContract.ContractTitle, businessContract.ProjectDescription, businessContract.Fees, businessContract.Id);
                     model.AddRow(row);
                 }
 
@@ -4437,147 +5037,17 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetBusinessContracts(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == removed && bc.DateDeleted == null).ToList();
-
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            businessContracts = businessContracts.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            businessContracts = businessContracts.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            businessContracts = businessContracts.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                businessContracts = businessContracts.ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = businessContracts.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    BusinessContract businessContract = businessContracts[i];
-                    JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetBusinessContractss(Guid informationId, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
-
-                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == false && bc.DateDeleted == null).ToList();
-
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = 1;
-                model.TotalRecords = businessContracts.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-
-                    BusinessContract businessContract = businessContracts[i];
-                    JqGridRow row = new JqGridRow(businessContract.Id);
-                    row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
-                    model.AddRow(row);
-                }
-
-                // convert model to XDocument for rendering
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(businessContractId);
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    businessContract.Removed = status;
-                    await uow.Commit();
-                }
-
-                return new JsonResult(true);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
-        }
 
         #endregion
 
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public async Task<IActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async Task<IActionResult> CoastGuardSelfReg(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
             User currentUser = null;
-            bool hasAccount = true;            
+            bool hasAccount = true;
             string organisationName = null;
             string ouname = null;
             string orgTypeName = null;
@@ -4756,13 +5226,13 @@ namespace DealEngine.WebUI.Controllers
                                 //send out information sheet issue notification email
                                 await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                             }
-                            
+
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);                            
+                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                         }
-                        
+
                     }
                 }
                 else
@@ -4785,7 +5255,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         #endregion
@@ -4958,7 +5428,7 @@ namespace DealEngine.WebUI.Controllers
                                 if (!string.IsNullOrWhiteSpace(membershipNumber))
                                 {
                                     clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                                }                                
+                                }
 
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
@@ -5007,7 +5477,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -5044,8 +5514,10 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
     }
 }
+
+

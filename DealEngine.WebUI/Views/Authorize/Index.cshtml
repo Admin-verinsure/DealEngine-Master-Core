@@ -6,7 +6,7 @@
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Roles
+                            Configure Role
                         </button>
                     </h2>
                 </div>
@@ -14,35 +14,17 @@
                     <div class="card-body">
                         <div class="container" id="AddRoleForm">
                             <form>
-                                @if (User.IsInRole("TCUser"))
-                                {
-                                    <div class="form-group container">
-                                        <select class="custom-select col-6 custom-select-lg" id="organisationId">
-                                            <option value="" selected>empty</option>
-                                            @foreach (var org in Model.Organisations)
-                                            {
-                                                <option value="@org.Id">@org.Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                }
                                 <div class="form-group">
                                     @await Html.PartialAsync("AddRoleForm", Model)
                                 </div>
+                                <div class="form-group">
+                                    @await Html.PartialAsync("UpdateRoleForm", Model)
+                                </div>
+                                <div class="form-group">
+                                    @await Html.PartialAsync("DeleteRoleForm", Model)
+                                </div>
                             </form>
-                        </div>
-                        <div class="card-body">
-                            <div class="container" id="UpdateRoleForm" style="display:none">
-                                @await Html.PartialAsync("UpdateRoleForm", Model)
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-primary btn-sm" onclick="AddRole()">Add</button>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="EditRole()">Update/Edit</button>
-                                <button type="button" class="btn btn-primary btn-sm">Delete</button>
-                            </div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -50,42 +32,43 @@
                 <div class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Claim/Rules
+                            Add Claims to User
                         </button>
                     </h2>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+
                     <div class="card-body">
-                        <div class="container">
-                            <div class="card">
-                                <div class="card-header">
-                                    Claims
-                                </div>
-                                <div class="card-body">
-                                    <form class="needs-validation" action="CreateClaim" method="post" id="claimform">
-                                        <div class="form-group">
-                                            <div class="col-3">
-                                                <input type="text" class="form-control" name="type" placeholder="Enter Claim Type" form="claimform"/>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="text" class="form-control" name="value" placeholder="Enter Claim Value" form="claimform"/>
-                                            </div>                                                                                       
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-sm" form="claimform">Submit Query</button>
-                                        </div>
-                                    </form>
-                                </div>
+                        <form id="userclaimform">
+                            <div class="form-group">
+                                <select class="custom-select form-control" id="AddClaimUser" data-placeholder="Select User">
+                                    @foreach (var user in Model.UserList)
+                                    {
+                                        <option value="@user.Id">@user.UserName</option>
+                                    }
+                                </select>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <select class="cselect form-control" data-placeholder="Add Claims" id="AddUserClaims" multiple="multiple" name="@Html.NameFor(m => m.ClaimList)">
+                                    @foreach (var claim in Model.ClaimList)
+                                    {
+                                        <option value="@claim.Value">@claim.Value</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="SaveClaimToUser()">Save</button>
+                            </div>
+                        </form>
                     </div>
+
                 </div>
             </div>
             <div class="card">
                 <div class="card-header" id="headingfour">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
-                            Add User Role
+                            Add Role to User
                         </button>
                     </h2>
                 </div>
@@ -95,12 +78,12 @@
                             @await Html.PartialAsync("AddRoleToUserForm", Model)
                         </div>
                     </div>
-                    <div class="card-footer">
+                    @*<div class="card-footer">
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <button type="button" class="btn btn-primary" onclick="AddRoleToUser()">Add User Permissions</button>
                             <button type="button" class="btn btn-primary">Delete</button>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>
@@ -109,12 +92,10 @@
 
 
 @section pagespecific {
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <link href="~/css/bootstrap-chosen.min.css" rel="stylesheet" />
     <script type="text/javascript">
 
         $(document).ready(function () {
-            $('#AddClaims').chosen({ width: '100%' });
+            $('#AddRoleClaims').chosen({ width: '100%' });
         });
 
         $(document).ready(function () {
@@ -125,15 +106,37 @@
             $('#AddUserRoleSelect').chosen({ width: '100%' });
         });
 
+        $(document).ready(function () {
+            $('#AddUserClaims').chosen({ width: '100%' });
+        });
+
         function ShowClaim() {
             $("#claimList").hide();
         }
 
+        function SaveClaimToUser() {
+            var userId = document.getElementById('AddClaimUser').value;
+            var claims = $('#AddUserClaims').val();
+            postData = { UserId: userId, Claims: claims }
+            $.ajax({
+                url: '@Url.Action("CreateUserToClaim", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    $('#Success').alert();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
         function SaveRole() {
             var roleName = $('#InputRoleName').val();
-            var claim = $('#AddClaims').val();
+            var claim = $('#AddRoleClaims').val();
             var organisationId = $('#organisationId').val();
-            debugger;
             var postData = { RoleName: roleName, Claims: claim, OrganisationId: organisationId }
 
             $.ajax({
@@ -155,9 +158,27 @@
             var roleName = $('#UpdateRoleSelect').val();
             var claim = $('#UpdateClaims').val();
             var postData = { RoleName: roleName, Claims: claim }
-            debugger;
             $.ajax({
                 url: '@Url.Action("UpdateRole", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    location.reload();
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    alert("Unable to save.");
+                });
+        }
+
+        function DeleteRole() {
+            var e = document.getElementById("DeleteRoleSelect");
+            var roleName = e.options[e.selectedIndex].text;  
+            debugger;
+            var postData = { RoleName: roleName }
+            $.ajax({
+                url: '@Url.Action("DeleteRoleSelect", "Authorize")',
                 type: "POST",
                 data: postData
             })

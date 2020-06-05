@@ -75,11 +75,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess = 0;
             int employeenumber = 0;
             //Calculation
-            foreach (var uISSharedDataRoles in agreement.ClientInformationSheet.SharedDataRoles.Where(sdr => sdr.DateDeleted == null))
+            foreach (var uISSharedDataRoles in agreement.ClientInformationSheet.RoleData.DataRoles.Where(sdr => sdr.DateDeleted == null))
             {
-                if (uISSharedDataRoles.Count > 0)
+                if (uISSharedDataRoles.Total > 0)
                 {
-                    employeenumber += uISSharedDataRoles.Count;
+                    employeenumber += uISSharedDataRoles.Total;
                 }
             }
 

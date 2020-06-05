@@ -10,9 +10,15 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
+using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
+using Microsoft.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Controllers
 {
+    [Authorize]
     public class AdminController : BaseController
 	{		
 		IPrivateServerService _privateServerService;
@@ -31,8 +37,12 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AdminController> _logger;
         IApplicationLoggingService _applicationLoggingService;
         IImportService _importService;
+        SignInManager<IdentityUser> _signInManager;
+        UserManager<IdentityUser> _userManager;
 
-		public AdminController (    
+        public AdminController (
+            SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
             IImportService importService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<AdminController> logger,
@@ -52,6 +62,8 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _userManager = userManager;
+            _signInManager = signInManager;
             _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
@@ -79,11 +91,13 @@ namespace DealEngine.WebUI.Controllers
             {         
                 var privateServers = await _privateServerService.GetAllPrivateServers();
                 var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
-                var merchants = await _merchantService.GetAllMerchants();                
+                var merchants = await _merchantService.GetAllMerchants();
+                var users = _userManager.Users.ToList();
 
                 model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
                 model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
                 model.Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants);
+                model.Users = users;
                 return View(model);
             }
             catch(Exception ex)
@@ -130,6 +144,24 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CEASUpdateUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServiceUpdateUsers(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> PMINZImportUsers()
         {
             User user = null;
@@ -147,6 +179,41 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceIndividuals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportPrincipals()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServicePrincipals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> CEASImportClaims()
         {
@@ -715,6 +782,17 @@ namespace DealEngine.WebUI.Controllers
             User user = await  _userService.GetUserByEmail(model.Email);
 
             return Redirect("~/Admin/Index");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImpersonateUser(IFormCollection form)
+        {
+            await _signInManager.SignOutAsync();
+            var deUser = await _userManager.FindByNameAsync(form["username"].ToString());
+            await _signInManager.SignInAsync(deUser, true);
+
+            return Redirect("~/Home/Index");
 
         }
 

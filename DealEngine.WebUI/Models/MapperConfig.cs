@@ -73,7 +73,9 @@ namespace DealEngine.WebUI.Models
             CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
 
             CreateMap<RevenueData, RevenueDataViewModel>();
+            CreateMap<RoleData, RoleDataViewModel>();
 
+            CreateMap<AdditionalRoleInformation, AdditionalRoleInformationViewModel>();
             CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
                 .IncludeAllDerived();
                 
@@ -113,6 +115,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.InformationSheet, map => map.Ignore())
                 .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())
                 .ForMember(dest => dest.ClientAgreementEGlobalSubmissions, map => map.Ignore())
+                .ForMember(dest => dest.Agreements, map => map.Ignore())
                 .ForMember(dest => dest.Id, map => map.Ignore());
             CreateMap<InformationSection, InformationSection>()                
                 .ForMember(dest => dest.Id, map => map.Ignore());

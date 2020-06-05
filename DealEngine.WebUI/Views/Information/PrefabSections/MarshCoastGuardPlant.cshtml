@@ -125,9 +125,9 @@
                             <label class="input">
                                 <select onchange="addPlantLoc()" class="form-control omv" id="MotorLocation" name="VehicleLocation">
                                     <option selected="selected" value="" required>-- Select --</option>
-                                    @foreach (var utrloc in Model.Locations)
+                                    @foreach (var utrloc in Model.LocationViewModel.Locations)
                                     {
-                                        <option value="@utrloc.LocationId">@string.Join(", ", utrloc.Street, utrloc.Suburb, utrloc.City)</option>
+                                        <option value="@utrloc.Id">@string.Join(", ", utrloc.Street, utrloc.Suburb, utrloc.City)</option>
                                     }
                                     <option value="add">Add Location</option>
                                 </select>
@@ -229,9 +229,9 @@
                             <label class="input">
                                 <select onchange="AddaddPlantLoc()" class="form-control omv" id="AddMotorLocation" name="VehicleLocation">
                                     <option selected="selected" value="" required>-- Select --</option>
-                                    @foreach (var utrloc in Model.Locations)
+                                    @foreach (var utrloc in Model.LocationViewModel.Locations)
                                     {
-                                        <option value="@utrloc.LocationId">@string.Join(", ", utrloc.Street, utrloc.Suburb, utrloc.City)</option>
+                                        <option value="@utrloc.Id">@string.Join(", ", utrloc.Street, utrloc.Suburb, utrloc.City)</option>
                                     }
                                     <option value="add">Add Location</option>
                                 </select>

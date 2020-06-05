@@ -7,21 +7,18 @@ namespace DealEngine.WebUI.Models
 	public class DashboardViewModel : BaseViewModel
 	{
 		public bool DisplayProducts { get; set; }
-
 		public bool DisplayDeals { get; set; }
-
 		public IList<ProductItemV2> ProductItems { get; set; }
-
 		public IList<ProductItem> DealItems { get; set; }
-
 		public IList<ProgrammeItem> ProgrammeItems { get; set; }
-
 		public IList<TaskItem> CriticalTaskItems { get; set; }
 
 		public IList<TaskItem> ImportantTaskItems { get; set; }
 
-        public string CurrentUserType { get; set; }
-    }
+		public string CurrentUserType { get; set; }
+		public IList<UserTask> UserTasks { get; set; }
+	}
+
 
 	public class ButtonItem
 	{
@@ -34,7 +31,7 @@ namespace DealEngine.WebUI.Models
 
 	public class ProductItem
 	{
-        public string Name { get; set; }
+		public string Name { get; set; }
 
 		public string Description { get; set; }
 
@@ -61,7 +58,8 @@ namespace DealEngine.WebUI.Models
 
 		public IList<KeyValuePair<string, Guid>> SheetHistory { get; set; }
 
-		public bool HasSheetHistory {
+		public bool HasSheetHistory
+		{
 			get { return SheetHistory != null && SheetHistory.Count > 1; }
 		}
 
@@ -78,28 +76,36 @@ namespace DealEngine.WebUI.Models
 
 		public string Status { get; set; }
 
-        public string ReferenceId { get; set; }
+		public string ReferenceId { get; set; }
 
-        public string Id { get; set; }
+		public string Id { get; set; }
 
 		public string LocalDateCreated { get; set; }
 
 		public string LocalDateSubmitted { get; set; }
-        public Boolean NextInfoSheet { get; set; }
-        public Boolean ProgrammeAllowUsesChange { get; set; }
-        public IList<SubClientProgramme> SubClientProgrammes { get; set; }
+		public Boolean NextInfoSheet { get; set; }
+		public Boolean ProgrammeAllowUsesChange { get; set; }
 
-        public string GetStatusDisplay ()
+		public IList<SubClientProgramme> SubClientProgrammes { get; set; }
+		public string AgreementStatus { get; set; }
+
+		public string GetStatusDisplay(string agreementstatus)
 		{
-			List<string> statusDisplay = new List<string> ();
+			List<string> statusDisplay = new List<string>();
 
-			if (!string.IsNullOrWhiteSpace (LocalDateCreated))
-				statusDisplay.Add ("Created on " + LocalDateCreated);
-			if (!string.IsNullOrWhiteSpace (LocalDateSubmitted))
-				statusDisplay.Add ("Submitted on " + LocalDateSubmitted);
+			if (!string.IsNullOrWhiteSpace(LocalDateCreated))
+				statusDisplay.Add("Created on " + LocalDateCreated);
+			if (!string.IsNullOrWhiteSpace(LocalDateSubmitted))
+				statusDisplay.Add("Submitted on " + LocalDateSubmitted);
+			if (agreementstatus != "")
+			{
+				statusDisplay.Add(" Agreement Status: " + agreementstatus);
 
+			}
 			return string.Join(", ", statusDisplay);
 		}
+
+
 	}
 
 	public class ProgrammeItem : BaseViewModel
@@ -112,18 +118,18 @@ namespace DealEngine.WebUI.Models
 
 		public IList<DealItem> Deals { get; set; }
 
-        public string CurrentUserIsBroker { get; set; }
+		public string CurrentUserIsBroker { get; set; }
 
-        public string CurrentUserIsInsurer { get; set; }
+		public string CurrentUserIsInsurer { get; set; }
 
-        public string CurrentUserIsTC { get; set; }
+		public string CurrentUserIsTC { get; set; }
 		public string ProgrammeClaim { get; set; }
 	}
 
 	public class TaskItem : BaseViewModel
-    {
-        public Guid Id { get; set; }
-        public string ClientName { get; set; }
+	{
+		public Guid Id { get; set; }
+		public string ClientName { get; set; }
 
 		public string Description { get; set; }
 
@@ -137,5 +143,5 @@ namespace DealEngine.WebUI.Models
 
 		public bool Completed { get; set; }
 	}
+
 }
-    

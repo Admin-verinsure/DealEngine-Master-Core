@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Mime;
 using System.IO;
@@ -503,10 +503,99 @@ namespace DealEngine.Services.Impl
                 //    strFinancialIP = strFinancialIPList + " is";
                 //}
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
-            }            
+            }
 
-			// merge the configured merge feilds into the document
-			string content = FromBytes (template.Contents);
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                DataTable dtadvisor = new DataTable();
+                dtadvisor.Columns.Add("Advisor");
+                dtadvisor.Columns.Add("RetroactiveDate");
+
+                DataTable dtadvisor1 = new DataTable();
+                dtadvisor1.Columns.Add("Advisor");
+                dtadvisor1.Columns.Add("RetroactiveDate");
+
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    {
+                        DataRow dradvisor = dtadvisor.NewRow();
+
+                        dradvisor["Advisor"] = uisorg.Name;
+                        dradvisor["RetroactiveDate"] = uisorg.PIRetroactivedate;
+
+                        dtadvisor.Rows.Add(dradvisor);
+
+                        DataRow dradvisor1 = dtadvisor1.NewRow();
+
+                        dradvisor1["Advisor"] = uisorg.Name;
+                        dradvisor1["RetroactiveDate"] = uisorg.DORetroactivedate;
+
+                        dtadvisor1.Rows.Add(dradvisor1);
+                    }
+
+                    dtadvisor.TableName = "AdvisorDetailsTablePI";
+                    dtadvisor1.TableName = "AdvisorDetailsTableDO";
+
+                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", ConvertDataTableToHTML(dtadvisor)));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", ConvertDataTableToHTML(dtadvisor1)));
+
+                }
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
+            }
+
+
+            string customeactivity = "";
+            string customeactivityexcess = "";
+            if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG Custome Excess for PI
+            {
+                if (agreement.ClientInformationSheet.RevenueData != null)
+                {
+                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                    {
+                        if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+                        {
+                            if (uISActivity.Percentage > 0)
+                            {
+                                if (string.IsNullOrEmpty(customeactivity))
+                                {
+                                    customeactivity = "Financial Planning";
+                                    customeactivityexcess = "$2,500 each and every Claim, costs inclusive";
+                                } else
+                                {
+                                    customeactivity += Environment.NewLine + "Financial Planning";
+                                    customeactivityexcess += Environment.NewLine + "$2,500 each and every Claim, costs inclusive";
+                                }
+                            }
+                        }
+                        else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+                        {
+                            if (uISActivity.Percentage > 0)
+                            {
+                                if (string.IsNullOrEmpty(customeactivity))
+                                {
+                                    customeactivity = "Broking Fire and General";
+                                    customeactivityexcess = "$5,000 each and every Claim, costs inclusive";
+                                }
+                                else
+                                {
+                                    customeactivity += Environment.NewLine + "Broking Fire and General";
+                                    customeactivityexcess += Environment.NewLine + "$5,000 each and every Claim, costs inclusive";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivity]]", customeactivity));
+            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivityexcess]]", customeactivityexcess));
+
+            // merge the configured merge feilds into the document
+            string content = FromBytes (template.Contents);
 			foreach (KeyValuePair<string, string> field in mergeFields)
 				content = content.Replace (field.Key, field.Value);
 
@@ -538,6 +627,15 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
             }
+            if (agreement.ClientInformationSheet != null)
+            {
+                if (agreement.ClientInformationSheet.Programme.Owner != null)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", agreement.ClientInformationSheet.Programme.Owner.TradingName));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));
+                }
+            }
+
             //Eglobal merge fields
             if (agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Count > 0)
             {
@@ -596,16 +694,24 @@ namespace DealEngine.Services.Impl
 
                     if (term.SubTermType == "CL")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
-                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
-                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
-                        {
-                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
-                        } else
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
                         {
                             mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                        } else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                            }
                         }
-                        
                     }
                 }
             }

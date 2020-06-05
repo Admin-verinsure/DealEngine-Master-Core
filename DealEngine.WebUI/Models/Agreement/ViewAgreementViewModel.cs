@@ -1,16 +1,235 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using DealEngine.Domain.Entities;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DealEngine.WebUI.Models.Agreement
 {
     public class ViewAgreementViewModel : BaseViewModel
     {
+        public ViewAgreementViewModel()
+        {
+        }
+
+        public ViewAgreementViewModel(ClientAgreement agreement, ClientInformationSheet sheet, System.Globalization.CultureInfo userCulture)
+        {
+            if (agreement != null)
+            {
+                GetInsuranceInclusionsExclusions(agreement, userCulture);
+                GetMultiCoverOptions(agreement, userCulture);
+                GetRiskPremiums(agreement, userCulture);
+            }
+            if (sheet != null)
+            {
+                GetVehicles(sheet);
+                GetBoats(agreement, sheet);
+            }
+        }
+
+        private void GetBoats(ClientAgreement agreement, ClientInformationSheet sheet)
+        {
+            Boats = new List<BoatViewModel>();
+            HasBoats = false;
+            foreach (Boat b in sheet.Boats)
+            {
+                if (!b.Removed && b.DateDeleted == null && b.BoatCeaseDate == DateTime.MinValue)
+                {
+                    Boats.Add(new BoatViewModel { BoatName = b.BoatName, BoatMake = b.BoatMake, BoatModel = b.BoatModel, MaxSumInsured = b.MaxSumInsured, BoatQuoteExcessOption = b.BoatQuoteExcessOption });
+                    HasBoats = true;
+                }
+            }
+
+            if (HasBoats)
+            {
+                BVTerms = new List<EditTermsViewModel>();
+                foreach (ClientAgreementBVTerm bt in
+                    agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null).BoatTerms)
+                {
+                    if (bt.DateDeleted == null)
+                    {
+                        BVTerms.Add(new EditTermsViewModel
+                        {
+                            BoatName = bt.BoatName,
+                            BoatMake = bt.BoatMake,
+                            BoatModel = bt.BoatModel,
+                            TermLimit = bt.TermLimit,
+                            Excess = bt.Excess
+                        });
+                    }
+                }
+            }
+        }
+        private async Task GetVehicles(ClientInformationSheet sheet)
+        {
+            Vehicles = new List<VehicleViewModel>();
+            HasVehicles = false;
+            foreach (Vehicle v in sheet.Vehicles)
+            {
+                if (!v.Removed && v.DateDeleted == null && v.VehicleCeaseDate == DateTime.MinValue)
+                {
+                    Vehicles.Add(new VehicleViewModel { VehicleCategory = v.VehicleCategory, Make = v.Make, Year = v.Year, Registration = v.Registration, FleetNumber = v.FleetNumber, VehicleModel = v.Model, SumInsured = v.GroupSumInsured });
+                    HasVehicles = true;
+                }
+            }
+        }
+        private async Task GetRiskPremiums(ClientAgreement agreement, System.Globalization.CultureInfo userCulture)
+        {
+            RiskPremiums = new List<RiskPremiumsViewModel>();
+            var sheet = agreement.ClientInformationSheet;
+            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null))
+            {
+                if (sheet.IsChange && sheet.PreviousInformationSheet != null)
+                {
+                    RiskPremiums.Add(new RiskPremiumsViewModel
+                    {
+                        RiskName = agreement.Product.Name,
+                        Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", userCulture),
+                        FSL = term.FSLDiffer.ToString("C", userCulture),
+                        TotalPremium = term.PremiumDiffer.ToString("C", userCulture),
+                        TotalPremiumIncFeeGST = ((term.PremiumDiffer + agreement.BrokerFee) * agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", userCulture),
+                        TotalPremiumIncFeeIncGST = ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", userCulture)
+                    });
+                }
+                else
+                {
+                    RiskPremiums.Add(new RiskPremiumsViewModel
+                    {
+                        RiskName = agreement.Product.Name,
+                        Premium = (term.Premium - term.FSL).ToString("C", userCulture),
+                        FSL = term.FSL.ToString("C", userCulture),
+                        TotalPremium = term.Premium.ToString("C", userCulture),
+                        TotalPremiumIncFeeGST = ((term.Premium + agreement.BrokerFee) * agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", userCulture),
+                        TotalPremiumIncFeeIncGST = ((term.Premium + agreement.BrokerFee) * (1 + agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", userCulture)
+                    });
+                }
+            }
+        }
+        private async Task GetMultiCoverOptions(ClientAgreement agreement, System.Globalization.CultureInfo userCulture)
+        {
+            MultiCoverOptions = new List<MultiCoverOptions>();
+            foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
+            {
+                if (null != agreement.Product.DependableProduct)
+                {
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                    } else
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                    }
+
+                }
+                else
+                {
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                    } else
+                    {
+                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                    }
+                }
+            }
+        }
+        private async Task GetInsuranceInclusionsExclusions(ClientAgreement agreement, System.Globalization.CultureInfo userCulture)
+        {
+            Inclusions = new List<InsuranceInclusion>();
+            Exclusions = new List<InsuranceExclusion>();
+            if (agreement.Product.IsMultipleOption)
+            {
+                if (agreement.Product.Id == new Guid("79dc8bcd-01f2-4551-9caa-aa9200f1d659")) //NZACS DO
+                {
+                    Inclusions.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below / Extension Covers" });
+                }
+                else
+                {
+                    Inclusions.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below" });
+                }
+                Exclusions.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
+
+            }
+            else
+            {
+                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                {
+                    var riskname = "";
+                    if (term.SubTermType == "MV")
+                    {
+                        riskname = "Motor Vehicle";
+                    }
+                    else if (term.SubTermType == "BV")
+                    {
+                        riskname = "Vessel";
+                    }
+                    else
+                    {
+                        riskname = agreement.Product.Name;
+                    }
+                    Inclusions.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = term.TermLimit.ToString("C0", userCulture) });
+                }
+
+                if (agreement.Product.Id == new Guid("107c38d6-0d46-4ec1-b3bd-a73b0021f2e3")) //HIANZ
+                {
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        Exclusions.Add(new InsuranceExclusion
+                        {
+                            RiskName = "Motor Vehicle",
+                            Exclusion = "Excess: <br /> - 1% of Sum Insured subject to a minimum of $500 " +
+                                                            "<br /> - theft excess 1 % of the sum insured with a minimum of $1,000 including whilst on hire, non return from hire and from the clients yard " +
+                                                            "<br /> - theft excess nil for any vehicle or item insured fitted with a GPS tracking device " +
+                                                            "<br /> PLUS " +
+                                                            "<br /> - Whilst being driven by any person under 25 years of age $500 " +
+                                                            "<br /> - Breach of Warranty / Invalidation Clause $1, 000"
+                        });
+                    }
+                }
+                else if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
+                { //Arcco
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        Exclusions.Add(new InsuranceExclusion
+                        {
+                            RiskName = "Motor Vehicle",
+                            Exclusion = "Excess: <br /> $2,000 each and every claim. " +
+                                                            "<br /> An additional $1,000 excess applies when the vehicle is on hire and is being driven by an under 21 year old driver or has held a full licence less than 12 months. " +
+                                                            "<br /> $500 excess on trailers. "
+                        });
+                    }
+                }
+                else if (agreement.Product.Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a"))
+                { //CoastGuard
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        Exclusions.Add(new InsuranceExclusion
+                        {
+                            RiskName = "Vessel",
+                            Exclusion = "Excess: refer to vessel excess "
+                        });
+                    }
+                }
+                else
+                {
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        Exclusions.Add(new InsuranceExclusion
+                        {
+                            RiskName = agreement.Product.Name,
+                            Exclusion = "Excess: " + term.Excess.ToString("C", userCulture)
+                        });
+                    }
+                }
+            }
+
+        }
+
         public IEnumerable<InsuranceRoleViewModel> InsuranceRoles { get; set; }
         public string ProductName { get; set; }
+        public string ProgrammeName { get; set; }
         public string Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? IssuedToCustomer { get; set; }
@@ -18,29 +237,31 @@ namespace DealEngine.WebUI.Models.Agreement
         public Boolean NextInfoSheet { get; set; }
         public Boolean IsChange { get; set; }
         public string StartDate { get; set; }
+        public string Content { get; set; }
         public string Sheetstatus { get; set; }
         public string EndDate { get; set; }
         public string CurrencySymbol { get; set; }
-		public string AdministrationFee { get; set; }
-        public IEnumerable<InsuranceInclusion> Inclusions { get; set; }
-        public IEnumerable<InsuranceExclusion> Exclusions { get; set; }
-        public IEnumerable<MultiCoverOptions> MultiCoverOptions { get; set; }
-        public IEnumerable<RiskPremiumsViewModel> RiskPremiums { get; set; }
-		public Guid InformationSheetId { get; set; }
-		public bool HasVehicles { get; set; }
-		public IEnumerable<VehicleViewModel> Vehicles { get; set; }
-		public Guid ClientAgreementId { get; set; }
-		public string ClientNumber { get; set; }
-		public string PolicyNumber { get; set; }
-		public string BrokerageRate { get; set; }
-		public IList<AgreementDocumentViewModel> Documents { get; set; }
-		public bool EditEnabled { get; set; }
+        public string AdministrationFee { get; set; }
+        public IList<InsuranceInclusion> Inclusions { get; set; }
+        public IList<InsuranceExclusion> Exclusions { get; set; }
+        public IList<MultiCoverOptions> MultiCoverOptions { get; set; }
+        public IList<RiskPremiumsViewModel> RiskPremiums { get; set; }
+        public Guid InformationSheetId { get; set; }
+        public bool HasVehicles { get; set; }
+        public IList<VehicleViewModel> Vehicles { get; set; }
+        public Guid ClientAgreementId { get; set; }
+        public string ClientNumber { get; set; }
+        public string PolicyNumber { get; set; }
+        public string BrokerageRate { get; set; }
+        public IList<AgreementDocumentViewModel> Documents { get; set; }
+        public bool EditEnabled { get; set; }
         public bool IsMultipleOption { get; set; }
         public bool IsOptionalProduct { get; set; }
         public Guid ClientProgrammeId { get; set; }
+        public Guid ProgrammeId { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; set; }
         public bool HasBoats { get; set; }
-        public IEnumerable<BoatViewModel> Boats { get; set; }
+        public IList<BoatViewModel> Boats { get; set; }
         public List<EditTermsViewModel> BVTerms { get; internal set; }
         public List<EditTermsViewModel> MVTerms { get; internal set; }
         public List<EditTermsViewModel> PLTerms { get; internal set; }
@@ -53,7 +274,9 @@ namespace DealEngine.WebUI.Models.Agreement
         public List<EditTermsCancelViewModel> BVTermsCan { get; internal set; }
         public List<EditTermsCancelViewModel> MVTermsCan { get; internal set; }
         public List<ClientAgreementReferral> Referrals { get; set; }
+        public IList<SelectListItem> UserList { get; set; }
         public User CurrentUser { get; set; }
+        public User SelectedBroker { get; set; }
         public DateTime CancellEffectiveDate { get; set; }
         public string InformationSheetStatus { get; set; }
         public decimal ReferralAmount { get; set; }
@@ -74,6 +297,10 @@ namespace DealEngine.WebUI.Models.Agreement
         public string TerritoryLimit { get; set; }
         public string Jurisdiction { get; set; }
         public string ProfessionalBusiness { get; set; }
+        public string issuetobrokercomment { get; set; }
+        public DateTime? IssuedToBroker { get; set; }
+        public string issuetobrokerby { get; set; }
+        public string issuetobrokerto { get; set; }
     }
 
     public class InsuranceInclusion

@@ -63,7 +63,7 @@ namespace DealEngine.Services.Impl
         {
             get
             {
-                return _configuration.GetValue<string>("GetCompanyTitle");
+                return _configuration.GetValue<string>("companyLogo");
             }
         }
 

@@ -10,11 +10,14 @@ namespace DealEngine.Services.Interfaces
         Task<User> GetUser (string username);
         Task<User> GetUserById (Guid userId);
         Task<User> GetUserByEmail (string email);
+        Task<User> GetUserByUserName(string userName);
         Task<List<User>> GetAllUsers ();
         Task ApplicationCreateUser(User user);
         Task Create(User user);
         Task Update(User user);
         Task<List<User>> GetLockedUsers();
-        Task<User> GetUserByOrganisation(Organisation org);
+        //Task<User> GetUserByOrganisation(Organisation org);
+        Task<List<User>> GetAllUserByOrganisation(Organisation org);
+        Task<List<User>> GetBrokerUsers();
     }
 }

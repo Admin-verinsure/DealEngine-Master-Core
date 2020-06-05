@@ -418,14 +418,18 @@ else
                 </table>
             </div>
 
-            <div class="row">
-                <div class="col-3">
-                    <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
+            @if (!Model.ClientInformationSheet.Programme.BaseProgramme.ProgHideAdminFee)
+            {
+                <div class="row">
+                    <div class="col-3">
+                        <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
+                    </div>
+                    <div class="col">
+                        @Model.AdministrationFee
+                    </div>
                 </div>
-                <div class="col">
-                    @Model.AdministrationFee
-                </div>
-            </div>
+            }
+
         </div>
     </fieldset>
 }
@@ -467,7 +471,59 @@ else
         width: 100%;
     }
 </style>
+@section pagespecific {
+    <script type="text/javascript">
 
+         $(window).on("load", function () {
+            debugger;
+           if ("@Model.InformationSheetStatus" == "Started" || "@Model.InformationSheetStatus" == "Submitted") {
+                debugger;
+
+                var progId = "@ViewBag.Id";
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                    url: '@Url.Action("GetCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
+                    }
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
+                });
+
+             }
+
+
+
+             @*if ("@Model.InformationSheetStatus.StartsWith("Bound")" == "True") {
+                debugger;
+
+                $("#Coveroptionssec :input").prop("disabled", true);
+              } else {
+                $("#Coveroptionssec :input").prop("disabled", false);
+              }*@
+
+
+
+        });
+
+    </script>
+
+}
 
 <script>
     $(document).ready(function () {
@@ -517,17 +573,157 @@ else
                 });
         }
 
-    });
-
-    $(window).on("load", function () {
-        if (@Model.InformationSheetStatus.StartsWith("Bound")) {
+        @*if ("@Model.InformationSheetStatus.StartsWith("Bound")" == "True") {
+            debugger;
             $("#Coveroptionssec :input").prop("disabled", true);
         } else {
             $("#Coveroptionssec :input").prop("disabled", false);
+        };*@
+
+
+          if ( "@Model.InformationSheetStatus" == "Submitted") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                   url: '@Url.Action("GetCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
+                    }
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
+                });
+
         }
 
+          if ("@Model.InformationSheetStatus" == "Started") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                    url: '@Url.Action("GetdefaultCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                alert("There was an error while trying to save the Vehicle.");
+                });
+
+             }
+
+
+
+        @*if ( "@Model.InformationSheetStatus" == "Started") {
+                debugger;
+
+                var progId = $("#ClientProgrammeId").val();
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
+
+                var proddata = "";
+               $.ajax({
+                   url: '@Url.Action("GetdefaulProductSelect", "Information")',
+                   type: "POST",
+                    async: false,
+                   data: postData
+               })
+                    .done(function (data) {
+                         proddata = data;
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                    });
+
+              var CoverOptions = new Array(proddata.length);
+                        for (var i = 0; i < proddata.length; i++) {
+                               var ProdName = proddata[i];
+                            var producttable = "[id='" + ProdName + "'] tr";
+                            //var table = document.getElementById(ProdName);
+                            //var table1 = $('#producttable');
+                             count = 0;
+                                $(producttable).each(function () {
+                                    debugger;
+                                    count++;
+                                    var $tds = $(this).find('td'),
+                                        value = $tds.eq(3).text().trim();
+                                    value1 = $tds.eq(1).text().trim();
+                                    if(count == 2)
+                                    $tds.eq(0).checked = true;
+                                  
+                                });
+                        }
+          }*@
 
     });
+
+
+
+
+
+    //      //@*if ("@Model.InformationSheetStatus.StartsWith("Started")" == "True") {
+                debugger;
+
+                var ID = $("#ClientProgrammeId").val();
+               var postdata = {
+                     id : ID
+               }
+                $.ajax({
+                   url: '@Url.Action("GetProductName", "Information")',
+                   type: "POST",
+                   data: postdata
+                }).done(function (data) {
+                        var prodname = data;
+                        for (var i = 0; i < prodname.length; i++) {
+                            var ProdName = prodname[i];
+                             if (ProdName.length == 1) {
+                             var queryselector = "" + "input[name=\'" + ProdName + "\']";
+
+                               $(queryselector).attr('checked', true);
+                             }
+                        }
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                });
+
+          }*@
+
+
+
+    //});
 </script>
 
 

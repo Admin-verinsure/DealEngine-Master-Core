@@ -1,4 +1,4 @@
-﻿using NHibernate.Linq;
+using NHibernate.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,28 +47,10 @@ namespace DealEngine.Services.Impl
 			return await _clientProgrammeRepository.GetByIdAsync(id);
 		}
 
-        public async Task<Programme> GetClientProgrammebyName(string programmeName)
-        {
-            return await _programmeRepository.FindAll().FirstOrDefaultAsync(p => p.Name == "NZACS Programme");
-        }
-
-
         public async Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
-            var clientList = new List<ClientProgramme>();
-            foreach (var client in list)
-            {
-                var isBaseClass = await IsBaseClass(client);
-                if (isBaseClass)
-                {
-                    if (client.DateDeleted == null)
-                    {
-                        clientList.Add(client);
-                    }
-                }
-            }
-            return clientList;
+            return list;
         }
 
 		public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
@@ -129,19 +111,24 @@ namespace DealEngine.Services.Impl
 		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser,ChangeReason changeReason)
 		{
 			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser, _mapper);
-            newClientProgramme = _mapper.Map<ClientProgramme>(clientProgramme);
-   //         newClientProgramme.ChangeReason = changeReason;
-			//newClientProgramme.InformationSheet.Programme = newClientProgramme;
-   //         newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
-   //         newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
-   //         newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
-   //         newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
-            var reference = await _referenceService.GetLatestReferenceId();
+			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
+            try {
+            //newClientProgramme = _mapper.Map<ClientProgramme>(clientProgramme);
+                newClientProgramme.ChangeReason = changeReason;
+                newClientProgramme.InformationSheet.Programme = newClientProgramme;
+                newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
+                newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
+                newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
+                newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
+                var reference = await _referenceService.GetLatestReferenceId();
             newClientProgramme.InformationSheet.ReferenceId = reference;
             newClientProgramme.InformationSheet.IsChange = true;
             await _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
-
+            }
+            catch (Exception ex)
+            {
+              Console.WriteLine( ex.Message);
+            }
             return newClientProgramme;
 		}
 
@@ -268,12 +255,22 @@ namespace DealEngine.Services.Impl
                     return false;
                 }
             }
+
             return true;
         }
 
         public async Task Update(Programme programmes)
         {
             await _programmeRepository.UpdateAsync(programmes);
+        }
+
+        public async Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template)
+        {
+            if (!programme.SharedDataRoleTemplates.Contains(template))
+            {
+                programme.SharedDataRoleTemplates.Add(template);
+                await _programmeRepository.UpdateAsync(programme);
+            }
         }
     }
 }

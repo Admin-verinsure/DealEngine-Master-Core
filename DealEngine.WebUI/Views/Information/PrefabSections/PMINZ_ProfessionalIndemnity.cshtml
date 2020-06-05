@@ -1,7 +1,7 @@
+
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div id="PI">
-    <form id="PIViewModel" class="is-valid">
+    <form id="PIViewModel" class="is-valid" data-accordianId="Professional Indemnity">
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
@@ -10,7 +10,7 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    <select id="hascontractingservices" name="PIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hascontractingservices" name="PIViewModel.ContractingServicesOptions" multiple data-rule="ContractingService" data-item='PIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PIViewModel.ContractingServicesOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -546,7 +546,7 @@
                     <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
                 </div>
                 <div class="col-3">
-                    <select id="hasmanagedprojects" name="PIViewModel.HasManagedProjectOptions" data-rule="reverseValidateOnSubmit" data-item='PIViewModel.HasManagedProjectOptions,tblpminzproject' class="custom-select" onchange="OnChange(this.id, this.name)">
+                    <select id="hasmanagedprojects" name="PIViewModel.HasManagedProjectOptions" data-rule="ReverseValidateOnSubmit" data-item='PIViewModel.HasManagedProjectOptions,tblProject' class="custom-select" onchange="OnChange(this.id, this.name)">
                         @foreach (var option in Model.PIViewModel.HasManagedProjectOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -570,4 +570,3 @@
             </div>
         </div>
     </form>
-</div>

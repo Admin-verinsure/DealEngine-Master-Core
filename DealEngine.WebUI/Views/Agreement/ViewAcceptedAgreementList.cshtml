@@ -60,6 +60,13 @@
                                 </li>
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>
+                                    </li>
+                                }
+
+                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                {
                                     @if (item.SentOnlineAcceptance != true)
                                     {
                                         <li class="nav-item">
@@ -114,6 +121,12 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 </li>
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>
+                                    </li>
+                                }
+                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                {
                                     @if (item.SentOnlineAcceptance != true)
                                     {
                                         <li class="nav-item">
@@ -152,6 +165,13 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
                             }
 
+                            @if (@item.Status == "Bound and pending payment")
+                            {
+                                <li class="nav-item">
+                                    <a href="~/Agreement/ResumeGeneratePxPayment/@item.ClientInformationSheet.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Payment Option</a>
+                                </li>
+                            }
+
                         </ul>
                     </div>
 
@@ -162,12 +182,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }
 
 
-                @if (@multiCoverOptionsStatus && !(@ViewBag.Status.Contains("Bound")))
-                {
-                    <div class="form-group">
-                        <div> <button class="btn btn-success btn-sm" onclick="SaveCoveroptions();">Save All Cover Options</button></div>
-                    </div>
-                }
 
 
             <div class="form-group">
@@ -181,11 +195,12 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
                         @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
 
-                        @if (!User.IsInRole("CLIENT"))
+                        @if (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer)
                         {
                             <h3><strong>Options </strong></h3>
                             <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
+                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
+                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
                         }
                     }
                     <!-- loop through process once only!! -->
@@ -193,7 +208,14 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }
             </div>
 
-                </form>
+                @if (@multiCoverOptionsStatus && (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer))
+                {
+                    <div class="form-group">
+                        <div> <button class="btn btn-success btn-sm" onclick="SaveCoveroptions();">Save All Cover Options</button></div>
+                    </div>
+                }
+
+            </form>
         </div>
 
     </div>
@@ -243,11 +265,13 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         alert("There was an error getting ProductName.");
                     });
 
-          };
+        };
 
-        $(window).on("load", function () {
-            if ($("#Sheetstatus").val() != "Started") {
+         $(window).on("load", function () {
+            debugger;
+            if ("@ViewBag.Sheetstatus" != "Started") {
                 debugger;
+
                 var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
                 var postData = { ProgrammeId: progId };
@@ -270,24 +294,27 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                             //$('#' + arr[count+1]).val(arr[count + 1]);
                         }
                     }
-                }).fail(function (a, s, d) {
-                    debugger;
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
                 });
 
+             }
 
+           
+              @*if ("@ViewBag.Sheetstatus" == "Bound") { // changed for pending payment next button issue*@
 
-            }
-
-            if ("@ViewBag.Status.Contains("Bound")" == "True") {
+              @*if ("@ViewBag.Status.Contains("Bound")" == "True" ) {
                 debugger;
                 //var coveroptiontable = document.querySelector('[type="radio"]');
                 $("#Coveroptionssec :input").prop("disabled", true);
-            } else {
+              } else {
                 $("#Coveroptionssec :input").prop("disabled", false);
-            }
+              }*@
 
+             
 
         });
 
     </script>
+
 }

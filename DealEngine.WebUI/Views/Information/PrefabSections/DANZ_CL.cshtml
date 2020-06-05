@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-<div id="CLI">
-    <form id="CLIViewModel" class="is-valid">
+
+    <form id="CLIViewModel" class="is-valid" data-accordianId="Cyber Liability Insurance">
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
@@ -183,7 +183,7 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            <select id="hasrenewal" name="CLIViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="reverse" required>
+                            <select id="hasrenewal" name="CLIViewModel.HasExistingPolicyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
                                 @foreach (var option in Model.CLIViewModel.HasExistingPolicyOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -246,5 +246,3 @@
             </div>
         </div>
     </form>
-</div>
-

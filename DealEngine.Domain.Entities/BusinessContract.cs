@@ -22,6 +22,8 @@ namespace DealEngine.Domain.Entities
         public virtual Boolean ProjectManager { get; set; }
         public virtual Boolean ProjectCoordinator { get; set; }
         public virtual Boolean ProjectEngineer { get; set; }
+        public virtual string Country { get; set; }
+
         public virtual ClientInformationSheet ClientInformationSheet
         {
             get;

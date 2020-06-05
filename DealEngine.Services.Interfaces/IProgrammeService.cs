@@ -11,7 +11,6 @@ namespace DealEngine.Services.Interfaces
         Task<Programme> GetCoastGuardProgramme();
         Task<List<Programme>> GetProgrammesByOwner (Guid ownerOrganisationId);
 		Task<ClientProgramme> GetClientProgramme (Guid id);
-        Task<Programme> GetClientProgrammebyName(string programmeName);
         Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
 		Task<List<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);
         Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
@@ -36,6 +35,7 @@ namespace DealEngine.Services.Interfaces
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
         Task<bool> IsBaseClass(ClientProgramme clientProgramme);
         Task<bool> SubsystemCompleted(ClientProgramme clientProgramme);
+        Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
     }
 }
 

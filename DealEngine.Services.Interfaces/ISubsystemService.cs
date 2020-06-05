@@ -7,6 +7,7 @@ namespace DealEngine.Services.Interfaces
 {
     public interface ISubsystemService
     {
-        Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet);
+        Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user);
+        Task ValidateSubObjects(ClientInformationSheet informationSheet);
     }
 }

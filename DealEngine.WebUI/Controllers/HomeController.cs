@@ -14,45 +14,54 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 #endregion
 
 namespace DealEngine.WebUI.Controllers
-{    
+{
     [Authorize]
     public class HomeController : BaseController
     {
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
-        ITaskingService _taskingService;        
+        ITaskingService _taskingService;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
         IHttpClientService _httpClientService;
         IMapper _mapper;
-        IEmailService _emailService;        
+        IAppSettingService _appSettingService;
+        IEmailService _emailService;
         IProgrammeService _programmeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
-        IApplicationLoggingService _applicationLoggingService;       
-
-        public HomeController(            
+        IApplicationLoggingService _applicationLoggingService;
+        IOrganisationService _organisationService;
+        IUnitOfWork _unitOfWork;
+        public HomeController(
+            IOrganisationService organisationService,
+            IAppSettingService appSettingService,
             IEmailService emailService,
             IMapper mapper,
             IApplicationLoggingService applicationLoggingService,
             ILogger<HomeController> logger,
             IProductService productService,
             IProgrammeService programmeService,
-            IUserService userRepository, 
+            IUserService userRepository,
             IHttpClientService httpClientService,
-            ITaskingService taskingService, 
-            IClientInformationService customerInformationService, 
-            IPrivateServerService privateServerService, 
-            IClientAgreementService clientAgreementService, 
-            IClientInformationService clientInformationService
+            ITaskingService taskingService,
+            IClientInformationService customerInformationService,
+            IPrivateServerService privateServerService,
+            IClientAgreementService clientAgreementService,
+            IClientInformationService clientInformationService,
+            IUnitOfWork unitOfWork
+
             )
 
-            : base (userRepository)
-        {            
+            : base(userRepository)
+        {
+            _organisationService = organisationService;
+            _appSettingService = appSettingService;
             _emailService = emailService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
@@ -62,9 +71,10 @@ namespace DealEngine.WebUI.Controllers
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             _taskingService = taskingService;
-            _clientInformationService = clientInformationService;            
+            _clientInformationService = clientInformationService;
             _clientAgreementService = clientAgreementService;
-            _mapper = mapper;            
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: home/index
@@ -72,16 +82,15 @@ namespace DealEngine.WebUI.Controllers
         {
             return View();
         }
-        
+
         public async Task<IActionResult> Index()
         {
-            ViewBag.Title = "Proposalonline Dashboard";
+            ViewBag.Title = "DealEngine Dashboard";
 
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
             model.DealItems = new List<ProductItem>();
-            model.CriticalTaskItems = new List<TaskItem>();
-            model.ImportantTaskItems = new List<TaskItem>();
+            model.UserTasks = new List<UserTask>();            
 
             User user = null;
             try
@@ -98,10 +107,12 @@ namespace DealEngine.WebUI.Controllers
                 if (user.PrimaryOrganisation.IsInsurer)
                 {
                     model.CurrentUserType = "Insurer";
+                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
                 if (user.PrimaryOrganisation.IsTC)
                 {
                     model.CurrentUserType = "TC";
+                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
 
                 IList<string> languages = new List<string>();
@@ -110,11 +121,11 @@ namespace DealEngine.WebUI.Controllers
                 IList<Programme> programmeList = new List<Programme>();
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
-                {
-                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp=>bp.BaseProgramme);                    
+                {                    
+                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme);
                     foreach (var clientProgramme in clientProgList)
                     {
-                        programmeList.Add(clientProgramme.Key);                     
+                        programmeList.Add(clientProgramme.Key);
                     }
                 }
                 else
@@ -148,176 +159,41 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search()
         {
-            return View("Search");
-
+            var companyName = _appSettingService.GetCompanyTitle;
+            SearchViewModel model = new SearchViewModel(companyName);
+            return View("Search", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> ViewProgramme(IFormCollection collection)
-        {                       
-            //enum 
-            //1-Reference No
-            //2-Insured First Name
-            //3-Insured Last Name
-            //4-Boat Name
+        {
+
             var searchTerm = collection["SearchTerm"].ToString();
             var searchValue = collection["SearchValue"].ToString();
+            ProgrammeItem model = new ProgrammeItem();
+            User user = await CurrentUser();
 
-            ProgrammeItem model = new ProgrammeItem();            
-            User user = null;
-
-            var isValidInput = ValidateSearchInput(searchTerm, searchValue);
-            if (isValidInput)
+            if (searchTerm == "Advisory")
             {
-                try
-                {
-                    user = await CurrentUser();
-
-                    if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
-                    {
-                        if (searchTerm == "1")
-                        {
-                            searchValue = searchValue.Replace(" ", string.Empty);
-                            model.Deals = await GetReferenceIdSearch(user, searchValue);
-                        }
-                        else if (searchTerm == "2" || searchTerm == "3")
-                        {
-                            searchValue = searchValue.Replace(" ", string.Empty);
-                            model.Deals = await GetInsuredNameSearch(user, searchValue);
-                        }
-                        else if(searchTerm == "4")
-                        {                            
-                            model.Deals = await GetBoatNameSearch(user, searchValue);
-                        }
-                    }
-
-                    if (user.PrimaryOrganisation.IsBroker)
-                    {
-                        model.CurrentUserIsBroker = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsBroker = "False";
-                    }
-                    if (user.PrimaryOrganisation.IsInsurer)
-                    {
-                        model.CurrentUserIsInsurer = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsInsurer = "False";
-                    }
-                    if (user.PrimaryOrganisation.IsTC)
-                    {
-                        model.CurrentUserIsTC = "True";
-                    }
-                    else
-                    {
-                        model.CurrentUserIsTC = "False";
-                    }
-
-                    return View(model);
-                }
-                catch (Exception ex)
-                {
-                    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                    return RedirectToAction("Error500", "Error");
-                }
+                model.Deals = await GetAdvisoryNameSearch(searchValue);
+            }
+            if (searchTerm == "Boat")
+            {
+                model.Deals = await GetBoatNameSearch(searchValue);
+            }
+            if (searchTerm == "Name")
+            {
+                model.Deals = await GetClientNameSearch(searchValue);
+            }
+            if (searchTerm == "Reference")
+            {
+                model.Deals = await GetReferenceSearch(searchValue);
             }
 
-            model.Deals = new List<DealItem>();
             return View(model);
         }
 
-        private async Task<IList<DealItem>> GetBoatNameSearch(User user, string searchValue)
-        {
-            List<DealItem> deals = new List<DealItem>();
-            List<ClientInformationSheet> clients = await _clientInformationService.FindByBoatName(searchValue);
-
-            if (clients.Count != 0)
-            {
-                foreach (var client in clients)
-                {
-                    string status = client.Status;
-                    string referenceid = client.ReferenceId;
-                    string localDateCreated = LocalizeTime(client.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
-                    string localDateSubmitted = null;
-
-                    if (client.Status != "Not Started" && client.Status != "Started")
-                    {
-                        localDateSubmitted = LocalizeTime(client.SubmitDate, "dd/MM/yyyy");
-                    }
-
-                    deals.Add(new DealItem
-                    {
-                        Id = client.Id.ToString(),
-                        //Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
-                        Name = client.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
-                        LocalDateCreated = localDateCreated,
-                        LocalDateSubmitted = localDateSubmitted,
-                        Status = status,
-                        ReferenceId = referenceid// Move into ClientProgramme?
-                    });
-                }
-            }
-
-            return deals;
-        }
-
-        private bool ValidateSearchInput(string value1, string value2)
-        {
-            var list = new List<string>();
-            if(!string.IsNullOrWhiteSpace(value1))
-            {
-                list.Add(value1);
-            }
-            if (!string.IsNullOrWhiteSpace(value2))
-            {
-                list.Add(value2);
-            }
-            
-            if(list.Count != 2)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private async Task<IList<DealItem>> GetInsuredNameSearch(User user, string searchValue)
-        {
-            List<DealItem> deals = new List<DealItem>();
-            List<ClientProgramme>  clients = await _programmeService.FindByOwnerName(searchValue);
-
-            if(clients.Count != 0)
-            {
-                foreach (var client in clients)
-                {
-                    string status = client.InformationSheet.Status;
-                    string referenceid = client.InformationSheet.ReferenceId;
-                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
-                    string localDateSubmitted = null;
-
-                    if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
-                    {
-                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
-                    }
-
-                    deals.Add(new DealItem
-                    {
-                        Id = client.Id.ToString(),
-                        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
-                        LocalDateCreated = localDateCreated,
-                        LocalDateSubmitted = localDateSubmitted,
-                        Status = status,
-                        ReferenceId = referenceid// Move into ClientProgramme?
-                    });
-                }
-            }
-
-            return deals;
-        }
-
-        private async Task<IList<DealItem>> GetReferenceIdSearch(User user, string searchValue)
+        private async Task<IList<DealItem>> GetReferenceSearch(string searchValue)
         {
             List<DealItem> deals = new List<DealItem>();
 
@@ -327,7 +203,6 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme client = sheet.Programme;
 
                 string status = client.InformationSheet.Status;
-                string referenceid = client.InformationSheet.ReferenceId;
                 string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
                 string localDateSubmitted = null;
 
@@ -343,7 +218,8 @@ namespace DealEngine.WebUI.Controllers
                     LocalDateCreated = localDateCreated,
                     LocalDateSubmitted = localDateSubmitted,
                     Status = status,
-                    ReferenceId = referenceid// Move into ClientProgramme?
+                    SubClientProgrammes = client.SubClientProgrammes,
+                    ReferenceId = client.InformationSheet.ReferenceId// Move into ClientProgramme?
                 });
             }
 
@@ -374,6 +250,7 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
+                        SubClientProgrammes = sheet2.Programme.SubClientProgrammes,
                         ReferenceId = referenceid// Move into ClientProgramme?
                     });
 
@@ -382,6 +259,112 @@ namespace DealEngine.WebUI.Controllers
 
             return deals;
         }
+
+        private async Task<IList<DealItem>> GetClientNameSearch(string searchValue)
+        {
+            List<DealItem> deals = new List<DealItem>();
+            List<ClientProgramme> clients = await _programmeService.FindByOwnerName(searchValue);
+
+            if (clients.Count != 0)
+            {
+                foreach (var client in clients)
+                {
+                    string status = client.InformationSheet.Status;
+                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
+                    string localDateSubmitted = null;
+
+                    if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+                    {
+                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
+                    }
+
+                    deals.Add(new DealItem
+                    {
+                        Id = client.Id.ToString(),
+                        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
+                        ProgrammeAllowUsesChange = client.BaseProgramme.AllowUsesChange,
+                        LocalDateCreated = localDateCreated,
+                        LocalDateSubmitted = localDateSubmitted,
+                        Status = status,
+                        ReferenceId = client.InformationSheet.ReferenceId,// Move into ClientProgramme?
+                        SubClientProgrammes = client.SubClientProgrammes,
+                    });
+                }
+            }
+
+            return deals;
+        }
+
+        private async Task<IList<DealItem>> GetAdvisoryNameSearch(string searchValue)
+        {
+            List<DealItem> deals = new List<DealItem>();
+            List<ClientInformationSheet> clients = await _clientInformationService.FindByAdvisoryName(searchValue);
+            if (clients.Count != 0)
+            {
+                foreach (var client in clients)
+                {
+                    string status = client.Status;
+                    string localDateCreated = LocalizeTime(client.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
+                    string localDateSubmitted = null;
+
+                    if (client.Status != "Not Started" && client.Status != "Started")
+                    {
+                        localDateSubmitted = LocalizeTime(client.SubmitDate, "dd/MM/yyyy");
+                    }
+
+                    deals.Add(new DealItem
+                    {
+                        Id = client.Programme.Id.ToString(),
+                        Name = client.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+                        ProgrammeAllowUsesChange = client.Programme.BaseProgramme.AllowUsesChange,
+                        LocalDateCreated = localDateCreated,
+                        LocalDateSubmitted = localDateSubmitted,
+                        Status = status,
+                        ReferenceId = client.ReferenceId,// Move into ClientProgramme?
+                        SubClientProgrammes = client.Programme.SubClientProgrammes,
+                    });
+                }
+            }
+
+            return deals;
+        }
+
+        private async Task<IList<DealItem>> GetBoatNameSearch(string searchValue)
+        {
+            List<DealItem> deals = new List<DealItem>();
+            List<ClientInformationSheet> clients = await _clientInformationService.FindByBoatName(searchValue);
+
+            if (clients.Count != 0)
+            {
+                foreach (var client in clients)
+                {
+                    string status = client.Status;
+                    string localDateCreated = LocalizeTime(client.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
+                    string localDateSubmitted = null;
+
+                    if (client.Status != "Not Started" && client.Status != "Started")
+                    {
+                        localDateSubmitted = LocalizeTime(client.SubmitDate, "dd/MM/yyyy");
+                    }
+
+                    deals.Add(new DealItem
+                    {
+                        Id = client.Programme.Id.ToString(),
+                        Name = client.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+                        ProgrammeAllowUsesChange = client.Programme.BaseProgramme.AllowUsesChange,
+                        LocalDateCreated = localDateCreated,
+                        LocalDateSubmitted = localDateSubmitted,
+                        Status = status,
+                        ReferenceId = client.ReferenceId,// Move into ClientProgramme?
+                        SubClientProgrammes = client.Programme.SubClientProgrammes,
+                    });
+                }
+            }
+
+            return deals;
+        }
+
+
         #endregion Search
 
         [HttpGet]
@@ -394,7 +377,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(clientProgrammeId);
-                foreach(var client in clientprogramme.SubClientProgrammes)
+                foreach (var client in clientprogramme.SubClientProgrammes)
                 {
                     clientList.Add(client);
                 }
@@ -413,9 +396,14 @@ namespace DealEngine.WebUI.Controllers
         {
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
-
-            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
+            var clientProgramme = clientList.FirstOrDefault();
+            var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+            if (isBaseClientProg)
             {
+                clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+            }
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
+            {                
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
@@ -425,7 +413,15 @@ namespace DealEngine.WebUI.Controllers
                         string referenceId = client.InformationSheet.ReferenceId;
                         bool nextInfoSheet = false;
                         bool programmeAllowUsesChange = false;
-
+                        string agreementSatus = "";
+                        foreach (ClientAgreement agreement in client.Agreements)
+                        {
+                            if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
+                            {
+                                agreementSatus = "Referred";
+                                break;
+                            }
+                        }
                         if (client.BaseProgramme.AllowUsesChange)
                         {
                             programmeAllowUsesChange = true;
@@ -454,7 +450,9 @@ namespace DealEngine.WebUI.Controllers
                             LocalDateSubmitted = localDateSubmitted,
                             Status = status,
                             ReferenceId = referenceId,// Move into ClientProgramme?
-                            SubClientProgrammes = client.SubClientProgrammes
+                            SubClientProgrammes = client.SubClientProgrammes,
+                            AgreementStatus = agreementSatus
+
                         });
                     }
 
@@ -472,7 +470,15 @@ namespace DealEngine.WebUI.Controllers
                     bool programmeAllowUsesChange = false;
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
-
+                    string agreementSatus = "";
+                    foreach (ClientAgreement agreement in client.Agreements)
+                    {
+                        if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
+                        {
+                            agreementSatus = "Referred";
+                            break;
+                        }
+                    }
                     if (client.BaseProgramme.AllowUsesChange)
                     {
                         programmeAllowUsesChange = true;
@@ -498,7 +504,8 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
-                        SubClientProgrammes = client.SubClientProgrammes
+                        SubClientProgrammes = client.SubClientProgrammes,
+                        AgreementStatus = agreementSatus
                     });
                 }
             }
@@ -544,7 +551,7 @@ namespace DealEngine.WebUI.Controllers
                 SubClientProgramme subClientprogramme = await _programmeService.GetSubClientProgrammebyId(subClientProgrammeId);
                 clientList.Add(subClientprogramme);
                 model = await GetClientProgrammeListModel(user, clientList);
-               
+
                 return View(model);
             }
             catch (Exception ex)
@@ -564,20 +571,13 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
-                var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-                foreach (var clientProg in clientList)
+                var clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
+                if(clientList.Count == 0)
                 {
-                    //foreach (var sub in clientProg.SubClientProgrammes)
-                    //{
-                    //    if (clientProg.Owner == user.PrimaryOrganisation)
-                    //    {
-                    //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
-                    //    }
-                    //}
+                    clientList = await _programmeService.GetClientProgrammesForProgramme(id);
                 }
 
                 model = await GetClientProgrammeListModel(user, clientList);
-
                 model.ProgrammeId = id.ToString();
 
                 return View(model);
@@ -590,7 +590,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> IssueUIS(string ProgrammeId)
+        public async Task<IActionResult> IssueUIS(string ProgrammeId,string actionname)
         {
             User user = null;
             try
@@ -602,19 +602,30 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    clientProgrammes.Add(client);                    
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                    {
+                        clientProgrammes.Add(client);
+                    }
                 }
 
-                model.ClientProgrammes = clientProgrammes;     
+                model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
 
-                return View(model);
+                if(actionname == "IssueUIS")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    //if (action == "EditClient")
+                        return View("EditClient", model);
+                }
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }                       
+            }
         }
 
         [HttpGet]
@@ -630,7 +641,10 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    clientProgrammes.Add(client);
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                    {
+                        clientProgrammes.Add(client);
+                    }
                 }
 
                 model.ClientProgrammes = clientProgrammes;
@@ -643,17 +657,17 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
+        }       
 
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
         {
             User user = null;
-            Programme programme = null;            
+            Programme programme = null;
             string email = null;
 
             try
-            {                
+            {
                 user = await CurrentUser();
                 programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
                 foreach (var key in formCollection.Keys)
@@ -683,7 +697,172 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                                            
+
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        
+             [HttpGet]
+        public async Task<IActionResult> GetClientDetails(String OwnerId , string actionName)
+        {
+            User user = null;
+            Organisation ownerorg= null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
+                orgmodel.OrganisationName = ownerorg.Name;
+                var userList = await _userService.GetAllUserByOrganisation(ownerorg);
+                orgmodel.ID = Guid.Parse(OwnerId);
+                orgmodel.Email = ownerorg.Email;
+                if(actionName == "ClientDetails")
+                {
+                    return Json(orgmodel);
+                }
+                else
+                {
+                    orgmodel.Users = userList;
+                    var id = OwnerId;
+                    List<User> userlist = userList;
+                    return View("getClientDetails", orgmodel);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DisplayClientUser(Guid Id , List<User> UserList)
+        {
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+            return View("getClientDetails", orgmodel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetUserDetails(Guid UserID)
+        {
+            User user = null;
+            Organisation ownerorg = null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+
+            try
+            {
+                user = await _userService.GetUserById(UserID);
+                orgmodel.ID = user.Id;
+                orgmodel.FirstName = user.FirstName;
+                orgmodel.LastName = user.LastName;
+                orgmodel.Email = user.Email;
+                orgmodel.Phone = user.Phone;
+                return Json(orgmodel);
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddClientUser(IFormCollection formCollection)
+        {
+            User Currentuser = null;
+            Organisation ownerorg = null;
+            Organisation primaryorg = null;
+            string email = null;
+            OrganisationViewModel orgmodel = new OrganisationViewModel();
+            User userdb = null;
+            var jsdkf = formCollection["Id"];
+            try
+            {
+                Currentuser = await CurrentUser();
+                ownerorg = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    var Action  = formCollection["Action"];
+                    var FirstName = formCollection["FirstName"];
+                    var LastName = formCollection["LastName"];
+                    var Email = formCollection["Email"];
+                    if (Action == "Edit")
+                    {
+                        userdb = await _userService.GetUserById(Guid.Parse(formCollection["UserId"]));
+                        primaryorg = await _organisationService.GetOrganisation(userdb.PrimaryOrganisation.Id);
+                        primaryorg.Email = Email;
+                        userdb.FirstName = FirstName;
+                        userdb.LastName = LastName;
+                        userdb.FullName = FirstName + " " + LastName;
+                        userdb.Email = Email;
+                        await uow.Commit();
+
+
+                    }
+                    else
+                    {
+                        if (Action == "Add") {
+                        userdb = new User(Currentuser, Guid.NewGuid(), FirstName);
+                            userdb.FirstName = FirstName;
+                            userdb.LastName = LastName;
+                            userdb.FullName = FirstName + " " + LastName;
+                            userdb.Email = Email;
+                            await _userService.Create(userdb);
+                            userdb.Organisations.Add(ownerorg);
+                            userdb.SetPrimaryOrganisation(ownerorg);
+                            await uow.Commit();
+                        }
+                    }
+
+                }
+               
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, Currentuser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditClient(IFormCollection formCollection)
+        {
+            User user = null;
+            Organisation organisation = null;
+            string email = null;
+
+            try
+            {
+                foreach (var key in formCollection.Keys)
+                {
+                    organisation = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
+                    var userList = await _userService.GetAllUserByOrganisation(organisation);
+                    user = userList.Last(user => user.PrimaryOrganisation == organisation);
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        organisation.ChangeOrganisationName(formCollection["OrganisationName"]);
+                        organisation.Email = formCollection["Email"];
+                        organisation.Phone = formCollection["Phone"];
+                        if(user != null)
+                        user.Email= formCollection["Email"];
+                        await uow.Commit();
+                    }
+                }
+
                 return await RedirectToLocal();
             }
             catch (Exception ex)
@@ -736,7 +915,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }        
+        }
 
     }
 }

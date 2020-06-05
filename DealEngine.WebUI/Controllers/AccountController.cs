@@ -118,17 +118,17 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
 			string errorMessage = @"We have sent you an email to the email address we have recorded in the system, that email address is different from the one you supplied. 
 				Please check the other email addresses you may have used. If you cannot locate our email, 
-				please email support@DealEngine.com with your contact details, we can re-establish your account with your broker.";
+				please email support@techcertain.com with your contact details, we can re-establish your account with your broker.";
 			try
 			{
 				if (!string.IsNullOrWhiteSpace (viewModel.Email))
 				{
                     //System Email Testing
-                    //var testuser = _userService.GetUserByEmail("mcgtestuser2@DealEngine.com");
+                    //var testuser = _userService.GetUserByEmail("mcgtestuser2@techcertain.com");
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
-                    //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@DealEngine.com");
+                    //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    //_emailService.SendSystemEmailLogin("support@DealEngine.com");
+                    //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
                     user = await _userService.GetUserById(token.UserID);
@@ -319,7 +319,8 @@ namespace DealEngine.WebUI.Controllers
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";               
+                string resultMessage = "";
+                IdentityUser deUser;
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
@@ -328,23 +329,23 @@ namespace DealEngine.WebUI.Controllers
                     var identityResult = await DealEngineIdentityUserLogin(user, password);
                     if (!identityResult.Succeeded)
                     {
-                        var deUser = await _userManager.FindByNameAsync(userName);
+                        deUser = await _userManager.FindByNameAsync(userName);
                         await _userManager.RemovePasswordAsync(deUser);
-                        await _userManager.AddPasswordAsync(deUser, password);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                        await _userManager.AddPasswordAsync(deUser, password);                        
                     }
                     else
                     {
-                        var deUser = await _userManager.FindByNameAsync(userName);
+                        deUser = await _userManager.FindByNameAsync(userName);
                         await _signInManager.SignOutAsync();
                         deUser = await _userManager.FindByNameAsync(userName);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                        
                     }
+                    await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
 
                     return LocalRedirect("~/Home/Index");
                 }
                 
-                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@DealEngine.com.");
+                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);
 
             }
@@ -413,12 +414,24 @@ namespace DealEngine.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
-                if(resultCode == 0)
+                if (resultCode == 0)
                 {
                     var result = await DealEngineIdentityUserLogin(user, password);
-                    if (result.Succeeded)
+                    if (!result.Succeeded)
+                    {
+
+                        var deUser = await _userManager.FindByNameAsync(userName);
+                        await _userManager.RemovePasswordAsync(deUser);
+                        await _userManager.AddPasswordAsync(deUser, password);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    }
+                    else
                     {
                         var deUser = await _userManager.FindByNameAsync(userName);
+                        await _signInManager.SignOutAsync();
+                        deUser = await _userManager.FindByNameAsync(userName);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+
 
                         MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
                         MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
@@ -427,11 +440,11 @@ namespace DealEngine.WebUI.Controllers
                         rsaUser.Username = user.UserName; //try as Marsh RSA team advised
                         rsaUser.HttpReferer = "~Account/LoginMarsh";
                         rsaUser.OrgName = "Marsh_Model";
-                        rsaUser.RsaStatus = RsaStatus.Deny;                        
-                        rsaUser = await rsaAuth.Analyze(rsaUser);                                                
+                        rsaUser.RsaStatus = RsaStatus.Deny;
+                        rsaUser = await rsaAuth.Analyze(rsaUser);
 
                         if (rsaUser.RsaStatus == RsaStatus.Allow)
-                        {                            
+                        {
                             _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
                             return RedirectToAction("Index", "Home");
                         }
@@ -446,9 +459,9 @@ namespace DealEngine.WebUI.Controllers
                                 TransactionId = rsaUser.CurrentTransactionId
                             });
                         }
-                    }                    
+                    }                
                 }
-                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@DealEngine.com.");
+                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);
             }
             catch (Exception ex)

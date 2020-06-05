@@ -105,6 +105,8 @@ namespace DealEngine.Services.Impl
 				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
 				|| ia.InsuranceAttributeName == "JointVenture"
 				|| ia.InsuranceAttributeName == "Mergers"
+				|| ia.InsuranceAttributeName == "Advisor"
+				|| ia.InsuranceAttributeName == "NominatedRepresentative"
 				|| ia.InsuranceAttributeName == "project management personnel"))
 			{
 				foreach (var org in IA.IAOrganisations)
@@ -118,7 +120,31 @@ namespace DealEngine.Services.Impl
 			return organisations;
 		}
 
+		public async Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet)
+		{
+			var organisations = new List<Organisation>();
+			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
+			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal"
+				|| ia.InsuranceAttributeName == "Subsidiary"
+				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
+				|| ia.InsuranceAttributeName == "JointVenture"
+				|| ia.InsuranceAttributeName == "Mergers"
+				|| ia.InsuranceAttributeName == "Advisor"
+				|| ia.InsuranceAttributeName == "NominatedRepresentative"
+				|| ia.InsuranceAttributeName == "project management personnel"))
+			{
+				foreach (var org in IA.IAOrganisations)
+				{
+					foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true && o.IsPrincipalAdvisor != true))
+					{
+						organisations.Add(organisation);
+					}
+				}
+			}
+			return organisations;
+		}
+
 	}
-	
+
 }
 

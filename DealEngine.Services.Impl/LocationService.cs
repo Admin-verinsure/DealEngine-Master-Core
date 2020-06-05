@@ -32,6 +32,11 @@ namespace DealEngine.Services.Impl
         {
             return await _locationRepository.FindAll().Select(l => l.Street).ToListAsync();
         }
+
+        public async Task UpdateLocation(Location location)
+        {
+            await _locationRepository.UpdateAsync(location);
+        }
     }
 }
 
