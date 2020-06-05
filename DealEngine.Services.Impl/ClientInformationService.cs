@@ -280,6 +280,7 @@ namespace DealEngine.Services.Impl
                     }
                     else if (ModelProperty.Name == "AdditionalActivityViewModel")
                     {
+                        var variabletype2 = sheet.RevenueData;
                         var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();
                         var field = variabletype.GetProperty(modelArray.LastOrDefault());
 
