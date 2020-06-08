@@ -149,7 +149,11 @@ namespace DealEngine.Services.Impl
 			return organisations;
 		}
 
-	}
+        public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
+        {
+			return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
+		}
+    }
 
 }
 
