@@ -52,6 +52,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool ProgEnableEmail { get; set; }
         public virtual bool ProgEnableInsuredDateChange { get; set; }
         public virtual bool ProgHideAdminFee { get; set; }
+        public virtual bool ProgStopPolicyDocAutoRelease { get; set; }
 
         protected Programme() : this(null) { }
 
