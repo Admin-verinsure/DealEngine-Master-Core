@@ -55,7 +55,7 @@ namespace DealEngine.Services.Impl
                     var subClientSheet = await CreateSubObjectProcess(clientProgramme, sheet, org);
                     sheet.SubClientInformationSheets.Add(subClientSheet);
                 }
-                if(principalOrganisations.Count != 0)
+                if (principalOrganisations.Count != 0)
                 {
                     sheet.Status = "Submitted";
                     sheet.SubmitDate = DateTime.Now;
@@ -93,7 +93,10 @@ namespace DealEngine.Services.Impl
                     clientProgramme.SubClientProgrammes.Add(subProg);
                 }
             }
-
+            if (subClientSheet.Status == "Not Started")
+            {
+                await _emailService.SendSystemEmailLogin(org.Email);
+            }
             await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
 
             return subClientSheet;
