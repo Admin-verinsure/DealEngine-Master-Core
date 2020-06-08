@@ -125,20 +125,15 @@ namespace DealEngine.WebUI.Controllers
                                 else
                                 {
                                     int widthIndex = ele.Length;                                                            // length of figure tag up until style=
-                                    string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
-                                    width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99%, 10.5% etc)
-                                    int srcEndIndex = html2.IndexOf(ele) + widthIndex;                                      // where src ends in original tag
+                                    string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in % plus extra characters sometimes which we delete now                       
+                                    width = width.Replace("%", "");                                                          
+                                    width = width.Replace("\"", "");
+                                    width = width.Replace(";", "");
+                                    width = width.Replace(">", "");
 
-                                    if (width.Length < 5)
-                                    {
-                                        html2 = html2.Remove(srcEndIndex, 25);                                                  // remove the extra src and style tags
-                                    }
-                                    else
-                                    {
-                                        html2 = html2.Remove(srcEndIndex, 26);                                                  // remove the extra src and style tags
-                                    }
-
-                                    // should probably also remove the closing figure tags...? (may break other elements if inside another <figure> (base it on srcEndIndex?)
+                                    int srcEndIndex = html2.IndexOf(ele) + widthIndex;
+                                    int end = 21 + width.Length;
+                                    html2 = html2.Remove(srcEndIndex, end);                                                 // remove the extra src and style tags
 
                                     if (ele.Equals(centerResize) == true)
                                     {
@@ -229,14 +224,12 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     int x = CountStringOccurrences(html2, ele);
                                     var regex = new Regex(Regex.Escape(ele));
-                                    //g\"></figure>
                                     var regex2 = new Regex(Regex.Escape("g\"></figure>"));
 
                                     for (int j = 0; j < x; j++)
                                     {
                                         if (ele.Contains("image_resized") == false)
                                         {
-                                            // Image to HTML use cases
                                             if (ele.Equals(centerImage))
                                             {
                                                 html2 = regex.Replace(html2, "<div style=\"text-align:center\"</div> <img src=\"", 1);
@@ -255,19 +248,17 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                         else
                                         {
-                                            int widthIndex = ele.Length;                                                            // length of figure tag up until style=
-                                            string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in %                       
-                                            width = width.Replace("%", "");                                                         // Handle when % is in the string (ie. <10%, 9.99%, 10.5% etc)
+                                            int widthIndex = ele.Length;
+                                            string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);
+                                            width = width.Replace("%", "");
+                                            width = width.Replace("\"", "");
+                                            width = width.Replace(";", "");
+                                            width = width.Replace(">", "");
+
                                             int srcEndIndex = html2.IndexOf(ele) + widthIndex;
-                        
-                                            if (width.Length < 5)
-                                            {
-                                                html2 = html2.Remove(srcEndIndex, 25);                                              // remove the extra src and style tags
-                                            }
-                                            else
-                                            {
-                                                html2 = html2.Remove(srcEndIndex, 26);                                              // remove the extra src and style tags
-                                            }
+                                            int end = 21 + width.Length;
+                                            html2 = html2.Remove(srcEndIndex, end);
+
                                             string url = html2.Substring(srcEndIndex);
 
                                             if (url.Contains(".jpg") == true)
@@ -297,19 +288,24 @@ namespace DealEngine.WebUI.Controllers
                                                 // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
                                             }
 
-                                            byte[] imageData = new WebClient().DownloadData(url);
-                                            MemoryStream imgStream = new MemoryStream(imageData);
-                                            System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
-
-                                            decimal pixelWidth = img.Width;
                                             decimal widthPercent = decimal.Parse(width);
                                             widthPercent = decimal.Divide(widthPercent, 100);
-                                            pixelWidth = decimal.Multiply(widthPercent, pixelWidth);
-                                            decimal pixelWidthZeroDP = decimal.Round(pixelWidth, 0, MidpointRounding.AwayFromZero);
+                                            decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
+                                            int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
                                             string pixelWidthStr = pixelWidthZeroDP.ToString();
 
+                                            #region 
+                                            //get the actual images width
+                                            // note: Not useful at moment as the % CK gives you is of the page not the images actual width
+
+                                            //byte[] imageData = new WebClient().DownloadData(url);
+                                            //MemoryStream imgStream = new MemoryStream(imageData);
+                                            //System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
+                                            //decimal pixelWidth = img.Width;
+                                            #endregion
+
                                             if (ele.Equals(centerResize) == true)
-                                            { 
+                                            {
                                                 html2 = regex.Replace(html2, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
                                                 html2 = regex2.Replace(html2, "g\"></div>", 1); 
                                             }
@@ -325,9 +321,9 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                         }
                                     }
-                                    html = html2;
-                                }
 
+                                }
+                                html = html2;
                                 HtmlConverter converter = new HtmlConverter(mainPart); // refer to this: https://github.com/onizet/html2openxml/wiki/Tags-Supported
                                 converter.ImageProcessing = ImageProcessing.ManualProvisioning;
                                 Body body = mainPart.Document.Body;
