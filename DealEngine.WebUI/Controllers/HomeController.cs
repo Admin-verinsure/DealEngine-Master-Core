@@ -368,7 +368,7 @@ namespace DealEngine.WebUI.Controllers
         #endregion Search
 
         [HttpGet]
-        public async Task<IActionResult> ViewSubClientProgrammes(Guid clientProgrammeId)
+        public async Task<IActionResult> ViewSubClientProgrammes(string clientProgrammeId)
         {
             ProgrammeItem model = new ProgrammeItem();
             User user = null;
@@ -376,12 +376,20 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(clientProgrammeId);
-                foreach (var client in clientprogramme.SubClientProgrammes)
+                ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(Guid.Parse(clientProgrammeId));
+                if (clientprogramme.SubClientProgrammes.Any())
                 {
-                    clientList.Add(client);
+                    foreach (var client in clientprogramme.SubClientProgrammes)
+                    {
+                        clientList.Add(client);
+                    }
                 }
-                model = await GetClientProgrammeListModel(user, clientList);
+                else
+                {
+                    clientList.Add(clientprogramme);
+                }
+
+                model = await GetClientProgrammeListModel(user, clientList, true);
 
                 return View(model);
             }
@@ -392,15 +400,18 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList)
+        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList, bool isClient=false)
         {
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
             var clientProgramme = clientList.FirstOrDefault();
-            var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
-            if (isBaseClientProg)
+            if (!isClient)
             {
-                clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+                if (isBaseClientProg)
+                {
+                    clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
             {                
@@ -572,7 +583,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
-                if(clientList.Count == 0)
+                if(!clientList.Any())
                 {
                     clientList = await _programmeService.GetClientProgrammesForProgramme(id);
                 }

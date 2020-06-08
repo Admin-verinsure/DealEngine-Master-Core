@@ -509,11 +509,11 @@ namespace DealEngine.Services.Impl
             {
                 DataTable dtadvisor = new DataTable();
                 dtadvisor.Columns.Add("Advisor");
-                dtadvisor.Columns.Add("RetroactiveDate");
+                dtadvisor.Columns.Add("Retroactive Date");
 
                 DataTable dtadvisor1 = new DataTable();
                 dtadvisor1.Columns.Add("Advisor");
-                dtadvisor1.Columns.Add("RetroactiveDate");
+                dtadvisor1.Columns.Add("Retroactive Date");
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
@@ -522,14 +522,14 @@ namespace DealEngine.Services.Impl
                         DataRow dradvisor = dtadvisor.NewRow();
 
                         dradvisor["Advisor"] = uisorg.Name;
-                        dradvisor["RetroactiveDate"] = uisorg.PIRetroactivedate;
+                        dradvisor["Retroactive Date"] = uisorg.PIRetroactivedate;
 
                         dtadvisor.Rows.Add(dradvisor);
 
                         DataRow dradvisor1 = dtadvisor1.NewRow();
 
                         dradvisor1["Advisor"] = uisorg.Name;
-                        dradvisor1["RetroactiveDate"] = uisorg.DORetroactivedate;
+                        dradvisor1["Retroactive Date"] = uisorg.DORetroactivedate;
 
                         dtadvisor1.Rows.Add(dradvisor1);
                     }

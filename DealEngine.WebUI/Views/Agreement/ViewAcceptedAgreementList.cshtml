@@ -22,8 +22,14 @@
 
     <div class="form-group">
         <span>
-            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
-        </span>
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+                    <a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgrammes?clientProgrammeId=@Model.FirstOrDefault().ClientProgrammeId" id="backbutton"><i class="fa fa-random"></i> Back to Client</a>
+                </div>
+            </div>
+
+</span>
     </div>
 
     <!-- NEW WIDGET START -->
