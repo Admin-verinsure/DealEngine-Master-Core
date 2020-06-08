@@ -353,6 +353,10 @@ namespace DealEngine.Services.Impl
             }
             return clientList;
         }
+        public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
+        {
+            return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation == organisation);
+        }
     }
 }
 

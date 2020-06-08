@@ -700,6 +700,7 @@ namespace DealEngine.WebUI.Controllers
             List<Guid> listClientAgreementermid = new List<Guid>();
             String[] OptionItem;
             User user = null;
+            Boolean boundval = false;
 
             try
             {
@@ -711,14 +712,37 @@ namespace DealEngine.WebUI.Controllers
                 foreach (var agreement in clientProgramme.Agreements)
                 {
                     //count = 0;
-                    var term = agreement.ClientAgreementTerms.FirstOrDefault();
-                   
-                        OptionItem = new String[2];
-                        
+                  foreach(var selectterm in agreement.ClientAgreementTerms)
+                    {
+                        boundval = false;
+                        if (selectterm.Bound)
+                        {
+                            OptionItem = new String[2];
+
                             OptionItem[0] = agreement.Product.Name;
-                            OptionItem[1] = "" + term.Id;
+                            OptionItem[1] = "" + selectterm.Id;
                             OptionItems[count] = OptionItem;
                             count++;
+                            boundval = true;
+                            continue;
+                        }
+                        
+                  }
+                    if (!boundval)
+                    {
+                        var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
+                        if (term == null)
+                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.AggregateLimit).FirstOrDefault();
+
+                        OptionItem = new String[2];
+
+                        OptionItem[0] = agreement.Product.Name;
+                        OptionItem[1] = "" + term.Id;
+                        OptionItems[count] = OptionItem;
+                        count++;
+                        boundval = true;
+                    }
+
                 }
                 return Json(OptionItems);
             }

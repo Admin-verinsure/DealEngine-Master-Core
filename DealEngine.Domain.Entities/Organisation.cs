@@ -214,8 +214,8 @@ namespace DealEngine.Domain.Entities
         public virtual string TradingName { get; set; }
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
-
-
+        public virtual IList<AuditHistory> AuditHistory { get; set; }
+       
         #endregion
 
         #region Opperations

@@ -1849,8 +1849,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     // TODO - Convert to UTC
                     TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
-                    agreement.InceptionDate = DateTime.Parse(model.StartDate, UserCulture).ToUniversalTime();
-                    agreement.ExpiryDate = DateTime.Parse(model.EndDate, UserCulture).ToUniversalTime();
+                    agreement.InceptionDate =  DateTime.Parse(model.StartDate, CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime();
+                    agreement.ExpiryDate = DateTime.Parse(model.EndDate, CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime();
                     agreement.Brokerage = Convert.ToDecimal(model.BrokerageRate.Replace("%", ""));
                     agreement.BrokerFee = Convert.ToDecimal(model.AdministrationFee.Replace("$", ""));
                     agreement.ClientNumber = model.ClientNumber;
