@@ -42,7 +42,8 @@
                             <td>
                                 <label class="input">
                                     @*<i class="icon-append fa fa-edit"></i>*@
-                                    @Html.TextBoxFor(m => m.StartDate)
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "Startdate", dateFormat = "dd/mm/yy" } })
+
                                 </label>
                             </td>
                         </tr>
@@ -53,7 +54,8 @@
                             <td>
                                 <label class="input">
                                     @*<i class="icon-append fa fa-edit"></i>*@
-                                    @Html.TextBoxFor(m => m.EndDate)
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "Startdate", dateFormat = "dd/mm/yy" } })
+
                                 </label>
                             </td>
                         </tr>
@@ -160,3 +162,16 @@
         </div>
     </div>
 </div>
+
+
+@section pagespecific {
+
+    <script>
+        $('.Startdate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd/mm/yy"
+        });
+
+    </script>
+ }

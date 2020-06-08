@@ -712,9 +712,10 @@ namespace DealEngine.WebUI.Controllers
                 foreach (var agreement in clientProgramme.Agreements)
                 {
                     //count = 0;
-                  foreach(var selectterm in agreement.ClientAgreementTerms)
+                    boundval = false;
+                    foreach (var selectterm in agreement.ClientAgreementTerms)
                     {
-                        boundval = false;
+                      
                         if (selectterm.Bound)
                         {
                             OptionItem = new String[2];
@@ -1139,12 +1140,20 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
+                //model.Locations = locations;
                 model.Buildings = buildings;
+                //model.Buildings.
                 model.WaterLocations = waterLocations;
+                //model.InterestedParties = interestedParties;
+
+
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;
+                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }
