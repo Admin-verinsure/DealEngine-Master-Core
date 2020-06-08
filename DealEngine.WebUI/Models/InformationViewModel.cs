@@ -291,6 +291,7 @@ namespace DealEngine.WebUI.Models
         public string QualificationDetails { get; set; }
         public string ValuationDetails { get; set; }
         public string OtherDetails { get; set; }
+        public string OtherServices { get; set; }
         public string RebuildDetails { get; set; }
         public string InspectionReportDetails { get; set; }
         public string OtherProjectManagementDetails { get; set; }

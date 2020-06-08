@@ -96,6 +96,11 @@ namespace DealEngine.Services.Impl
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
 		}
 
+		public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
+		{
+			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed==true);
+		}
+
 		public async Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();

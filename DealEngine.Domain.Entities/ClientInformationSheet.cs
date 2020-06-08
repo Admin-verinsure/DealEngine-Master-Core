@@ -42,6 +42,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }        
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
+       
         protected ClientInformationSheet () : this (null) { }
 
 		protected ClientInformationSheet (User createdBy)
@@ -310,6 +311,7 @@ namespace DealEngine.Domain.Entities
         public virtual string QualificationDetails { get; set; }
         public virtual string ValuationDetails { get; set; }
         public virtual string OtherDetails { get; set; }
+        public virtual string OtherServices { get; set; }        
         public virtual string RebuildDetails { get; set; }
         public virtual string InspectionReportDetails { get; set; }
         public virtual string OtherProjectManagementDetails { get; set; }

@@ -89,6 +89,8 @@
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Advisor">Advisor</option>
                                 <option value="NominatedRepresentative">Nominated Representative</option>
+                                <option value="OtherConsultingBusiness">Other Consulting Business</option>
+
 
                             </select>
                         </label>
@@ -102,6 +104,9 @@
                             <select id="CommonEditOrgType" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Person - Individual">Private</option>
+                                <option value="Corporate">Company</option>
+                                <option value="Trust">Trust</option>
+                                <option value="Partnership">Partnership</option>
                             </select>
                         </label>
                         <p class="validationContainer" id="ValidateCommonEditOrgType"></p>
@@ -171,7 +176,7 @@
                         <p class="validationContainer" id="ValidateCommonEditDOB"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec CommonEditOtherConsultingBusiness">
                         <label class="label required">Organisation Name</label>
                         <label class="input">
                             <i></i>
@@ -195,7 +200,7 @@
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec">
 
-                        <label class="label">Trading Name</label>
+                        <label class="label required">Trading Name</label>
                         <label class="input">
                             <i></i>
                             <input data-type="TEXTBOX" id="CommonEditTradingName" name="TradingName" placeholder="Trading Name" value="">
@@ -305,6 +310,7 @@
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Advisor">Advisor</option>
                                 <option value="NominatedRepresentative">Nominated Representative</option>
+                                <option value="OtherConsultingBusiness">Other Consulting Business</option>
 
                             </select>
                         </label>
@@ -318,10 +324,22 @@
                             <select id="CommonOrgType" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Person - Individual">Private</option>
+                                <option value="Corporate">Company</option>
+                                <option value="Trust">Trust</option>
+                                <option value="Partnership">Partnership</option>
                             </select>
                         </label>
                         <p class="validationContainer" id="ValidateCommonOrgType"></p>
 
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonOtherConsultingBusiness">
+                        <label class="label required">Organisation Name</label>
+                        <label class="input">
+                            <i></i>
+                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonOrgName" name="OrganisationName" placeholder="Organisation Name" value="">
+                        </label>
+                        <p class="validationContainer" id="ValidateCommonOrgName"></p>
                     </section>
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec ">
@@ -370,8 +388,8 @@
                         <p class="validationContainer" id="ValidateCommonLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <label class="label required">DOB</label>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" hidden>
+                        <label class="label ">DOB</label>
                         <label class="input">
                             <i></i>
                             <input name="DateofBirth" placeholder="Date of Birth" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDOB" type="text">
@@ -551,12 +569,23 @@
         if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor") {
             $("#" + type + "Advisor").removeClass('hidden');
             $("." + type + "Advisorsec").removeClass('hidden');
-            $("#" + type +"Duration").val('');
+            $("#" + type + "Duration").val('');
+            $("#" + type + "OrgType").val("Person - Individual").trigger('chosen:updated');
+            $("#" + type + "OrgType").prop("disabled", true);
         } else {
+            $("#" + type + "OrgType").val("").trigger('chosen:updated');
+            $("#" + type + "OrgType").prop("disabled", false);
             $("#" + type + "Advisor").addClass('hidden');
             $("." + type + "Advisorsec").addClass('hidden');
 
         }
+
+         if (typeSelected.options[typeSelected.selectedIndex].value == "OtherConsultingBusiness") {
+            $("#" + type + "OtherConsultingBusiness").removeClass('hidden');
+            $("#" + type +"CommonOrgName").val('');
+         } else {
+            $("#" + type + "OtherConsultingBusiness").addClass('hidden');
+         }
     }
 
 
@@ -627,7 +656,7 @@
         var orgType = $('#' + validatortype + 'OrgType').val();
         var fname = $('#' + validatortype + 'FirstName').val();
         var lname = $('#' + validatortype + 'LastName').val();
-        var dob = $('#' + validatortype + 'DOB').val();
+        var tradingname = $('#' + validatortype + 'TradingName').val();
         var email = $('#' + validatortype + 'Email').val();
         var regstatus = $('#' + validatortype + 'RegStatus').val();
         var qualification = $('#' + validatortype + 'Qualification').val();
@@ -699,14 +728,14 @@
                 $("#Validate" + type + "LastName").html("<i></i>");
             }
 
-            if (dob == "") {
-                $("#Validate" + type + "DOB").html("<font color='red'>Field is required</font>");
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                $("#Validate" + type + "DOB").html("<i></i>");
-            }
+            //if (dob == "") {
+            //    $("#Validate" + type + "DOB").html("<font color='red'>Field is required</font>");
+            //    if (validity) {
+            //        validity = false;
+            //    }
+            //} else {
+            //    $("#Validate" + type + "DOB").html("<i></i>");
+            //}
 
 
             if (regstatus == "") {
@@ -794,9 +823,9 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-         //var Orgname = $('#CommonAdvisorDuration').val(); 
+         //var OrgType = $('#CommonOrgType').val(); 
          var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-         //var proddata = proddata + "& Duration =" + Orgname;
+         //var proddata = proddata + "& OrganisationTypeName =" + OrgType;
 
         $.ajax({
             url: '@Url.Action("AddCommonNamedParty", "Services")',

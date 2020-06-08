@@ -280,6 +280,7 @@ namespace DealEngine.Services.Impl
                     }
                     else if (ModelProperty.Name == "AdditionalActivityViewModel")
                     {
+                        var variabletype2 = sheet.RevenueData;
                         var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();
                         var field = variabletype.GetProperty(modelArray.LastOrDefault());
 
@@ -352,6 +353,10 @@ namespace DealEngine.Services.Impl
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
             }
             return clientList;
+        }
+        public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
+        {
+            return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation == organisation);
         }
     }
 }

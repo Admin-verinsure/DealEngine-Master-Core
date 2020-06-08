@@ -24,6 +24,9 @@ namespace DealEngine.Services.Interfaces
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
         Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue);
+        Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation);
+
+        
     }
 }
 
