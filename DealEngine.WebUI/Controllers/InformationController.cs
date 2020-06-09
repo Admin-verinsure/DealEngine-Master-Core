@@ -35,6 +35,7 @@ namespace DealEngine.WebUI.Controllers
         IFileService _fileService;
         IClientInformationService _clientInformationService;
         IChangeProcessService _changeProcessService;
+        IUnlockProcessService _unlockProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
@@ -71,6 +72,7 @@ namespace DealEngine.WebUI.Controllers
             ITerritoryService territoryService,
             IInformationItemService informationItemService,
             IChangeProcessService changeProcessService,
+            IUnlockProcessService unlockProcessService,
             IFileService fileService,
             IEmailService emailService,
             IMilestoneService milestoneService,
@@ -106,7 +108,7 @@ namespace DealEngine.WebUI.Controllers
             _advisoryService = advisoryService;
             _activityService = activityService;
             _userService = userService;
-            _changeProcessService = changeProcessService;
+            _unlockProcessService = unlockProcessService;
             _productService = productService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
@@ -1283,22 +1285,24 @@ namespace DealEngine.WebUI.Controllers
             return steps;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Unlock(Guid id)
+        [HttpPost]
+        public async Task<IActionResult> Unlock(UnlockReason UnlockReason)
         {
             User user = null;
             try
             {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(UnlockReason.DealId);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 user = await CurrentUser();
+                await _unlockProcessService.CreateUnlockReason(user, UnlockReason);
+
                 if (sheet != null)
                 {
                     await _clientInformationService.UnlockSheet(sheet, user);
                 }
 
-                var url = "/Information/EditInformation/" + id;
-                return Redirect(url);
+                var url = "/Information/EditInformation/" + UnlockReason.DealId;
+                return Json(new { url });
             }
             catch (Exception ex)
             {
