@@ -16,6 +16,7 @@ using DealEngine.Infrastructure.Email;
 using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace DealEngine.Services.Impl
 {
@@ -26,9 +27,13 @@ namespace DealEngine.Services.Impl
         ISystemEmailService _systemEmailRepository;
         IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
         IAppSettingService _appSettingService;
+        IApplicationLoggingService _applicationLoggingService;
+        //ILogger<> _logger;
+
+
         private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService, IApplicationLoggingService applicationLoggingService)
 		{
             _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
             _userService = userService;			
@@ -36,11 +41,12 @@ namespace DealEngine.Services.Impl
             _systemEmailRepository = systemEmailService;
             _configuration = configuration;
             _appSettingService = appSettingService;
+            _applicationLoggingService = applicationLoggingService;
         }
 
-		#region IEmailService implementation
+        #region IEmailService implementation
 
-		public string EmailEnabled
+        public string EmailEnabled
 		{
 			get {
                 return _configuration.GetValue<string>("EnableMail");
@@ -865,7 +871,15 @@ namespace DealEngine.Services.Impl
 
                         HtmlConverter converter = new HtmlConverter (mainPart);
                         converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-						converter.ParseHtml (html);
+
+                        try
+                        {
+                            converter.ParseHtml(html);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationLoggingService.LogInformation(null,ex,null,null); //(ex, html);
+                        }
 					}
 					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
