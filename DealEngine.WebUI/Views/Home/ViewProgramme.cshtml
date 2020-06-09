@@ -337,7 +337,7 @@
         });
 
           $('#myUnlockModal').on('show.bs.modal', function (e) {
-            $('.modal').css({ "width": "50%", "margin-left": "25%" });
+            $('.modal').css({ "width": "40%", "margin-left": "30%" });
             var dealId = $(e.relatedTarget).data('dealitem-id');
             $(e.currentTarget).find('input[id="UnlockId"]').val(dealId);
         });
@@ -399,25 +399,49 @@
             var unlockReason = $('#UnlockDescription').val();
             var dealId = $('#UnlockId').val();
             var postData = {
-                UnlockReason: unlockReason,
-                id: dealId
+                Reason: unlockReason,
+                DealId: dealId
             };
 
-            $.ajax({
-                type: "POST",
-                url: "/Information/Unlock",
-                data: postData,
-                traditional: true,
-            })
-                .done(function (data, textStatus, jQxhr) {
-                    debugger;
-                    $('#CreateUISProcess').hide();
+             $.ajax({
+            type: "Post",
+            data: postData,
+            url: "/Information/Unlock",
+            success: function (data) {
+                 $('#CreateUISProcess').hide();
+                 $('#myUnlockModal').modal('hide')
+                alert("Saved Successfully!");
+                window.location.href = data.url;
+            }
+              })
+            .done(function (data) {
+             })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+
+
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/Information/Unlock",
+            //    data: postData,
+            //    traditional: true,
+            //})
+            //    .done(function (url, textStatus, jQxhr) {
+            //        debugger;
+            //         $('#CreateUISProcess').hide();
+            //        $('#myUnlockModal').modal('hide')
+            //        window.location.href = url;                   
+            //    })
+            //    .fail(function (jqXhr, textStatus, errorThrown) {
+            //         $('#CreateUISProcess').hide();
+            //         $('#myUnlockModal').modal('hide')
+
+            //        debugger;
                   
-                })
-                .fail(function (jqXhr, textStatus, errorThrown) {
-                    debugger;
-                  
-                });
+            //    });
         }
 
     </script>
