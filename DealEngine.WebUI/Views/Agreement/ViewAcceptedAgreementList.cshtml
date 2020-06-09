@@ -57,7 +57,12 @@
                                 <li class="nav-item">
                                     <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
                                 </li>
-
+                                @if (User.IsInRole("TCUser"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>
+                                    </li>
+                                }
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
                                 </li>
@@ -125,6 +130,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
+
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">
@@ -154,6 +160,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <li class="nav-item">
                                         <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
                                     </li>
+
                                 }
                                 @if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
                                 {

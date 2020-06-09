@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
 using DealEngine.WebUI.Controllers;
-
+using DealEngine.WebUI.Models.Programme;
 
 namespace DealEngine.WebUI.Models
 {
@@ -28,9 +28,6 @@ namespace DealEngine.WebUI.Models
             CreateMap<PrivateServer, PrivateServerViewModel>().ReverseMap();
             CreateMap<PaymentGateway, PaymentGatewayViewModel>().ReverseMap();
             CreateMap<Merchant, MerchantViewModel>().ReverseMap();
-
-            // Home
-            //CreateMap<UserTask, TaskItem>().ReverseMap();
 
             // Information
             CreateMap<InformationTemplate, InformationViewModel>();
