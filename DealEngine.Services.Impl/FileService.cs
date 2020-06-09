@@ -45,9 +45,23 @@ namespace DealEngine.Services.Impl
 			);
 		}
 
-		#region IFileService implementation
+        #region IFileService implementation
 
-		public string FileDirectory { get; protected set; }
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+
+        public string FileDirectory { get; protected set; }
 
 		public bool IsApplication(byte [] buffer, string contentType, string fileName)
 		{
@@ -618,7 +632,9 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
-            mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]",
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate]]", agreement.RetroactiveDate));
             mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
             mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
@@ -644,7 +660,9 @@ namespace DealEngine.Services.Impl
                 {
                     if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
                     {
-                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+                        //mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]",
+                            TimeZoneInfo.ConvertTimeFromUtc(eGlobalResponse.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
@@ -717,18 +735,30 @@ namespace DealEngine.Services.Impl
             }
             //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
             //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
-            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", agreement.ExpiryDate.ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", agreement.ExpiryDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]",
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             if (agreement.Bound == true)
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+                //mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]",
+                    TimeZoneInfo.ConvertTimeFromUtc(agreement.BoundDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             }
             else
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+                //mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]",
+                    TimeZoneInfo.ConvertTimeFromUtc(agreement.QuoteDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             }
-            mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
-            mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]",
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.BoundDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]",
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.QuoteDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[PolicyNumber]]", agreement.PolicyNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[Brokerage]]", (agreement.Brokerage / 100).ToString("P2", CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[AdministrationFee]]", agreement.BrokerFee.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
