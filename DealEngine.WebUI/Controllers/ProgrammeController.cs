@@ -560,38 +560,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> OwnerProgrammes(Guid ownerId, Guid Id)
-        //{
-        //    User user = null;
-        //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-        //    List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
-        //    List<Organisation> Owners = new List<Organisation>();
-
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        var programeListByOwner = await _programmeService.GetClientProgrammesByOwner(ownerId);
-        //        foreach (var programme in programeListByOwner)
-        //        {
-        //            clientProgrammes.Add(programme);
-
-        //        }
-
-        //        model.OwnerId = ownerId;
-        //        model.Id = Id;
-        //        model.clientProgrammes = clientProgrammes;
-        //        ViewBag.Title = "Term Sheet Template ";
-        //        return View(model);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-
         [HttpGet]
         public async Task<IActionResult> ClientProgrammeDetails(Guid programmeId, Guid Id,Guid ownerId)
         {
@@ -981,7 +949,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
-                //model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;                              
+                model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;                              
                 model.Id = Id;
                 model.programmeName = programme.Name;
                 model.IsPublic = programme.IsPublic;
@@ -1020,21 +988,9 @@ namespace DealEngine.WebUI.Controllers
         }
 
         private async Task<ProgrammeInfoViewModel> GetProgrammeInfoViewModel()
-        {
-            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            var brokers = await _userService.GetBrokerUsers();            
-            var brokerList = new List<SelectListItem>();
-            foreach (var broker in brokers)
-            {
-                brokerList.Add(
-                    new SelectListItem
-                    {
-                        Text = broker.FirstName + " " + broker.Email,
-                        Value = broker.Id.ToString(),
-                        Selected = false
-                    });
-            }
-            model.Brokers = brokerList;
+        {            
+            var brokers = await _userService.GetBrokerUsers();
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel(brokers);
             
             return model;
         }

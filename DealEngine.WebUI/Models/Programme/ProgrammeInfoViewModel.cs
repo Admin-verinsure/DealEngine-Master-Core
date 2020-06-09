@@ -11,7 +11,29 @@ namespace DealEngine.WebUI.Models.Programme
 
 	public class ProgrammeInfoViewModel : BaseViewModel
 	{
-		public Guid Id { get; set; }
+        public ProgrammeInfoViewModel() { }
+        public ProgrammeInfoViewModel(List<User> brokers)
+        {
+            Brokers = GetBrokerSelectList(brokers);
+        }
+
+        private IList<SelectListItem> GetBrokerSelectList(List<User> brokers)
+        {
+            Brokers = new List<SelectListItem>();
+            foreach (var broker in brokers)
+            {
+                Brokers.Add(
+                    new SelectListItem
+                    {
+                        Text = broker.FirstName + " " + broker.Email,
+                        Value = broker.Id.ToString(),
+                        Selected = false
+                    });
+            }
+            return Brokers;
+        }
+
+        public Guid Id { get; set; }
         public Guid OwnerId { get; set; }
         public Guid ProductId { get; set; }
         public Guid selectedparty { get; set; }
