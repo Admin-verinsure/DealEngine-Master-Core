@@ -3227,13 +3227,13 @@ namespace DealEngine.WebUI.Controllers
                             //{
 
                             //};
-                            ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
-                            //prevsheet.Organisation.Remove(organisation);
-
                             AuditHistory audit = new AuditHistory();
-                            audit.PreviousSheet = prevsheet;
+                            
+                                ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
+                                audit.PreviousSheet = prevsheet;
+
                             audit.NextSheet = sheet;
-                            audit.DateDeleted = DateTime.Now;
+                           //audit.DateDeleted = DateTime.Now;
                             //audit.DateAdded = DateTime.Now;
                             organisation.AuditHistory.Add(audit);
                             organisation.Removed = false;

@@ -356,7 +356,15 @@ namespace DealEngine.Services.Impl
         }
         public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
         {
-            return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation == organisation);
+            try
+            {
+                return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation == organisation);
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task RemoveOrganisationFromSheets(Organisation organisation)
