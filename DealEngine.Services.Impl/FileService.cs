@@ -519,6 +519,8 @@ namespace DealEngine.Services.Impl
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
             }
 
+            string strnominatedrepresentative = "";
+
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 DataTable dtadvisor = new DataTable();
@@ -528,9 +530,6 @@ namespace DealEngine.Services.Impl
                 DataTable dtadvisor1 = new DataTable();
                 dtadvisor1.Columns.Add("Advisor");
                 dtadvisor1.Columns.Add("Retroactive Date");
-
-                DataTable dtnominatedrepresentative = new DataTable();
-                dtnominatedrepresentative.Columns.Add("Nominated Representative");
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
@@ -553,29 +552,31 @@ namespace DealEngine.Services.Impl
 
                     if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia1 => uisorgia1.InsuranceAttributeName == "NominatedRepresentative" && uisorgia1.DateDeleted == null) != null)
                     {
-                        DataRow drnominatedrepresentative = dtnominatedrepresentative.NewRow();
+                        if (string.IsNullOrEmpty(strnominatedrepresentative))
+                        {
+                            strnominatedrepresentative = uisorg.Name;
+                        }
+                        else
+                        {
+                            strnominatedrepresentative += ", " + uisorg.Name;
+                        }
 
-                        drnominatedrepresentative["Advisor"] = uisorg.Name;
-
-                        dtnominatedrepresentative.Rows.Add(drnominatedrepresentative);
                     }
                 }
 
                 dtadvisor.TableName = "AdvisorDetailsTablePI";
                 dtadvisor1.TableName = "AdvisorDetailsTableDO";
-                dtnominatedrepresentative.TableName = "NominatedRepresentativeDetailsTable";
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", ConvertDataTableToHTML(dtadvisor)));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", ConvertDataTableToHTML(dtadvisor1)));
-                mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", ConvertDataTableToHTML(dtnominatedrepresentative)));
+                
             }
             else
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
-                mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", "No Nominated Representative insured under this policy."));
             }
-
+            mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
 
             string customeactivity = "";
             string customeactivityexcess = "";

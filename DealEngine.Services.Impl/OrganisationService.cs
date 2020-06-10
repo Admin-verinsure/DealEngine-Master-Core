@@ -105,15 +105,7 @@ namespace DealEngine.Services.Impl
 		{
 			var organisations = new List<Organisation>();
 			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal"
-				|| ia.InsuranceAttributeName == "Subsidiary"
-				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
-				|| ia.InsuranceAttributeName == "OtherConsultingBusiness"
-				|| ia.InsuranceAttributeName == "JointVenture"
-				|| ia.InsuranceAttributeName == "Mergers"
-				|| ia.InsuranceAttributeName == "Advisor"
-				|| ia.InsuranceAttributeName == "NominatedRepresentative"
-				|| ia.InsuranceAttributeName == "project management personnel"))
+			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
 			{
 				foreach (var org in IA.IAOrganisations)
 				{
@@ -130,15 +122,7 @@ namespace DealEngine.Services.Impl
 		{
 			var organisations = new List<Organisation>();
 			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal"
-				|| ia.InsuranceAttributeName == "Subsidiary"
-				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
-				|| ia.InsuranceAttributeName == "OtherConsultingBusiness"
-				|| ia.InsuranceAttributeName == "JointVenture"
-				|| ia.InsuranceAttributeName == "Mergers"
-				|| ia.InsuranceAttributeName == "Advisor"
-				|| ia.InsuranceAttributeName == "NominatedRepresentative"
-				|| ia.InsuranceAttributeName == "project management personnel"))
+			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
 			{
 				foreach (var org in IA.IAOrganisations)
 				{
