@@ -797,38 +797,65 @@ namespace DealEngine.WebUI.Controllers
             string email = null;
             OrganisationViewModel orgmodel = new OrganisationViewModel();
             User userdb = null;
+            User user2 = null;
             var jsdkf = formCollection["Id"];
+            string username = "";
             try
             {
                 Currentuser = await CurrentUser();
                 ownerorg = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
+
                     var Action  = formCollection["Action"];
                     var FirstName = formCollection["FirstName"];
                     var LastName = formCollection["LastName"];
                     var Email = formCollection["Email"];
+                    var Phone = formCollection["Phone"];
+
                     if (Action == "Edit")
                     {
                         userdb = await _userService.GetUserById(Guid.Parse(formCollection["UserId"]));
+                        if (userdb == null)
+                        {
+                             username = FirstName + "_" + LastName;
+
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = FirstName + "_" + LastName;
+                            }
+                        }
+
                         primaryorg = await _organisationService.GetOrganisation(userdb.PrimaryOrganisation.Id);
                         primaryorg.Email = Email;
                         userdb.FirstName = FirstName;
                         userdb.LastName = LastName;
                         userdb.FullName = FirstName + " " + LastName;
                         userdb.Email = Email;
+                        userdb.Phone = Phone;
                         await uow.Commit();
-
 
                     }
                     else
                     {
                         if (Action == "Add") {
-                        userdb = new User(Currentuser, Guid.NewGuid(), FirstName);
+                        userdb = new User(Currentuser, Guid.NewGuid(), username);
                             userdb.FirstName = FirstName;
                             userdb.LastName = LastName;
                             userdb.FullName = FirstName + " " + LastName;
                             userdb.Email = Email;
+                            userdb.Phone = Phone;
                             await _userService.Create(userdb);
                             userdb.Organisations.Add(ownerorg);
                             userdb.SetPrimaryOrganisation(ownerorg);

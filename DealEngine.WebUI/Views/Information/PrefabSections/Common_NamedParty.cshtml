@@ -39,7 +39,7 @@
                                     { name: "OrganisationName", align: 'center' },
                                     { name: "IsPrincipalAdvisor", align: 'center' },
                                     { name: "OrganisationType", align: 'center' },
-                                    { name: "TradingName", align: 'center'},
+                                    { name: "TradingName", align: 'center',hidden:true},
                                                                         //{ name: "TradingName", align: 'center',hidden:true },
 
                                      {
@@ -169,7 +169,7 @@
                         <p class="validationContainer" id="ValidateCommonEditLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden">
                         <label class="label required">DOB</label>
                         <label class="input">
                             <i></i>
@@ -345,7 +345,7 @@
                         <p class="validationContainer" id="ValidateCommonOrgName"></p>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec ">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec CommonNonOtherConsultingBusiness ">
                         <label class="label required">This Person has retired or deceased ?</label>
                         <label class="input">
                             <select id="CommonIsRetiredorDecieved" onchange="Isretiredselected('CommonIsRetiredorDecieved','Common')" class="form-control b" name="IsRetiredorDecieved">
@@ -391,7 +391,7 @@
                         <p class="validationContainer" id="ValidateCommonLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness" hidden>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" >
                         <label class="label ">DOB</label>
                         <label class="input">
                             <i></i>
