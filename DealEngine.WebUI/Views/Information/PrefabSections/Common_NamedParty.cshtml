@@ -107,7 +107,7 @@
                             <select id="CommonEditOrgType" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Person - Individual">Private</option>
-                                <option value="Corporate">Company</option>
+                                <option value="Corporation – Limited liability">Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
                             </select>
@@ -134,7 +134,9 @@
                         <p class="validationContainer" id="ValidateCommonEditIsRetiredorDecieved"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
+
+                        @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">*@
                         <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                         <label class="input">
                             <i></i>
@@ -142,7 +144,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
                         <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                         <label class="input">
                             <i></i>
@@ -201,7 +203,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec  CommonEditnonnominated CommonEditNonOtherConsultingBusiness">
 
                         <label class="label required">Trading Name</label>
                         <label class="input">
@@ -212,7 +214,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec  CommonEditnonnominated CommonEditNonOtherConsultingBusiness">
                         <label class="label">Company Office Number</label>
                         <label class="input">
                             <i></i>
@@ -274,7 +276,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditnonnominated CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">
 
                         <label class="label">MyCRMID</label>
                         <label class="input">
@@ -327,7 +329,7 @@
                             <select id="CommonOrgType" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
                                 <option value="Person - Individual">Private</option>
-                                <option value="Corporate">Company</option>
+                                <option value="Corporation – Limited liability">Company</option>
                                 <option value="Trust">Trust</option>
                                 <option value="Partnership">Partnership</option>
                             </select>
@@ -357,7 +359,7 @@
                         <p class="validationContainer" id="ValidateCommonIsRetiredorDecieved"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec CommonNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
                         <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                         <label class="input">
                             <i></i>
@@ -365,7 +367,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec CommonNonOtherConsultingBusiness">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
                         <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                         <label class="input">
                             <i></i>
@@ -465,7 +467,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonNonOtherConsultingBusiness CommonAdvisorsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonnonnominated CommonNonOtherConsultingBusiness CommonAdvisorsec">
 
                         <label class="label required">MyCRMID</label>
                         <label class="input">
@@ -570,24 +572,36 @@
     function CommonTypeSelected(TypeSelected, type) {
         debugger;
         var typeSelected = document.getElementById(TypeSelected);
+
+        if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor" || typeSelected.options[typeSelected.selectedIndex].value == "NominatedRepresentative") {
+            $("#" + type + "OrgType").val("Person - Individual").trigger('chosen:updated');
+            $("#" + type + "OrgType").prop("disabled", true);
+        } else {
+             $("#" + type + "OrgType").val("").trigger('chosen:updated');
+            $("#" + type + "OrgType").prop("disabled", false);
+        }
         if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor") {
             $("#" + type + "Advisor").removeClass('hidden');
             $("." + type + "Advisorsec").removeClass('hidden');
             $("#" + type + "Duration").val('');
-            $("#" + type + "OrgType").val("Person - Individual").trigger('chosen:updated');
-            $("#" + type + "OrgType").prop("disabled", true);
+            
         } else {
             if (typeSelected.options[typeSelected.selectedIndex].value == "OtherConsultingBusiness") {
              $("." + type + "OtherConsultingBusiness").removeClass('hidden');
             $("." + type + "NonOtherConsultingBusiness").addClass('hidden');
-            $("." + type +"CommonOrgName").val('');
+            $("." + type + "CommonOrgName").val('');
             } else {
-             $("." + type + "OtherConsultingBusiness").addClass('hidden');
-             $("." + type + "NonOtherConsultingBusiness").removeClass('hidden');
-            $("#" + type + "OrgType").val("").trigger('chosen:updated');
-            $("#" + type + "OrgType").prop("disabled", false);
-            $("#" + type + "Advisor").addClass('hidden');
-            $("." + type + "Advisorsec").addClass('hidden');
+                if (typeSelected.options[typeSelected.selectedIndex].value == "NominatedRepresentative" ) {
+                    $("." + type + "nonnominated").addClass('hidden');
+
+                } else{
+                     $("." + type + "OtherConsultingBusiness").addClass('hidden');
+                    $("." + type + "NonOtherConsultingBusiness").removeClass('hidden');
+                    $("#" + type + "Advisor").addClass('hidden');
+                    $("." + type + "nonnominated").removeClass('hidden');
+                     $("." + type + "Advisorsec").addClass('hidden');
+                }
+            
             }
 
 
@@ -627,20 +641,18 @@
                  $('.nonownersec').addClass("hidden");
                  
                 } else {
-                     $('#CommonEditType').val(data.type);
-                     $('#CommonEditOrgType').val(data.organisationTypeName);
                      $('#CommonEditOrgName').val(data.organisationName);
 
                     if (data.type == "OtherConsultingBusiness") {
-                        $("." + type + "OtherConsultingBusiness").removeClass('hidden');
-                        $("." + type + "NonOtherConsultingBusiness").addClass('hidden');
+                        $(".CommonEditOtherConsultingBusiness").removeClass('hidden');
+                        $(".CommonEditNonOtherConsultingBusiness").addClass('hidden');
+
                     }
                     else {
 
                  $('.nonownersec').removeClass("hidden");
                  $('.ownersec').addClass("hidden");
-                 //$('#CommonEditType').val(data.type);
-                 //$('#CommonEditOrgType').val(data.organisationTypeName);
+                 $('#CommonEditType').val(data.type);
                  $('#CommonEditFirstName').val(data.firstName);
                  $('#CommonEditLastName').val(data.lastName);
                  $('#CommonEditDOB').val(data.dateofBirth);
@@ -653,10 +665,13 @@
                  $('#CommonEditConfirmAAA').val(data.confirmAAA);
                  $('#CommonEditCRMID').val(data.myCRMId);
                  $("#CommonEditIsPrincipalAdvisor").prop("checked", data.isPrincipalAdvisor);
+
                 }
                   UpdateChosen();
                  //CommonTypeSelected('CommonType','CommonEdit')
-                 CommonTypeSelected('CommonEditType','CommonEdit')
+                 CommonTypeSelected('CommonEditType', 'CommonEdit')
+                 $('#CommonEditOrgType').val(data.organisationTypeName);
+
                  Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')
              }
 
@@ -858,7 +873,7 @@
          //var OrgType = $('#CommonOrgType').val(); 
          var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
          //var proddata = proddata + "& OrganisationTypeName =" + OrgType;
-
+        $("#getAgreementModal").modal("show");
         $.ajax({
             url: '@Url.Action("AddCommonNamedParty", "Services")',
             type: "POST",
@@ -877,8 +892,12 @@
                 $('#EditPrincial12Sec').addClass('hidden');
                 $("#ValidateCommonEditEmail").html("<i></i>");
                 $("#ValidateCommonEmail").html("<i></i>");
+                        $("#getAgreementModal").modal("hide");
+
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
+                        $("#getAgreementModal").modal("hide");
+
                 alert("There was an error while trying to save the Vehicle.");
             });
     };
@@ -887,9 +906,10 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        //var Orgname = $('#CommonEditAdvisorDuration').val(); 
+         //var OrgType = $('#CommonEditOrgType').val(); 
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        //var proddata = proddata + "& Duration =" + Orgname;
+         $("#getAgreementModal").modal("show");
+        //var proddata = proddata + "& OrganisationTypeName =" + Orgname;
 
         $.ajax({
             url: '@Url.Action("EditCommonNamedParty", "Services")',
@@ -904,10 +924,11 @@
                 $("#ValidateCommonEmail").html("<i></i>");
                 $(tableId).trigger('reloadGrid');
                 $(tabId + " :input").val("");
-              
+               $("#getAgreementModal").modal("hide");
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to save the Vehicle.");
+                 $("#getAgreementModal").modal("hide");
             });
     };
    
