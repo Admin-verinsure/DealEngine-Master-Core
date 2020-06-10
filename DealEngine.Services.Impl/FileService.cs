@@ -557,7 +557,7 @@ namespace DealEngine.Services.Impl
                         }
                         else
                         {
-                            stradvisorlist += Environment.NewLine + "The Advisor Insured:                    " + uisorg.Name +
+                            stradvisorlist += "<br />" + "The Advisor Insured:                    " + uisorg.Name +
                                 "<br />" + "Policy Retroactive Active Date: " + uisorg.PIRetroactivedate;
                         }
                         if (string.IsNullOrEmpty(stradvisorlist1))
@@ -567,7 +567,7 @@ namespace DealEngine.Services.Impl
                         }
                         else
                         {
-                            stradvisorlist1 += Environment.NewLine + "The Advisor Insured:                    " + uisorg.Name +
+                            stradvisorlist1 += "<br />" + "The Advisor Insured:                    " + uisorg.Name +
                                 "<br />" + "Policy Retroactive Active Date: " + uisorg.DORetroactivedate;
                         }
                     }
