@@ -16,6 +16,11 @@ namespace DealEngine.Domain.Entities
         {
             Name = name;
         }
+        public OrganisationType(string name)
+            : base(null)
+        {
+            Name = name;
+        }
 
-	}
+    }
 }

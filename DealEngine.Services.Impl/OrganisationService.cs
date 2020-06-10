@@ -14,13 +14,16 @@ namespace DealEngine.Services.Impl
 	public class OrganisationService : IOrganisationService
 	{
 		IMapperSession<Organisation> _organisationRepository;
+		IOrganisationTypeService _organisationTypeService;
 		ILdapService _ldapService;		
 		IInsuranceAttributeService _insuranceAttributeService;
 
-		public OrganisationService(IMapperSession<Organisation> organisationRepository, 			
+		public OrganisationService(IMapperSession<Organisation> organisationRepository,
+			IOrganisationTypeService organisationTypeService,
 			ILdapService ldapService,
 			IInsuranceAttributeService insuranceAttributeService)
 		{
+			_organisationTypeService = organisationTypeService;
 			_insuranceAttributeService = insuranceAttributeService;			
 			_organisationRepository = organisationRepository;
 			_ldapService = ldapService;
@@ -45,9 +48,9 @@ namespace DealEngine.Services.Impl
 			return organisation;
 		}
 
-		public Organisation CreateNewOrganisation(string p1, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail)
+		public Organisation CreateNewOrganisation(string organisationName, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail)
 		{
-			Organisation organisation = new Organisation(null, Guid.NewGuid(), p1, organisationType);
+			Organisation organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
 			// TODO - finish this later since I need to figure out what calls the controller function that calls this service function
 			throw new NotImplementedException();
 		}
@@ -96,6 +99,11 @@ namespace DealEngine.Services.Impl
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
 		}
 
+		public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
+		{
+			return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
+		}
+
 		public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
 		{
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed==true);
@@ -135,10 +143,78 @@ namespace DealEngine.Services.Impl
 			return organisations;
 		}
 
-        public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
-        {
-			return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
-		}
+
+        //      public async Task<List<Organisation>> GetOrCreateOrganisation(string Email)
+        //      {
+        //	User User = null;
+        //	string OrganisationTypeName = "";
+        //	var foundOrgs = await GetAllOrganisationsByEmail(Email);
+        //          if (foundOrgs.Any())
+        //          {
+        //		return foundOrgs;
+        //	}
+        //          else
+        //          {
+        //		string ownerLastName = null;
+        //		string ownerEmail = null;
+        //		string ownerFirstName = null;
+        //		string organisationName = null;
+        //		string OrganisationTypeName = "";
+        //		OrganisationType OrganisationType = _organisationTypeService.GetOrganisationTypeByName(OrganisationType);
+        //		CreateNewOrganisation(organisationName, OrganisationType, ownerLastName, ownerLastName, Email);
+        //          }
+
+        //	if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
+        //	{
+        //		organisationName = firstName + " " + lastName;
+        //		ouname = "Home";
+        //	}
+        //	else
+        //	{
+        //		ouname = "Head Office";
+        //	}
+        //	switch (orgType)
+        //	{
+        //		case "Private":
+        //			{
+        //				orgTypeName = "Person - Individual";
+        //				break;
+        //			}
+        //		case "Company":
+        //			{
+        //				orgTypeName = "Corporation – Limited liability";
+        //				break;
+        //			}
+        //		case "Trust":
+        //			{
+        //				orgTypeName = "Trust";
+        //				break;
+        //			}
+        //		case "Partnership":
+        //			{
+        //				orgTypeName = "Partnership";
+        //				break;
+        //			}
+        //		default:
+        //			{
+        //				throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
+        //			}
+        //	}
+        //	string phonenumber = null;
+
+        //	phonenumber = mobilePhone;
+        //	OrganisationType organisationType = null;
+        //	organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+        //	if (organisationType == null)
+        //	{
+        //		organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
+        //	}
+
+        //	organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType);
+        //	organisation.Phone = phonenumber;
+        //	organisation.Email = email;
+        //	await _organisationService.CreateNewOrganisation(organisation);
+        //}
     }
 
 }

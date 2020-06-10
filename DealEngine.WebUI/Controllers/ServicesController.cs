@@ -5441,6 +5441,7 @@ namespace DealEngine.WebUI.Controllers
                 currentUser = await CurrentUser();
 
                 var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+                //var organisations = await _organisationService.GetOrCreateOrganisation(email);
                 var organisations = await _organisationService.GetAllOrganisationsByEmail(email);
                 organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
                 //condition for organisation exists
