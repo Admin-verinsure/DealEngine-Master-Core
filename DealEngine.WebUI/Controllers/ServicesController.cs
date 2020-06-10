@@ -2490,6 +2490,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddCEASPrincipalDirectors(OrganisationViewModel model)
         {
             User currentUser = null;
+            var OwnerId = new Guid();
             try
             {
                 currentUser = await CurrentUser();
@@ -2573,6 +2574,7 @@ namespace DealEngine.WebUI.Controllers
 
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
 
                     }
@@ -2593,6 +2595,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUsers();
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
 
                     }
@@ -3040,7 +3043,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddCommonNamedParty(OrganisationViewModel model)
         {
             User currentUser = null;
-
+            var OwnerId = new Guid();
             try
             {
                 if (model == null)
@@ -3065,7 +3068,7 @@ namespace DealEngine.WebUI.Controllers
                                     orgTypeName = "Person - Individual";
                                     break;
                                 }
-                            case "Corporation – Limited liability":
+                            case "Corporate":
                                 {
                                     orgTypeName = "Corporation – Limited liability";
                                     break;
@@ -3116,7 +3119,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                     try
                     {
-                        if (orgTypeName == "Person - Individual")
+                        if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
                             userdb = await _userService.GetUserByEmail(model.Email);
                             if (userdb == null)
@@ -3132,12 +3135,20 @@ namespace DealEngine.WebUI.Controllers
                             }
 
                         }
+                        else
+                        {
+                            //var userList = await _userService.GetAllUsers();
+
+                            var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
+                            userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId =userdb.Id;
+                        }
 
                     }
                     catch (Exception ex)
                     {
 
-                        if (orgTypeName == "Person - Individual")
+                        if (orgTypeName == "Person - Individual" && model.FirstName !=null)
                         {
                             userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
                             userdb.FirstName = model.FirstName;
@@ -3150,11 +3161,19 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
                     }
 
-                    var organisationName = model.FirstName + " " + model.LastName;
-
+                    var organisationName = "";
+                    if (orgTypeName == "Person - Individual" && model.FirstName != null)
+                    {
+                        organisationName = model.FirstName + " " + model.LastName;
+                    }
+                    else
+                    {
+                        organisationName = model.OrganisationName;
+                    }
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (organisation != null)
@@ -3257,7 +3276,10 @@ namespace DealEngine.WebUI.Controllers
                             insuranceAttribute.IAOrganisations.Add(organisation);
                             await _organisationService.CreateNewOrganisation(organisation);
                             userdb.Organisations.Add(organisation);
-                            userdb.SetPrimaryOrganisation(organisation);
+                            if (userdb.Id != OwnerId)
+                            {
+                                userdb.SetPrimaryOrganisation(organisation);
+                            }
                             sheet.Organisation.Add(organisation);
                             //organisation.NextOrg.Add(sheet);
                             model.ID = organisation.Id;
