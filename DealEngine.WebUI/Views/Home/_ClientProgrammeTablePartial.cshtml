@@ -117,7 +117,7 @@
                             if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                             {
                                 @*<a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>*@
-                                <a href="#mysubUnlockModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Unlock</a>
+                                <a href="#myUnlockModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Unlock</a>
 
                             }
                             if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
@@ -148,7 +148,7 @@
     </tbody>
 </table>
 
-<div id="mysubUnlockModal" class="modal container" role="dialog">
+<div id="myUnlockModal" class="modal container" role="dialog">
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="modal-title" style="color:blue; font-size:22px">Unlock Details</h3>
@@ -174,7 +174,7 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-sm" onclick="postUnlockSubData();" data-toggle="tab">Submit</button>
+            <button type="button" class="btn btn-success btn-sm" onclick="postUnlockData();" data-toggle="tab">Submit</button>
         </div>
     </div>
 </div>

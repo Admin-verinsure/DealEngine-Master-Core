@@ -391,6 +391,9 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+                var progname = sheet.Programme.BaseProgramme.Name;
+
+               
 
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
@@ -417,7 +420,11 @@ namespace DealEngine.WebUI.Controllers
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
                 JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false");
+                if (progname == "NZFSG Programme"){
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false",sheet.Owner.TradingName == null ? " ": sheet.Owner.TradingName);
+                }else{
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false","NonTrading");
+                }
                 model.AddRow(row1);
                 int offset = rows * (page - 1);
                 for (int i = offset; i < offset + rows; i++)
@@ -429,7 +436,7 @@ namespace DealEngine.WebUI.Controllers
 
                     for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
                     {
-                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor, organisation.Id);
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor,"", organisation.Id);
                     }
                     model.AddRow(row);
                 }
