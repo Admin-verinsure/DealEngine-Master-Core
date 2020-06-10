@@ -2490,6 +2490,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddCEASPrincipalDirectors(OrganisationViewModel model)
         {
             User currentUser = null;
+            var OwnerId = new Guid();
             try
             {
                 currentUser = await CurrentUser();
@@ -2573,6 +2574,7 @@ namespace DealEngine.WebUI.Controllers
 
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
 
                     }
@@ -2593,6 +2595,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUsers();
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
 
                     }
@@ -3040,7 +3043,8 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddCommonNamedParty(OrganisationViewModel model)
         {
             User currentUser = null;
-
+            var OwnerId = new Guid();
+            Organisation organisation = null;
             try
             {
                 if (model == null)
@@ -3050,94 +3054,96 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-                if (model.Type == "Advisor")
-                    model.OrganisationTypeName = "Person - Individual";
-                string orgTypeName = "";
-                try
+                organisation = await _organisationService.GetExistingOrganisationByEmail(model.Email);
+                if (organisation == null)
                 {
-
-                    if (model.OrganisationTypeName != null)
-                    {
-                        switch (model.OrganisationTypeName)
-                        {
-                            case "Person - Individual":
-                                {
-                                    orgTypeName = "Person - Individual";
-                                    break;
-                                }
-                            case "Corporation – Limited liability":
-                                {
-                                    orgTypeName = "Corporation – Limited liability";
-                                    break;
-                                }
-                            case "Trust":
-                                {
-                                    orgTypeName = "Corporation – Limited liability";
-                                    break;
-                                }
-
-
-                            case "Partnership":
-                                {
-                                    orgTypeName = "Partnership";
-                                    break;
-                                }
-                            default:
-                                {
-                                    throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
-                                }
-                        }
-                    }
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
-                    if (insuranceAttribute == null)
-                    {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
-                    }
-                    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
-                    if (organisationType == null)
-                    {
-                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
-                    }
-
-                    User userdb = null;
-                    Organisation organisation = null;
-                    if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
-                    {
-                        organisation = await _organisationService.GetOrganisation(model.ID);
-
-                    }
-                    else
-                    {
-                        if (model.Email != null)
-                        {
-                            organisation = await _organisationService.GetExistingOrganisationByEmail(model.Email);
-
-                        }
-                    }
+                    if (model.Type == "Advisor")
+                        model.OrganisationTypeName = "Person - Individual";
+                    string orgTypeName = "";
                     try
                     {
-                        if (orgTypeName == "Person - Individual")
+
+                        if (model.OrganisationTypeName != null)
                         {
-                            userdb = await _userService.GetUserByEmail(model.Email);
-                            if (userdb == null)
+                            switch (model.OrganisationTypeName)
                             {
-                                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                                case "Person - Individual":
+                                    {
+                                        orgTypeName = "Person - Individual";
+                                        break;
+                                    }
+                                case "Corporation – Limited liability":
+                                    {
+                                        orgTypeName = "Corporation – Limited liability";
+                                        break;
+                                    }
+                                case "Trust":
+                                    {
+                                        orgTypeName = "Corporation – Limited liability";
+                                        break;
+                                    }
+
+
+                                case "Partnership":
+                                    {
+                                        orgTypeName = "Partnership";
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                                    }
+                            }
+                        }
+                        InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
+                        if (insuranceAttribute == null)
+                        {
+                            insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
+                        }
+                        OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+                        if (organisationType == null)
+                        {
+                            organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
+                        }
+
+                        User userdb = null;
+                        if (model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                        {
+                            organisation = await _organisationService.GetOrganisation(model.ID);
+
+                        }
+                        else
+                        {
+                            if (model.Email != null)
+                            {
+
+
+                            }
+                        }
+                        try
+                        {
+                            if (orgTypeName == "Person - Individual")
+                            {
+                                userdb = await _userService.GetUserByEmail(model.Email);
+                                if (userdb == null)
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
-                                    userdb.Email = model.Email;
-                                    await uow.Commit();
+                                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        userdb.FirstName = model.FirstName;
+                                        userdb.LastName = model.LastName;
+                                        userdb.FullName = model.FirstName + " " + model.LastName;
+                                        userdb.Email = model.Email;
+                                        await uow.Commit();
+                                    }
                                 }
+
                             }
 
                         }
+                        catch (Exception ex)
+                        {
 
-                    }
-                    catch (Exception ex)
-                    {
-
-                        if (orgTypeName == "Person - Individual")
+                        if (orgTypeName == "Person - Individual" && model.FirstName !=null)
                         {
                             userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
                             userdb.FirstName = model.FirstName;
@@ -3150,127 +3156,104 @@ namespace DealEngine.WebUI.Controllers
                         {
                             var userList = await _userService.GetAllUserByOrganisation(sheet.Owner);
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                            OwnerId = userdb.Id;
                         }
+                        }
+
+                        var organisationName = model.FirstName + " " + model.LastName;
+                        organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                        organisation.Qualifications = model.Qualifications;
+                        organisation.ChangeOrganisationName(organisationName);
+                        organisation.Type = model.Type;
+                        organisation.Email = model.Email;
+                        organisation.Qualifications = model.Qualifications;
+                        organisation.RegisteredStatus = model.RegisteredStatus;
+                        organisation.Duration = model.Duration;
+                        organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                        organisation.ConfirmAAA = model.ConfirmAAA;
+                        organisation.TradingName = model.TradingName;
+
+                        if (model.DateofBirth != null)
+                        {
+                            organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                        }
+                        if (model.DateofRetirement != null)
+                        {
+                            organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                        }
+                        if (model.DateofDeceased != null)
+                        {
+                            organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                        }
+                        if (model.IsPrincipalAdvisor)
+                        {
+                            List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                            foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                            {
+                                org.IsPrincipalAdvisor = false;
+                            }
+                        }
+                        organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+                        organisation.InsuranceAttributes.Add(insuranceAttribute);
+                        insuranceAttribute.IAOrganisations.Add(organisation);
+                        await _organisationService.CreateNewOrganisation(organisation);
+                        userdb.Organisations.Add(organisation);
+                        userdb.SetPrimaryOrganisation(organisation);
+                        sheet.Organisation.Add(organisation);
+                        //organisation.NextOrg.Add(sheet);
+                        model.ID = organisation.Id;
                     }
-
-                    var organisationName = model.FirstName + " " + model.LastName;
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    catch (Exception ex)
                     {
-                        if (organisation != null)
-                        {
-                            organisation.ChangeOrganisationName(organisationName);
-                            organisation.Type = model.Type;
-                            organisation.Email = model.Email;
-                            organisation.Qualifications = model.Qualifications;
-                            organisation.RegisteredStatus = model.RegisteredStatus;
-                            organisation.Duration = model.Duration;
-                            organisation.ConfirmAAA = model.ConfirmAAA;
-                            organisation.MyCRMId = model.MyCRMId;
-                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                            organisation.TradingName = model.TradingName;
-
-                            if (model.DateofBirth != null)
-                            {
-                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
-                            }
-                            if (model.DateofRetirement != null)
-                            {
-                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
-                            }
-                            if (model.DateofDeceased != null)
-                            {
-                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
-                            }
-                            if (model.IsPrincipalAdvisor)
-                            {
-                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
-                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
-                                {
-                                    org.IsPrincipalAdvisor = false;
-                                }
-                            }
-                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
-                            //ClientInformationSheet prevsheet = null;
-                            //try
-                            //{
-                            //    prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
-
-                            //}
-                            //catch (Exception ex)
-                            //{
-
-                            //};
-                            ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
-                            //prevsheet.Organisation.Remove(organisation);
-
-                            AuditHistory audit = new AuditHistory();
-                            audit.PreviousSheet = prevsheet;
-                            audit.NextSheet = sheet;
-                            audit.DateDeleted = DateTime.Now;
-                            //audit.DateAdded = DateTime.Now;
-                            organisation.AuditHistory.Add(audit);
-                            organisation.Removed = false;
-                            sheet.Organisation.Add(organisation);
-                            //organisation.Previoussheet.Add(prevsheet);
-                            //organisation.Nextsheet.(Addsheet;
-
-                        }
-
-                        else
-                        {
-
-                            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                            organisation.Qualifications = model.Qualifications;
-                            organisation.ChangeOrganisationName(organisationName);
-                            organisation.Type = model.Type;
-                            organisation.Email = model.Email;
-                            organisation.Qualifications = model.Qualifications;
-                            organisation.RegisteredStatus = model.RegisteredStatus;
-                            organisation.Duration = model.Duration;
-                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                            organisation.ConfirmAAA = model.ConfirmAAA;
-                            organisation.TradingName = model.TradingName;
-
-                            if (model.DateofBirth != null)
-                            {
-                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
-                            }
-                            if (model.DateofRetirement != null)
-                            {
-                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
-                            }
-                            if (model.DateofDeceased != null)
-                            {
-                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
-                            }
-                            if (model.IsPrincipalAdvisor)
-                            {
-                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
-                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
-                                {
-                                    org.IsPrincipalAdvisor = false;
-                                }
-                            }
-                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            insuranceAttribute.IAOrganisations.Add(organisation);
-                            await _organisationService.CreateNewOrganisation(organisation);
-                            userdb.Organisations.Add(organisation);
-                            userdb.SetPrimaryOrganisation(organisation);
-                            sheet.Organisation.Add(organisation);
-                            //organisation.NextOrg.Add(sheet);
-                            model.ID = organisation.Id;
-
-                        }
-                        await uow.Commit();
+                        Console.Write(ex.Message);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.Write(ex.Message);
+                    var Advisor = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+                    if (organisation.InsuranceAttributes.Contains(Advisor) && organisation.Removed == true)
+                    {
+                        await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+                    }
+                    
+                    organisation.ChangeOrganisationName(organisation.Name);
+                    organisation.Type = model.Type;
+                    organisation.Email = model.Email;
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.RegisteredStatus = model.RegisteredStatus;
+                    organisation.Duration = model.Duration;
+                    organisation.ConfirmAAA = model.ConfirmAAA;
+                    organisation.MyCRMId = model.MyCRMId;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.TradingName = model.TradingName;
+                    if (model.DateofBirth != null)
+                    {
+                        organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                    }
+                    if (model.DateofRetirement != null)
+                    {
+                        organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                    if (model.DateofDeceased != null)
+                    {
+                        organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
+                    if (model.IsPrincipalAdvisor)
+                    {
+                        List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                        foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                        {
+                            org.IsPrincipalAdvisor = false;
+                        }
+                    }
+                    organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+                    organisation.Removed = false;
+                    model.ID = organisation.Id;
+                    sheet.Organisation.Add(organisation);
+                    
+                    
                 }
-
+                await _clientInformationService.UpdateInformation(sheet);
                 return Json(model);
             }
             catch (Exception ex)
@@ -5402,6 +5385,7 @@ namespace DealEngine.WebUI.Controllers
             string email = collection["email"];
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
             Organisation organisation = null;
+            Organisation principalAdvisor = null;
             string membershipNumber = collection["memno"];
 
             try
@@ -5412,6 +5396,14 @@ namespace DealEngine.WebUI.Controllers
                 var organisations = await _organisationService.GetAllOrganisationsByEmail(email);
                 organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
                 //condition for organisation exists
+                if (organisation != null)
+                {
+                    await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+                    organisation.IsPrincipalAdvisor = true;
+                    organisation.Removed = false;
+                    principalAdvisor = organisation;
+                    organisation = null;
+                }
                 if (organisation == null)
                 {
                     hasAccount = false;
@@ -5466,10 +5458,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.Email = email;
                     await _organisationService.CreateNewOrganisation(organisation);
                 }
-                else
-                {
-                    organisation.InsuranceAttributes.Clear();
-                }
+
                 User user = null;
                 User user2 = null;
 
@@ -5525,7 +5514,10 @@ namespace DealEngine.WebUI.Controllers
                         {
                             clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
                         }
-
+                        if (principalAdvisor != null)
+                        {
+                            sheet.Organisation.Add(principalAdvisor);
+                        }
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         try
                         {
@@ -5553,7 +5545,7 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("failed create user " + ex.Message);
                 }
 
-                return RedirectPermanent("../Home/ViewProgramme?id="+ programmeId);
+                return RedirectPermanent("../Home/ViewProgramme?id=" + programmeId);
             }
             catch (Exception ex)
             {

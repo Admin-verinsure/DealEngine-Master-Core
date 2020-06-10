@@ -82,7 +82,7 @@
                     <input id="CommonEditPrincipalPartnersId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec ">
                         <label class=" label required">Type</label>
                         <label class="input">
                             <select id="CommonEditType" onchange="CommonTypeSelected('CommonEditType','CommonEdit')" class="form-control b" name="Type">
@@ -119,7 +119,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditAdvisorsec ">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">This Person has retired or deceased ?</label>
                         <label class="input">
                             <select id="CommonEditIsRetiredorDecieved" onchange="Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')" class="form-control b" name="IsRetiredorDecieved">
@@ -131,7 +131,7 @@
                         <p class="validationContainer" id="ValidateCommonEditIsRetiredorDecieved"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec CommonEditNonOtherConsultingBusiness">
                         <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                         <label class="input">
                             <i></i>
@@ -139,7 +139,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonEditretirementsec CommonEditNonOtherConsultingBusiness">
                         <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                         <label class="input">
                             <i></i>
@@ -148,7 +148,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec ">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">First Name</label>
                         <label class="input">
                             <i></i>
@@ -157,7 +157,7 @@
                         <p class="validationContainer" id="ValidateCommonEditFirstName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">Last Name</label>
                         <label class="input">
                             <i></i>
@@ -166,7 +166,7 @@
                         <p class="validationContainer" id="ValidateCommonEditLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">DOB</label>
                         <label class="input">
                             <i></i>
@@ -184,7 +184,7 @@
                         </label>
                         <p class="validationContainer" id="ValidateCommonEditOrgName"></p>
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonEditNonOtherConsultingBusiness">
                         <label class="label required">Email</label>
                         <label class="input">
                             <i></i>
@@ -198,7 +198,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden ownersec CommonEditNonOtherConsultingBusiness">
 
                         <label class="label required">Trading Name</label>
                         <label class="input">
@@ -209,7 +209,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label">Company Office Number</label>
                         <label class="input">
                             <i></i>
@@ -219,7 +219,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">Registered Status AFA,RFA or N/A</label>
                         <label class="input">
                             <i></i>
@@ -234,7 +234,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec CommonEditNonOtherConsultingBusiness">
                         <label class="label required">List any industry qualifications you have. (If none please put nil)</label>
                         <label class="input">
                             <i></i>
@@ -244,7 +244,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec hidden" id="CommonEditAdvisor">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 nonownersec hidden CommonEditNonOtherConsultingBusiness" id="CommonEditAdvisor">
                         <label class="label required">Duration Of Time as Adviser</label>
                         <label class="input">
                             <i></i>
@@ -255,7 +255,7 @@
                     </section>
                     @if (@Model.Name == "AAA Programme")
                     {
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonEditNonOtherConsultingBusiness">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
                             <label class="input">
                                 <i></i>
@@ -271,7 +271,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditAdvisorsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden nonownersec CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">
 
                         <label class="label">MyCRMID</label>
                         <label class="input">
@@ -281,7 +281,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden nonownersec CommonEditAdvisorsec">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden nonownersec CommonEditAdvisorsec CommonEditNonOtherConsultingBusiness">
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                             <input type="checkbox" id="CommonEditIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
@@ -318,7 +318,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " >
                         <label class=" label required">Organisation Type</label>
                         <label class="input">
                             <select id="CommonOrgType" class="form-control b" name="OrganisationTypeName">
@@ -354,7 +354,7 @@
                         <p class="validationContainer" id="ValidateCommonIsRetiredorDecieved"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec CommonNonOtherConsultingBusiness">
                         <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                         <label class="input">
                             <i></i>
@@ -362,7 +362,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonretirementsec CommonNonOtherConsultingBusiness">
                         <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                         <label class="input">
                             <i></i>
@@ -370,7 +370,7 @@
                         </label>
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                         <label class="label required">First Name</label>
                         <label class="input">
                             <i></i>
@@ -379,7 +379,7 @@
                         <p class="validationContainer" id="ValidateCommonFirstName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                         <label class="label required">Last Name</label>
                         <label class="input">
                             <i></i>
@@ -388,7 +388,7 @@
                         <p class="validationContainer" id="ValidateCommonLastName"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" hidden>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness" hidden>
                         <label class="label ">DOB</label>
                         <label class="input">
                             <i></i>
@@ -399,7 +399,7 @@
                         <p class="validationContainer" id="ValidateCommonDOB"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                         <label class="label required">Email</label>
                         <label class="input">
                             <i></i>
@@ -410,7 +410,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                         <label class="label required">Registered Status AFA,RFA or N/A</label>
                         <label class="input">
                             <i></i>
@@ -425,7 +425,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                         <label class="label required">List any industry qualifications you have. (If none please put nil)</label>
                         <label class="input">
                             <i></i>
@@ -435,7 +435,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CommonAdvisor">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonNonOtherConsultingBusiness" id="CommonAdvisor">
                         <label class="label required">Duration Of Time as Adviser</label>
                         <label class="input">
                             <i></i>
@@ -446,7 +446,7 @@
                     </section>
                     @if (@Model.Name == "AAA Programme")
                     {
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
                             <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
                             <label class="input">
                                 <i></i>
@@ -462,7 +462,7 @@
                         </section>
                     }
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonNonOtherConsultingBusiness CommonAdvisorsec">
 
                         <label class="label required">MyCRMID</label>
                         <label class="input">
@@ -473,7 +473,7 @@
                     </section>
 
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonAdvisorsec">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonNonOtherConsultingBusiness CommonAdvisorsec">
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                             <input type="checkbox" id="CommonIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
@@ -564,7 +564,8 @@
         }
     }
 
-    function CommonTypeSelected(TypeSelected,type) {
+    function CommonTypeSelected(TypeSelected, type) {
+        debugger;
         var typeSelected = document.getElementById(TypeSelected);
         if (typeSelected.options[typeSelected.selectedIndex].value == "Advisor") {
             $("#" + type + "Advisor").removeClass('hidden');
@@ -573,19 +574,23 @@
             $("#" + type + "OrgType").val("Person - Individual").trigger('chosen:updated');
             $("#" + type + "OrgType").prop("disabled", true);
         } else {
+            if (typeSelected.options[typeSelected.selectedIndex].value == "OtherConsultingBusiness") {
+             $("." + type + "OtherConsultingBusiness").removeClass('hidden');
+            $("." + type + "NonOtherConsultingBusiness").addClass('hidden');
+            $("." + type +"CommonOrgName").val('');
+            } else {
+             $("." + type + "OtherConsultingBusiness").addClass('hidden');
+             $("." + type + "NonOtherConsultingBusiness").removeClass('hidden');
             $("#" + type + "OrgType").val("").trigger('chosen:updated');
             $("#" + type + "OrgType").prop("disabled", false);
             $("#" + type + "Advisor").addClass('hidden');
             $("." + type + "Advisorsec").addClass('hidden');
+            }
+
 
         }
 
-         if (typeSelected.options[typeSelected.selectedIndex].value == "OtherConsultingBusiness") {
-            $("#" + type + "OtherConsultingBusiness").removeClass('hidden');
-            $("#" + type +"CommonOrgName").val('');
-         } else {
-            $("#" + type + "OtherConsultingBusiness").addClass('hidden');
-         }
+        
     }
 
 
@@ -618,11 +623,21 @@
                  $('.ownersec').removeClass("hidden");
                  $('.nonownersec').addClass("hidden");
                  
-             } else {
+                } else {
+                     $('#CommonEditType').val(data.type);
+                     $('#CommonEditOrgType').val(data.organisationTypeName);
+                     $('#CommonEditOrgName').val(data.organisationName);
+
+                    if (data.type == "OtherConsultingBusiness") {
+                        $("." + type + "OtherConsultingBusiness").removeClass('hidden');
+                        $("." + type + "NonOtherConsultingBusiness").addClass('hidden');
+                    }
+                    else {
+
                  $('.nonownersec').removeClass("hidden");
                  $('.ownersec').addClass("hidden");
-                 $('#CommonEditType').val(data.type);
-                 $('#CommonEditOrgType').val(data.organisationTypeName);
+                 //$('#CommonEditType').val(data.type);
+                 //$('#CommonEditOrgType').val(data.organisationTypeName);
                  $('#CommonEditFirstName').val(data.firstName);
                  $('#CommonEditLastName').val(data.lastName);
                  $('#CommonEditDOB').val(data.dateofBirth);
@@ -633,9 +648,9 @@
                  $('#CommonEditDateofRetirement').val(data.dateofRetirement);
                  $('#CommonEditDateofDeceased').val(data.dateofDeceased);
                  $('#CommonEditConfirmAAA').val(data.confirmAAA);
-                    $('#CommonEditCRMID').val(data.myCRMId);
-                  
-                 $("#CommonEditIsPrincipalAdvisor"). prop("checked", data.isPrincipalAdvisor);
+                 $('#CommonEditCRMID').val(data.myCRMId);
+                 $("#CommonEditIsPrincipalAdvisor").prop("checked", data.isPrincipalAdvisor);
+                }
                   UpdateChosen();
                  //CommonTypeSelected('CommonType','CommonEdit')
                  CommonTypeSelected('CommonEditType','CommonEdit')
@@ -665,7 +680,7 @@
         var ownercheck = $('#' + validatortype + 'Ownercheck').val();
         var emailcheck =  $('#CommonEditEmailCheck').val();
 
-        
+        if (Type != "OtherConsultingBusiness") {
             if (email == "") {
                 $("#Validate" + type + "Email").html("<font color='red'>Field is required</font>");
                 if (validity) {
@@ -689,8 +704,10 @@
                 }
                 
             }
+        }
+            
 
-        if (ownercheck != "Owner") {
+        if (ownercheck != "Owner" && Type != "OtherConsultingBusiness" ) {
             if (Type == "") {
                 $("#Validate" + type + "Type").html("<font color='red'>Field is required</font>");
                 if (validity) {
