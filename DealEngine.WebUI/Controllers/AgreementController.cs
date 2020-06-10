@@ -28,6 +28,7 @@ namespace DealEngine.WebUI.Controllers
     public class AgreementController : BaseController
     {
         #region Interfaces
+        IUWMService _underwritingModule;
         ISubsystemService _subsystemService;
         IActivityService _activityService;
         IInformationTemplateService _informationService;
@@ -62,6 +63,7 @@ namespace DealEngine.WebUI.Controllers
         #endregion
 
         public AgreementController(
+            IUWMService underwritingModule,
             ISubsystemService subsystemService,
             ILogger<AgreementController> logger,
             IApplicationLoggingService applicationLoggingService,
@@ -96,6 +98,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _underwritingModule = underwritingModule;
             _subsystemService = subsystemService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
@@ -131,24 +134,25 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> MyAgreements()
+        public async Task<IActionResult> ReRunUWM(string ClientId)
         {
-            MyAgreementsViewModel model = new MyAgreementsViewModel();
-            model.MyAgreements = new List<AgreementViewModel>();
-
-            // TODO - fix this to use ClientProgramme
-            //foreach (var answerSheet in _customerInformationService.GetAllInformationFor (CurrentUser())) {
-            //	if (answerSheet.Status == "Submitted") {
-            //		var template = answerSheet.InformationTemplate;
-            //		model.MyAgreements.Add (new AgreementViewModel () {
-            //			InformationName = template.Name,
-            //			InformationId = answerSheet.Id,
-            //			Status = "Unaccepted"
-            //		});
-            //	}
-            //}
-
-            return View(model);
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                var clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(ClientId));
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    _underwritingModule.UWM(user, clientProgramme.InformationSheet, clientProgramme.InformationSheet.ReferenceId);
+                    await uow.Commit();
+                }
+                return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         public async Task<IActionResult> AgreementTemplates()
@@ -1514,12 +1518,11 @@ namespace DealEngine.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
             model.ProgrammeStopAgreement = true;
-            var message = clientProgramme.BaseProgramme.SubsystemMessage;
-            if (string.IsNullOrWhiteSpace(message))
+            model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemStopAgreementMessage;
+            if (string.IsNullOrWhiteSpace(model.AgreementMessage))
             {
-                message = " The other advisors are now being notified so that they can login and complete their own declaration.";
+                model.AgreementMessage = " The other advisors are now being notified so that they can login and complete their own declaration.";
             }
-            model.AgreementMessage = message;
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
@@ -1547,9 +1550,13 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 //Notify broker 
-                model.AgreementMessage = @" <li>I declare that the information and answers given in this proposal have been checked and are true and complete in every respect and the applicant is not aware of any other information that may be material in considering this proposal.</li>
+                model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemDeclaration;
+                if (string.IsNullOrWhiteSpace(model.AgreementMessage))
+                {
+                    model.AgreementMessage = @" <li>I declare that the information and answers given in this proposal have been checked and are true and complete in every respect and the applicant is not aware of any other information that may be material in considering this proposal.</li>
                                             <li>I acknowledge that this proposal, declaration and any other information supplied in support of this proposal constitutes representations to, and will be relied on as the basis of contract by, insurers requested to quote on this proposal. We undertake to inform these insurers through our broker of any material alteration to this information whether occurring before or after the completion of any insurance contract.</li>
                                             <li>I acknowledge that misrepresentations or material non-disclosure of relevant information, whether made through this proposal or otherwise, may result in the insurance not being available to meet a claim and/ or cancellation of relevant insurance contract(s), in addition to other remedies.</li> ";
+                }
                 return PartialView("_ViewStopAgreementMessage", model);
             }
         }

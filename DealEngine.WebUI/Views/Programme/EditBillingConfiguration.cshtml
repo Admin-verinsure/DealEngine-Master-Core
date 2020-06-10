@@ -19,7 +19,7 @@
     <div class="row">
         <h1 class="page-title txt-color-blueDark">
             <i class="fa-fw fa fa-home"></i>
-            <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
             > <span>
                 Edit Billing Configuration
             </span>
@@ -28,7 +28,7 @@
     <!-- end col -->
     <div class="row">
         <span>
-            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.clientprogramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
     </div>
 
@@ -304,8 +304,8 @@
 
 
         $(window).on("load", function () {
-            $('#clientId').val(@Model.EGlobalClientNumber);
-            $('#branch').val("@Model.EGlobalBranchCode");
+            $('#clientId').val(@Model.ClientProgramme.EGlobalClientNumber);
+            $('#branch').val("@Model.ClientProgramme.EGlobalBranchCode");
         });
 
         var bcdata = [];

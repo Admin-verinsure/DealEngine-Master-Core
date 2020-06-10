@@ -11,10 +11,26 @@ namespace DealEngine.WebUI.Models.Programme
 
 	public class ProgrammeInfoViewModel : BaseViewModel
 	{
-        public ProgrammeInfoViewModel() { }
-        public ProgrammeInfoViewModel(List<User> brokers)
+        public ProgrammeInfoViewModel() 
         {
-            Brokers = GetBrokerSelectList(brokers);
+            Brokers = new List<SelectListItem>();
+        }
+        public ProgrammeInfoViewModel(List<User> brokers, Domain.Entities.Programme programme, ClientProgramme clientProgramme)
+        {
+            if(brokers != null)
+            {
+                Brokers = GetBrokerSelectList(brokers);
+            }            
+            if(programme != null)
+            {
+                Id = programme.Id;
+                Name = programme.Name;
+                this.Programme = programme;
+            }
+            if(clientProgramme != null)
+            {
+                ClientProgramme = clientProgramme;
+            }
         }
 
         private IList<SelectListItem> GetBrokerSelectList(List<User> brokers)
@@ -34,43 +50,18 @@ namespace DealEngine.WebUI.Models.Programme
         }
 
         public Guid Id { get; set; }
-        public Guid OwnerId { get; set; }
-        public Guid ProductId { get; set; }
-        public Guid selectedparty { get; set; }
-        public IList<Organisation> Parties { get; set; }
-        public IList<ClientProgramme> clientProgrammes { get; set; }
+        public bool EGlobalIsActiveOrNot { get; set; }
+        public ClientProgramme ClientProgramme { get; set; }
         public IList<ProductInfoViewModel> Product { get; set; }
-        public IList<Rule> Rules { get; set; }
         public IList<Organisation> Owner { get; set; }
-        public IList<SelectListItem> OrgUser { get; set; }
         public IList<EGlobalSubmission> EGlobalSubmissions { get; set; }
         public IList<EGlobalResponse> EGlobalResponses { get; set; }
         public User BrokerContactUser { get; set; }
-        public ClientProgramme clientprogramme { get; set; }
-        public string programmeName { get; set; }
         public string Name { get; set; }
-        public string Status { get; set; }
+        public Domain.Entities.Programme Programme { get; }
         public string OwnerCompany { get; set; }
         public string DateCreated { get; set; }
-        public string LocalDateSubmitted { get; set; }
-        public string PolicyNumberPrefixString { get; set; }
-        public string EGlobalBranchCode { get; set; }
-        public string EGlobalClientNumber { get; set; }
-        public string EGlobalClientStatus { get; set; }
-        public string EGlobalCustomDescription { get; set; }
-        public string ProgrammeClaim { get; set; }
-        public bool HasEGlobalCustomDescription { get; set; }
-        public bool EGlobalIsActiveOrNot { get; set; }        
-        public bool IsPublic { get; set; }
-        public bool UsesEGlobal { get; set; }
-        public bool StopAgreement { get; set; }
-        public bool HasSubsystemEnabled { get; set; }
-        public decimal TaxRate { get; set; }
-        public DateTime StopAgreementDateTime { get; set; }
         public IList<SelectListItem> Brokers { get; set; }
-        public string Declaration { get; set; }
-        public string StopAgreementMessage { get; set; }
-        public string NoPaymentRequiredMessage { get; set; }
         public ProductViewModel ProductViewModel { get; set; }
         public InformationBuilderViewModel InformationBuilderViewModel { get; set; }
 

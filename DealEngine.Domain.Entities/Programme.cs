@@ -31,7 +31,8 @@ namespace DealEngine.Domain.Entities
         public virtual bool StopDeclaration { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public virtual string StopAgreementMessage { get; set; }
-        public virtual string SubsystemMessage { get; set; }
+        public virtual string SubsystemDeclaration { get; set; }
+        public virtual string SubsystemStopAgreementMessage { get; set; }
         public virtual string NoPaymentRequiredMessage { get; set; }
         public virtual bool AllowUsesChange { get; set; }
         public virtual bool CalculateCancelTerm { get; set; }
@@ -84,6 +85,12 @@ namespace DealEngine.Domain.Entities
         public virtual IEnumerable<Document> GetProductDocuments()
         {
             return Products.SelectMany((arg) => arg.Documents);
+        }
+
+        public virtual void LastModified(User user)
+        {
+            LastModifiedBy = user;
+            LastModifiedOn = DateTime.Now;
         }
     }
 

@@ -37,6 +37,7 @@
     });
 
     function OnChange(Id, Name) {
+        debugger;
         var obj = document.getElementById(Id);
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
@@ -125,6 +126,14 @@
     function TriggerHandler(obj, Name, Value, Rule, DataItem) {
         try {
             //all rules go here
+            if (obj.type == "checkbox") {
+                if (obj.checked === true) {
+                    Value = "1";
+                } else {
+                    Value = "2";
+                }
+            }
+
             DefaultRule(Value, Name);
             if (Rule === "Clear") {
                 if (Value == 2) {
