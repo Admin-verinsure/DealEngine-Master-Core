@@ -139,7 +139,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             Name = filename,
                             Path = filename,
-                            ThumbPath = "_" + filename          // "../../images/_" + filename
+                            ThumbPath = "_" + filename
                         };
 
                         await _ckimageRepository.AddAsync(newCKImage);

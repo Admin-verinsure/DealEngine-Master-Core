@@ -867,7 +867,6 @@ namespace DealEngine.Services.Impl
                         {
                             html = html.Replace(oldpath, newpath);
                         }
-                        //================
 
                         HtmlConverter converter = new HtmlConverter (mainPart);
                         converter.ImageProcessing = ImageProcessing.ManualProvisioning;
@@ -881,31 +880,30 @@ namespace DealEngine.Services.Impl
                             await _applicationLoggingService.LogInformation(null,ex,null,null); //(ex, html);
                         }
 					}
-					//var attachment = new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
 				}
 			}
             else if (document.ContentType == MediaTypeNames.Application.Pdf)
             {
                 var path = document.Path;
-                if (File.Exists(path))
+
+                try
                 {
                     var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
                     Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
+                    pdf.Name = "NameTest";
                     return pdf;
                 }
-                else
+                catch (Exception ex)
                 {
-                    return null;
+                    await _applicationLoggingService.LogInformation(null, ex, null, null); //(ex, html);
                 }
-
+                return null;
             }
             else
             {
                 return null;
-
             }
-			return null;
 		}
 
 		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
