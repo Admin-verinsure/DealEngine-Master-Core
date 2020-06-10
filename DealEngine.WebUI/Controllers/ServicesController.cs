@@ -3229,8 +3229,8 @@ namespace DealEngine.WebUI.Controllers
                             //};
                             AuditHistory audit = new AuditHistory();
                             
-                                //ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
-                                //audit.PreviousSheet = prevsheet;
+                                ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
+                                audit.PreviousSheet = prevsheet;
 
                             audit.NextSheet = sheet;
                            //audit.DateDeleted = DateTime.Now;
