@@ -29,7 +29,7 @@
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
-                                colNames: ["","Organisation Name","Organisation Type","IsPrincipalAdvisor", "Remove"],
+                                colNames: ["","Organisation Name","Organisation Type","IsPrincipalAdvisor","TradingName", "Remove"],
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
@@ -39,6 +39,9 @@
                                     { name: "OrganisationName", align: 'center' },
                                     { name: "IsPrincipalAdvisor", align: 'center' },
                                     { name: "OrganisationType", align: 'center' },
+                                    { name: "TradingName", align: 'center'},
+                                                                        //{ name: "TradingName", align: 'center',hidden:true },
+
                                      {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
@@ -205,7 +208,7 @@
                             <i></i>
                             <input data-type="TEXTBOX" id="CommonEditTradingName" name="TradingName" placeholder="Trading Name" value="">
                         </label>
-
+                        <p class="validationContainer" id="ValidateCommonEditTradingName"></p>
                     </section>
 
 
@@ -679,7 +682,19 @@
         var orgname = $('#' + validatortype + 'OrgName').val();
         var ownercheck = $('#' + validatortype + 'Ownercheck').val();
         var emailcheck =  $('#CommonEditEmailCheck').val();
+        var tradingname = $('#CommonEditTradingName').val(); 
 
+        if (type == "CommonEdit" && ownercheck == "Owner") {
+             if (tradingname == "") {
+                $("#ValidateCommonEditTradingName").html("<font color='red'>Field is required</font>");
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                $("#ValidateCommonEditTradingName").html("<i></i>");
+            }
+
+        }
         if (Type != "OtherConsultingBusiness") {
             if (email == "") {
                 $("#Validate" + type + "Email").html("<font color='red'>Field is required</font>");
