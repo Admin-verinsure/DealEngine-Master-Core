@@ -873,7 +873,7 @@
          //var OrgType = $('#CommonOrgType').val(); 
          var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
          //var proddata = proddata + "& OrganisationTypeName =" + OrgType;
-        $("#getAgreementModal").modal("show");
+        $("#getDetailsModal").modal("show");
         $.ajax({
             url: '@Url.Action("AddCommonNamedParty", "Services")',
             type: "POST",
@@ -892,13 +892,13 @@
                 $('#EditPrincial12Sec').addClass('hidden');
                 $("#ValidateCommonEditEmail").html("<i></i>");
                 $("#ValidateCommonEmail").html("<i></i>");
-                        $("#getAgreementModal").modal("hide");
+                $("#getDetailsModal").modal("hide");
 
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                        $("#getAgreementModal").modal("hide");
+                $("#getDetailsModal").modal("hide");
 
-                alert("There was an error while trying to save the Vehicle.");
+                alert("There was an error while trying to save the named party.");
             });
     };
 
@@ -908,7 +908,7 @@
         var informationId = $('#AnswerSheetId').serialize();
          //var OrgType = $('#CommonEditOrgType').val(); 
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-         $("#getAgreementModal").modal("show");
+        $("#getDetailsModal").modal("show");
         //var proddata = proddata + "& OrganisationTypeName =" + Orgname;
 
         $.ajax({
@@ -924,11 +924,11 @@
                 $("#ValidateCommonEmail").html("<i></i>");
                 $(tableId).trigger('reloadGrid');
                 $(tabId + " :input").val("");
-               $("#getAgreementModal").modal("hide");
+                $("#getDetailsModal").modal("hide");
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("There was an error while trying to save the Vehicle.");
-                 $("#getAgreementModal").modal("hide");
+                alert("There was an error while trying to save the named party.");
+                $("#getDetailsModal").modal("hide");
             });
     };
    
