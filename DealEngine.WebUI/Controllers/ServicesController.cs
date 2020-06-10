@@ -3158,83 +3158,19 @@ namespace DealEngine.WebUI.Controllers
                             userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
                             OwnerId = userdb.Id;
                         }
-                    }
+                        }
 
                         var organisationName = model.FirstName + " " + model.LastName;
-
-                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                            organisation.Qualifications = model.Qualifications;
-                            organisation.ChangeOrganisationName(organisationName);
-                            organisation.Type = model.Type;
-                            organisation.Email = model.Email;
-                            organisation.Qualifications = model.Qualifications;
-                            organisation.RegisteredStatus = model.RegisteredStatus;
-                            organisation.Duration = model.Duration;
-                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                            organisation.ConfirmAAA = model.ConfirmAAA;
-                            organisation.TradingName = model.TradingName;
-
-                            if (model.DateofBirth != null)
-                            {
-                                organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
-                            }
-                            if (model.DateofRetirement != null)
-                            {
-                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
-                            }
-                            if (model.DateofDeceased != null)
-                            {
-                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
-                            }
-                            if (model.IsPrincipalAdvisor)
-                            {
-                                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
-                                foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
-                                {
-                                    org.IsPrincipalAdvisor = false;
-                                }
-                            }
-                            organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            insuranceAttribute.IAOrganisations.Add(organisation);
-                            await _organisationService.CreateNewOrganisation(organisation);
-                            userdb.Organisations.Add(organisation);
-                            userdb.SetPrimaryOrganisation(organisation);
-                            sheet.Organisation.Add(organisation);
-                            //organisation.NextOrg.Add(sheet);
-                            model.ID = organisation.Id;
-
-
-                            await uow.Commit();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex.Message);
-                    }
-                }
-                else
-                {
-                    var Advisor = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-                    if (organisation.InsuranceAttributes.Contains(Advisor) && organisation.Removed == true)
-                    {
-                        await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                        await _clientInformationService.UpdateInformation(sheet);
-                    }
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        organisation.ChangeOrganisationName(organisation.Name);
+                        organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                        organisation.Qualifications = model.Qualifications;
+                        organisation.ChangeOrganisationName(organisationName);
                         organisation.Type = model.Type;
                         organisation.Email = model.Email;
                         organisation.Qualifications = model.Qualifications;
                         organisation.RegisteredStatus = model.RegisteredStatus;
                         organisation.Duration = model.Duration;
-                        organisation.ConfirmAAA = model.ConfirmAAA;
-                        organisation.MyCRMId = model.MyCRMId;
                         organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                        organisation.ConfirmAAA = model.ConfirmAAA;
                         organisation.TradingName = model.TradingName;
 
                         if (model.DateofBirth != null)
@@ -3258,17 +3194,66 @@ namespace DealEngine.WebUI.Controllers
                             }
                         }
                         organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
-                        ClientInformationSheet prevsheet = await _clientInformationService.GetInformationSheetforOrg(organisation);
-                        AuditHistory audit = new AuditHistory();
-                        audit.PreviousSheet = prevsheet;
-                        audit.NextSheet = sheet;
-                        audit.DateDeleted = DateTime.Now;
-                        organisation.AuditHistory.Add(audit);
-                        organisation.Removed = false;
-                        model.ID = organisation.Id;
+                        organisation.InsuranceAttributes.Add(insuranceAttribute);
+                        insuranceAttribute.IAOrganisations.Add(organisation);
+                        await _organisationService.CreateNewOrganisation(organisation);
+                        userdb.Organisations.Add(organisation);
+                        userdb.SetPrimaryOrganisation(organisation);
                         sheet.Organisation.Add(organisation);
+                        //organisation.NextOrg.Add(sheet);
+                        model.ID = organisation.Id;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write(ex.Message);
                     }
                 }
+                else
+                {
+                    var Advisor = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+                    if (organisation.InsuranceAttributes.Contains(Advisor) && organisation.Removed == true)
+                    {
+                        await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+                    }
+                    
+                    organisation.ChangeOrganisationName(organisation.Name);
+                    organisation.Type = model.Type;
+                    organisation.Email = model.Email;
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.RegisteredStatus = model.RegisteredStatus;
+                    organisation.Duration = model.Duration;
+                    organisation.ConfirmAAA = model.ConfirmAAA;
+                    organisation.MyCRMId = model.MyCRMId;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.TradingName = model.TradingName;
+                    if (model.DateofBirth != null)
+                    {
+                        organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
+                    }
+                    if (model.DateofRetirement != null)
+                    {
+                        organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                    if (model.DateofDeceased != null)
+                    {
+                        organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
+                    if (model.IsPrincipalAdvisor)
+                    {
+                        List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                        foreach (var org in organisations.Where(or => or.IsPrincipalAdvisor == true))
+                        {
+                            org.IsPrincipalAdvisor = false;
+                        }
+                    }
+                    organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+                    organisation.Removed = false;
+                    model.ID = organisation.Id;
+                    sheet.Organisation.Add(organisation);
+                    
+                    
+                }
+                await _clientInformationService.UpdateInformation(sheet);
                 return Json(model);
             }
             catch (Exception ex)
@@ -5400,20 +5385,24 @@ namespace DealEngine.WebUI.Controllers
             string email = collection["email"];
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
             Organisation organisation = null;
+            Organisation principalAdvisor = null;
             string membershipNumber = collection["memno"];
 
             try
             {
                 currentUser = await CurrentUser();
 
-                var Advisor = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+                var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
                 var organisations = await _organisationService.GetAllOrganisationsByEmail(email);
-                if (organisation.InsuranceAttributes.Contains(Advisor) && organisation.Removed == true)
+                organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
+                //condition for organisation exists
+                if (organisation != null)
                 {
                     await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    organisation.Removed = false;
                     organisation.IsPrincipalAdvisor = true;
-                    organisation
+                    organisation.Removed = false;
+                    principalAdvisor = organisation;
+                    organisation = null;
                 }
                 if (organisation == null)
                 {
@@ -5469,10 +5458,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.Email = email;
                     await _organisationService.CreateNewOrganisation(organisation);
                 }
-                else
-                {
-                    organisation.InsuranceAttributes.Clear();
-                }
+
                 User user = null;
                 User user2 = null;
 
@@ -5528,7 +5514,10 @@ namespace DealEngine.WebUI.Controllers
                         {
                             clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
                         }
-
+                        if (principalAdvisor != null)
+                        {
+                            sheet.Organisation.Add(principalAdvisor);
+                        }
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         try
                         {
@@ -5556,7 +5545,7 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("failed create user " + ex.Message);
                 }
 
-                return RedirectPermanent("../Home/ViewProgramme?id="+ programmeId);
+                return RedirectPermanent("../Home/ViewProgramme?id=" + programmeId);
             }
             catch (Exception ex)
             {
