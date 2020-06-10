@@ -358,6 +358,25 @@ namespace DealEngine.Services.Impl
         {
             return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation == organisation);
         }
+
+        public async Task RemoveOrganisationFromSheets(Organisation organisation)
+        {
+            var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(organisation)).ToListAsync();
+            foreach(var sheet in iSheets)
+            {
+                organisation.AuditHistory.Add(GetHistory(sheet));
+                sheet.Organisation.Remove(organisation);                
+                await _customerInformationRepository.UpdateAsync(sheet);
+            }
+        }
+
+        private AuditHistory GetHistory(ClientInformationSheet sheet)
+        {            
+            AuditHistory audit = new AuditHistory();
+            audit.PreviousSheet = sheet;
+            audit.DateDeleted = DateTime.Now;
+            return audit;
+        }
     }
 }
 
