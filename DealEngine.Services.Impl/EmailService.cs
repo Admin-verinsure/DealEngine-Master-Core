@@ -891,7 +891,8 @@ namespace DealEngine.Services.Impl
                 {
                     var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
                     Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
-                    pdf.Name = "NameTest";
+                    pdf.Name = document.Name;
+
                     return pdf;
                 }
                 catch (Exception ex)
