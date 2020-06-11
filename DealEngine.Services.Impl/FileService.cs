@@ -552,23 +552,23 @@ namespace DealEngine.Services.Impl
                         //dtadvisor1.Rows.Add(dradvisor1);
                         if (string.IsNullOrEmpty(stradvisorlist))
                         {
-                            stradvisorlist = "The Advisor Insured:                    " + uisorg.Name + 
-                                "<br />" + "Policy Retroactive Active Date: " + uisorg.PIRetroactivedate;
+                            stradvisorlist = "Advisor:                                           " + uisorg.Name + 
+                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
                         }
                         else
                         {
-                            stradvisorlist += "<br />" + "The Advisor Insured:                    " + uisorg.Name +
-                                "<br />" + "Policy Retroactive Active Date: " + uisorg.PIRetroactivedate;
+                            stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
                         }
                         if (string.IsNullOrEmpty(stradvisorlist1))
                         {
-                            stradvisorlist1 = "The Advisor Insured:                    " + uisorg.Name +
-                                "<br />" + "Policy Retroactive Active Date: " + uisorg.DORetroactivedate;
+                            stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
                         }
                         else
                         {
-                            stradvisorlist1 += "<br />" + "The Advisor Insured:                    " + uisorg.Name +
-                                "<br />" + "Policy Retroactive Active Date: " + uisorg.DORetroactivedate;
+                            stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
                         }
                     }
 
