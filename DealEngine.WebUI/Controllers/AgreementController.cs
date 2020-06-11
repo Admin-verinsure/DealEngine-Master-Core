@@ -21,6 +21,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
 using ServiceStack;
+using DealEngine.WebUI.Models.Programme;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -1928,6 +1929,83 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditAdvisor(Guid id)
+        {
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(answerSheet);
+                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
+                List<Organisation> Advisors = new List<Organisation>();
+                try
+                {
+                    foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
+
+                    {
+                        for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
+                        {
+                            foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
+                            {
+                                Advisors.Add(organisation);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                model.Id = answerSheet.Programme.Id;
+                model.Owner = Advisors;
+                model.AgreementId = id;
+                //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
+
+                return View("ViewEditAdvisor", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdvisor(ProgrammeInfoViewModel model)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
+                //if (model.ClientAgreementRules.Any(mcr => mcr != null && mcr.Value != null))
+                //{
+                //    using (var uow = _unitOfWork.BeginUnitOfWork())
+                //    {
+                //        foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
+                //        {
+                //            var clientAgreementRule = await _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID);
+                //            clientAgreementRule.Value = crv.Value;
+                //        }
+                //        await uow.Commit();
+                //    }
+                //}
+
+                return Redirect("/Information/EditInformation/" + model.Id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> ViewAgreementRule(ViewAgreementRuleViewModel model)
         {
@@ -2955,6 +3033,7 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
+                    model.ProgrammeName = programme.BaseProgramme.Name;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {
