@@ -108,7 +108,6 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.SubClientProgrammes, map => map.Ignore())
                 .ForMember(dest => dest.ChangeReason, map => map.Ignore())
                 .ForMember(dest => dest.Products, map => map.Ignore())
-                .ForMember(dest => dest.Products, map => map.Ignore())
                 .ForMember(dest => dest.Payment, map => map.Ignore())
                 .ForMember(dest => dest.InformationSheet, map => map.Ignore())
                 .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())

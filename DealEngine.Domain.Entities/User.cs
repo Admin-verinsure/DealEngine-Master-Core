@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
-
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Domain.Entities
 {
     public class User : EntityBase, IAggregateRoot
     {
 		private Organisation _primaryOrganisation;
+        private User creator;
+        private Guid guid;
+        private IFormCollection collection;
 
         protected User() : this(null) { }
 
@@ -125,6 +128,22 @@ namespace DealEngine.Domain.Entities
         public User(User createdBy, Guid id, string userName) : this(createdBy, userName)
         {
             Id = id;
+        }
+        public User(User createdBy, Guid id)
+            : this(createdBy)
+        {
+            Id = id;
+        }
+
+        public User(User createdBy, Guid guid, IFormCollection collection)
+            :this(createdBy, guid)
+        {
+            if (collection.Any())
+            {
+                PopulateEntity(collection);
+                UserName = FirstName.Replace(" ", string.Empty) + "_" + LastName.Replace(" ", string.Empty);
+                FullName = FirstName + " " + LastName;
+            }
         }
 
         public virtual void Lock()

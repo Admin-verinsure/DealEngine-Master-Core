@@ -36,6 +36,7 @@ namespace DealEngine.Services.Interfaces
         Task<bool> IsBaseClass(ClientProgramme clientProgramme);
         Task<bool> SubsystemCompleted(ClientProgramme clientProgramme);
         Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
+        Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation);
     }
 }
 

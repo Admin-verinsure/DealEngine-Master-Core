@@ -7,8 +7,21 @@ namespace DealEngine.WebUI.Models
 {
     public class OrganisationViewModel : BaseViewModel
     {
+
+
+        public OrganisationViewModel() { }
+        public OrganisationViewModel(Organisation organisation)
+        {
+            if(organisation != null)
+            {
+                Organisation = organisation;
+                //PopulateEntity(organisation);
+            }
+        }
+
         public Guid ID { get; set; }
         public Guid ProgrammeId { get; set; }
+        public Organisation Organisation { get; set; }
 
         // Organisation Details
         public string OrganisationName { get; set; }
@@ -19,33 +32,19 @@ namespace DealEngine.WebUI.Models
         public string InsuranceAttribute { get; set; }
 
         public Guid AnswerSheetId { get; set; }
-        public Guid PartyUseId { get; set; }
-        public OrganisationType OrganisationType { get; set; }
         public IList<SelectListItem> OrgMooredType { get; set; }
 
         public string OperatorYearsOfExp { get; set; }
-
-        public User user { get; set; }
-
         public IList<User> Users { get; set; }
         public IEnumerable<string> OrganisationTypes { get; set; }
         public string IsAdmin { get; set; }
-
         // Organisation Owner Details
         public string FirstName { get; set; }
-
         public string LastName { get; set; }
-
         public string Email { get; set; }
-
         public string Phone { get; set; }
-
         public string Website { get; set; }
-
         public bool IsPrimary { get; set; }
-
-        public string YearsOfExp { get; set; }
-
         public string Qualifications { get; set; }
         public bool IsNZIAmember { get; set; }
         public string IsIPENZmember { get; set; }
@@ -73,18 +72,14 @@ namespace DealEngine.WebUI.Models
         public string PartyName { get; set; }
         public string CertType { get; set; }
         public bool MajorShareHolder { get; set; }
-
         public bool isaffiliation { get; set; }
         public string affiliationdetails { get; set; }
         public string CurrentMembershipNo { get; set; }
-
         public  string DateQualified { get; set; }
         public  string DesignLicensed { get; set; }
         public  string SiteLicensed { get; set; }
         public  bool IsRegisteredLicensed { get; set; }
         public  bool ConfirmAAA { get; set; }
-
-        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
         public string RegisteredStatus { get; set; }
         public string Duration { get;  set; }
         public  bool IsPrincipalAdvisor { get; set; }

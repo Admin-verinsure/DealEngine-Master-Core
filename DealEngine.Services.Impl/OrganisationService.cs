@@ -8,6 +8,8 @@ using DealEngine.Infrastructure.BaseLdap.Interfaces;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Ldap.Interfaces;
 using DealEngine.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace DealEngine.Services.Impl
 {
@@ -15,14 +17,24 @@ namespace DealEngine.Services.Impl
 	{
 		IMapperSession<Organisation> _organisationRepository;
 		IOrganisationTypeService _organisationTypeService;
-		ILdapService _ldapService;		
+		IOrganisationalUnitService _organisationalUnitService;
+		ILdapService _ldapService;
+		IUserService _userService;
 		IInsuranceAttributeService _insuranceAttributeService;
+		ILogger<OrganisationService> _logger;
 
 		public OrganisationService(IMapperSession<Organisation> organisationRepository,
+			IUserService userService,
+			IOrganisationalUnitService organisationalUnitService,
 			IOrganisationTypeService organisationTypeService,
 			ILdapService ldapService,
-			IInsuranceAttributeService insuranceAttributeService)
+			IInsuranceAttributeService insuranceAttributeService,
+			ILogger<OrganisationService> logger
+			)
 		{
+			_logger = logger;
+			_userService = userService;
+			_organisationalUnitService = organisationalUnitService;
 			_organisationTypeService = organisationTypeService;
 			_insuranceAttributeService = insuranceAttributeService;			
 			_organisationRepository = organisationRepository;
@@ -85,8 +97,8 @@ namespace DealEngine.Services.Impl
 
 		public async Task UpdateOrganisation(Organisation organisation)
 		{
-			await _organisationRepository.AddAsync(organisation);
-			_ldapService.Update(organisation);
+			await UpdateApplication(organisation);
+			UpdateLDap(organisation);
 		}
 
 		public async Task<Organisation> GetOrganisationByName(string organisationName)
@@ -112,16 +124,10 @@ namespace DealEngine.Services.Impl
 		public async Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();
-			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
+			var insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+			foreach (var organisation in sheet.Organisation.Where(o=>o.Removed != true && o.InsuranceAttributes.Contains(insuranceAttribute) || o.Type == "Advisor"))
 			{
-				foreach (var org in IA.IAOrganisations)
-				{
-					foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true))
-					{
-						organisations.Add(organisation);
-					}
-				}
+				organisations.Add(organisation);
 			}
 			return organisations;
 		}
@@ -144,77 +150,120 @@ namespace DealEngine.Services.Impl
 		}
 
 
-        //      public async Task<List<Organisation>> GetOrCreateOrganisation(string Email)
-        //      {
-        //	User User = null;
-        //	string OrganisationTypeName = "";
-        //	var foundOrgs = await GetAllOrganisationsByEmail(Email);
-        //          if (foundOrgs.Any())
-        //          {
-        //		return foundOrgs;
-        //	}
-        //          else
-        //          {
-        //		string ownerLastName = null;
-        //		string ownerEmail = null;
-        //		string ownerFirstName = null;
-        //		string organisationName = null;
-        //		string OrganisationTypeName = "";
-        //		OrganisationType OrganisationType = _organisationTypeService.GetOrganisationTypeByName(OrganisationType);
-        //		CreateNewOrganisation(organisationName, OrganisationType, ownerLastName, ownerLastName, Email);
-        //          }
+        public async Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
+        {
+			Organisation foundOrg = await GetOrganisationByEmail(Email);
+			if (foundOrg == null)
+			{
+				OrganisationalUnit OrganisationalUnit = null;
 
-        //	if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
-        //	{
-        //		organisationName = firstName + " " + lastName;
-        //		ouname = "Home";
-        //	}
-        //	else
-        //	{
-        //		ouname = "Head Office";
-        //	}
-        //	switch (orgType)
-        //	{
-        //		case "Private":
-        //			{
-        //				orgTypeName = "Person - Individual";
-        //				break;
-        //			}
-        //		case "Company":
-        //			{
-        //				orgTypeName = "Corporation – Limited liability";
-        //				break;
-        //			}
-        //		case "Trust":
-        //			{
-        //				orgTypeName = "Trust";
-        //				break;
-        //			}
-        //		case "Partnership":
-        //			{
-        //				orgTypeName = "Partnership";
-        //				break;
-        //			}
-        //		default:
-        //			{
-        //				throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
-        //			}
-        //	}
-        //	string phonenumber = null;
+				var User = await _userService.GetUserByEmail(Email);				
+				if (User != null)
+				{					
+					var SameUser = await _userService.GetUser(User.UserName);
+					if (User != SameUser)
+					{						
+						User = new User(Creator, Guid.NewGuid(), collection);
+					}
+				}
+                else
+                {
+					User = new User(Creator, Guid.NewGuid(), collection);
+				}
 
-        //	phonenumber = mobilePhone;
-        //	OrganisationType organisationType = null;
-        //	organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
-        //	if (organisationType == null)
-        //	{
-        //		organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
-        //	}
+				if (Type == "Private" || Type== "Advisor" || Type == "NominatedRepresentative")
+				{
+					OrganisationName = FirstName + " " + LastName;
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnit = new OrganisationalUnit(User, "Home");
+				}
+				else if (Type == "Company")
+				{
+					OrganisationTypeName = "Corporation – Limited liability";
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+				}
+				else if (Type == "Trust")
+				{
+					OrganisationTypeName = "Trust";
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+				}
+				else if (Type == "Trust")
+				{
+					OrganisationTypeName = "Trust";
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+				}
+				else if (Type == "Partnership")
+				{
+					OrganisationTypeName = "Partnership";
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+				}
 
-        //	organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType);
-        //	organisation.Phone = phonenumber;
-        //	organisation.Email = email;
-        //	await _organisationService.CreateNewOrganisation(organisation);
-        //}
+				OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
+				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);
+				InsuranceAttribute InsuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(Type);
+				foundOrg = CreateNewOrganisation(Creator, OrganisationName, OrganisationType, OrganisationalUnit, InsuranceAttribute, collection);
+
+				if (!User.Organisations.Contains(foundOrg))
+					User.Organisations.Add(foundOrg);
+
+				User.SetPrimaryOrganisation(foundOrg);
+				await _userService.Update(User);
+			}
+			return foundOrg;			
+        }
+
+        private Organisation CreateNewOrganisation(User Creator, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute, IFormCollection collection)
+        {
+			var Organisation =  new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnit, insuranceAttribute, collection);
+			return Organisation;
+        }
+
+        public async Task<Organisation> GetAnyRemovedAdvisor(string email)
+        {
+			var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+			var organisations = await GetAllOrganisationsByEmail(email);
+			var organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
+			return organisation;
+		}
+
+        public async Task ChangeOwner(Organisation organisation, ClientInformationSheet sheet)
+        {
+			if(sheet != null)
+            {
+				AuditHistory audit = new AuditHistory();
+				audit.NextSheet = sheet;
+				organisation.AuditHistory.Add(audit);
+			}
+			organisation.IsPrincipalAdvisor = true;
+			organisation.Removed = false;
+			await UpdateOrganisation(organisation);
+		}
+
+        public async  Task UpdateApplication(Organisation organisation)
+        {
+			await _organisationRepository.AddAsync(organisation);
+		}
+
+        private void UpdateLDap(Organisation organisation)
+        {
+			_ldapService.Update(organisation);
+		}
+
+        public async Task Update(Organisation organisation)
+        {
+			try
+			{
+				UpdateLDap(organisation);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning(ex.Message);
+			}
+			finally
+			{
+				await _organisationRepository.UpdateAsync(organisation);
+			}
+		}
     }
 
 }

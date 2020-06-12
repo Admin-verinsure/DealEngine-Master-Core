@@ -13,17 +13,20 @@ namespace DealEngine.Services.Impl
 	public class ProgrammeService : IProgrammeService
 	{
 		IMapperSession<Programme> _programmeRepository;
-		IMapperSession<ClientProgramme> _clientProgrammeRepository;        
+		IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IClientInformationService _clientInformationService;
         IReferenceService _referenceService;
         IMapper _mapper;
 
-        public ProgrammeService (IMapperSession<Programme> programmeRepository, 
+        public ProgrammeService (IMapperSession<Programme> programmeRepository,
+            IClientInformationService clientInformationService,
             IMapperSession<ClientProgramme> clientProgrammeRepository, 
             IReferenceService referenceService,
             IMapper mapper
             )
         {
             _mapper = mapper;
+            _clientInformationService = clientInformationService;
             _programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
@@ -36,9 +39,10 @@ namespace DealEngine.Services.Impl
 		}
 
 		public async Task<ClientProgramme> CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
-		{
-			ClientProgramme clientProgramme = new ClientProgramme(creatingUser, owner, programme);
-			await Update(clientProgramme);
+		{            
+            ClientProgramme clientProgramme = new ClientProgramme(creatingUser, owner, programme);
+            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+            await Update(clientProgramme);
 			return clientProgramme;
 		}
 
@@ -271,6 +275,14 @@ namespace DealEngine.Services.Impl
                 programme.SharedDataRoleTemplates.Add(template);
                 await _programmeRepository.UpdateAsync(programme);
             }
+        }
+
+        public async Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation)
+        {
+            var ClientProgramme = await CreateClientProgrammeFor(programmeId, user, organisation);
+            var Reference = await _referenceService.GetLatestReferenceId();
+            var Sheet = await _clientInformationService.IssueInformationFor(user, organisation, ClientProgramme, Reference);
+            return Sheet;
         }
     }
 }

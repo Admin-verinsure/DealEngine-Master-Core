@@ -33,7 +33,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditNamedParty(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'CommonNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
+                                            return ('<button onclick="EditOrganisation(\'' + cellvalue + '\'); SetCurrentTab(\'CommonNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
                                         }
                                     },
                                     { name: "OrganisationName", align: 'center' },
@@ -45,7 +45,7 @@
                                      {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
-                                                        return ('<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'true\', \'#CommonNamedParties\', \'#tblRemovedCommonNamedParty\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                             return ('<button onclick="SetPrincipalRemovedStatus(\'bu\', \'' + cellvalue + '\', \'true\', \'#CommonNamedParties\', \'#tblRemovedCommonNamedParty\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                          }
                                      }
 								],
@@ -185,7 +185,7 @@
                         <label class="label required">Organisation Name</label>
                         <label class="input">
                             <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonEditOrgName" name="OrganisationName" placeholder="Organisation Name" value="">
+                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonEditOrgName" name="Name" placeholder="Organisation Name" value="">
                         </label>
                         <p class="validationContainer" id="ValidateCommonEditOrgName"></p>
                     </section>
@@ -304,196 +304,198 @@
 
             </div>
             <div id="CommonNamedPartyTabs3" class="tab-content">
-                <fieldset id="fieldset">
-                    <input id="CommonAddPrincipalPartnersId" class="b" name="ID" type="hidden">
-                    <!-- 1st row -->
+                <form id="CommonParty" onsubmit="AddCommonNamedPartyForm('CommonNamedPartyTabs1', '#CommonNamedParties')" method="post" >
+                    @Html.HiddenFor(m=>m.ClientInformationSheet.Id)
+                    <fieldset id="fieldset">
+                        <input id="CommonAddPrincipalPartnersId" class="b" name="ID" type="hidden">
+                        <!-- 1st row -->
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <label class=" label required">Type</label>
-                        <label class="input">
-                            <select id="CommonType" onchange="CommonTypeSelected('CommonType','Common')" class="form-control b" name="Type">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="Advisor">Advisor</option>
-                                <option value="NominatedRepresentative">Nominated Representative</option>
-                                <option value="OtherConsultingBusiness">Other Consulting Business</option>
-
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonType"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " >
-                        <label class=" label required">Organisation Type</label>
-                        <label class="input">
-                            <select id="CommonOrgType" class="form-control b" name="OrganisationTypeName">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="Person - Individual">Private</option>
-                                <option value="Corporation – Limited liability">Company</option>
-                                <option value="Trust">Trust</option>
-                                <option value="Partnership">Partnership</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonOrgType"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonOtherConsultingBusiness">
-                        <label class="label required">Organisation Name</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonOrgName" name="OrganisationName" placeholder="Organisation Name" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonOrgName"></p>
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec CommonNonOtherConsultingBusiness ">
-                        <label class="label required">This Person has retired or deceased ?</label>
-                        <label class="input">
-                            <select id="CommonIsRetiredorDecieved" onchange="Isretiredselected('CommonIsRetiredorDecieved','Common')" class="form-control b" name="IsRetiredorDecieved">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonIsRetiredorDecieved"></p>
-
-                    </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
-                        <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
-                        <label class="input">
-                            <i></i>
-                            <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofRetirement" type="text">
-                        </label>
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
-                        <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
-                        <label class="input">
-                            <i></i>
-                            <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofDeceased" type="text">
-                        </label>
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                        <label class="label required">First Name</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonFirstName" name="FirstName" placeholder="FirstName" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonFirstName"></p>
-
-                    </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                        <label class="label required">Last Name</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonLastName" name="LastName" placeholder="LastName" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonLastName"></p>
-
-                    </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" >
-                        <label class="label ">DOB</label>
-                        <label class="input">
-                            <i></i>
-                            <input name="DateofBirth" placeholder="Date of Birth" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDOB" type="text">
-                            @*<input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonDOB" name="DateofBirth" placeholder="Date of Birth" value="">*@
-                        </label>
-
-                        <p class="validationContainer" id="ValidateCommonDOB"></p>
-
-                    </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                        <label class="label required">Email</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonEmail" name="Email" placeholder="Email" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonEmail"></p>
-
-                    </section>
-
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                        <label class="label required">Registered Status AFA,RFA or N/A</label>
-                        <label class="input">
-                            <i></i>
-                            <select id="CommonRegStatus" class="form-control b" name="RegisteredStatus">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="AFA">AFA</option>
-                                <option value="RFA">RFA</option>
-                                <option value="N/A">N/A</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonRegStatus"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                        <label class="label required">List any industry qualifications you have. (If none please put nil)</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonQualification" name="Qualifications" placeholder="Qualifications" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonQualification"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonNonOtherConsultingBusiness" id="CommonAdvisor">
-                        <label class="label required">Duration Of Time as Adviser</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonAdvisorDuration" name="Duration" placeholder="Duration" value="">
-                        </label>
-                        <p class="validationContainer" id="ValidateCommonDuration"></p>
-
-                    </section>
-                    @if (@Model.Name == "AAA Programme")
-                    {
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
-                            <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class=" label required">Type</label>
                             <label class="input">
-                                <i></i>
-                                <select id="CommonConfirmAAA" class="form-control b" name="ConfirmAAA">
+                                <select id="CommonType" onchange="CommonTypeSelected('CommonType','Common')" class="form-control b" name="Type">
                                     <option selected="selected" value="">-- Select --</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
+                                    <option value="Advisor">Advisor</option>
+                                    <option value="NominatedRepresentative">Nominated Representative</option>
+                                    <option value="OtherConsultingBusiness">Other Consulting Business</option>
 
                                 </select>
                             </label>
-                            <p class="validationContainer" id="ValidateCommonConfirmAAA"></p>
+                            <p class="validationContainer" id="ValidateCommonType"></p>
 
                         </section>
-                    }
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonnonnominated CommonNonOtherConsultingBusiness CommonAdvisorsec">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                            <label class=" label required">Organisation Type</label>
+                            <label class="input">
+                                <select id="CommonOrgType" class="form-control b" name="OrganisationTypeName">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Person - Individual">Private</option>
+                                    <option value="Corporation – Limited liability">Company</option>
+                                    <option value="Trust">Trust</option>
+                                    <option value="Partnership">Partnership</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonOrgType"></p>
 
-                        <label class="label required">MyCRMID</label>
-                        <label class="input">
-                            <i></i>
-                            <input data-type="TEXTBOX" id="CommonCRMID" name="MyCRMId" placeholder="Your CRM ID" value="">
-                        </label>
+                        </section>
 
-                    </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonOtherConsultingBusiness">
+                            <label class="label required">Organisation Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonOrgName" name="Name" placeholder="Organisation Name" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonOrgName"></p>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonAdvisorsec CommonNonOtherConsultingBusiness ">
+                            <label class="label required">This Person has retired or deceased ?</label>
+                            <label class="input">
+                                <select id="CommonIsRetiredorDecieved" onchange="Isretiredselected('CommonIsRetiredorDecieved','Common')" class="form-control b" name="IsRetiredorDecieved">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonIsRetiredorDecieved"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
+                            <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                            <label class="input">
+                                <i></i>
+                                <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofRetirement" type="text">
+                            </label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden  Commonretirementsec ">
+                            <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                            <label class="input">
+                                <i></i>
+                                <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDateofDeceased" type="text">
+                            </label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                            <label class="label required">First Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonFirstName" name="FirstName" placeholder="FirstName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonFirstName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                            <label class="label required">Last Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonLastName" name="LastName" placeholder="LastName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonLastName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden">
+                            <label class="label ">DOB</label>
+                            <label class="input">
+                                <i></i>
+                                <input name="DateofBirth" placeholder="Date of Birth" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CommonDOB" type="text">
+                                @*<input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonDOB" name="DateofBirth" placeholder="Date of Birth" value="">*@
+                            </label>
+
+                            <p class="validationContainer" id="ValidateCommonDOB"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                            <label class="label required">Email</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="CommonEmail" name="Email" placeholder="Email" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonEmail"></p>
+
+                        </section>
 
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonNonOtherConsultingBusiness CommonAdvisorsec">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                            <label class="label required">Registered Status AFA,RFA or N/A</label>
+                            <label class="input">
+                                <i></i>
+                                <select id="CommonRegStatus" class="form-control b" name="RegisteredStatus">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="AFA">AFA</option>
+                                    <option value="RFA">RFA</option>
+                                    <option value="N/A">N/A</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonRegStatus"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                            <label class="label required">List any industry qualifications you have. (If none please put nil)</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonQualification" name="Qualifications" placeholder="Qualifications" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonQualification"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden CommonNonOtherConsultingBusiness" id="CommonAdvisor">
+                            <label class="label required">Duration Of Time as Adviser</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="CommonAdvisorDuration" name="Duration" placeholder="Duration" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateCommonDuration"></p>
+
+                        </section>
+                        @if (@Model.Name == "AAA Programme")
+                        {
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 CommonNonOtherConsultingBusiness">
+                                <label class="label required">Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme</label>
+                                <label class="input">
+                                    <i></i>
+                                    <select id="CommonConfirmAAA" class="form-control b" name="ConfirmAAA">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateCommonConfirmAAA"></p>
+
+                            </section>
+                        }
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden Commonnonnominated CommonNonOtherConsultingBusiness CommonAdvisorsec">
+
+                            <label class="label required">MyCRMID</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" id="CommonCRMID" name="MyCRMId" placeholder="Your CRM ID" value="">
+                            </label>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden CommonNonOtherConsultingBusiness CommonAdvisorsec">
+
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input type="checkbox" id="CommonIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
+
+                            </section>
+
+                        </section>
 
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <input type="checkbox" id="CommonIsPrincipalAdvisor" name="IsPrincipalAdvisor" value="true"> Tick here if this party is Principal Advisor<br>
-
+                            <button type="submit" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#CommonNamedPartyTabs3','CommonNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <button onclick="ValidateCommonNamedParty(event,'Common')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
-                        <button onclick="ClearBoats(event,'#CommonNamedPartyTabs3','CommonNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
-                    </section>
-
-                </fieldset>
-
+                    </fieldset>
+                </form>
             </div>
 
             <div id="CommonNamedPartyTabs4" class="tab-content">
@@ -517,7 +519,7 @@
 
                                         }
                                     },
-                                     { name: "OrganisationName", align: 'center' },
+                                     { name: "Name", align: 'center' },
                                     { name: "OrganisationType", align: 'center' },
                                    ],
                                 autowidth: true,
@@ -584,7 +586,7 @@
             $("#" + type + "Advisor").removeClass('hidden');
             $("." + type + "Advisorsec").removeClass('hidden');
             $("#" + type + "Duration").val('');
-            
+
         } else {
             if (typeSelected.options[typeSelected.selectedIndex].value == "OtherConsultingBusiness") {
              $("." + type + "OtherConsultingBusiness").removeClass('hidden');
@@ -601,47 +603,44 @@
                     $("." + type + "nonnominated").removeClass('hidden');
                      $("." + type + "Advisorsec").addClass('hidden');
                 }
-            
+
             }
 
 
         }
 
-        
+
     }
 
 
-    function EditNamedParty(classId, boatUseId) {
+    function EditOrganisation(OrganisationId) {
         debugger;
-         $("CommonNamedPartyTabs2 :input").val("");
+        $("CommonNamedPartyTabs2 :input").val("");
         event.preventDefault();
-        var _sheetId = $('#AnswerSheetId').val();
-        var postData = {
-		'partyID': boatUseId,
-            'answerSheetId': _sheetId
-        };
         $.ajax({
-            url: '@Url.Action("GetCommonNamedPArty", "Services")',
+            url: '@Url.Action("GetOrganisation", "Services")',
             type: "Post",
-            data: postData
+            data: { Id: OrganisationId }
         })
-            .done(function (data) {    
+            .done(function (data) {
+                PopulateData("Organisation", data);
+                debugger;
               $('#CommonEditPrincipalPartnersId').val(data.id);
                 $('#CommonEditEmail').val(data.email);
                 $('#CommonEditEmailCheck').val(data.email);
                  $('#CommonEditOwnercheck').val(data.type);
                   $("#ValidateCommonEditEmail").html("<i></i>");
                     $("#ValidateCommonEmail").html("<i></i>");
-                 
+
                 if (data.type == "Owner") {
                     $('#CommonEditOfcPhone').val(data.ofcPhoneno);
                     $('#CommonEditTradingName').val(data.tradingName);
-                 $('#CommonEditOrgName').val(data.organisationName);
+                 $('#CommonEditOrgName').val(data.Name);
                  $('.ownersec').removeClass("hidden");
                  $('.nonownersec').addClass("hidden");
-                 
+
                 } else {
-                     $('#CommonEditOrgName').val(data.organisationName);
+                    $('#CommonEditOrgName').val(data.Name);
 
                     if (data.type == "OtherConsultingBusiness") {
                         $(".CommonEditOtherConsultingBusiness").removeClass('hidden');
@@ -675,10 +674,10 @@
                  Isretiredselected('CommonEditIsRetiredorDecieved','CommonEdit')
              }
 
-          
+
          });
     };
-    
+
     function ValidateCommonNamedParty(event, type) {
         debugger;
         event.preventDefault();
@@ -697,7 +696,7 @@
         var orgname = $('#' + validatortype + 'OrgName').val();
         var ownercheck = $('#' + validatortype + 'Ownercheck').val();
         var emailcheck =  $('#CommonEditEmailCheck').val();
-        var tradingname = $('#CommonEditTradingName').val(); 
+        var tradingname = $('#CommonEditTradingName').val();
 
         if (type == "CommonEdit" && ownercheck == "Owner") {
              if (tradingname == "") {
@@ -730,12 +729,12 @@
                     }
                 } else {
                         $("#Validate" + type + "Email").html("<i></i>");
-                        
+
                 }
-                
+
             }
         }
-            
+
 
         if (ownercheck != "Owner" && Type != "OtherConsultingBusiness" ) {
             if (Type == "") {
@@ -847,7 +846,7 @@
             data: postData,
             async:false
         })
-            .done(function (data) {                
+            .done(function (data) {
                 debugger;
                 if (data === false) {
 
@@ -864,13 +863,39 @@
 
 
     };
-    
+
+    function AddCommonNamedPartyForm(currenttab, tableId) {
+        event.preventDefault();
+        $.ajax({
+            url: '@Url.Action("AddCommonNamedParty", "Services")',
+            type: "POST",
+            data: $('#CommonParty').serialize()
+        })
+            .done(function (data) {
+                SetCurrentTab(currenttab);
+                $(tableId).trigger('reloadGrid');
+                document.getElementById("CommonParty").reset();
+                $('#EditIndividual1').addClass('hidden');
+                $('#EditIndividual2').addClass('hidden');
+                $('#EditIndividual3').addClass('hidden');
+                $('#EditIndividualPrincipal').addClass('hidden');
+                $('#EditPrincial6Sec').addClass('hidden');
+                $('#EditPrincial8Sec').addClass('hidden');
+                $('#EditPrincial12Sec').addClass('hidden');
+                $("#ValidateCommonEditEmail").html("<i></i>");
+                $("#ValidateCommonEmail").html("<i></i>");
+                $("#getAgreementModal").modal("hide");
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+            });
+    }    
 
     function AddCommonNamedParty(event, tabId, tableId, currenttab) {
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-         //var OrgType = $('#CommonOrgType').val(); 
+         //var OrgType = $('#CommonOrgType').val();
          var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
          //var proddata = proddata + "& OrganisationTypeName =" + OrgType;
         $("#getAgreementModal").modal("show");
@@ -879,7 +904,7 @@
             type: "POST",
             data: proddata
         })
-            .done(function (data) {                
+            .done(function (data) {
                 SetCurrentTab(currenttab);
                 $(tableId).trigger('reloadGrid');
                 $(tabId + " :input").val("");
@@ -896,9 +921,6 @@
 
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                        $("#getAgreementModal").modal("hide");
-
-                alert("There was an error while trying to save the Vehicle.");
             });
     };
 
@@ -906,7 +928,7 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-         //var OrgType = $('#CommonEditOrgType').val(); 
+         //var OrgType = $('#CommonEditOrgType').val();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
          $("#getAgreementModal").modal("show");
         //var proddata = proddata + "& OrganisationTypeName =" + Orgname;
@@ -916,7 +938,7 @@
             type: "POST",
             data: proddata
         })
-            .done(function (data) {           
+            .done(function (data) {
                 debugger;
                 SetCurrentTab(currenttab);
                 $('#CommonEditEmailCheck').val("");
@@ -931,7 +953,7 @@
                  $("#getAgreementModal").modal("hide");
             });
     };
-   
+
 
     function SetPrincipalRemovedStatus(PrincipalId, status, sourceTable, destTable) {
         var AnswersheetId = $('#AnswerSheetId').val();
@@ -944,7 +966,7 @@
         $.ajax({
             url: '@Url.Action("SetPrincipalRemovedStatus", "Services")',
             type: "Post",
-            data: postData            
+            data: postData
         })
             .done(function (data) {
                 if (data === true) {

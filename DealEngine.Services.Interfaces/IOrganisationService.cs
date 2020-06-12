@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Services.Interfaces
 {
@@ -20,7 +21,10 @@ namespace DealEngine.Services.Interfaces
         Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet);
         Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet);
         Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
-        //Task<List<Organisation>>GetOrCreateOrganisation(string email);
+        Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
+        Task<Organisation> GetAnyRemovedAdvisor(string email);
+        Task ChangeOwner(Organisation organisation, ClientInformationSheet sheet);
+        Task Update(Organisation organisation);
     }
 }
 

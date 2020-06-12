@@ -46,6 +46,12 @@ namespace DealEngine.Services.Impl
         {
             return await _organisationUnitRepository.FindAll().Select(ou => ou.Name).ToListAsync();
         }
+
+        public async Task<OrganisationalUnit> CreateOrganisationalUnit(OrganisationalUnit organisationalUnit)
+        {
+            await _organisationUnitRepository.AddAsync(organisationalUnit);
+            return organisationalUnit;
+        }
     }
 }
 

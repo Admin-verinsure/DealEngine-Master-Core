@@ -35,7 +35,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditNamedParty(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'CommonNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
+                                            return ('<button onclick="EditNamedParty(\'' + cellvalue + '\'); SetCurrentTab(\'CommonNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
                                         }
                                     },
                                     { name: "OrganisationName", align: 'center' },
@@ -43,7 +43,7 @@
                                      {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
-                                                        return ('<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'true\', \'#CommonNamedParties\', \'#tblRemovedCommonNamedParty\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                             return ('<button onclick="SetPrincipalRemovedStatus(\'bu\',\'' + cellvalue + '\', \'true\', \'#CommonNamedParties\', \'#tblRemovedCommonNamedParty\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                          }
                                      }
 								],
@@ -393,19 +393,15 @@
     }
 
 
-    function EditNamedParty(classId, boatUseId) {
+    function EditOrganisation(OrganisationId) {
         debugger;
-         $("CommonNamedPartyTabs2 :input").val("");
+        $("CommonNamedPartyTabs2 :input").val("");
         event.preventDefault();
-        var _sheetId = $('#AnswerSheetId').val();
-        var postData = {
-		'partyID': boatUseId,
-            'answerSheetId': _sheetId
-        };
+        form = document.getElementById();
         $.ajax({
-            url: '@Url.Action("GetCommonNamedPArty", "Services")',
+            url: '@Url.Action("GetOrganisation", "Services")',
             type: "Post",
-            data: postData
+            data: form.serialize()
         })
             .done(function (data) {
               $('#CommonEditPrincipalPartnersId').val(data.id);

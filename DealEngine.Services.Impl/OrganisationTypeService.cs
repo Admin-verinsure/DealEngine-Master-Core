@@ -31,7 +31,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<OrganisationType> CreateNewOrganisationType(User user, string organisationTypeName)
         {
-            OrganisationType OrganisationType = null;
+            OrganisationType OrganisationType;
             if (user != null)
             {
                 OrganisationType = new OrganisationType(user, organisationTypeName);

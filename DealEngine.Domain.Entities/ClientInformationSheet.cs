@@ -63,6 +63,7 @@ namespace DealEngine.Domain.Entities
             BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
             RevenueData = new RevenueData(null, createdBy);
+            RoleData = new RoleData(null, createdBy);
         }
 
 		public ClientInformationSheet (User createdBy, Organisation createdFor, InformationTemplate informationTemplate)

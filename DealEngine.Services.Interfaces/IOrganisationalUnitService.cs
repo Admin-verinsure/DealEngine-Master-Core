@@ -15,6 +15,7 @@ namespace DealEngine.Services.Interfaces
         Task<OrganisationalUnit> GetOrganisationalUnitByName (string organisationalUnitName);
         Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsByOrg(Organisation org);
         Task<List<string>> GetAllOrganisationalUnitsName();
+        Task<OrganisationalUnit> CreateOrganisationalUnit(OrganisationalUnit organisationalUnit);
     }
 }
 

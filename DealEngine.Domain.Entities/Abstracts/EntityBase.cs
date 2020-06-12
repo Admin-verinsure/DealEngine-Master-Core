@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace DealEngine.Domain.Entities.Abstracts
 {
@@ -68,6 +71,55 @@ namespace DealEngine.Domain.Entities.Abstracts
             int hash = GetType().GetHashCode();
             hash = (hash * 397) ^ Id.GetHashCode();
             return hash;
+        }
+
+        public virtual void PopulateEntity(IFormCollection collection)
+        {
+            //PropertyInfo property;
+            try
+            {
+                foreach (var property in GetType().GetProperties())
+                {
+                    var value = collection[property.Name].ToString();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        if (property.PropertyType == typeof(string))
+                        {
+                            if (string.IsNullOrWhiteSpace(value.ToString()))
+                            {
+                                if(property.Name != "Name")
+                                {
+                                    property.SetValue(this, value.ToString());
+                                }
+                                else
+                                {
+                                    //throw new Exception("Cant save Name");
+                                }
+                            }
+                            else
+                                property.SetValue(this, value.ToString());
+                        }
+                        else if (property.PropertyType == typeof(bool))
+                        {
+                            var boolValue = value.ToString();
+                            property.SetValue(this, bool.Parse(value));
+                        }
+                        else if (property.PropertyType == typeof(DateTime))
+                        {
+                            var dateValue = value.ToString();
+                            property.SetValue(this, DateTime.Parse(dateValue));
+                        }
+                        else
+                        {
+                            throw new Exception("add new type condition " + property.PropertyType.Name);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
