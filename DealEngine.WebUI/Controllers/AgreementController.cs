@@ -1998,7 +1998,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                return Redirect("/Information/EditInformation/" + model.ProgId);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + model.ProgId);
             }
             catch (Exception ex)
             {

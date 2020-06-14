@@ -5,14 +5,14 @@
         <h1 class="page-title txt-color-blueDark">
             <!-- PAGE HEADER -->
             <i class="fa-fw fa fa-home"></i>
-            <a href="~/Agreement/ViewAcceptedAgreement/@Model.Id"> Agreement</a>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId"> Agreement</a>
             > <span>Edit Agreement Rule</span>
         </h1>
     </div>
 
     <div class="row">
         <span>
-            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ProgId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
     </div>
 
@@ -71,7 +71,7 @@
                     <td>
                         <div class="form-group">
                             <button type="submit" value="Submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Update Date</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.Id" class="btn btn-danger btn-sm text-white"><i class="fa fa-trash"></i> Cancel</a>
+                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId" class="btn btn-danger btn-sm text-white"><i class="fa fa-trash"></i> Cancel</a>
                         </div>
                     </td>
                     <td>
