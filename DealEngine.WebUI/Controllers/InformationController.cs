@@ -1522,22 +1522,22 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateInformation(ChangeReason changeReason)
         {
-            User user = null;
+            User createdBy = null;
 
             try
             {
-                user = await CurrentUser();
-                await _changeProcessService.CreateChangeReason(user, changeReason);
+                createdBy = await CurrentUser();
+                //await _changeProcessService.CreateChangeReason(createdBy, changeReason);
 
                 changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
 
-                await _changeProcessService.CreateChangeReason(user, changeReason);
+                 _changeProcessService.CreateChangeReason(createdBy, changeReason);
 
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
                 if (clientProgramme == null)
-                    throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + user.UserName);
+                    throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user, changeReason);
+                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
 
                 await _programmeService.Update(newClientProgramme);
 
@@ -1546,7 +1546,7 @@ namespace DealEngine.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                await _applicationLoggingService.LogWarning(_logger, ex, createdBy, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
         }

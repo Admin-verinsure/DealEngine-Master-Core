@@ -1961,7 +1961,7 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                model.Id = answerSheet.Programme.Id;
+                model.ProgId = answerSheet.Programme.Id;
                 model.Owner = Advisors;
                 model.AgreementId = id;
                 //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
@@ -1983,20 +1983,22 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
-                //if (model.ClientAgreementRules.Any(mcr => mcr != null && mcr.Value != null))
-                //{
-                //    using (var uow = _unitOfWork.BeginUnitOfWork())
-                //    {
-                //        foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
-                //        {
-                //            var clientAgreementRule = await _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID);
-                //            clientAgreementRule.Value = crv.Value;
-                //        }
-                //        await uow.Commit();
-                //    }
-                //}
+                if (model.Owner != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        foreach (Organisation org in model.Owner)
+                        {
+                            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
+                            organisation.PIRetroactivedate = org.PIRetroactivedate;
+                            organisation.DORetroactivedate = org.DORetroactivedate;
 
-                return Redirect("/Information/EditInformation/" + model.Id);
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                return Redirect("/Information/EditInformation/" + model.ProgId);
             }
             catch (Exception ex)
             {
