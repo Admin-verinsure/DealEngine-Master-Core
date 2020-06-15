@@ -126,7 +126,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                 RiskName = agreement.Product.Name,
                                 Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                 Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
-                                TotalPremium = "To be adviced",
+                                TotalPremium = "To be advised",
                                 Dependableproduct = agreement.Product.DependableProduct.Name
                             });
                         } else
@@ -156,7 +156,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                 RiskName = agreement.Product.Name,
                                 Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                 Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
-                                TotalPremium = "To be adviced",
+                                TotalPremium = "To be advised",
                                 Dependableproduct = agreement.Product.DependableProduct.Name
                             });
                         }
@@ -192,7 +192,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                 RiskName = agreement.Product.Name,
                                 Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                 Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
-                                TotalPremium = "To be adviced",
+                                TotalPremium = "To be advised",
                                 Dependableproduct = "NonDependable"
                             });
                         }
@@ -223,7 +223,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                 RiskName = agreement.Product.Name,
                                 Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                 Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
-                                TotalPremium = "To be adviced",
+                                TotalPremium = "To be advised",
                                 Dependableproduct = "NonDependable"
                             });
                         }

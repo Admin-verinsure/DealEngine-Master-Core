@@ -238,7 +238,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //============================================================
 
             #region terms
-            
+            int intelectedlimit = 0;
+
             decimal TermPremiumDEFAULT = 0m;
             decimal TermBrokerageDEFAULT = 0m;
             int TermExcess = 0;
@@ -411,6 +412,60 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl10000klimitoption.Brokerage = TermBrokerageDEFAULT;
             termsl10000klimitoption.DateDeleted = null;
             termsl10000klimitoption.DeletedBy = null;
+
+            if (termsl300klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit300k;
+            } 
+            else if (termsl500klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit500k;
+            }
+            else if (termsl750klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit750k;
+            }
+            else if (termsl1000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit1000k;
+            }
+            else if (termsl1500klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit1500k;
+            }
+            else if (termsl2000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit2000k;
+            }
+            else if (termsl2500klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit2500k;
+            }
+            else if (termsl3000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit3000k;
+            }
+            else if (termsl4000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit4000k;
+            }
+            else if (termsl5000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit5000k;
+            }
+            else if (termsl6000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit6000k;
+            }
+            else if (termsl8000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit8000k;
+            }
+            else if (termsl10000klimitoption.Bound)
+            {
+                intelectedlimit = TermLimit10000k;
+            }
+
             #endregion
 
             //=====================================================
@@ -433,6 +488,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfotheractivity(underwritingUser, agreement, decArchConsultingOther);
             //Current year fee is 25% greater or less than last year fee 
             uwrfcurrentandlastfeeincome(underwritingUser, agreement, feeincome, lastyearfeeincome);
+            //Members who elect to take a limit of indemnity over $5,000,000  
+            uwrfhigherlimit(underwritingUser, agreement, intelectedlimit);
 
             //=====================================================
 
@@ -862,6 +919,28 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
+        void uwrfhigherlimit(User underwritingUser, ClientAgreement agreement, int intelectedlimit)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhigherlimit" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhigherlimit") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhigherlimit").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhigherlimit").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhigherlimit").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhigherlimit").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhigherlimit" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (intelectedlimit > 5000000)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhigherlimit" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
 
     }
 }
