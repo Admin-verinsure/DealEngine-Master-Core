@@ -134,25 +134,32 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ReRunUWM(string ClientId)
+        public async Task<IActionResult> ReRunUWM(Guid id)
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                var clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(ClientId));
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    _underwritingModule.UWM(user, clientProgramme.InformationSheet, clientProgramme.InformationSheet.ReferenceId);
+                    _underwritingModule.UWM(user, agreement.ClientInformationSheet, agreement.ClientInformationSheet.ReferenceId);
+
+                    string auditLogDetail = "Underwriting Module Run by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
                     await uow.Commit();
                 }
-                return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+                //return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
             }
             catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+
         }
 
         public async Task<IActionResult> AgreementTemplates()
@@ -1131,7 +1138,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
@@ -1142,7 +1150,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1155,7 +1164,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1168,7 +1178,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1181,7 +1192,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1194,7 +1206,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1207,7 +1220,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();

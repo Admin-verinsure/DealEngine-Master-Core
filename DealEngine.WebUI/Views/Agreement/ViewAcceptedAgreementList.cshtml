@@ -60,7 +60,8 @@
                                 @if (User.IsInRole("TCUser"))
                                 {
                                     <li class="nav-item">
-                                        <a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>
+                                        @*<a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>*@
+                                        <a href="~/Agreement/ReRunUWM/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwriting Module</a>
                                     </li>
                                 }
                                 <li class="nav-item">
