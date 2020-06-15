@@ -14,7 +14,7 @@ namespace DealEngine.Domain.Entities
         OrganisationType _organisationType;
 
         #region Constructors
-        protected Organisation() : base(null) { }
+        public Organisation() : base(null) { }
 
         protected Organisation(User createdBy)
             : base(createdBy)

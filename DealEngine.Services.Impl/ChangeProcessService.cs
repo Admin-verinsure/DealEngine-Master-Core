@@ -22,7 +22,7 @@ namespace DealEngine.Services.Impl
             change.Reason = changeReason.Reason;
             change.ReasonDesc = changeReason.ReasonDesc;
             //change.EffectiveDate = changeReason.EffectiveDate;
-            await _changeReason.AddAsync(change);            
+            await _changeReason.AddAsync(change);
         }
     }
 }

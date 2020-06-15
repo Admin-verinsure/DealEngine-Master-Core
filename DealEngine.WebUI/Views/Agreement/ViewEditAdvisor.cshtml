@@ -1,0 +1,87 @@
+﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
+
+<div class="container">
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId"> Agreement</a>
+            > <span>Edit Agreement Rule</span>
+        </h1>
+    </div>
+
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ProgId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    <div class="jarviswidget container-fluid" id="wid-id-10"
+         data="false"
+         data-widget-editbutton="false"
+         data-widget-togglebutton="false"
+         data-widget-deletebutton="false"
+         data-widget-custombutton="false"
+         data-widget-sortable="false">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+            <h2>@ViewBag.Title </h2>
+        </header>
+
+        <!-- widget div-->
+        <form action="~/Agreement/EditAdvisor" method="POST" id="update-form">
+            @Html.HiddenFor(m => m.AgreementId)
+            @Html.HiddenFor(m => m.ProgId)
+
+            <table class="table table-striped table-bordered">
+
+                <tr>
+                    <th>
+                        Advisor Name
+                    </th>
+                    <th>
+                        PI RetroactiveDate
+                    </th>
+                    <th>
+                        DO RetroactiveDate
+                    </th>
+                </tr>
+
+                @for (var i = 0; i < Model.Owner.Count(); i++)
+                {
+                   
+                        <tr class="table-light">
+                            <td hidden>
+                                @Html.TextBoxFor(m => Model.Owner[i].Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => Model.Owner[i].Name)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => Model.Owner[i].PIRetroactivedate)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => Model.Owner[i].DORetroactivedate)
+                            </td>
+                        </tr>
+                  
+                   
+                }
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <button type="submit" value="Submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Update Date</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId" class="btn btn-danger btn-sm text-white"><i class="fa fa-trash"></i> Cancel</a>
+                        </div>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+    </div>
+    <!-- end widget -->
+</div>
+
+
