@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using DealEngine.Domain.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
 
@@ -11,7 +12,7 @@ namespace DealEngine.Domain.Entities
     public class Organisation : EntityBase, IAggregateRoot
     {
         #region Constructors
-        protected Organisation() : base(null) { }
+        public Organisation() : base(null) { }
 
         protected Organisation(User createdBy)
             : base(createdBy)
@@ -85,14 +86,10 @@ namespace DealEngine.Domain.Entities
             Email = email;
         }
 
-        public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute, IFormCollection collection)
+        public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute)
             :this(creator, organisationName, organisationType)
         {
-            if (collection.Any())
-            {
-                PopulateEntity(collection);
-                Name = organisationName;
-            }
+            Name = organisationName;
             Id = id;
             OrganisationalUnits.Add(organisationalUnit);
             InsuranceAttributes.Add(insuranceAttribute);
@@ -119,7 +116,7 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual DateTime DateofRetirement
+        public virtual DateTime? DateofRetirement
         {
             get;
             set;
@@ -137,34 +134,35 @@ namespace DealEngine.Domain.Entities
         }
 
 
-        public virtual DateTime DateofDeceased
+        public virtual DateTime? DateofDeceased
         {
             get;
             set;
         }
 
-        public virtual DateTime DateofBirth
+        public virtual DateTime? DateofBirth
         {
             get;
             set;
         }
 
+        [JsonIgnore]
         public virtual IList<Boat> Boat
         {
             get;
             set;
         }
 
+        [JsonIgnore]
         public virtual IList<string> Marinaorgmooredtype
         {
             get;
             set;
         }
-
+        [JsonIgnore]
         public virtual OrganisationType OrganisationType
         {
             get;
-            set;
         }
         public virtual bool Removed
         {
@@ -177,7 +175,7 @@ namespace DealEngine.Domain.Entities
         public virtual string DesignLicensed { get; set; }
         public virtual string SiteLicensed { get; set; }
         public virtual bool IsRegisteredLicensed { get; set; }
-
+        [JsonIgnore]
         public virtual Location Location { get; set; }
         public virtual string Description { get; set; }
         public virtual string Phone { get; set; }
@@ -215,6 +213,7 @@ namespace DealEngine.Domain.Entities
         public virtual string RegisteredStatus { get; set; }
         public virtual bool ConfirmAAA { get; set; }
         public virtual string Duration { get; set; }
+        [JsonIgnore]
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
@@ -222,19 +221,10 @@ namespace DealEngine.Domain.Entities
         public virtual string TradingName { get; set; }
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
-        public virtual IList<AuditHistory> AuditHistory { get; set; }
        
         #endregion
 
         #region Opperations
-
-        public virtual void ChangeOrganisationType(OrganisationType organisationType)
-        {
-            if (organisationType == null)
-                throw new ArgumentNullException(nameof(organisationType));
-
-            OrganisationType = organisationType;
-        }
 
         public virtual void ChangeOrganisationName(string name)
         {
@@ -245,6 +235,7 @@ namespace DealEngine.Domain.Entities
         }
         #endregion
 
+        [JsonIgnore]
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)

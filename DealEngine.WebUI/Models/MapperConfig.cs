@@ -24,6 +24,13 @@ namespace DealEngine.WebUI.Models
         {
             // place all automapper maps here
 
+            //
+            CreateMap<Organisation, Organisation>()
+                .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
+                .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.OrganisationType, map => map.Ignore());
+
             // Admin
             CreateMap<PrivateServer, PrivateServerViewModel>().ReverseMap();
             CreateMap<PaymentGateway, PaymentGatewayViewModel>().ReverseMap();

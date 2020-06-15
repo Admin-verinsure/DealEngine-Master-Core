@@ -678,18 +678,6 @@ namespace DealEngine.WebUI.Controllers
                 model.EmployeeNumber = user.EmployeeNumber;
                 model.JobTitle = user.JobTitle;
                 model.SalesPersonUserName = user.SalesPersonUserName;
-
-                var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnitsByOrg(user.PrimaryOrganisation);
-                OrgUnitList.GroupBy(o => o.Name);
-                foreach (OrganisationalUnit ou in OrgUnitList)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
-                }
-
                 if (user.PrimaryOrganisation != null)
                     model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
                 model.Description = user.Description;

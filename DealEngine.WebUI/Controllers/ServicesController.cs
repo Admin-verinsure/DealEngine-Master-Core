@@ -20,7 +20,7 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -3056,18 +3056,29 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddCommonNamedParty(IFormCollection collection)
+        private void AddOrganisation(OrganisationViewModel model)
         {
+            throw new Exception("Unfinihed core update");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisation(IFormCollection collection)
+        {
+            
             User currentUser = null;
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
-            ClientInformationSheet sheet = await _clientInformationService.GetInformation(Id);
-            string Email = collection["Email"];
-            string Type = collection["Type"];
-            string Name = collection["Name"];
-            string FirstName = collection["FirstName"];
-            string LastName = collection["LastName"];
-            string OrganisationTypeName = collection["OrganisationTypeName"];
+            ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
+
+            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection, "OrganisationViewModel");
+            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection, "OrganisationViewModel");
+
+            string Email = jsonOrganisation.Email;
+            string Type = jsonOrganisation.Type;
+            string Name = jsonOrganisation.Name;
+            string FirstName = jsonUser.FirstName;
+            string LastName = jsonUser.LastName;
+            string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
             Organisation organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
             //condition for organisation exists
             try
@@ -3075,22 +3086,18 @@ namespace DealEngine.WebUI.Controllers
                 if (organisation != null)
                 {
                     await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    await _organisationService.ChangeOwner(organisation, sheet);                    
+                    await _organisationService.ChangeOwner(organisation, Sheet);
                 }
                 if (organisation == null)
                 {
                     organisation = await _organisationService.GetOrCreateOrganisation(Email, Type, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
-                    organisation.PopulateEntity(collection);
-                    await _organisationService.Update(organisation);                   
-                    
-                    var user = await _userService.GetUserByEmail(Email);
-                    user.PopulateEntity(collection);
-                    await _userService.Update(user);
+                    organisation = _mapper.Map(jsonOrganisation, organisation);
+                    await _organisationService.Update(organisation);
                 }
-                if(!sheet.Organisation.Contains(organisation))
-                    sheet.Organisation.Add(organisation);
+                if (!Sheet.Organisation.Contains(organisation))
+                    Sheet.Organisation.Add(organisation);
 
-                await _clientInformationService.UpdateInformation(sheet);
+                await _clientInformationService.UpdateInformation(Sheet);
                 return Ok();
             }
             catch (Exception ex)
@@ -3099,8 +3106,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> EditCommonNamedParty(OrganisationViewModel model)
@@ -3399,21 +3404,27 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-        public async Task<IActionResult> GetOrganisation(IFormCollection collection)
+
+        [HttpPost]
+        public async Task<IActionResult> GetOrganisation(OrganisationViewModel collection)
         {
-            OrganisationViewModel model;
+            OrganisationViewModel model = collection;
             User user = null;
-            Guid OrganisationId = Guid.Parse(collection["Id"]);
+            Guid OrganisationId = Guid.Parse(collection.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
+            Guid ClientInformationId = Guid.Parse(collection.AnswerSheetId.ToString());//Guid.Parse(collection["ClientInformationId"]);
             try
-            {                
+            {                   
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                model =new OrganisationViewModel(organisation);
-                return Json(model);
+                User orgUser = await _userService.GetUserByEmail(organisation.Email);
+                ClientInformationSheet clientInformationSheet = await _clientInformationService.GetInformation(ClientInformationId);
+                collection = new OrganisationViewModel(clientInformationSheet, organisation, orgUser);
+                string jsonObj = GetSerializedModel(collection);
+                return Json(jsonObj);
             }
             catch(Exception ex)
-            {
+            {               
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
+                return Json(ex.Message);
             }
         }
 
@@ -3447,16 +3458,16 @@ namespace DealEngine.WebUI.Controllers
                     model.OrganisationName = org.Name;
                     if (org.DateofBirth != null)
                     {
-                        model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                        //model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
 
                     if (org.DateofRetirement != null)
                     {
-                        model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                        //model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
                     if (model.DateofDeceased != null)
                     {
-                        model.DateofDeceased = (org.DateofRetirement > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                        //model.DateofDeceased = (org.DateofRetirement > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
 
                     model.Email = org.Email;
@@ -3862,7 +3873,7 @@ namespace DealEngine.WebUI.Controllers
                     model.prevPractice = org.PrevPractice;
                     if (org.DateofBirth != null)
                     {
-                        model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                       // model.DateofBirth = (org.DateofBirth > DateTime.MinValue) ? org.DateofBirth.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     }
                     model.IsIPENZmember = org.IsIPENZmember;
                     model.CPEngQualified = org.CPEngQualified;
@@ -3879,8 +3890,8 @@ namespace DealEngine.WebUI.Controllers
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                     model.Othercompanyname = org.OtherCompanyname;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
-                    model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
-                    model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    //model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    //model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     model.OrganisationName = org.Name;
                     model.Activities = org.Activities;
                     model.AnswerSheetId = answerSheetId;
@@ -4043,7 +4054,7 @@ namespace DealEngine.WebUI.Controllers
                 var organisationalUnits = new List<OrganisationalUnitViewModel>();
                 List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
-                foreach (var mooredtype in organisation.Marinaorgmooredtype)
+                foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
                 {
                     mooredtypes.Add(new SelectListItem
                     {
@@ -4531,6 +4542,7 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                AddOrganisation(model);
                 if (model == null)
                     throw new ArgumentNullException(nameof(model));
 
@@ -5225,7 +5237,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection collection)
-        {
+        {            
             User currentUser = null;
             string Name = collection["Name"];
             string FirstName = collection["FirstName"];
@@ -5252,6 +5264,7 @@ namespace DealEngine.WebUI.Controllers
                 if (organisation == null)
                 {
                     organisation = await _organisationService.GetOrCreateOrganisation(email, orgType, Name, orgType, FirstName, LastName, currentUser, collection);
+                    organisation.PopulateEntity(collection);
                 }
                 
                 var user = await _userService.GetUserByEmail(email);

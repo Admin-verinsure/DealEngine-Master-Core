@@ -239,25 +239,6 @@ namespace DealEngine.WebUI.Controllers
 
         }    
 
-        [HttpGet]
-        public async Task<IActionResult> Register()
-        {
-            OrganisationViewModel organisationViewModel = new OrganisationViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                organisationViewModel.OrganisationTypes = _organisationTypeService.GetOrganisationTypes().Select(x => x.Name);
-                return View(organisationViewModel);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
         [HttpPost]
         public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
         {

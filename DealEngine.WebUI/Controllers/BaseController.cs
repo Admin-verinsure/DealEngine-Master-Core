@@ -8,6 +8,12 @@ using DealEngine.WebUI.Helpers;
 using DealEngine.WebUI.Helpers.CustomActions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Localization;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
+using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -52,6 +58,49 @@ namespace DealEngine.WebUI.Controllers
                     return null;
 
                 return await _userService.GetUser(userName);            
+        }
+
+        public string GetSerializedModel(object model)
+        {
+            return JsonConvert.SerializeObject(model, Formatting.Indented,
+                    new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                        FloatFormatHandling = FloatFormatHandling.DefaultValue,                        
+                    });
+        }
+
+        public object? GetModelDeserializedModel(Type type, IFormCollection collection, string ModelName)
+        {
+            Dictionary<object, string> model = new Dictionary<object, string>();
+            var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
+            foreach(var Key in Keys)
+            {
+                var test = Key.Split(".").ToList().LastOrDefault();
+                //var splitName = Key.Replace(test + ".", string.Empty);
+                model.Add(test, collection[Key].ToString());
+            }            
+            var JsonString = GetSerializedModel(model);
+            try
+            {
+                var obj = JsonConvert.DeserializeObject(JsonString, type,
+                    new JsonSerializerSettings()
+                    {
+                        ObjectCreationHandling = ObjectCreationHandling.Auto,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
+                    });
+                return obj;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         /// <summary>

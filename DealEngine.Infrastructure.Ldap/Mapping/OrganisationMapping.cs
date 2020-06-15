@@ -18,7 +18,6 @@ namespace DealEngine.Infrastructure.Ldap.Mapping
 			organisation.Phone = entry.GetAttributeValue ("telephoneNumber");
 			organisation.Description = entry.GetAttributeValue ("description");
 			string organisationType = entry.GetAttributeValue ("businessCategory");
-			organisation.ChangeOrganisationType (new OrganisationType (null, organisationType));
 
 			return organisation;
 		}

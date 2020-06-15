@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -73,47 +74,57 @@ namespace DealEngine.Domain.Entities.Abstracts
             return hash;
         }
 
-        public virtual void PopulateEntity(IFormCollection collection)
+        public virtual void PopulateEntity(IFormCollection Collection)
         {
             //PropertyInfo property;
             try
             {
                 foreach (var property in GetType().GetProperties())
                 {
-                    var value = collection[property.Name].ToString();
-                    if (!string.IsNullOrWhiteSpace(value))
+                    var fieldName = Collection.Keys.Where(k => k.EndsWith(property.Name)).FirstOrDefault();
+                    if(fieldName != null)
                     {
-                        if (property.PropertyType == typeof(string))
+                        var value = Collection[fieldName];
+                        if (!string.IsNullOrWhiteSpace(value))
                         {
-                            if (string.IsNullOrWhiteSpace(value.ToString()))
+                            if (property.PropertyType == typeof(string))
                             {
-                                if(property.Name != "Name")
+                                if (string.IsNullOrWhiteSpace(value.ToString()))
                                 {
-                                    property.SetValue(this, value.ToString());
+                                    if (property.Name != "Name")
+                                    {
+                                        property.SetValue(this, value.ToString());
+                                    }
+                                    else
+                                    {
+                                        //throw new Exception("Cant save Name");
+                                    }
                                 }
                                 else
-                                {
-                                    //throw new Exception("Cant save Name");
-                                }
+                                    property.SetValue(this, value.ToString());
+                            }
+                            else if (property.PropertyType == typeof(bool))
+                            {
+                                var boolValue = value.ToString();
+                                property.SetValue(this, bool.Parse(value));
+                            }
+                            else if (property.PropertyType == typeof(DateTime))
+                            {
+                                var dateValue = value.ToString();
+                                property.SetValue(this, DateTime.Parse(dateValue));
+                            }
+                            else if (property.PropertyType == typeof(Guid))
+                            {
+                                //throw new Exception("Cant save Ids");
                             }
                             else
-                                property.SetValue(this, value.ToString());
-                        }
-                        else if (property.PropertyType == typeof(bool))
-                        {
-                            var boolValue = value.ToString();
-                            property.SetValue(this, bool.Parse(value));
-                        }
-                        else if (property.PropertyType == typeof(DateTime))
-                        {
-                            var dateValue = value.ToString();
-                            property.SetValue(this, DateTime.Parse(dateValue));
-                        }
-                        else
-                        {
-                            throw new Exception("add new type condition " + property.PropertyType.Name);
+                            {
+                                throw new Exception("add new type condition " + property.PropertyType.Name);
+                            }
+
                         }
                     }
+                    
                 }
             }
             catch (Exception ex)

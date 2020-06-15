@@ -1612,9 +1612,9 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                user = await CurrentUser();
+                var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet)
+                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()

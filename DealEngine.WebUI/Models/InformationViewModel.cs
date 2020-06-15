@@ -9,7 +9,7 @@ namespace DealEngine.WebUI.Models
     public class InformationViewModel : BaseViewModel
     {
         public InformationViewModel() { }
-        public InformationViewModel(ClientInformationSheet ClientInformationSheet)
+        public InformationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser)
         {
             ELViewModel = new ELViewModel(); //Employment Liability Insurance
             EPLViewModel = new EPLViewModel(); //Employers Practices Insurance
@@ -24,7 +24,9 @@ namespace DealEngine.WebUI.Models
             RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(ClientInformationSheet);
             ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
+            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, ClientInformationSheet.Owner, OrgUser);
         }
+        public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme;
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }

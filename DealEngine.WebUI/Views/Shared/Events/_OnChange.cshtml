@@ -1,4 +1,5 @@
 ﻿<script type="text/javascript">
+
     $(function () {
         //get all forms on load
         var forms = document.getElementsByClassName('is-valid');
@@ -125,6 +126,14 @@
     function TriggerHandler(obj, Name, Value, Rule, DataItem) {
         try {
             //all rules go here
+            if (obj.type == "checkbox") {
+                if (obj.checked === true) {
+                    Value = "1";
+                } else {
+                    Value = "2";
+                }
+            }
+
             DefaultRule(Value, Name);
             if (Rule === "Clear") {
                 if (Value == 2) {
@@ -166,7 +175,7 @@
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
                 DefaultRule(Value, element.name);
-            } 
+            }
             if (Rule === "FABConditional") {
                 var ids = DataItem.split(',');
                 document.getElementById(ids[0]).hidden = true;
@@ -214,6 +223,17 @@
                 }
                 if (DataItem === "validatetabledataroles") {
                     AdditionalRoleInformation("dataroles");
+                }
+            }
+            if (Rule === "OrganisationType") {
+                DefaultRule("1", "OrganisationViewModel.Type");
+                if (Value == "Advisor" || Value == "NominatedRepresentative") {
+                    //readonly Organisation Type personal
+                    debugger;
+                    DefaultRule("1", Value);                    
+                }
+                else {
+                    DefaultRule("2", Value);
                 }
             }
         } catch (ex) {
@@ -478,10 +498,3 @@
     }
 
 </script>
-<style>
-    .required:after {
-        content: " *";
-        color: red;
-        font-size: 20px;
-    }
-</style>

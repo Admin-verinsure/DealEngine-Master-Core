@@ -21,6 +21,11 @@
         SetCurrentTab(Tab);
     }
 
+    function ResetOrganisation(FormId) {
+        debugger;
+        document.getElementById(FormId).reset();
+    }
+
     function CreateEditLabel(ObjectLabel) {
         var div = document.createElement("div");
         div.setAttribute("class", "form-group");

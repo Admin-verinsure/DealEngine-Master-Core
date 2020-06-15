@@ -319,14 +319,6 @@
             $(e.currentTarget).find('input[id="UnlockId"]').val(dealId);
         });
 
-        $('#CreateUISModal').on('show.bs.modal', function (e) {
-            debugger;
-            $('.modal').css({ "width": "80%", "margin-left": "25%" });
-            var PanelPositon = $(e.relatedTarget).data('progname-id');
-            $(e.currentTarget).find('input[name="ProgId"]').val(PanelPositon);
-            $('#ProgId').addClass('hidden');
-        });
-
         function vesselOwnUpdate() {
             var OrgType = $('input[name=cgradioselect]:checked').val();
             if (OrgType == "Private") {
@@ -422,8 +414,5 @@
         }
 
     </script>
-    @Html.Partial("_ProgrammeScripts")
-
-
 }
 

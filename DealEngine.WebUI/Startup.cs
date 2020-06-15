@@ -14,9 +14,9 @@ using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using AutoMapper;
-using ReflectionIT.Mvc.Paging;
 using Microsoft.AspNetCore.Identity;
 using System;
+using Newtonsoft.Json;
 
 namespace DealEngine.WebUI
 {
@@ -25,11 +25,11 @@ namespace DealEngine.WebUI
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
-        
+
         public static void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
-            {                
+            {
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
@@ -41,7 +41,7 @@ namespace DealEngine.WebUI
             services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
-            services.Configure<RequestLocalizationOptions>(options => 
+            services.Configure<RequestLocalizationOptions>(options =>
             {
                 //https://stackoverflow.com/questions/41289737/get-the-current-culture-in-a-controller-asp-net-core
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
@@ -57,7 +57,7 @@ namespace DealEngine.WebUI
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>
-            {                
+            {
                 options.Path = @"c078b2de-f512-4225-90e8-90f8e17ac70b";
             });
             services.AddBaseLdapPackage();

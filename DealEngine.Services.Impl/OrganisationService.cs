@@ -10,6 +10,7 @@ using DealEngine.Infrastructure.Ldap.Interfaces;
 using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NHibernate.Mapping;
 
 namespace DealEngine.Services.Impl
 {
@@ -175,33 +176,33 @@ namespace DealEngine.Services.Impl
 				{
 					OrganisationName = FirstName + " " + LastName;
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnit = new OrganisationalUnit(User, "Home");
+					OrganisationalUnit = new OrganisationalUnit(User, "Home", collection);
 				}
 				else if (Type == "Company")
 				{
 					OrganisationTypeName = "Corporation – Limited liability";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
 				}
 				else if (Type == "Trust")
 				{
 					OrganisationTypeName = "Trust";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
 				}
 				else if (Type == "Trust")
 				{
 					OrganisationTypeName = "Trust";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
 				}
 				else if (Type == "Partnership")
 				{
 					OrganisationTypeName = "Partnership";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office");
+					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
 				}
 
 				OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
 				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);
 				InsuranceAttribute InsuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(Type);
-				foundOrg = CreateNewOrganisation(Creator, OrganisationName, OrganisationType, OrganisationalUnit, InsuranceAttribute, collection);
+				foundOrg = CreateNewOrganisation(Creator, OrganisationName, OrganisationType, OrganisationalUnit, InsuranceAttribute);
 
 				if (!User.Organisations.Contains(foundOrg))
 					User.Organisations.Add(foundOrg);
@@ -212,9 +213,9 @@ namespace DealEngine.Services.Impl
 			return foundOrg;			
         }
 
-        private Organisation CreateNewOrganisation(User Creator, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute, IFormCollection collection)
+        private Organisation CreateNewOrganisation(User Creator, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute)
         {
-			var Organisation =  new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnit, insuranceAttribute, collection);
+			var Organisation =  new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnit, insuranceAttribute);
 			return Organisation;
         }
 
@@ -230,9 +231,16 @@ namespace DealEngine.Services.Impl
         {
 			if(sheet != null)
             {
-				AuditHistory audit = new AuditHistory();
-				audit.NextSheet = sheet;
-				organisation.AuditHistory.Add(audit);
+                try
+                {
+					var insuranceattribute = organisation.InsuranceAttributes.FirstOrDefault(IA => IA.InsuranceAttributeName == organisation.Type);
+					insuranceattribute.SetHistory(sheet);
+				}
+				catch(Exception ex)
+                {
+					throw ex;
+                }
+				
 			}
 			organisation.IsPrincipalAdvisor = true;
 			organisation.Removed = false;

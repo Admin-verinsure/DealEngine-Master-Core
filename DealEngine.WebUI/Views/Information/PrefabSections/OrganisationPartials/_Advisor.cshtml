@@ -1,0 +1,19 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.MyCRMId, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.MyCRMId, new { @class = "form-control", @id = "Organisation.MyCRMId", onchange = "OnChange(this.id, this.name)", @required = "" })
+</div>
+<div class="form-group">
+    <div class="input-group-prepend">
+        <div class="input-group-text">
+            @Html.CheckBoxFor(m => m.OrganisationViewModel.Organisation.IsPrincipalAdvisor, new { @onchange = "OnChange(this.id, this.name)", @Id = "Organisation.isPrincipalAdvisor" })
+        </div>
+        <input type="text" class="form-control" id="label" value="Tick here if this party is Principal Advisor" readonly>
+    </div>
+
+</div>
+
+
+

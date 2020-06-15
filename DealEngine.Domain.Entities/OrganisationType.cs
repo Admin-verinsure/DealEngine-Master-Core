@@ -20,7 +20,7 @@ namespace DealEngine.Domain.Entities
             : base(null)
         {
             Name = name;
-        }
+        }      
 
     }
 }

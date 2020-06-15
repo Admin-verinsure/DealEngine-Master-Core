@@ -1,0 +1,48 @@
+﻿<script type="text/javascript">
+    function OnSubmit(FormId) {
+        debugger;
+        var form = document.getElementById(FormId);
+        if (FormId === "organisationViewModel") {
+            for (var i = 0; i < form.length; i++) {
+                try {
+                    if (form[i].id != "") {
+                        var element = document.getElementById(form[i].id);
+                        if (element.parentElement.parentElement.hidden == true) {
+                            element.classList.add("is-valid");
+                            element.classList.remove("is-invalid");
+                        }
+                    }
+                }
+                catch (ex) {
+                    debugger;
+                    console.log(ex, element.Name);
+                }
+
+            }
+            try {
+                form.submit();
+                //sessionStorage.setItem('accordianTrigger', 'Location');
+                 $.ajax({
+                    url: '@Url.Action("AddOrganisation", "Services")',
+                     type: "POST",
+                     data: $("#" + form.id).serialize()
+                })
+                    .done(function () {
+                        //Save the session and reload
+                        form.reset();
+                    })
+                    .fail(function (a, s, d) {
+                        debugger;
+                    });
+            }
+            catch (ex) {
+                debugger;
+                console.log(ex, element.Name);
+            }
+            
+            //debugger;
+
+        }
+    }
+
+</script>

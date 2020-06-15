@@ -1,0 +1,50 @@
+﻿<script type="text/javascript">
+    function OnClick(Method, Type, Id, SheetId, Tab) {
+        if (Method == "Get") {
+            if (Type == "Organisation") {
+                $.ajax({
+                    url: '@Url.Action("GetOrganisation", "Services")',
+                    type: "POST",
+                    data: { ID: Id, AnswerSheetId: SheetId },
+                    success: function (Data) {
+                        try {                 
+                            var OutPut = JSON.parse(Data);
+                            PopulateView(Type, OutPut);
+                        } catch (e) {
+                            debugger;
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
+            SetCurrentTab(Tab);
+        }
+    }
+
+    function PopulateView(Type, OutPut) {
+        var Form;
+        if (Type == "Organisation") {
+            var Organisation = OutPut.Organisation;
+            Form = document.getElementById("organisationViewModel");
+            try {
+                debugger;
+                for (Field in OutPut)
+                {
+                    if (OutPut.hasOwnProperty(Field)) {
+                        if (Field == "User") {
+                            debugger;
+                        }
+                        var id = Type + "." + Field;
+                        var element = document.getElementById(id);
+                        if (element != null) {
+                            $('input[id="' + id + '"]').val(OutPut[Field]);
+                        }
+                        else { console.log(id) }                        
+                    }
+                        
+                }
+            } catch (ex) { debugger; }
+        }
+    }
+</script>

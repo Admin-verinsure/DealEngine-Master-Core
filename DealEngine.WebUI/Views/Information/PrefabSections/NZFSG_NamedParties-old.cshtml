@@ -213,11 +213,11 @@
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class=" label required">Type</label>
                         <label class="input">
-                            <select id="types" name="Type" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.OrganisationViewModel.Types)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
+                            <select id="CommonType" onchange="CommonTypeSelected('CommonType','Common')" class="form-control b" name="Type">
+                                <option selected="selected" value="">-- Select --</option>
+                                <option value="Advisor">Advisor</option>
+                                <option value="NominatedRepresentative">Nominated Representative</option>
+
                             </select>
                         </label>
                         <p class="validationContainer" id="ValidateCommonType"></p>
