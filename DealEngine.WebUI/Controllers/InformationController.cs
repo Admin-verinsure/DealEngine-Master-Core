@@ -1527,18 +1527,13 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 createdBy = await CurrentUser();
-                //await _changeProcessService.CreateChangeReason(createdBy, changeReason);
-
                 changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
-
-                 _changeProcessService.CreateChangeReason(createdBy, changeReason);
-
+                ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
                 if (clientProgramme == null)
                     throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
-
+                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, ChangeReason);
                 await _programmeService.Update(newClientProgramme);
 
                 var url = "/Information/EditInformation/" + newClientProgramme.Id;

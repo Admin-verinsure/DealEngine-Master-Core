@@ -1832,6 +1832,7 @@ namespace DealEngine.WebUI.Controllers
                 model.TerritoryLimit = agreement.TerritoryLimit;
                 model.Jurisdiction = agreement.Jurisdiction;
                 model.ProfessionalBusiness = agreement.ProfessionalBusiness;
+                model.InsuredName = agreement.InsuredName;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1867,6 +1868,7 @@ namespace DealEngine.WebUI.Controllers
                     agreement.Jurisdiction = model.Jurisdiction;
                     agreement.TerritoryLimit = model.TerritoryLimit;
                     agreement.ProfessionalBusiness = model.ProfessionalBusiness;
+                    agreement.InsuredName = model.InsuredName;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);

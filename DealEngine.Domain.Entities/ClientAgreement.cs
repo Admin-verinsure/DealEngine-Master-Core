@@ -47,7 +47,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<ClientAgreementReferral> ClientAgreementReferrals { get; protected set; }
         public virtual IList<AuditLog> ClientAgreementAuditLogs { get; protected set; }
         public virtual IList<ClientAgreementEndorsement> ClientAgreementEndorsements { get; protected set; }
-        public virtual string InsuredName { get; protected set; }
+        public virtual string InsuredName { get;  set; }
         public virtual bool CustomInceptionDate { get; set; }
         public virtual string AgreementReference { get; set; }
         public virtual string ReferenceId { get; set; }

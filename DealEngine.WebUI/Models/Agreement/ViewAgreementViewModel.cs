@@ -301,6 +301,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public DateTime? IssuedToBroker { get; set; }
         public string issuetobrokerby { get; set; }
         public string issuetobrokerto { get; set; }
+        public string InsuredName { get; set; }
     }
 
     public class InsuranceInclusion
