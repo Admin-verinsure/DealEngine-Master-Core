@@ -62,14 +62,22 @@ namespace DealEngine.WebUI.Controllers
 
         public string GetSerializedModel(object model)
         {
-            return JsonConvert.SerializeObject(model, Formatting.Indented,
+            try
+            {
+                return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,                        
+                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
+                        DateParseHandling = DateParseHandling.DateTime
                     });
+            }catch(Exception ex)
+            {
+                return ex.Message;
+            }
+
         }
 
         public object? GetModelDeserializedModel(Type type, IFormCollection collection, string ModelName)

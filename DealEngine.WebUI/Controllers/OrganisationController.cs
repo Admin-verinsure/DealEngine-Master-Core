@@ -48,65 +48,65 @@ namespace DealEngine.WebUI.Controllers
         {
             BaseListViewModel<OrganisationViewModel> organisations = new BaseListViewModel<OrganisationViewModel>();
             User user = null;
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    user = await CurrentUser();
+            //    foreach (Organisation org in user.Organisations)
+            //    {
+            //        OrganisationViewModel model = new OrganisationViewModel
+            //        {
+            //            ID = org.Id,
+            //            OrganisationName = org.Name,
+            //            OrganisationTypeName = org.OrganisationType != null ? org.OrganisationType.Name : string.Empty,
+            //            Website = org.Domain,
+            //            Phone = org.Phone,
+            //            Email = org.Email,
+            //            IsPrimary = org.Id == user.PrimaryOrganisation.Id
+            //        };
+            //        organisations.Add(model);
+            //    }
 
-            try
-            {
-                user = await CurrentUser();
-                foreach (Organisation org in user.Organisations)
-                {
-                    OrganisationViewModel model = new OrganisationViewModel
-                    {
-                        ID = org.Id,
-                        OrganisationName = org.Name,
-                        OrganisationTypeName = org.OrganisationType != null ? org.OrganisationType.Name : string.Empty,
-                        Website = org.Domain,
-                        Phone = org.Phone,
-                        Email = org.Email,
-                        IsPrimary = org.Id == user.PrimaryOrganisation.Id
-                    };
-                    organisations.Add(model);
-                }
-
-                return View(organisations);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            //    return View(organisations);
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(OrganisationViewModel model)
         {
             User user = null;
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    user = await CurrentUser();
+            //    Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
+            //    if (org != null)
+            //    {
+            //        org.ChangeOrganisationName(model.OrganisationName);
+            //        // Org type here
+            //        org.Domain = (model.Website != "Empty") ? model.Website : "";
+            //        org.Email = (model.Email != "Empty") ? model.Email : "";
+            //        org.Phone = (model.Phone != "Empty") ? model.Phone : "";
 
-            try
-            {
-                user = await CurrentUser();
-                Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
-                if (org != null)
-                {
-                    org.ChangeOrganisationName(model.OrganisationName);
-                    // Org type here
-                    org.Domain = (model.Website != "Empty") ? model.Website : "";
-                    org.Email = (model.Email != "Empty") ? model.Email : "";
-                    org.Phone = (model.Phone != "Empty") ? model.Phone : "";
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        await _organisationService.UpdateOrganisation(org);
-                        await uow.Commit();
-                    }
-                    return Content("success");
-                }
-                throw new Exception("No organisation found with Id '" + model.ID + "'");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            //        {
+            //            await _organisationService.UpdateOrganisation(org);
+            //            await uow.Commit();
+            //        }
+            //        return Content("success");
+            //    }
+            //    throw new Exception("No organisation found with Id '" + model.ID + "'");
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpGet]
@@ -120,25 +120,25 @@ namespace DealEngine.WebUI.Controllers
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
             User user = null;
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    organisationViewModel.ProgrammeId = programmeId;
 
-            try
-            {
-                organisationViewModel.ProgrammeId = programmeId;
+            //    organisationViewModel.OrgMooredType = new List<SelectListItem>()
+            //    {
+            //        new SelectListItem {Text = "Berthed", Value = "Berthed"},
+            //        new SelectListItem {Text = "Pile", Value = "Pile"},
+            //        new SelectListItem {Text = "Swing", Value = "Swing"},
+            //    };
 
-                organisationViewModel.OrgMooredType = new List<SelectListItem>()
-                {
-                    new SelectListItem {Text = "Berthed", Value = "Berthed"},
-                    new SelectListItem {Text = "Pile", Value = "Pile"},
-                    new SelectListItem {Text = "Swing", Value = "Swing"},
-                };
-
-                return View("AddNewOrganisation", organisationViewModel);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            //    return View("AddNewOrganisation", organisationViewModel);
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpPost]
@@ -243,23 +243,23 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
         {
             User user = null;
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    user = await CurrentUser();
+            //    _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
+            //                                               new OrganisationType(user, organisationViewModel.OrganisationTypeName),
+            //                                               organisationViewModel.FirstName,
+            //                                               organisationViewModel.LastName,
+            //                                               organisationViewModel.Email);
 
-            try
-            {
-                user = await CurrentUser();
-                _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
-                                                           new OrganisationType(user, organisationViewModel.OrganisationTypeName),
-                                                           organisationViewModel.FirstName,
-                                                           organisationViewModel.LastName,
-                                                           organisationViewModel.Email);
-
-                return View();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            //    return View();
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         public async Task<IActionResult> CreateDefault()

@@ -1,5 +1,5 @@
 ﻿<script type="text/javascript">
-    function OnClick(Method, Type, Id, SheetId, Tab) {
+    function OnClick(Method, Type, Id, SheetId) {
         if (Method == "Get") {
             if (Type == "Organisation") {
                 $.ajax({
@@ -17,33 +17,83 @@
                         debugger;
                     }
                 });
+                EditOrganisation();
             }
-            SetCurrentTab(Tab);
+        }
+    }
+
+    function EditOrganisation() {
+        CloneFormView("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
+    }
+
+    function CloneFormView(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
+        var editTabHTML = document.getElementById(EditTabId);
+        var addTabHTML = document.getElementById(AddTabId);
+        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        addTabHTML.innerHTML = "";
+        document.getElementById(AddButtonId).innerText = "Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+        SetCurrentTab(EditTabId);
+    }
+
+    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        debugger;
+        var editTabHTML = document.getElementById(EditTabId);
+        if (editTabHTML.children.length == 1) {
+            document.getElementById(Form).reset();
+            var addTabHTML = document.getElementById(AddTabId);
+            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            editTabHTML.innerHTML = "";
+            editTabHTML.appendChild(CreateEditLabel(Object));
+            document.getElementById(AddButtonId).innerText = "Add";
+            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
     }
 
     function PopulateView(Type, OutPut) {
         var Form;
         if (Type == "Organisation") {
-            var Organisation = OutPut.Organisation;
             Form = document.getElementById("organisationViewModel");
             try {
-                debugger;
-                for (Field in OutPut)
-                {
-                    if (OutPut.hasOwnProperty(Field)) {
-                        if (Field == "User") {
-                            debugger;
-                        }
-                        var id = Type + "." + Field;
-                        var element = document.getElementById(id);
-                        if (element != null) {
-                            $('input[id="' + id + '"]').val(OutPut[Field]);
-                        }
-                        else { console.log(id) }                        
+                for (obj in OutPut) {
+                    var model = OutPut[obj];
+                    if (obj == "0") {
+                        Type = "User";
                     }
-                        
-                }
+                    else {
+                        Type = "Organisation";
+                    }
+                    for (Field in model) {
+                        if (model.hasOwnProperty(Field)) {
+                            var id = Type + "." + Field;
+                            var element = document.getElementById(id);
+                            if (element != null) {
+                                if (element.tagName == "INPUT") {
+                                    if (element.type == "date") {
+                                        //hardcord date string
+                                        var date = OutPut[obj][Field].substring(0, 10);
+                                        element.value = date;
+                                    }
+                                    else {
+                                        element.value = OutPut[obj][Field];
+                                    }
+                                    
+                                }
+                                else if (element.tagName == "SELECT") {
+                                    for (var o = 0; o < element.options.length; o++) {
+                                        if (element.options[o].value == OutPut[obj][Field]) {
+                                            element.options[o].selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                OnChange(element.id.element.name);
+                            }
+                            else { console.log(id) }
+                        }
+
+                    }
+                }                
             } catch (ex) { debugger; }
         }
     }

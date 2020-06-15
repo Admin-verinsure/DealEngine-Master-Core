@@ -138,7 +138,7 @@
                                                                                         <option selected="selected" value="">-- Select --</option>
                                                                                         @foreach (var bwloc in Model.MarinaLocations)
                                                                                         {
-                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
                                                                                         }
                                                                                         <option value="add">Add Marina Location</option>
                                                                                     </select>
@@ -683,9 +683,9 @@
                                                                                     <label class="label cgmodalLabel">Interested Parties</label>
                                                                                     <label class="input cgmodalInput">
                                                                                         <select class="cselect form-control b" data-placeholder="Interested Parties" id="InterestedPartiesModal" multiple="multiple" name="InterestedParties">
-                                                                                            @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationTypeName == "financial"))
+                                                                                            @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationType == "financial"))
                                                                                             {
-                                                                                                <option value="@trip.ID">@trip.OrganisationName</option>
+                                                                                                <option value="@trip.ID">@trip.Organisation.Name</option>
                                                                                             }
                                                                                         </select>
                                                                                     </label>

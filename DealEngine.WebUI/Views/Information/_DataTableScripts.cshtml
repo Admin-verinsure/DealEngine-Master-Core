@@ -23,7 +23,10 @@
 
     function ResetOrganisation(FormId) {
         debugger;
-        document.getElementById(FormId).reset();
+        var form = document.getElementById(FormId);
+        if (form != null) {
+            form.reset();
+        }        
     }
 
     function CreateEditLabel(ObjectLabel) {
@@ -35,7 +38,7 @@
         return div;
     }
 
-    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId,) {
+    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.children.length != 1) {
             document.getElementById(Form).reset();
@@ -48,14 +51,7 @@
         }
     }
 
-    function CloneFormView(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
-        var addTabHTML = document.getElementById(AddTabId);  
-        editTabHTML.innerHTML = addTabHTML.innerHTML;
-        addTabHTML.innerHTML = "";
-        document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";
-    }
+
 
     function AddLocation() {        
         var form = document.getElementById("LocationViewModel");

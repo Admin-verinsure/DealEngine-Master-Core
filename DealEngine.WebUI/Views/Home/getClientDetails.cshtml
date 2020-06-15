@@ -23,10 +23,10 @@
                                 <td>
                                     <select id="UserIdSelect" onchange="UserEditDetails('UserIdSelect')" class="form-control b" name="Type">
                                         <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var clientProg in Model.Users)
+                                        @*@foreach (var clientProg in Model.Users)
                                         {
                                             <option value="@clientProg.Id">@clientProg.FullName</option>
-                                        }
+                                        }*@
                                         <option  value="AddNew">Add New User</option>
                                     </select>
 

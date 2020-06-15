@@ -309,55 +309,6 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                model.Advisory = advisoryDesc;
-
-                var boats = new List<BoatViewModel>();
-                foreach (var b in sheet.Boats)
-                {
-                    boats.Add(BoatViewModel.FromEntity(b));
-                }
-
-                model.Boats = boats;
-
-                var operators = new List<OrganisationViewModel>();
-
-                foreach (Organisation skipperorg in sheet.Organisation.Where(o => o.OrganisationType.Name == "Person - Individual"))
-                {
-                    if (skipperorg.InsuranceAttributes.FirstOrDefault(ia => ia.InsuranceAttributeName == "Skipper") != null)
-                    {
-                        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipperorg);
-                        ovm.OrganisationName = skipperorg.Name;
-                        ovm.OrganisationEmail = skipperorg.Email;
-                        ovm.ID = skipperorg.Id;
-                        operators.Add(ovm);
-                    }
-                }
-
-                if (sheet.Owner.OrganisationType.Name == "Person - Individual")
-                {
-                    OrganisationViewModel ovmowner = _mapper.Map<OrganisationViewModel>(sheet.Owner);
-                    ovmowner.OrganisationName = sheet.Owner.Name;
-                    ovmowner.OrganisationEmail = sheet.Owner.Email;
-                    ovmowner.ID = sheet.Owner.Id;
-                    operators.Add(ovmowner);
-                }
-
-                model.Operators = operators;
-
-                List<SelectListItem> skipperlist = new List<SelectListItem>();
-
-                for (var i = 0; i < model.Operators.Count(); i++)
-                {
-                    skipperlist.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
-                        Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
-                    });
-
-                }
-
-                model.SkipperList = skipperlist;
 
                 var claims = new List<ClaimViewModel>();
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
@@ -366,13 +317,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Claims = claims;
-
-                //var businessContracts = new List<BusinessContractViewModel>();
-                //for (var i = 0; i < sheet.BusinessContracts.Count; i++)
-                //{
-                //    businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
-                //}
-                //model.BusinessContracts = businessContracts;
 
                 var interestedParties = new List<OrganisationViewModel>();
 
@@ -386,7 +330,7 @@ namespace DealEngine.WebUI.Controllers
                             org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.OrganisationName = org.Name;
+                            ovm.Organisation.Name = org.Name;
                             interestedParties.Add(ovm);
                         }
                     }
@@ -401,7 +345,7 @@ namespace DealEngine.WebUI.Controllers
                     linterestedparty.Add(new SelectListItem
                     {
                         Selected = false,
-                        Text = model.InterestedParties.ElementAtOrDefault(i).OrganisationName,
+                        Text = model.InterestedParties.ElementAtOrDefault(i).Organisation.Name,
                         Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
                     });
                 }
@@ -483,7 +427,7 @@ namespace DealEngine.WebUI.Controllers
                         org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.OrganisationName = org.Name;
+                            ovm.Organisation.Name = org.Name;
                             MarinaLocations.Add(ovm);
                         }
                     }
@@ -914,54 +858,6 @@ namespace DealEngine.WebUI.Controllers
 
                 model.Advisory = advisoryDesc;
 
-                var boats = new List<BoatViewModel>();
-                foreach (var b in sheet.Boats)
-                {
-                    boats.Add(BoatViewModel.FromEntity(b));
-                }
-
-                model.Boats = boats;
-
-                var operators = new List<OrganisationViewModel>();
-
-                foreach (Organisation skipperorg in sheet.Organisation.Where(o => o.OrganisationType.Name == "Person - Individual"))
-                {
-                    if (skipperorg.InsuranceAttributes.FirstOrDefault(ia => ia.InsuranceAttributeName == "Skipper") != null)
-                    {
-                        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipperorg);
-                        ovm.OrganisationName = skipperorg.Name;
-                        ovm.OrganisationEmail = skipperorg.Email;
-                        ovm.ID = skipperorg.Id;
-                        operators.Add(ovm);
-                    }
-                }
-
-                if (sheet.Owner.OrganisationType.Name == "Person - Individual")
-                {
-                    OrganisationViewModel ovmowner = _mapper.Map<OrganisationViewModel>(sheet.Owner);
-                    ovmowner.OrganisationName = sheet.Owner.Name;
-                    ovmowner.OrganisationEmail = sheet.Owner.Email;
-                    ovmowner.ID = sheet.Owner.Id;
-                    operators.Add(ovmowner);
-                }
-
-                model.Operators = operators;
-
-                List<SelectListItem> skipperlist = new List<SelectListItem>();
-
-                for (var i = 0; i < model.Operators.Count(); i++)
-                {
-                    skipperlist.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
-                        Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
-                    });
-
-                }
-
-                model.SkipperList = skipperlist;
-
                 var claims = new List<ClaimViewModel>();
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
                 {
@@ -982,7 +878,7 @@ namespace DealEngine.WebUI.Controllers
                             org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.OrganisationName = org.Name;
+                            ovm.Organisation.Name = org.Name;
                             interestedParties.Add(ovm);
                         }
                     }
@@ -997,7 +893,7 @@ namespace DealEngine.WebUI.Controllers
                     linterestedparty.Add(new SelectListItem
                     {
                         Selected = false,
-                        Text = model.InterestedParties.ElementAtOrDefault(i).OrganisationName,
+                        Text = model.InterestedParties.ElementAtOrDefault(i).Organisation.Name,
                         Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
                     });
                 }
@@ -1078,7 +974,7 @@ namespace DealEngine.WebUI.Controllers
                         org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.OrganisationName = org.Name;
+                            ovm.Organisation.Name = org.Name;
                             MarinaLocations.Add(ovm);
                         }
                     }

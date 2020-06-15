@@ -134,6 +134,15 @@
                 }
             }
 
+            if (Value == 'True' || Value == 'False') {
+                if (Value == 'True') {
+                    Value = "1";
+                }
+                else {
+                    Value = "2";
+                }
+            }
+
             DefaultRule(Value, Name);
             if (Rule === "Clear") {
                 if (Value == 2) {
@@ -226,9 +235,30 @@
                 }
             }
             if (Rule === "OrganisationType") {
-                DefaultRule("1", "OrganisationViewModel.Type");
+                debugger;
+                document.getElementById("Private").hidden = true;
+                debugger;
+                var element = document.getElementById(Value);
+                if (element != null) {
+                    element.hidden = true;
+                }                
+                debugger;
+                var list = document.getElementById("Organisation.OrganisationType");
+                list.disabled = false;
+                var option;
                 if (Value == "Advisor" || Value == "NominatedRepresentative") {
                     //readonly Organisation Type personal
+                    document.getElementById("Organisation.OrganisationType")
+                    for (var i = 0; i < list.options.length; i++) {
+                        if (list.options[i].value == "Person - Individual") {
+                            list.options[i].selected = true;
+                            option = list.options[i].text;
+                        }
+                    }
+                    list.disabled = true;
+                    debugger;
+                    document.getElementById(option).hidden = false;
+                    document.getElementById(Value).hidden = false;
                     debugger;
                     DefaultRule("1", Value);                    
                 }
