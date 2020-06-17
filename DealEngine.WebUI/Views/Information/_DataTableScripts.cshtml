@@ -22,11 +22,18 @@
     }
 
     function ResetOrganisation(FormId) {
-        debugger;
         var form = document.getElementById(FormId);
-        if (form != null) {
-            form.reset();
-        }        
+        form.reset();
+        for (var i = 0; i < form.length; i++) {
+            if (form[i].type == "email" || form[i].type == "text") {
+                debugger;
+                form[i].value = "";
+            }
+        }
+        //var form = $("#" + FormId);        
+        ////$form.find('input:text, input:password, input:file, input:email, select, textarea').val('');
+        //$form.find('input:radio, input:checkbox')
+        //    .removeAttr('checked').removeAttr('selected');  
     }
 
     function CreateEditLabel(ObjectLabel) {

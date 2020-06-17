@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using DealEngine.Domain.Entities.Abstracts;
@@ -116,31 +117,16 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
+
+        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement
         {
             get;
             set;
         }
 
+        [Display(Name = "This Person has retired or deceased ?")]
         public virtual bool IsRetiredorDecieved
-        {
-            get;
-            set;
-        }
-        public virtual string Activities
-        {
-            get;
-            set;
-        }
-
-
-        public virtual DateTime? DateofDeceased
-        {
-            get;
-            set;
-        }
-
-        public virtual DateTime? DateofBirth
         {
             get;
             set;
@@ -186,6 +172,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsReinsurer { get; set; }
         public virtual bool IsTC { get; set; }
         public virtual bool IsApproved { get; set; }
+        [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
         public virtual string Qualifications { get; set; }
         public virtual bool IsNZIAmember { get; set; }
         public virtual string NZIAmembership { get; set; }
@@ -210,8 +197,12 @@ namespace DealEngine.Domain.Entities
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
+
+        [Display(Name = "Registered Status AFA,RFA or N/A")]
         public virtual string RegisteredStatus { get; set; }
         public virtual bool ConfirmAAA { get; set; }
+        
+        [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
         [JsonIgnore]
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }

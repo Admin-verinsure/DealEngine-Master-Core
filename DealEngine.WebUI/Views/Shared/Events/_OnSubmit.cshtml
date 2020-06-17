@@ -1,15 +1,18 @@
 ﻿<script type="text/javascript">
-    function OnSubmit(FormId) {
-        debugger;
+    function OnSubmit(FormId, AccordionId) {
         var form = document.getElementById(FormId);
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
                 try {
                     if (form[i].id != "") {
                         var element = document.getElementById(form[i].id);
-                        if (element.parentElement.parentElement.hidden == true) {
-                            element.classList.add("is-valid");
-                            element.classList.remove("is-invalid");
+                        OnChange(element.id, element.name);
+                        if (element.classList.contains("is-invalid") && element.parentElement.parentElement.hidden != true) {
+                            //write a message here or stop the process
+                            event.preventDefault();
+                            event.stopPropagation();
+                            window.alert("Please complete the form");
+                            throw FormId + " incomplete";
                         }
                     }
                 }
@@ -17,31 +20,31 @@
                     debugger;
                     console.log(ex, element.Name);
                 }
-
             }
+        }
+        if (form != null) {
             try {
-                form.submit();
-                //sessionStorage.setItem('accordianTrigger', 'Location');
-                 $.ajax({
+                sessionStorage.setItem('accordianTrigger', AccordionId);
+                $.ajax({
                     url: '@Url.Action("AddOrganisation", "Services")',
-                     type: "POST",
-                     data: $("#" + form.id).serialize()
-                })
-                    .done(function () {
-                        //Save the session and reload
-                        form.reset();
-                    })
-                    .fail(function (a, s, d) {
+                    type: "POST",
+                    data: $("#" + form.id).serialize(),
+                    success: function (Data) {
+                        try {
+                            form.reset();
+                            location.reload();
+                        } catch (e) {
+                            debugger;
+                        }
+                    }, error: function (request, error) {
                         debugger;
-                    });
+                    }
+                });
             }
             catch (ex) {
                 debugger;
                 console.log(ex, element.Name);
             }
-            
-            //debugger;
-
         }
     }
 

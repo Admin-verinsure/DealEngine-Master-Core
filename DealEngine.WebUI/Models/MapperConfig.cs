@@ -27,9 +27,23 @@ namespace DealEngine.WebUI.Models
             //
             CreateMap<Organisation, Organisation>()
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
-                .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())
+                .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
                 .ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationType, map => map.Ignore());
+
+            CreateMap<User, User>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.Organisations, map => map.Ignore())
+                .ForMember(dest => dest.Email, map => map.Ignore())
+                .ForMember(dest => dest.Branches, map => map.Ignore())
+                .ForMember(dest => dest.Departments, map => map.Ignore())
+                .ForMember(dest => dest.UISIssueNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.UISSubmissionNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementReferNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementIssueNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementBoundNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.PaymentConfigNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.InvoiceConfigNotifyProgrammes, map => map.Ignore());
 
             // Admin
             CreateMap<PrivateServer, PrivateServerViewModel>().ReverseMap();

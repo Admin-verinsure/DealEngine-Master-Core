@@ -235,20 +235,17 @@
                 }
             }
             if (Rule === "OrganisationType") {
-                debugger;
-                document.getElementById("Private").hidden = true;
-                debugger;
+                document.getElementById("Advisor").hidden = true;
+                document.getElementById("OtherConsultingBusiness").hidden = true;
                 var element = document.getElementById(Value);
                 if (element != null) {
                     element.hidden = true;
                 }                
-                debugger;
                 var list = document.getElementById("Organisation.OrganisationType");
                 list.disabled = false;
                 var option;
                 if (Value == "Advisor" || Value == "NominatedRepresentative") {
                     //readonly Organisation Type personal
-                    document.getElementById("Organisation.OrganisationType")
                     for (var i = 0; i < list.options.length; i++) {
                         if (list.options[i].value == "Person - Individual") {
                             list.options[i].selected = true;
@@ -256,15 +253,10 @@
                         }
                     }
                     list.disabled = true;
-                    debugger;
-                    document.getElementById(option).hidden = false;
-                    document.getElementById(Value).hidden = false;
-                    debugger;
-                    DefaultRule("1", Value);                    
+                    document.getElementById(option).hidden = false;   
                 }
-                else {
-                    DefaultRule("2", Value);
-                }
+
+                DefaultRule("1", Value);
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch

@@ -37,6 +37,11 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                     {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
                         Text = "Yes",
                         Value = "True"
                     },
@@ -108,6 +113,11 @@ namespace DealEngine.WebUI.Models
                 _Types = new List<SelectListItem>() {
                     new SelectListItem
                     {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
                         Text = "Advisor",
                         Value = "Advisor"
                     },
@@ -128,8 +138,7 @@ namespace DealEngine.WebUI.Models
 
         }
         [JsonIgnore]
-        public DealEngine.Domain.Entities.Programme Programme { get; set; }
-
+        public Domain.Entities.Programme Programme { get; set; }
         public Guid ID { get; set; }
         public Guid ProgrammeId { get; set; }
         public Organisation Organisation { get; set; }
@@ -137,6 +146,7 @@ namespace DealEngine.WebUI.Models
         [Display(Name ="Type")]
         [JsonIgnore]
         public IList<SelectListItem> Types { get; set; }
+        [Display(Name = "Organisation Type")]
         [JsonIgnore]
         public IList<SelectListItem> OrganisationTypes { get; set; }
         [JsonIgnore]

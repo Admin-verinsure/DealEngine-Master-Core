@@ -3064,6 +3064,25 @@ namespace DealEngine.WebUI.Controllers
             throw new Exception("Unfinihed core update");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemoveOrganisation(IFormCollection collection)
+        {
+            Guid Id = Guid.Parse(collection["OrganisationId"]);
+            Organisation organisation = await _organisationService.GetOrganisation(Id);
+            organisation.Removed = true;
+            await _organisationService.Update(organisation);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreOrganisation(IFormCollection collection)
+        {
+            Guid Id = Guid.Parse(collection["OrganisationId"]);
+            Organisation organisation = await _organisationService.GetOrganisation(Id);
+            organisation.Removed = false;
+            await _organisationService.Update(organisation);
+            return Ok();
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddOrganisation(IFormCollection collection)

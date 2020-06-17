@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
@@ -9,9 +10,6 @@ namespace DealEngine.Domain.Entities
     public class User : EntityBase, IAggregateRoot
     {
 		private Organisation _primaryOrganisation;
-        private User creator;
-        private Guid guid;
-        private IFormCollection collection;
 
         protected User() : this(null) { }
 
@@ -35,9 +33,9 @@ namespace DealEngine.Domain.Entities
         public virtual string SalesPersonUserName { get; set; }
         public virtual string JobTitle { get; set; }
         public virtual string EmployeeNumber { get; set; }
-
+        [Display(Name = "First Name")]
         public virtual string FirstName { get; set; }
-
+        [Display(Name = "Last Name")]
         public virtual string LastName { get; set; }
 
         public virtual string Email { get; set; }
