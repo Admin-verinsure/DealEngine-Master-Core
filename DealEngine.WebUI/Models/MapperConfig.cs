@@ -29,7 +29,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
                 .ForMember(dest => dest.Id, map => map.Ignore())
-                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.Condition(source => source.Type != "Private"))
                 .ForMember(dest => dest.OrganisationType, map => map.Ignore());
 
             CreateMap<User, User>()
