@@ -258,10 +258,12 @@
         });
 
         function OrganisationTypeChange(Value) {
+            debugger;
+            var input = document.getElementById('OrganisationViewModel_Organisation_Type');
             if (Value == "Person - Individual") {
                 Value = "Private";
             }
-            document.getElementById("Type").value = Value;
+            input.value = Value;
         }
 
         function ValidateEmail() {
