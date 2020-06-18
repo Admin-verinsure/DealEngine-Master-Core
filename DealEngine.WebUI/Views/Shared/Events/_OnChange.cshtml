@@ -235,15 +235,18 @@
                 }
             }
             if (Rule === "OrganisationType") {
-                document.getElementById("Advisor").hidden = true;
+                debugger;
+                document.getElementById("Private").hidden = true;
                 document.getElementById("OtherConsultingBusiness").hidden = true;
-                var element = document.getElementById(Value);
-                if (element != null) {
-                    element.hidden = true;
-                }                
+                document.getElementById("Advisor").hidden = true;   
                 var list = document.getElementById("Organisation.OrganisationType");
                 list.disabled = false;
                 var option;
+                var element = document.getElementById(Value);
+                if (element != null) {
+                    element.hidden = true;
+                }            
+                                
                 if (Value == "Advisor" || Value == "NominatedRepresentative") {
                     //readonly Organisation Type personal
                     for (var i = 0; i < list.options.length; i++) {
@@ -253,7 +256,10 @@
                         }
                     }
                     list.disabled = true;
-                    document.getElementById(option).hidden = false;   
+                    var organisationUnit = document.getElementById(option);
+                    if (organisationUnit != null) {
+                        organisationUnit.hidden = false;
+                    }                                          
                 }
 
                 DefaultRule("1", Value);

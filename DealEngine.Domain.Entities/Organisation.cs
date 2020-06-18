@@ -206,6 +206,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Duration { get; set; }
         [JsonIgnore]
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
+        [Display(Name = "Is a Principal Advisor?")]
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
         public virtual string MyCRMId { get; set; }

@@ -49,6 +49,11 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                     {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
                         Text = "No",
                         Value = "False"
                     },
@@ -138,7 +143,12 @@ namespace DealEngine.WebUI.Models
         private IList<SelectListItem> GetHasRegisteredOptions()
         {
             var _Types = new List<SelectListItem>();
-            _Types = new List<SelectListItem>() {
+            _Types = new List<SelectListItem>() {                            
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
                     new SelectListItem
                     {
                         Text = "AFA",

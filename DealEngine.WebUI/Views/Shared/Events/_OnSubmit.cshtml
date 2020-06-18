@@ -10,8 +10,6 @@
                         OnChange(element.id, element.name);
                         if (element.classList.contains("is-invalid") && element.parentElement.parentElement.hidden != true) {
                             //write a message here or stop the process
-                            event.preventDefault();
-                            event.stopPropagation();
                             window.alert("Please complete the form");
                             throw FormId + " incomplete";
                         }
@@ -21,6 +19,8 @@
                     debugger;
                     PostAjax = false;
                     console.log(ex, element.Name);
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
             }
         }
