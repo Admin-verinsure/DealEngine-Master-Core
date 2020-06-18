@@ -39,7 +39,15 @@ namespace DealEngine.Domain.Entities
 		public virtual User SubmittedBy { get; set; }
         public virtual DateTime UnlockDate { get; set; }
         public virtual User UnlockedBy { get; set; }        
-        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }        
+        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
+
+        public virtual void submitted(User user)
+        {
+            Status = "Submitted";
+            SubmitDate = DateTime.Now;
+            SubmittedBy = user;
+        }
+
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
        

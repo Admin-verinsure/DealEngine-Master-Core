@@ -1545,7 +1545,7 @@ namespace DealEngine.WebUI.Controllers
                 bool isComplete;
                 if (clientProgramme.SubClientProgrammes.Count != 0)
                 {
-                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet);
+                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet,user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
                 }
                 else

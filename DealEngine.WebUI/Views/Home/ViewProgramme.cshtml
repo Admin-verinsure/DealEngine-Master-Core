@@ -26,24 +26,24 @@
 
                         <ul class="nav">
                             <li class="nav-item">
-                                <a class="btn btn-primary btn-xs" href="~/Home/Index"><i class="fa fa-home"></i>Back to Dashboard</a>
+                                <a class="btn btn-primary btn-sm" href="~/Home/Index"><i class="fa fa-home"></i>Back to Dashboard</a>
                             </li>
                             @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                             {
                                 <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+                                    <a class="btn btn-primary btn-sm" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
                                 </li>
                                 <li class="nav-item">
                                     @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
-                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-xs" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
+                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
 
                                 </li>
                                 <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
+                                    <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="EditClient"})'" class="btn btn-primary btn-xs" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
+                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="EditClient"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
                                 </li>
 
                                 @*<li class="nav-item">
