@@ -137,7 +137,7 @@
                 </div>
             </div>
         </div>
-        <div id="CreateUISModal" class="modal container"  aria-hidden="true">
+        <div id="CreateUISModal" class="modal"  aria-hidden="true">
             <form id="ProdForm" class="" action="../../Services/IssueUIS" method="post" onsubmit="CloseModal()">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -146,108 +146,46 @@
                             <button type="button" class="close" id="CreateUISModalClose" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
-
+                            @Html.Hidden("OrganisationViewModel.Organisation.Type", "Private")
                             @Html.HiddenFor(m => m.ProgrammeId)
-                            <input class="form-control" hidden type="text" data-type="TEXTBOX" id="ProgId" name="ProgId">
-
-                            <table class="table table-striped">
-                                <tr>
-                                    <td>
-                                        <label class="required">Organisation Type</label>
-                                    </td>
-                                    <td>
-                                        <label class="radio-inline cgradio" style="width:25%;"> <input type="radio" name="cgradioselect" id="vown1" value="Private" checked="checked" onclick="vesselOwnUpdate()">Private</label>
-                                    </td>
-                                    <td>
-                                        <label class="radio-inline cgradio" style="width:25%;"> <input type="radio" name="cgradioselect" id="vown2" value="Company" onclick="vesselOwnUpdate()">Company</label>
-                                    </td>
-                                    <td>
-                                        <label class="radio-inline cgradio" style="width:25%;"> <input type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()">Trust</label>
-                                    </td>
-                                    <td>
-                                        <label class="radio-inline cgradio" style="width:25%;"> <input type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()">Partnership</label>
-                                    </td>
-                                    <td>
-                                        <p class="validationContainer" id="validateOrgType"></p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="required">Organisation Name</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter Organisation Name" type="text" name="Name" id="UISorgname" required="">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="required">First Name</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter First Name" type="text" name="FirstName" id="FirstName" required="">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="required">Last Name</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="LastName" id="LastName" required="">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="required">Email</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter Email" type="email" name="Email" id="Email" required="">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label>Membership Number</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="MemberShipNo" id="UISMembershipno">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="required">Mobile Phone</label>
-                                    </td>
-                                    <td colspan="3">
-                                        <input class="form-control input-lg" placeholder="Enter Mobile Number" type="text" name="Phone" id="UISmphon" aria-required="true" aria-invalid="false" maxlength="14" required="">
-                                    </td>
-                                    <td>                                        
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </table>
-
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.OrganisationTypes, new { @class = "label required" })
+                                <select id="Organisation.OrganisationType" name="OrganisationViewModel.OrganisationType" class="custom-select" onclick="OrganisationTypeChange(this.value)" required>
+                                    @foreach (var option in Model.OrganisationViewModel.OrganisationTypes)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
+                                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.User.FirstName, new { @class = "label required" })
+                                @Html.TextBoxFor(m => m.OrganisationViewModel.User.FirstName, new { @class = "form-control", @id = "User.FirstName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.User.LastName, new { @class = "label required" })
+                                @Html.TextBoxFor(m => m.OrganisationViewModel.User.LastName, new { @class = "form-control", @id = "User.LastName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "label required" })
+                                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email", @type = "email", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                            <div class="form-group">                                
+                                @Html.Label("Membership Number")
+                                @Html.TextBox("OrganisationViewModel.Organisation.NZIAmembership", "", new { @class="form-control", @name = "OrganisationViewModel.Organisation.NZIAmembership" })
+                            </div>
+                            <div class="form-group">                                
+                                @Html.Label("Mobile Phone")
+                                @Html.TextBox("OrganisationViewModel.Organisation.Phone", "", new { @class = "form-control", @name= "OrganisationViewModel.Organisation.Phone" })
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button id="next" type="submit" class="btn btn-success btn-sm">Submit</button>
+                            <div class="modal-footer">
+                                <button id="next" type="submit" class="btn btn-success btn-sm">Submit</button>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -294,7 +232,7 @@
                 </div>
             </div>
         </div>
-    </div>
+  
 
 
 @section pagespecific {
@@ -319,13 +257,11 @@
             $(e.currentTarget).find('input[id="UnlockId"]').val(dealId);
         });
 
-        function vesselOwnUpdate() {
-            var OrgType = $('input[name=cgradioselect]:checked').val();
-            if (OrgType == "Private") {
-                $('#UISorgnamesection').addClass('hidden');
-            } else {
-                $('#UISorgnamesection').removeClass('hidden');
+        function OrganisationTypeChange(Value) {
+            if (Value == "Person - Individual") {
+                Value = "Private";
             }
+            document.getElementById("Type").value = Value;
         }
 
         function ValidateEmail() {
@@ -355,11 +291,7 @@
 
         function CloseModal() {
             $('#CreateUISModal').modal('hide')
-        }
-
-        
-
-        
+        }       
 
        
         function postUnlockData() {

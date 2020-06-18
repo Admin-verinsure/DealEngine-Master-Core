@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DealEngine.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models
 {
@@ -13,24 +14,53 @@ namespace DealEngine.WebUI.Models
         public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, Organisation organisation, User OrgUser)
         {
             User = new User(null, Guid.NewGuid());
-            if(organisation != null)
+            Organisations = new List<Organisation>();
+            Types = GetTypes();
+            HasRetiredorDecievedOptions = GetHasRetiredorDecievedOptions();
+            HasRegisteredOptions = GetHasRegisteredOptions();
+            OrganisationTypes = GetOrganisationTypes();
+            HasPrincipalAdvisor = GetHasPrincipalAdvisor();
+            if (organisation != null)
             {
                 Organisation = organisation;
             }
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                Types = GetTypes();
-                OrganisationTypes = GetOrganisationTypes();
-                HasRetiredorDecievedOptions = GetHasRetiredorDecievedOptions();
-                HasRegisteredOptions = GetHasRegisteredOptions();
-                Organisations = ClientInformationSheet.Organisation;
+                Organisations.Add(ClientInformationSheet.Owner);
+                if (ClientInformationSheet.Organisation.Any())
+                {
+                    foreach(var sheetOrg in ClientInformationSheet.Organisation)
+                    {
+                        Organisations.Add(sheetOrg);
+                    }                    
+                }
+                
             }
             if(OrgUser != null)
             {
                 User = OrgUser;
             }
         }
+
+        private IList<SelectListItem> GetHasPrincipalAdvisor()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "No",
+                        Value = "False"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Yes",
+                        Value = "True"
+                    }
+            };
+            return _Types;
+        }
+
         private IList<SelectListItem> GetHasRetiredorDecievedOptions()
         {
             var _Types = new List<SelectListItem>()
@@ -56,9 +86,7 @@ namespace DealEngine.WebUI.Models
         private IList<SelectListItem> GetOrganisationTypes()
         {
             var _Types = new List<SelectListItem>();
-            if (Programme.Name == "NZFSG Programme")
-            {
-                _Types = new List<SelectListItem>() {
+            _Types = new List<SelectListItem>() {
                     new SelectListItem
                     {
                         Text = "Private",
@@ -80,7 +108,31 @@ namespace DealEngine.WebUI.Models
                         Value = "Partnership"
                     }
                 };
-            }
+            //if (Programme.Name == "NZFSG Programme")
+            //{
+            //    _Types = new List<SelectListItem>() {
+            //        new SelectListItem
+            //        {
+            //            Text = "Private",
+            //            Value = "Person - Individual"
+            //        },
+            //        new SelectListItem
+            //        {
+            //            Text = "Corporation – Limited liability",
+            //            Value = "Company"
+            //        },
+            //        new SelectListItem
+            //        {
+            //            Text = "Trust",
+            //            Value = "Trust"
+            //        },
+            //        new SelectListItem
+            //        {
+            //            Text = "Partnership",
+            //            Value = "Partnership"
+            //        }
+            //    };
+            //}
             return _Types;
         }
         private IList<SelectListItem> GetHasRegisteredOptions()
@@ -108,9 +160,7 @@ namespace DealEngine.WebUI.Models
         private IList<SelectListItem> GetTypes()
         {
             var _Types = new List<SelectListItem>();
-            if (Programme.Name == "NZFSG Programme")
-            {
-                _Types = new List<SelectListItem>() {
+            _Types = new List<SelectListItem>() {
                     new SelectListItem
                     {
                         Text = "-- Select --",
@@ -132,8 +182,11 @@ namespace DealEngine.WebUI.Models
                         Value = "OtherConsultingBusiness"
                     }
                 };
+            //if (Programme.Name == "NZFSG Programme")
+            //{
+                
 
-            }
+            //}
             return _Types;
 
         }
@@ -155,6 +208,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasRegisteredOptions { get; set; }
         [JsonIgnore]
         public IList<Organisation> Organisations { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasPrincipalAdvisor { get; set; }
 
         #region OLD!
         // Organisation Details --- 

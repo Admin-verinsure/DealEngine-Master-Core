@@ -84,7 +84,7 @@ namespace DealEngine.WebUI.Controllers
         {
             Dictionary<object, string> model = new Dictionary<object, string>();
             var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
-            foreach(var Key in Keys)
+            foreach(var Key in collection.Keys)
             {
                 var test = Key.Split(".").ToList().LastOrDefault();
                 //var splitName = Key.Replace(test + ".", string.Empty);

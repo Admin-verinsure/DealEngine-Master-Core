@@ -1,5 +1,6 @@
 ﻿<script type="text/javascript">
     function OnSubmit(FormId, AccordionId) {
+        var PostAjax = true;
         var form = document.getElementById(FormId);
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
@@ -18,11 +19,12 @@
                 }
                 catch (ex) {
                     debugger;
+                    PostAjax = false;
                     console.log(ex, element.Name);
                 }
             }
         }
-        if (form != null) {
+        if (PostAjax) {
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
                 $.ajax({

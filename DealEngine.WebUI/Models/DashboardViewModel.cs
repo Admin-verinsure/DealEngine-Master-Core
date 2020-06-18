@@ -110,6 +110,17 @@ namespace DealEngine.WebUI.Models
 
 	public class ProgrammeItem : BaseViewModel
 	{
+		public ProgrammeItem()
+        {
+            try
+            {
+				OrganisationViewModel = new OrganisationViewModel(null, null, null);
+			}
+			catch(Exception ex)
+            {
+				throw ex;
+            }
+		}
 		public string Name { get; set; }
 
 		public string ProgrammeId { get; set; }
@@ -117,6 +128,7 @@ namespace DealEngine.WebUI.Models
 		public IList<string> Languages { get; set; }
 
 		public IList<DealItem> Deals { get; set; }
+		public OrganisationViewModel OrganisationViewModel { get; set; }
 
 		public string CurrentUserIsBroker { get; set; }
 

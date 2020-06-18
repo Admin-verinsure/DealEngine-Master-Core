@@ -6,13 +6,15 @@
     @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.MyCRMId, new { @class = "form-control", @id = "Organisation.MyCRMId", onchange = "OnChange(this.id, this.name)", @required = "" })
 </div>
 <div class="form-group">
-    <div class="input-group-prepend">
-        <div class="input-group-text">
-            @Html.CheckBoxFor(m => m.OrganisationViewModel.Organisation.IsPrincipalAdvisor, new { @onchange = "OnChange(this.id, this.name)", @Id = "Organisation.isPrincipalAdvisor" })
-        </div>
-        <input type="text" class="form-control" id="label" value="Tick here if this party is Principal Advisor" readonly>
-    </div>
-
+    @Html.LabelFor(m => m.OrganisationViewModel.HasPrincipalAdvisor, new { @class = "label required" })
+    <select id="Organisation.IsPrincipalAdvisor" name="OrganisationViewModel.Organisation.IsPrincipalAdvisor" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasPrincipalAdvisor)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
 </div>
 
 

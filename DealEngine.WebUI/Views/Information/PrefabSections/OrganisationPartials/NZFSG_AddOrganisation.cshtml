@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "label required" })
-                        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email", @type = "email", @onchange = "OnChange(this.id, this.name)", @form= "organisationViewModel", @required = "" })
+                        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email", @type = "email", @onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Qualifications, new { @class = "label required" })
@@ -84,9 +84,7 @@
                         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Duration, new { @class = "label required" })
                         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Duration, new { @class = "form-control", @id = "Organisation.Duration", @required = "" })
                     </div>
-                    <div id="Advisor" hidden>
-                        @await Html.PartialAsync("PrefabSections/OrganisationPartials/_Advisor", Model)
-                    </div>
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/_Advisor", Model)
                 </div>
             </div>
         </div>

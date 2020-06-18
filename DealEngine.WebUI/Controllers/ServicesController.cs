@@ -5265,11 +5265,16 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> IssueUIS(IFormCollection collection)
         {            
             User currentUser = null;
-            string Name = collection["Name"];
-            string FirstName = collection["FirstName"];
-            string LastName = collection["LastName"];
-            string orgType = collection["cgradioselect"];
-            string email = collection["Email"];
+            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection, "OrganisationViewModel");
+            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection, "OrganisationViewModel");
+
+            string Email = jsonOrganisation.Email;
+            string Type = jsonOrganisation.Type;
+            string Name = jsonOrganisation.Name;
+            string FirstName = jsonUser.FirstName;
+            string LastName = jsonUser.LastName;
+            string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
+
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
             Organisation organisation;
             Organisation principalAdvisor = null;
@@ -5278,7 +5283,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 currentUser = await CurrentUser();
-                organisation = await _organisationService.GetAnyRemovedAdvisor(email);
+                organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
                 //condition for organisation exists
                 if (organisation != null)
                 {
@@ -5289,11 +5294,12 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.GetOrCreateOrganisation(email, orgType, Name, orgType, FirstName, LastName, currentUser, collection);
-                    organisation.PopulateEntity(collection);
+                    organisation = await _organisationService.GetOrCreateOrganisation(Email, Type, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+                    organisation = _mapper.Map(jsonOrganisation, organisation);
+                    await _organisationService.Update(organisation);
                 }
                 
-                var user = await _userService.GetUserByEmail(email);
+                var user = await _userService.GetUserByEmail(Email);
                 var sheet = await _programmeService.CreateUIS(programmeId, user, organisation);
                 
                 if (principalAdvisor != null)

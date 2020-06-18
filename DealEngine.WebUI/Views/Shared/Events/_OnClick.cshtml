@@ -70,18 +70,18 @@
         SetCurrentTab(EditTabId);
     }
 
-    function ResetForm(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
-        if (editTabHTML.firstElementChild.tagName == "FORM") {
-            ResetOrganisation(Form);
-            var addTabHTML = document.getElementById(AddTabId);
-            addTabHTML.innerHTML = editTabHTML.innerHTML;
-            editTabHTML.innerHTML = "";
-            editTabHTML.appendChild(CreateEditLabel(Object));
-            document.getElementById(AddButtonId).innerText = "Add";
-            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
-        }
-    }
+    //function ResetForm(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+    //    var editTabHTML = document.getElementById(EditTabId);
+    //    if (editTabHTML.firstElementChild.tagName == "FORM") {
+    //        ResetOrganisation(Form);
+    //        var addTabHTML = document.getElementById(AddTabId);
+    //        addTabHTML.innerHTML = editTabHTML.innerHTML;
+    //        editTabHTML.innerHTML = "";
+    //        editTabHTML.appendChild(CreateEditLabel(Object));
+    //        document.getElementById(AddButtonId).innerText = "Add";
+    //        document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
+    //    }
+    //}
 
     function PopulateView(Type, OutPut) {
         var Form;
