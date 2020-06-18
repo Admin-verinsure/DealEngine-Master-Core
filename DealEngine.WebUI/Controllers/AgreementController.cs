@@ -21,6 +21,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
 using ServiceStack;
+using DealEngine.WebUI.Models.Programme;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -134,25 +135,32 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ReRunUWM(string ClientId)
+        public async Task<IActionResult> ReRunUWM(Guid id)
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                var clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(ClientId));
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    _underwritingModule.UWM(user, clientProgramme.InformationSheet, clientProgramme.InformationSheet.ReferenceId);
+                    _underwritingModule.UWM(user, agreement.ClientInformationSheet, agreement.ClientInformationSheet.ReferenceId);
+
+                    string auditLogDetail = "Underwriting Module Run by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
                     await uow.Commit();
                 }
-                return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+                //return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
             }
             catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+
         }
 
         public async Task<IActionResult> AgreementTemplates()
@@ -1131,7 +1139,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
@@ -1142,7 +1151,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1155,7 +1165,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1168,7 +1179,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1181,7 +1193,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1194,7 +1207,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1207,7 +1221,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
@@ -1646,7 +1661,7 @@ namespace DealEngine.WebUI.Controllers
                 if(!isBaseSheet)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel();
-                    model.AgreementMessage = " Process Finished";
+                    model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemDeclaration;
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
                 else
@@ -1831,6 +1846,7 @@ namespace DealEngine.WebUI.Controllers
                 model.TerritoryLimit = agreement.TerritoryLimit;
                 model.Jurisdiction = agreement.Jurisdiction;
                 model.ProfessionalBusiness = agreement.ProfessionalBusiness;
+                model.InsuredName = agreement.InsuredName;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1866,6 +1882,7 @@ namespace DealEngine.WebUI.Controllers
                     agreement.Jurisdiction = model.Jurisdiction;
                     agreement.TerritoryLimit = model.TerritoryLimit;
                     agreement.ProfessionalBusiness = model.ProfessionalBusiness;
+                    agreement.InsuredName = model.InsuredName;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
@@ -1926,6 +1943,85 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditAdvisor(Guid id)
+        {
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(answerSheet);
+                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
+                List<Organisation> Advisors = new List<Organisation>();
+                try
+                {
+                    foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
+
+                    {
+                        for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
+                        {
+                            foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
+                            {
+                                Advisors.Add(organisation);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                model.ProgId = answerSheet.Programme.Id;
+                model.Owner = Advisors;
+                model.AgreementId = id;
+                //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
+
+                return View("ViewEditAdvisor", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdvisor(ProgrammeInfoViewModel model)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
+                if (model.Owner != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        foreach (Organisation org in model.Owner)
+                        {
+                            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
+                            organisation.PIRetroactivedate = org.PIRetroactivedate;
+                            organisation.DORetroactivedate = org.DORetroactivedate;
+
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + model.ProgId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         [HttpPost]
@@ -2955,6 +3051,7 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
+                    model.ProgrammeName = programme.BaseProgramme.Name;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {

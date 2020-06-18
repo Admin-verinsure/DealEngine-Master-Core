@@ -60,7 +60,8 @@
                                 @if (User.IsInRole("TCUser"))
                                 {
                                     <li class="nav-item">
-                                        <a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>
+                                        @*<a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>*@
+                                        <a href="~/Agreement/ReRunUWM/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwriting Module</a>
                                     </li>
                                 }
                                 <li class="nav-item">
@@ -69,6 +70,15 @@
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
+                                @if (item.ProgrammeName == "NZFSG Programme")
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> EditAdvisor</a>
+                                    </li>
+                                }
+                                @*<li class="nav-item">
+                <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> EditAdvisor test</a>
+            </li>*@
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">
@@ -130,7 +140,9 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
-
+                                <li class="nav-item">
+                                    <a href="~/Agreement/ReRunUWM/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Re-Run Underwriting Module</a>
+                                </li>
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">

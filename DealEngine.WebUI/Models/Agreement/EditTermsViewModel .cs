@@ -30,8 +30,8 @@ namespace DealEngine.WebUI.Models.Agreement
 
         public IEnumerable<ClientAgreementBVTerm> BVTerms { get; set; }
         public IEnumerable<ClientAgreementMVTerm> MVTerms { get; set; }
-        
 
+        public decimal BasePremium { get; set; }
 
     }
 }

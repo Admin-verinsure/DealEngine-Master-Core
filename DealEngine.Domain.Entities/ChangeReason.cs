@@ -18,6 +18,17 @@ namespace DealEngine.Domain.Entities
         {
         }
 
+        public ChangeReason(User createdBy, ChangeReason changeReason)
+            : base(createdBy)
+        {
+            //ChangeReason change = new ChangeReason(createdBy);
+            DealId = changeReason.DealId;
+            ChangeType = changeReason.ChangeType;
+            Reason = changeReason.Reason;
+            ReasonDesc = changeReason.ReasonDesc;
+            EffectiveDate = changeReason.EffectiveDate;
+        }
+
         public virtual Guid DealId { get; set; }
 
         public virtual string ChangeType { get; set; }

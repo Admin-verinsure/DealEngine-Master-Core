@@ -8,7 +8,6 @@ namespace DealEngine.Services.Interfaces
 
         Task CreateChangeReason(User createdBy,ChangeReason changeReason);
 
-
     }
 }
 

@@ -55,6 +55,8 @@ namespace DealEngine.Domain.Entities
         public virtual bool ProgHideAdminFee { get; set; }
         public virtual bool ProgStopPolicyDocAutoRelease { get; set; }
 
+        public virtual bool ProgHidePremium { get; set; }
+
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)

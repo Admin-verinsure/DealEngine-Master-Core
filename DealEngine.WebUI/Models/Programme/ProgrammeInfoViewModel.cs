@@ -64,6 +64,8 @@ namespace DealEngine.WebUI.Models.Programme
         public IList<SelectListItem> Brokers { get; set; }
         public ProductViewModel ProductViewModel { get; set; }
         public InformationBuilderViewModel InformationBuilderViewModel { get; set; }
+        public Guid AgreementId { get; set; }
+        public Guid ProgId { get; set; }
 
     }
 }

@@ -114,23 +114,134 @@ namespace DealEngine.WebUI.Models.Agreement
             {
                 if (null != agreement.Product.DependableProduct)
                 {
-                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG
                     {
-                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                        if (agreement.ClientInformationSheet.Programme.BaseProgramme.ProgHidePremium)
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = "To be advised",
+                                Dependableproduct = agreement.Product.DependableProduct.Name
+                            });
+                        } else
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = term.Premium.ToString("C", userCulture),
+                                Dependableproduct = agreement.Product.DependableProduct.Name
+                            });
+                        }
+                        
                     } else
                     {
-                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
+                        if (agreement.ClientInformationSheet.Programme.BaseProgramme.ProgHidePremium)
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = "To be advised",
+                                Dependableproduct = agreement.Product.DependableProduct.Name
+                            });
+                        }
+                        else
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = term.Premium.ToString("C", userCulture),
+                                Dependableproduct = agreement.Product.DependableProduct.Name
+                            });
+                        }
+                        
                     }
 
                 }
                 else
                 {
-                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953"))
+                    if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG
                     {
-                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                        if (agreement.ClientInformationSheet.Programme.BaseProgramme.ProgHidePremium)
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = "To be advised",
+                                Dependableproduct = "NonDependable"
+                            });
+                        }
+                        else
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = term.Premium.ToString("C", userCulture),
+                                Dependableproduct = "NonDependable"
+                            });
+                        }
+                        
                     } else
                     {
-                        MultiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture), Exclusion = "Excess: " + term.Excess.ToString("C", userCulture), TotalPremium = term.Premium.ToString("C", userCulture), Dependableproduct = "NonDependable" });
+                        if (agreement.ClientInformationSheet.Programme.BaseProgramme.ProgHidePremium)
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = "To be advised",
+                                Dependableproduct = "NonDependable"
+                            });
+                        }
+                        else
+                        {
+                            MultiCoverOptions.Add(new MultiCoverOptions
+                            {
+                                TermId = term.Id,
+                                isSelected = (term.Bound == true) ? "checked" : "",
+                                ProductId = agreement.Product.Id,
+                                RiskName = agreement.Product.Name,
+                                Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                TotalPremium = term.Premium.ToString("C", userCulture),
+                                Dependableproduct = "NonDependable"
+                            });
+                        }
+                        
                     }
                 }
             }
@@ -301,6 +412,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public DateTime? IssuedToBroker { get; set; }
         public string issuetobrokerby { get; set; }
         public string issuetobrokerto { get; set; }
+        public string InsuredName { get; set; }
     }
 
     public class InsuranceInclusion
