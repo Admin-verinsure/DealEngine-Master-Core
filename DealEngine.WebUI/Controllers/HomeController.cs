@@ -414,7 +414,8 @@ namespace DealEngine.WebUI.Controllers
                 }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
-            {                
+            {
+                Boolean Issubclientsubmitted = true;
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
@@ -451,6 +452,12 @@ namespace DealEngine.WebUI.Controllers
                             localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
                         }
 
+                        for(var index=0; index <client.SubClientProgrammes.Count; index++)
+                        {
+                            if (client.SubClientProgrammes[index].InformationSheet.Status != "Submitted")
+                                Issubclientsubmitted = false;
+
+                        }
                         deals.Add(new DealItem
                         {
                             Id = client.Id.ToString(),
@@ -462,7 +469,8 @@ namespace DealEngine.WebUI.Controllers
                             Status = status,
                             ReferenceId = referenceId,// Move into ClientProgramme?
                             SubClientProgrammes = client.SubClientProgrammes,
-                            AgreementStatus = agreementSatus
+                            AgreementStatus = agreementSatus,
+                            IsSubclientSubmitted = Issubclientsubmitted
 
                         });
                     }

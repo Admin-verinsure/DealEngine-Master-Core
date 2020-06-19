@@ -57,9 +57,8 @@ namespace DealEngine.Services.Impl
                 }
                 if (principalOrganisations.Count != 0)
                 {
-                    sheet.Status = "Submitted";
-                    sheet.SubmitDate = DateTime.Now;
-                    sheet.SubmittedBy = user;
+                    sheet.submitted(user);
+                    
                 }
                              
                 await _clientInformationService.UpdateInformation(sheet);
@@ -196,7 +195,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task ValidateSubObjects(ClientInformationSheet informationSheet)
+        public async Task ValidateSubObjects(ClientInformationSheet informationSheet, User user)
         {
             var principalOrganisations = await _organisationService.GetSubsystemOrganisationPrincipals(informationSheet);
 
@@ -222,6 +221,7 @@ namespace DealEngine.Services.Impl
                 }
             }
 
+            informationSheet.submitted(user);
             await _clientInformationService.UpdateInformation(informationSheet);
         }
 

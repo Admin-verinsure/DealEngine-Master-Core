@@ -89,6 +89,7 @@ namespace DealEngine.WebUI.Models
 		public IList<SubClientProgramme> SubClientProgrammes { get; set; }
 		public string AgreementStatus { get; set; }
 
+		public Boolean IsSubclientSubmitted { get; set; }
 		public string GetStatusDisplay(string agreementstatus)
 		{
 			List<string> statusDisplay = new List<string>();
