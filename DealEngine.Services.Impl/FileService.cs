@@ -653,10 +653,10 @@ namespace DealEngine.Services.Impl
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
 			foreach (KeyValuePair<string, string> field in mergeFields)
-				content = content.Replace (field.Key, field.Value);
+                content = content.Replace(field.Key, field.Value);
 
-			// save the merged content
-			doc.Contents = ToBytes (content);
+            // save the merged content
+            doc.Contents = ToBytes (content);
 
 			return (T)doc;
 		}
