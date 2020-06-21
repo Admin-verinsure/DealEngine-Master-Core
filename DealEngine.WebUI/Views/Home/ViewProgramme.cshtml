@@ -38,6 +38,19 @@
                                     <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
 
                                 </li>
+                                  <li class="nav-item">
+                                    @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
+                                    <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
+
+                                </li>
+                                if (Model.IsSubclientEnabled)
+                                {
+                                 <li class="nav-item">
+                                    @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
+                                    <a onclick="location.href='@Url.Action("IssueSubUIS", "Home", new { ProgrammeId = @Model.ProgrammeId, actionname = "IssueUIS" })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Sub UIS </a>
+                                </li>
+                                }
+
                                 <li class="nav-item">
                                     <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
                                 </li>

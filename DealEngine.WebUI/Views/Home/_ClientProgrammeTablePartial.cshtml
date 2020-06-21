@@ -120,7 +120,7 @@
                                 <a href="#myUnlockModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Unlock</a>
 
                             }
-                            if (item.SubClientProgrammes != null)
+                            if (item.SubClientProgrammes.Count > 0)
                             {
                                 if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True" && (item.IsSubclientSubmitted))
                                 {
