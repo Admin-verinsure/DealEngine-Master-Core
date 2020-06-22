@@ -90,6 +90,13 @@
 
 
 @section pagespecific {
+    <style>
+        textarea.form-control {
+            height: auto;
+            width: 1000px;
+        }
+    </style>
+
     <script>
         $(window).on("load", function () {
             debugger;
@@ -104,6 +111,10 @@
             var commonloc = $("#locationtab1").html();
             var commonclaim = $(".listclaimreport").html();
             var commonnamedparty = $(".listnamedpartyreport").html();
+            var revenue1 = $("#RevenueTab1").html();
+            var revenue2 = $("#RevenueTab2").html();
+            var revenue3 = $("#RevenueTab3").html();
+
 
             var printWindow = window.open('', '', 'height=10000,width=800');
             printWindow.document.write('<html><head><title>DIV Contents</title>');
@@ -127,6 +138,18 @@
             printWindow.document.write("</div>");
 
             printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(revenue1);
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(revenue2);
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
+            printWindow.document.write(revenue3);
+            printWindow.document.write("</div>");
+
+            printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(projectdetails);
             printWindow.document.write("</div>");
 
@@ -135,7 +158,6 @@
             printWindow.document.write("<div style='border-style : groove' >");
             printWindow.document.write(commonclaim);
             printWindow.document.write("</div>");
-
 
             //printWindow.document.write(namedparty);
             printWindow.document.write('</body></html>');
@@ -151,3 +173,4 @@
     @await Html.PartialAsync("_InformationWizardScripts")
 
 }
+

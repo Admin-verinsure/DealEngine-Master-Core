@@ -652,9 +652,23 @@ namespace DealEngine.Services.Impl
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
-			foreach (KeyValuePair<string, string> field in mergeFields)
-                content = content.Replace(field.Key, field.Value);
+            try
+            {
+                foreach (KeyValuePair<string, string> field in mergeFields)
+                    if (field.Value != null && field.Value.Contains("&"))
+                    {
+                        content = content.Replace(field.Key, field.Value.Replace("&", "&amp;"));
+                    }
+                    else
+                    {
+                        content = content.Replace(field.Key, field.Value);
+                    }
 
+            }catch(Exception ex)
+            {
+               
+            }
+            //content = content.Replace(field.Key, field.Value);
             // save the merged content
             doc.Contents = ToBytes (content);
 
