@@ -1,134 +1,188 @@
 ﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
 
-<form id="programmeform" method="post" class="needs-validation" novalidate>
-    <div class="card">
-        <div class="card-header text-white" style="background-color:#3276b1">
-            <h2>Edit Programme</h2>
-        </div>
-        <div class="card-body">
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                        <td>
+    <form id="programmeform" method="post" class="is-valid" action="EditProgramme">
+        @Html.HiddenFor(m => m.Id)
+        <div class="card">
+            <div class="card-header text-white" style="background-color:#3276b1">
+                <h2>Edit Programme</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">
                             <label class="label required"><strong>Programme Name: </strong></label>
-                        </td>
-                        <td>
-                            @Html.TextBoxFor(m => m.programmeName, new { @class = "form-control", @required = "required" })
-                        </td>
-                    </tr>
-                    <tr class="table-light">
-                        <td>
-                            <label class="label required"><strong>Tax Rate: </strong></label>
-                        </td>
-                        <td>
-                            @Html.TextBoxFor(m => m.TaxRate, new { @class = "form-control", @required = "required" })
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="label required"><strong>Policy Number Prefix String: </strong></label>
-                        </td>
-                        <td>
-                            @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class = "form-control", @required = "required" })
-                        </td>
-                    </tr>
-                    @if (User.IsInRole("TCUser"))
-                    {
-                        <tr class="table-light">
-                            <td>
-                                <label class="label required"><strong>Declaration: </strong></label>
-                            </td>
-                            <td>
-                                @Html.TextAreaFor(m => m.Declaration, new { @class = "form-control", @required = "required" })
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                                <label class="label required"><strong>Stop Agreement Message: </strong></label>
-                            </td>
-                            <td>
-                                @Html.TextAreaFor(m => m.StopAgreementMessage, new { @class = "form-control", @required = "required" })
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                                <label class="label required"><strong>No Payment Required Message: </strong></label>
-                            </td>
-                            <td>
-                                @Html.TextAreaFor(m => m.NoPaymentRequiredMessage, new { @class = "form-control", @required = "required" })
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                                <label class="label required"><strong>Broker user email: </strong></label>
-                            </td>
-                            <td>
-                                @Html.DropDownListFor(m => m.Brokers, Model.Brokers, new { @class = "form-control", @required = "required" })
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                                <label class="label required"><strong>Permission Claim: </strong></label>
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(m => m.ProgrammeClaim, new { @class = "form-control", @required = "required" })
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            </td>
-                            <td>
-                                <label class="checkbox">
-                                    @Html.CheckBoxFor(m => m.UsesEGlobal)
-                                    <i></i>I want this programme to use EGlobal API.
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            </td>
-                            <td>
-                                <label class="checkbox">
-                                    @Html.CheckBoxFor(m => m.IsPublic)
-                                    <i></i>I want this programme to be publicly available.
-                                </label>
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                            </td>
-                            <td>
-                                <label class="checkbox">
-                                    @Html.CheckBoxFor(m => m.StopAgreement)
-                                    <i></i>I want this programme to suspend all agreements.
-                                </label>
-                            </td>
-                        </tr>
-                        <tr class="table-light">
-                            <td>
-                            </td>
-                            <td>
-                                <label class="checkbox">
-                                    @Html.CheckBoxFor(m => m.HasSubsystemEnabled)
-                                    <i></i>I want to enable the sub system
-                                </label>
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-
-
-            @if (User.HasClaim("EditProgramme", "EditProgramme"))
-            {
-                <div class="card-footer">
-                    @if (Model.ProductViewModel == null)
-                    {
-                        <button type="submit" class="btn btn-success"> Save</button>
-                    }
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @required = "", @id="pname"})
+                        </div>
+                    </div>
                 </div>
-            }
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="label required"><strong>Tax Rate: </strong></label>
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Programme.TaxRate, new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="label required"><strong>Policy Number Prefix String: </strong></label>
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Programme.PolicyNumberPrefixString, new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                </div>
+
+                @if (User.IsInRole("TCUser"))
+                {
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="label required"><strong>Declaration: </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.TextAreaFor(m => m.Programme.Declaration, new { @class = "form-control", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="label required"><strong>No Payment Required Message: </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="label required"><strong>Broker user email: </strong></label>
+                            </div>
+                            <div class="col-8">
+                                <select id="brokers" name="BrokerContactUser" class="custom-select" required>
+                                    @foreach (var option in Model.Brokers)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="label"><strong>Permission Claim: </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.TextBoxFor(m => m.Programme.Claim, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        @Html.CheckBoxFor(m => m.Programme.UsesEGlobal)
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to use EGlobal API." readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        @Html.CheckBoxFor(m => m.Programme.IsPublic)
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to be publicly available." readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        @Html.CheckBoxFor(m => m.Programme.StopAgreement, new { @onchange = "OnChange(this.id, this.name)" })
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to suspend all agreements." readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Programme.StopAgreement" hidden>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="label required">
+                                        <strong>Stop Agreement Message: </strong>
+                                    </label>
+                                </div>
+                                <div class="col-8">
+                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control", @required = "required" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        @Html.CheckBoxFor(m => m.Programme.HasSubsystemEnabled, new { @onchange = "OnChange(this.id, this.name)" })
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want to enable the sub system." readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Programme.HasSubsystemEnabled" hidden>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="label required"><strong>Subsystem Declaration: </strong></label>
+                                </div>
+                                <div class="col-8">
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control", @required = "required" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="label required"><strong>Subsystem Stop Agreement Message: </strong></label>
+                                </div>
+                                <div class="col-8">
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @required = "required" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+            @if (User.HasClaim("EditProgramme", "EditProgramme"))
+                    {
+                        <div class="card-footer">
+                            @if (Model.ProductViewModel == null)
+                            {
+                                <button type="submit" class="btn btn-success"> Save</button>
+                            }
+                        </div>
+                    }
         </div>
-    </div>
-</form>
+    </form>
+@section pagespecific {
+    @Html.PartialAsync("_ProgrammeScripts")
+}

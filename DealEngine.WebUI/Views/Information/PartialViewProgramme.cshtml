@@ -15,9 +15,9 @@
             </h1>
         </div>
         <span>
-            @*<a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { model=@Model , id=@Model.Id})'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>*@
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
 
-            <a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { id=@Model.Id,ListView =@Model.ListSectionView })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            @*<a onclick="location.href='@Url.Action("ProgrammeDetailsReport", "Information",new { id=@Model.Id,ListView =@Model.ListSectionView })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>*@
         </span>
       
 
@@ -36,7 +36,7 @@
                             <h2>Client Information Sheet Section</h2>
                         </header>
                         <!-- widget div-->
-                        if(@Model.SectionView != ""){
+                        @if(Model.SectionView != ""){
                         @Html.Partial("PrefabSections/" + Model.SectionView, Model)
 
                         }

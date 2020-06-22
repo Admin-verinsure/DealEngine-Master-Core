@@ -35,6 +35,7 @@ namespace DealEngine.WebUI.Controllers
         IFileService _fileService;
         IClientInformationService _clientInformationService;
         IChangeProcessService _changeProcessService;
+        IUnlockProcessService _unlockProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
@@ -71,6 +72,7 @@ namespace DealEngine.WebUI.Controllers
             ITerritoryService territoryService,
             IInformationItemService informationItemService,
             IChangeProcessService changeProcessService,
+            IUnlockProcessService unlockProcessService,
             IFileService fileService,
             IEmailService emailService,
             IMilestoneService milestoneService,
@@ -106,7 +108,7 @@ namespace DealEngine.WebUI.Controllers
             _advisoryService = advisoryService;
             _activityService = activityService;
             _userService = userService;
-            _changeProcessService = changeProcessService;
+            _unlockProcessService = unlockProcessService;
             _productService = productService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
@@ -700,6 +702,7 @@ namespace DealEngine.WebUI.Controllers
             List<Guid> listClientAgreementermid = new List<Guid>();
             String[] OptionItem;
             User user = null;
+            Boolean boundval = false;
 
             try
             {
@@ -711,14 +714,38 @@ namespace DealEngine.WebUI.Controllers
                 foreach (var agreement in clientProgramme.Agreements)
                 {
                     //count = 0;
-                    var term = agreement.ClientAgreementTerms.FirstOrDefault();
-                   
-                        OptionItem = new String[2];
-                        
+                    boundval = false;
+                    foreach (var selectterm in agreement.ClientAgreementTerms)
+                    {
+                      
+                        if (selectterm.Bound)
+                        {
+                            OptionItem = new String[2];
+
                             OptionItem[0] = agreement.Product.Name;
-                            OptionItem[1] = "" + term.Id;
+                            OptionItem[1] = "" + selectterm.Id;
                             OptionItems[count] = OptionItem;
                             count++;
+                            boundval = true;
+                            continue;
+                        }
+                        
+                  }
+                    if (!boundval)
+                    {
+                        var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
+                        if (term == null)
+                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.AggregateLimit).FirstOrDefault();
+
+                        OptionItem = new String[2];
+
+                        OptionItem[0] = agreement.Product.Name;
+                        OptionItem[1] = "" + term.Id;
+                        OptionItems[count] = OptionItem;
+                        count++;
+                        boundval = true;
+                    }
+
                 }
                 return Json(OptionItems);
             }
@@ -1115,12 +1142,20 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
+                //model.Locations = locations;
                 model.Buildings = buildings;
+                //model.Buildings.
                 model.WaterLocations = waterLocations;
+                //model.InterestedParties = interestedParties;
+
+
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;
+                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }
@@ -1250,22 +1285,24 @@ namespace DealEngine.WebUI.Controllers
             return steps;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Unlock(Guid id)
+        [HttpPost]
+        public async Task<IActionResult> Unlock(UnlockReason UnlockReason)
         {
             User user = null;
             try
             {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(UnlockReason.DealId);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 user = await CurrentUser();
+                await _unlockProcessService.CreateUnlockReason(user, UnlockReason);
+
                 if (sheet != null)
                 {
                     await _clientInformationService.UnlockSheet(sheet, user);
                 }
 
-                var url = "/Information/EditInformation/" + id;
-                return Redirect(url);
+                var url = "/Information/EditInformation/" + UnlockReason.DealId;
+                return Json(new { url });
             }
             catch (Exception ex)
             {
@@ -1485,23 +1522,18 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateInformation(ChangeReason changeReason)
         {
-            User user = null;
+            User createdBy = null;
 
             try
             {
-                user = await CurrentUser();
-                await _changeProcessService.CreateChangeReason(user, changeReason);
-
+                createdBy = await CurrentUser();
                 changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
-
-                await _changeProcessService.CreateChangeReason(user, changeReason);
-
+                ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
                 if (clientProgramme == null)
-                    throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + user.UserName);
+                    throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user, changeReason);
-
+                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, ChangeReason);
                 await _programmeService.Update(newClientProgramme);
 
                 var url = "/Information/EditInformation/" + newClientProgramme.Id;
@@ -1509,7 +1541,7 @@ namespace DealEngine.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                await _applicationLoggingService.LogWarning(_logger, ex, createdBy, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
         }

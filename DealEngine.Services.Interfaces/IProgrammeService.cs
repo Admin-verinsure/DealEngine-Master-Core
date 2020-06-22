@@ -35,6 +35,7 @@ namespace DealEngine.Services.Interfaces
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
         Task<bool> IsBaseClass(ClientProgramme clientProgramme);
         Task<bool> SubsystemCompleted(ClientProgramme clientProgramme);
+        Task<List<ClientProgramme>> GetSubClientProgrammesForProgramme(Guid programmeId);
         Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
     }
 }

@@ -322,5 +322,11 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
+        public virtual decimal BasePremium
+        {
+            get;
+            set;
+        }
+
     }
 }

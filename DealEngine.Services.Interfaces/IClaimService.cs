@@ -9,6 +9,7 @@ namespace DealEngine.Services.Interfaces
         Task<Domain.Entities.Claim> GetTemplateByName(string claimName);
         Task<List<Domain.Entities.Claim>> GetClaimsAllClaimsList();
         Task AddClaim(Domain.Entities.Claim claim);
+        Task RemoveClaim(string claim);
     }
 }
 

@@ -368,7 +368,7 @@ namespace DealEngine.WebUI.Controllers
         #endregion Search
 
         [HttpGet]
-        public async Task<IActionResult> ViewSubClientProgrammes(Guid clientProgrammeId)
+        public async Task<IActionResult> ViewSubClientProgrammes(string clientProgrammeId)
         {
             ProgrammeItem model = new ProgrammeItem();
             User user = null;
@@ -376,12 +376,20 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(clientProgrammeId);
-                foreach (var client in clientprogramme.SubClientProgrammes)
+                ClientProgramme clientprogramme = await _programmeService.GetClientProgramme(Guid.Parse(clientProgrammeId));
+                if (clientprogramme.SubClientProgrammes.Any())
                 {
-                    clientList.Add(client);
+                    foreach (var client in clientprogramme.SubClientProgrammes)
+                    {
+                        clientList.Add(client);
+                    }
                 }
-                model = await GetClientProgrammeListModel(user, clientList);
+                else
+                {
+                    clientList.Add(clientprogramme);
+                }
+
+                model = await GetClientProgrammeListModel(user, clientList, true);
 
                 return View(model);
             }
@@ -392,18 +400,22 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList)
+        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList, bool isClient=false)
         {
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
             var clientProgramme = clientList.FirstOrDefault();
-            var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
-            if (isBaseClientProg)
+            if (!isClient)
             {
-                clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+                if (isBaseClientProg)
+                {
+                    clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
-            {                
+            {
+                Boolean Issubclientsubmitted = false;
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
@@ -439,7 +451,16 @@ namespace DealEngine.WebUI.Controllers
                         {
                             localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
                         }
+                        if(client.SubClientProgrammes.Count > 0)
+                        {
+                            Issubclientsubmitted = true;
+                        }
+                        for(var index=0; index <client.SubClientProgrammes.Count; index++)
+                        {
+                            if (client.SubClientProgrammes[index].InformationSheet.Status != "Submitted")
+                                Issubclientsubmitted = false;
 
+                        }
                         deals.Add(new DealItem
                         {
                             Id = client.Id.ToString(),
@@ -451,7 +472,8 @@ namespace DealEngine.WebUI.Controllers
                             Status = status,
                             ReferenceId = referenceId,// Move into ClientProgramme?
                             SubClientProgrammes = client.SubClientProgrammes,
-                            AgreementStatus = agreementSatus
+                            AgreementStatus = agreementSatus,
+                            IsSubclientSubmitted = Issubclientsubmitted
 
                         });
                     }
@@ -572,13 +594,14 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
-                if(clientList.Count == 0)
+                if(!clientList.Any())
                 {
                     clientList = await _programmeService.GetClientProgrammesForProgramme(id);
                 }
 
                 model = await GetClientProgrammeListModel(user, clientList);
                 model.ProgrammeId = id.ToString();
+                model.IsSubclientEnabled = programme.HasSubsystemEnabled;
 
                 return View(model);
             }
@@ -599,19 +622,20 @@ namespace DealEngine.WebUI.Controllers
                 IssueUISViewModel model = new IssueUISViewModel();
                 var clientProgrammes = new List<ClientProgramme>();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-
-                foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+                
+                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
                     {
-                        clientProgrammes.Add(client);
+                            clientProgrammes.Add(client);
                     }
                 }
-
                 model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
-
-                if(actionname == "IssueUIS")
+                model.IsSubUIS = "false";
+                if (actionname == "IssueUIS")
                 {
                     return View(model);
                 }
@@ -620,6 +644,40 @@ namespace DealEngine.WebUI.Controllers
                     //if (action == "EditClient")
                         return View("EditClient", model);
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IssueSubUIS(string ProgrammeId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                IssueUISViewModel model = new IssueUISViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+
+                foreach (var client in subClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                    {
+                        clientProgrammes.Add(client);
+                    }
+                }
+                model.IsSubUIS = "true";
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
+
+                    return View("IssueUIS",model);
+               
+               
             }
             catch (Exception ex)
             {
@@ -686,7 +744,19 @@ namespace DealEngine.WebUI.Controllers
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            EmailTemplate emailTemplate = null;
+                            var isSubUis = formCollection["IsSubUIS"];
+
+                            if (isSubUis.Contains("true"))
+                            {
+                                 emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction"); 
+
+                            }
+                            else
+                            {
+                                emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+
+                            }
                             if (emailTemplate != null)
                             {
                                 await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
@@ -786,38 +856,65 @@ namespace DealEngine.WebUI.Controllers
             string email = null;
             OrganisationViewModel orgmodel = new OrganisationViewModel();
             User userdb = null;
+            User user2 = null;
             var jsdkf = formCollection["Id"];
+            string username = "";
             try
             {
                 Currentuser = await CurrentUser();
                 ownerorg = await _organisationService.GetOrganisation(Guid.Parse(formCollection["Id"]));
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
+
                     var Action  = formCollection["Action"];
                     var FirstName = formCollection["FirstName"];
                     var LastName = formCollection["LastName"];
                     var Email = formCollection["Email"];
+                    var Phone = formCollection["Phone"];
+
                     if (Action == "Edit")
                     {
                         userdb = await _userService.GetUserById(Guid.Parse(formCollection["UserId"]));
+                        if (userdb == null)
+                        {
+                             username = FirstName + "_" + LastName;
+
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = FirstName + "_" + LastName;
+                            }
+                        }
+
                         primaryorg = await _organisationService.GetOrganisation(userdb.PrimaryOrganisation.Id);
                         primaryorg.Email = Email;
                         userdb.FirstName = FirstName;
                         userdb.LastName = LastName;
                         userdb.FullName = FirstName + " " + LastName;
                         userdb.Email = Email;
+                        userdb.Phone = Phone;
                         await uow.Commit();
-
 
                     }
                     else
                     {
                         if (Action == "Add") {
-                        userdb = new User(Currentuser, Guid.NewGuid(), FirstName);
+                        userdb = new User(Currentuser, Guid.NewGuid(), username);
                             userdb.FirstName = FirstName;
                             userdb.LastName = LastName;
                             userdb.FullName = FirstName + " " + LastName;
                             userdb.Email = Email;
+                            userdb.Phone = Phone;
                             await _userService.Create(userdb);
                             userdb.Organisations.Add(ownerorg);
                             userdb.SetPrimaryOrganisation(ownerorg);

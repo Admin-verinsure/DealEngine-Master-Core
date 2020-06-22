@@ -280,6 +280,7 @@ namespace DealEngine.Services.Impl
                     }
                     else if (ModelProperty.Name == "AdditionalActivityViewModel")
                     {
+                        var variabletype2 = sheet.RevenueData;
                         var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();
                         var field = variabletype.GetProperty(modelArray.LastOrDefault());
 
@@ -352,6 +353,30 @@ namespace DealEngine.Services.Impl
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
             }
             return clientList;
+        }
+        public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
+        {
+                return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
+
+        }
+
+        public async Task RemoveOrganisationFromSheets(Organisation organisation)
+        {
+            var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(organisation)).ToListAsync();
+            foreach(var sheet in iSheets)
+            {
+                organisation.AuditHistory.Add(GetHistory(sheet));
+                sheet.Organisation.Remove(organisation);                
+                await _customerInformationRepository.UpdateAsync(sheet);
+            }
+        }
+
+        private AuditHistory GetHistory(ClientInformationSheet sheet)
+        {            
+            AuditHistory audit = new AuditHistory();
+            audit.PreviousSheet = sheet;
+            audit.DateDeleted = DateTime.Now;
+            return audit;
         }
     }
 }

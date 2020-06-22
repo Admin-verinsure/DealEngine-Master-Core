@@ -52,10 +52,10 @@
                             
                         </thead>
                         <tbody>
-                            @foreach (var programme in Model.clientProgrammes)
+                            @foreach (var programme in Model.Programme.ClientProgrammes)
                             {
                             <tr>
-                                <td onclick="location.href='@Url.Action("ClientProgrammeDetails", "Programme",new { programmeId = programme.Id,Id=Model.Id ,ownerId=Model.OwnerId})'" style="cursor:pointer" align="left">
+                                <td onclick="location.href='@Url.Action("ClientProgrammeDetails", "Programme",new { programmeId = programme.Id,Id=Model.Id ,ownerId=programme.Owner.Id})'" style="cursor:pointer" align="left">
                                 @programme.BaseProgramme.Name for @programme </td>
 
                             </tr>

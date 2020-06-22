@@ -150,8 +150,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
                 cAEDOInsExcl.DeletedBy = underwritingUser;
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasExistingPolicyOptions").First().Value == "2" || 
-                (decDOTotalAssets <= 0 && decDOTotalLiabilities <= 0 && decDOCurrentAssets <= 0 && decDOCurrentLiabilities <= 0 && decDOAftertaxProfitOrLoss <= 0))
+            if (decDOTotalAssets <= 0 && decDOTotalLiabilities <= 0 && decDOCurrentAssets <= 0 && decDOCurrentLiabilities <= 0 && decDOAftertaxProfitOrLoss <= 0)
             {
                 if (cAEDOInsExcl != null)
                 {
@@ -280,8 +279,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDebtsOptions").First().Value == "2" ||
-                       (decDOTotalAssets <= 0 && decDOTotalLiabilities <= 0 && decDOCurrentAssets <= 0 && decDOCurrentLiabilities <= 0 && decDOAftertaxProfitOrLoss <= 0))
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDebtsOptions").First().Value == "2")
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
                     }

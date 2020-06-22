@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,6 +22,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.Email;
 using ServiceStack;
+using DealEngine.WebUI.Models.Programme;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -29,6 +30,7 @@ namespace DealEngine.WebUI.Controllers
     public class AgreementController : BaseController
     {
         #region Interfaces
+        IUWMService _underwritingModule;
         ISubsystemService _subsystemService;
         IActivityService _activityService;
         IInformationTemplateService _informationService;
@@ -63,6 +65,7 @@ namespace DealEngine.WebUI.Controllers
         #endregion
 
         public AgreementController(
+            IUWMService underwritingModule,
             ISubsystemService subsystemService,
             ILogger<AgreementController> logger,
             IApplicationLoggingService applicationLoggingService,
@@ -97,6 +100,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _underwritingModule = underwritingModule;
             _subsystemService = subsystemService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
@@ -132,24 +136,32 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> MyAgreements()
+        public async Task<IActionResult> ReRunUWM(Guid id)
         {
-            MyAgreementsViewModel model = new MyAgreementsViewModel();
-            model.MyAgreements = new List<AgreementViewModel>();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    _underwritingModule.UWM(user, agreement.ClientInformationSheet, agreement.ClientInformationSheet.ReferenceId);
 
-            // TODO - fix this to use ClientProgramme
-            //foreach (var answerSheet in _customerInformationService.GetAllInformationFor (CurrentUser())) {
-            //	if (answerSheet.Status == "Submitted") {
-            //		var template = answerSheet.InformationTemplate;
-            //		model.MyAgreements.Add (new AgreementViewModel () {
-            //			InformationName = template.Name,
-            //			InformationId = answerSheet.Id,
-            //			Status = "Unaccepted"
-            //		});
-            //	}
-            //}
+                    string auditLogDetail = "Underwriting Module Run by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-            return View(model);
+                    await uow.Commit();
+                }
+                //return RedirectPermanent("AcceptAgreement?Id=" + ClientId);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         public async Task<IActionResult> AgreementTemplates()
@@ -1128,7 +1140,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
@@ -1139,7 +1152,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1152,7 +1166,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1165,7 +1180,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1178,7 +1194,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1191,7 +1208,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
 
 
@@ -1204,7 +1222,8 @@ namespace DealEngine.WebUI.Controllers
                         TermType = plterm.SubTermType,
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium
+                        Premium = plterm.Premium,
+                        BasePremium = plterm.BasePremium
                     });
                 }
                 model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
@@ -1515,12 +1534,11 @@ namespace DealEngine.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
             model.ProgrammeStopAgreement = true;
-            var message = clientProgramme.BaseProgramme.SubsystemMessage;
-            if (string.IsNullOrWhiteSpace(message))
+            model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemStopAgreementMessage;
+            if (string.IsNullOrWhiteSpace(model.AgreementMessage))
             {
-                message = " The other advisors are now being notified so that they can login and complete their own declaration.";
+                model.AgreementMessage = " The other advisors are now being notified so that they can login and complete their own declaration.";
             }
-            model.AgreementMessage = message;
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
@@ -1528,7 +1546,7 @@ namespace DealEngine.WebUI.Controllers
                 bool isComplete;
                 if (clientProgramme.SubClientProgrammes.Count != 0)
                 {
-                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet);
+                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet,user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
                 }
                 else
@@ -1548,9 +1566,13 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 //Notify broker 
-                model.AgreementMessage = @" <li>I declare that the information and answers given in this proposal have been checked and are true and complete in every respect and the applicant is not aware of any other information that may be material in considering this proposal.</li>
+                model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemDeclaration;
+                if (string.IsNullOrWhiteSpace(model.AgreementMessage))
+                {
+                    model.AgreementMessage = @" <li>I declare that the information and answers given in this proposal have been checked and are true and complete in every respect and the applicant is not aware of any other information that may be material in considering this proposal.</li>
                                             <li>I acknowledge that this proposal, declaration and any other information supplied in support of this proposal constitutes representations to, and will be relied on as the basis of contract by, insurers requested to quote on this proposal. We undertake to inform these insurers through our broker of any material alteration to this information whether occurring before or after the completion of any insurance contract.</li>
                                             <li>I acknowledge that misrepresentations or material non-disclosure of relevant information, whether made through this proposal or otherwise, may result in the insurance not being available to meet a claim and/ or cancellation of relevant insurance contract(s), in addition to other remedies.</li> ";
+                }
                 return PartialView("_ViewStopAgreementMessage", model);
             }
         }
@@ -1640,7 +1662,7 @@ namespace DealEngine.WebUI.Controllers
                 if(!isBaseSheet)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel();
-                    model.AgreementMessage = " Process Finished";
+                    model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemDeclaration;
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
                 else
@@ -1825,6 +1847,7 @@ namespace DealEngine.WebUI.Controllers
                 model.TerritoryLimit = agreement.TerritoryLimit;
                 model.Jurisdiction = agreement.Jurisdiction;
                 model.ProfessionalBusiness = agreement.ProfessionalBusiness;
+                model.InsuredName = agreement.InsuredName;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1850,8 +1873,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     // TODO - Convert to UTC
                     TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
-                    agreement.InceptionDate = DateTime.Parse(model.StartDate, UserCulture).ToUniversalTime();
-                    agreement.ExpiryDate = DateTime.Parse(model.EndDate, UserCulture).ToUniversalTime();
+                    agreement.InceptionDate =  DateTime.Parse(model.StartDate, CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime();
+                    agreement.ExpiryDate = DateTime.Parse(model.EndDate, CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime();
                     agreement.Brokerage = Convert.ToDecimal(model.BrokerageRate.Replace("%", ""));
                     agreement.BrokerFee = Convert.ToDecimal(model.AdministrationFee.Replace("$", ""));
                     agreement.ClientNumber = model.ClientNumber;
@@ -1860,6 +1883,7 @@ namespace DealEngine.WebUI.Controllers
                     agreement.Jurisdiction = model.Jurisdiction;
                     agreement.TerritoryLimit = model.TerritoryLimit;
                     agreement.ProfessionalBusiness = model.ProfessionalBusiness;
+                    agreement.InsuredName = model.InsuredName;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
@@ -1920,6 +1944,85 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditAdvisor(Guid id)
+        {
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(answerSheet);
+                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
+                List<Organisation> Advisors = new List<Organisation>();
+                try
+                {
+                    foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
+
+                    {
+                        for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
+                        {
+                            foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
+                            {
+                                Advisors.Add(organisation);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                model.ProgId = answerSheet.Programme.Id;
+                model.Owner = Advisors;
+                model.AgreementId = id;
+                //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
+
+                return View("ViewEditAdvisor", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdvisor(ProgrammeInfoViewModel model)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
+                if (model.Owner != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        foreach (Organisation org in model.Owner)
+                        {
+                            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
+                            organisation.PIRetroactivedate = org.PIRetroactivedate;
+                            organisation.DORetroactivedate = org.DORetroactivedate;
+
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + model.ProgId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         [HttpPost]
@@ -2265,11 +2368,14 @@ namespace DealEngine.WebUI.Controllers
 
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
-                            //send out policy document email
-                            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                            if (emailTemplate != null)
+                            if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
                             {
-                                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                //send out policy document email
+                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                if (emailTemplate != null)
+                                {
+                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                }
                             }
                             //send out agreement bound notification email
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
@@ -2958,6 +3064,7 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
+                    model.ProgrammeName = programme.BaseProgramme.Name;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {

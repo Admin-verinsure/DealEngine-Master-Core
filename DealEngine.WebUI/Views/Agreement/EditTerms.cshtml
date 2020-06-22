@@ -1,4 +1,4 @@
-﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
+@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
 
 @{
     int count = 0;
@@ -457,33 +457,38 @@
                                                 <th class="text-center" width="11%"> Sum Insured</th>
                                                 <th class="text-center" width="11%"> Excess</th>
                                                 <th class="text-center" width="11%"> Total Premium</th>
+                                                <th class="text-center" width="11%"> Base Premium</th>
                                                 <th class="text-center" width="9%"></th>
                                             </tr>
                                             @foreach (var item in Model.PITerms)
                                             {
-                                                <tr class="clickable-row">
-                                                    <td class="pt-3-half" width="12%" contenteditable="true" id="VesselId" hidden>
-                                                        @item.TermId
-                                                    </td>
-                                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                                        @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                                                    </td>
-                                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                                        @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        <tr class="clickable-row">
+                                            <td class="pt-3-half" width="12%" contenteditable="true" id="VesselId" hidden>
+                                                @item.TermId
+                                            </td>
+                                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                            </td>
+                                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                                                    </td>
-                                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                                        @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                            </td>
+                                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                                                    </td>
+                                            </td>
+                                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                                @item.BasePremium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                                                    <td width="9%">
-                                                        <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                                           data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                                           data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                                        <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                                                    </td>
-                                                </tr>
+                                            </td>
+
+                                            <td width="9%">
+                                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                            </td>
+                                        </tr>
                                             }
                                         </table>
 

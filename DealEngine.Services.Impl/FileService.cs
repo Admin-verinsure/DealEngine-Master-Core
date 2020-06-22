@@ -45,9 +45,23 @@ namespace DealEngine.Services.Impl
 			);
 		}
 
-		#region IFileService implementation
+        #region IFileService implementation
 
-		public string FileDirectory { get; protected set; }
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+
+        public string FileDirectory { get; protected set; }
 
 		public bool IsApplication(byte [] buffer, string contentType, string fileName)
 		{
@@ -505,102 +519,144 @@ namespace DealEngine.Services.Impl
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
             }
 
+            string stradvisorlist = "";
+            string stradvisorlist1 = "";
+            string strnominatedrepresentative = "";
+
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
-                DataTable dtadvisor = new DataTable();
-                dtadvisor.Columns.Add("Advisor");
-                dtadvisor.Columns.Add("RetroactiveDate");
+                //DataTable dtadvisor = new DataTable();
+                //dtadvisor.Columns.Add("Advisor");
+                //dtadvisor.Columns.Add("Retroactive Date");
 
-                DataTable dtadvisor1 = new DataTable();
-                dtadvisor1.Columns.Add("Advisor");
-                dtadvisor1.Columns.Add("RetroactiveDate");
+                //DataTable dtadvisor1 = new DataTable();
+                //dtadvisor1.Columns.Add("Advisor");
+                //dtadvisor1.Columns.Add("Retroactive Date");
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
                     {
-                        DataRow dradvisor = dtadvisor.NewRow();
+                        //DataRow dradvisor = dtadvisor.NewRow();
 
-                        dradvisor["Advisor"] = uisorg.Name;
-                        dradvisor["RetroactiveDate"] = uisorg.PIRetroactivedate;
+                        //dradvisor["Advisor"] = uisorg.Name;
+                        //dradvisor["Retroactive Date"] = uisorg.PIRetroactivedate;
 
-                        dtadvisor.Rows.Add(dradvisor);
+                        //dtadvisor.Rows.Add(dradvisor);
 
-                        DataRow dradvisor1 = dtadvisor1.NewRow();
+                        //DataRow dradvisor1 = dtadvisor1.NewRow();
 
-                        dradvisor1["Advisor"] = uisorg.Name;
-                        dradvisor1["RetroactiveDate"] = uisorg.DORetroactivedate;
+                        //dradvisor1["Advisor"] = uisorg.Name;
+                        //dradvisor1["Retroactive Date"] = uisorg.DORetroactivedate;
 
-                        dtadvisor1.Rows.Add(dradvisor1);
+                        //dtadvisor1.Rows.Add(dradvisor1);
+                        if (string.IsNullOrEmpty(stradvisorlist))
+                        {
+                            stradvisorlist = "Advisor:                                           " + uisorg.Name + 
+                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
+                        }
+                        else
+                        {
+                            stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
+                        }
+                        if (string.IsNullOrEmpty(stradvisorlist1))
+                        {
+                            stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
+                        }
+                        else
+                        {
+                            stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
+                        }
                     }
 
-                    dtadvisor.TableName = "AdvisorDetailsTablePI";
-                    dtadvisor1.TableName = "AdvisorDetailsTableDO";
+                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia1 => uisorgia1.InsuranceAttributeName == "NominatedRepresentative" && uisorgia1.DateDeleted == null) != null)
+                    {
+                        if (string.IsNullOrEmpty(strnominatedrepresentative))
+                        {
+                            strnominatedrepresentative = "Nominated Representative:       " + uisorg.Name;
+                        }
+                        else
+                        {
+                            strnominatedrepresentative += ", " + uisorg.Name;
+                        }
 
-                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", ConvertDataTableToHTML(dtadvisor)));
-                    mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", ConvertDataTableToHTML(dtadvisor1)));
-
+                    }
                 }
+
+                if (!string.IsNullOrEmpty(strnominatedrepresentative))
+                {
+                    stradvisorlist += "<br /><br />" + strnominatedrepresentative;
+                }
+                //dtadvisor.TableName = "AdvisorDetailsTablePI";
+                //dtadvisor1.TableName = "AdvisorDetailsTableDO";
+
+
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
+                
             }
             else
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
             }
+            //mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
 
-
-            string customeactivity = "";
-            string customeactivityexcess = "";
-            if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG Custome Excess for PI
-            {
-                if (agreement.ClientInformationSheet.RevenueData != null)
-                {
-                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                    {
-                        if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-                        {
-                            if (uISActivity.Percentage > 0)
-                            {
-                                if (string.IsNullOrEmpty(customeactivity))
-                                {
-                                    customeactivity = "Financial Planning";
-                                    customeactivityexcess = "$2,500 each and every Claim, costs inclusive";
-                                } else
-                                {
-                                    customeactivity += Environment.NewLine + "Financial Planning";
-                                    customeactivityexcess += Environment.NewLine + "$2,500 each and every Claim, costs inclusive";
-                                }
-                            }
-                        }
-                        else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-                        {
-                            if (uISActivity.Percentage > 0)
-                            {
-                                if (string.IsNullOrEmpty(customeactivity))
-                                {
-                                    customeactivity = "Broking Fire and General";
-                                    customeactivityexcess = "$5,000 each and every Claim, costs inclusive";
-                                }
-                                else
-                                {
-                                    customeactivity += Environment.NewLine + "Broking Fire and General";
-                                    customeactivityexcess += Environment.NewLine + "$5,000 each and every Claim, costs inclusive";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivity]]", customeactivity));
-            mergeFields.Add(new KeyValuePair<string, string>("[[customeactivityexcess]]", customeactivityexcess));
+            //string customeactivity = "";
+            //string customeactivityexcess = "";
+            //if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG Custome Excess for PI
+            //{
+            //    if (agreement.ClientInformationSheet.RevenueData != null)
+            //    {
+            //        foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+            //        {
+            //            if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
+            //            {
+            //                if (uISActivity.Percentage > 0)
+            //                {
+            //                    if (string.IsNullOrEmpty(customeactivity))
+            //                    {
+            //                        customeactivity = "Financial Planning";
+            //                        customeactivityexcess = "$2,500 each and every Claim, costs inclusive";
+            //                    } else
+            //                    {
+            //                        customeactivity += Environment.NewLine + "Financial Planning";
+            //                        customeactivityexcess += Environment.NewLine + "$2,500 each and every Claim, costs inclusive";
+            //                    }
+            //                }
+            //            }
+            //            else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
+            //            {
+            //                if (uISActivity.Percentage > 0)
+            //                {
+            //                    if (string.IsNullOrEmpty(customeactivity))
+            //                    {
+            //                        customeactivity = "Broking Fire and General";
+            //                        customeactivityexcess = "$5,000 each and every Claim, costs inclusive";
+            //                    }
+            //                    else
+            //                    {
+            //                        customeactivity += Environment.NewLine + "Broking Fire and General";
+            //                        customeactivityexcess += Environment.NewLine + "$5,000 each and every Claim, costs inclusive";
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //mergeFields.Add(new KeyValuePair<string, string>("[[customeactivity]]", customeactivity));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[customeactivityexcess]]", customeactivityexcess));
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
 			foreach (KeyValuePair<string, string> field in mergeFields)
-				content = content.Replace (field.Key, field.Value);
+                content = content.Replace(field.Key, field.Value);
 
-			// save the merged content
-			doc.Contents = ToBytes (content);
+            // save the merged content
+            doc.Contents = ToBytes (content);
 
 			return (T)doc;
 		}
@@ -619,6 +675,8 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]",
+            //    TimeZoneInfo.ConvertTimeFromUtc(agreement.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate]]", agreement.RetroactiveDate));
             mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
             mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
@@ -645,6 +703,8 @@ namespace DealEngine.Services.Impl
                     if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
                     {
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+                        //mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]",
+                        //    TimeZoneInfo.ConvertTimeFromUtc(eGlobalResponse.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
@@ -717,18 +777,30 @@ namespace DealEngine.Services.Impl
             }
             //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
             //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
-            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", agreement.ExpiryDate.ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", agreement.ExpiryDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]",
+                TimeZoneInfo.ConvertTimeFromUtc(agreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             if (agreement.Bound == true)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+                //mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]",
+                //    TimeZoneInfo.ConvertTimeFromUtc(agreement.BoundDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             }
             else
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+                //mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]",
+                //    TimeZoneInfo.ConvertTimeFromUtc(agreement.QuoteDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             }
             mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
             mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]",
+            //    TimeZoneInfo.ConvertTimeFromUtc(agreement.BoundDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
+            //mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]",
+            //    TimeZoneInfo.ConvertTimeFromUtc(agreement.QuoteDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[PolicyNumber]]", agreement.PolicyNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[Brokerage]]", (agreement.Brokerage / 100).ToString("P2", CultureInfo.CreateSpecificCulture("en-NZ"))));
             mergeFields.Add(new KeyValuePair<string, string>("[[AdministrationFee]]", agreement.BrokerFee.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));

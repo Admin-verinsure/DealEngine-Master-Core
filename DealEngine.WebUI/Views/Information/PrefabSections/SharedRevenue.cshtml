@@ -277,6 +277,18 @@
                             </div>
                         </div>
                     </div>
+                    <div id="CUS0029" hidden>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-9">
+                                    <label for="otherdetails">You have specified Other consulting work, please provide further details:</label>
+                                </div>
+                                <div class="col-3">
+                                    @Html.TextAreaFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="CUS0018" hidden>
                         <div class="form-group">
                             <div class="row">
@@ -293,10 +305,10 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-9">
-                                    <label for="otherdetails">You have specified Other Work not listed above, please provide further details:</label>
+                                    <label for="otherservices">You have specified Other Work not listed above, please provide further details:</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextAreaFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
+                                    @Html.TextAreaFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherServices, new { @class = "form-control", @id = "otherservices", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @required = "", @data_item = "validateadditional" })
                                 </div>
                             </div>
                         </div>
