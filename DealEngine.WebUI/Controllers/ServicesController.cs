@@ -393,7 +393,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
                 var progname = sheet.Programme.BaseProgramme.Name;
 
-               
+
 
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
@@ -420,10 +420,13 @@ namespace DealEngine.WebUI.Controllers
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
                 JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                if (progname == "NZFSG Programme"){
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false",sheet.Owner.TradingName == null ? " ": sheet.Owner.TradingName);
-                }else{
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false","NonTrading");
+                if (progname == "NZFSG Programme")
+                {
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false", sheet.Owner.TradingName == null ? " " : sheet.Owner.TradingName);
+                }
+                else
+                {
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false", "NonTrading");
                 }
                 model.AddRow(row1);
                 int offset = rows * (page - 1);
@@ -436,7 +439,7 @@ namespace DealEngine.WebUI.Controllers
 
                     for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
                     {
-                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor,"", organisation.Id);
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor, "", organisation.Id);
                     }
                     model.AddRow(row);
                 }
@@ -3401,7 +3404,7 @@ namespace DealEngine.WebUI.Controllers
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
                             userdb = await _userService.GetUserByEmail(model.Email);
-                            if (userdb == null)
+                            if (userdb != null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
@@ -3518,6 +3521,16 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
                             organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
+                            if (!organisation.InsuranceAttributes.Contains(insuranceAttribute))
+                            {
+                                organisation.InsuranceAttributes.FirstOrDefault().IAOrganisations.Remove(organisation);
+                                organisation.InsuranceAttributes.Remove(organisation.InsuranceAttributes.FirstOrDefault());
+                                organisation.InsuranceAttributes.Add(insuranceAttribute);
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                            }
+                           
+
 
                         }
                         else
