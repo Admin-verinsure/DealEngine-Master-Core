@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using DealEngine.Domain.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Domain.Entities
 {
-	public class OrganisationalUnit : EntityBase, IAggregateRoot
+    public class OrganisationalUnit : EntityBase, IAggregateRoot
     {
-        protected OrganisationalUnit () : base (null) {}
+        protected OrganisationalUnit() : base(null) { }
 
-        public OrganisationalUnit(User createdBy, string name) 
-			: base (createdBy)
-		{
+        public OrganisationalUnit(User createdBy, string name)
+            : base(createdBy)
+        {
             Name = name;
             Locations = new List<Location>();
             BranchCodes = new List<BranchCode>();
@@ -24,7 +25,7 @@ namespace DealEngine.Domain.Entities
         {
             Locations = new List<Location>();
             BranchCodes = new List<BranchCode>();
-            if(collection != null)
+            if (collection != null)
             {
                 PopulateEntity(collection);
             }
@@ -33,7 +34,7 @@ namespace DealEngine.Domain.Entities
 
         public virtual string Name { get; set; }
 
-		public virtual IEnumerable<BranchCode> BranchCodes { get; set; }
+        public virtual IEnumerable<BranchCode> BranchCodes { get; set; }
 
         public virtual IList<Location> Locations { get; set; }
         public virtual IList<string> Marinaorgmooredtype { get; set; }
@@ -43,11 +44,10 @@ namespace DealEngine.Domain.Entities
         public virtual string EbixDepartmentCode { get; set; }
 
         public virtual string HPFBranchCode { get; set; }
-        public virtual bool IsCurrentMembership { get; set; }
+
         // public virtual string Othercompanyname { get; set; }
-        public virtual string DateQualified { get; set; }
-        public virtual string DesignLicensed { get; set; }
-        public virtual string SiteLicensed { get; set; }
+
+
         public virtual bool IsRegisteredLicensed { get; set; }
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
@@ -56,32 +56,132 @@ namespace DealEngine.Domain.Entities
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
         public virtual bool IsApproved { get; set; }
-        public virtual string Qualifications { get; set; }
+
         public virtual bool IsNZIAmember { get; set; }
         public virtual string NZIAmembership { get; set; }
-        public virtual string CPEngQualified { get; set; }
+
         public virtual bool IsADNZmember { get; set; }
-        public virtual string IsIPENZmember { get; set; }
-        public virtual string YearofPractice { get; set; }
-        public virtual string PrevPractice { get; set; }
+
+
         public virtual string Type { get; set; }
         public virtual string PMICert { get; set; }
-        public virtual string CertType { get; set; }
+
         public virtual bool IsLPBCategory3 { get; set; }
-        public virtual bool MajorShareHolder { get; set; }
-        public virtual bool IsContractorInsured { get; set; }
-        public virtual bool IsInsuredRequired { get; set; }
+
+
+
         public virtual bool IsOtherdirectorship { get; set; }
-        public virtual string InsuredEntityRelation { get; set; }
-        public virtual string OtherCompanyname { get; set; }
         public virtual bool IsAffiliation { get; set; }
         public virtual string AffiliationDetails { get; set; }
-        public virtual string ProfAffiliation { get; set; }
-        public virtual string JobTitle { get; set; }
+
+
         public virtual string PartyName { get; set; }
-        public virtual string CurrentMembershipNo { get; set; }
-        public virtual string RegisteredStatus { get; set; }
+
         public virtual bool ConfirmAAA { get; set; }
+    }
+
+    public class AdvisorUnit : OrganisationalUnit
+    {
+        protected AdvisorUnit() { }
+        public AdvisorUnit(User User, string Name, IFormCollection Collection)
+            : base(User, Name, Collection)
+        {
+
+        }
+
+        [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "This Person has retired or deceased ?")]
+        public virtual bool IsRetiredorDecieved { get; set; }
+        [Display(Name = "Registered Status AFA,RFA or N/A")]
+        public virtual string RegisteredStatus { get; set; }
+        [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
+        [Display(Name = "Is a Principal Advisor?")]
+        public virtual bool IsPrincipalAdvisor { get; set; }
+        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateofRetirement { get; set; }
+    }
+
+    public class PersonnelUnit : OrganisationalUnit
+    {
+        protected PersonnelUnit() { }
+        public PersonnelUnit(User User, string Name, IFormCollection Collection)
+            : base(User, Name, Collection)
+        {
+
+        }
+        [Display(Name = "Qualifications")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "Relation to insured entity")]
+        public virtual string InsuredEntityRelation { get; set; }
+        [Display(Name = "Date Qualified")]
+        public virtual DateTime? DateQualified { get; set; }
+        [Display(Name = "Design Licensed")]
+        public virtual string DesignLicensed { get; set; }
+        [Display(Name = "Site Licensed")]
+        public virtual string SiteLicensed { get; set; }
+        [Display(Name = "Does this person have an association membership")]
+        public virtual bool IsCurrentMembership { get; set; }
+        [Display(Name = "Association")]
+        public virtual string OtherCompanyName { get; set; }
+        [Display(Name = "Years as a Member")]
+        public virtual string YearofPractice { get; set; }
+    }
+
+    public class ProjectPersonnelUnit : OrganisationalUnit
+    {
+        protected ProjectPersonnelUnit() { }
+        public ProjectPersonnelUnit(User User, string Name, IFormCollection Collection)
+            : base(User, Name, Collection)
+        {
+
+        }
+        [Display(Name = "Qualifications")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "Job title")]
+        public virtual string JobTitle { get; set; }
+        [Display(Name = "Relation to insured entity")]
+        public virtual string InsuredEntityRelation { get; set; }
+        [Display(Name = "Professional Affiliations")]
+        public virtual string ProfAffiliation { get; set; }
+        [Display(Name = "Does this contractor require to be insured under this policy")]
+        public virtual bool IsInsuredRequired { get; set; }
+        [Display(Name = "Does this contractor carry their own insurance")]
+        public virtual bool IsContractorInsured { get; set; }
+        [Display(Name = "Do you have a current PMI membership (i.e. not expired)")]
+        public virtual bool IsCurrentMembership { get; set; }
+        [Display(Name = "PMI Certification Type")]
+        public virtual string CertType { get; set; }
+        [Display(Name = "PMI membership No")]
+        public virtual string CurrentMembershipNo { get; set; }
+        [Display(Name = "Does this party own 10% or more of the insured's issued shares")]
+        public virtual bool MajorShareHolder { get; set; }
+    }
+
+    public class PrincipalUnit : OrganisationalUnit
+    {
+        protected PrincipalUnit() { }
+        public PrincipalUnit(User User, string Name, IFormCollection Collection)
+            : base(User, Name, Collection)
+        {
+
+        }
+        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateofRetirement { get; set; }
+        [Display(Name = "This Person has retired or deceased ?")]
+        public virtual bool IsRetiredorDecieved { get; set; }
+        [Display(Name = "Qualifications")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "Engineer Member")]
+        public virtual string IsIPENZmember { get; set; }
+        [Display(Name = "CPEng Qualified")]
+        public virtual string CPEngQualified { get; set; }
+        [Display(Name = "How long as a Principal of this practice")]
+        public virtual string YearofPractice { get; set; }
+        [Display(Name = "How long as a Principal of any practice")]
+        public virtual string PrevPractice { get; set; }
     }
 }
+
+    

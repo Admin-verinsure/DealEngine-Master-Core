@@ -160,29 +160,29 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
-                if (insuranceAttribute == null)
-                {
-                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
-                }
+                //InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
+                //if (insuranceAttribute == null)
+                //{
+                //    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
+                //}
 
                 Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
                 if (organisation == null)
                 {
-                    organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
-                    organisation.Phone = Request.Form["OrganisationPhone"];
-                    organisation.Email = Request.Form["OrganisationEmail"];
-                    organisation.Domain = Request.Form["OrganisationWebsite"];
-                    organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
+                    //organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
+                    //organisation.Phone = Request.Form["OrganisationPhone"];
+                    //organisation.Email = Request.Form["OrganisationEmail"];
+                    //organisation.Domain = Request.Form["OrganisationWebsite"];
+                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    //organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
 
-                    foreach (string MooredType in selectedMooredType)
-                    {
-                        organisation.Marinaorgmooredtype.Add(MooredType);
-                    }
+                    //foreach (string MooredType in selectedMooredType)
+                    //{
+                    //    organisation.Marinaorgmooredtype.Add(MooredType);
+                    //}
 
-                    organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    insuranceAttribute.IAOrganisations.Add(organisation);
+                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    //insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
                 }
 

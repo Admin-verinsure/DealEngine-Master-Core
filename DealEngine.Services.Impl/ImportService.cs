@@ -170,7 +170,7 @@ namespace DealEngine.Services.Impl
             //addresses need to be on one line
             //var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
             var principalsFileName = WorkingDirectory + "NZACSPrincipals2018.csv";
-            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
+            //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
             {
@@ -207,7 +207,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             organisation.NZIAmembership = parts[1];
                             organisation.Email = email;
                             organisation.Phone = "12345";
@@ -247,7 +247,7 @@ namespace DealEngine.Services.Impl
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
-                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                //insuranceAttribute.IAOrganisations.Add(organisation);
                                 try
                                 {
                                     await uom.Commit();
@@ -816,11 +816,11 @@ namespace DealEngine.Services.Impl
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
 
-                            InsuranceAttribute insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-                            if (insuranceAttribute == null)
-                            {
-                                insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
-                            }
+                            //InsuranceAttribute insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+                            //if (insuranceAttribute == null)
+                            //{
+                            //    insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
+                            //}
                             Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
                             advisororganisation.IsPrincipalAdvisor = true;
                             advisororganisation.PIRetroactivedate = parts[8];
@@ -830,8 +830,8 @@ namespace DealEngine.Services.Impl
                                 advisororganisation.MyCRMId = parts[7];
                             }
                             await _organisationService.CreateNewOrganisation(advisororganisation);
-                            advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
-                            insuranceAttribute.IAOrganisations.Add(advisororganisation);
+                            //advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //insuranceAttribute.IAOrganisations.Add(advisororganisation);
                             sheet.Organisation.Add(advisororganisation);
                             clientProgramme.BrokerContactUser = programme.BrokerContactUser;
                             clientProgramme.ClientProgrammeMembershipNumber = parts[5];
@@ -867,7 +867,7 @@ namespace DealEngine.Services.Impl
             string userName;
             //addresses need to be on one line            
             var fileName = WorkingDirectory + "CEASPrincipals2020.csv";
-            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
+            //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
             {
@@ -901,7 +901,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             organisation.NZIAmembership = parts[1];
                             organisation.Email = email;
                             organisation.Phone = "12345";
@@ -921,7 +921,7 @@ namespace DealEngine.Services.Impl
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
-                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                //insuranceAttribute.IAOrganisations.Add(organisation);
                                 try
                                 {
                                     await uom.Commit();
@@ -987,7 +987,7 @@ namespace DealEngine.Services.Impl
             string userName;
             //addresses need to be on one line            
             var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
-            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
+            //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
             {
@@ -1022,7 +1022,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             organisation.NZIAmembership = parts[13];
                             organisation.Email = email;
                             organisation.Phone = "12345";
@@ -1117,7 +1117,7 @@ namespace DealEngine.Services.Impl
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
-                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                //insuranceAttribute.IAOrganisations.Add(organisation);
                                 try
                                 {
                                     await uom.Commit();
@@ -1185,7 +1185,7 @@ namespace DealEngine.Services.Impl
             //addresses need to be on one line            
             var fileName = WorkingDirectory + "NZFSGDataUploadAdvisor.csv";
 
-            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor");
+            //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor" );
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
             {
@@ -1220,7 +1220,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             organisation.NZIAmembership = parts[5];
                             organisation.Email = email;
                             organisation.Phone = "12345";
@@ -1240,7 +1240,7 @@ namespace DealEngine.Services.Impl
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
-                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                //insuranceAttribute.IAOrganisations.Add(organisation);
                                 try
                                 {
                                     await uom.Commit();
@@ -1680,7 +1680,7 @@ namespace DealEngine.Services.Impl
             string userName;
             //addresses need to be on one line            
             var fileName = WorkingDirectory + "DANZPersonnel2019.csv";
-            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
+            //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             int lineCount = 0;
             using (reader = new StreamReader(fileName))
@@ -1716,7 +1716,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
-                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             organisation.NZIAmembership = parts[12];
                             organisation.Email = email;
                             organisation.Phone = "12345";
@@ -1782,7 +1782,7 @@ namespace DealEngine.Services.Impl
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
-                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                //insuranceAttribute.IAOrganisations.Add(organisation);
                                 try
                                 {
                                     await uom.Commit();

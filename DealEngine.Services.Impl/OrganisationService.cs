@@ -154,6 +154,7 @@ namespace DealEngine.Services.Impl
         public async Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
 			Organisation foundOrg = await GetOrganisationByEmail(Email);
+			IList<OrganisationalUnit> OrganisationalUnits = new List<OrganisationalUnit>();
 			if (foundOrg == null)
 			{
 				OrganisationalUnit OrganisationalUnit = null;
@@ -172,13 +173,8 @@ namespace DealEngine.Services.Impl
 					User = new User(Creator, Guid.NewGuid(), collection);
 				}
 
-				if (Type == "Private" || Type== "Advisor" || Type == "NominatedRepresentative")
-				{
-					OrganisationName = FirstName + " " + LastName;
-					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnit = new OrganisationalUnit(User, "Home", collection);
-				}
-				else if (Type == "Company")
+				
+				if (Type == "Company")
 				{
 					OrganisationTypeName = "Corporation – Limited liability";
 					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
@@ -198,7 +194,31 @@ namespace DealEngine.Services.Impl
 					OrganisationTypeName = "Partnership";
 					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
 				}
-
+                else
+                {
+					if (Type == "Private" || Type == "Advisor" || Type == "NominatedRepresentative")
+					{
+						OrganisationName = FirstName + " " + LastName;
+						OrganisationTypeName = "Person - Individual";
+						//OrganisationalUnit = new OrganisationalUnit(User, "Home", collection);
+						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
+						OrganisationalUnits.Add(new AdvisorUnit(User, Type, collection));
+					}
+					if (Type == "Personnel")
+					{
+						OrganisationName = FirstName + " " + LastName;
+						OrganisationTypeName = "Person - Individual";
+						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
+						OrganisationalUnits.Add(new PersonnelUnit(User, Type, collection));
+					}
+					if (Type == "ProjectPersonnel")
+					{
+						OrganisationName = FirstName + " " + LastName;
+						OrganisationTypeName = "Person - Individual";
+						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
+						OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, collection));
+					}
+				}				
 				OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
 				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);
 				InsuranceAttribute InsuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(Type);
