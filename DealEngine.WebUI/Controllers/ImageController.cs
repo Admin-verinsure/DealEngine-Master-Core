@@ -82,9 +82,22 @@ namespace DealEngine.WebUI.Controllers
         {
             var user = await CurrentUser();
             if (model != null)
-            {
-                if (model.Image != null)
+            {                
+                if (model.Image != null )
                 {
+
+                    // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace
+
+                    // string path = Path.Combine(_hostingEnv.WebRootPath, "Image", model.Image.FileName);
+                    // CKImage dupe = new CKImage();
+                    // var list = await _ckimageService.GetAllImages();
+                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
+                    //if (System.IO.File.Exists(path) & dupe != null)
+                    //{
+                    //    await _ckimageService.Delete(dupe);
+                    //}
+                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
+                    // list = await _ckimageService.GetAllImages();
 
                     var contentType = model.Image.ContentType;
                     var extension = "";                   
@@ -100,14 +113,14 @@ namespace DealEngine.WebUI.Controllers
                     {
                         throw new FileFormatException("Invalid File Type");
                     }
-                    if (model.Name == null)
+                    if (model.Name == null || model.Name.Length < 1)
                     {
                         model.Name = model.Image.FileName;
                         extension = "";
                     }
                     var filename = model.Name + extension;
-                    var path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
-                    
+                    string path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
+
                     try
                     {
                         Stream stream = model.Image.OpenReadStream();
@@ -115,7 +128,7 @@ namespace DealEngine.WebUI.Controllers
 
                         if (thumbnail != null)
                         {
-                               thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
+                                thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
                         }
                         else
                         {
@@ -152,7 +165,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                return Redirect("~/Image/ManageImage");
+                return Redirect("~/Image/ManageImage");          
             }
             return Redirect("~/Image/ManageImage");
         }
@@ -186,10 +199,7 @@ namespace DealEngine.WebUI.Controllers
                 var name = file.FileName;
                 var path = Path.Combine(_hostingEnv.WebRootPath, "Image", name);
                 var url = "https://" + _appSettingService.domainQueryString + "/Image/" + name;
-
-                // var url = "https://localhost:44323/Image/" + name;
                 var json = Json(new { url });
-                //string url = "";
 
                 try
                 {

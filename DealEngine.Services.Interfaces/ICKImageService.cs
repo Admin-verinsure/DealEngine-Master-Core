@@ -9,10 +9,8 @@ namespace DealEngine.Services.Interfaces
     public interface ICKImageService { 
         Task Upload(CKImage ckimage);
         Task Update(CKImage ckimageUpdate);
-        Task Delete(int Id);
-        Task GetCKImage(int Id);
-        // IEnumerable<CKImage> GetAllImages();
+        Task Delete(CKImage ckimage);
+        Task<CKImage> GetCKImage(string path);
         Task<List<CKImage>> GetAllImages();
-
     }   
 }

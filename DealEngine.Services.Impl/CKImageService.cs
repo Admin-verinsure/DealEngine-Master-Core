@@ -25,25 +25,24 @@ namespace DealEngine.Services.Impl
 
         #region ICKImageService implementation
 
-
         public async Task Upload(CKImage ckimage)
         {
             await _ckimageRepository.AddAsync(ckimage);
         }
 
-        public Task Delete(int Id)
+        public async Task Delete(CKImage ckimage)
         {
-            throw new NotImplementedException();
+            await _ckimageRepository.RemoveAsync(ckimage);
         }
-      
+
         public Task Update(CKImage ckimageUpdate)
         {
             throw new NotImplementedException();
         }
 
-        public Task GetCKImage(int Id)
+        public async Task<CKImage> GetCKImage(string path)
         {
-            throw new NotImplementedException();
+            return await _ckimageRepository.FindAll().FirstOrDefaultAsync(i => i.Path == path);
         }
 
         public Task<List<CKImage>> GetAllImages()
@@ -51,29 +50,6 @@ namespace DealEngine.Services.Impl
             return _ckimageRepository.FindAll().ToListAsync();                
         }           
  
-        /*
-        public async Task UploadFile(Image image)
-        {
-            _imageRepository.AddAsync(image);
-        }
-
-        public async Task<Document> GetDocument(string documentName)
-        {
-            return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Name == documentName);
-        }
-
-        
-        public byte [] ToBytes (string contents)
-        {
-            return System.Text.Encoding.UTF8.GetBytes (contents);
-        }
-
-        public string FromBytes (byte [] bytes)
-        {
-            return System.Text.Encoding.UTF8.GetString (bytes);
-        }
-
-         */
         #endregion
 
 
