@@ -831,7 +831,7 @@ namespace DealEngine.WebUI.Controllers
 
                     }
 
-                    //agreement.ClientInformationSheet.Status = "Started";
+                    agreement.ClientInformationSheet.Status = "Submitted";
                     string auditLogDetail = "Agreement has been confirmed Unbind by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
@@ -2451,6 +2451,15 @@ namespace DealEngine.WebUI.Controllers
                                 if (emailTemplate != null)
                                 {
                                     await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                             await uow.Commit();
+                                        }
+                                    }
                                 }
                             }
                             //send out agreement bound notification email
@@ -2547,6 +2556,15 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
                                 }
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    if (!agreement.IsPolicyDocSend)
+                                    {
+                                        agreement.IsPolicyDocSend = true;
+                                        await uow.Commit();
+                                    }
+                                }
                             }
                         }
                     }
@@ -2593,7 +2611,10 @@ namespace DealEngine.WebUI.Controllers
                     {
                         emailTemplate = new EmailTemplate(user, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                         programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-
+                        if (!agreement.IsPolicyDocSend)
+                        {
+                            agreement.IsPolicyDocSend = true;
+                        }
                         await uow.Commit();
                     }
                 }

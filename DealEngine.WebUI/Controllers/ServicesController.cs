@@ -3522,7 +3522,7 @@ namespace DealEngine.WebUI.Controllers
                             }
                             organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
 
-                            if (!organisation.InsuranceAttributes.Contains(insuranceAttribute))
+                            if (organisation.InsuranceAttributes.Count >0 && !organisation.InsuranceAttributes.Contains(insuranceAttribute))
                             {
                                 organisation.InsuranceAttributes.FirstOrDefault().IAOrganisations.Remove(organisation);
                                 organisation.InsuranceAttributes.Remove(organisation.InsuranceAttributes.FirstOrDefault());

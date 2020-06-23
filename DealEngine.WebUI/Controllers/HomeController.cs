@@ -426,6 +426,7 @@ namespace DealEngine.WebUI.Controllers
                         bool nextInfoSheet = false;
                         bool programmeAllowUsesChange = false;
                         string agreementSatus = "";
+                        bool IsDocSend = false;
                         foreach (ClientAgreement agreement in client.Agreements)
                         {
                             if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
@@ -433,6 +434,9 @@ namespace DealEngine.WebUI.Controllers
                                 agreementSatus = "Referred";
                                 break;
                             }
+                            IsDocSend = agreement.IsPolicyDocSend;
+
+
                         }
                         if (client.BaseProgramme.AllowUsesChange)
                         {
@@ -473,8 +477,8 @@ namespace DealEngine.WebUI.Controllers
                             ReferenceId = referenceId,// Move into ClientProgramme?
                             SubClientProgrammes = client.SubClientProgrammes,
                             AgreementStatus = agreementSatus,
-                            IsSubclientSubmitted = Issubclientsubmitted
-
+                            IsSubclientSubmitted = Issubclientsubmitted,
+                            IsDocSend = IsDocSend
                         });
                     }
 
