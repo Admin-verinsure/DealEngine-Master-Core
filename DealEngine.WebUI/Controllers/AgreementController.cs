@@ -831,7 +831,7 @@ namespace DealEngine.WebUI.Controllers
 
                     }
 
-                    //agreement.ClientInformationSheet.Status = "Started";
+                    agreement.ClientInformationSheet.Status = "Submitted";
                     string auditLogDetail = "Agreement has been confirmed Unbind by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
