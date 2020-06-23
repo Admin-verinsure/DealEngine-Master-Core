@@ -807,6 +807,54 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UnbindAgreement(IFormCollection formCollection)
+        {
+            User user = null;
+            var url = "";
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(Guid.Parse(formCollection["ClientAgreementId"]));
+                user = await CurrentUser();
+
+                ClientProgramme programme = agreement.ClientInformationSheet.Programme;
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
+                        (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced" || agreement.Status == "Cancel Pending"))
+                    {
+                        agreement.Status = "Quoted";
+                        agreement.IsUnbind = true;
+                        agreement.UnbindNotes = formCollection["DeclineNotes"];
+                        agreement.UnbindEffectiveDate = DateTime.UtcNow;
+                        agreement.UnbindByUserID = user;
+
+                    }
+
+                    //agreement.ClientInformationSheet.Status = "Started";
+                    string auditLogDetail = "Agreement has been confirmed Unbind by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                    await uow.Commit().ConfigureAwait(false);
+
+                }
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
+
+                //url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+
+                //return Json(new { url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+        [HttpPost]
         public async Task<IActionResult> ConfirmCancellAgreement(AgreementViewModel clientAgreementModel)
         {
             User user = null;
@@ -898,6 +946,38 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
             
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UnbindAgreement(Guid id)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+                Organisation insured = answerSheet.Owner;
+                ClientProgramme programme = answerSheet.Programme;
+
+                model.InformationSheetId = answerSheet.Id;
+                model.ClientAgreementId = agreement.Id;
+                model.ClientProgrammeId = programme.Id;
+
+                model.DeclineNotes = agreement.InsurerDeclinedComment;
+
+                ViewBag.Title = "Unbind Agreement ";
+
+                return View("UnbindAgreement", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         [HttpPost]

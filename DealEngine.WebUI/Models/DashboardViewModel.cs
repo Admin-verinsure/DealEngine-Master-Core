@@ -125,6 +125,8 @@ namespace DealEngine.WebUI.Models
 
 		public string CurrentUserIsTC { get; set; }
 		public string ProgrammeClaim { get; set; }
+		public bool IsSubclientEnabled { get; set; }
+
 	}
 
 	public class TaskItem : BaseViewModel
