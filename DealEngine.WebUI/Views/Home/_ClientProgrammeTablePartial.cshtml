@@ -91,7 +91,7 @@
                     <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ") </td>
                 }
 
-                <td>@(item.Status + "  (" + item.GetStatusDisplay(item.AgreementStatus) + ") " + "DocStatus : "+ item.IsDocSend)</td>
+                <td>@(item.Status + "  (" + item.GetStatusDisplay(item.AgreementStatus)+ item.DocSendDate + ") " )</td>
                 <td>
                     <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
                         @if (item.Status.StartsWith("Bound"))
