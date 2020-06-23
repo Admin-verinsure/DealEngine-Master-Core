@@ -106,6 +106,8 @@ namespace DealEngine.Domain.Entities
         public virtual string UnbindNotes { get; set; }
         public virtual DateTime UnbindEffectiveDate { get; set; }
         public virtual User UnbindByUserID { get; set; }
+        public virtual bool IsPolicyDocSend { get; set; }
+        public virtual DateTime DocIssueDate { get; set; }
 
         public virtual List<Document> GetDocuments()
         {
