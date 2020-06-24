@@ -58,7 +58,7 @@
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.ProjectPersonnelUnit.CertType, new { @class = "label required" })
-    <select id="Organisation.IsCurrentMembership" name="ProjectPersonnelUnit.CertType" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+    <select id="Organisation.CertType" name="ProjectPersonnelUnit.CertType" class="custom-select" onchange="OnChange(this.id, this.name)" required>
         @foreach (var option in @Model.OrganisationViewModel.CertTypes)
         {
             <option selected="@option.Selected" value="@option.Value">

@@ -67,9 +67,9 @@ namespace DealEngine.WebUI.Controllers
                 return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
+                       // MaxDepth = 2,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         DateParseHandling = DateParseHandling.DateTime
                     });
@@ -80,15 +80,15 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
-        public object? GetModelDeserializedModel(Type type, IFormCollection collection, string ModelName)
+        public object? GetModelDeserializedModel(Type type, IFormCollection collection)
         {
             Dictionary<object, string> model = new Dictionary<object, string>();
-            var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
+            //var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
             foreach(var Key in collection.Keys)
             {
-                var test = Key.Split(".").ToList().LastOrDefault();
-                //var splitName = Key.Replace(test + ".", string.Empty);
-                model.Add(test, collection[Key].ToString());
+                //model.Add(Key, collection[Key].ToString());
+                var value = Key.Split(".").ToList().LastOrDefault();
+                model.Add(value, collection[Key].ToString());
             }            
             var JsonString = GetSerializedModel(model);
             try

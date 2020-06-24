@@ -24,7 +24,7 @@
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsIPENZmember, new { @class = "label required" })
     <select id="Organisation.IsIPENZmember" name="Organisation.PrincipalUnit.IsIPENZmember" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-        @foreach (var option in @Model.OrganisationViewModel.HasIsIPENZmember)
+        @foreach (var option in @Model.OrganisationViewModel.HasIsIPENZmemberOptions)
         {
             <option selected="@option.Selected" value="@option.Value">
                 @option.Text
@@ -35,7 +35,7 @@
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.CPEngQualified, new { @class = "label required" })
     <select id="Organisation.CPEngQualified" name="Organisation.PrincipalUnit.CPEngQualified" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-        @foreach (var option in @Model.OrganisationViewModel.HasCPEngQualified)
+        @foreach (var option in @Model.OrganisationViewModel.HasCPEngQualifiedOptions)
         {
             <option selected="@option.Selected" value="@option.Value">
                 @option.Text
@@ -44,10 +44,10 @@
     </select>
 </div>
 <div class="form-group">
-    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPractice, new { @class = "label required" })
-    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPractice, new { @class = "form-control", @id = "Organisation.YearofPractice", @required = "" })
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPracticeCEAS, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPracticeCEAS, new { @class = "form-control", @id = "Organisation.YearofPracticeCEAS", @required = "" })
 </div>
 <div class="form-group">
-    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPractice, new { @class = "label required" })
-    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPractice, new { @class = "form-control", @id = "Organisation.PrevPractice", @required = "" })
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeCEAS, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeCEAS, new { @class = "form-control", @id = "Organisation.YearofPracticeCEAS", @required = "" })
 </div>

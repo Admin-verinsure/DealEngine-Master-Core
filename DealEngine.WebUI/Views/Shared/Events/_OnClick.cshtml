@@ -70,19 +70,6 @@
         SetCurrentTab(EditTabId);
     }
 
-    //function ResetForm(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-    //    var editTabHTML = document.getElementById(EditTabId);
-    //    if (editTabHTML.firstElementChild.tagName == "FORM") {
-    //        ResetOrganisation(Form);
-    //        var addTabHTML = document.getElementById(AddTabId);
-    //        addTabHTML.innerHTML = editTabHTML.innerHTML;
-    //        editTabHTML.innerHTML = "";
-    //        editTabHTML.appendChild(CreateEditLabel(Object));
-    //        document.getElementById(AddButtonId).innerText = "Add";
-    //        document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
-    //    }
-    //}
-
     function PopulateView(Type, OutPut) {
         var Form;
         if (Type == "Organisation") {
@@ -99,6 +86,7 @@
                     for (Field in model) {
                         if (model.hasOwnProperty(Field)) {
                             var id = Type + "." + Field;
+                            debugger;
                             var element = document.getElementById(id);
                             if (element != null) {
                                 if (element.tagName == "INPUT") {
@@ -110,11 +98,11 @@
                                     else {
                                         element.value = OutPut[obj][Field];
                                     }
-
                                 }
                                 else if (element.tagName == "SELECT") {
+                                    //debugger;
                                     for (var o = 0; o < element.options.length; o++) {
-                                        if (element.options[o].value == OutPut[obj][Field]) {
+                                        if (element.options[o].value == OutPut[obj][Field].toString()) {
                                             element.options[o].selected = true;
                                             break;
                                         }

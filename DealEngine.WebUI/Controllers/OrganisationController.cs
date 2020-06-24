@@ -238,54 +238,6 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }    
-
-        [HttpPost]
-        public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
-        {
-            User user = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
-            //                                               new OrganisationType(user, organisationViewModel.OrganisationTypeName),
-            //                                               organisationViewModel.FirstName,
-            //                                               organisationViewModel.LastName,
-            //                                               organisationViewModel.Email);
-
-            //    return View();
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
-        }
-
-        public async Task<IActionResult> CreateDefault()
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                OrganisationType ot = new OrganisationType(user, "financial");
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ANZ Bank", ot));
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ASB Bank", ot));
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "BNZ Bank", ot));
-
-                    await uow.Commit();
-                }
-
-                return Redirect("~/Home/Index");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        
     }
 }

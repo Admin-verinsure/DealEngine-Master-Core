@@ -20,7 +20,7 @@ namespace DealEngine.Domain.Entities
             Marinaorgmooredtype = new List<string>();
         }
 
-        public OrganisationalUnit(User createdBy, string name, IFormCollection collection)
+        public OrganisationalUnit(User createdBy, string name, string type, IFormCollection collection)
             : base(createdBy)
         {
             Locations = new List<Location>();
@@ -30,61 +30,28 @@ namespace DealEngine.Domain.Entities
                 PopulateEntity(collection);
             }
             Name = name;
+            Type = type;
         }
 
         public virtual string Name { get; set; }
-
         public virtual IEnumerable<BranchCode> BranchCodes { get; set; }
-
         public virtual IList<Location> Locations { get; set; }
         public virtual IList<string> Marinaorgmooredtype { get; set; }
-
         public virtual string EserviceProducerCode { get; set; }
-
         public virtual string EbixDepartmentCode { get; set; }
-
         public virtual string HPFBranchCode { get; set; }
-
-        // public virtual string Othercompanyname { get; set; }
-
-
-        public virtual bool IsRegisteredLicensed { get; set; }
-        public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
         public virtual string MyCRMId { get; set; }
-        public virtual string TradingName { get; set; }
-        public virtual string PIRetroactivedate { get; set; }
-        public virtual string DORetroactivedate { get; set; }
-        public virtual bool IsApproved { get; set; }
-
-        public virtual bool IsNZIAmember { get; set; }
-        public virtual string NZIAmembership { get; set; }
-
-        public virtual bool IsADNZmember { get; set; }
-
-
+              
         public virtual string Type { get; set; }
-        public virtual string PMICert { get; set; }
-
-        public virtual bool IsLPBCategory3 { get; set; }
-
-
-
-        public virtual bool IsOtherdirectorship { get; set; }
-        public virtual bool IsAffiliation { get; set; }
-        public virtual string AffiliationDetails { get; set; }
-
-
         public virtual string PartyName { get; set; }
-
-        public virtual bool ConfirmAAA { get; set; }
     }
 
     public class AdvisorUnit : OrganisationalUnit
     {
         protected AdvisorUnit() { }
         public AdvisorUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, Collection)
+            : base(User, Name, null, Collection)
         {
 
         }
@@ -107,10 +74,12 @@ namespace DealEngine.Domain.Entities
     {
         protected PersonnelUnit() { }
         public PersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, Collection)
+            : base(User, Name, null, Collection)
         {
 
         }
+        [Display(Name = "Is this personnel registered as a licensed building practioner")]
+        public virtual bool IsRegisteredLicensed { get; set; }
         [Display(Name = "Qualifications")]
         public virtual string Qualifications { get; set; }
         [Display(Name = "Relation to insured entity")]
@@ -133,7 +102,7 @@ namespace DealEngine.Domain.Entities
     {
         protected ProjectPersonnelUnit() { }
         public ProjectPersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, Collection)
+            : base(User, Name, null, Collection)
         {
 
         }
@@ -163,7 +132,7 @@ namespace DealEngine.Domain.Entities
     {
         protected PrincipalUnit() { }
         public PrincipalUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, Collection)
+            : base(User, Name, null, Collection)
         {
 
         }
@@ -178,9 +147,25 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "CPEng Qualified")]
         public virtual string CPEngQualified { get; set; }
         [Display(Name = "How long as a Principal of this practice")]
-        public virtual string YearofPractice { get; set; }
+        public virtual string YearofPracticeCEAS { get; set; }
         [Display(Name = "How long as a Principal of any practice")]
-        public virtual string PrevPractice { get; set; }
+        public virtual string PrevPracticeCEAS { get; set; }
+        [Display(Name = "Are you a member of NZIA")]
+        public virtual bool IsNZIAmember { get; set; }
+        [Display(Name = "Are you a member of ADNZ")]
+        public virtual bool IsADNZmember { get; set; }
+        [Display(Name = "State the type of NZIA membership held")]
+        public virtual string NZIAmembership { get; set; }
+        [Display(Name = "Do you hold LPB Category 3 classification")]
+        public virtual bool IsLPBCategory3 { get; set; }
+        [Display(Name = "How long have you been at this practice")]
+        public virtual string YearofPracticeNZACS { get; set; }
+        [Display(Name = "Name of previous practice")]
+        public virtual string PrevPracticeNZACS { get; set; }
+        [Display(Name = "Do you require coverage for other directorship appointments held by you on behalf of your practice")]
+        public virtual bool IsOtherdirectorship { get; set; }
+        [Display(Name = "Please list all Name of company(s)")]
+        public virtual string TradingName { get; set; }
     }
 }
 

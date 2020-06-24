@@ -134,8 +134,8 @@
                 }
             }
 
-            if (Value == 'True' || Value == 'False') {
-                if (Value == 'True') {
+            if (Value == 'true' || Value == 'false') {
+                if (Value == 'true') {
                     Value = "1";
                 }
                 else {
@@ -235,7 +235,6 @@
                 }
             }
             if (Rule === "OrganisationType") {
-                debugger;
                 document.getElementById("Private").hidden = true;
                 document.getElementById("Else").hidden = true;
                 var List = document.getElementById("Organisation.OrganisationType");
@@ -267,7 +266,6 @@
 
     function OrganisationTypeOnChange(Obj, List, Value) {
         OptionOnChange(Obj);
-        debugger;
         if (Value == "Advisor" || Value == "NominatedRepresentative"
             || Value == "Personnel" || Value == "ProjectPersonnel"
             || Value == "Principal") {

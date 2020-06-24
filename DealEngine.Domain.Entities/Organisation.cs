@@ -87,12 +87,13 @@ namespace DealEngine.Domain.Entities
             Email = email;
         }
 
-        public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute)
+        public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, List<OrganisationalUnit> organisationalUnits, InsuranceAttribute insuranceAttribute, string email)
             :this(creator, organisationName, organisationType)
         {
             Name = organisationName;
             Id = id;
-            OrganisationalUnits.Add(organisationalUnit);
+            Email = email;
+            OrganisationalUnits = organisationalUnits;
             InsuranceAttributes.Add(insuranceAttribute);
         }        
 

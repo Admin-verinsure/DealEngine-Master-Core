@@ -37,6 +37,7 @@ namespace DealEngine.WebUI.Models
                 {
                     Types = GetDANZTypes();
                     PersonnelUnit = new PersonnelUnit(null, null, null);
+                    InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
                     HasSiteLicensedOptions = GetLicencedOptions();
@@ -58,9 +59,17 @@ namespace DealEngine.WebUI.Models
                     Types = GetCEASTypes();
                     PrincipalUnit = new PrincipalUnit(null, null, null);
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    HasIsIPENZmemberOptions = GetStandardSelectOptions();
+                    HasCPEngQualifiedOptions = GetStandardSelectOptions();
+                }
+                if (Programme.Name == "NZACS Programme")
+                {
+                    Types = GetCEASTypes();
+                    PrincipalUnit = new PrincipalUnit(null, null, null);
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
-                    HasIsIPENZmember = GetStandardSelectOptions();
-                    HasCPEngQualified = GetStandardSelectOptions();
+                    HasIsNZIAmemberOptions = GetStandardSelectOptions();
+                    HasIsADNZmemberOptions = GetStandardSelectOptions();
+                    HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
 
                 Organisations.Add(ClientInformationSheet.Owner);
@@ -316,18 +325,13 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                     {
-                        Text = "-- Select --",
-                        Value = ""
-                    },
-                new SelectListItem
-                    {
                         Text = "No",
-                        Value = "False"
+                        Value = "false"
                     },
                 new SelectListItem
                     {
                         Text = "Yes",
-                        Value = "True"
+                        Value = "true"
                     }
             };
             return _Types;
@@ -453,10 +457,16 @@ namespace DealEngine.WebUI.Models
         [JsonIgnore]
         public IList<SelectListItem> HasMajorShareHolder { get; set; }
         [JsonIgnore]
-        public IList<SelectListItem> HasIsIPENZmember { get; set; }
+        public IList<SelectListItem> HasIsIPENZmemberOptions { get; set; }
         [JsonIgnore]
-        public IList<SelectListItem> HasCPEngQualified { get; set; }
-        
+        public IList<SelectListItem> HasCPEngQualifiedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsNZIAmemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsADNZmemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsOtherdirectorshipOptions { get; set; }
+
 
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }

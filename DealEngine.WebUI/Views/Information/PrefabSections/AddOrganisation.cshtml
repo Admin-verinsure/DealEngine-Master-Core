@@ -83,22 +83,30 @@
             @using (Html.BeginForm("AddOrganisation", "Services", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
             {
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
-                @Html.Hidden("ViewModel", "OrganisationViewModel");
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
                 {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
                 {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.ProjectPersonnelUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/PMINZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "DANZ Programme")
                 {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/DANZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "CEAS Programme")
                 {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/CEAS_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "NZACS Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZACS_AddOrganisation", Model)
                 }
                 <div class="form-group">
                     <input class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnSubmit('organisationViewModel', 'Insured Details / Named Parties')" value="Add" />

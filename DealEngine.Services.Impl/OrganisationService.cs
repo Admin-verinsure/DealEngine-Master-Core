@@ -11,6 +11,7 @@ using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NHibernate.Mapping;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
@@ -23,8 +24,10 @@ namespace DealEngine.Services.Impl
 		IUserService _userService;
 		IInsuranceAttributeService _insuranceAttributeService;
 		ILogger<OrganisationService> _logger;
+		IMapper _mapper;
 
 		public OrganisationService(IMapperSession<Organisation> organisationRepository,
+			IMapper mapper,
 			IUserService userService,
 			IOrganisationalUnitService organisationalUnitService,
 			IOrganisationTypeService organisationTypeService,
@@ -33,6 +36,7 @@ namespace DealEngine.Services.Impl
 			ILogger<OrganisationService> logger
 			)
 		{
+			_mapper = mapper;
 			_logger = logger;
 			_userService = userService;
 			_organisationalUnitService = organisationalUnitService;
@@ -46,7 +50,7 @@ namespace DealEngine.Services.Impl
 		{
 			try
 			{
-				await UpdateOrganisation(organisation);
+				await Update(organisation);
 				_ldapService.Create(organisation);
 			}
 			catch (Exception ex)
@@ -54,7 +58,7 @@ namespace DealEngine.Services.Impl
 				//org exists in LDap but not in application
 				if (ex.HResult == 68)
 				{
-					await UpdateOrganisation(organisation);
+					//await Update(organisation);
 				}
 			}
 			
@@ -71,7 +75,7 @@ namespace DealEngine.Services.Impl
 		public async Task DeleteOrganisation(User deletedBy, Organisation organisation)
 		{
 			organisation.Delete(deletedBy);
-			await UpdateOrganisation(organisation);
+			await Update(organisation);
 		}
 
 		public async Task<List<Organisation>> GetAllOrganisations()
@@ -89,17 +93,38 @@ namespace DealEngine.Services.Impl
 			organisation = _ldapService.GetOrganisation(organisationId);
 			// have a ldap organisation but no repo? Update NHibernate & return
 			if (organisation != null) {
-				await UpdateOrganisation(organisation);
+				await Update(organisation);
 				return organisation;
 			}
 			// no organisation at all? Throw exception
 			throw new Exception("Organisation with id [" + organisationId + "] does not exist in the system");
 		}
 
-		public async Task UpdateOrganisation(Organisation organisation)
+		public async Task UpdateOrganisation(User jsonUser, Organisation jsonOrganisation, OrganisationalUnit jsonUnit)
 		{
-			await UpdateApplication(organisation);
-			UpdateLDap(organisation);
+			var user = await _userService.GetUserByEmail(jsonUser.Email);
+			if(user != null)
+            {
+				user = _mapper.Map(jsonUser, user);
+				await _userService.Update(user);
+			}
+
+			var organisation = await GetOrganisationByEmail(jsonOrganisation.Email);			
+			if(organisation != null)
+            {
+				organisation = _mapper.Map(jsonOrganisation, organisation);
+				var unit = organisation.OrganisationalUnits.FirstOrDefault(u => u.Type == jsonUnit.Type);
+				if(unit != null)
+                {
+					_mapper.Map(jsonUnit, unit);
+				}
+                else
+                {
+					organisation.OrganisationalUnits.Add(jsonUnit);
+				}
+				await Update(organisation);
+			}			
+			//UpdateLDap(organisation);
 		}
 
 		public async Task<Organisation> GetOrganisationByName(string organisationName)
@@ -154,11 +179,8 @@ namespace DealEngine.Services.Impl
         public async Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
 			Organisation foundOrg = await GetOrganisationByEmail(Email);
-			IList<OrganisationalUnit> OrganisationalUnits = new List<OrganisationalUnit>();
 			if (foundOrg == null)
 			{
-				OrganisationalUnit OrganisationalUnit = null;
-
 				var User = await _userService.GetUserByEmail(Email);				
 				if (User != null)
 				{					
@@ -173,56 +195,17 @@ namespace DealEngine.Services.Impl
 					User = new User(Creator, Guid.NewGuid(), collection);
 				}
 
-				
-				if (Type == "Company")
-				{
-					OrganisationTypeName = "Corporation – Limited liability";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
-				}
-				else if (Type == "Trust")
-				{
-					OrganisationTypeName = "Trust";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
-				}
-				else if (Type == "Trust")
-				{
-					OrganisationTypeName = "Trust";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
-				}
-				else if (Type == "Partnership")
-				{
-					OrganisationTypeName = "Partnership";
-					OrganisationalUnit = new OrganisationalUnit(User, "Head Office", collection);
-				}
-                else
+				if(string.IsNullOrWhiteSpace(OrganisationName))
                 {
-					if (Type == "Private" || Type == "Advisor" || Type == "NominatedRepresentative")
-					{
-						OrganisationName = FirstName + " " + LastName;
-						OrganisationTypeName = "Person - Individual";
-						//OrganisationalUnit = new OrganisationalUnit(User, "Home", collection);
-						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
-						OrganisationalUnits.Add(new AdvisorUnit(User, Type, collection));
-					}
-					if (Type == "Personnel")
-					{
-						OrganisationName = FirstName + " " + LastName;
-						OrganisationTypeName = "Person - Individual";
-						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
-						OrganisationalUnits.Add(new PersonnelUnit(User, Type, collection));
-					}
-					if (Type == "ProjectPersonnel")
-					{
-						OrganisationName = FirstName + " " + LastName;
-						OrganisationTypeName = "Person - Individual";
-						OrganisationalUnits.Add(new OrganisationalUnit(User, Type, collection));
-						OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, collection));
-					}
-				}				
-				OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
+					OrganisationName = FirstName + " " + LastName;
+					OrganisationTypeName = "Person - Individual";
+				}
+
+				List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
+				//IList<OrganisationalUnit> OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
 				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);
 				InsuranceAttribute InsuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(Type);
-				foundOrg = CreateNewOrganisation(Creator, OrganisationName, OrganisationType, OrganisationalUnit, InsuranceAttribute);
+				foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
 
 				if (!User.Organisations.Contains(foundOrg))
 					User.Organisations.Add(foundOrg);
@@ -233,9 +216,69 @@ namespace DealEngine.Services.Impl
 			return foundOrg;			
         }
 
-        private Organisation CreateNewOrganisation(User Creator, string organisationName, OrganisationType organisationType, OrganisationalUnit organisationalUnit, InsuranceAttribute insuranceAttribute)
+        private List<OrganisationalUnit> GetOrganisationCreateUnits(string Type, User User, IFormCollection collection)
         {
-			var Organisation =  new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnit, insuranceAttribute);
+			List<OrganisationalUnit> OrganisationalUnits = new List<OrganisationalUnit>();			
+			string OrganisationTypeName;
+			if (Type == "Company")
+			{
+				OrganisationTypeName = "Corporation – Limited liability";
+				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+			}
+			else if (Type == "Trust")
+			{
+				OrganisationTypeName = "Trust";
+				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+			}
+			else if (Type == "Trust")
+			{
+				OrganisationTypeName = "Trust";
+				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+			}
+			else if (Type == "Partnership")
+			{
+				OrganisationTypeName = "Partnership";
+				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+			}
+			else
+			{
+				if (Type == "Private")
+				{					
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+				}
+				if(Type == "Advisor" || Type == "NominatedRepresentative")
+                {
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new AdvisorUnit(User, Type, collection));
+				}
+				if (Type == "Personnel")
+				{
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new PersonnelUnit(User, Type, collection));
+				}
+				if (Type == "ProjectPersonnel")
+				{
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, collection));
+				}
+				if(Type == "Principal")
+                {
+					OrganisationTypeName = "Person - Individual";
+					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new PrincipalUnit(User, Type, collection));
+				}
+			}
+
+			return OrganisationalUnits;
+		}
+
+        private Organisation CreateNewOrganisation(User Creator, string email, string organisationName, OrganisationType organisationType, List<OrganisationalUnit> organisationalUnits, InsuranceAttribute insuranceAttribute)
+        {
+			var Organisation =  new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnits, insuranceAttribute, email);
 			return Organisation;
         }
 
@@ -264,7 +307,7 @@ namespace DealEngine.Services.Impl
 			}
 			organisation.IsPrincipalAdvisor = true;
 			organisation.Removed = false;
-			await UpdateOrganisation(organisation);
+			await Update(organisation);
 		}
 
         public async  Task UpdateApplication(Organisation organisation)
