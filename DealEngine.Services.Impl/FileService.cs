@@ -522,6 +522,7 @@ namespace DealEngine.Services.Impl
             string stradvisorlist = "";
             string stradvisorlist1 = "";
             string strnominatedrepresentative = "";
+            string strotherconsultingbusiness = "";
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
@@ -584,6 +585,19 @@ namespace DealEngine.Services.Impl
                         }
 
                     }
+
+                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia2 => uisorgia2.InsuranceAttributeName == "OtherConsultingBusiness" && uisorgia2.DateDeleted == null) != null)
+                    {
+                        if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                        {
+                            strotherconsultingbusiness = uisorg.Name;
+                        }
+                        else
+                        {
+                            strotherconsultingbusiness += ", " + uisorg.Name;
+                        }
+
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(strnominatedrepresentative))
@@ -593,15 +607,21 @@ namespace DealEngine.Services.Impl
                 //dtadvisor.TableName = "AdvisorDetailsTablePI";
                 //dtadvisor1.TableName = "AdvisorDetailsTableDO";
 
+                if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                {
+                    strotherconsultingbusiness = "No Other Consulting Business insured under this policy.";
+                }
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
-                
+                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
+
             }
             else
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Other Consulting Business insured under this policy."));
             }
             //mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
 
