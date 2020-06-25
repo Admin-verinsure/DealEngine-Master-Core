@@ -609,7 +609,7 @@ namespace DealEngine.Services.Impl
 
                 if (string.IsNullOrEmpty(strotherconsultingbusiness))
                 {
-                    strotherconsultingbusiness = "No Other Consulting Business insured under this policy.";
+                    strotherconsultingbusiness = "No Additional Insureds.";
                 }
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
@@ -621,7 +621,7 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
-                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Other Consulting Business insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
             }
             //mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
 
