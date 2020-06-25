@@ -2358,17 +2358,12 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrganisation(IFormCollection collection)
         {            
-            var UnitName = collection["Unit"].ToString();
             User currentUser = await CurrentUser();
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
-            Type UnitType = Type.GetType(UnitName);
 
             var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-            //var typeOrganisation = Activator.CreateInstance(jsonOrganisation);
             var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-            var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
-            //var jsonInsuranceAttribute 
 
             string Email = jsonOrganisation.Email;
             string TypeName = jsonOrganisation.Type;
@@ -2390,7 +2385,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
                 }
 
-                await _organisationService.UpdateOrganisation(jsonUser, jsonOrganisation, jsonUnit);
+                await _organisationService.UpdateOrganisation(collection);
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

@@ -150,6 +150,7 @@ namespace DealEngine.Domain.Entities
         public virtual OrganisationType OrganisationType
         {
             get;
+            set;
         }
         public virtual bool Removed
         {

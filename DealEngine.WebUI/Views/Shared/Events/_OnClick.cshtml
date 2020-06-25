@@ -96,7 +96,11 @@
                                         element.value = date;
                                     }
                                     else {
-                                        element.value = OutPut[obj][Field];
+                                        var value = OutPut[obj][Field];
+                                        if (value == "project management personnel") {
+                                            value = "ProjectPersonnel";
+                                        }
+                                        element.value = value;
                                     }
                                 }
                                 else if (element.tagName == "SELECT") {

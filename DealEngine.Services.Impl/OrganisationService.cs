@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NHibernate.Mapping;
 using AutoMapper;
+using Newtonsoft.Json;
 
 namespace DealEngine.Services.Impl
 {
@@ -100,8 +101,14 @@ namespace DealEngine.Services.Impl
 			throw new Exception("Organisation with id [" + organisationId + "] does not exist in the system");
 		}
 
-		public async Task UpdateOrganisation(User jsonUser, Organisation jsonOrganisation, OrganisationalUnit jsonUnit)
+		public async Task UpdateOrganisation(IFormCollection collection)
 		{
+			var UnitName = collection["Unit"].ToString();
+			Type UnitType = Type.GetType(UnitName);
+			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
+			var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
+
 			var user = await _userService.GetUserByEmail(jsonUser.Email);
 			if(user != null)
             {
@@ -121,7 +128,10 @@ namespace DealEngine.Services.Impl
                 else
                 {
 					organisation.OrganisationalUnits.Add(jsonUnit);
+					organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, collection["Type"]));
+					organisation.OrganisationType = new OrganisationType(null, collection["OrganisationType"]);
 				}
+				
 				await Update(organisation);
 			}			
 			//UpdateLDap(organisation);
@@ -335,7 +345,58 @@ namespace DealEngine.Services.Impl
 				await _organisationRepository.UpdateAsync(organisation);
 			}
 		}
-    }
+		private object? GetModelDeserializedModel(Type type, IFormCollection collection)
+		{
+			Dictionary<object, string> model = new Dictionary<object, string>();
+			//var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
+			foreach (var Key in collection.Keys)
+			{
+				//model.Add(Key, collection[Key].ToString());
+				var value = Key.Split(".").ToList().LastOrDefault();
+				model.Add(value, collection[Key].ToString());
+			}
+			var JsonString = GetSerializedModel(model);
+			try
+			{
+				var obj = JsonConvert.DeserializeObject(JsonString, type,
+					new JsonSerializerSettings()
+					{
+						ObjectCreationHandling = ObjectCreationHandling.Auto,
+						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+						NullValueHandling = NullValueHandling.Ignore,
+						DateFormatHandling = DateFormatHandling.IsoDateFormat,
+						FloatFormatHandling = FloatFormatHandling.DefaultValue,
+					});
+				return obj;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
+		}
+
+		private string GetSerializedModel(object model)
+		{
+			try
+			{
+				return JsonConvert.SerializeObject(model,
+					new JsonSerializerSettings()
+					{
+						// MaxDepth = 2,
+						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+						NullValueHandling = NullValueHandling.Ignore,
+						FloatFormatHandling = FloatFormatHandling.DefaultValue,
+						DateParseHandling = DateParseHandling.DateTime
+					});
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+
+		}
+	}
 
 }
 
