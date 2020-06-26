@@ -86,7 +86,7 @@ namespace DealEngine.WebUI.Controllers
                 if (model.Image != null )
                 {
 
-                    // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace
+                    // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace have done differently below where you just don't create a new record if one already exists with that filename
 
                     // string path = Path.Combine(_hostingEnv.WebRootPath, "Image", model.Image.FileName);
                     // CKImage dupe = new CKImage();
@@ -121,14 +121,14 @@ namespace DealEngine.WebUI.Controllers
                     var filename = model.Name + extension;
                     string path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
 
-                    try
+                    try //save thumbnail
                     {
                         Stream stream = model.Image.OpenReadStream();
                         System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
 
                         if (thumbnail != null)
                         {
-                                thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
+                            thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
                         }
                         else
                         {
@@ -141,13 +141,13 @@ namespace DealEngine.WebUI.Controllers
                         await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                     }
 
-                    try
+                    try //save Image
                     {
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
                         }
-
+                        //save Record of Image
                         CKImage newCKImage = new CKImage
                         {
                             Name = filename,
@@ -155,7 +155,16 @@ namespace DealEngine.WebUI.Controllers
                             ThumbPath = "_" + filename
                         };
 
-                        await _ckimageRepository.AddAsync(newCKImage);
+                        // check if there is a record with this filename already if there is then take action?
+                        CKImage dupe = await _ckimageService.GetCKImage(model.Image.FileName);
+                        if (dupe != null && dupe.Path == newCKImage.Path)
+                        {
+                            // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                        }
+                        else
+                        {
+                            await _ckimageRepository.AddAsync(newCKImage);
+                        }
 
                     }
 
@@ -172,7 +181,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CKUpload()
-        {
+        { 
             IFormFileCollection files = HttpContext.Request.Form.Files;
             int fileCount = files.Count;
             IFormFile file = null;
@@ -234,7 +243,16 @@ namespace DealEngine.WebUI.Controllers
                         Path = name,
                         ThumbPath = "_" + name
                     };
-                    await _ckimageRepository.AddAsync(newCKImage);
+
+                    CKImage dupe = await _ckimageService.GetCKImage(file.FileName);
+                    if (dupe != null && dupe.Path == newCKImage.Path)
+                    {
+                        // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                    }
+                    else
+                    {
+                        await _ckimageRepository.AddAsync(newCKImage);
+                    }
                     return json;
                 }
 
