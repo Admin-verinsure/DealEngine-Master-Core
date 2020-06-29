@@ -65,7 +65,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                               (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                             (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -129,6 +129,14 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <li class="nav-item">
                                         <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Agreement</a>
                                     </li>
+
+                                    @if (item.ProgrammeName == "NZFSG Programme")
+                                    {
+                        <li class="nav-item">
+                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
+                        </li>
+                                    }
+                                    
 
                                 }
                                 <li class="nav-item">
