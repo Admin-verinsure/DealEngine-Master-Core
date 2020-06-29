@@ -3136,9 +3136,9 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.FirstName = model.FirstName.Trim();
+                                    userdb.LastName = model.LastName.Trim();
+                                    userdb.FullName = userdb.FirstName + " " + userdb.LastName;
                                     userdb.Email = model.Email;
                                     await uow.Commit();
                                 }
