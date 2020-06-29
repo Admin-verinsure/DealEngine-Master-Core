@@ -231,52 +231,47 @@ namespace DealEngine.Services.Impl
 			if (Type == "Company")
 			{
 				OrganisationTypeName = "Corporation – Limited liability";
-				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+				OrganisationalUnits.Add(new OrganisationalUnit(User, "Head Office", OrganisationTypeName, collection));
 			}
 			else if (Type == "Trust")
 			{
 				OrganisationTypeName = "Trust";
-				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
-			}
-			else if (Type == "Trust")
-			{
-				OrganisationTypeName = "Trust";
-				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+				OrganisationalUnits.Add(new OrganisationalUnit(User, "Head Office", OrganisationTypeName, collection));
 			}
 			else if (Type == "Partnership")
 			{
 				OrganisationTypeName = "Partnership";
-				OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, "Head Office", collection));
+				OrganisationalUnits.Add(new OrganisationalUnit(User, "Head Office", OrganisationTypeName, collection));
 			}
 			else
 			{
 				if (Type == "Private")
 				{					
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 				}
 				if(Type == "Advisor" || Type == "NominatedRepresentative")
                 {
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 					OrganisationalUnits.Add(new AdvisorUnit(User, Type, collection));
 				}
 				if (Type == "Personnel")
 				{
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName,  collection));
 					OrganisationalUnits.Add(new PersonnelUnit(User, Type, collection));
 				}
 				if (Type == "ProjectPersonnel")
 				{
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 					OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, collection));
 				}
 				if(Type == "Principal")
                 {
 					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, OrganisationTypeName, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 					OrganisationalUnits.Add(new PrincipalUnit(User, Type, collection));
 				}
 			}

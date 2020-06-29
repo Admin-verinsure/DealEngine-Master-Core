@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
@@ -17,7 +16,6 @@ namespace DealEngine.Domain.Entities
         {
             Name = name;
             Locations = new List<Location>();
-            BranchCodes = new List<BranchCode>();
             Marinaorgmooredtype = new List<string>();
         }
 
@@ -25,7 +23,6 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             Locations = new List<Location>();
-            BranchCodes = new List<BranchCode>();
             if (collection != null)
             {
                 PopulateEntity(collection);
@@ -34,18 +31,18 @@ namespace DealEngine.Domain.Entities
             Type = type;
         }
 
+        public virtual string Type { get; set; }
+        public virtual string PartyName { get; set; }
         public virtual string Name { get; set; }
-        public virtual IEnumerable<BranchCode> BranchCodes { get; set; }
         public virtual IList<Location> Locations { get; set; }
+
+
         public virtual IList<string> Marinaorgmooredtype { get; set; }
         public virtual string EserviceProducerCode { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
         public virtual string HPFBranchCode { get; set; }
-        public virtual string OfcPhoneno { get; set; }
-        public virtual string MyCRMId { get; set; }
-              
-        public virtual string Type { get; set; }
-        public virtual string PartyName { get; set; }
+        public virtual string OfcPhoneno { get; set; }         
+
     }
 
     public class AdvisorUnit : OrganisationalUnit
@@ -69,6 +66,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsPrincipalAdvisor { get; set; }
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
+        public virtual string MyCRMId { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit

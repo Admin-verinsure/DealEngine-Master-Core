@@ -111,20 +111,17 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Previous Consulting Business",
                         Value = "PreviousConsultingBusiness"
-                    }
-                    ,
+                    },
                     new SelectListItem
                     {
                         Text = "Mergers",
                         Value = "Mergers"
-                    }
-                    ,
+                    },
                     new SelectListItem
                     {
                         Text = "Joint Venture",
                         Value = "JointVenture"
-                    }
-                    ,
+                    },
                     new SelectListItem
                     {
                         Text = "Previous Consulting Business",

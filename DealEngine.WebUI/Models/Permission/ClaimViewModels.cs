@@ -12,13 +12,6 @@ namespace DealEngine.WebUI.Models.Permission
 		public bool IsSystemRole { get; set; }
 
 		public ClaimViewModels() { }
-		public ClaimViewModels(AuthClaims claim)
-		{
-			Id = claim.Id;
-            ClaimName = claim.Name;
-			Description = claim.Description;
-			IsSystemRole = claim.IsSystemRole;
-		}
 	}
 
 	//public class EditRoleViewModel
