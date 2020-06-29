@@ -797,5 +797,16 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AIBOrganisationRefactor()
+        {
+            await _organisationService.RefactorOrganisations();
+
+            return Redirect("~/Home/Index");
+
+        }
+
+        
+
     }
 }

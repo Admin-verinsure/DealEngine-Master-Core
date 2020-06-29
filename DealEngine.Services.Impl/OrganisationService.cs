@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using NHibernate.Mapping;
 using AutoMapper;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace DealEngine.Services.Impl
 {
@@ -20,7 +21,6 @@ namespace DealEngine.Services.Impl
 	{
 		IMapperSession<Organisation> _organisationRepository;
 		IOrganisationTypeService _organisationTypeService;
-		IOrganisationalUnitService _organisationalUnitService;
 		ILdapService _ldapService;
 		IUserService _userService;
 		IInsuranceAttributeService _insuranceAttributeService;
@@ -30,7 +30,6 @@ namespace DealEngine.Services.Impl
 		public OrganisationService(IMapperSession<Organisation> organisationRepository,
 			IMapper mapper,
 			IUserService userService,
-			IOrganisationalUnitService organisationalUnitService,
 			IOrganisationTypeService organisationTypeService,
 			ILdapService ldapService,
 			IInsuranceAttributeService insuranceAttributeService,
@@ -40,7 +39,6 @@ namespace DealEngine.Services.Impl
 			_mapper = mapper;
 			_logger = logger;
 			_userService = userService;
-			_organisationalUnitService = organisationalUnitService;
 			_organisationTypeService = organisationTypeService;
 			_insuranceAttributeService = insuranceAttributeService;			
 			_organisationRepository = organisationRepository;
@@ -396,7 +394,16 @@ namespace DealEngine.Services.Impl
 			}
 
 		}
-	}
+
+        public async Task RefactorOrganisations()
+        {
+			var organisations = await _organisationRepository.FindAll().ToListAsync();
+			foreach (var organisation in organisations)
+            {
+				
+            }
+        }
+    }
 
 }
 
