@@ -160,29 +160,29 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
-                if (insuranceAttribute == null)
-                {
-                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
-                }
+                //InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
+                //if (insuranceAttribute == null)
+                //{
+                //    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
+                //}
 
                 Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
                 if (organisation == null)
                 {
-                    organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
-                    organisation.Phone = Request.Form["OrganisationPhone"];
-                    organisation.Email = Request.Form["OrganisationEmail"];
-                    organisation.Domain = Request.Form["OrganisationWebsite"];
-                    organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
+                    //organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
+                    //organisation.Phone = Request.Form["OrganisationPhone"];
+                    //organisation.Email = Request.Form["OrganisationEmail"];
+                    //organisation.Domain = Request.Form["OrganisationWebsite"];
+                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    //organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
 
-                    foreach (string MooredType in selectedMooredType)
-                    {
-                        organisation.Marinaorgmooredtype.Add(MooredType);
-                    }
+                    //foreach (string MooredType in selectedMooredType)
+                    //{
+                    //    organisation.Marinaorgmooredtype.Add(MooredType);
+                    //}
 
-                    organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    insuranceAttribute.IAOrganisations.Add(organisation);
+                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    //insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
                 }
 
@@ -238,54 +238,6 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }    
-
-        [HttpPost]
-        public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
-        {
-            User user = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
-            //                                               new OrganisationType(user, organisationViewModel.OrganisationTypeName),
-            //                                               organisationViewModel.FirstName,
-            //                                               organisationViewModel.LastName,
-            //                                               organisationViewModel.Email);
-
-            //    return View();
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
-        }
-
-        public async Task<IActionResult> CreateDefault()
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                OrganisationType ot = new OrganisationType(user, "financial");
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ANZ Bank", ot));
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ASB Bank", ot));
-                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "BNZ Bank", ot));
-
-                    await uow.Commit();
-                }
-
-                return Redirect("~/Home/Index");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        
     }
 }

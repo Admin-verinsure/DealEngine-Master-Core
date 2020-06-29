@@ -134,8 +134,8 @@
                 }
             }
 
-            if (Value == 'True' || Value == 'False') {
-                if (Value == 'True') {
+            if (Value == 'true' || Value == 'false') {
+                if (Value == 'true') {
                     Value = "1";
                 }
                 else {
@@ -235,34 +235,14 @@
                 }
             }
             if (Rule === "OrganisationType") {
-                debugger;
                 document.getElementById("Private").hidden = true;
-                document.getElementById("OtherConsultingBusiness").hidden = true;
-                document.getElementById("Advisor").hidden = true;   
-                var list = document.getElementById("Organisation.OrganisationType");
-                list.disabled = false;
-                var option;
-                var element = document.getElementById(Value);
-                if (element != null) {
-                    element.hidden = true;
-                }            
-                                
-                if (Value == "Advisor" || Value == "NominatedRepresentative") {
-                    //readonly Organisation Type personal
-                    for (var i = 0; i < list.options.length; i++) {
-                        if (list.options[i].value == "Person - Individual") {
-                            list.options[i].selected = true;
-                            option = list.options[i].text;
-                        }
-                    }
-                    list.disabled = true;
-                    var organisationUnit = document.getElementById(option);
-                    if (organisationUnit != null) {
-                        organisationUnit.hidden = false;
-                    }                                          
-                }
-
-                DefaultRule("1", Value);
+                document.getElementById("Else").hidden = true;
+                var List = document.getElementById("Organisation.OrganisationType");
+                List.disabled = false;
+                OrganisationTypeOnChange(obj, List, Value);                
+            }
+            if (Rule === "OptionOnChange") {
+                OptionOnChange(obj);
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
@@ -270,6 +250,44 @@
             //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
+    }
+
+    function OptionOnChange(Obj) {
+        for (var i = 0; i < Obj.options.length; i++) {
+            var element = document.getElementById(Obj.options[i].value)
+            if (element != null) {
+                element.hidden = true;
+                if (Obj.options[i].selected == true) {
+                    element.hidden = false;
+                }
+            }            
+        }
+    }
+
+    function OrganisationTypeOnChange(Obj, List, Value) {
+        OptionOnChange(Obj);
+        if (Value == "Advisor" || Value == "NominatedRepresentative"
+            || Value == "Personnel" || Value == "ProjectPersonnel"
+            || Value == "Principal") {
+            //readonly Organisation Type personal
+            for (var i = 0; i < List.options.length; i++) {
+                if (List.options[i].value == "Person - Individual") {
+                    List.options[i].selected = true;
+                    option = List.options[i].text;
+                }
+            }
+            List.disabled = true;
+            //organisationUnitOnChange
+            var organisationUnit = document.getElementById(option);
+            if (organisationUnit != null) {
+                organisationUnit.hidden = false;
+            }
+        } else {
+            debugger;
+            document.getElementById("Else").hidden = false;        
+        }
+
+        DefaultRule("1", Value);
     }
 
     function AdditionalActivityInformation(Id) {

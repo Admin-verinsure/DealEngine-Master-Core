@@ -44,7 +44,10 @@ namespace DealEngine.Services.Impl
 
         public async Task<OrganisationalUnit> CreateOrganisationalUnit(OrganisationalUnit organisationalUnit)
         {
-            await _organisationUnitRepository.AddAsync(organisationalUnit);
+            if(organisationalUnit != null)
+            {
+                await _organisationUnitRepository.AddAsync(organisationalUnit);
+            }            
             return organisationalUnit;
         }
     }
