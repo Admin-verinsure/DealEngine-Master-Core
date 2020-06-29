@@ -2405,7 +2405,6 @@ namespace DealEngine.WebUI.Controllers
         {
             User user = null;
             Guid OrganisationId = Guid.Parse(model.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
-            Guid ClientInformationId = Guid.Parse(model.AnswerSheetId.ToString());//Guid.Parse(collection["ClientInformationId"]);
             IList<object> JsonObjects = new List<object>();
             try
             {                   
