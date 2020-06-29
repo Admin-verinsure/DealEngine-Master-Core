@@ -102,6 +102,12 @@ namespace DealEngine.Domain.Entities
         public virtual string issuetobrokerby { get; set; }
         public virtual string issuetobrokerto { get; set; }
         public virtual User SelectedBroker { get; set; }
+        public virtual bool IsUnbind { get; set; }
+        public virtual string UnbindNotes { get; set; }
+        public virtual DateTime UnbindEffectiveDate { get; set; }
+        public virtual User UnbindByUserID { get; set; }
+        public virtual bool IsPolicyDocSend { get; set; }
+        public virtual DateTime DocIssueDate { get; set; }
 
         public virtual List<Document> GetDocuments()
         {

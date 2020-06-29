@@ -414,7 +414,8 @@ namespace DealEngine.WebUI.Controllers
                 }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
-            {                
+            {
+                Boolean Issubclientsubmitted = false;
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
@@ -425,6 +426,7 @@ namespace DealEngine.WebUI.Controllers
                         bool nextInfoSheet = false;
                         bool programmeAllowUsesChange = false;
                         string agreementSatus = "";
+                        string DocSendDate = "";
                         foreach (ClientAgreement agreement in client.Agreements)
                         {
                             if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
@@ -432,6 +434,8 @@ namespace DealEngine.WebUI.Controllers
                                 agreementSatus = "Referred";
                                 break;
                             }
+                            if (agreement.IsPolicyDocSend)
+                                DocSendDate =", Document Issued on: "+agreement.DocIssueDate;
                         }
                         if (client.BaseProgramme.AllowUsesChange)
                         {
@@ -450,7 +454,16 @@ namespace DealEngine.WebUI.Controllers
                         {
                             localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
                         }
+                        if(client.SubClientProgrammes.Count > 0)
+                        {
+                            Issubclientsubmitted = true;
+                        }
+                        for(var index=0; index <client.SubClientProgrammes.Count; index++)
+                        {
+                            if (client.SubClientProgrammes[index].InformationSheet.Status != "Submitted")
+                                Issubclientsubmitted = false;
 
+                        }
                         deals.Add(new DealItem
                         {
                             Id = client.Id.ToString(),
@@ -462,8 +475,9 @@ namespace DealEngine.WebUI.Controllers
                             Status = status,
                             ReferenceId = referenceId,// Move into ClientProgramme?
                             SubClientProgrammes = client.SubClientProgrammes,
-                            AgreementStatus = agreementSatus
-
+                            AgreementStatus = agreementSatus,
+                            IsSubclientSubmitted = Issubclientsubmitted,
+                            DocSendDate = DocSendDate
                         });
                     }
 
@@ -590,6 +604,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model = await GetClientProgrammeListModel(user, clientList);
                 model.ProgrammeId = id.ToString();
+                model.IsSubclientEnabled = programme.HasSubsystemEnabled;
 
                 return View(model);
             }
@@ -610,19 +625,20 @@ namespace DealEngine.WebUI.Controllers
                 IssueUISViewModel model = new IssueUISViewModel();
                 var clientProgrammes = new List<ClientProgramme>();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-
-                foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+                
+                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
                     {
-                        clientProgrammes.Add(client);
+                            clientProgrammes.Add(client);
                     }
                 }
-
                 model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
-
-                if(actionname == "IssueUIS")
+                model.IsSubUIS = "false";
+                if (actionname == "IssueUIS")
                 {
                     return View(model);
                 }
@@ -631,6 +647,40 @@ namespace DealEngine.WebUI.Controllers
                     //if (action == "EditClient")
                         return View("EditClient", model);
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IssueSubUIS(string ProgrammeId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                IssueUISViewModel model = new IssueUISViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+
+                foreach (var client in subClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                    {
+                        clientProgrammes.Add(client);
+                    }
+                }
+                model.IsSubUIS = "true";
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
+
+                    return View("IssueUIS",model);
+               
+               
             }
             catch (Exception ex)
             {
@@ -697,7 +747,19 @@ namespace DealEngine.WebUI.Controllers
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            EmailTemplate emailTemplate = null;
+                            var isSubUis = formCollection["IsSubUIS"];
+
+                            if (isSubUis.Contains("true"))
+                            {
+                                 emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction"); 
+
+                            }
+                            else
+                            {
+                                emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+
+                            }
                             if (emailTemplate != null)
                             {
                                 await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);

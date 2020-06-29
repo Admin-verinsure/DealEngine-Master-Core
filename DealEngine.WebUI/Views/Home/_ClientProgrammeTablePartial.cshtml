@@ -91,7 +91,7 @@
                     <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ") </td>
                 }
 
-                <td>@(item.Status + "  (" + item.GetStatusDisplay(item.AgreementStatus) + ") ")</td>
+                <td>@(item.Status + "  (" + item.GetStatusDisplay(item.AgreementStatus)+ item.DocSendDate + ") " )</td>
                 <td>
                     <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
                         @if (item.Status.StartsWith("Bound"))
@@ -120,10 +120,21 @@
                                 <a href="#myUnlockModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Unlock</a>
 
                             }
-                            if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                            if (item.SubClientProgrammes.Count > 0)
                             {
-                                <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True" && (item.IsSubclientSubmitted))
+                                {
+                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                }
                             }
+                            else
+                            {
+                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                {
+                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                }
+                            }
+
                         }
                         else if (item.Status == "Not Started")
                         {

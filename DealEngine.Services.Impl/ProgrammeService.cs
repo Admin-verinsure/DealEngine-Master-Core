@@ -78,6 +78,28 @@ namespace DealEngine.Services.Impl
             return clientList;
 		}
 
+        public async Task<List<ClientProgramme>> GetSubClientProgrammesForProgramme(Guid programmeId)
+        {
+            Programme programme = await GetProgramme(programmeId);
+            var clientList = new List<ClientProgramme>();
+            if (programme == null)
+                return null;
+            foreach (var client in programme.ClientProgrammes)
+            {
+                var isBaseClass = await IsBaseClass(client);
+                if (!isBaseClass)
+                {
+                    if (client.DateDeleted == null)
+                    {
+                        clientList.Add(client);
+                    }
+                }
+            }
+
+            return clientList;
+        }
+
+        
         public async Task<bool> IsBaseClass(ClientProgramme client)
         {
             var objectType = client.GetType();
