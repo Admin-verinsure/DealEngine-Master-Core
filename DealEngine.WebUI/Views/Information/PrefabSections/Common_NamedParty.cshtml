@@ -36,8 +36,8 @@
                                             return ('<button onclick="EditNamedParty(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'CommonNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
                                         }
                                     },
-                                    { name: "OrganisationName", align: 'center' },
-                                    { name: "IsPrincipalAdvisor", align: 'center' },
+                                    { name: "OrganisationName", align: 'center'},
+                                    { name: "IsPrincipalAdvisor", align: 'center'},
                                     { name: "OrganisationType", align: 'center' },
                                     { name: "TradingName", align: 'center',hidden:true},
                                                                         //{ name: "TradingName", align: 'center',hidden:true },
@@ -52,8 +52,8 @@
 						        autowidth: true,
                                 pager: "#CommonpagerNamedParty",
 						        rowNum: 10,
-						        rowList: [10, 20, 30],
-                                sortname: "Name",
+                                rowList: [10, 20, 30],
+                                sortname: "IsPrincipalAdvisor",
 						        sortorder: "desc",
 						        viewrecords: true,
 						        gridview: true,
@@ -642,6 +642,7 @@
                  
                 } else {
                      $('#CommonEditOrgName').val(data.organisationName);
+                                     $('#CommonEditType').val(data.type);
 
                     if (data.type == "OtherConsultingBusiness") {
                         $(".CommonEditOtherConsultingBusiness").removeClass('hidden');
@@ -652,7 +653,6 @@
 
                  $('.nonownersec').removeClass("hidden");
                  $('.ownersec').addClass("hidden");
-                 $('#CommonEditType').val(data.type);
                  $('#CommonEditFirstName').val(data.firstName);
                  $('#CommonEditLastName').val(data.lastName);
                  $('#CommonEditDOB').val(data.dateofBirth);

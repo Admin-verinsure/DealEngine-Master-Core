@@ -415,7 +415,7 @@ namespace DealEngine.WebUI.Controllers
                             break;
                     }
                 }
-                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                organisations = organisations.OrderByDescending(cp => cp.IsPrincipalAdvisor).ToList();
                 model.Page = page;
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
@@ -3639,8 +3639,13 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
                     model.ID = partyID;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
-                    model.FirstName = userdb.FirstName;
-                    model.LastName = userdb.LastName;
+                    if (userdb != null)
+                    {
+                        model.FirstName = userdb.FirstName;
+                        model.LastName = userdb.LastName;
+                    }
+                    //model.FirstName = userdb.FirstName;
+                    //model.LastName = userdb.LastName;
                     model.Email = org.Email;
                     model.RegisteredStatus = org.RegisteredStatus;
                     model.Duration = org.Duration;
