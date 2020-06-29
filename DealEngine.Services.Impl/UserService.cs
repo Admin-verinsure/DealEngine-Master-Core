@@ -260,6 +260,11 @@ namespace DealEngine.Services.Impl
 			var users = await _userRepository.FindAll().Where(u => u.PrimaryOrganisation.IsBroker == true).ToListAsync();
 			return users;			
 		}
+		public async Task<List<String>> GetUsers()
+		{
+			var users = await _userRepository.FindAll().Select(x => x.UserName).ToListAsync();
+			return users;
+		}
 
 		public async Task<List<User>> GetAllUserByOrganisation(Organisation org)
 		{

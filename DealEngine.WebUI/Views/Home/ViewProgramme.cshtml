@@ -41,10 +41,10 @@
 
                                 if (Model.IsSubclientEnabled)
                                 {
-                                 <li class="nav-item">
-                                    @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
-                                    <a onclick="location.href='@Url.Action("IssueSubUIS", "Home", new { ProgrammeId = @Model.ProgrammeId, actionname = "IssueUIS" })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Sub UIS </a>
-                                </li>
+                                    <li class="nav-item">
+                                        @*<a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue UIS</a>*@
+                                        <a onclick="location.href='@Url.Action("IssueSubUIS", "Home", new { ProgrammeId = @Model.ProgrammeId, actionname = "IssueUIS" })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Sub UIS </a>
+                                    </li>
                                 }
 
                                 <li class="nav-item">
@@ -56,12 +56,18 @@
                                 </li>
 
                                 @*<li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
-                                </li>*@
+                <a class="btn btn-primary btn-xs" href="~/Home/IssueUIS?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd UIS</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary btn-xs" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue 2nd Reminder</a>
+            </li>*@
                             }
+                            @*<li class="nav-item">
+                                <a onclick="location.href='@Url.Action("getuserdetails", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>
+                            </li>*@
+                           @*<li class="nav-item">
+                                <a onclick="location.href='@Url.Action("ReportView", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>
+                            </li>*@
 
                         </ul>
                     </td>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DealEngine.WebUI.Models
 {
@@ -9,6 +10,8 @@ namespace DealEngine.WebUI.Models
 		public string ProgrammeId { get; set; }
 		public List<User> users { get; set; }
 		public string IsSubUIS { get; set; }
+		public List<SelectListItem> ListClientProgrammes { get; set; }
+		public List<SelectListItem> ListQueries { get; set; }
 
 	}
 }
