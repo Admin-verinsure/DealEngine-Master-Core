@@ -1593,7 +1593,7 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && (sheet.Status == "Started" || sheet.Status == "Not Started"))
                 {
                    return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
@@ -2361,7 +2361,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ByPassPayment (IFormCollection collection)
+        public async Task<IActionResult> ByPassPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -2374,16 +2374,16 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 ClientProgramme programme = sheet.Programme;
-                user = await CurrentUser();                
+                user = await CurrentUser();
                 var status = "Bound";
                 if (sheet.Programme.BaseProgramme.UsesEGlobal)
                 {
                     status = "Bound and invoice pending";
                 }
-                
+
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted==null && acagreement.Bound).Count() > 0)
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null && acagreement.Bound).Count() > 0)
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
                         var documents = new List<SystemDocument>();
@@ -2464,9 +2464,10 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
                             //send out agreement bound notification email
-                            await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                           await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
-                    } else
+                    }
+                    else
                     {
                         agreement.DateDeleted = DateTime.Now;
                     }
@@ -2478,10 +2479,10 @@ namespace DealEngine.WebUI.Controllers
                     if (programme.InformationSheet.Status != status)
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit();
+                        uow.Commit();
                     }
                 }
-                
+
                 var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
                 return Json(new { url });
 
