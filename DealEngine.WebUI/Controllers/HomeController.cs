@@ -854,6 +854,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (queryselect == "PI Cover Limit")
                         {
+                            ViewBag.Title = "PI Cover Limit and Premium Selected";
                             PIReport report = new PIReport();
                             report.ReferenceID = cp.InformationSheet.ReferenceId;
                             report.IndividualName = cp.Owner.Name;
@@ -908,6 +909,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         PropertyDescriptor prop = props[i];
                         table.Columns.Add(prop.Name, prop.PropertyType);
+                        table.Columns.Remove("Id");
                     }
                 }
                 catch (Exception ex)

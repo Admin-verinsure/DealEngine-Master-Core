@@ -312,7 +312,7 @@
         var programmeId;
 
         function SendInvoice() {
-            programmeId = $('#Id').val();
+            programmeId = "@Model.ClientProgramme.Id";
 
             $.ajax({
             type: "POST",
@@ -363,7 +363,7 @@
         }
 
         function addBCData() {
-            programmeId = $('#Id').val();
+             programmeId = "@Model.ClientProgramme.Id";
             var branch = document.getElementById("branch").value;
             var clientId = document.getElementById("clientId").value;
             bcdata = [branch, clientId];
