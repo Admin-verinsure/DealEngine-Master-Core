@@ -252,9 +252,9 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation).ToList();
 
-                if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
+                if (user.PrimaryOrganisation.IsTC)
                 {
-                    //docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
+                    docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate).ToList();
                     //if(productId != null)
                     //{
                     //    var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
