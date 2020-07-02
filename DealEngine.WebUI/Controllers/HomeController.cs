@@ -748,34 +748,34 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 IssueUISViewModel model = new IssueUISViewModel();
-                var clientProgrammes = new List<ClientProgramme>();
-                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-                List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
-                List<SelectListItem> queryselectlist = new List<SelectListItem>();
-                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
-                {
-                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
-                    {
-                        clientProgrammes.Add(client);
-                    }
-                }
-                model.ClientProgrammes = clientProgrammes;
+               // var clientProgrammes = new List<ClientProgramme>();
+               // Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+               // List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+               // List<SelectListItem> queryselectlist = new List<SelectListItem>();
+                //foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                //{
+                //    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                //    {
+                //        clientProgrammes.Add(client);
+                //    }
+                //}
+                //model.ClientProgrammes = clientProgrammes;
 
-                List<SelectListItem> clientproglist = new List<SelectListItem>();
+                //List<SelectListItem> clientproglist = new List<SelectListItem>();
 
-                for (var i = 0; i < model.ClientProgrammes.Count(); i++)
-                {
-                    clientproglist.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Text = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Name,
-                        Value = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Id.ToString(),
-                    });
+                //for (var i = 0; i < model.ClientProgrammes.Count(); i++)
+                //{
+                //    clientproglist.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Text = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Name,
+                //        Value = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Id.ToString(),
+                //    });
 
-                }
+                //}
 
                 model.ProgrammeId = ProgrammeId;
-                model.ListClientProgrammes = clientproglist;
+               // model.ListClientProgrammes = clientproglist;
                 //model.ListQueries = queryselectlist.ToList();
                 return View(model);
             }
@@ -805,36 +805,26 @@ namespace DealEngine.WebUI.Controllers
         //    return listing;
         //}
 
-        [HttpGet]
-        public List<string> generatequeryField(string Query)
-        {
-            List<string> listing = new List<string>();
-            //double[] balance = { 2340.0, 4523.69, 3421.0 };
-            //string[] fighters = { "johnjones", "rondarousey", "connormcgregor"};
-            //Hashtable ht = new Hashtable();
+        //[HttpGet]
+        //public List<string> generatequeryField(string Query)
+        //{
+        //    List<string> listing = new List<string>();
 
-            //ht.Add(1, cp.Owner.Name);
-            //ht.Add(2, "Two");
-            //ht.Add(3, "Three");
-            //ht.Add(4, "Four");
-            //ht.Add(5, null);
-            //ht.Add("Fv", "Five");
-            //ht.Add(8.5F, 8.5);
-
-            //if (Query == "PI Cover Limit")
-            //{
-            //    // Adding pairs to fslist 
-            //    listing.Add("ReferenceID", "cp.InformationSheet.ReferenceId");
-            //    listing.Add("IndividualName");
-            //    listing.Add("CompanyName");
-            //    listing.Add("Limit");
-            //    listing.Add("Premium");
-            //    listing.Add("Inceptiondate");
-            //}
+        //    if (Query == "PI Cover Limit")
+        //    {
+        //        // Adding pairs to fslist 
+        //        listing.Add("ReferenceID");
+        //        listing.Add("IndividualName");
+        //        listing.Add("CompanyName");
+        //        listing.Add("Limit");
+        //        listing.Add("Premium");
+        //        listing.Add("Inceptiondate");
+        //    }
 
 
-            return listing;
-        }
+        //    return listing;
+        //}
+
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection)
         {
@@ -843,50 +833,66 @@ namespace DealEngine.WebUI.Controllers
             {
                 // List<User> userList = await _userService.GetBrokerUsers();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(formCollection["ProgrammeId"]));
-                ClientProgramme clientprog = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection["ClientProgramme"]));
+              //  ClientProgramme clientprog = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection["ClientProgramme"]));
                 // List<ClientProgramme> clientprogrammes = _clie;
                 // var hgh = programme
                 string queryselect = formCollection["queryselect"];
-               // List<string> queryfields = generatequeryField(queryselect);
-                List<Report> reportset = new List<Report>();
+              //  List<string> queryfields = generatequeryField(queryselect);
+                List<PIReport> reportset = new List<PIReport>();
                 DataTable table = new DataTable();
                 List<String> ListReport = new List<String>();
-                //foreach (var field in  queryfields)
+                //foreach (var field in queryfields)
                 //{
                 //    table.Columns.Add(field, typeof(string));
 
-              
+
                 //}
 
-                foreach (ClientProgramme cp in programme.ClientProgrammes)
+                foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.Status=="Submitted"))
                 {
                     try
                     {
                         if (queryselect == "PI Cover Limit")
                         {
-                            Report report = new Report();
-                            
-                            report.MemberName = cp.Owner.Name;
+                            ViewBag.Title = "PI Cover Limit and Premium Selected";
+                            PIReport report = new PIReport();
                             report.ReferenceID = cp.InformationSheet.ReferenceId;
                             report.IndividualName = cp.Owner.Name;
                             report.CompanyName = cp.Owner.Name;
-                            foreach (ClientAgreement agreement in cp.Agreements)
-                            {
-                                var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == "PI" && ter.Bound == true);
-                                if (term != null)
-                                {
-                                    report.selectedlimit = term.TermLimit.ToString();
-                                    report.Premium = term.Premium.ToString();
-                                }
-                                else
-                                {
-                                    report.selectedlimit = "0";
-                                    report.Premium = "0";
-                                }
-                                report.Inceptiondate = agreement.InceptionDate.ToString();
 
+                            if (cp.Agreements.Count > 0)
+                            {
+
+                                foreach (ClientAgreement agreement in cp.Agreements)
+                                {
+
+                                    var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == "PI" && ter.Bound == true);
+                                    if (term != null)
+                                    {
+                                        report.selectedlimit = term.TermLimit.ToString();
+                                        report.Premium = term.Premium.ToString();
+                                        report.Inceptiondate = agreement.InceptionDate.ToString();
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        report.selectedlimit = "0";
+                                        report.Premium = "0";
+                                        report.Inceptiondate = agreement.InceptionDate.ToString();
+                                        break;
+
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                report.selectedlimit = "0";
+                                report.Premium = "0";
+                                report.Inceptiondate = "0";
                             }
                             reportset.Add(report);
+
                         }
                     }
                     catch (Exception ex)
@@ -895,66 +901,52 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(Report));
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(PIReport));
 
                 try
                 {
-                    foreach(PropertyDescriptor propertyDescriptor in props)
+                    for (int i = 0; i < props.Count; i++)
                     {
-                     //   if (propertyDescriptor.Attributes.Contains(new DontShowMe())) continue;
-                        table.Columns.Add(propertyDescriptor.Name, typeof(string));
-
+                        PropertyDescriptor prop = props[i];
+                        table.Columns.Add(prop.Name, prop.PropertyType);
+                        table.Columns.Remove("Id");
                     }
-                    //for (int i = 0; i < props.Count; i++)
-                    //{
-                    //    PropertyDescriptor prop = props[i];
-                    //    if (PropertyDescriptor.Attributes.Contains(new DontShowMe())) continue;
-
-                    //    table.Columns.Add(propertyDescriptor.Name, type);
-                    //    table.Columns.Add(prop.Name, prop.PropertyType);
-                    //}
                 }
                 catch (Exception ex)
                 {
 
                 }
 
-                //object[] values = new object[props.Count];
+                object[] values = new object[props.Count];
                 object[] values1 = new object[table.Columns.Count];
-                try
-                {
-                    foreach (var item in reportset)
+               
+                    foreach (PIReport item in reportset)
                     {
                         var count = 0;
-                        //var value = item[Value];
-                       // for (int i = 0; i < item.l; i++)
-                       // {
-                       //try 
-                       //{
-                       //    var val = item[i];
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            try
+                            {
+                                var val = props[i].GetValue(item);
 
-                        //    if (val != null && props[i].Name != "Id")
-                        //    {
-                        //        values1[count] = val;
-                        //        count++;
-                        //    }
+                                if (val != null)
+                                {
+                                    values1[count] = val;
+                                    count++;
+                                }
 
-                        //}
-                        //catch (Exception ex)
-                        //{
+                            }
+                            catch (Exception ex)
+                            {
 
-                        //}
-                        // }
-                        table.Rows.Add(item);
+                            }
+                        }
+                        table.Rows.Add(values1);
                     }
-                }
-                catch (Exception ex)
-                {
-
-                }
 
 
-                return View(table);
+
+                    return View(table);
             }
             catch (Exception ex)
             {

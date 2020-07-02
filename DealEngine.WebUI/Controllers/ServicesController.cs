@@ -3136,9 +3136,9 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.FirstName = model.FirstName.Trim();
+                                    userdb.LastName = model.LastName.Trim();
+                                    userdb.FullName = userdb.FirstName + " " + userdb.LastName;
                                     userdb.Email = model.Email;
                                     await uow.Commit();
                                 }
@@ -3160,10 +3160,29 @@ namespace DealEngine.WebUI.Controllers
 
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
-                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                            userdb.FirstName = model.FirstName;
-                            userdb.LastName = model.LastName;
-                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            string firstname = model.FirstName.Trim();
+                            string lastname = model.LastName.Trim();
+                            string username = (firstname + "_" + lastname).Replace(" ", "");
+                            User user2 = null;
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = (firstname + "_" + lastname).Replace(" ", "");
+                            }
+                            userdb = new User(currentUser, Guid.NewGuid(), username);
+                            userdb.FirstName = firstname;
+                            userdb.LastName = lastname;
+                            userdb.FullName = firstname + " " + lastname;
                             userdb.Email = model.Email;
                             await _userService.Create(userdb);
                         }
@@ -3178,7 +3197,7 @@ namespace DealEngine.WebUI.Controllers
                     var organisationName = "";
                     if (orgTypeName == "Person - Individual" && model.FirstName != null)
                     {
-                        organisationName = model.FirstName + " " + model.LastName;
+                        organisationName = model.FirstName.Trim() + " " + model.LastName.Trim();
                     }
                     else
                     {
@@ -3408,9 +3427,9 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.FirstName = model.FirstName.Trim();
+                                    userdb.LastName = model.LastName.Trim();
+                                    userdb.FullName = userdb.FirstName + " " + userdb.LastName;
                                     userdb.Email = model.Email;
                                     await uow.Commit();
                                 }
@@ -3443,12 +3462,33 @@ namespace DealEngine.WebUI.Controllers
 
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
-                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                            userdb.FirstName = model.FirstName;
-                            userdb.LastName = model.LastName;
-                            userdb.FullName = model.FirstName + " " + model.LastName;
+
+                            string firstname = model.FirstName.Trim();
+                            string lastname = model.LastName.Trim();
+                            string username = (firstname + "_" + lastname).Replace(" ", "");
+                            User user2 = null;
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = (firstname + "_" + lastname).Replace(" ", "");
+                            }
+                            userdb = new User(currentUser, Guid.NewGuid(), username);
+                            userdb.FirstName = firstname;
+                            userdb.LastName = lastname;
+                            userdb.FullName = firstname + " " + lastname;
                             userdb.Email = model.Email;
                             await _userService.Create(userdb);
+
                         }
                         else
                         {
@@ -3476,7 +3516,7 @@ namespace DealEngine.WebUI.Controllers
                     var organisationName = "";
                     if (orgTypeName == "Person - Individual")
                     {
-                        organisationName = model.FirstName + " " + model.LastName;
+                        organisationName = model.FirstName.Trim() + " " + model.LastName.Trim();
                     }
                     else
                     {
