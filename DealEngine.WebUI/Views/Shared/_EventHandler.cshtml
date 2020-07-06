@@ -1,4 +1,4 @@
-<script type="text/javascript">
+﻿<script type="text/javascript">
     $(function () {
         //get all forms on load
         var forms = document.getElementsByClassName('is-valid');
@@ -125,6 +125,14 @@
     function TriggerHandler(obj, Name, Value, Rule, DataItem) {
         try {
             //all rules go here
+            if (obj.type == "checkbox") {
+                if (obj.checked === true) {
+                    Value = "1";
+                } else {
+                    Value = "2";
+                }
+            }
+
             DefaultRule(Value, Name);
             if (Rule === "Clear") {
                 if (Value == 2) {
@@ -230,9 +238,6 @@
         //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
-            if (additionalactivityId == "CUS0029") {
-                additionalactivityId = "CUS0018";
-            }
             if (activities.options[i].selected === true) {
                 hasItem = true;
                 element = document.getElementById(additionalactivityId);

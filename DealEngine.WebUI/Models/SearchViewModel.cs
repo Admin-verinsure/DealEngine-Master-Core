@@ -28,7 +28,7 @@ namespace DealEngine.WebUI.Models
             {
                 SearchOptions.Add(new SelectListItem
                 {
-                    Text = "Advisory Name",
+                    Text = "Advisor Name",
                     Value = "Advisory"
                 });
             }

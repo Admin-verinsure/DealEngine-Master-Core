@@ -160,7 +160,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageClient(Guid Id)
         {
-            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            ProgrammeInfoViewModel model;
             User user = null;
             List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
             List<Organisation> Owners = new List<Organisation>();
@@ -169,12 +169,14 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                
                 var clientProgrammeList = await _programmeService.GetClientProgrammesForProgramme(Id);
+                model = new ProgrammeInfoViewModel(null, clientProgrammeList.FirstOrDefault().BaseProgramme, null);
                 foreach (var programme in clientProgrammeList)
                 {
                     Ownerlist.Add(programme.Owner);
                     clientProgrammes.Add(programme);
-                    model.programmeName = programme.BaseProgramme.Name;
+                    model.Name = programme.BaseProgramme.Name;
 
                 }
                 Ownerlist.Select(x => x.Name).Distinct();
@@ -184,9 +186,7 @@ namespace DealEngine.WebUI.Controllers
                     Owners.Add(owner);
                 }
                 //Notes.Select(x => x.Author).Distinct();
-                model.Id = Id;
                 model.Owner = Owners;
-                model.clientProgrammes = clientProgrammes;
 
                 ViewBag.Title = "Term Sheet Template ";
                 return View(model);
@@ -560,38 +560,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> OwnerProgrammes(Guid ownerId, Guid Id)
-        //{
-        //    User user = null;
-        //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-        //    List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
-        //    List<Organisation> Owners = new List<Organisation>();
-
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        var programeListByOwner = await _programmeService.GetClientProgrammesByOwner(ownerId);
-        //        foreach (var programme in programeListByOwner)
-        //        {
-        //            clientProgrammes.Add(programme);
-
-        //        }
-
-        //        model.OwnerId = ownerId;
-        //        model.Id = Id;
-        //        model.clientProgrammes = clientProgrammes;
-        //        ViewBag.Title = "Term Sheet Template ";
-        //        return View(model);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-
         [HttpGet]
         public async Task<IActionResult> ClientProgrammeDetails(Guid programmeId, Guid Id,Guid ownerId)
         {
@@ -625,23 +593,20 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
-            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            ProgrammeInfoViewModel model;
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-                model.Id = programme.Id;
-                model.BrokerContactUser = programme.BrokerContactUser;
-                model.EGlobalBranchCode = programme.EGlobalBranchCode;
-                model.EGlobalClientNumber = programme.EGlobalClientNumber;
-                model.clientprogramme = programme;
-                model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
+                model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
+                model.BrokerContactUser = clientProgramme.BaseProgramme.BrokerContactUser;
+                model.EGlobalSubmissions = clientProgramme.ClientAgreementEGlobalSubmissions;
 
-                if (programme.ClientAgreementEGlobalSubmissions != null)
+                if (clientProgramme.ClientAgreementEGlobalSubmissions != null)
                 {
-                    foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
+                    foreach (EGlobalSubmission esubmission in clientProgramme.ClientAgreementEGlobalSubmissions)
                     {
                         string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
 
@@ -670,9 +635,9 @@ namespace DealEngine.WebUI.Controllers
 
                     }
                 }
-                //var active = await _httpClientService.GetEglobalStatus();
-                //model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
-
+                var active = await _httpClientService.GetEglobalStatus();
+                model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
+                
                 return View(model);
             }
             catch (Exception ex)
@@ -840,7 +805,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 Programme programme = await _programmeService.GetProgramme(Id);
                 model.Id = Id;
-                model.programmeName = programme.Name;
+                model.Name = programme.Name;
                 ViewBag.Title = "Term Sheet Template ";
                 return View(model);
             }
@@ -855,38 +820,38 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
-            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            var rules = new List<Rule>();
-            User user = null;
+            return NoContent();
+            //ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            //var rules = new List<Rule>();
+            //User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgramme(Id);
-                model.Id = Id;
-                model.ProductId = productId;
+            //try
+            //{
+            //    user = await CurrentUser();
+            //    Programme programme = await _programmeService.GetProgramme(Id);
+            //    model.Id = Id;
 
-                foreach (var programmeProduct in programme.Products)
-                {
-                    var product = await _productService.GetProductById(programmeProduct.Id);
+            //    foreach (var programmeProduct in programme.Products)
+            //    {
+            //        var product = await _productService.GetProductById(programmeProduct.Id);
 
-                    foreach (var rule in product.Rules)
-                    {
-                        rules.Add(rule);
-                    }
-                }
+            //        foreach (var rule in product.Rules)
+            //        {
+            //            rules.Add(rule);
+            //        }
+            //    }
 
-                model.Rules = rules;
+            //    model.Rules = rules;
 
-                ViewBag.Title = "Manage Product Rules";
+            //    ViewBag.Title = "Manage Product Rules";
 
-                return View("ProductRules", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            //    return View("ProductRules", model);
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpPost]
@@ -919,7 +884,6 @@ namespace DealEngine.WebUI.Controllers
                         Console.WriteLine(ex.Message);
                     }
                 }
-                model.Rules = rules;
 
                 ViewBag.Title = "Manage Product Rules";
                 return Json(true);
@@ -973,27 +937,12 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> EditProgramme(Guid Id)
-        {
-            ProgrammeInfoViewModel model = await GetProgrammeInfoViewModel();
+        {            
             User user = null;
 
             try
             {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgrammeById(Id);
-                //model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;                              
-                model.Id = Id;
-                model.programmeName = programme.Name;
-                model.IsPublic = programme.IsPublic;
-                model.TaxRate = programme.TaxRate;
-                model.UsesEGlobal = programme.UsesEGlobal;
-                model.StopAgreement = programme.StopAgreement;
-                model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
-                model.HasSubsystemEnabled = programme.HasSubsystemEnabled;
-                model.Declaration = programme.Declaration;
-                model.StopAgreementMessage = programme.StopAgreementMessage;
-                model.NoPaymentRequiredMessage = programme.NoPaymentRequiredMessage;
-                model.ProgrammeClaim = programme.Claim;
+                ProgrammeInfoViewModel model = await GetProgrammeInfoViewModel(Id);
 
                 return View("EditProgramme", model);
             }
@@ -1013,30 +962,29 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgramme()
         {
-            ProgrammeInfoViewModel model = await GetProgrammeInfoViewModel();
+            ProgrammeInfoViewModel model = await GetProgrammeInfoViewModel(Guid.Empty);
             model.ProductViewModel = await GetProductViewModel();
             model.InformationBuilderViewModel = await GetInformationBuilderViewModel();
             return View(model);
         }
 
-        private async Task<ProgrammeInfoViewModel> GetProgrammeInfoViewModel()
-        {
-            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            var brokers = await _userService.GetBrokerUsers();            
-            var brokerList = new List<SelectListItem>();
-            foreach (var broker in brokers)
+        private async Task<ProgrammeInfoViewModel> GetProgrammeInfoViewModel(Guid id)
+        {            
+            var brokers = await _userService.GetBrokerUsers();
+            if(id == Guid.Empty)
             {
-                brokerList.Add(
-                    new SelectListItem
-                    {
-                        Text = broker.FirstName + " " + broker.Email,
-                        Value = broker.Id.ToString(),
-                        Selected = false
-                    });
+                ProgrammeInfoViewModel model = new ProgrammeInfoViewModel(brokers, null, null);
+                return model;
             }
-            model.Brokers = brokerList;
-            
-            return model;
+            else
+            {
+                Programme programme = await _programmeService.GetProgrammeById(id);
+                
+                ProgrammeInfoViewModel model = new ProgrammeInfoViewModel(brokers, programme, null);
+                model.Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;
+                return model;
+            }
+
         }
 
         private async Task<InformationBuilderViewModel> GetInformationBuilderViewModel()
@@ -1132,44 +1080,62 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProgramme(ProgrammeInfoViewModel model)
+        public async Task<IActionResult> EditProgramme(IFormCollection collection)
         {
             User user = null;
-
+            ICollection<string> keys= collection.Keys; 
             try
             {
-                Programme programme = await _programmeService.GetProgrammeById(model.Id);
-                user = await CurrentUser();
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    programme.Name = model.programmeName;
-                    
-                    programme.IsPublic = model.IsPublic;
-                    programme.UsesEGlobal = model.UsesEGlobal;
-                    programme.TaxRate = model.TaxRate;
-                    programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
-                    programme.HasSubsystemEnabled = model.HasSubsystemEnabled;
-                    programme.StopAgreement = model.StopAgreement;
-                    programme.StopAgreementMessage = model.StopAgreementMessage;
-                    programme.Declaration = model.Declaration;
-                    programme.NoPaymentRequiredMessage = model.NoPaymentRequiredMessage;
-                    //programme.BrokerContactUser = model.BrokerContactUser;
-                    programme.Claim = "";
-                    if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
-                    {
-                        programme.Claim = model.ProgrammeClaim;
-                        Claim claim = new Claim(programme.Claim, programme.Claim);
-                        await _claimService.AddClaim(claim);
-                    }
-                    if (model.StopAgreement)
-                    {
-                        programme.StopAgreementDateTime = DateTime.UtcNow;
-                    }
-                    programme.LastModifiedBy = user;
-                    programme.LastModifiedOn = DateTime.UtcNow;
 
-                    await uow.Commit();
+                Programme programme =null; 
+                user = await CurrentUser();
+                foreach (var key in keys)
+                {
+                    var field = key.Split('.').LastOrDefault();
+                    if (field == "Id")
+                    {
+                        programme = await _programmeService.GetProgrammeById(Guid.Parse(collection["Id"]));
+                    }
+                    else if(field == "BrokerContactUser")
+                    {
+                        programme.BrokerContactUser = await _userService.GetUserById(Guid.Parse(collection[key]));
+                    }
+                    else
+                    {
+                        var propField = programme.GetType().GetProperty(field);
+                        if (propField.PropertyType.Name == "Decimal")
+                        {
+                            var total = decimal.Parse(collection[key]);
+                            propField.SetValue(programme, total);                            
+                        }
+                        else if(propField.PropertyType.Name == "Boolean")
+                        {
+                            var value = collection[key].ToString().Split(',').FirstOrDefault();                            
+                            propField.SetValue(programme, bool.Parse(value));                        
+                        }
+                        else
+                        {
+                            if (key == "Claim")
+                            {
+                                if (string.IsNullOrWhiteSpace(collection[key].ToString()))
+                                {
+
+                                    await _claimService.RemoveClaim(programme.Claim);
+                                }
+                                else
+                                {
+                                    Claim claim = new Claim(collection[key].ToString(), collection[key].ToString());
+                                    await _claimService.AddClaim(claim);
+                                }
+                            }
+                            propField.SetValue(programme, collection[key].ToString());
+                        }
+                            
+                    }
+
                 }
+                programme.LastModified(user);
+                await _programmeService.Update(programme);
 
                 return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
             }
@@ -1270,73 +1236,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> getselectedParty(Guid informationId)
-        {
-            List<string> userEmail = new List<string>();
-            PartyUserViewModel model = new PartyUserViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgrammeById(informationId);
-
-                foreach (var email in programme.UISIssueNotifyUsers)
-                {
-                    userEmail.Add(email.Email);
-                }
-
-                return Json(userEmail);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> selectedParty(Guid selectedParty, Guid informationId)
-        {
-            List<PartyUserViewModel> userPartyList = new List<PartyUserViewModel>();
-            PartyUserViewModel model = new PartyUserViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgrammeById(informationId);
-                Organisation organisation = await _organisationService.GetOrganisation(selectedParty);
-
-                if ("organisation" != null)
-                {
-                    List<User> userList = await _userService.GetAllUserByOrganisation(organisation);
-
-                    foreach (var userOrg in userList)
-                    {
-                        userPartyList.Add(new PartyUserViewModel()
-                        {
-                            Name = userOrg.FullName,
-                            Id = userOrg.Id.ToString(),
-                            Email = userOrg.Email,
-                        });
-                    }
-                }
-
-                return Json(userPartyList);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }                 
-
+        }          
 
         [HttpGet]
         public async Task<IActionResult> IssueNotification(Guid Id, String Title)
@@ -1349,11 +1249,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
-
-                model.Id = Id;
-                model.Name = Title;
-                model.Parties = programme.Parties;
-                //model.OrgUser = programme.UISIssueNotifyUsers;
+                model = new ProgrammeInfoViewModel(null, programme, null);
                 List<SelectListItem> usrlist = new List<SelectListItem>();
                 foreach(var org in programme.Parties)
                 {
@@ -1369,17 +1265,7 @@ namespace DealEngine.WebUI.Controllers
                         });
                     }
                 }
-                //foreach (var useroption in programme.UISIssueNotifyUsers)
-                //{
-                //    usrlist.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Text = useroption.FullName,
-                //        Value = useroption.Email,
-                //    });
 
-                //}
-                model.OrgUser = usrlist;
                 ViewBag.Title = "Add/Edit Programme Email Template";
 
                 return View("IssueNotification", model);

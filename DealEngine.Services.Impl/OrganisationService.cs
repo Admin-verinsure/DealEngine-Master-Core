@@ -96,6 +96,11 @@ namespace DealEngine.Services.Impl
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
 		}
 
+		public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
+		{
+			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed==true);
+		}
+
 		public async Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();
@@ -103,6 +108,7 @@ namespace DealEngine.Services.Impl
 			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal"
 				|| ia.InsuranceAttributeName == "Subsidiary"
 				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
+				|| ia.InsuranceAttributeName == "OtherConsultingBusiness"
 				|| ia.InsuranceAttributeName == "JointVenture"
 				|| ia.InsuranceAttributeName == "Mergers"
 				|| ia.InsuranceAttributeName == "Advisor"
@@ -124,14 +130,7 @@ namespace DealEngine.Services.Impl
 		{
 			var organisations = new List<Organisation>();
 			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal"
-				|| ia.InsuranceAttributeName == "Subsidiary"
-				|| ia.InsuranceAttributeName == "PreviousConsultingBusiness"
-				|| ia.InsuranceAttributeName == "JointVenture"
-				|| ia.InsuranceAttributeName == "Mergers"
-				|| ia.InsuranceAttributeName == "Advisor"
-				|| ia.InsuranceAttributeName == "NominatedRepresentative"
-				|| ia.InsuranceAttributeName == "project management personnel"))
+			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
 			{
 				foreach (var org in IA.IAOrganisations)
 				{
@@ -144,7 +143,11 @@ namespace DealEngine.Services.Impl
 			return organisations;
 		}
 
-	}
+        public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
+        {
+			return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
+		}
+    }
 
 }
 

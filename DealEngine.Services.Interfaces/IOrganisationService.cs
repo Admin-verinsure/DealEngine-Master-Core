@@ -15,10 +15,11 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetOrganisation(Guid organisationId);
         Task<Organisation> GetOrganisationByName(string organisationName);
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
+        Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail);
         Task UpdateOrganisation(Organisation organisation);
         Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet);
         Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet);
-       
+        Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
     }
 }
 

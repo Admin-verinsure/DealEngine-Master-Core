@@ -35,5 +35,14 @@ namespace DealEngine.Services.Impl
         {
             return await _claimsRepository.FindAll().FirstOrDefaultAsync(c => c.Value == claimName);
         }
+
+        public async Task RemoveClaim(string claimName)
+        {
+            var claim = await GetTemplateByName(claimName);
+            if(claim != null)
+            {
+                await _claimsRepository.RemoveAsync(claim);
+            }
+        }
     }
 }

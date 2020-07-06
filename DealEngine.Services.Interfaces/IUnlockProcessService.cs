@@ -3,10 +3,11 @@ using DealEngine.Domain.Entities;
 
 namespace DealEngine.Services.Interfaces
 {
-	public interface IChangeProcessService
+	public interface IUnlockProcessService
     {
 
-        Task CreateChangeReason(User createdBy,ChangeReason changeReason);
+        Task CreateUnlockReason(User createdBy, UnlockReason changeReason);
+
 
     }
 }

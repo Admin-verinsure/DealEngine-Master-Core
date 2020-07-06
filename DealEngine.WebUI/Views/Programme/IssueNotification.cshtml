@@ -31,26 +31,9 @@
                         @Html.HiddenFor(m => m.Id)
                         @Html.HiddenFor(m => m.Name)
 
-                        <div class="form-group">
-                            <select onchange="selectorgUser()" class="form-control b" id="selectParty" name="selectedparty">
-                                <option selected="selected" value="">-- Select Party --</option>
-                                @foreach (var blloc in Model.Parties)
-                                {
-                                    <option value="@blloc.Id"> @blloc.Name</option>
-                                }
-                            </select>
-                        </div>
+                        
                         <div id="div1"></div>
-                        @*<div id="OrgUserSection" class="form-group">
 
-            <select class="chosen-select form-control b" data-placeholder="Choose User to notify..." id="partyuser" multiple>
-                @foreach (var blloc in Model.OrgUser)
-                {
-                    <option value="@blloc.Value"> @blloc.Text</option>
-                }
-            </select>
-
-        </div>*@
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-success btn-sm">save</button>
@@ -65,21 +48,5 @@
 
 
 @section pagespecific {
-<script>
-            $(".chosen-select").chosen({ width: "95%" });
-
-</script>
-    @*<script>
-       $("#partyuser option").each(function(item){
-			var element =  $(this) ; 
-			if (element.data("tag") != selected){
-				element.hide() ; 
-			}else{
-				element.show();
-			}
-		}) ; 
-    </script>*@
-
     @await Html.PartialAsync("_ProgrammeScripts")
-
 }

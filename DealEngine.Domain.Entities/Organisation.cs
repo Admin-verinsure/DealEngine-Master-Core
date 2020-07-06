@@ -14,7 +14,7 @@ namespace DealEngine.Domain.Entities
         OrganisationType _organisationType;
 
         #region Constructors
-        protected Organisation() : base(null) { }
+        public Organisation() : base(null) { }
 
         protected Organisation(User createdBy)
             : base(createdBy)
@@ -214,8 +214,8 @@ namespace DealEngine.Domain.Entities
         public virtual string TradingName { get; set; }
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
-
-
+        public virtual IList<AuditHistory> AuditHistory { get; set; }
+       
         #endregion
 
         #region Opperations

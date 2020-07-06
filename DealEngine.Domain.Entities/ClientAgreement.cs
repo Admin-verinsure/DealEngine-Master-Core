@@ -47,7 +47,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<ClientAgreementReferral> ClientAgreementReferrals { get; protected set; }
         public virtual IList<AuditLog> ClientAgreementAuditLogs { get; protected set; }
         public virtual IList<ClientAgreementEndorsement> ClientAgreementEndorsements { get; protected set; }
-        public virtual string InsuredName { get; protected set; }
+        public virtual string InsuredName { get;  set; }
         public virtual bool CustomInceptionDate { get; set; }
         public virtual string AgreementReference { get; set; }
         public virtual string ReferenceId { get; set; }
@@ -102,6 +102,12 @@ namespace DealEngine.Domain.Entities
         public virtual string issuetobrokerby { get; set; }
         public virtual string issuetobrokerto { get; set; }
         public virtual User SelectedBroker { get; set; }
+        public virtual bool IsUnbind { get; set; }
+        public virtual string UnbindNotes { get; set; }
+        public virtual DateTime UnbindEffectiveDate { get; set; }
+        public virtual User UnbindByUserID { get; set; }
+        public virtual bool IsPolicyDocSend { get; set; }
+        public virtual DateTime DocIssueDate { get; set; }
 
         public virtual List<Document> GetDocuments()
         {

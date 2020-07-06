@@ -1,4 +1,4 @@
-﻿@model DealEngine.WebUI.Models.InformationViewModel
+@model DealEngine.WebUI.Models.InformationViewModel
 
 <div id="content" style="background-color: #A6E2EF">
     <!-- widget grid -->
@@ -1145,7 +1145,7 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     @await Html.PartialAsync("_InformationWizardScripts")
     @await Html.PartialAsync("_DataTableScripts")
-    @await Html.PartialAsync("_PrefabScripts")
+    @*@await Html.PartialAsync("_PrefabScripts")*@
     <script>
 
         $(document).ready(function () {
@@ -1174,6 +1174,9 @@
                 }
                 $('.btn-sm').addClass("hidden");
                 $("#accordion :input").prop("disabled", true);
+                $('.btn-success').removeClass("hidden");
+                $('.btn-success').prop("disabled", false);
+
             }
         });
 
@@ -1198,6 +1201,7 @@
                 $('#advisoryModal').modal('hide');
             }
         }
+
 
     </script>
 

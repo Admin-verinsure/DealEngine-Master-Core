@@ -174,7 +174,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
                     {
                         intnumberofadvisors += 1;
 
@@ -335,6 +335,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 agreement.RetroactiveDate = strretrodate;
             }
+
+            agreement.InsuredName = informationSheet.Owner.Name;
 
             string auditLogDetail = "NZFSG PI UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
