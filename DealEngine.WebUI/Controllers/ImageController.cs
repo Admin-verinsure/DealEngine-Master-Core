@@ -121,7 +121,7 @@ namespace DealEngine.WebUI.Controllers
                     var filename = model.Name + extension;
                     string path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
 
-                    try
+                    try //save thumbnail
                     {
                         Stream stream = model.Image.OpenReadStream();
                         System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
@@ -141,13 +141,14 @@ namespace DealEngine.WebUI.Controllers
                         await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                     }
 
-                    try
+                    try //save Image
                     {
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
                         }
 
+                        //save Record of Image
                         CKImage newCKImage = new CKImage
                         {
                             Name = filename,
@@ -155,7 +156,17 @@ namespace DealEngine.WebUI.Controllers
                             ThumbPath = "_" + filename
                         };
 
-                        await _ckimageRepository.AddAsync(newCKImage);
+                        // check if there is a record with this filename already if there is then take action?
+                        CKImage dupe = await _ckimageService.GetCKImage(model.Image.FileName);
+                        if (dupe != null && dupe.Path == newCKImage.Path)
+                        {
+                            // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                            // I.e change user, change last modified
+                        }
+                        else
+                        {
+                            await _ckimageRepository.AddAsync(newCKImage);
+                        }
 
                     }
 
@@ -234,7 +245,17 @@ namespace DealEngine.WebUI.Controllers
                         Path = name,
                         ThumbPath = "_" + name
                     };
-                    await _ckimageRepository.AddAsync(newCKImage);
+
+                    CKImage dupe = await _ckimageService.GetCKImage(file.FileName);
+                    if (dupe != null && dupe.Path == newCKImage.Path)
+                    {
+                        // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                    }
+                    else
+                    {
+                        await _ckimageRepository.AddAsync(newCKImage);
+                    }
+
                     return json;
                 }
 
