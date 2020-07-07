@@ -9,6 +9,7 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using DealEngine.WebUI.Models;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
@@ -21,6 +22,7 @@ using ServiceStack;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Net;
+using FastReport.Export.PdfSimple.PdfObjects;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -36,7 +38,6 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
         IAppSettingService _appSettingService;
-
         //      string _appData = "~/App_Data/";
         //string _uploadFolder = "uploads";
 
@@ -78,15 +79,15 @@ namespace DealEngine.WebUI.Controllers
                 {
                     extension = ".html";
                     string html = _fileService.FromBytes(doc.Contents);
-                    string html2 = html; 
-                    
+                    string html2 = html;
+
                     // Image resize/positioning
                     string centerImage = "<figure class=\"image\"><img src=\"";
                     string centerResize = "<figure class=\"image image_resized\" style=";
                     string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
                     string leftResize = "<figure class=\"image image-style-align-left image_resized\" style=";
                     string leftResize2 = "<figure class=\"image image_resized image-style-align-left\" style=";
-                    string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";                    
+                    string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
                     string rightResize = "<figure class=\"image image-style-align-right image_resized\" style=";
                     string rightResize2 = "<figure class=\"image image_resized image-style-align-right\" style=";
 
@@ -97,7 +98,8 @@ namespace DealEngine.WebUI.Controllers
                     // array of elements that need
                     string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
 
-                    if (!(format == "docx"))
+                    // Reason you check the Content Type and then the format is for when you want a docx from html
+                    if (!(format == "docx") & !(format == "pdf"))
                     {
                         foreach (string ele in badHtml)
                         {
@@ -126,7 +128,7 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     int widthIndex = ele.Length;                                                            // length of figure tag up until style=
                                     string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in % plus extra characters sometimes which we delete now                       
-                                    width = width.Replace("%", "");                                                          
+                                    width = width.Replace("%", "");
                                     width = width.Replace("\"", "");
                                     width = width.Replace(";", "");
                                     width = width.Replace(">", "");
@@ -201,7 +203,7 @@ namespace DealEngine.WebUI.Controllers
                         docContents = _fileService.ToBytes(html);
                     }
 
-                    if (format == "docx")
+                    else if (format == "docx")
                     {
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
@@ -209,7 +211,7 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-                                
+
                                 // Border Fix (show & no border use cases)
                                 if (html.Contains(showBorder))
                                 {
@@ -233,7 +235,7 @@ namespace DealEngine.WebUI.Controllers
                                             if (ele.Equals(centerImage))
                                             {
                                                 html2 = regex.Replace(html2, "<div style=\"text-align:center\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1); 
+                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
                                             }
                                             else if (ele.Equals(leftImage))
                                             {
@@ -307,7 +309,7 @@ namespace DealEngine.WebUI.Controllers
                                             if (ele.Equals(centerResize) == true)
                                             {
                                                 html2 = regex.Replace(html2, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1); 
+                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
                                             }
                                             else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
                                             {
@@ -338,7 +340,14 @@ namespace DealEngine.WebUI.Controllers
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
                     }
+
                 }
+
+                else if (doc.ContentType == MediaTypeNames.Application.Pdf)
+                {
+                    return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
+                }
+
                 return File(docContents, doc.ContentType, doc.Name + extension);
             }
             catch (Exception ex)
