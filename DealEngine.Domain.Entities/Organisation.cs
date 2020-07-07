@@ -7,9 +7,11 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using DealEngine.Domain.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class Organisation : EntityBase, IAggregateRoot
     {
         #region Constructors
@@ -119,34 +121,29 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement
         {
             get;
             set;
         }
 
-        [Display(Name = "This Person has retired or deceased ?")]
         public virtual bool IsRetiredorDecieved
         {
             get;
             set;
         }
-
-        [JsonIgnore]
         public virtual IList<Boat> Boat
         {
             get;
             set;
         }
 
-        [JsonIgnore]
         public virtual IList<string> Marinaorgmooredtype
         {
             get;
             set;
         }
-        [JsonIgnore]
+
         public virtual OrganisationType OrganisationType
         {
             get;
@@ -163,7 +160,6 @@ namespace DealEngine.Domain.Entities
         public virtual string DesignLicensed { get; set; }
         public virtual string SiteLicensed { get; set; }
         public virtual bool IsRegisteredLicensed { get; set; }
-        [JsonIgnore]
         public virtual Location Location { get; set; }
         public virtual string Description { get; set; }
         public virtual string Phone { get; set; }
@@ -174,7 +170,6 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsReinsurer { get; set; }
         public virtual bool IsTC { get; set; }
         public virtual bool IsApproved { get; set; }
-        [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
         public virtual string Qualifications { get; set; }
         public virtual bool IsNZIAmember { get; set; }
         public virtual string NZIAmembership { get; set; }
@@ -200,15 +195,10 @@ namespace DealEngine.Domain.Entities
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
 
-        [Display(Name = "Registered Status AFA,RFA or N/A")]
         public virtual string RegisteredStatus { get; set; }
         public virtual bool ConfirmAAA { get; set; }
-        
-        [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
-        [JsonIgnore]
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
-        [Display(Name = "Is a Principal Advisor?")]
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
         public virtual string MyCRMId { get; set; }
@@ -229,7 +219,6 @@ namespace DealEngine.Domain.Entities
         }
         #endregion
 
-        [JsonIgnore]
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)

@@ -2410,9 +2410,9 @@ namespace DealEngine.WebUI.Controllers
             {                   
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
                 User orgUser = await _userService.GetUserByEmail(organisation.Email);                
-                JsonObjects.Add(orgUser);
+                //JsonObjects.Add(orgUser);
                 JsonObjects.Add(organisation);
-                string jsonObj = GetSerializedModel(JsonObjects);
+                string jsonObj = GetSerializedModel(organisation);
                 return Json(jsonObj);
             }
             catch(Exception ex)
