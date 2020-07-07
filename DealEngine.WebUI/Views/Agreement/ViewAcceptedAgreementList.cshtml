@@ -63,6 +63,15 @@
                                         @*<a href="~/Agreement/ReRunUWM?ClientId=@item.ClientInformationSheet.Programme.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwrighting Module</a>*@
                                         <a href="~/Agreement/ReRunUWM/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Run Underwriting Module</a>
                                     </li>
+
+                                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                                             (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
+                                        </li>
+                                    }
+
                                 }
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
@@ -120,6 +129,15 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <li class="nav-item">
                                         <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Agreement</a>
                                     </li>
+
+                                    @if (item.ProgrammeName == "NZFSG Programme")
+                                    {
+                        <li class="nav-item">
+                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
+                        </li>
+                                    }
+                                    
+
                                 }
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
@@ -185,6 +203,9 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 {
                                     <li class="nav-item">
                                         <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Agreement</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
                                     </li>
                                 }
 

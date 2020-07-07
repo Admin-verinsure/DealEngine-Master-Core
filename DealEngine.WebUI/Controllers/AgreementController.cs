@@ -808,6 +808,54 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UnbindAgreement(IFormCollection formCollection)
+        {
+            User user = null;
+            var url = "";
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(Guid.Parse(formCollection["ClientAgreementId"]));
+                user = await CurrentUser();
+
+                ClientProgramme programme = agreement.ClientInformationSheet.Programme;
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
+                        (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced" || agreement.Status == "Cancel Pending"))
+                    {
+                        agreement.Status = "Quoted";
+                        agreement.IsUnbind = true;
+                        agreement.UnbindNotes = formCollection["DeclineNotes"];
+                        agreement.UnbindEffectiveDate = DateTime.UtcNow;
+                        agreement.UnbindByUserID = user;
+
+                    }
+
+                    agreement.ClientInformationSheet.Status = "Submitted";
+                    string auditLogDetail = "Agreement has been confirmed Unbind by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                    await uow.Commit().ConfigureAwait(false);
+
+                }
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
+
+                //url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+
+                //return Json(new { url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+        [HttpPost]
         public async Task<IActionResult> ConfirmCancellAgreement(AgreementViewModel clientAgreementModel)
         {
             User user = null;
@@ -899,6 +947,38 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
             
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UnbindAgreement(Guid id)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+                Organisation insured = answerSheet.Owner;
+                ClientProgramme programme = answerSheet.Programme;
+
+                model.InformationSheetId = answerSheet.Id;
+                model.ClientAgreementId = agreement.Id;
+                model.ClientProgrammeId = programme.Id;
+
+                model.DeclineNotes = agreement.InsurerDeclinedComment;
+
+                ViewBag.Title = "Unbind Agreement ";
+
+                return View("UnbindAgreement", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         [HttpPost]
@@ -1449,6 +1529,7 @@ namespace DealEngine.WebUI.Controllers
                     };
 
                     // Populate the ViewModel
+                    model.ProgrammeId = agreement.ClientInformationSheet.Programme.BaseProgramme.Id;
                     model.InsuranceRoles = insuranceRoles;
                     model.ProductName = agreement.Product.Name;
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
@@ -1514,7 +1595,7 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && (sheet.Status == "Started" || sheet.Status == "Not Started"))
                 {
                    return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
@@ -2282,7 +2363,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ByPassPayment (IFormCollection collection)
+        public async Task<IActionResult> ByPassPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -2295,16 +2376,16 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 ClientProgramme programme = sheet.Programme;
-                user = await CurrentUser();                
+                user = await CurrentUser();
                 var status = "Bound";
                 if (sheet.Programme.BaseProgramme.UsesEGlobal)
                 {
                     status = "Bound and invoice pending";
                 }
-                
+
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted==null && acagreement.Bound).Count() > 0)
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null && acagreement.Bound).Count() > 0)
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
                         var documents = new List<SystemDocument>();
@@ -2375,12 +2456,23 @@ namespace DealEngine.WebUI.Controllers
                                 if (emailTemplate != null)
                                 {
                                     await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                            agreement.DocIssueDate = DateTime.Now;
+                                            await uow.Commit();
+                                        }
+                                    }
                                 }
                             }
                             //send out agreement bound notification email
-                            await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                           await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
-                    } else
+                    }
+                    else
                     {
                         agreement.DateDeleted = DateTime.Now;
                     }
@@ -2392,10 +2484,10 @@ namespace DealEngine.WebUI.Controllers
                     if (programme.InformationSheet.Status != status)
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit();
+                        uow.Commit();
                     }
                 }
-                
+
                 var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
                 return Json(new { url });
 
@@ -2480,6 +2572,15 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
                                 }
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    if (!agreement.IsPolicyDocSend)
+                                    {
+                                        agreement.IsPolicyDocSend = true;
+                                        agreement.DocIssueDate = DateTime.Now;
+                                        await uow.Commit();
+                                    }
+                                }
                             }
                         }
                     }
@@ -2526,7 +2627,11 @@ namespace DealEngine.WebUI.Controllers
                     {
                         emailTemplate = new EmailTemplate(user, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                         programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-
+                        if (!agreement.IsPolicyDocSend)
+                        {
+                            agreement.IsPolicyDocSend = true;
+                            agreement.DocIssueDate = DateTime.Now;
+                        }
                         await uow.Commit();
                     }
                 }

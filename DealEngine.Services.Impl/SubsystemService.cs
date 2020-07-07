@@ -94,9 +94,9 @@ namespace DealEngine.Services.Impl
             }
             if (subClientSheet.Status == "Not Started")
             {
-                await _emailService.SendSystemEmailLogin(org.Email);
+                //await _emailService.SendSystemEmailLogin(org.Email);
+                //await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
             }
-            await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
 
             return subClientSheet;
         }

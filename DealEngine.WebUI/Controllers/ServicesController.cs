@@ -393,7 +393,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
                 var progname = sheet.Programme.BaseProgramme.Name;
 
-               
+
 
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
@@ -415,15 +415,18 @@ namespace DealEngine.WebUI.Controllers
                             break;
                     }
                 }
-                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                organisations = organisations.OrderByDescending(cp => cp.IsPrincipalAdvisor).ToList();
                 model.Page = page;
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
                 JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                if (progname == "NZFSG Programme"){
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false",sheet.Owner.TradingName == null ? " ": sheet.Owner.TradingName);
-                }else{
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false","NonTrading");
+                if (progname == "NZFSG Programme")
+                {
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false", sheet.Owner.TradingName == null ? " " : sheet.Owner.TradingName);
+                }
+                else
+                {
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false", "NonTrading");
                 }
                 model.AddRow(row1);
                 int offset = rows * (page - 1);
@@ -436,7 +439,7 @@ namespace DealEngine.WebUI.Controllers
 
                     for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
                     {
-                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor,"", organisation.Id);
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor, "", organisation.Id);
                     }
                     model.AddRow(row);
                 }
@@ -3133,9 +3136,9 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.FirstName = model.FirstName.Trim();
+                                    userdb.LastName = model.LastName.Trim();
+                                    userdb.FullName = userdb.FirstName + " " + userdb.LastName;
                                     userdb.Email = model.Email;
                                     await uow.Commit();
                                 }
@@ -3157,10 +3160,29 @@ namespace DealEngine.WebUI.Controllers
 
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
-                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                            userdb.FirstName = model.FirstName;
-                            userdb.LastName = model.LastName;
-                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            string firstname = model.FirstName.Trim();
+                            string lastname = model.LastName.Trim();
+                            string username = (firstname + "_" + lastname).Replace(" ", "");
+                            User user2 = null;
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = (firstname + "_" + lastname).Replace(" ", "");
+                            }
+                            userdb = new User(currentUser, Guid.NewGuid(), username);
+                            userdb.FirstName = firstname;
+                            userdb.LastName = lastname;
+                            userdb.FullName = firstname + " " + lastname;
                             userdb.Email = model.Email;
                             await _userService.Create(userdb);
                         }
@@ -3175,7 +3197,7 @@ namespace DealEngine.WebUI.Controllers
                     var organisationName = "";
                     if (orgTypeName == "Person - Individual" && model.FirstName != null)
                     {
-                        organisationName = model.FirstName + " " + model.LastName;
+                        organisationName = model.FirstName.Trim() + " " + model.LastName.Trim();
                     }
                     else
                     {
@@ -3401,13 +3423,13 @@ namespace DealEngine.WebUI.Controllers
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
                             userdb = await _userService.GetUserByEmail(model.Email);
-                            if (userdb == null)
+                            if (userdb != null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
-                                    userdb.FirstName = model.FirstName;
-                                    userdb.LastName = model.LastName;
-                                    userdb.FullName = model.FirstName + " " + model.LastName;
+                                    userdb.FirstName = model.FirstName.Trim();
+                                    userdb.LastName = model.LastName.Trim();
+                                    userdb.FullName = userdb.FirstName + " " + userdb.LastName;
                                     userdb.Email = model.Email;
                                     await uow.Commit();
                                 }
@@ -3440,12 +3462,33 @@ namespace DealEngine.WebUI.Controllers
 
                         if (orgTypeName == "Person - Individual" && model.FirstName != null)
                         {
-                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                            userdb.FirstName = model.FirstName;
-                            userdb.LastName = model.LastName;
-                            userdb.FullName = model.FirstName + " " + model.LastName;
+
+                            string firstname = model.FirstName.Trim();
+                            string lastname = model.LastName.Trim();
+                            string username = (firstname + "_" + lastname).Replace(" ", "");
+                            User user2 = null;
+                            try
+                            {
+                                user2 = await _userService.GetUser(username);
+
+                                if (user2 != null && userdb == user2)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    username = username + randomNumber.ToString();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                username = (firstname + "_" + lastname).Replace(" ", "");
+                            }
+                            userdb = new User(currentUser, Guid.NewGuid(), username);
+                            userdb.FirstName = firstname;
+                            userdb.LastName = lastname;
+                            userdb.FullName = firstname + " " + lastname;
                             userdb.Email = model.Email;
                             await _userService.Create(userdb);
+
                         }
                         else
                         {
@@ -3473,7 +3516,7 @@ namespace DealEngine.WebUI.Controllers
                     var organisationName = "";
                     if (orgTypeName == "Person - Individual")
                     {
-                        organisationName = model.FirstName + " " + model.LastName;
+                        organisationName = model.FirstName.Trim() + " " + model.LastName.Trim();
                     }
                     else
                     {
@@ -3518,6 +3561,16 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
                             organisation.IsPrincipalAdvisor = model.IsPrincipalAdvisor;
+
+                            if (organisation.InsuranceAttributes.Count >0 && !organisation.InsuranceAttributes.Contains(insuranceAttribute))
+                            {
+                                organisation.InsuranceAttributes.FirstOrDefault().IAOrganisations.Remove(organisation);
+                                organisation.InsuranceAttributes.Remove(organisation.InsuranceAttributes.FirstOrDefault());
+                                organisation.InsuranceAttributes.Add(insuranceAttribute);
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                            }
+                           
+
 
                         }
                         else
@@ -3626,8 +3679,13 @@ namespace DealEngine.WebUI.Controllers
                     User userdb = await _userService.GetUserByEmail(org.Email);
                     model.ID = partyID;
                     model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
-                    model.FirstName = userdb.FirstName;
-                    model.LastName = userdb.LastName;
+                    if (userdb != null)
+                    {
+                        model.FirstName = userdb.FirstName;
+                        model.LastName = userdb.LastName;
+                    }
+                    //model.FirstName = userdb.FirstName;
+                    //model.LastName = userdb.LastName;
                     model.Email = org.Email;
                     model.RegisteredStatus = org.RegisteredStatus;
                     model.Duration = org.Duration;

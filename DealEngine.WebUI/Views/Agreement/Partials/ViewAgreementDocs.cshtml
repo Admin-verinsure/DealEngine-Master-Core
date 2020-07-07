@@ -5,9 +5,18 @@
 {
     <fieldset>
         <div class="row">
-            <section class="col col-12 font-md">
-                <a href="@(doc.Url + "?format=docx")">@doc.DisplayName</a>
-            </section>
+            @if (doc.DisplayName.Contains(".pdf")){
+                <section class="col col-12 font-md">
+                    <a href="@(doc.Url + "?format=pdf")">@doc.DisplayName.Substring(0, doc.DisplayName.Length - 4)</a>
+                </section>
+            }
+            else
+            {
+                <section class="col col-12 font-md">
+                    <a href="@(doc.Url + "?format=docx")">@doc.DisplayName</a>
+                </section>
+            }
+
         </div>
     </fieldset>
 }

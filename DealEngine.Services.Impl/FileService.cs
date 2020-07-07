@@ -351,7 +351,7 @@ namespace DealEngine.Services.Impl
                 dtbv2.Columns.Add("Make");
                 dtbv2.Columns.Add("Model");
                 dtbv2.Columns.Add("Sum Insured");
-
+                dtbv2.Columns.Add("Effective Date");
 
                 DataTable dtbv3 = new DataTable();
                 dtbv3.Columns.Add("Name");
@@ -399,6 +399,7 @@ namespace DealEngine.Services.Impl
                     drbv2["Make"] = bVTerm.BoatMake;
                     drbv2["Model"] = bVTerm.BoatModel;
                     drbv2["Sum Insured"] = bVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
+                    drbv2["Effective Date"] = bVTerm.Boat.BoatEffectiveDate.ToShortDateString();
 
                     dtbv2.Rows.Add(drbv2);
 
@@ -482,6 +483,7 @@ namespace DealEngine.Services.Impl
                         dtmv1.Columns.Add("Model");
                         dtmv1.Columns.Add("Registration");
                         dtmv1.Columns.Add("Sum Insured");
+                        dtmv1.Columns.Add("Effective Date");
 
                         AgreementMVTerm = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV"));
                         AgreementMVTerm.OrderBy(camvt => camvt.Registration);
@@ -495,6 +497,7 @@ namespace DealEngine.Services.Impl
                             drmv1["Model"] = bVMVTerm.Model;
                             drmv1["Registration"] = bVMVTerm.Registration;
                             drmv1["Sum Insured"] = bVMVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
+                            drmv1["Effective Date"] = bVMVTerm.Vehicle.VehicleEffectiveDate.ToShortDateString();
 
                             dtmv1.Rows.Add(drmv1);
 
@@ -522,6 +525,7 @@ namespace DealEngine.Services.Impl
             string stradvisorlist = "";
             string stradvisorlist1 = "";
             string strnominatedrepresentative = "";
+            string strotherconsultingbusiness = "";
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
@@ -584,6 +588,19 @@ namespace DealEngine.Services.Impl
                         }
 
                     }
+
+                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia2 => uisorgia2.InsuranceAttributeName == "OtherConsultingBusiness" && uisorgia2.DateDeleted == null) != null)
+                    {
+                        if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                        {
+                            strotherconsultingbusiness = uisorg.Name;
+                        }
+                        else
+                        {
+                            strotherconsultingbusiness += ", " + uisorg.Name;
+                        }
+
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(strnominatedrepresentative))
@@ -593,15 +610,21 @@ namespace DealEngine.Services.Impl
                 //dtadvisor.TableName = "AdvisorDetailsTablePI";
                 //dtadvisor1.TableName = "AdvisorDetailsTableDO";
 
+                if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                {
+                    strotherconsultingbusiness = "No Additional Insureds.";
+                }
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
-                
+                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
+
             }
             else
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
             }
             //mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
 
@@ -652,9 +675,23 @@ namespace DealEngine.Services.Impl
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
-			foreach (KeyValuePair<string, string> field in mergeFields)
-                content = content.Replace(field.Key, field.Value);
+            try
+            {
+                foreach (KeyValuePair<string, string> field in mergeFields)
+                    if (field.Value != null && field.Value.Contains("&"))
+                    {
+                        content = content.Replace(field.Key, field.Value.Replace("&", "&amp;"));
+                    }
+                    else
+                    {
+                        content = content.Replace(field.Key, field.Value);
+                    }
 
+            }catch(Exception ex)
+            {
+               
+            }
+            //content = content.Replace(field.Key, field.Value);
             // save the merged content
             doc.Contents = ToBytes (content);
 

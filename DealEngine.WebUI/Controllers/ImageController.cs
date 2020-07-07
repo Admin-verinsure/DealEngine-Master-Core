@@ -160,6 +160,7 @@ namespace DealEngine.WebUI.Controllers
                         if (dupe != null && dupe.Path == newCKImage.Path)
                         {
                             // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                            // I.e change user, change last modified
                         }
                         else
                         {
