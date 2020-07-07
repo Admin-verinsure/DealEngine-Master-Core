@@ -48,7 +48,6 @@ namespace DealEngine.WebUI.Controllers
         IReferenceService _referenceService;
         IEmailService _emailService;
         IAppSettingService _appSettingService;
-        IInsuranceAttributeService _insuranceAttributeService;
         IBusinessContractService _businessContractService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
@@ -109,7 +108,6 @@ namespace DealEngine.WebUI.Controllers
             _unitOfWork = unitOfWork;
             _referenceService = referenceService;
             _emailService = emailService;
-            _insuranceAttributeService = insuranceAttributeService;
             _businessContractService = businessContractService;
 
         }
