@@ -139,23 +139,23 @@
 
                         @foreach (var submission in Model.EGlobalSubmissions.OrderByDescending(esub => esub.DateCreated))
                         {
-                    <tr>
- 
-                        <td width="40%">
-                            @submission.SubmissionDesc
-                        </td>
+                            <tr>
 
-                            <td width="20%">
-                               <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
-                            </td>
+                                <td width="40%">
+                                    @submission.SubmissionDesc
+                                </td>
 
-                        <td width="15%">
-                            <button data-rev-trans="@submission.Id" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
-                        </td>
+                                <td width="20%">
+                                    <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
+                                </td>
 
-                    </tr>
+                                <td width="15%">
+                                    <button data-rev-trans="@submission.Id" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
+                                </td>
 
-                         
+                            </tr>
+
+
                         }
                     </tbody>
                 </table>
@@ -178,26 +178,34 @@
     </div>
 </div>
 
-
-
-@*<div id="toNewWindow">
-    <p>open new window testykdhjkf fdgredg</p>
-</div>*@
-
-@*<div class="modal" id="TransactionXMl" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+<div class="modal overlay" id="getExistingUser" tabindex="-1" role="dialog" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Transaction XML title</h4>
-                <button onclick="$('#TransactionXMl').hide()" type="button" class="close">&times;</button>
-            </div>
             <div class="modal-body">
-                <textarea id="textareaID" name="transxml" class="form-control"></textarea>
+                <p><img src="/img/loading.gif" /> Processing Information. Please wait...</p>
             </div>
-
         </div>
     </div>
-</div>*@
+</div>
+
+@*<div id="toNewWindow">
+        <p>open new window testykdhjkf fdgredg</p>
+    </div>*@
+
+@*<div class="modal" id="TransactionXMl" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Transaction XML title</h4>
+                    <button onclick="$('#TransactionXMl').hide()" type="button" class="close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="textareaID" name="transxml" class="form-control"></textarea>
+                </div>
+
+            </div>
+        </div>
+    </div>*@
 
 @*@section pagespecific {
 
@@ -312,8 +320,10 @@
         var programmeId;
 
         function SendInvoice() {
-            programmeId = "@Model.ClientProgramme.Id";
+                        debugger;
 
+            programmeId = "@Model.ClientProgramme.Id";
+            $('#getExistingUser').show();
             $.ajax({
             type: "POST",
             url: "@Url.Action("SendInvoice", "Programme")",
@@ -321,6 +331,7 @@
             traditional: true,
             })
                 .done(function (data) {
+                    $('#getExistingUser').hide();
                     //$.smallBox({
                     //    title: "Invoice has been sent",
                     //    color: "#5F895F",
@@ -330,13 +341,16 @@
                     window.location.href = data.url;
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#getExistingUser').hide();
                     alert("There was an error while trying to send your invoice.");
                 });
         }
 
         function SaveBillingConfiguration() {
+                        debugger;
+
             addBCData();
-            debugger;
+             $('#getExistingUser').show();
             $.ajax({
             type: "POST",
             url: "@Url.Action("SaveBillingConfiguration", "Programme")",
@@ -344,6 +358,9 @@
             traditional: true,
             })
                 .done(function (data) {
+                                debugger;
+
+                    $('#getExistingUser').hide();
                     //$.smallBox({
                     //    title: "billing configuration has been saved",
                     //    color: "#5F895F",
@@ -353,6 +370,7 @@
                     alert("Saved.");
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#getExistingUser').hide();
                     alert("You are going to save billing configuration.");
                 });
         }
