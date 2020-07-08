@@ -227,7 +227,7 @@
                            if ((IsTradingnameexist == true && IsTradingnameCount != 0)) {
 
                                window.alert("Please Add Trading Name for Owner with complete information to proceed for policy  ");
-                               $("#Insured Details / Named Parties").trigger("click");
+                               $("[id='Insured Details / Named Parties']").trigger("click");
                                return false;
 
                            }
@@ -653,7 +653,12 @@
                     data: $("#tab_1 :input").serialize({ json: true })
                 })
                     .done(function (data) {
+                        if (ui.oldHeader[0].id == "Investment Product") {
+                            debugger;
+                            checkInvestmentVal();
+                        }
                         document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
+                        
                         $('.toast').toast('show');
                         $('#tblBuilding').trigger('reloadGrid');
                         $('#Principal,Partners or Directors').trigger('reloadGrid');
@@ -759,7 +764,28 @@
         })
     });
 
+    function checkInvestmentVal() {
+        debugger;
+        var hjh = $("#HasClientFunds").val();
+        if ($("#HasClientFunds").val() == "1") {
+        var totalpercent = 0;
+        $.each($(".Investment input[type=\"text\"]"), function (index, ele) {
+            debugger;
+            if (ele.value != "") {
+            var percent = parseInt(ele.value);
+            totalpercent +=  percent;
+            
+            }
+            
+        });
 
+         if (totalpercent != 100) {
+             alert("Percentage calculation does not equal to 100%");
+              $("[id='AAA Investment Products']").trigger("click");
+            return false;
+        }
+            }
+    }
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
         var validity = true;
         if (claim1 == "") {

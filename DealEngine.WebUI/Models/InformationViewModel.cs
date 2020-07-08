@@ -24,6 +24,9 @@ namespace DealEngine.WebUI.Models
             RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(ClientInformationSheet);
             ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
+            ResearchHouseViewModel = new ResearchHouseViewModel(ClientInformationSheet);
+            OTViewModel = new  OTViewModel();//OutsideTrustees
+            IPViewModel = new IPViewModel();
         }
         public Domain.Entities.Programme Programme;
         public Guid AnswerSheetId { get; set; }
@@ -77,10 +80,13 @@ namespace DealEngine.WebUI.Models
         public SLViewModel SLViewModel { get; set; }
         public FAPViewModel FAPViewModel { get; set; }
         public ProjectViewModel ProjectViewModel { get;set;}
+        public ResearchHouseViewModel ResearchHouseViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
         public ClientProgramme ClientProgramme { get; internal set; }
         public ClientAgreement ClientAgreement { get; internal set; }
+        public OTViewModel OTViewModel { get; internal set; }
+        public IPViewModel IPViewModel { get; internal set; }
     }
 
     public class InformationSectionViewModel
@@ -387,6 +393,10 @@ namespace DealEngine.WebUI.Models
         {
             HasSLOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HasAMLCFTExtensionOptions = GetSelectListOptions();
+            HasManageAMLOptions = GetSelectListOptions();
+            HasReportingEntityOptions = GetSelectListOptions();
+            HasTrainingOptions = GetSelectListOptions();
         }               
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -406,6 +416,11 @@ namespace DealEngine.WebUI.Models
         }
         public IList<SelectListItem> HasSLOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public IList<SelectListItem> HasAMLCFTExtensionOptions { get; set; }
+        public IList<SelectListItem> HasManageAMLOptions { get; set; }
+        public IList<SelectListItem> HasReportingEntityOptions { get; set; }
+        public IList<SelectListItem> HasTrainingOptions { get; set; }
+
         public int CoverAmount { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
@@ -685,7 +700,8 @@ namespace DealEngine.WebUI.Models
             HasLegalCouncelOptions = GetSelectListOptions();
             HasFormalProceduresOptions = GetSelectListOptions();
             HasMortageOptions = GetSelectListOptions();
-            HasBusinessChangesOptions = GetSelectListOptions();            
+            HasBusinessChangesOptions = GetSelectListOptions();
+            HasotherBusinessActivity = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetCEASMembershipSelectListOptions()
@@ -903,8 +919,9 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasIndustrialSoftwareOptions { get; set; }
         public IList<SelectListItem> HasComputerSoftwareOptions { get; set; }
         public IList<SelectListItem> HasFormalProceduresOptions { get; set; }
-        public IList<SelectListItem> HasBusinessChangesOptions { get; set; }        
-
+        public IList<SelectListItem> HasBusinessChangesOptions { get; set; }
+        public IList<SelectListItem> HasotherBusinessActivity { get; set; }
+        
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
         public string LegalCouncelDetails { get; set; }
@@ -942,7 +959,8 @@ namespace DealEngine.WebUI.Models
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
         public string SubstantialChangeDetails { get; set; }
-        
+        public string hasdirectagencies { get; set; }
+        public string hasfsdr { get; set; }
     }
     public class DAOLIViewModel
     {
@@ -1016,6 +1034,44 @@ namespace DealEngine.WebUI.Models
        
 
     }
+
+    public class OTViewModel
+    {
+        public OTViewModel()
+        {
+            HasOutsideTrusteesOptions = GetSelectListOptions();
+            HasClaimQuestionsOptions = GetSelectListOptions();
+
+            FormDate = DateTime.Now;
+        }
+
+        public IList<SelectListItem> HasOutsideTrusteesOptions { get; set; }
+        public IList<SelectListItem> HasClaimQuestionsOptions { get; set; }
+        public DateTime FormDate { get; set; }
+        public string CompanyName { get; set; }
+        public string OutsidePositions { get; set; }
+        public string ClaimDetails { get; set; }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+
+
+    }
+
     public class GLViewModel
     {
         public GLViewModel()
@@ -1024,6 +1080,7 @@ namespace DealEngine.WebUI.Models
             HasHigherGLOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             HasAssumeLiabilityOptions = GetSelectListOptions();
+            HasClientFundsOptions = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -1046,7 +1103,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasHigherGLOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
-        
+        public IList<SelectListItem> HasClientFundsOptions { get; set; }
         public int CoverAmount { get; set; }
         public string VehicleDetails { get; set; }
         public string AssumeLiabilityDetails { get; set; }
@@ -1055,6 +1112,17 @@ namespace DealEngine.WebUI.Models
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
+        public string totalValue { get; set; }
+        public string CashInvestments { get; set; }
+        public string Bonds { get; set; }
+        public string DirectInvestment { get; set; }
+        public string PropertyTrust { get; set; }
+        public string FinanceDebentures { get; set; }
+        public string ManagedFunds { get; set; }
+        public string Superannuation { get; set; }
+        public string Kiwisaver { get; set; }
+        public string OtherFunds { get; set; }
+
     }
     public class ProjectViewModel
     {
@@ -1150,5 +1218,73 @@ namespace DealEngine.WebUI.Models
         public string ConstructionValue { get; set; }
         public string ProjectDuration { get; set; }
         
+    }
+
+    public class ResearchHouseViewModel
+    {
+        public ResearchHouseViewModel(ClientInformationSheet clientInformationSheet)
+        {
+            ResearchHouses = GetAAABusinessContracts(clientInformationSheet);
+        }
+
+      
+        private IList<ResearchHouse> GetAAABusinessContracts(ClientInformationSheet clientInformationSheet)
+        {
+            ResearchHouses = new List<ResearchHouse>();
+            foreach (var researchHouses in clientInformationSheet.ResearchHouses)
+            {
+                ResearchHouses.Add(researchHouses);
+            }
+            return ResearchHouses;
+        }
+       
+        public IList<ResearchHouse> ResearchHouses { get; set; }
+        //public string MajorResponsibilities { get; set; }
+        public string ResearchServices { get; set; }
+        //public string Fees { get; set; }
+        public string ResearchName { get; set; }
+        public string ContractTitle { get; set; }
+        public string ConstructionValue { get; set; }
+        public string ProjectDuration { get; set; }
+
+    }
+
+    public class IPViewModel
+    {
+        public IPViewModel()
+        {
+
+            HasClientFundsOptions = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+
+        public IList<SelectListItem> HasClientFundsOptions { get; set; }
+        public string totalValue { get; set; }
+        public string CashInvestments { get; set; }
+        public string Bonds { get; set; }
+        public string DirectInvestment { get; set; }
+        public string PropertyTrust { get; set; }
+        public string FinanceDebentures { get; set; }
+        public string ManagedFunds { get; set; }
+        public string Superannuation { get; set; }
+        public string Kiwisaver { get; set; }
+        public string OtherFunds { get; set; }
+
     }
 }

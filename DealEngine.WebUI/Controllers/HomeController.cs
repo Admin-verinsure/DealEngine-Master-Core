@@ -1,23 +1,20 @@
 ﻿#region Using
 using AutoMapper;
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.FluentNHibernate;
+using DealEngine.Infrastructure.Tasking;
+using DealEngine.Services.Interfaces;
+using DealEngine.WebUI.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using DealEngine.Domain.Entities;
-using DealEngine.Services.Interfaces;
-using DealEngine.Infrastructure.Tasking;
-using Microsoft.AspNetCore.Authorization;
-using DealEngine.WebUI.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.FluentNHibernate;
-using System.Data;
-using Npgsql;
 using System.ComponentModel;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -408,12 +405,15 @@ namespace DealEngine.WebUI.Controllers
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
             var clientProgramme = clientList.FirstOrDefault();
-            if (!isClient)
+            if (clientProgramme != null)
             {
-                var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
-                if (isBaseClientProg)
+                if (!isClient)
                 {
-                    clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                    var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+                    if (isBaseClientProg)
+                    {
+                        clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                    }
                 }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
@@ -633,7 +633,7 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
+                    if (client.DateDeleted == null)
                     {
                         clientProgrammes.Add(client);
                     }
@@ -748,35 +748,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 IssueUISViewModel model = new IssueUISViewModel();
-               // var clientProgrammes = new List<ClientProgramme>();
-               // Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-               // List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
-               // List<SelectListItem> queryselectlist = new List<SelectListItem>();
-                //foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
-                //{
-                //    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
-                //    {
-                //        clientProgrammes.Add(client);
-                //    }
-                //}
-                //model.ClientProgrammes = clientProgrammes;
-
-                //List<SelectListItem> clientproglist = new List<SelectListItem>();
-
-                //for (var i = 0; i < model.ClientProgrammes.Count(); i++)
-                //{
-                //    clientproglist.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Text = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Name,
-                //        Value = model.ClientProgrammes.ElementAtOrDefault(i).Owner.Id.ToString(),
-                //    });
-
-                //}
-
                 model.ProgrammeId = ProgrammeId;
-               // model.ListClientProgrammes = clientproglist;
-                //model.ListQueries = queryselectlist.ToList();
                 return View(model);
             }
             catch (Exception ex)
@@ -805,49 +777,18 @@ namespace DealEngine.WebUI.Controllers
         //    return listing;
         //}
 
-        //[HttpGet]
-        //public List<string> generatequeryField(string Query)
-        //{
-        //    List<string> listing = new List<string>();
-
-        //    if (Query == "PI Cover Limit")
-        //    {
-        //        // Adding pairs to fslist 
-        //        listing.Add("ReferenceID");
-        //        listing.Add("IndividualName");
-        //        listing.Add("CompanyName");
-        //        listing.Add("Limit");
-        //        listing.Add("Premium");
-        //        listing.Add("Inceptiondate");
-        //    }
-
-
-        //    return listing;
-        //}
-
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection)
         {
             User user = null;
             try
             {
-                // List<User> userList = await _userService.GetBrokerUsers();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(formCollection["ProgrammeId"]));
-              //  ClientProgramme clientprog = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection["ClientProgramme"]));
-                // List<ClientProgramme> clientprogrammes = _clie;
-                // var hgh = programme
                 string queryselect = formCollection["queryselect"];
               //  List<string> queryfields = generatequeryField(queryselect);
                 List<PIReport> reportset = new List<PIReport>();
                 DataTable table = new DataTable();
                 List<String> ListReport = new List<String>();
-                //foreach (var field in queryfields)
-                //{
-                //    table.Columns.Add(field, typeof(string));
-
-
-                //}
-
                 foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.Status=="Submitted"))
                 {
                     try
@@ -862,10 +803,8 @@ namespace DealEngine.WebUI.Controllers
 
                             if (cp.Agreements.Count > 0)
                             {
-
                                 foreach (ClientAgreement agreement in cp.Agreements)
                                 {
-
                                     var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == "PI" && ter.Bound == true);
                                     if (term != null)
                                     {
@@ -880,9 +819,7 @@ namespace DealEngine.WebUI.Controllers
                                         report.Premium = "0";
                                         report.Inceptiondate = agreement.InceptionDate.ToString();
                                         break;
-
                                     }
-
                                 }
                             }
                             else
@@ -892,29 +829,25 @@ namespace DealEngine.WebUI.Controllers
                                 report.Inceptiondate = "0";
                             }
                             reportset.Add(report);
-
                         }
                     }
                     catch (Exception ex)
-                    {
-
-                    }
+                    {}
                 }
 
                 PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(PIReport));
-
                 try
                 {
                     for (int i = 0; i < props.Count; i++)
                     {
                         PropertyDescriptor prop = props[i];
                         table.Columns.Add(prop.Name, prop.PropertyType);
-                        table.Columns.Remove("Id");
                     }
                 }
                 catch (Exception ex)
                 {
-
+                    if (table.Columns.Contains("Id"))
+                        table.Columns.Remove("Id");
                 }
 
                 object[] values = new object[props.Count];
@@ -934,25 +867,30 @@ namespace DealEngine.WebUI.Controllers
                                     values1[count] = val;
                                     count++;
                                 }
-
                             }
                             catch (Exception ex)
                             {
-
                             }
                         }
                         table.Rows.Add(values1);
                     }
 
-
-
-                    return View(table);
+              //  table.ExportToExcel(@"c:\temp\exported.xls");
+                return View(table);
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+
+       [HttpGet]
+        public void ExportExcel(DataColumnCollection Columns , DataRowCollection Rows)
+        {
+
+
         }
 
 
@@ -1142,6 +1080,7 @@ namespace DealEngine.WebUI.Controllers
                         userdb.FullName = FirstName + " " + LastName;
                         userdb.Email = Email;
                         userdb.Phone = Phone;
+                        await _userService.Update(userdb);
                         await uow.Commit();
 
                     }

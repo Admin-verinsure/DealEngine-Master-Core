@@ -216,13 +216,45 @@
                     AdditionalRoleInformation("dataroles");
                 }
             }
+
+            if (Rule === "AAASL") {
+                
+
+                var Value = DoubleConditional(DataItem);
+                var ids = DataItem.split(',');
+                var element = document.getElementById(ids[0]);
+                
+                Value = CreateAAASLLabelInput(Value, element, ids[2]);
+                DefaultRule(Value, element.name);
+            }
         } catch (ex) {
+            debugger;
             //these rules need to be re-run regardless of the catch
 
             //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
+
+    function CreateAAASLLabelInput(Value, Element, LabelId) {
+        var conditional = "If you have answered 'No' then NZI are unable to offer this extension";
+        var label = document.getElementById(LabelId);
+        if (Value == "2" || Value == "both") {
+            if (label == null) {
+                label = AttachLabel(LabelId, conditional);
+                Element.parentElement.parentElement.appendChild(label);
+            }
+            return "2";
+        }
+        if (Value == "1") {
+            if (label != null) {
+                Element.parentElement.parentElement.removeChild(label);
+            }
+            return "1";
+        }
+        return "2";
+    }
+
 
     function AdditionalActivityInformation(Id) {
         var activities = document.getElementById(Id);
