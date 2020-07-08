@@ -1528,6 +1528,7 @@ namespace DealEngine.WebUI.Controllers
                     };
 
                     // Populate the ViewModel
+                    model.ProgrammeId = agreement.ClientInformationSheet.Programme.BaseProgramme.Id;
                     model.InsuranceRoles = insuranceRoles;
                     model.ProductName = agreement.Product.Name;
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;

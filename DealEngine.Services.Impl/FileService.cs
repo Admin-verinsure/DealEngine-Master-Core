@@ -351,7 +351,7 @@ namespace DealEngine.Services.Impl
                 dtbv2.Columns.Add("Make");
                 dtbv2.Columns.Add("Model");
                 dtbv2.Columns.Add("Sum Insured");
-
+                dtbv2.Columns.Add("Effective Date");
 
                 DataTable dtbv3 = new DataTable();
                 dtbv3.Columns.Add("Name");
@@ -399,6 +399,7 @@ namespace DealEngine.Services.Impl
                     drbv2["Make"] = bVTerm.BoatMake;
                     drbv2["Model"] = bVTerm.BoatModel;
                     drbv2["Sum Insured"] = bVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
+                    drbv2["Effective Date"] = bVTerm.Boat.BoatEffectiveDate.ToShortDateString();
 
                     dtbv2.Rows.Add(drbv2);
 
@@ -482,6 +483,7 @@ namespace DealEngine.Services.Impl
                         dtmv1.Columns.Add("Model");
                         dtmv1.Columns.Add("Registration");
                         dtmv1.Columns.Add("Sum Insured");
+                        dtmv1.Columns.Add("Effective Date");
 
                         AgreementMVTerm = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV"));
                         AgreementMVTerm.OrderBy(camvt => camvt.Registration);
@@ -495,6 +497,7 @@ namespace DealEngine.Services.Impl
                             drmv1["Model"] = bVMVTerm.Model;
                             drmv1["Registration"] = bVMVTerm.Registration;
                             drmv1["Sum Insured"] = bVMVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
+                            drmv1["Effective Date"] = bVMVTerm.Vehicle.VehicleEffectiveDate.ToShortDateString();
 
                             dtmv1.Rows.Add(drmv1);
 
