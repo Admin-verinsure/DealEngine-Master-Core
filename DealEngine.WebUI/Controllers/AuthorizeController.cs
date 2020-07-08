@@ -21,7 +21,6 @@ namespace DealEngine.WebUI.Controllers
     {
         IClaimService _claimService;
         IClaimTemplateService _claimTemplateService;
-        IUserRoleService _userRoleService;
         RoleManager<IdentityRole> _roleManager;
         UserManager<IdentityUser> _userManager;
         IOrganisationService _organisationService;
@@ -34,7 +33,6 @@ namespace DealEngine.WebUI.Controllers
             IClaimTemplateService claimTemplateService, 
             RoleManager<IdentityRole> roleManager, 
             UserManager<IdentityUser> userManager, 
-            IUserRoleService userRoleService, 
             IOrganisationService organisationService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<AuthorizeController> logger
@@ -44,7 +42,6 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _organisationService = organisationService;
-            _userRoleService = userRoleService;
             _userManager = userManager;
             _roleManager = roleManager;
             _claimService = claimService;
@@ -59,7 +56,6 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
 
                 var userList = await _userService.GetAllUsers();
                 var roleList = new List<IdentityRole>();
@@ -76,25 +72,7 @@ namespace DealEngine.WebUI.Controllers
                 model.RoleList = new List<IdentityRole>();
                 model.UserList = new List<User>();
                 model.ClaimList = claimList;
-
-                if (user.PrimaryOrganisation.IsTC)
-                {
-                    roleList = await _roleManager.Roles.ToListAsync();
-                }
-                else
-                {
-                    if (userRoleList.Count != 0)
-                    {
-                        foreach (var userRole in userRoleList)
-                        {
-                            var identityRole = await _roleManager.FindByNameAsync(userRole.IdentityRoleName);
-                            roleList.Add(identityRole);
-                        }
-
-                    }
-                }
-
-                model.RoleList = roleList;
+                model.RoleList = await _roleManager.Roles.ToListAsync();
 
                 if (userList.Count != 0)
                 {
@@ -135,8 +113,6 @@ namespace DealEngine.WebUI.Controllers
                     var identityresult = await _roleManager.CreateAsync(role);
                     if (identityresult.Succeeded)
                     {
-                        await _userRoleService.AddUserRole(user, role, organisation);
-
                         foreach (var cl in Claims)
                         {
                             var claim = new Claim(cl, cl);

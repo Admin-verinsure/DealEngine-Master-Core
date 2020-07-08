@@ -134,14 +134,14 @@
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel">Marina Location</label>
                                                                                 <label class="input w100">
-                                                                                    <select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
+                                                                                    @*<select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
                                                                                         <option selected="selected" value="">-- Select --</option>
                                                                                         @foreach (var bwloc in Model.MarinaLocations)
                                                                                         {
-                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
                                                                                         }
                                                                                         <option value="add">Add Marina Location</option>
-                                                                                    </select>
+                                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -159,14 +159,14 @@
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom:.5px solid #e5e5e5; padding-bottom:18px; margin-bottom:20px;">
                                                                                 <label class="label cgmodalLabel">Location</label>
                                                                                 <label class="input w100">
-                                                                                    <select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
+                                                                                    @*<select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
                                                                                         <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
                                                                                         @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                         {
                                                                                             <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                         }
                                                                                         <option value="add">Add Location</option>
-                                                                                    </select>
+                                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -213,14 +213,14 @@
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom:.5px solid #e5e5e5; padding-bottom:18px; margin-bottom:20px;">
                                                                                 <label class="label cgmodalLabel required">Location</label>
                                                                                 <label class="input w100">
-                                                                                    <select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
+                                                                                    @*<select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
                                                                                         <option selected="selected" value="">-- Select --</option>
                                                                                         @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                         {
                                                                                             <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                         }
                                                                                         <option value="add">Add Location</option>
-                                                                                    </select>
+                                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -682,12 +682,7 @@
                                                                                 <section class="col col-xs-12 col-md-12" id="VesselTrailerIP" style="display:none;">
                                                                                     <label class="label cgmodalLabel">Interested Parties</label>
                                                                                     <label class="input cgmodalInput">
-                                                                                        <select class="cselect form-control b" data-placeholder="Interested Parties" id="InterestedPartiesModal" multiple="multiple" name="InterestedParties">
-                                                                                            @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationTypeName == "financial"))
-                                                                                            {
-                                                                                                <option value="@trip.ID">@trip.OrganisationName</option>
-                                                                                            }
-                                                                                        </select>
+
                                                                                     </label>
                                                                                 </section>
                                                                             </div>
@@ -1145,7 +1140,6 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     @await Html.PartialAsync("_InformationWizardScripts")
     @await Html.PartialAsync("_DataTableScripts")
-    @*@await Html.PartialAsync("_PrefabScripts")*@
     <script>
 
         $(document).ready(function () {

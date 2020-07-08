@@ -778,10 +778,11 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SysExchange(OrganisationViewModel model)
         {
-            Organisation org = await _organisationService.GetOrganisationByEmail(model.Email);            
-            User user = await  _userService.GetUserByEmail(model.Email);
+            throw new Exception("new organisation method");
+            //Organisation org = await _organisationService.GetOrganisationByEmail(model.Email);            
+            //User user = await  _userService.GetUserByEmail(model.Email);
 
-            return Redirect("~/Admin/Index");
+            //return Redirect("~/Admin/Index");
 
         }
 
@@ -795,6 +796,17 @@ namespace DealEngine.WebUI.Controllers
             return Redirect("~/Home/Index");
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AIBOrganisationRefactor()
+        {
+            await _organisationService.RefactorOrganisations();
+
+            return Redirect("~/Home/Index");
+
+        }
+
+        
 
     }
 }

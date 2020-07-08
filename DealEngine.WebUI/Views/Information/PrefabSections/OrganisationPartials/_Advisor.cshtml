@@ -1,0 +1,49 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.RegisteredStatus, new { @class = "label required" })
+    <select id="Organisation.RegisteredStatus" name="OrganisationViewModel.Organisation.RegisteredStatus" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasRegisteredOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.IsRetiredorDecieved)
+    <select id="Organisation.IsRetiredorDecieved" name="OrganisationViewModel.Organisation.IsRetiredorDecieved" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in Model.OrganisationViewModel.HasRetiredorDecievedOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+        }
+    </select>
+</div>
+<div id="OrganisationViewModel.Organisation.IsRetiredorDecieved" hidden>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofRetirement, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofRetirement, new { @class = "form-control", @id = "Organisation.DateofRetirement", @type = "date", @required = "" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "form-control", @id = "Organisation.AdvisorUnit.Duration", @required = "" })
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.MyCRMId, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.MyCRMId, new { @class = "form-control", @id = "Organisation.AdvisorUnit.MyCRMId", onchange = "OnChange(this.id, this.name)", @required = "" })
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor, new { @class = "label required" })
+    <select id="Organisation.IsPrincipalAdvisor" name="OrganisationViewModel.Organisation.IsPrincipalAdvisor" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasPrincipalAdvisor)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+
+
+

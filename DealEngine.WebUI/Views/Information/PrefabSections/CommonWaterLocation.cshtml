@@ -87,7 +87,7 @@
                             <option selected="selected" value="">-- Select --</option>
                             @foreach (var bwloc in Model.MarinaLocations)
                             {
-                                <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                                <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
                             }
                             <option value="add">Add Marina Location</option>
                         </select>
@@ -179,7 +179,7 @@
                             <option selected="selected" value="">-- Select --</option>
                             @foreach (var bwloc in Model.MarinaLocations)
                             {
-                                <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                                <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
                             }
                             <option value="add">Add Marina Location</option>
                         </select>

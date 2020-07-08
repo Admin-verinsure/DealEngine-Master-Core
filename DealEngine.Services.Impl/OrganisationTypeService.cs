@@ -31,7 +31,16 @@ namespace DealEngine.Services.Impl
 
         public async Task<OrganisationType> CreateNewOrganisationType(User user, string organisationTypeName)
         {
-            OrganisationType OrganisationType = new OrganisationType(user, organisationTypeName);          
+            OrganisationType OrganisationType;
+            if (user != null)
+            {
+                OrganisationType = new OrganisationType(user, organisationTypeName);
+            }
+            else
+            {
+                OrganisationType = new OrganisationType(organisationTypeName);
+            }
+                    
             await _organisationTypeRepository.AddAsync(OrganisationType);
 
             return OrganisationType;
@@ -39,8 +48,12 @@ namespace DealEngine.Services.Impl
 
         public async Task<OrganisationType> GetOrganisationTypeByName(string organisationTypeName)
         {
-            //return _organisationTypeRepository.FindAll().FirstOrDefault(ot => ot.Name == organisationTypeName);
-            return await _organisationTypeRepository.FindAll().FirstOrDefaultAsync(ot => ot.Name == organisationTypeName);
+            OrganisationType GetOrganisationType = await _organisationTypeRepository.FindAll().FirstOrDefaultAsync(ot => ot.Name == organisationTypeName);
+            if(GetOrganisationType == null)
+            {
+                GetOrganisationType = await CreateNewOrganisationType(null, organisationTypeName);
+            }
+            return GetOrganisationType;
         }
 
         #endregion

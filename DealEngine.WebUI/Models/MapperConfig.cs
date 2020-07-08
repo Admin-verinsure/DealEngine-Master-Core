@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
 using DealEngine.WebUI.Controllers;
 using DealEngine.WebUI.Models.Programme;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace DealEngine.WebUI.Models
 {
@@ -23,6 +25,34 @@ namespace DealEngine.WebUI.Models
         public MappingProfile()
         {
             // place all automapper maps here
+            CreateMap<OrganisationalUnit, OrganisationalUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<Organisation, Organisation>()
+                .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
+                .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.Condition(source => source.Name != string.Empty))
+                .ForMember(dest => dest.OrganisationType, map => map.Ignore());
+
+            CreateMap<User, User>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.Organisations, map => map.Ignore())
+                .ForMember(dest => dest.Email, map => map.Ignore())
+                .ForMember(dest => dest.Branches, map => map.Ignore())
+                .ForMember(dest => dest.Departments, map => map.Ignore())
+                .ForMember(dest => dest.UISIssueNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.UISSubmissionNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementReferNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementIssueNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.AgreementBoundNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.PaymentConfigNotifyProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.InvoiceConfigNotifyProgrammes, map => map.Ignore());
+
+
+
 
             // Admin
             CreateMap<PrivateServer, PrivateServerViewModel>().ReverseMap();
@@ -108,7 +138,6 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.SubClientProgrammes, map => map.Ignore())
                 .ForMember(dest => dest.ChangeReason, map => map.Ignore())
                 .ForMember(dest => dest.Products, map => map.Ignore())
-                .ForMember(dest => dest.Products, map => map.Ignore())
                 .ForMember(dest => dest.Payment, map => map.Ignore())
                 .ForMember(dest => dest.InformationSheet, map => map.Ignore())
                 .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())
@@ -124,6 +153,14 @@ namespace DealEngine.WebUI.Models
             CreateMap<ClientProgramme, ClientProgramme>()
                 .ForMember(dest => dest.Id, map => map.Ignore());
         }
-    }
 
+
+    }
+    public static class MapperExtensions
+    {
+        public static T ResolveJson<T>(this JObject jobj, string target)
+        {
+            return JsonConvert.DeserializeObject<T>(jobj.SelectToken(target).ToString());
+        }
+    }
 }

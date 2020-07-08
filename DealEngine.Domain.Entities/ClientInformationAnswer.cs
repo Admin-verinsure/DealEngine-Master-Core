@@ -6,7 +6,6 @@ namespace DealEngine.Domain.Entities
 	public class ClientInformationAnswer : EntityBase, IAggregateRoot
 	{
 		public virtual string Value { get; set; }
-
 		public virtual string ItemName { get; protected set; }
 
         public virtual string ClaimDetails { get; set; }

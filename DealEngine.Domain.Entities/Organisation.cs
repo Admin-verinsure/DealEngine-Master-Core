@@ -2,17 +2,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text.Json.Serialization;
 using DealEngine.Domain.Entities.Abstracts;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class Organisation : EntityBase, IAggregateRoot
     {
-        string _name;
-        string _phone;
-        string _SkipperExp;
-        OrganisationType _organisationType;
-
         #region Constructors
         public Organisation() : base(null) { }
 
@@ -20,7 +21,6 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             OrganisationalUnits = new List<OrganisationalUnit>();
-            Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
             Marinaorgmooredtype = new List<string>();
         }
@@ -30,7 +30,6 @@ namespace DealEngine.Domain.Entities
         {
             Id = id;
             OrganisationalUnits = new List<OrganisationalUnit>();
-            Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
             Marinaorgmooredtype = new List<string>();
         }
@@ -41,9 +40,8 @@ namespace DealEngine.Domain.Entities
             if (string.IsNullOrWhiteSpace(organisationName))
                 throw new ArgumentNullException(nameof(organisationName), "Not allowed to create an organisation with no name.");
 
-            _name = organisationName;
+            Name = organisationName;
             OrganisationalUnits = new List<OrganisationalUnit>();
-            Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
             Marinaorgmooredtype = new List<string>();
         }
@@ -66,20 +64,20 @@ namespace DealEngine.Domain.Entities
             if (organisationType == null)
                 throw new ArgumentNullException(nameof(organisationType), "Not allowed to create an organisation without specifying a type.");
 
-            _name = organisationName;
-            _organisationType = organisationType;
+            Name = organisationName;
+            OrganisationType = organisationType;
         }
 
-        public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string email, string Phone)
+        public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string email, string phone)
            : this(createdBy, organisationName)
         {
             if (organisationType == null)
                 throw new ArgumentNullException(nameof(organisationType), "Not allowed to create an organisation without specifying a type.");
 
-            _name = organisationName;
+            Name = organisationName;
             Email = email;
-            _phone = Phone;
-            _organisationType = organisationType;
+            Phone = phone;
+            OrganisationType = organisationType;
         }
 
         public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType, string email)
@@ -91,12 +89,23 @@ namespace DealEngine.Domain.Entities
             Email = email;
         }
 
+        public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, List<OrganisationalUnit> organisationalUnits, InsuranceAttribute insuranceAttribute, string email)
+            :this(creator, organisationName, organisationType)
+        {
+            Name = organisationName;
+            Id = id;
+            Email = email;
+            OrganisationalUnits = organisationalUnits;
+            InsuranceAttributes.Add(insuranceAttribute);
+        }        
+
         #endregion
 
         #region Getters
         public virtual string Name
         {
-            get { return _name; }
+            get;
+            set;
         }
 
         public virtual string SkipperExp
@@ -111,7 +120,8 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual DateTime DateofRetirement
+
+        public virtual DateTime? DateofRetirement
         {
             get;
             set;
@@ -122,25 +132,6 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual string Activities
-        {
-            get;
-            set;
-        }
-
-
-        public virtual DateTime DateofDeceased
-        {
-            get;
-            set;
-        }
-
-        public virtual DateTime DateofBirth
-        {
-            get;
-            set;
-        }
-
         public virtual IList<Boat> Boat
         {
             get;
@@ -155,7 +146,8 @@ namespace DealEngine.Domain.Entities
 
         public virtual OrganisationType OrganisationType
         {
-            get { return _organisationType; }
+            get;
+            set;
         }
         public virtual bool Removed
         {
@@ -168,7 +160,6 @@ namespace DealEngine.Domain.Entities
         public virtual string DesignLicensed { get; set; }
         public virtual string SiteLicensed { get; set; }
         public virtual bool IsRegisteredLicensed { get; set; }
-
         public virtual Location Location { get; set; }
         public virtual string Description { get; set; }
         public virtual string Phone { get; set; }
@@ -203,10 +194,10 @@ namespace DealEngine.Domain.Entities
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }
         public virtual string CurrentMembershipNo { get; set; }
+
         public virtual string RegisteredStatus { get; set; }
         public virtual bool ConfirmAAA { get; set; }
         public virtual string Duration { get; set; }
-        public virtual IList<Programme> Programmes { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
         public virtual bool IsPrincipalAdvisor { get; set; }
         public virtual string OfcPhoneno { get; set; }
@@ -214,31 +205,21 @@ namespace DealEngine.Domain.Entities
         public virtual string TradingName { get; set; }
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
-        public virtual IList<AuditHistory> AuditHistory { get; set; }
        
         #endregion
 
         #region Opperations
-
-        public virtual void ChangeOrganisationType(OrganisationType organisationType)
-        {
-            if (organisationType == null)
-                throw new ArgumentNullException(nameof(organisationType));
-
-            _organisationType = organisationType;
-        }
 
         public virtual void ChangeOrganisationName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            _name = name;
+            Name = name;
         }
         #endregion
 
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
-       
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)
         {

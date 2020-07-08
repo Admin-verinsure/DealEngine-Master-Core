@@ -21,6 +21,20 @@
         SetCurrentTab(Tab);
     }
 
+    function ResetOrganisation(FormId) {
+        var form = document.getElementById(FormId);
+        form.reset();
+        for (var i = 0; i < form.length; i++) {
+            if (form[i].type == "email" || form[i].type == "text") {
+                form[i].value = "";
+            }
+        }
+        //var form = $("#" + FormId);        
+        ////$form.find('input:text, input:password, input:file, input:email, select, textarea').val('');
+        //$form.find('input:radio, input:checkbox')
+        //    .removeAttr('checked').removeAttr('selected');  
+    }
+
     function CreateEditLabel(ObjectLabel) {
         var div = document.createElement("div");
         div.setAttribute("class", "form-group");
@@ -30,27 +44,20 @@
         return div;
     }
 
-    function ResetFormView(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId,) {
+    function ResetForm(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
         var editTabHTML = document.getElementById(EditTabId);
-        if (editTabHTML.children.length != 1) {
-            document.getElementById(Form).reset();
+        ResetOrganisation(Form);
+        if (editTabHTML.firstElementChild.tagName == "FORM") {            
             var addTabHTML = document.getElementById(AddTabId);
             addTabHTML.innerHTML = editTabHTML.innerHTML;
-            addTabHTML.editTabHTML = "";
+            editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
             document.getElementById(AddButtonId).innerText = "Add";
             document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
     }
 
-    function CloneFormView(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
-        var addTabHTML = document.getElementById(AddTabId);  
-        editTabHTML.innerHTML = addTabHTML.innerHTML;
-        addTabHTML.innerHTML = "";
-        document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";
-    }
+
 
     function AddLocation() {        
         var form = document.getElementById("LocationViewModel");

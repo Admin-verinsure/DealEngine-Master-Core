@@ -1024,32 +1024,32 @@ namespace DealEngine.WebUI.Controllers
             Organisation ownerorg = null;
             string email = null;
             OrganisationViewModel orgmodel = new OrganisationViewModel();
-
-            try
-            {
-                user = await CurrentUser();
-                ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
-                orgmodel.OrganisationName = ownerorg.Name;
-                var userList = await _userService.GetAllUserByOrganisation(ownerorg);
-                orgmodel.ID = Guid.Parse(OwnerId);
-                orgmodel.Email = ownerorg.Email;
-                if (actionName == "ClientDetails")
-                {
-                    return Json(orgmodel);
-                }
-                else
-                {
-                    orgmodel.Users = userList;
-                    var id = OwnerId;
-                    List<User> userlist = userList;
-                    return View("getClientDetails", orgmodel);
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    user = await CurrentUser();
+            //    ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
+            //    orgmodel.OrganisationName = ownerorg.Name;
+            //    var userList = await _userService.GetAllUserByOrganisation(ownerorg);
+            //    orgmodel.ID = Guid.Parse(OwnerId);
+            //    orgmodel.Email = ownerorg.Email;
+            //    if(actionName == "ClientDetails")
+            //    {
+            //        return Json(orgmodel);
+            //    }
+            //    else
+            //    {
+            //        orgmodel.Users = userList;
+            //        var id = OwnerId;
+            //        List<User> userlist = userList;
+            //        return View("getClientDetails", orgmodel);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpGet]
@@ -1067,23 +1067,23 @@ namespace DealEngine.WebUI.Controllers
             Organisation ownerorg = null;
             string email = null;
             OrganisationViewModel orgmodel = new OrganisationViewModel();
-
-            try
-            {
-                user = await _userService.GetUserById(UserID);
-                orgmodel.ID = user.Id;
-                orgmodel.FirstName = user.FirstName;
-                orgmodel.LastName = user.LastName;
-                orgmodel.Email = user.Email;
-                orgmodel.Phone = user.Phone;
-                return Json(orgmodel);
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+            throw new Exception("new organisation method");
+            //try
+            //{
+            //    user = await _userService.GetUserById(UserID);
+            //    orgmodel.ID = user.Id;
+            //    orgmodel.FirstName = user.FirstName;
+            //    orgmodel.LastName = user.LastName;
+            //    orgmodel.Email = user.Email;
+            //    orgmodel.Phone = user.Phone;
+            //    return Json(orgmodel);
+               
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}
         }
 
         [HttpPost]

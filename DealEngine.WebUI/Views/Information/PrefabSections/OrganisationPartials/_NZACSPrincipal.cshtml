@@ -1,0 +1,82 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsRetiredorDecieved, new { @class = "label required" })
+    <select id="Organisation.IsRetiredorDecieved" name="OrganisationViewModel.PrincipalUnit.IsRetiredorDecieved" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasRetiredorDecievedOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+<div id="OrganisationViewModel.PrincipalUnit.IsRetiredorDecieved" hidden>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "form-control", @id = "Organisation.DateofRetirement", @type = "date", @required = "" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.Qualifications, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.Qualifications, new { @class = "form-control", @id = "Organisation.Qualifications", @required = "" })
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsNZIAmember, new { @class = "label required" })
+    <select id="Organisation.IsNZIAmember" name="OrganisationViewModel.Organisation.PrincipalUnit.IsNZIAmember" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasIsNZIAmemberOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+<div id="OrganisationViewModel.PrincipalUnit.IsNZIAmember" hidden>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.NZIAmembership, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.NZIAmembership, new { @class = "form-control", @id = "Organisation.NZIAmembership", @required = "" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsADNZmember, new { @class = "label required" })
+    <select id="Organisation.IsADNZmember" name="OrganisationViewModel.Organisation.PrincipalUnit.IsADNZmember" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasIsADNZmemberOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+<div id="OrganisationViewModel.PrincipalUnit.IsNZIAmember" hidden>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsLPBCategory3, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.IsLPBCategory3, new { @class = "form-control", @id = "Organisation.IsLPBCategory3", @required = "" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPracticeNZACS, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.YearofPracticeNZACS, new { @class = "form-control", @id = "Organisation.YearofPracticeNZACS", @required = "" })
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeNZACS, new { @class = "label required" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeNZACS, new { @class = "form-control", @id = "Organisation.PrevPracticeNZACS", @required = "" })
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsOtherdirectorship, new { @class = "label required" })
+    <select id="Organisation.IsOtherdirectorship" name="OrganisationViewModel.Organisation.PrincipalUnit.IsOtherdirectorship" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in @Model.OrganisationViewModel.HasIsOtherdirectorshipOptions)
+        {
+            <option selected="@option.Selected" value="@option.Value">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>
+<div id="OrganisationViewModel.PrincipalUnit.IsOtherdirectorship" hidden>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.PartyName, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PartyName, new { @class = "form-control", @id = "Organisation.PartyName", @required = "" })
+    </div>
+</div>

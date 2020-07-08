@@ -84,7 +84,6 @@ namespace DealEngine.Infrastructure.BaseLdap.Converters
 
 			OrganisationType organisationType = new OrganisationType (null, LdapHelpers.GetLdapAttributeValue (attributes, "businessCategory"));
 
-			organisation.ChangeOrganisationType (organisationType);
 			organisation.Description	= LdapHelpers.GetLdapAttributeValue (attributes, "description");
 			organisation.Phone			= LdapHelpers.GetLdapAttributeValue (attributes, "telephoneNumber");
 			organisation.Domain			= LdapHelpers.GetLdapAttributeValue (attributes, "associatedDomain");

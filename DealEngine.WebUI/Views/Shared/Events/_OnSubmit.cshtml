@@ -1,0 +1,53 @@
+﻿<script type="text/javascript">
+    function OnSubmit(FormId, AccordionId) {
+        var PostAjax = true;
+        var form = document.getElementById(FormId);
+        if (FormId === "organisationViewModel") {
+            for (var i = 0; i < form.length; i++) {
+                try {
+                    if (form[i].id != "") {
+                        var element = document.getElementById(form[i].id);
+                        OnChange(element.id, element.name);
+                        if (element.classList.contains("is-invalid") && element.parentElement.parentElement.hidden != true) {
+                            //write a message here or stop the process
+                            window.alert("Please complete the form");
+                            throw FormId + " incomplete";
+                        }
+                    }
+                }
+                catch (ex) {
+                    debugger;
+                    PostAjax = false;
+                    console.log(ex, element.Name);
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+        }
+        if (PostAjax) {
+            try {
+                sessionStorage.setItem('accordianTrigger', AccordionId);
+                $.ajax({
+                    url: '@Url.Action("AddOrganisation", "Services")',
+                    type: "POST",
+                    data: $("#" + form.id).serialize(),
+                    success: function (Data) {
+                        try {
+                            form.reset();
+                            location.reload();
+                        } catch (e) {
+                            debugger;
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
+            catch (ex) {
+                debugger;
+                console.log(ex, element.Name);
+            }
+        }
+    }
+
+</script>

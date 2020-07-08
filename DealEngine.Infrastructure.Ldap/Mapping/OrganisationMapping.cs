@@ -11,14 +11,15 @@ namespace DealEngine.Infrastructure.Ldap.Mapping
 		public Organisation FromLdap (LdapEntry entry)
 		{
 			Guid id = Guid.Parse (entry.GetAttributeValue ("o"));					// Need to swap this to use 'uniqueIdentifier'
-			string orgName = entry.GetAttributeValue ("buildingName");				// Need to swap this to use 'o'
+			string orgName = entry.GetAttributeValue ("buildingName");              // Need to swap this to use 'o'
 
-			Organisation organisation = new Organisation (null, id, orgName);
-			organisation.Domain = entry.GetAttributeValue ("associatedDomain");
-			organisation.Phone = entry.GetAttributeValue ("telephoneNumber");
-			organisation.Description = entry.GetAttributeValue ("description");
-			string organisationType = entry.GetAttributeValue ("businessCategory");
-			organisation.ChangeOrganisationType (new OrganisationType (null, organisationType));
+            Organisation organisation = new Organisation(null, id, orgName)
+            {
+                Domain = entry.GetAttributeValue("associatedDomain"),
+                Phone = entry.GetAttributeValue("telephoneNumber"),
+                Description = entry.GetAttributeValue("description")
+            };
+            string organisationType = entry.GetAttributeValue ("businessCategory");
 
 			return organisation;
 		}

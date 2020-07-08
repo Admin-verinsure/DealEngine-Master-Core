@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
-
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
     public class User : EntityBase, IAggregateRoot
     {
-		private Organisation _primaryOrganisation;
+        [JsonIgnore]
+        private Organisation _primaryOrganisation;
 
         protected User() : this(null) { }
 
@@ -25,16 +28,17 @@ namespace DealEngine.Domain.Entities
             AgreementBoundNotifyProgrammes = new List<Programme>();
             PaymentConfigNotifyProgrammes = new List<Programme>();
             InvoiceConfigNotifyProgrammes = new List<Programme>();
-        }               
+        }
 
+        [JsonIgnore]
         public virtual OrganisationalUnit DefaultOU { get; set; }
         public virtual string UserName { get; set; }
         public virtual string SalesPersonUserName { get; set; }
         public virtual string JobTitle { get; set; }
         public virtual string EmployeeNumber { get; set; }
-
+        [Display(Name = "First Name")]
         public virtual string FirstName { get; set; }
-
+        [Display(Name = "Last Name")]
         public virtual string LastName { get; set; }
 
         public virtual string Email { get; set; }
@@ -48,19 +52,19 @@ namespace DealEngine.Domain.Entities
         public virtual string FullName { get; set; }
 
 		public virtual string Description { get; set; }
-
-		public virtual Image ProfilePicture { get; set; }
+        [JsonIgnore]
+        public virtual Image ProfilePicture { get; set; }
 
 		public virtual bool Locked { get; protected set; }
-
+        [JsonIgnore]
         public virtual Guid LegacyId { get; set; }
-
-		public virtual DateTime? LockTime { get; protected set; }
+        [JsonIgnore]
+        public virtual DateTime? LockTime { get; protected set; }
 
         public virtual string MobilePhone { get; set; }
 
-        public virtual DateTime? DateOfBirth { get; protected set; }
-        //public virtual string OfcPhoneno { get; set; }
+        [Display(Name = "Date of Birth")]
+        public virtual DateTime? DateOfBirth { get; set; }
         /// <summary>
         /// Gets or sets the users primary organisation.
         /// The primary organisation is defined as the users current organisation for the purposes of tracking organisation ownership and related permissions.
@@ -68,6 +72,7 @@ namespace DealEngine.Domain.Entities
         /// (something that should be impossible due to individual user organisations) it will return null.
         /// </summary>
         /// <value>The primary organisation.</value>
+        [JsonIgnore]
         public virtual Organisation PrimaryOrganisation { 
 			get {
 				if (_primaryOrganisation != null)
@@ -84,34 +89,35 @@ namespace DealEngine.Domain.Entities
 		}
 
         //public virtual IEnumerable<Organisation> Organisations { get; set; }
+        [JsonIgnore]
         public virtual IList<Organisation> Organisations { get; set; }
 
         //public Guid[] OrganisationIDs { get; set; }
-
+        [JsonIgnore]
         public virtual IEnumerable<OrganisationalUnit> Branches { get; set; }
 
         //public Guid[] BranchIDs { get; set; }
-
+        [JsonIgnore]
         public virtual IEnumerable<Department> Departments { get; set; }
 
         //public Guid[] DepartmentIDs { get; set; }
-
+        [JsonIgnore]
         public virtual Location Location { get; set; }
 
-		//public virtual UserTask LastActiveTask { get; set; }
-
+        //public virtual UserTask LastActiveTask { get; set; }
+        [JsonIgnore]
         public virtual IList<Programme> UISIssueNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> UISSubmissionNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> AgreementReferNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> AgreementIssueNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> AgreementBoundNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> PaymentConfigNotifyProgrammes { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Programme> InvoiceConfigNotifyProgrammes { get; set; }
         
 
@@ -125,6 +131,22 @@ namespace DealEngine.Domain.Entities
         public User(User createdBy, Guid id, string userName) : this(createdBy, userName)
         {
             Id = id;
+        }
+        public User(User createdBy, Guid id)
+            : this(createdBy)
+        {
+            Id = id;
+        }
+
+        public User(User createdBy, Guid guid, IFormCollection collection)
+            :this(createdBy, guid)
+        {
+            if (collection.Any())
+            {
+                PopulateEntity(collection);
+                UserName = FirstName.Replace(" ", string.Empty) + "_" + LastName.Replace(" ", string.Empty);
+                FullName = FirstName + " " + LastName;
+            }
         }
 
         public virtual void Lock()

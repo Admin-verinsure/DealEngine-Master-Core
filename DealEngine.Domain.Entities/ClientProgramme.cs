@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper.Configuration.Annotations;
 using DealEngine.Domain.Entities.Abstracts;
 
@@ -33,6 +34,7 @@ namespace DealEngine.Domain.Entities
         public ClientProgramme (User createdBy, Organisation createdFor, Programme baseProgramme)
 			: base(createdBy)
 		{
+            //BrokerContactUser = baseProgramme.BrokerContactUser;
 			Owner = createdFor;
 			BaseProgramme = baseProgramme;
 			Agreements = new List<ClientAgreement> ();

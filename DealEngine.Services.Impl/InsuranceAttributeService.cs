@@ -28,9 +28,14 @@ namespace DealEngine.Services.Impl
         #region IOrganisationTypeService implementation
 
 
-        public async Task<InsuranceAttribute> GetInsuranceAttributeByName(string InsuranceAttributeName)
-        {
-            return await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.InsuranceAttributeName == InsuranceAttributeName);
+        public async Task<InsuranceAttribute> GetInsuranceAttributeByName(string Name)
+        {            
+            var attribute = await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.InsuranceAttributeName == Name);
+            if(attribute == null)
+            {
+                attribute = await CreateNewInsuranceAttribute(null, Name);
+            }
+            return attribute;
         }
 
         public async Task<List<InsuranceAttribute>> GetInsuranceAttributes()

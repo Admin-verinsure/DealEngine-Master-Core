@@ -1,0 +1,125 @@
+﻿<script type="text/javascript">
+    function OnClick(Method, Type, Id, SheetId) {
+        if (Type == "Organisation") {
+            $.ajax({
+                url: '@Url.Action("GetOrganisation", "Services")',
+                type: "POST",
+                data: { ID: Id, AnswerSheetId: SheetId },
+                success: function (Data) {
+                    try {
+                        var OutPut = JSON.parse(Data);
+                        PopulateView(Type, OutPut);
+                    } catch (e) {
+                        debugger;
+                    }
+                }, error: function (request, error) {
+                    debugger;
+                }
+            });
+            EditOrganisation();        
+        }
+    }
+
+    function EditOrganisation() {
+        CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
+    }
+    
+    function RemoveOrganisation(organisationId, AccordionId) {
+        sessionStorage.setItem('accordianTrigger', AccordionId);
+        $.ajax({
+            url: '@Url.Action("RemoveOrganisation", "Services")',
+            type: "POST",
+            data: { OrganisationId: organisationId },
+            success: function (Data) {
+                try {
+                    location.reload();
+                } catch (e) {
+                    debugger;
+                }
+            }, error: function (request, error) {
+                debugger;
+            }
+        });
+    }
+
+    function RestoreOrganisation(organisationId, AccordionId) {
+        sessionStorage.setItem('accordianTrigger', AccordionId);
+        $.ajax({
+            url: '@Url.Action("RestoreOrganisation", "Services")',
+            type: "POST",
+            data: { OrganisationId: organisationId },
+            success: function (Data) {
+                try {
+                    location.reload();
+                } catch (e) {
+                    debugger;
+                }
+            }, error: function (request, error) {
+                debugger;
+            }
+        });
+    }
+
+    function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
+        var editTabHTML = document.getElementById(EditTabId);
+        var addTabHTML = document.getElementById(AddTabId);
+        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        addTabHTML.innerHTML = "";
+        document.getElementById(AddButtonId).innerText = "Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+        SetCurrentTab(EditTabId);
+    }
+
+    function PopulateView(Type, OutPut) {
+        var Form;
+        if (Type == "Organisation") {
+            Form = document.getElementById("organisationViewModel");
+            try {
+                for (obj in OutPut) {
+                    var model = OutPut[obj];
+                    if (obj == "0") {
+                        Type = "User";
+                    }
+                    else {
+                        Type = "Organisation";
+                    }
+                    for (Field in model) {
+                        if (model.hasOwnProperty(Field)) {
+                            var id = Type + "." + Field;
+                            debugger;
+                            var element = document.getElementById(id);
+                            if (element != null) {
+                                if (element.tagName == "INPUT") {
+                                    if (element.type == "date") {
+                                        //hardcord date string
+                                        var date = OutPut[obj][Field].substring(0, 10);
+                                        element.value = date;
+                                    }
+                                    else {
+                                        var value = OutPut[obj][Field];
+                                        if (value == "project management personnel") {
+                                            value = "ProjectPersonnel";
+                                        }
+                                        element.value = value;
+                                    }
+                                }
+                                else if (element.tagName == "SELECT") {
+                                    //debugger;
+                                    for (var o = 0; o < element.options.length; o++) {
+                                        if (element.options[o].value == OutPut[obj][Field].toString()) {
+                                            element.options[o].selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                OnChange(element.id, element.name);
+                            }
+                            else { console.log(id) }
+                        }
+
+                    }
+                }
+            } catch (ex) { debugger; }
+        }
+    }
+</script>

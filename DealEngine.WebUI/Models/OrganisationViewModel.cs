@@ -2,109 +2,482 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models
 {
     public class OrganisationViewModel : BaseViewModel
     {
-        public Guid ID { get; set; }
-        public Guid ProgrammeId { get; set; }
-
-        // Organisation Details
-        public string OrganisationName { get; set; }
-        public string OrganisationEmail { get; set; }
-        public string OrganisationPhone { get; set; }
-
-        public string OrganisationTypeName { get; set; }
-        public string InsuranceAttribute { get; set; }
-
-        public Guid AnswerSheetId { get; set; }
-        public Guid PartyUseId { get; set; }
-        public OrganisationType OrganisationType { get; set; }
-        public IList<SelectListItem> OrgMooredType { get; set; }
-
-        public string OperatorYearsOfExp { get; set; }
-
-        public User user { get; set; }
-
-        public IList<User> Users { get; set; }
-        public IEnumerable<string> OrganisationTypes { get; set; }
-        public string IsAdmin { get; set; }
-
-        // Organisation Owner Details
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        public string Email { get; set; }
-
-        public string Phone { get; set; }
-
-        public string Website { get; set; }
-
-        public bool IsPrimary { get; set; }
-
-        public string YearsOfExp { get; set; }
-
-        public string Qualifications { get; set; }
-        public bool IsNZIAmember { get; set; }
-        public string IsIPENZmember { get; set; }
-        public string NZIAmembership { get; set; }
-        public string YearofPractice { get; set; }
-        public string prevPractice { get; set; }
-        public string Type { get; set; }
-        public bool IsADNZmember { get; set; }
-        public string DateofRetirement { get; set; }
-        public string CPEngQualified { get; set; }
-        public string DateofDeceased { get; set; }
-        public string DateofBirth { get; set; }
-        public bool IsLPBCategory3 { get; set; }
-        public bool IsRetiredorDecieved { get; set; }
-        public bool IsOtherdirectorship { get; set; }
-        public string Othercompanyname { get; set; }
-        public string Activities { get; set; }
-        public string ProfAffiliation { get; set; }
-        public string JobTitle { get; set; }
-        public string InsuredEntityRelation { get; set; }
-        public bool IsContractorInsured { get; set; }
-        public bool IsCurrentMembership { get; set; }
-        public bool IsInsuredRequired { get; set; }
-        public string PMICert { get; set; }
-        public string PartyName { get; set; }
-        public string CertType { get; set; }
-        public bool MajorShareHolder { get; set; }
-
-        public bool isaffiliation { get; set; }
-        public string affiliationdetails { get; set; }
-        public string CurrentMembershipNo { get; set; }
-
-        public  string DateQualified { get; set; }
-        public  string DesignLicensed { get; set; }
-        public  string SiteLicensed { get; set; }
-        public  bool IsRegisteredLicensed { get; set; }
-        public  bool ConfirmAAA { get; set; }
-
-        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
-        public string RegisteredStatus { get; set; }
-        public string Duration { get;  set; }
-        public  bool IsPrincipalAdvisor { get; set; }
-        public  string OfcPhoneno { get; set; }
-        public  string MyCRMId { get; set; }
-        public  string TradingName { get; set; }
-        
-        public static OrganisationViewModel FromEntity(OrganisationViewModel organisationViewModel)
+        public OrganisationViewModel() { }
+        public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, Organisation organisation, User OrgUser)
         {
-            OrganisationViewModel model = new OrganisationViewModel
+            User = new User(null, Guid.NewGuid());
+            Organisations = new List<Organisation>();
+            
+            OrganisationTypes = GetOrganisationTypes();
+            if (organisation != null)
             {
-                OrganisationTypeName = organisationViewModel.OrganisationTypeName,
-                OrganisationName = organisationViewModel.OrganisationName,
-                OrganisationEmail = organisationViewModel.OrganisationEmail,
-                OrganisationPhone = organisationViewModel.OrganisationPhone,
-            };
+                Organisation = organisation;
+            }
+            if (ClientInformationSheet != null)
+            {
+                Programme = ClientInformationSheet.Programme.BaseProgramme;
+                if(Programme.Name == "NZFSG Programme")
+                {
+                    AdvisorUnit = new AdvisorUnit(null, null, null);
+                    Types = GetNZFSGTypes(); 
+                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    HasRegisteredOptions = GetHasRegisteredOptions();
+                    OrganisationTypes = GetOrganisationTypes();
+                    HasPrincipalAdvisor = GetStandardSelectOptions();
+                }
+                if (Programme.Name == "DANZ Programme")
+                {
+                    Types = GetDANZTypes();
+                    PersonnelUnit = new PersonnelUnit(null, null, null);
+                    InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
+                    HasRegisteredLicensedOptions = GetStandardSelectOptions();
+                    HasDesignLicencedOptions = GetLicencedOptions();
+                    HasSiteLicensedOptions = GetLicencedOptions();
+                    HasCurrentMembershipOptions = GetStandardSelectOptions();
+                }
+                if (Programme.Name == "PMINZ Programme")
+                {
+                    Types = GetPMINZTypes();
+                    ProjectPersonnelUnit = new ProjectPersonnelUnit(null, null, null);
+                    InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
+                    HasContractorInsuredOptions = GetStandardSelectOptions();
+                    HasInsuredRequiredOptions = GetStandardSelectOptions();
+                    HasCurrentMembershipOptions = GetStandardSelectOptions();
+                    CertTypes = GetCertTypes();
+                    HasMajorShareHolder = GetStandardSelectOptions();
+                }
+                if (Programme.Name == "CEAS Programme")
+                {
+                    Types = GetCEASTypes();
+                    PrincipalUnit = new PrincipalUnit(null, null, null);
+                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    HasIsIPENZmemberOptions = GetStandardSelectOptions();
+                    HasCPEngQualifiedOptions = GetStandardSelectOptions();
+                }
+                if (Programme.Name == "NZACS Programme")
+                {
+                    Types = GetCEASTypes();
+                    PrincipalUnit = new PrincipalUnit(null, null, null);
+                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    HasIsNZIAmemberOptions = GetStandardSelectOptions();
+                    HasIsADNZmemberOptions = GetStandardSelectOptions();
+                    HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
+                }
 
-            return model;
+                Organisations.Add(ClientInformationSheet.Owner);
+                if (ClientInformationSheet.Organisation.Any())
+                {
+                    foreach(var sheetOrg in ClientInformationSheet.Organisation)
+                    {
+                        Organisations.Add(sheetOrg);
+                    }                    
+                }
+                
+            }
+            if(OrgUser != null)
+            {
+                User = OrgUser;
+            }
         }
 
+        private IList<SelectListItem> GetCEASTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Principal",
+                        Value = "Principal"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Subsidiary",
+                        Value = "Subsidiary"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Previous Consulting Business",
+                        Value = "PreviousConsultingBusiness"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Mergers",
+                        Value = "Mergers"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Joint Venture",
+                        Value = "JointVenture"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Previous Consulting Business",
+                        Value = "PreviousConsultingBusiness"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetInsuredEntityRelationOptions()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Director",
+                        Value = "Director"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Employee",
+                        Value = "Employee"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Contractor",
+                        Value = "Contractor"
+                    }
+            };
+            return _Types;
+        }
+        private List<SelectListItem> GetCertTypes()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Ordinary/Non Member",
+                        Value = "Ordinary"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "PMP",
+                        Value = "PMP"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "CAPM",
+                        Value = "CAPM"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Project Director",
+                        Value = "ProjectDirector"
+                    }
+            };
+            return _Types;
+        }
+        private IList<SelectListItem> GetPMINZTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Project Personnel",
+                        Value = "ProjectPersonnel"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Subsidiary",
+                        Value = "Subsidiary"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Previous Consulting Business",
+                        Value = "PreviousConsultingBusiness"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Mergers",
+                        Value = "Mergers"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Joint Venture",
+                        Value = "JointVenture"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Major Share Holder (Not being a PM)",
+                        Value = "MajorShareHolder"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetDANZTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Personnel",
+                        Value = "Personnel"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Subsidiary",
+                        Value = "Subsidiary"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Previous Consulting Business",
+                        Value = "PreviousConsultingBusiness"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Mergers",
+                        Value = "Mergers"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Joint Venture",
+                        Value = "JointVenture"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetLicencedOptions()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "None",
+                        Value = "None"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Category 1",
+                        Value = "Category 1"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Category 2",
+                        Value = "Category 2"
+                    }
+                ,
+                new SelectListItem
+                    {
+                        Text = "Category 3",
+                        Value = "Category 3"
+                    }
+            };
+            return _Types;
+        }
+        private IList<SelectListItem> GetStandardSelectOptions()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "No",
+                        Value = "false"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Yes",
+                        Value = "true"
+                    }
+            };
+            return _Types;
+        }
+        private IList<SelectListItem> GetOrganisationTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "Private",
+                        Value = "Person - Individual"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Corporation – Limited liability",
+                        Value = "Company"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Trust",
+                        Value = "Trust"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Partnership",
+                        Value = "Partnership"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetHasRegisteredOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {                            
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "AFA",
+                        Value = "AFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "RFA",
+                        Value = "RFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "N/A",
+                        Value = "N/A"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetNZFSGTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Advisor",
+                        Value = "Advisor"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Nominated Representative",
+                        Value = "NominatedRepresentative"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Other Consulting Business",
+                        Value = "OtherConsultingBusiness"
+                    }
+                };
+            return _Types;
+
+        }
+        [JsonIgnore]
+        public Domain.Entities.Programme Programme { get; set; }
+        public Guid ID { get; set; }
+        public Guid ProgrammeId { get; set; }
+        public Organisation Organisation { get; set; }
+        public User User { get; set; }
+        [Display(Name ="Type")]
+        [JsonIgnore]
+        public IList<SelectListItem> Types { get; set; }
+        [Display(Name = "Organisation Type")]
+        [JsonIgnore]
+        public IList<SelectListItem> OrganisationTypes { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasRetiredorDecievedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasRegisteredOptions { get; set; }
+        [JsonIgnore]
+        public IList<Organisation> Organisations { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasPrincipalAdvisor { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasRegisteredLicensedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasDesignLicencedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasSiteLicensedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasCurrentMembershipOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasContractorInsuredOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasInsuredRequiredOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> InsuredEntityRelationOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> CertTypes { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasMajorShareHolder { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsIPENZmemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasCPEngQualifiedOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsNZIAmemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsADNZmemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsOtherdirectorshipOptions { get; set; }
+
+
+        public AdvisorUnit AdvisorUnit { get; set; }
+        public PersonnelUnit PersonnelUnit { get; set; }
+        public ProjectPersonnelUnit ProjectPersonnelUnit { get; set; }
+        public PrincipalUnit PrincipalUnit { get; set; }
+
+
+        #region OLD!
+        // Organisation Details --- 
+        public string OrganisationType { get; set; }
+        public string InsuranceAttribute { get; set; }
+        public Guid AnswerSheetId { get; set; }
+        
+        #endregion
     }
 
 

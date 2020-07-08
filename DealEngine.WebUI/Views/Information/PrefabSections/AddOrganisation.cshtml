@@ -1,0 +1,159 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+<div id="AddOrganisation">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" id="tab1">
+            <a class="nav-link active" href="#OrganisationTab1" data-toggle="tab" onclick="ResetForm('organisationViewModel', 'OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> List All </a>
+        </li>
+        <li class="nav-item" id="tab2">
+            <a class="nav-link" href="#OrganisationTab2" data-toggle="tab"> Edit </a>
+        </li>
+        <li class="nav-item" id="tab3">
+            <a class="nav-link" href="#OrganisationTab3" data-toggle="tab" onclick="ResetForm('organisationViewModel', 'OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> Add </a>
+        </li>
+        <li class="nav-item" id="tab4">
+            <a class="nav-link" href="#OrganisationTab4" data-toggle="tab"> Removed </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="OrganisationTab1" class="tab-pane active" role="tabpanel">
+            <table id="tblorg"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="editButton" data-sortable="false"></th>
+                        <th data-field="OrganisationName" data-sortable="true">Organisation Name</th>
+                        <th data-field="OrganisationType" data-sortable="true">Organisation Type</th>
+                        <th data-field="IsPrincipal" data-sortable="true">Is Principal</th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id == Model.ClientInformationSheet.Owner.Id).ToList())
+                    {
+                        <tr id="@organisation.Id">
+                            <td>
+                                @*<button class="btn btn-success btn-sm" onclick="OnClick('Get', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>*@
+                            </td>
+                            <td>
+                                @organisation.Name
+                            </td>
+                            <td>
+                                Owner
+                            </td>
+                            <td>                                
+                            </td>
+                            <td>                                
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id != Model.ClientInformationSheet.Owner.Id && o.Removed != true).ToList())
+                    {
+                        <tr id="@organisation.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="OnClick('Get', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
+                            </td>
+                            <td>
+                                @organisation.Name
+                            </td>
+                            <td>
+                                @organisation.Type
+                            </td>
+                            <td>
+                                @organisation.IsPrincipalAdvisor
+                            </td>
+                            <td>
+                                <button onclick="RemoveOrganisation('@organisation.Id', 'Insured Details / Named Parties')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="OrganisationTab2" class="tab-pane" role="tabpanel">
+            <div class="form-group">
+                <label>Select a Organisation from the 'List All' Tab and Click Edit Button</label>
+            </div>            
+        </div>
+        <div id="OrganisationTab3" class="tab-pane" role="tabpanel">
+            @using (Html.BeginForm("AddOrganisation", "Services", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
+            {
+                @Html.HiddenFor(m => m.ClientInformationSheet.Id)
+                @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.ProjectPersonnelUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/PMINZ_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "DANZ Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/DANZ_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "CEAS Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/CEAS_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "NZACS Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZACS_AddOrganisation", Model)
+                }
+                <div class="form-group">
+                    <input class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnSubmit('organisationViewModel', 'Insured Details / Named Parties')" value="Add" />
+                    <button class="btn btn-danger" id="OrganisationClearButton" onclick="ResetOrganisation('organisationViewModel')"> Clear</button>
+                </div>
+            }
+
+        </div>
+        <div id="OrganisationTab4" class="tab-pane" role="tabpanel">
+            <table id="tblorgremoved"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="editButton" data-sortable="false"></th>
+                        <th data-field="OrganisationName" data-sortable="true">Organisation Name</th>
+                        <th data-field="OrganisationType" data-sortable="true">Organisation Type</th>
+                        <th data-field="IsPrincipal" data-sortable="true">Is Principal</th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id != Model.ClientInformationSheet.Owner.Id && o.Removed == true).ToList())
+                    {
+                        <tr id="@organisation.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="RestoreOrganisation('@organisation.Id', 'Insured Details / Named Parties')"><i class="fa fa-undo"></i> Restore</button>
+                            </td>
+                            <td>
+                                @organisation.Name
+                            </td>
+                            <td>
+                                @organisation.Type
+                            </td>
+                            <td>
+                                @organisation.IsPrincipalAdvisor
+                            </td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

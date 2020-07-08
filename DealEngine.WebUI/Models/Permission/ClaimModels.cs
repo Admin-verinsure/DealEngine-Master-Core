@@ -11,14 +11,6 @@ namespace DealEngine.WebUI.Models.Permission
 		public SelectClaimEditorViewModel() { }
 
 		// Update this to accept an argument of type ApplicationRole:
-		public SelectClaimEditorViewModel(AuthClaims claim)
-		{
-            ClaimId = claim.Id;
-            ClaimName = claim.Name;
-
-			// Assign the new Descrption property:
-			Description = claim.Description;
-		}
 
 		public bool Selected { get; set; }
 

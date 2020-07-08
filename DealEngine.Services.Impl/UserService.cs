@@ -186,13 +186,16 @@ namespace DealEngine.Services.Impl
 		{
 			try
 			{
-				_ldapService.Update(user);
+				UpdateLDap(user);
 			}
 			catch(Exception ex)
 			{
 				_logger.LogWarning(ex.Message);
 			}
-		    await _userRepository.UpdateAsync(user);			
+            finally
+            {
+				await _userRepository.UpdateAsync(user);
+			}		    			
 		}
 
         public async Task Delete (User user, User authorizingUser)
@@ -271,5 +274,9 @@ namespace DealEngine.Services.Impl
 			return _userRepository.FindAll().Where(u => u.PrimaryOrganisation == org).ToList();
 		}
 
-	}
+        private void UpdateLDap(User user)
+        {
+			_ldapService.Update(user);
+		}
+    }
 }
