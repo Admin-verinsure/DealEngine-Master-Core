@@ -67,7 +67,7 @@ namespace DealEngine.WebUI.Controllers
                 return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
-                       // MaxDepth = 2,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,

@@ -28,6 +28,8 @@ namespace DealEngine.WebUI.Models
             CreateMap<OrganisationalUnit, OrganisationalUnit>()
                 .ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
                 .ForMember(dest => dest.CreatedBy, map => map.Ignore());
 
             CreateMap<Organisation, Organisation>()
@@ -41,6 +43,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.Organisations, map => map.Ignore())
                 .ForMember(dest => dest.Email, map => map.Ignore())
+                .ForMember(dest => dest.UserName, map => map.Ignore())
                 .ForMember(dest => dest.Branches, map => map.Ignore())
                 .ForMember(dest => dest.Departments, map => map.Ignore())
                 .ForMember(dest => dest.UISIssueNotifyProgrammes, map => map.Ignore())

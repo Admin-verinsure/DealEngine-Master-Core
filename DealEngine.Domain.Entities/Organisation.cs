@@ -57,7 +57,7 @@ namespace DealEngine.Domain.Entities
         {
             Id = id;
         }
-
+        
         public Organisation(User createdBy, string organisationName, OrganisationType organisationType)
             : this(createdBy, organisationName)
         {

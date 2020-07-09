@@ -22,6 +22,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
+using System.IO;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -2408,10 +2410,11 @@ namespace DealEngine.WebUI.Controllers
             {                   
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
                 User orgUser = await _userService.GetUserByEmail(organisation.Email);                
-                //JsonObjects.Add(orgUser);
+                JsonObjects.Add(orgUser);
                 JsonObjects.Add(organisation);
-                string jsonObj = GetSerializedModel(organisation);
-                return Json(jsonObj);
+                var jsonObj = GetSerializedModel(JsonObjects);
+
+               return Json(jsonObj);
             }
             catch(Exception ex)
             {               

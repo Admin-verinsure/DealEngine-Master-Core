@@ -47,9 +47,9 @@ namespace DealEngine.Domain.Entities
 
     public class AdvisorUnit : OrganisationalUnit
     {
-        protected AdvisorUnit() { }
-        public AdvisorUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public AdvisorUnit() { }
+        public AdvisorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
@@ -71,9 +71,9 @@ namespace DealEngine.Domain.Entities
 
     public class PersonnelUnit : OrganisationalUnit
     {
-        protected PersonnelUnit() { }
-        public PersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public PersonnelUnit() { }
+        public PersonnelUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
@@ -99,9 +99,9 @@ namespace DealEngine.Domain.Entities
 
     public class ProjectPersonnelUnit : OrganisationalUnit
     {
-        protected ProjectPersonnelUnit() { }
-        public ProjectPersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public ProjectPersonnelUnit() { }
+        public ProjectPersonnelUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
@@ -129,9 +129,9 @@ namespace DealEngine.Domain.Entities
 
     public class PrincipalUnit : OrganisationalUnit
     {
-        protected PrincipalUnit() { }
-        public PrincipalUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public PrincipalUnit() { }
+        public PrincipalUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }

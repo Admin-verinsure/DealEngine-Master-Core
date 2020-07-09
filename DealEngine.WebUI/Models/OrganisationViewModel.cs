@@ -26,7 +26,7 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.Name == "NZFSG Programme")
                 {
-                    AdvisorUnit = new AdvisorUnit(null, null, null);
+                    AdvisorUnit = new AdvisorUnit();
                     Types = GetNZFSGTypes(); 
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
@@ -36,7 +36,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "DANZ Programme")
                 {
                     Types = GetDANZTypes();
-                    PersonnelUnit = new PersonnelUnit(null, null, null);
+                    PersonnelUnit = new PersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
@@ -46,7 +46,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "PMINZ Programme")
                 {
                     Types = GetPMINZTypes();
-                    ProjectPersonnelUnit = new ProjectPersonnelUnit(null, null, null);
+                    ProjectPersonnelUnit = new ProjectPersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasContractorInsuredOptions = GetStandardSelectOptions();
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
@@ -57,7 +57,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "CEAS Programme")
                 {
                     Types = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit(null, null, null);
+                    PrincipalUnit = new PrincipalUnit();
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasIsIPENZmemberOptions = GetStandardSelectOptions();
                     HasCPEngQualifiedOptions = GetStandardSelectOptions();
@@ -65,7 +65,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "NZACS Programme")
                 {
                     Types = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit(null, null, null);
+                    PrincipalUnit = new PrincipalUnit();
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasIsNZIAmemberOptions = GetStandardSelectOptions();
                     HasIsADNZmemberOptions = GetStandardSelectOptions();

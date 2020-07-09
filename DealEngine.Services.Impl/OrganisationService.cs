@@ -118,7 +118,7 @@ namespace DealEngine.Services.Impl
 			if(organisation != null)
             {
 				organisation = _mapper.Map(jsonOrganisation, organisation);
-				var unit = organisation.OrganisationalUnits.FirstOrDefault(u => u.Type == jsonUnit.Type);
+				var unit = organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == jsonUnit.Type);
 				if(unit != null)
                 {
 					_mapper.Map(jsonUnit, unit);
@@ -245,34 +245,30 @@ namespace DealEngine.Services.Impl
 			}
 			else
 			{
+				OrganisationTypeName = "Person - Individual";
 				if (Type == "Private")
-				{					
-					OrganisationTypeName = "Person - Individual";
+				{										
 					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 				}
 				if(Type == "Advisor" || Type == "NominatedRepresentative")
                 {
-					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
-					OrganisationalUnits.Add(new AdvisorUnit(User, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+					OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
 				}
 				if (Type == "Personnel")
 				{
-					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName,  collection));
-					OrganisationalUnits.Add(new PersonnelUnit(User, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName,  collection));
+					OrganisationalUnits.Add(new PersonnelUnit(User, Type, OrganisationTypeName, collection));
 				}
 				if (Type == "ProjectPersonnel")
 				{
-					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
-					OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+					OrganisationalUnits.Add(new ProjectPersonnelUnit(User, Type, OrganisationTypeName, collection));
 				}
 				if(Type == "Principal")
                 {
-					OrganisationTypeName = "Person - Individual";
-					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
-					OrganisationalUnits.Add(new PrincipalUnit(User, Type, collection));
+					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+					OrganisationalUnits.Add(new PrincipalUnit(User, Type, OrganisationTypeName, collection));
 				}
 			}
 
