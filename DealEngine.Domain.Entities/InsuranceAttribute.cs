@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
@@ -8,7 +9,7 @@ namespace DealEngine.Domain.Entities
     {
         public virtual string InsuranceAttributeName { get; protected set; }
         public virtual IList<AuditHistory> AuditHistory { get; set; }
-
+        [JsonIgnore]
         public virtual IList<Organisation> IAOrganisations { get; set; }
         protected InsuranceAttribute() : base(null) { }
 

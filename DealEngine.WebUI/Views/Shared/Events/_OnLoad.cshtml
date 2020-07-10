@@ -18,4 +18,158 @@
         }
         debugger;
     }
+    function PopulateAdvisorUnit(OutPut) {
+        debugger;
+        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
+            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
+                id = "AdvisorUnit." + Item;
+                var element = document.getElementById(id);
+                if (element != null) {
+                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
+                    //debugger;
+                    //ImportValue(element, Value);
+                    if (element.tagName == "INPUT") {
+                        if (element.type == "date") {
+                            //hardcord date string
+                            var date = Value.substring(0, 10);
+                            element.value = date;
+                        }
+                        else {
+                            element.value = Value;
+                        }
+                    }
+                    else if (element.tagName == "SELECT") {
+                        //debugger;
+                        for (var o = 0; o < element.options.length; o++) {
+                            if (element.options[o].value == Value.toString()) {
+                                element.options[o].selected = true;
+                                break;
+                            }
+                        }
+                    }
+                    debugger;
+                    OnChange(element.id, element.name);
+                }
+
+            }
+        }
+    }
+
+    function PopulateOrganisationView(OutPut) {
+        var Form;
+        Form = document.getElementById("organisationViewModel");
+        try {
+            for (obj in OutPut) {
+                var model = OutPut[obj];
+                if (obj == "0") {
+                    Type = "User";
+                }
+                else {
+                    Type = "Organisation";
+                }
+                for (var Field in model) {
+                    var Element = null;
+                    var Value = "";
+
+                    if (model.hasOwnProperty("InsuranceAttributes")) {
+                        if (Field === "InsuranceAttributes") {
+                            if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] === "Principal") {
+                                debugger;
+                                PopulatePrincipalUnit(OutPut);
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Principal";
+                            }
+                            else if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] === "Advisor") {
+                                PopulateAdvisorUnit(OutPut);
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Advisor";
+                            }
+                            //}
+                            //else if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] != "") {
+                            //    Value = OutPut[obj][Field]["0"]["InsuranceAttributeName"];
+                            //    var Id = Type + ".InsuranceAttribute";
+                            //    Element = document.getElementById(Id);
+                            //}
+                        }
+                    }
+
+                    if (Element == null) {
+                        var Id = Type + "." + Field;
+                        Element = document.getElementById(Id);
+                        Value = OutPut[obj][Field];
+                    }
+                    if (Element != null) {
+                        
+                        //ImportValue(element, Value);
+                        if (Element.tagName == "INPUT") {
+                            if (Element.type == "date") {
+                                //hardcord date string
+                                var date = Value.substring(0, 10);
+                                Element.value = date;
+                            }
+                            else {
+                                Element.value = Value;
+                            }
+                        }
+                        else if (Element.tagName == "SELECT") {
+                            //debugger;
+                            for (var o = 0; o < Element.options.length; o++) {
+                                if (Element.options[o].value == Value.toString()) {
+                                    Element.options[o].selected = true;
+                                    break;
+                                }
+                            }
+                        }
+                        OnChange(Element.id, Element.name);
+                    }
+                    else { console.log(Id) }
+                }
+            }
+        } catch (ex) { debugger; }
+    }
+
+    function PopulatePrincipalUnit(OutPut) {
+        debugger;
+        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
+            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
+                id = "PrincipalUnit." + Item;
+                var element = document.getElementById(id);
+                if (element != null) {
+                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
+                    //debugger;
+                    //ImportValue(element, Value);
+                    if (element.tagName == "INPUT") {
+                        if (element.type == "date") {
+                            //hardcord date string
+                            var date = Value.substring(0, 10);
+                            element.value = date;
+                        }
+                        else {
+                            element.value = Value;
+                        }
+                    }
+                    else if (element.tagName == "SELECT") {
+                        //debugger;
+                        if (Value == "1") {
+                            Value = "true"
+                        }
+                        else {
+                            Value = "false";
+                        }
+                        for (var o = 0; o < element.options.length; o++) {
+                            if (element.options[o].value == Value.toString()) {
+                                element.options[o].selected = true;
+                                break;
+                            }
+                        }
+                    }
+                    debugger;
+                    OnChange(element.id, element.name);
+                }
+            }
+        }
+    }
+
 </script>

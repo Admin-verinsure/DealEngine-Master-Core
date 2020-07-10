@@ -2366,7 +2366,7 @@ namespace DealEngine.WebUI.Controllers
             var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 
             string Email = jsonOrganisation.Email;
-            string TypeName = jsonOrganisation.Type;
+            string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             string Name = jsonOrganisation.Name;
             string FirstName = jsonUser.FirstName;
             string LastName = jsonUser.LastName;

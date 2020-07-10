@@ -6,9 +6,9 @@
             <div class="form-group row">
                 <div class="form-group col-md-6">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.OrganisationViewModel.Types, new { @class = "label required" })
-                        <select id="Organisation.Type" name="OrganisationViewModel.Organisation.Type" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in @Model.OrganisationViewModel.Types)
+                        @Html.LabelFor(m => m.OrganisationViewModel.InsuranceAttributes, new { @class = "label required" })
+                        <select id="Organisation.InsuranceAttributes" name="OrganisationViewModel.InsuranceAttribute" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in @Model.OrganisationViewModel.InsuranceAttributes)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }

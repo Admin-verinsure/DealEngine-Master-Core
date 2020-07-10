@@ -25,7 +25,7 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetAnyRemovedAdvisor(string email);
         Task ChangeOwner(Organisation organisation, ClientInformationSheet sheet);
         Task Update(Organisation organisation);
-        Task RefactorOrganisations();
+        Task RefactorOrganisations(Guid programmeId);
     }
 }
 

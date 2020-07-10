@@ -9,7 +9,7 @@ namespace DealEngine.Domain.Entities
 {
     public class OrganisationalUnit : EntityBase, IAggregateRoot
     {
-        protected OrganisationalUnit() : base(null) { }
+        public OrganisationalUnit() : base(null) { }
 
         public OrganisationalUnit(User createdBy, string name)
             : base(createdBy)
@@ -138,7 +138,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
-        public virtual bool IsRetiredorDecieved { get; set; }
+        public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Qualifications")]
         public virtual string Qualifications { get; set; }
         [Display(Name = "Engineer Member")]

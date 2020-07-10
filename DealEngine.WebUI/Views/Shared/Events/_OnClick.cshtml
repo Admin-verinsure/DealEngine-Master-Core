@@ -8,7 +8,7 @@
                 success: function (Data) {
                     try {
                         var OutPut = JSON.parse(Data);
-                        PopulateView(Type, OutPut);
+                        PopulateOrganisationView(OutPut);
                     } catch (e) {
                         debugger;
                     }
@@ -16,14 +16,14 @@
                     debugger;
                 }
             });
-            EditOrganisation();        
+            EditOrganisation();
         }
     }
 
     function EditOrganisation() {
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
-    
+
     function RemoveOrganisation(organisationId, AccordionId) {
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
@@ -77,7 +77,7 @@
                 var date = Value.substring(0, 10);
                 Element.value = date;
             }
-            else {                
+            else {
                 if (Value == "project management personnel") {
                     Value = "ProjectPersonnel";
                 }
@@ -94,94 +94,5 @@
             }
         }
     }
-
-    function PopulateView(Type, OutPut) {
-        var Form;
-        if (Type == "Organisation") {
-            Form = document.getElementById("organisationViewModel");
-            try {
-                for (obj in OutPut) {
-                    var model = OutPut[obj];
-                    if (obj == "0") {
-                        Type = "User";
-                    }
-                    else {
-                        Type = "Organisation";
-                    }
-                    for (var Field in model) {
-                        var element;
-                        var id;
-                        if (model.hasOwnProperty("OrganisationalUnits")) {
-                            if (OutPut[obj][Field] === "Advisor") {
-                                for (var ArrayNo in OutPut[obj]["OrganisationalUnits"]) {
-                                    for (var Item in OutPut[obj]["OrganisationalUnits"][ArrayNo]) {
-                                        id = "AdvisorUnit." + Item;
-                                        element = document.getElementById(id);
-                                        if (element != null) {                                            
-                                            var Value = OutPut[obj]["OrganisationalUnits"][ArrayNo][Item];
-                                            //debugger;
-                                            //ImportValue(element, Value);
-                                            if (element.tagName == "INPUT") {
-                                                if (element.type == "date") {
-                                                    //hardcord date string
-                                                    var date = Value.substring(0, 10);
-                                                    element.value = date;
-                                                }
-                                                else {
-                                                    element.value = Value;
-                                                }
-                                            }
-                                            else if (element.tagName == "SELECT") {
-                                                //debugger;
-                                                for (var o = 0; o < element.options.length; o++) {
-                                                    if (element.options[o].value == Value.toString()) {
-                                                        element.options[o].selected = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            debugger;
-                                            OnChange(element.id, element.name);
-                                        }
-                                        
-                                    }
-                                }
-
-                            }
-                        }
-                        id = Type + "." + Field;
-                        element = document.getElementById(id);
-                        if (element != null) {
-                            var Value = OutPut[obj][Field];
-                            //ImportValue(element, Value);                            
-                            if (element.tagName == "INPUT") {
-                                if (element.type == "date") {
-                                    //hardcord date string
-                                    var date = Value.substring(0, 10);
-                                    element.value = date;
-                                }
-                                else {
-                                    if (Value == "project management personnel") {
-                                        Value = "ProjectPersonnel";
-                                    }
-                                    element.value = Value;
-                                }
-                            }
-                            else if (element.tagName == "SELECT") {
-                                //debugger;
-                                for (var o = 0; o < element.options.length; o++) {
-                                    if (element.options[o].value == Value.toString()) {
-                                        element.options[o].selected = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            OnChange(element.id, element.name);
-                        }
-                        else { console.log(id) }
-                    }
-                }
-            } catch (ex) { debugger; }
-        }
-    }
+    
 </script>

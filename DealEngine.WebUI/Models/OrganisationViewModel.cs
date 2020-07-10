@@ -27,7 +27,7 @@ namespace DealEngine.WebUI.Models
                 if(Programme.Name == "NZFSG Programme")
                 {
                     AdvisorUnit = new AdvisorUnit();
-                    Types = GetNZFSGTypes(); 
+                    InsuranceAttributes = GetNZFSGTypes(); 
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
@@ -35,7 +35,7 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "DANZ Programme")
                 {
-                    Types = GetDANZTypes();
+                    InsuranceAttributes = GetDANZTypes();
                     PersonnelUnit = new PersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
@@ -45,7 +45,7 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "PMINZ Programme")
                 {
-                    Types = GetPMINZTypes();
+                    InsuranceAttributes = GetPMINZTypes();
                     ProjectPersonnelUnit = new ProjectPersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasContractorInsuredOptions = GetStandardSelectOptions();
@@ -56,7 +56,7 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "CEAS Programme")
                 {
-                    Types = GetCEASTypes();
+                    InsuranceAttributes = GetCEASTypes();
                     PrincipalUnit = new PrincipalUnit();
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasIsIPENZmemberOptions = GetStandardSelectOptions();
@@ -64,7 +64,7 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "NZACS Programme")
                 {
-                    Types = GetCEASTypes();
+                    InsuranceAttributes = GetCEASTypes();
                     PrincipalUnit = new PrincipalUnit();
                     HasRetiredorDecievedOptions = GetStandardSelectOptions();
                     HasIsNZIAmemberOptions = GetStandardSelectOptions();
@@ -423,7 +423,7 @@ namespace DealEngine.WebUI.Models
         public User User { get; set; }
         [Display(Name ="Type")]
         [JsonIgnore]
-        public IList<SelectListItem> Types { get; set; }
+        public IList<SelectListItem> InsuranceAttributes { get; set; }
         [Display(Name = "Organisation Type")]
         [JsonIgnore]
         public IList<SelectListItem> OrganisationTypes { get; set; }

@@ -386,13 +386,44 @@ namespace DealEngine.Services.Impl
 
 		}
 
-        public async Task RefactorOrganisations()
+        public async Task RefactorOrganisations(Guid programmeId)
         {
+			int value = 0;
+			var Principal = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			foreach (var organisation in organisations)
-            {
-				
-            }
+			var CeasOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
+			foreach (var organisation in CeasOrg)
+			{
+                organisation.OrganisationalUnits.Add(
+                    new PrincipalUnit()
+                    {
+                        Name = "Principal",
+                        Type = "Person - Individual",
+                        DateofRetirement = organisation.DateofRetirement,
+                        IsRetiredorDeceased = organisation.IsRetiredorDecieved,
+                        Qualifications = organisation.Qualifications,
+                        IsIPENZmember = organisation.IsIPENZmember,
+                        CPEngQualified = organisation.CPEngQualified,
+                        YearofPracticeCEAS = organisation.YearofPractice,
+                        IsNZIAmember = organisation.IsNZIAmember,
+                        IsADNZmember = organisation.IsADNZmember,
+                        NZIAmembership = organisation.NZIAmembership,
+                        IsLPBCategory3 = organisation.IsLPBCategory3,
+                        IsOtherdirectorship = organisation.IsOtherdirectorship,
+                        TradingName = organisation.TradingName
+                    });
+
+                organisation.OrganisationalUnits.Add(
+                    new OrganisationalUnit()
+                    {
+                        Name = "Private",
+                        Type = "Person - Individual",
+                    });
+
+                await _organisationRepository.UpdateAsync(organisation);
+				Console.WriteLine(value);
+			}
+			Console.WriteLine(value);
         }
     }
 
