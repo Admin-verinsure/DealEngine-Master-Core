@@ -775,7 +775,7 @@ namespace DealEngine.WebUI.Controllers
         //}
 
         [HttpPost]
-        public async Task<IActionResult> GetReportView(IFormCollection formCollection)
+        public async Task<IActionResult> GetReportView(IFormCollection formCollection, Object reporttype)
         {
             User user = null;
             try
@@ -884,10 +884,10 @@ namespace DealEngine.WebUI.Controllers
 
 
        [HttpGet]
-        public void ExportExcel(DataColumnCollection Columns , DataRowCollection Rows)
+        public void ExportExcel(IFormCollection formCollection)
         {
 
-
+            //var json = json.
         }
 
 
