@@ -405,12 +405,15 @@ namespace DealEngine.WebUI.Controllers
             ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
             var clientProgramme = clientList.FirstOrDefault();
-            if (!isClient)
+            if (clientProgramme != null)
             {
-                var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
-                if (isBaseClientProg)
+                if (!isClient)
                 {
-                    clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                    var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+                    if (isBaseClientProg)
+                    {
+                        clientList = await _programmeService.GetClientProgrammesForProgramme(clientProgramme.BaseProgramme.Id);
+                    }
                 }
             }
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
