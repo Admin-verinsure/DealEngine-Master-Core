@@ -2045,13 +2045,13 @@ namespace DealEngine.WebUI.Controllers
                     foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
 
                     {
-                        for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
-                        {
-                            foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
-                            {
-                                Advisors.Add(organisation);
-                            }
-                        }
+                        //for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
+                        //{
+                        //    foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
+                        //    {
+                        //        Advisors.Add(organisation);
+                        //    }
+                        //}
                     }
                 }
                 catch (Exception ex)

@@ -214,7 +214,7 @@
                         <label class=" label required">Type</label>
                         <label class="input">
                             <select id="types" name="Type" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.OrganisationViewModel.Types)
+                                @foreach (var option in Model.OrganisationViewModel.InsuranceAttributes)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }

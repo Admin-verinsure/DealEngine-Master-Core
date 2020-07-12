@@ -1,21 +1,122 @@
-﻿<script type="text/javascript">
-    function OnPopulateData(Type, Data) {
-        var formId = Type + "ViewModel";
-        debugger;
-        var form = document.getElementById(formId);
+﻿<script type="text/javascript">   
 
-        if (Type == "Organisation") {
-            try {
-                for (var l = 0; l < Data.organisation.length; l++) {
-                    debugger;
-                    var element = document.getElementById(Data.organisation[l])
+    function PopulateOrganisationView(OutPut) {
+        var Form;
+        Form = document.getElementById("organisationViewModel");
+        try {
+            for (obj in OutPut) {
+                var model = OutPut[obj];
+                if (obj == "0") {
+                    Type = "User";
+                }
+                else {
+                    Type = "Organisation";
+                }
+                for (var Field in model) {
+                    var Element = null;
+                    var Value = "";
+
+                    if (model.hasOwnProperty("InsuranceAttributes")) {
+                        if (Field === "InsuranceAttributes") {
+                            if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
+                                debugger;
+                                PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Principal";
+                            }
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
+                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Advisor";
+                            }
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
+                                PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Personnel";
+                            }
+                            //}
+                            //else if (OutPut[obj][Field]["0"]["Name"] != "") {
+                            //    Value = OutPut[obj][Field]["0"]["Name"];
+                            //    var Id = Type + ".InsuranceAttribute";
+                            //    Element = document.getElementById(Id);
+                            //}
+                        }
+                    }
+
+                    if (Element == null) {
+                        var Id = Type + "." + Field;
+                        Element = document.getElementById(Id);
+                        Value = OutPut[obj][Field];
+                    }
+                    if (Element != null) {
+                        
+                        //ImportValue(element, Value);
+                        if (Element.tagName == "INPUT") {
+                            if (Element.type == "date") {
+                                //hardcord date string
+                                var date = Value.substring(0, 10);
+                                Element.value = date;
+                            }
+                            else {
+                                Element.value = Value;
+                            }
+                        }
+                        else if (Element.tagName == "SELECT") {
+                            //debugger;
+                            for (var o = 0; o < Element.options.length; o++) {
+                                if (Element.options[o].value == Value.toString()) {
+                                    Element.options[o].selected = true;
+                                    break;
+                                }
+                            }
+                        }
+                        OnChange(Element.id, Element.name);
+                    }
+                    else { console.log(Id) }
                 }
             }
-            catch (ex) {
-                debugger;
-            }
-
-        }
-        debugger;
+        } catch (ex) { debugger; }
     }
+
+    function PopulateOrganisationalUnit(OutPut, UnitName) {
+        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
+            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
+                id = UnitName + "." + Item;
+                var element = document.getElementById(id);
+                if (element != null) {
+                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
+                    if (element.tagName == "INPUT") {
+                        if (element.type == "date") {
+                            //hardcord date string
+                            var date = Value.substring(0, 10);
+                            element.value = date;
+                        }
+                        else {
+                            element.value = Value;
+                        }
+                    }
+                    else if (element.tagName == "SELECT") {
+                        debugger;
+                        if (Value == "1") {
+                            Value = "true"
+                        }
+                        else if (Value == "2") {
+                            Value = "false";
+                        }
+                        for (var o = 0; o < element.options.length; o++) {
+                            if (element.options[o].value == Value.toString()) {
+                                element.options[o].selected = true;
+                                break;
+                            }
+                        }
+                    }
+                    OnChange(element.id, element.name);
+                }
+            }
+        }
+    }
+
 </script>

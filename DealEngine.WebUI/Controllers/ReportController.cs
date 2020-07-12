@@ -83,10 +83,6 @@ namespace DealEngine.WebUI.Controllers
         {
             Guid clientId = Guid.Parse("82ed739d-0795-4602-a2c8-abab017abcb5");
             var sheet = await _clientService.GetInformation(clientId);
-            //Craig wants to change stuff at this point (this is the post processing)
-
-            // NO BOATS
-
 
             var agreements = sheet.Programme.Agreements;
             var list = new List<object>();

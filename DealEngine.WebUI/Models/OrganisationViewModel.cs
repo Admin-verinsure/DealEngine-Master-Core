@@ -26,17 +26,17 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.Name == "NZFSG Programme")
                 {
-                    AdvisorUnit = new AdvisorUnit(null, null, null);
-                    Types = GetNZFSGTypes(); 
-                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    AdvisorUnit = new AdvisorUnit();
+                    InsuranceAttributes = GetNZFSGTypes();
+                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalAdvisor = GetStandardSelectOptions();
                 }
                 if (Programme.Name == "DANZ Programme")
                 {
-                    Types = GetDANZTypes();
-                    PersonnelUnit = new PersonnelUnit(null, null, null);
+                    InsuranceAttributes = GetDANZTypes();
+                    PersonnelUnit = new PersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
@@ -45,8 +45,8 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "PMINZ Programme")
                 {
-                    Types = GetPMINZTypes();
-                    ProjectPersonnelUnit = new ProjectPersonnelUnit(null, null, null);
+                    InsuranceAttributes = GetPMINZTypes();
+                    PersonnelUnit = new PersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasContractorInsuredOptions = GetStandardSelectOptions();
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
@@ -56,17 +56,17 @@ namespace DealEngine.WebUI.Models
                 }
                 if (Programme.Name == "CEAS Programme")
                 {
-                    Types = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit(null, null, null);
-                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    InsuranceAttributes = GetCEASTypes();
+                    PrincipalUnit = new PrincipalUnit();
+                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasIsIPENZmemberOptions = GetStandardSelectOptions();
                     HasCPEngQualifiedOptions = GetStandardSelectOptions();
                 }
                 if (Programme.Name == "NZACS Programme")
                 {
-                    Types = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit(null, null, null);
-                    HasRetiredorDecievedOptions = GetStandardSelectOptions();
+                    InsuranceAttributes = GetCEASTypes();
+                    PrincipalUnit = new PrincipalUnit();
+                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasIsNZIAmemberOptions = GetStandardSelectOptions();
                     HasIsADNZmemberOptions = GetStandardSelectOptions();
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
@@ -110,7 +110,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Previous Consulting Business",
-                        Value = "PreviousConsultingBusiness"
+                        Value = "Previous Consulting Business"
                     },
                     new SelectListItem
                     {
@@ -125,7 +125,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Previous Consulting Business",
-                        Value = "PreviousConsultingBusiness"
+                        Value = "Previous Consulting Business"
                     }
                 };
             return _Types;
@@ -207,8 +207,8 @@ namespace DealEngine.WebUI.Models
                     },
                     new SelectListItem
                     {
-                        Text = "Project Personnel",
-                        Value = "ProjectPersonnel"
+                        Text = "Personnel",
+                        Value = "Personnel"
                     },
                     new SelectListItem
                     {
@@ -218,7 +218,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Previous Consulting Business",
-                        Value = "PreviousConsultingBusiness"
+                        Value = "Previous Consulting Business"
                     }
                     ,
                     new SelectListItem
@@ -230,13 +230,13 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Joint Venture",
-                        Value = "JointVenture"
+                        Value = "Joint Venture"
                     }
                     ,
                     new SelectListItem
                     {
                         Text = "Major Share Holder (Not being a PM)",
-                        Value = "MajorShareHolder"
+                        Value = "Major Share Holder"
                     }
                 };
             return _Types;
@@ -263,7 +263,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Previous Consulting Business",
-                        Value = "PreviousConsultingBusiness"
+                        Value = "Previous Consulting Business"
                     }
                     ,
                     new SelectListItem
@@ -275,7 +275,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Joint Venture",
-                        Value = "JointVenture"
+                        Value = "Joint Venture"
                     }
                 };
             return _Types;
@@ -404,12 +404,12 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Nominated Representative",
-                        Value = "NominatedRepresentative"
+                        Value = "Nominated Representative"
                     },
                     new SelectListItem
                     {
                         Text = "Other Consulting Business",
-                        Value = "OtherConsultingBusiness"
+                        Value = "Other Consulting Business"
                     }
                 };
             return _Types;
@@ -423,12 +423,12 @@ namespace DealEngine.WebUI.Models
         public User User { get; set; }
         [Display(Name ="Type")]
         [JsonIgnore]
-        public IList<SelectListItem> Types { get; set; }
+        public IList<SelectListItem> InsuranceAttributes { get; set; }
         [Display(Name = "Organisation Type")]
         [JsonIgnore]
         public IList<SelectListItem> OrganisationTypes { get; set; }
         [JsonIgnore]
-        public IList<SelectListItem> HasRetiredorDecievedOptions { get; set; }
+        public IList<SelectListItem> HasRetiredorDeceasedOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasRegisteredOptions { get; set; }
         [JsonIgnore]
@@ -467,7 +467,6 @@ namespace DealEngine.WebUI.Models
 
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
-        public ProjectPersonnelUnit ProjectPersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
 
 

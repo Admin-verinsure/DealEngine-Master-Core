@@ -4,17 +4,7 @@
     <div class="form-group">
         <div class="form-group">
             <div class="form-group row">
-                <div class="form-group col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.OrganisationViewModel.Types, new { @class = "label required" })
-                        <select id="Organisation.Type" name="OrganisationViewModel.Organisation.Type" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in @Model.OrganisationViewModel.Types)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>                    
-                </div>
+
                 <div class="form-group col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.OrganisationTypes, new { @class = "label required" })
@@ -30,6 +20,17 @@
                             @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
                             @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.OrganisationViewModel.InsuranceAttributes, new { @class = "label required" })
+                        <select id="Organisation.InsuranceAttribute" name="OrganisationViewModel.InsuranceAttribute" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in @Model.OrganisationViewModel.InsuranceAttributes)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
                     </div>
                 </div>
             </div>
@@ -52,7 +53,7 @@
                         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Email, new { @class = "form-control", @id = "User.Email", @type = "email", @onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
-                <div class="form-group col-md-6" id="Personnel">                    
+                <div class="form-group col-md-6">                    
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/_NZACSPrincipal", Model)
                 </div>
             </div>

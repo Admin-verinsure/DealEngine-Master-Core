@@ -55,8 +55,8 @@ namespace DealEngine.Domain.Entities
         public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
        
         protected ClientInformationSheet () : this (null) { }
-
-		protected ClientInformationSheet (User createdBy)
+        public virtual IList<ResearchHouse> ResearchHouses { get; protected set; }
+        protected ClientInformationSheet (User createdBy)
 			: base (createdBy)
 		{
             SubClientInformationSheets = new List<SubClientInformationSheet>();

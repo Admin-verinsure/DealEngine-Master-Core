@@ -17,7 +17,7 @@
     </ul>
     <div class="tab-content">
         <div id="OrganisationTab1" class="tab-pane active" role="tabpanel">
-            <table id="tblorg"
+            <table id="tblOrganisation"
                    class="table table-striped" width="100%"
                    data-show-columns="true"
                    data-pagination="true"
@@ -90,7 +90,7 @@
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.ProjectPersonnelUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/PMINZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "DANZ Programme")

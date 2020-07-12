@@ -1,6 +1,4 @@
-﻿using System;
-using DealEngine.Domain.Entities;
-using FluentNHibernate.Mapping;
+﻿using DealEngine.Domain.Entities;
 using FluentNHibernate.Automapping.Alterations;
 using FluentNHibernate.Automapping;
 

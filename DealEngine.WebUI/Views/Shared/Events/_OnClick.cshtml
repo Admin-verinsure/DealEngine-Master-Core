@@ -8,7 +8,7 @@
                 success: function (Data) {
                     try {
                         var OutPut = JSON.parse(Data);
-                        PopulateView(Type, OutPut);
+                        PopulateOrganisationView(OutPut);
                     } catch (e) {
                         debugger;
                     }
@@ -16,14 +16,14 @@
                     debugger;
                 }
             });
-            EditOrganisation();        
+            EditOrganisation();
         }
     }
 
     function EditOrganisation() {
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
-    
+
     function RemoveOrganisation(organisationId, AccordionId) {
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
@@ -70,56 +70,29 @@
         SetCurrentTab(EditTabId);
     }
 
-    function PopulateView(Type, OutPut) {
-        var Form;
-        if (Type == "Organisation") {
-            Form = document.getElementById("organisationViewModel");
-            try {
-                for (obj in OutPut) {
-                    var model = OutPut[obj];
-                    if (obj == "0") {
-                        Type = "User";
-                    }
-                    else {
-                        Type = "Organisation";
-                    }
-                    for (Field in model) {
-                        if (model.hasOwnProperty(Field)) {
-                            var id = Type + "." + Field;
-                            debugger;
-                            var element = document.getElementById(id);
-                            if (element != null) {
-                                if (element.tagName == "INPUT") {
-                                    if (element.type == "date") {
-                                        //hardcord date string
-                                        var date = OutPut[obj][Field].substring(0, 10);
-                                        element.value = date;
-                                    }
-                                    else {
-                                        var value = OutPut[obj][Field];
-                                        if (value == "project management personnel") {
-                                            value = "ProjectPersonnel";
-                                        }
-                                        element.value = value;
-                                    }
-                                }
-                                else if (element.tagName == "SELECT") {
-                                    //debugger;
-                                    for (var o = 0; o < element.options.length; o++) {
-                                        if (element.options[o].value == OutPut[obj][Field].toString()) {
-                                            element.options[o].selected = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                OnChange(element.id, element.name);
-                            }
-                            else { console.log(id) }
-                        }
-
-                    }
+    function ImportValue(Element, Value) {
+        if (Element.tagName == "INPUT") {
+            if (Element.type == "date") {
+                //hardcord date string
+                var date = Value.substring(0, 10);
+                Element.value = date;
+            }
+            else {
+                if (Value == "project management personnel") {
+                    Value = "ProjectPersonnel";
                 }
-            } catch (ex) { debugger; }
+                Element.value = Value;
+            }
+        }
+        else if (Element.tagName == "SELECT") {
+            //debugger;
+            for (var o = 0; o < Element.options.length; o++) {
+                if (Element.options[o].value == Value.toString()) {
+                    Element.options[o].selected = true;
+                    break;
+                }
+            }
         }
     }
+    
 </script>

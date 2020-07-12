@@ -548,36 +548,36 @@
             * TODO: add a way to add more todo's to list
             */
             // initialize sortable
-            $(function () {
-                $("#sortable1, #sortable2").sortable({
-                    handle: '.handle',
-                    connectWith: ".todo",
-                    update: countTasks
-                }).disableSelection();
-            });
+            //$(function () {
+            //    $("#sortable1, #sortable2").sortable({
+            //        handle: '.handle',
+            //        connectWith: ".todo",
+            //        update: countTasks
+            //    }).disableSelection();
+            //});
 
             // check and uncheck
-            $('.todo .checkbox > input[type="checkbox"]').click(function () {
-                var $this = $(this).parent().parent().parent();
+            //$('.todo .checkbox > input[type="checkbox"]').click(function () {
+            //    var $this = $(this).parent().parent().parent();
 
-                if ($(this).prop('checked')) {
-                    $this.addClass("complete");
+            //    if ($(this).prop('checked')) {
+            //        $this.addClass("complete");
 
-                    // remove this if you want to undo a check list once checked
-                    //$(this).attr("disabled", true);
-                    $(this).parent().hide();
+            //        // remove this if you want to undo a check list once checked
+            //        //$(this).attr("disabled", true);
+            //        $(this).parent().hide();
 
-                    // once clicked - add class, copy to memory then remove and add to sortable3
-                    $this.slideUp(500, function () {
-                        $this.clone().prependTo("#sortable3").effect("highlight", {}, 800);
-                        $this.remove();
-                        countTasks();
-                    });
-                } else {
-                    // insert undo code here...
-                }
+            //        // once clicked - add class, copy to memory then remove and add to sortable3
+            //        $this.slideUp(500, function () {
+            //            $this.clone().prependTo("#sortable3").effect("highlight", {}, 800);
+            //            $this.remove();
+            //            countTasks();
+            //        });
+            //    } else {
+            //        // insert undo code here...
+            //    }
 
-            })
+            //})
             // count tasks
             function countTasks() {
                 debugger;
@@ -590,101 +590,101 @@
 
             // Start Finance
 
-            $(function () {
+            //$(function () {
 
-                var trgt = [[1354586000000, 153], [1364587000000, 658], [1374588000000, 198],
-                [1384589000000, 663], [1394590000000, 801], [1404591000000, 1080],
-                [1414592000000, 353], [1424593000000, 749], [1434594000000, 523],
-                [1444595000000, 258], [1454596000000, 688], [1464597000000, 364]],
+            //    var trgt = [[1354586000000, 153], [1364587000000, 658], [1374588000000, 198],
+            //    [1384589000000, 663], [1394590000000, 801], [1404591000000, 1080],
+            //    [1414592000000, 353], [1424593000000, 749], [1434594000000, 523],
+            //    [1444595000000, 258], [1454596000000, 688], [1464597000000, 364]],
 
-                    prft = [[1354586000000, 53], [1364587000000, 65], [1374588000000, 98], [1384589000000, 83],
-                    [1394590000000, 980], [1404591000000, 808], [1414592000000, 720], [1424593000000, 674],
-                    [1434594000000, 23], [1444595000000, 79], [1454596000000, 88], [1464597000000, 36]],
+            //        prft = [[1354586000000, 53], [1364587000000, 65], [1374588000000, 98], [1384589000000, 83],
+            //        [1394590000000, 980], [1404591000000, 808], [1414592000000, 720], [1424593000000, 674],
+            //        [1434594000000, 23], [1444595000000, 79], [1454596000000, 88], [1464597000000, 36]],
 
-                    sgnups = [[1354586000000, 647], [1364587000000, 435], [1374588000000, 784], [1384589000000, 346],
-                    [1394590000000, 487], [1404591000000, 463], [1414592000000, 479], [1424593000000, 236], [1434594000000, 843],
-                    [1444595000000, 657], [1454596000000, 241], [1464597000000, 341]], toggles = $("#rev-toggles"), target = $("#flotcontainer");
+            //        sgnups = [[1354586000000, 647], [1364587000000, 435], [1374588000000, 784], [1384589000000, 346],
+            //        [1394590000000, 487], [1404591000000, 463], [1414592000000, 479], [1424593000000, 236], [1434594000000, 843],
+            //        [1444595000000, 657], [1454596000000, 241], [1464597000000, 341]], toggles = $("#rev-toggles"), target = $("#flotcontainer");
 
-                var data = [{
-                    label: "Target Profit",
-                    data: trgt,
-                    bars: {
-                        show: true,
-                        align: "center",
-                        barWidth: 30 * 30 * 60 * 1000 * 80
-                    }
-                }, {
-                    label: "Actual Profit",
-                    data: prft,
-                    color: '#3276B1',
-                    lines: {
-                        show: true,
-                        lineWidth: 3
-                    },
-                    points: {
-                        show: true
-                    }
-                }, {
-                    label: "Actual Losses",
-                    data: sgnups,
-                    color: '#71843F',
-                    lines: {
-                        show: true,
-                        lineWidth: 1
-                    },
-                    points: {
-                        show: true
-                    }
-                }]
+            //    var data = [{
+            //        label: "Target Profit",
+            //        data: trgt,
+            //        bars: {
+            //            show: true,
+            //            align: "center",
+            //            barWidth: 30 * 30 * 60 * 1000 * 80
+            //        }
+            //    }, {
+            //        label: "Actual Profit",
+            //        data: prft,
+            //        color: '#3276B1',
+            //        lines: {
+            //            show: true,
+            //            lineWidth: 3
+            //        },
+            //        points: {
+            //            show: true
+            //        }
+            //    }, {
+            //        label: "Actual Losses",
+            //        data: sgnups,
+            //        color: '#71843F',
+            //        lines: {
+            //            show: true,
+            //            lineWidth: 1
+            //        },
+            //        points: {
+            //            show: true
+            //        }
+            //    }]
 
-                var options = {
-                    grid: {
-                        hoverable: true
-                    },
-                    tooltip: true,
-                    tooltipOpts: {
-                        //content: '%x - %y',
-                        //dateFormat: '%b %y',
-                        defaultTheme: false
-                    },
-                    xaxis: {
-                        mode: "time"
-                    },
-                    yaxes: {
-                        tickFormatter: function (val, axis) {
-                            return "$" + val;
-                        },
-                        max: 1200
-                    }
+            //    var options = {
+            //        grid: {
+            //            hoverable: true
+            //        },
+            //        tooltip: true,
+            //        tooltipOpts: {
+            //            //content: '%x - %y',
+            //            //dateFormat: '%b %y',
+            //            defaultTheme: false
+            //        },
+            //        xaxis: {
+            //            mode: "time"
+            //        },
+            //        yaxes: {
+            //            tickFormatter: function (val, axis) {
+            //                return "$" + val;
+            //            },
+            //            max: 1200
+            //        }
 
-                };
+            //    };
 
-                plot2 = null;
+            //    plot2 = null;
 
-                function plotNow() {
-                    var d = [];
-                    toggles.find(':checkbox').each(function () {
-                        if ($(this).is(':checked')) {
-                            d.push(data[$(this).attr("name").substr(4, 1)]);
-                        }
-                    });
-                    if (d.length > 0) {
-                        if (plot2) {
-                            plot2.setData(d);
-                            plot2.draw();
-                        } else {
-                            plot2 = $.plot(target, d, options);
-                        }
-                    }
+            //    function plotNow() {
+            //        var d = [];
+            //        toggles.find(':checkbox').each(function () {
+            //            if ($(this).is(':checked')) {
+            //                d.push(data[$(this).attr("name").substr(4, 1)]);
+            //            }
+            //        });
+            //        if (d.length > 0) {
+            //            if (plot2) {
+            //                plot2.setData(d);
+            //                plot2.draw();
+            //            } else {
+            //                plot2 = $.plot(target, d, options);
+            //            }
+            //        }
 
-                };
+            //    };
 
-                toggles.find(':checkbox').on('change', function () {
-                    plotNow();
-                });
-                plotNow()
+            //    toggles.find(':checkbox').on('change', function () {
+            //        plotNow();
+            //    });
+            //    plotNow()
 
-            });
+            //});
 
             // End Finance
 
@@ -702,33 +702,33 @@
                 "NZ-NSN": 100
             };
 
-            $('#vector-map').vectorMap({
-                map: 'nz_mill',
-                backgroundColor: '#fff',
-                regionStyle: {
-                    initial: {
-                        fill: '#c4c4c4'
-                    },
-                    hover: {
-                        "fill-opacity": 1
-                    }
-                },
-                series: {
-                    regions: [{
-                        values: data_array,
-                        scale: ['#85a8b6', '#4d7686'],
-                        normalizeFunction: 'polynomial'
-                    }]
-                },
-                onRegionLabelShow: function (e, el, code) {
-                    if (typeof data_array[code] == 'undefined') {
-                        e.preventDefault();
-                    } else {
-                        var countrylbl = data_array[code];
-                        el.html(el.html() + ': ' + countrylbl + ' visits');
-                    }
-                }
-            });
+            //$('#vector-map').vectorMap({
+            //    map: 'nz_mill',
+            //    backgroundColor: '#fff',
+            //    regionStyle: {
+            //        initial: {
+            //            fill: '#c4c4c4'
+            //        },
+            //        hover: {
+            //            "fill-opacity": 1
+            //        }
+            //    },
+            //    series: {
+            //        regions: [{
+            //            values: data_array,
+            //            scale: ['#85a8b6', '#4d7686'],
+            //            normalizeFunction: 'polynomial'
+            //        }]
+            //    },
+            //    onRegionLabelShow: function (e, el, code) {
+            //        if (typeof data_array[code] == 'undefined') {
+            //            e.preventDefault();
+            //        } else {
+            //            var countrylbl = data_array[code];
+            //            el.html(el.html() + ': ' + countrylbl + ' visits');
+            //        }
+            //    }
+            //});
 
             jQuery.expr[':'].Contains = function (a, i, m) {
                 return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;

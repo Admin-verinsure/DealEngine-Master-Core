@@ -22,6 +22,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
+using System.IO;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -49,6 +51,7 @@ namespace DealEngine.WebUI.Controllers
         IEmailService _emailService;
         IAppSettingService _appSettingService;
         IBusinessContractService _businessContractService;
+        IResearchHouseService _researchHouseService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
         IMapper _mapper;
@@ -80,7 +83,8 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IUnitOfWork unitOfWork,
             IInsuranceAttributeService insuranceAttributeService,
-            IReferenceService referenceService
+            IReferenceService referenceService,
+            IResearchHouseService researchHouseService
             )
 
             : base(userService)
@@ -109,6 +113,7 @@ namespace DealEngine.WebUI.Controllers
             _referenceService = referenceService;
             _emailService = emailService;
             _businessContractService = businessContractService;
+            _researchHouseService = researchHouseService;
 
         }
 
@@ -2364,7 +2369,7 @@ namespace DealEngine.WebUI.Controllers
             var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 
             string Email = jsonOrganisation.Email;
-            string TypeName = jsonOrganisation.Type;
+            string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             string Name = jsonOrganisation.Name;
             string FirstName = jsonUser.FirstName;
             string LastName = jsonUser.LastName;
@@ -2408,10 +2413,11 @@ namespace DealEngine.WebUI.Controllers
             {                   
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
                 User orgUser = await _userService.GetUserByEmail(organisation.Email);                
-                //JsonObjects.Add(orgUser);
+                JsonObjects.Add(orgUser);
                 JsonObjects.Add(organisation);
-                string jsonObj = GetSerializedModel(organisation);
-                return Json(jsonObj);
+                var jsonObj = GetSerializedModel(JsonObjects);
+
+               return Json(jsonObj);
             }
             catch(Exception ex)
             {               
@@ -3053,6 +3059,86 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreResearchHouse(string researchHouseId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ResearchHouse researchHouse = await _researchHouseService.GetResearchHouseById(Guid.Parse(researchHouseId));
+                researchHouse.Removed = false;
+                await _researchHouseService.Update(researchHouse);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddResearchHouse(IFormCollection collection)
+        {
+            User user = null;
+            try
+            {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
+                user = await CurrentUser();
+                ResearchHouse researchHouse = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var projectForm = collection.Keys.Where(s => s.StartsWith("ResearchHouseViewModel", StringComparison.CurrentCulture));
+                var id = collection["ResearchHouseViewModel.ProjectId"];
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    researchHouse = new ResearchHouse(user);
+                }
+                else
+                {
+                    researchHouse = await _researchHouseService.GetResearchHouseById(Guid.Parse(id));                   
+                }
+                var type = researchHouse.GetType();
+                foreach (var keyField in projectForm)
+                {
+                    if (keyField != "ResearchHouseViewModel.ProjectId")
+                    {
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        if (typeof(string) == property.PropertyType)
+                        {
+                            property.SetValue(researchHouse, collection[keyField].ToString());
+                        }
+                        if (typeof(bool) == property.PropertyType)
+                        {
+                            property.SetValue(researchHouse, bool.Parse(collection[keyField].ToString()));
+                        }
+                    }
+                }
+
+                if (sheet.ResearchHouses.Contains(researchHouse))
+                {
+                    await _researchHouseService.Update(researchHouse);
+                }
+                else
+                {
+                    sheet.ResearchHouses.Add(researchHouse);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
         {
@@ -3509,15 +3595,11 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection collection)
         {            
-            User currentUser = null;
-            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-
-            string Email = jsonOrganisation.Email;
-            string Type = jsonOrganisation.Type;
-            string Name = jsonOrganisation.Name;
-            string FirstName = jsonUser.FirstName;
-            string LastName = jsonUser.LastName;
+            User currentUser = null;            
+            string Email = collection["OrganisationViewModel.Organisation.Email"].ToString();
+            string Name = collection["OrganisationViewModel.Organisation.Name"].ToString();
+            string FirstName = collection["OrganisationViewModel.User.FirstName"].ToString();
+            string LastName = collection["OrganisationViewModel.User.FirstName"].ToString();
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
 
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
@@ -3539,9 +3621,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.GetOrCreateOrganisation(Email, Type, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
-                    organisation = _mapper.Map(jsonOrganisation, organisation);
-                    await _organisationService.Update(organisation);
+                    organisation = await _organisationService.GetOrCreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                    
                 }
                 
                 var user = await _userService.GetUserByEmail(Email);

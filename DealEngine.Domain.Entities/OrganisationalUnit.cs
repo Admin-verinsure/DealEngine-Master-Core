@@ -9,7 +9,7 @@ namespace DealEngine.Domain.Entities
 {
     public class OrganisationalUnit : EntityBase, IAggregateRoot
     {
-        protected OrganisationalUnit() : base(null) { }
+        public OrganisationalUnit() : base(null) { }
 
         public OrganisationalUnit(User createdBy, string name)
             : base(createdBy)
@@ -47,9 +47,9 @@ namespace DealEngine.Domain.Entities
 
     public class AdvisorUnit : OrganisationalUnit
     {
-        protected AdvisorUnit() { }
-        public AdvisorUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public AdvisorUnit() { }
+        public AdvisorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
@@ -57,7 +57,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
         public virtual string Qualifications { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
-        public virtual bool IsRetiredorDecieved { get; set; }
+        public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Registered Status AFA,RFA or N/A")]
         public virtual string RegisteredStatus { get; set; }
         [Display(Name = "Duration Of Time as Adviser")]
@@ -71,9 +71,9 @@ namespace DealEngine.Domain.Entities
 
     public class PersonnelUnit : OrganisationalUnit
     {
-        protected PersonnelUnit() { }
-        public PersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public PersonnelUnit() { }
+        public PersonnelUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
@@ -95,22 +95,9 @@ namespace DealEngine.Domain.Entities
         public virtual string OtherCompanyName { get; set; }
         [Display(Name = "Years as a Member")]
         public virtual string YearofPractice { get; set; }
-    }
-
-    public class ProjectPersonnelUnit : OrganisationalUnit
-    {
-        protected ProjectPersonnelUnit() { }
-        public ProjectPersonnelUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
-        {
-
-        }
-        [Display(Name = "Qualifications")]
-        public virtual string Qualifications { get; set; }
+        ///pminz
         [Display(Name = "Job title")]
         public virtual string JobTitle { get; set; }
-        [Display(Name = "Relation to insured entity")]
-        public virtual string InsuredEntityRelation { get; set; }
         [Display(Name = "Professional Affiliations")]
         public virtual string ProfAffiliation { get; set; }
         [Display(Name = "Does this contractor require to be insured under this policy")]
@@ -118,7 +105,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Does this contractor carry their own insurance")]
         public virtual bool IsContractorInsured { get; set; }
         [Display(Name = "Do you have a current PMI membership (i.e. not expired)")]
-        public virtual bool IsCurrentMembership { get; set; }
+        public virtual bool IsCurrentMembershipPMINZ { get; set; }
         [Display(Name = "PMI Certification Type")]
         public virtual string CertType { get; set; }
         [Display(Name = "PMI membership No")]
@@ -129,16 +116,16 @@ namespace DealEngine.Domain.Entities
 
     public class PrincipalUnit : OrganisationalUnit
     {
-        protected PrincipalUnit() { }
-        public PrincipalUnit(User User, string Name, IFormCollection Collection)
-            : base(User, Name, null, Collection)
+        public PrincipalUnit() { }
+        public PrincipalUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
         {
 
         }
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
-        public virtual bool IsRetiredorDecieved { get; set; }
+        public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Qualifications")]
         public virtual string Qualifications { get; set; }
         [Display(Name = "Engineer Member")]

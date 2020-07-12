@@ -84,12 +84,12 @@ namespace DealEngine.WebUI.Controllers
         {
             Dictionary<object, string> model = new Dictionary<object, string>();
             //var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
-            foreach(var Key in collection.Keys)
+            foreach (var Key in collection.Keys)
             {
                 //model.Add(Key, collection[Key].ToString());
                 var value = Key.Split(".").ToList().LastOrDefault();
                 model.Add(value, collection[Key].ToString());
-            }            
+            }
             var JsonString = GetSerializedModel(model);
             try
             {
@@ -106,7 +106,7 @@ namespace DealEngine.WebUI.Controllers
                     }); ;
                 return obj;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
