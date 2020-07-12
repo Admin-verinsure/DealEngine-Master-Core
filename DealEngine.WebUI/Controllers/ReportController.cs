@@ -27,7 +27,10 @@ using Npgsql;
 //using System.Windows.Forms;
 //using System.Linq;
 //using System.Net;
-//using DealEngine.Domain.Entities;
+using DealEngine.Domain.Entities;
+using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using System.Collections.Generic;
 //using DealEngine.Infrastructure.FluentNHibernate;
 //using Microsoft.AspNetCore.Http;
 //using Microsoft.Extensions.Logging;
@@ -46,13 +49,26 @@ namespace DealEngine.WebUI.Controllers
     public class ReportController : BaseController
     {
         private readonly IWebHostEnvironment _hostingEnv;
-    
-        public ReportController(IUserService userRepository,  
-            IWebHostEnvironment hostingEnv
+        IUserService _userService;
+        IClientInformationService _clientService;
+        IProgrammeService _programmeService;
+        IOrganisationService _organisationService;
+
+
+        public ReportController(IUserService userService,  
+            IWebHostEnvironment hostingEnv,
+            IClientInformationService clientService,
+            IOrganisationService organisationService,
+            IProgrammeService programmeService
             )
-            : base(userRepository)
+            : base(userService)
         {
+
         _hostingEnv = hostingEnv;
+        _userService = userService;
+        _clientService = clientService;
+        _programmeService = programmeService;
+        _organisationService = organisationService;
         }
 
 
@@ -65,6 +81,23 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ReportViewModel model)
         {
+            Guid clientId = Guid.Parse("82ed739d-0795-4602-a2c8-abab017abcb5");
+            var sheet = await _clientService.GetInformation(clientId);
+            //Craig wants to change stuff at this point (this is the post processing)
+
+            // NO BOATS
+
+
+            var agreements = sheet.Programme.Agreements;
+            var list = new List<object>();
+            list.Add(sheet);
+            list.Add(agreements);
+            string test = GetSerializedModel(list);
+            System.IO.File.WriteAllText(@"C:\Users\tcnathan\source\repos\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
+
+            #region report writer code
+            /*#
+
             FastReport.Utils.RegisteredObjects.AddConnection(typeof(PostgresDataConnection));
             
             // Get the Data and fill the dataset
@@ -121,6 +154,8 @@ namespace DealEngine.WebUI.Controllers
             //TODO Create WebReport instead (make seperate function and link to different button in UI)
 
             report.Abort();
+            */
+            #endregion
 
             return View("~/Views/Report/CreateReport.cshtml");
         }

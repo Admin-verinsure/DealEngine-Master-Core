@@ -4,21 +4,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper.Configuration.Annotations;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
     public class ClientProgramme : EntityBase, IAggregateRoot
     {
         public virtual Organisation Owner { get; set; }
+        [JsonIgnore]
         public virtual Programme BaseProgramme { get; set; }        
         public virtual ClientInformationSheet InformationSheet { get; set; }
+        [JsonIgnore]
         public virtual Payment Payment { get; set; }
         public virtual User BrokerContactUser { get; set; }
         public virtual ChangeReason ChangeReason { get; set; }
         public virtual DateTime IssueDate { get; set; }
         public virtual DateTime ReminderDate { get; set; }
-        public virtual IDictionary<Product, bool> Products { get; set; }        
-        public virtual IList<ClientAgreement> Agreements { get; protected set; }        
+        public virtual IDictionary<Product, bool> Products { get; set; }      
+        [JsonIgnore]
+        public virtual IList<ClientAgreement> Agreements { get; set; }        
         public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }        
         public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }        
         public virtual IList<SubClientProgramme> SubClientProgrammes { get; set; }       

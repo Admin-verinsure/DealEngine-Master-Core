@@ -67,11 +67,11 @@ namespace DealEngine.WebUI.Controllers
                 return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
-                       // MaxDepth = 2,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        DateParseHandling = DateParseHandling.DateTime
+                        DateParseHandling = DateParseHandling.DateTime                        
                     });
             }catch(Exception ex)
             {
@@ -96,12 +96,14 @@ namespace DealEngine.WebUI.Controllers
                 var obj = JsonConvert.DeserializeObject(JsonString, type,
                     new JsonSerializerSettings()
                     {
+                        MaxDepth = 1,
                         ObjectCreationHandling = ObjectCreationHandling.Auto,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                    });
+                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
+                    }); ;
                 return obj;
             }
             catch(Exception ex)

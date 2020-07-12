@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using DealEngine.Domain.Entities.Abstracts;
 using System.Linq;
+using Newtonsoft.Json;
 using AutoMapper;
 using AutoMapper.Configuration.Annotations;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class ClientInformationSheet : EntityBase, IAggregateRoot
     {
         public virtual Organisation Owner { get; set; }        
@@ -38,7 +40,8 @@ namespace DealEngine.Domain.Entities
         public virtual DateTime SubmitDate { get; set; }
 		public virtual User SubmittedBy { get; set; }
         public virtual DateTime UnlockDate { get; set; }
-        public virtual User UnlockedBy { get; set; }        
+        public virtual User UnlockedBy { get; set; }
+        [JsonIgnore]
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
 
         public virtual void submitted(User user)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,10 +22,10 @@ namespace DealEngine.Domain.Entities.Abstracts
         [DisplayName("Last Modified On")]
         public virtual DateTime? LastModifiedOn { get; set; }
 
-		// TODO - http://stackoverflow.com/questions/12940954/where-to-put-created-date-and-created-by-in-ddd
-		// TODO - http://stackoverflow.com/questions/13040380/how-to-keep-track-of-the-last-user-that-made-changes-to-an-object-in-ddd
-
-		[DisplayName("Created By")]
+        // TODO - http://stackoverflow.com/questions/12940954/where-to-put-created-date-and-created-by-in-ddd
+        // TODO - http://stackoverflow.com/questions/13040380/how-to-keep-track-of-the-last-user-that-made-changes-to-an-object-in-ddd
+        [JsonIgnore]
+        [DisplayName("Created By")]
         public virtual User CreatedBy { get; protected set; }
 
         [DisplayName("Deleted By")]
@@ -32,7 +33,6 @@ namespace DealEngine.Domain.Entities.Abstracts
 
         [DisplayName("Last Modified By")]
         public virtual User LastModifiedBy { get; set; }        
-
         public EntityBase(User createdBy)
         {
             //this.Id = Guid.NewGuid();

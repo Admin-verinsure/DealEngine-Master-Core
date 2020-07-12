@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
@@ -80,10 +81,11 @@ namespace DealEngine.Domain.Entities
         public virtual User CancelledByUserID { get; set; }
         public virtual string CancelAgreementReason { get; set; }
         public virtual string PolicyNumber { get; set; }
-        public virtual int ReferenceNumber { get; protected set; }        
+        public virtual int ReferenceNumber { get; protected set; }
         public virtual Product Product { get; protected set; }
         public virtual AgreementTemplate AgreementTemplate { get; protected set; }
         public virtual ClientInformationSheet ClientInformationSheet { get; protected set; }
+        [JsonIgnore]
 		public virtual IList<Document> Documents { get; protected set; }
         public virtual string ClientNumber { get; set; }
         public virtual string Jurisdiction { get; set; }

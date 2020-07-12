@@ -12,6 +12,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         public void Override(AutoMapping<Organisation> mapping)
         {
             mapping.Id(p => p.Id).GeneratedBy.Assigned();
+            mapping.References(n => n.OrganisationType).Not.LazyLoad();
         }
     }
 

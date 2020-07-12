@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.Json.Serialization;
 using DealEngine.Domain.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -143,7 +142,6 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-
         public virtual OrganisationType OrganisationType
         {
             get;

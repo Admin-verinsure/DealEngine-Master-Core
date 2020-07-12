@@ -12,6 +12,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         {
             mapping.Map(x => x.issuetobrokercomment).Length(10000);
             mapping.Map(x => x.ProfessionalBusiness).Length(10000);
+            mapping.References(x => x.Product).Not.LazyLoad();
         }
     }
 }
