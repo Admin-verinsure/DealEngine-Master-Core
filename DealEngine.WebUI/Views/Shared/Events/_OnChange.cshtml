@@ -233,6 +233,17 @@
                     AdditionalRoleInformation("dataroles");
                 }
             }
+
+            if (Rule === "AAASL") {
+                
+
+                var Value = DoubleConditional(DataItem);
+                var ids = DataItem.split(',');
+                var element = document.getElementById(ids[0]);
+                
+                Value = CreateAAASLLabelInput(Value, element, ids[2]);
+                DefaultRule(Value, element.name);
+            }
             if (Rule === "OrganisationType") {
                 document.getElementById("Private").hidden = true;
                 document.getElementById("Else").hidden = true;
@@ -251,17 +262,25 @@
         }
     }
 
-    function OptionOnChange(Obj) {
-        for (var i = 0; i < Obj.options.length; i++) {
-            var element = document.getElementById(Obj.options[i].value)
-            if (element != null) {
-                element.hidden = true;
-                if (Obj.options[i].selected == true) {
-                    element.hidden = false;
-                }
-            }            
+    function CreateAAASLLabelInput(Value, Element, LabelId) {
+        var conditional = "If you have answered 'No' then NZI are unable to offer this extension";
+        var label = document.getElementById(LabelId);
+        if (Value == "2" || Value == "both") {
+            if (label == null) {
+                label = AttachLabel(LabelId, conditional);
+                Element.parentElement.parentElement.appendChild(label);
+            }
+            return "2";
         }
+        if (Value == "1") {
+            if (label != null) {
+                Element.parentElement.parentElement.removeChild(label);
+            }
+            return "1";
+        }
+        return "2";
     }
+
 
     function OrganisationTypeOnChange(Obj, List, Value) {
         OptionOnChange(Obj);
@@ -296,7 +315,7 @@
         //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
-            if (additionalactivityId == "CUS0029") {
+            if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039") {
                 additionalactivityId = "CUS0018";
             }
             if (activities.options[i].selected === true) {

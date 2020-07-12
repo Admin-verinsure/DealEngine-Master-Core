@@ -1,28 +1,31 @@
 ﻿@model System.Data.DataTable
 @using System.Data
 
-    <h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Title</h3>
+
+<li class="nav-item">
+    <a onclick="location.href='@Url.Action("ExportExcel", "Home", new { Columns = @Model.Columns , Rows = @Model.Rows})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Export Report </a>
+</li>
 
 <div>
-    @if(Model != null)
+    @if (Model != null)
     {
         <table border="1" width="60%">
             <thead>
                 <tr>
                     @foreach (System.Data.DataColumn col in Model.Columns)
                     {
-                            <th>@col.Caption</th>
+                        <th>@col.Caption</th>
                     }
                 </tr>
             </thead>
             <tbody>
                 @foreach (System.Data.DataRow row in Model.Rows)
-                  {
-                   <tr>
-                      @foreach (var cell in row.ItemArray)
-                       {
-                          if (cell != "{00000000-0000-0000-0000-000000000000}")
-                          {
+                {
+                    <tr>
+                        @foreach (var cell in row.ItemArray)
+                        {
+
                             if (cell != null)
                             {
                                 <td>@cell</td>
@@ -31,11 +34,11 @@
                             {
                                 <td></td>
                             }
-                          }
 
-                       }
+
+                        }
                     </tr>
-                   }
+                }
             </tbody>
         </table>
     }
