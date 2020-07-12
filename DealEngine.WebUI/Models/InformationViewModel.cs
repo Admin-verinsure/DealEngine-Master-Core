@@ -1242,9 +1242,9 @@ namespace DealEngine.WebUI.Models
        
         public IList<ResearchHouse> ResearchHouses { get; set; }
         //public string MajorResponsibilities { get; set; }
-        public string ResearchServices { get; set; }
+        public string Services { get; set; }
         //public string Fees { get; set; }
-        public string ResearchName { get; set; }
+        public string Name { get; set; }
         public string ContractTitle { get; set; }
         public string ConstructionValue { get; set; }
         public string ProjectDuration { get; set; }

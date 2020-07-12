@@ -234,9 +234,7 @@
                 }
             }
 
-            if (Rule === "AAASL") {
-                
-
+            if (Rule === "AAASL") {               
                 var Value = DoubleConditional(DataItem);
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
@@ -284,10 +282,7 @@
 
     function OrganisationTypeOnChange(Obj, List, Value) {
         OptionOnChange(Obj);
-        debugger;
-        if (Value == "Advisor" || Value == "NominatedRepresentative"
-            || Value == "Personnel" || Value == "ProjectPersonnel"
-            || Value == "Principal") {
+        if (Value == "Advisor" || Value == "Personnel" || Value == "Principal") {
             //readonly Organisation Type personal
             for (var i = 0; i < List.options.length; i++) {
                 if (List.options[i].value == "Person - Individual") {
@@ -296,13 +291,11 @@
                 }
             }
             List.disabled = true;
-            //organisationUnitOnChange
             var organisationUnit = document.getElementById(option);
             if (organisationUnit != null) {
                 organisationUnit.hidden = false;
             }
         } else {
-            debugger;
             document.getElementById("Else").hidden = false;        
         }
 

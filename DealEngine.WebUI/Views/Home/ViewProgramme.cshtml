@@ -168,7 +168,6 @@
                             <button type="button" class="close" id="CreateUISModalClose" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
-                            @Html.Hidden("OrganisationViewModel.Organisation.Type", "Private")
                             @Html.HiddenFor(m => m.ProgrammeId)
                             <div class="form-group">
                                 @Html.LabelFor(m => m.OrganisationViewModel.OrganisationTypes, new { @class = "label required" })

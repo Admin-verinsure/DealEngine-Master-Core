@@ -3099,8 +3099,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    researchHouse = await _researchHouseService.GetResearchHouseById(Guid.Parse(id));
-                   
+                    researchHouse = await _researchHouseService.GetResearchHouseById(Guid.Parse(id));                   
                 }
                 var type = researchHouse.GetType();
                 foreach (var keyField in projectForm)
@@ -3596,15 +3595,11 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection collection)
         {            
-            User currentUser = null;
-            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-
-            string Email = jsonOrganisation.Email;
-            string Type = jsonOrganisation.Type;
-            string Name = jsonOrganisation.Name;
-            string FirstName = jsonUser.FirstName;
-            string LastName = jsonUser.LastName;
+            User currentUser = null;            
+            string Email = collection["OrganisationViewModel.Organisation.Email"].ToString();
+            string Name = collection["OrganisationViewModel.Organisation.Name"].ToString();
+            string FirstName = collection["OrganisationViewModel.User.FirstName"].ToString();
+            string LastName = collection["OrganisationViewModel.User.FirstName"].ToString();
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
 
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
@@ -3626,9 +3621,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.GetOrCreateOrganisation(Email, Type, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
-                    organisation = _mapper.Map(jsonOrganisation, organisation);
-                    await _organisationService.Update(organisation);
+                    organisation = await _organisationService.GetOrCreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                    
                 }
                 
                 var user = await _userService.GetUserByEmail(Email);

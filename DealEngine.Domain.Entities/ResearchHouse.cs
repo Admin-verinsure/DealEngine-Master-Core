@@ -28,8 +28,8 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        public virtual string ResearchServices { get; set; }
-        public virtual string ResearchName { get; set; }
+        public virtual string Services { get; set; }
+        public virtual string Name { get; set; }
      
     }
 }
