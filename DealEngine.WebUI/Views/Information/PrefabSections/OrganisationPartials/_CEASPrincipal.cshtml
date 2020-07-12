@@ -2,7 +2,7 @@
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsRetiredorDeceased, new { @class = "label required" })
     <select id="PrincipalUnit.IsRetiredorDeceased" name="OrganisationViewModel.PrincipalUnit.IsRetiredorDeceased" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-        @foreach (var option in @Model.OrganisationViewModel.HasRetiredorDecievedOptions)
+        @foreach (var option in @Model.OrganisationViewModel.HasRetiredorDeceasedOptions)
         {
             <option selected="@option.Selected" value="@option.Value">
                 @option.Text
@@ -10,7 +10,7 @@
         }
     </select>
 </div>
-<div id="PrincipalUnit.IsRetiredorDeceased" hidden>
+<div id="OrganisationViewModel.PrincipalUnit.IsRetiredorDeceased" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "form-control", @id = "PrincipalUnit.DateofRetirement", @type = "date", @required = "" })

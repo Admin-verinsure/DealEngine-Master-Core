@@ -806,8 +806,5 @@ namespace DealEngine.WebUI.Controllers
             return Redirect("~/Home/Index");
 
         }
-
-        
-
     }
 }

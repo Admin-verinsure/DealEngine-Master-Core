@@ -15,15 +15,15 @@
     </select>
 </div>
 <div class="form-group">
-    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsRetiredorDecieved)
-    <select id="AdvisorUnit.IsRetiredorDecieved" name="Organisation.AdvisorUnit.IsRetiredorDecieved" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-        @foreach (var option in Model.OrganisationViewModel.HasRetiredorDecievedOptions)
+    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased)
+    <select id="AdvisorUnit.IsRetiredorDeceased" name="Organisation.AdvisorUnit.IsRetiredorDeceased" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+        @foreach (var option in Model.OrganisationViewModel.HasRetiredorDeceasedOptions)
         {
             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
         }
     </select>
 </div>
-<div id="AdvisorUnit.IsRetiredorDecieved" hidden>
+<div id="Organisation.AdvisorUnit.IsRetiredorDecieved" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofRetirement, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @required = "" })

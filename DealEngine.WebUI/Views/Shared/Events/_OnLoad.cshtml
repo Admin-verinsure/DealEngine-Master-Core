@@ -1,59 +1,4 @@
-﻿<script type="text/javascript">
-    function OnPopulateData(Type, Data) {
-        var formId = Type + "ViewModel";
-        debugger;
-        var form = document.getElementById(formId);
-
-        if (Type == "Organisation") {
-            try {
-                for (var l = 0; l < Data.organisation.length; l++) {
-                    debugger;
-                    var element = document.getElementById(Data.organisation[l])
-                }
-            }
-            catch (ex) {
-                debugger;
-            }
-
-        }
-        debugger;
-    }
-    function PopulateAdvisorUnit(OutPut) {
-        debugger;
-        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
-            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
-                id = "AdvisorUnit." + Item;
-                var element = document.getElementById(id);
-                if (element != null) {
-                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
-                    //debugger;
-                    //ImportValue(element, Value);
-                    if (element.tagName == "INPUT") {
-                        if (element.type == "date") {
-                            //hardcord date string
-                            var date = Value.substring(0, 10);
-                            element.value = date;
-                        }
-                        else {
-                            element.value = Value;
-                        }
-                    }
-                    else if (element.tagName == "SELECT") {
-                        //debugger;
-                        for (var o = 0; o < element.options.length; o++) {
-                            if (element.options[o].value == Value.toString()) {
-                                element.options[o].selected = true;
-                                break;
-                            }
-                        }
-                    }
-                    debugger;
-                    OnChange(element.id, element.name);
-                }
-
-            }
-        }
-    }
+﻿<script type="text/javascript">   
 
     function PopulateOrganisationView(OutPut) {
         var Form;
@@ -73,22 +18,28 @@
 
                     if (model.hasOwnProperty("InsuranceAttributes")) {
                         if (Field === "InsuranceAttributes") {
-                            if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] === "Principal") {
+                            if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
                                 debugger;
-                                PopulatePrincipalUnit(OutPut);
+                                PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
                                 var Id = Type + ".InsuranceAttribute";
                                 Element = document.getElementById(Id);
                                 Value = "Principal";
                             }
-                            else if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] === "Advisor") {
-                                PopulateAdvisorUnit(OutPut);
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
+                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
                                 var Id = Type + ".InsuranceAttribute";
                                 Element = document.getElementById(Id);
                                 Value = "Advisor";
                             }
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
+                                PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Personnel";
+                            }
                             //}
-                            //else if (OutPut[obj][Field]["0"]["InsuranceAttributeName"] != "") {
-                            //    Value = OutPut[obj][Field]["0"]["InsuranceAttributeName"];
+                            //else if (OutPut[obj][Field]["0"]["Name"] != "") {
+                            //    Value = OutPut[obj][Field]["0"]["Name"];
                             //    var Id = Type + ".InsuranceAttribute";
                             //    Element = document.getElementById(Id);
                             //}
@@ -130,16 +81,13 @@
         } catch (ex) { debugger; }
     }
 
-    function PopulatePrincipalUnit(OutPut) {
-        debugger;
+    function PopulateOrganisationalUnit(OutPut, UnitName) {
         for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
             for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
-                id = "PrincipalUnit." + Item;
+                id = UnitName + "." + Item;
                 var element = document.getElementById(id);
                 if (element != null) {
                     var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
-                    //debugger;
-                    //ImportValue(element, Value);
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string
@@ -151,11 +99,11 @@
                         }
                     }
                     else if (element.tagName == "SELECT") {
-                        //debugger;
+                        debugger;
                         if (Value == "1") {
                             Value = "true"
                         }
-                        else {
+                        else if (Value == "2") {
                             Value = "false";
                         }
                         for (var o = 0; o < element.options.length; o++) {
@@ -165,7 +113,6 @@
                             }
                         }
                     }
-                    debugger;
                     OnChange(element.id, element.name);
                 }
             }

@@ -324,16 +324,16 @@ namespace DealEngine.WebUI.Controllers
                 foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
                 {
 
-                    foreach (var org in IA.IAOrganisations)
-                    {
-                        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
-                            org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
-                        {
-                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.Organisation.Name = org.Name;
-                            interestedParties.Add(ovm);
-                        }
-                    }
+                    //foreach (var org in IA.IAOrganisations)
+                    //{
+                    //    if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                    //        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
+                    //    {
+                    //        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                    //        ovm.Organisation.Name = org.Name;
+                    //        interestedParties.Add(ovm);
+                    //    }
+                    //}
                 }
 
                 model.InterestedParties = interestedParties;
@@ -421,16 +421,16 @@ namespace DealEngine.WebUI.Controllers
                 var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
                 {
-                    foreach (var org in IA.IAOrganisations)
-                    {
-                        if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
-                        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
-                        {
-                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                            ovm.Organisation.Name = org.Name;
-                            MarinaLocations.Add(ovm);
-                        }
-                    }
+                    //foreach (var org in IA.IAOrganisations)
+                    //{
+                    //    if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                    //    org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
+                    //    {
+                    //        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                    //        ovm.Organisation.Name = org.Name;
+                    //        MarinaLocations.Add(ovm);
+                    //    }
+                    //}
                 }
 
                 model.MarinaLocations = MarinaLocations;

@@ -90,7 +90,7 @@
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.ProjectPersonnelUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/PMINZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "DANZ Programme")
