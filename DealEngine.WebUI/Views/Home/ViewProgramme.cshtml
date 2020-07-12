@@ -262,7 +262,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            $.noConflict();
+            //$.noConflict();
             $('#tableProgrammeItems').bootstrapTable();
             $('#subsystemAccodion').accordion;
         });
@@ -280,7 +280,6 @@
         });
 
         function OrganisationTypeChange(Value) {
-            debugger;
             var input = document.getElementById('OrganisationViewModel_Organisation_Type');
             if (Value == "Person - Individual") {
                 Value = "Private";
@@ -345,28 +344,6 @@
                 debugger;
                 alert("Unable to save.");
             });
-
-
-
-            //$.ajax({
-            //    type: "POST",
-            //    url: "/Information/Unlock",
-            //    data: postData,
-            //    traditional: true,
-            //})
-            //    .done(function (url, textStatus, jQxhr) {
-            //        debugger;
-            //         $('#CreateUISProcess').hide();
-            //        $('#myUnlockModal').modal('hide')
-            //        window.location.href = url;                   
-            //    })
-            //    .fail(function (jqXhr, textStatus, errorThrown) {
-            //         $('#CreateUISProcess').hide();
-            //         $('#myUnlockModal').modal('hide')
-
-            //        debugger;
-                  
-            //    });
         }
 
     </script>
