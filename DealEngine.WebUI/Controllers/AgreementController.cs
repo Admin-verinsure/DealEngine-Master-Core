@@ -852,6 +852,26 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> BindAgreement(Guid id)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ViewBag.Title = "Bind Agreements ";
+                model.InformationSheetId = id;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
 
 
         [HttpPost]
@@ -2367,6 +2387,8 @@ namespace DealEngine.WebUI.Controllers
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
             User user = null;
+            var Action = HttpContext.Request.Form["BindAgreement"];
+           
             try
             {
                 if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
@@ -2384,6 +2406,12 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
+                    if (Action == "BindAgreement")
+                    {
+                        agreement.BindNotes = HttpContext.Request.Form["BindNotes"];
+                        agreement.BindByUserID = user;
+                    }
+
                     if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null && acagreement.Bound).Count() > 0)
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
@@ -2451,7 +2479,7 @@ namespace DealEngine.WebUI.Controllers
                                 EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                 if (emailTemplate != null)
                                 {
-                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                   await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
 
                                     using (var uow = _unitOfWork.BeginUnitOfWork())
                                     {
@@ -2465,7 +2493,7 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
                             //send out agreement bound notification email
-                           await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                          await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
                     else
@@ -2484,8 +2512,12 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
-                return Json(new { url });
+                if (Action == "BindAgreement"){
+                    return Redirect("/Agreement/ViewAcceptedAgreement/" + programme.Id);
+                }else{
+                    var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
+                    return Json(new { url });
+                }
 
             }
             catch (Exception ex)
@@ -3173,7 +3205,6 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
-
 
                 return View("ViewAcceptedAgreementList", models);
             }

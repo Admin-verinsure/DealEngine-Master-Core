@@ -209,7 +209,7 @@
                 }
                 DefaultRule(Value, Name);
             }
-            if (Rule === "ValidateSharedTable") {
+            if (Rule === "ValidateSharedTable") { 
                 if (DataItem === "validatetableactivities") {
                     AdditionalActivityInformation("activities");
                 }
@@ -225,6 +225,12 @@
 
                 Value = CreateAAASLLabelInput(Value, element, ids[1]);
                 DefaultRule(Value, element.name);
+            }
+            if (Rule === "OTAlert") {
+                  var OTAlert = "Please ensure that you provide details in the notification section";
+                 Value = ShowAlert(Value,OTAlert);
+                
+               
             }
         } catch (ex) {
             debugger;
@@ -261,9 +267,10 @@
         //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
-            if (additionalactivityId == "CUS0029") {
+             if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039") {
                 additionalactivityId = "CUS0018";
             }
+           
             if (activities.options[i].selected === true) {
                 hasItem = true;
                 element = document.getElementById(additionalactivityId);
@@ -524,6 +531,23 @@
             SetCurrentTab(nextTab + tabNo);
         }
     }
+
+    function ShowAlert(Value, show) {
+        debugger;
+        if (Value == "1" ) {
+            if (show != null) {
+                alert(show);
+            }
+            return Value;
+        }
+        return Value;
+    }
+
+
+    //function ShowAlert(show) {
+    //    debugger;
+    //    alert(show);
+    //}
 
 </script>
 <style>
