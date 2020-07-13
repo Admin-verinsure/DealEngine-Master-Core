@@ -247,10 +247,7 @@
                 document.getElementById("Else").hidden = true;
                 var List = document.getElementById("Organisation.OrganisationType");
                 List.disabled = false;
-                OrganisationTypeOnChange(obj, List, Value);                
-            }
-            if (Rule === "OptionOnChange") {
-                OptionOnChange(obj);
+                OrganisationTypeOnChange(List, Value);                
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
@@ -280,8 +277,7 @@
     }
 
 
-    function OrganisationTypeOnChange(Obj, List, Value) {
-        OptionOnChange(Obj);
+    function OrganisationTypeOnChange(List, Value) {
         if (Value == "Advisor" || Value == "Personnel" || Value == "Principal") {
             //readonly Organisation Type personal
             for (var i = 0; i < List.options.length; i++) {

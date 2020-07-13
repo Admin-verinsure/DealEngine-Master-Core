@@ -389,7 +389,7 @@ namespace DealEngine.Services.Impl
 			//Run again to Create Attributes
 			await PrincipalUnit();
 			//turn off IA Organisations
-			await PersonnelUnit();
+			//await PersonnelUnit();
 			//await PMINZ();
 			//await NZACS();
 		}
@@ -477,7 +477,7 @@ namespace DealEngine.Services.Impl
 			int value = 0;
 			//var Principal = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			var attributeList = organisations.Where(o => o.InsuranceAttributes.Any(IA => IA.Name == "Principal"));
+			var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
 			//var CeasOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
 			string Message = "";
 			string Id;
