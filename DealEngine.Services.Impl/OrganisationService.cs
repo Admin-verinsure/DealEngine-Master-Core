@@ -397,64 +397,64 @@ namespace DealEngine.Services.Impl
         private async Task PersonnelUnit()
         {
 			int value = 0;
-			var Personnel = await _insuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
+			//var Personnel = await _insuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			//var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
-			var DanzOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Personnel));
+			var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
+			//var DanzOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Personnel));
 
 			string Message = "";
 			string Id;
 			try
 			{
-				foreach (var organisation in DanzOrg)
+				foreach (var organisation in attributeList)
 				{
 					value++;
 					Id = organisation.Id.ToString();
 					Message = "Start Id:" + Id;
-					//organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Personnel"));
+					organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Personnel"));
 					Message = "Added Attribute";
 
-                    Console.WriteLine(organisation.DateQualified);
-                    DateTime DateQualified = DateTime.MinValue;
-                    DateTime.TryParse(organisation.DateQualified, out DateQualified);
-					bool IsCurrentMembershipPMINZ = false;
-					string CurrentMembershipNo = organisation.CurrentMembershipNo;
-					if (!string.IsNullOrWhiteSpace(organisation.CurrentMembershipNo))
-					{
-						IsCurrentMembershipPMINZ = true;
-						CurrentMembershipNo = organisation.CurrentMembershipNo;
-					}
+     //               Console.WriteLine(organisation.DateQualified);
+     //               DateTime DateQualified = DateTime.MinValue;
+     //               DateTime.TryParse(organisation.DateQualified, out DateQualified);
+					//bool IsCurrentMembershipPMINZ = false;
+					//string CurrentMembershipNo = organisation.CurrentMembershipNo;
+					//if (!string.IsNullOrWhiteSpace(organisation.CurrentMembershipNo))
+					//{
+					//	IsCurrentMembershipPMINZ = true;
+					//	CurrentMembershipNo = organisation.CurrentMembershipNo;
+					//}
 
-					organisation.OrganisationalUnits.Add(
-                        new PersonnelUnit()
-                        {
-                            Name = "Personnel",
-                            Type = "Person - Individual",
-                            IsRegisteredLicensed = organisation.IsRegisteredLicensed,
-                            InsuredEntityRelation = organisation.InsuredEntityRelation,
-                            DateQualified = DateQualified,
-                            DesignLicensed = organisation.DesignLicensed,
-                            SiteLicensed = organisation.SiteLicensed,
-                            IsCurrentMembership = organisation.IsCurrentMembership,
-                            OtherCompanyName = organisation.OtherCompanyname,
-                            YearofPractice = organisation.YearofPractice,
-							Qualifications = organisation.Qualifications,
-							JobTitle = organisation.JobTitle,
-							ProfAffiliation = organisation.ProfAffiliation,
-							IsInsuredRequired = organisation.IsInsuredRequired,
-							IsContractorInsured = organisation.IsContractorInsured,
-							CertType = organisation.CertType,
-							MajorShareHolder = organisation.MajorShareHolder,
-							IsCurrentMembershipPMINZ = IsCurrentMembershipPMINZ,
-							CurrentMembershipNo = CurrentMembershipNo
-						});
+					//organisation.OrganisationalUnits.Add(
+     //                   new PersonnelUnit()
+     //                   {
+     //                       Name = "Personnel",
+     //                       Type = "Person - Individual",
+     //                       IsRegisteredLicensed = organisation.IsRegisteredLicensed,
+     //                       InsuredEntityRelation = organisation.InsuredEntityRelation,
+     //                       DateQualified = DateQualified,
+     //                       DesignLicensed = organisation.DesignLicensed,
+     //                       SiteLicensed = organisation.SiteLicensed,
+     //                       IsCurrentMembership = organisation.IsCurrentMembership,
+     //                       OtherCompanyName = organisation.OtherCompanyname,
+     //                       YearofPractice = organisation.YearofPractice,
+					//		Qualifications = organisation.Qualifications,
+					//		JobTitle = organisation.JobTitle,
+					//		ProfAffiliation = organisation.ProfAffiliation,
+					//		IsInsuredRequired = organisation.IsInsuredRequired,
+					//		IsContractorInsured = organisation.IsContractorInsured,
+					//		CertType = organisation.CertType,
+					//		MajorShareHolder = organisation.MajorShareHolder,
+					//		IsCurrentMembershipPMINZ = IsCurrentMembershipPMINZ,
+					//		CurrentMembershipNo = CurrentMembershipNo
+					//	});
 
-                    organisation.OrganisationalUnits.Add(
-                        new OrganisationalUnit()
-                        {
-                            Name = "Private",
-                            Type = "Person - Individual",
-                        });
+     //               organisation.OrganisationalUnits.Add(
+     //                   new OrganisationalUnit()
+     //                   {
+     //                       Name = "Private",
+     //                       Type = "Person - Individual",
+     //                   });
 
                     Message = "Added Units";
 
@@ -475,49 +475,49 @@ namespace DealEngine.Services.Impl
         private async Task PrincipalUnit()
         {
 			int value = 0;
-			var Principal = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
+			//var Principal = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			//var attributeList = organisations.Where(o => o.InsuranceAttributes.Any(IA => IA.Name == "Principal"));
-			var CeasOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
+			var attributeList = organisations.Where(o => o.InsuranceAttributes.Any(IA => IA.Name == "Principal"));
+			//var CeasOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
 			string Message = "";
 			string Id;
 			try
 			{
-                foreach (var organisation in CeasOrg)
+                foreach (var organisation in attributeList)
                 {
                     value++;
                     Id = organisation.Id.ToString();
                     Message = "Start Id:" + Id;
-                    //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Principal"));
+                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Principal"));
                     Message = "Added Attribute";
 
-                    organisation.OrganisationalUnits.Add(
-                        new PrincipalUnit()
-                        {
-                            Name = "Principal",
-                            Type = "Person - Individual",
-                            DateofRetirement = organisation.DateofRetirement,
-                            IsRetiredorDeceased = organisation.IsRetiredorDecieved,
-                            Qualifications = organisation.Qualifications,
-                            IsIPENZmember = organisation.IsIPENZmember,
-                            CPEngQualified = organisation.CPEngQualified,
-                            YearofPracticeCEAS = organisation.YearofPractice,
-                            IsNZIAmember = organisation.IsNZIAmember,
-                            IsADNZmember = organisation.IsADNZmember,
-                            NZIAmembership = organisation.NZIAmembership,
-                            IsLPBCategory3 = organisation.IsLPBCategory3,
-                            IsOtherdirectorship = organisation.IsOtherdirectorship,
-                            TradingName = organisation.TradingName,
-							YearofPracticeNZACS = organisation.YearofPractice,
-							PrevPracticeNZACS = organisation.PrevPractice
-						});
+      //              organisation.OrganisationalUnits.Add(
+      //                  new PrincipalUnit()
+      //                  {
+      //                      Name = "Principal",
+      //                      Type = "Person - Individual",
+      //                      DateofRetirement = organisation.DateofRetirement,
+      //                      IsRetiredorDeceased = organisation.IsRetiredorDecieved,
+      //                      Qualifications = organisation.Qualifications,
+      //                      IsIPENZmember = organisation.IsIPENZmember,
+      //                      CPEngQualified = organisation.CPEngQualified,
+      //                      YearofPracticeCEAS = organisation.YearofPractice,
+      //                      IsNZIAmember = organisation.IsNZIAmember,
+      //                      IsADNZmember = organisation.IsADNZmember,
+      //                      NZIAmembership = organisation.NZIAmembership,
+      //                      IsLPBCategory3 = organisation.IsLPBCategory3,
+      //                      IsOtherdirectorship = organisation.IsOtherdirectorship,
+      //                      TradingName = organisation.TradingName,
+						//	YearofPracticeNZACS = organisation.YearofPractice,
+						//	PrevPracticeNZACS = organisation.PrevPractice
+						//});
 
-                    organisation.OrganisationalUnits.Add(
-                        new OrganisationalUnit()
-                        {
-                            Name = "Private",
-                            Type = "Person - Individual",
-                        });
+      //              organisation.OrganisationalUnits.Add(
+      //                  new OrganisationalUnit()
+      //                  {
+      //                      Name = "Private",
+      //                      Type = "Person - Individual",
+      //                  });
 
 					await _organisationRepository.UpdateAsync(organisation);
 					Message = "Updated Organisation";
