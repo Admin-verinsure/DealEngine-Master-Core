@@ -65,7 +65,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                             (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                           (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -93,6 +93,11 @@
                                     <li class="nav-item">
                                         <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="~/Agreement/BindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Bind Agreement</a>
+                                    </li>
+
                                 }
 
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
@@ -132,11 +137,11 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
                                     @if (item.ProgrammeName == "NZFSG Programme")
                                     {
-                        <li class="nav-item">
-                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
-                        </li>
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
+                                        </li>
                                     }
-                                    
+
 
                                 }
                                 <li class="nav-item">
@@ -207,9 +212,11 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <li class="nav-item">
                                         <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
                                     </li>
+
                                 }
 
                             }
+
 
                             @if (@item.Status == "Bound and pending payment")
                             {
@@ -217,6 +224,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <a href="~/Agreement/ResumeGeneratePxPayment/@item.ClientInformationSheet.Id" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Payment Option</a>
                                 </li>
                             }
+
 
                         </ul>
                     </div>
