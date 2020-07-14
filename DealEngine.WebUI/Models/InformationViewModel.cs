@@ -36,11 +36,8 @@ namespace DealEngine.WebUI.Models
         public string Status { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
-        public List<string> ListSectionView { get; set; }
-
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
-
         public List<string> ListProductName { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
@@ -52,7 +49,6 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<OrganisationalUnitViewModel> OrganisationalUnits { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
         public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
-        public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
         public IEnumerable<SelectListItem> ClaimProducts { get; set; }
         public IEnumerable<SelectListItem> AvailableOrganisations { get; set; }
         public OrganisationDetailsVM OrganisationDetails { get; set; }
@@ -60,16 +56,11 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<BuildingViewModel> Buildings { get; set; }
         public IEnumerable<ClientInformationAnswer> ClientInformationAnswers { get; set; }
         public IEnumerable<WaterLocationViewModel> WaterLocations { get; set; }
-        public IEnumerable<BoatViewModel> Boats { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
         public List<SelectListItem> InterestedPartyList { get; set; }
-        public List<SelectListItem> SkipperList { get; set; }
-        public IEnumerable<BoatUseViewModel> BoatUse { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
-        public IEnumerable<OrganisationViewModel> Operators { get; set; }
         public string Advisory { get; set; }
-        public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueDataViewModel RevenueDataViewModel { get; set; }
         public RoleDataViewModel RoleDataViewModel { get; set; }
         public ClaimsHistoryViewModel ClaimsHistoryViewModel { get; set; }

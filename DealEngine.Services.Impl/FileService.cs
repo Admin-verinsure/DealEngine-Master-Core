@@ -511,15 +511,6 @@ namespace DealEngine.Services.Impl
                 {
                     mergeFields.Add(new KeyValuePair<string, string>("[[BVMVDetailsTable]]", "No Trailer insured under this policy."));
                 }
-
-                //if (intFinancialIPCount > 1)
-                //{
-                //    strFinancialIP = strFinancialIPList + " are";
-                //} else
-                //{
-                //    strFinancialIP = strFinancialIPList + " is";
-                //}
-                //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
             }
 
             string stradvisorlist = "";
@@ -529,54 +520,36 @@ namespace DealEngine.Services.Impl
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
-                //DataTable dtadvisor = new DataTable();
-                //dtadvisor.Columns.Add("Advisor");
-                //dtadvisor.Columns.Add("Retroactive Date");
-
-                //DataTable dtadvisor1 = new DataTable();
-                //dtadvisor1.Columns.Add("Advisor");
-                //dtadvisor1.Columns.Add("Retroactive Date");
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    var unit= (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                    if(unit != null)
                     {
-                        //DataRow dradvisor = dtadvisor.NewRow();
-
-                        //dradvisor["Advisor"] = uisorg.Name;
-                        //dradvisor["Retroactive Date"] = uisorg.PIRetroactivedate;
-
-                        //dtadvisor.Rows.Add(dradvisor);
-
-                        //DataRow dradvisor1 = dtadvisor1.NewRow();
-
-                        //dradvisor1["Advisor"] = uisorg.Name;
-                        //dradvisor1["Retroactive Date"] = uisorg.DORetroactivedate;
-
-                        //dtadvisor1.Rows.Add(dradvisor1);
                         if (string.IsNullOrEmpty(stradvisorlist))
                         {
-                            stradvisorlist = "Advisor:                                           " + uisorg.Name + 
-                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
+                            stradvisorlist = "Advisor:                                           " + uisorg.Name +
+                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
                         }
                         else
                         {
                             stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + uisorg.PIRetroactivedate;
+                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
                         }
                         if (string.IsNullOrEmpty(stradvisorlist1))
                         {
                             stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
+                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
                         }
                         else
                         {
                             stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + uisorg.DORetroactivedate;
+                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
                         }
                     }
 
-                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia1 => uisorgia1.InsuranceAttributeName == "NominatedRepresentative" && uisorgia1.DateDeleted == null) != null)
+                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
+                    if (unit != null)
                     {
                         if (string.IsNullOrEmpty(strnominatedrepresentative))
                         {
@@ -586,10 +559,10 @@ namespace DealEngine.Services.Impl
                         {
                             strnominatedrepresentative += ", " + uisorg.Name;
                         }
-
                     }
 
-                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia2 => uisorgia2.InsuranceAttributeName == "OtherConsultingBusiness" && uisorgia2.DateDeleted == null) != null)
+                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
+                    if (unit != null)
                     {
                         if (string.IsNullOrEmpty(strotherconsultingbusiness))
                         {
@@ -599,7 +572,6 @@ namespace DealEngine.Services.Impl
                         {
                             strotherconsultingbusiness += ", " + uisorg.Name;
                         }
-
                     }
                 }
 
@@ -607,8 +579,6 @@ namespace DealEngine.Services.Impl
                 {
                     stradvisorlist += "<br /><br />" + strnominatedrepresentative;
                 }
-                //dtadvisor.TableName = "AdvisorDetailsTablePI";
-                //dtadvisor1.TableName = "AdvisorDetailsTableDO";
 
                 if (string.IsNullOrEmpty(strotherconsultingbusiness))
                 {
@@ -625,53 +595,7 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
-            }
-            //mergeFields.Add(new KeyValuePair<string, string>("[[NominatedRepresentativeDetailsTable]]", strnominatedrepresentative));
-
-            //string customeactivity = "";
-            //string customeactivityexcess = "";
-            //if (agreement.Product.Id == new Guid("0e9ce29b-f1e4-499a-8994-a96e96962953")) //NZFSG Custome Excess for PI
-            //{
-            //    if (agreement.ClientInformationSheet.RevenueData != null)
-            //    {
-            //        foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-            //        {
-            //            if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-            //            {
-            //                if (uISActivity.Percentage > 0)
-            //                {
-            //                    if (string.IsNullOrEmpty(customeactivity))
-            //                    {
-            //                        customeactivity = "Financial Planning";
-            //                        customeactivityexcess = "$2,500 each and every Claim, costs inclusive";
-            //                    } else
-            //                    {
-            //                        customeactivity += Environment.NewLine + "Financial Planning";
-            //                        customeactivityexcess += Environment.NewLine + "$2,500 each and every Claim, costs inclusive";
-            //                    }
-            //                }
-            //            }
-            //            else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-            //            {
-            //                if (uISActivity.Percentage > 0)
-            //                {
-            //                    if (string.IsNullOrEmpty(customeactivity))
-            //                    {
-            //                        customeactivity = "Broking Fire and General";
-            //                        customeactivityexcess = "$5,000 each and every Claim, costs inclusive";
-            //                    }
-            //                    else
-            //                    {
-            //                        customeactivity += Environment.NewLine + "Broking Fire and General";
-            //                        customeactivityexcess += Environment.NewLine + "$5,000 each and every Claim, costs inclusive";
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            //mergeFields.Add(new KeyValuePair<string, string>("[[customeactivity]]", customeactivity));
-            //mergeFields.Add(new KeyValuePair<string, string>("[[customeactivityexcess]]", customeactivityexcess));
+            }            
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
@@ -726,7 +650,12 @@ namespace DealEngine.Services.Impl
             {
                 if (agreement.ClientInformationSheet.Programme.Owner != null)
                 {
-                    mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", agreement.ClientInformationSheet.Programme.Owner.TradingName));
+                    var principalUnit = (PrincipalUnit)agreement.ClientInformationSheet.Programme.Owner.OrganisationalUnits.FirstOrDefault(o => o.Name == "Principal");
+                    if(principalUnit != null)
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", principalUnit.PartyName));
+                    }
+                    
                     mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));
                 }
             }

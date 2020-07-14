@@ -102,12 +102,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal extpremium = 0m;
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            {
+            {                
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (!bolsitelicensecategory3 && uisorg.SiteLicensed == "Category 3")
+                    var unit = (PersonnelUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Personnel");
+                    if(unit != null)
                     {
-                        bolsitelicensecategory3 = true;
+                        if (!bolsitelicensecategory3 && unit.SiteLicensed == "Category 3")
+                        {
+                            bolsitelicensecategory3 = true;
+                        }
                     }
                 }
             }

@@ -383,89 +383,89 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetCommonPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                         string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
-            XDocument document = null;
-            JqGridViewModel model = new JqGridViewModel();
+        //[HttpGet]
+        //public async Task<IActionResult> GetCommonPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+        //                                 string searchField, string searchString, string searchOper, string filters)
+        //{
+        //    User user = null;
+        //    XDocument document = null;
+        //    JqGridViewModel model = new JqGridViewModel();
 
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                var progname = sheet.Programme.BaseProgramme.Name;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+        //        var progname = sheet.Programme.BaseProgramme.Name;
 
                
 
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
+        //        if (sheet == null)
+        //            throw new Exception("No valid information for id " + informationId);
 
-                var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+        //        var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
 
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                organisations = organisations.OrderByDescending(cp => cp.IsPrincipalAdvisor).ToList();
-                model.Page = page;
-                model.TotalRecords = organisations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                if (progname == "NZFSG Programme"){
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false",sheet.Owner.TradingName == null ? " ": sheet.Owner.TradingName);
-                }else{
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false","NonTrading");
-                }
-                model.AddRow(row1);
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-                    Organisation organisation = organisations[i];
-                    JqGridRow row = new JqGridRow(organisation.Id);
+        //        if (_search)
+        //        {
+        //            switch (searchOper)
+        //            {
+        //                case "eq":
+        //                    organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+        //                    break;
+        //                case "bw":
+        //                    organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+        //                    break;
+        //                case "cn":
+        //                    organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+        //                    break;
+        //            }
+        //        }
+        //        organisations = organisations.OrderByDescending(cp => cp.IsPrincipalAdvisor).ToList();
+        //        model.Page = page;
+        //        model.TotalRecords = organisations.Count;
+        //        model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+        //        JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+        //        if (progname == "NZFSG Programme"){
+        //            row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false",sheet.Owner.TradingName == null ? " ": sheet.Owner.TradingName);
+        //        }else{
+        //            row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", "false","NonTrading");
+        //        }
+        //        model.AddRow(row1);
+        //        int offset = rows * (page - 1);
+        //        for (int i = offset; i < offset + rows; i++)
+        //        {
+        //            if (i == model.TotalRecords)
+        //                break;
+        //            Organisation organisation = organisations[i];
+        //            JqGridRow row = new JqGridRow(organisation.Id);
 
-                    if (organisation.InsuranceAttributes.Any())
-                    {
-                        for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
-                        {
-                            row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor, "", organisation.Id);
-                        }
-                    }
-                    else
-                    {
-                        if(organisation.Type == "Advisor")
-                        {
-                            row.AddValues(organisation.Id, organisation.Name, organisation.Type, organisation.IsPrincipalAdvisor, "", organisation.Id);
-                        }
-                    }
-                    model.AddRow(row);
-                }
+        //            if (organisation.InsuranceAttributes.Any())
+        //            {
+        //                for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+        //                {
+        //                    row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.IsPrincipalAdvisor, "", organisation.Id);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //if(organisation.Type == "Advisor")
+        //                //{
+        //                //    row.AddValues(organisation.Id, organisation.Name, organisation.Type, organisation.IsPrincipalAdvisor, "", organisation.Id);
+        //                //}
+        //            }
+        //            model.AddRow(row);
+        //        }
 
 
-                //// convert model to XDocument for rendering.
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        //// convert model to XDocument for rendering.
+        //        document = model.ToXml();
+        //        return Xml(document);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
@@ -2333,10 +2333,10 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private void AddOrganisation(OrganisationViewModel model)
-        {
-            throw new Exception("Unfinihed core update");
-        }
+        //private void AddOrganisation(OrganisationViewModel model)
+        //{
+        //    throw new Exception("Unfinihed core update");
+        //}
 
         [HttpPost]
         public async Task<IActionResult> RemoveOrganisation(IFormCollection collection)
@@ -2360,7 +2360,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddOrganisation(IFormCollection collection)
-        {            
+        {
             User currentUser = await CurrentUser();
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
@@ -2381,7 +2381,7 @@ namespace DealEngine.WebUI.Controllers
                 if (organisation != null)
                 {
                     await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    await _organisationService.ChangeOwner(organisation, Sheet);
+                    //await _organisationService.ChangeOwner(organisation, Sheet);
                 }
                 if (organisation == null)
                 {
@@ -2394,7 +2394,7 @@ namespace DealEngine.WebUI.Controllers
                     Sheet.Organisation.Add(organisation);
 
                 await _clientInformationService.UpdateInformation(Sheet);
-                return Ok();
+                return Redirect("../Information/EditInformation?Id="+ Sheet.Programme.Id.ToString());
             }
             catch (Exception ex)
             {
@@ -3615,7 +3615,7 @@ namespace DealEngine.WebUI.Controllers
                 if (organisation != null)
                 {
                     await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    await _organisationService.ChangeOwner(organisation, null);
+                    //await _organisationService.ChangeOwner(organisation, null);
                     principalAdvisor = organisation;
                     organisation = null;
                 }

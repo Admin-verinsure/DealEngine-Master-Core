@@ -18,9 +18,9 @@ namespace DealEngine.Services.Impl
             _InsuranceAttributeRepository = insuranceAttributeRepository;
         }
 
-        public async Task<InsuranceAttribute> CreateNewInsuranceAttribute(User user, string insuranceAttributeName)
+        public async Task<InsuranceAttribute> CreateNewInsuranceAttribute(User user, string Name)
         {
-            InsuranceAttribute insuranceAttribute = new InsuranceAttribute(user, insuranceAttributeName);
+            InsuranceAttribute insuranceAttribute = new InsuranceAttribute(user, Name);
             await _InsuranceAttributeRepository.AddAsync(insuranceAttribute);
 
             return insuranceAttribute;
@@ -30,7 +30,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<InsuranceAttribute> GetInsuranceAttributeByName(string Name)
         {            
-            var attribute = await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.InsuranceAttributeName == Name);
+            var attribute = await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.Name == Name);
             if(attribute == null)
             {
                 attribute = await CreateNewInsuranceAttribute(null, Name);

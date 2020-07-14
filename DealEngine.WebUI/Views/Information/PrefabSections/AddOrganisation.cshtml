@@ -61,10 +61,7 @@
                                 @organisation.Name
                             </td>
                             <td>
-                                @organisation.Type
-                            </td>
-                            <td>
-                                @organisation.IsPrincipalAdvisor
+                                @organisation.InsuranceAttributes.FirstOrDefault().Name
                             </td>
                             <td>
                                 <button onclick="RemoveOrganisation('@organisation.Id', 'Insured Details / Named Parties')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
@@ -142,13 +139,9 @@
                                 @organisation.Name
                             </td>
                             <td>
-                                @organisation.Type
+                                @organisation.InsuranceAttributes.FirstOrDefault().Name
                             </td>
-                            <td>
-                                @organisation.IsPrincipalAdvisor
-                            </td>
-                            <td>
-                                
+                            <td>                                
                             </td>
                         </tr>
                     }

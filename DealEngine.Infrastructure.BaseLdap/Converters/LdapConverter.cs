@@ -87,8 +87,6 @@ namespace DealEngine.Infrastructure.BaseLdap.Converters
 			organisation.Description	= LdapHelpers.GetLdapAttributeValue (attributes, "description");
 			organisation.Phone			= LdapHelpers.GetLdapAttributeValue (attributes, "telephoneNumber");
 			organisation.Domain			= LdapHelpers.GetLdapAttributeValue (attributes, "associatedDomain");
-			organisation.Location		= ToLocation(attributes);
-
 			return organisation;
 		}
 

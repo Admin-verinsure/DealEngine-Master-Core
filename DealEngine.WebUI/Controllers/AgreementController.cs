@@ -407,32 +407,32 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (var terms in agreement.ClientAgreementTerms)
                     {
-                        foreach (var bvterm in terms.BoatTerms)
-                        {
+                        //foreach (var bvterm in terms.BoatTerms)
+                        //{ Org Changes
 
-                            if (bvterm.Boat.BoatWaterLocation != null)
-                            {
+                        //    if (bvterm.Boat.BoatWaterLocation != null)
+                        //    {
+                        //        var orgList = await _organisationService.GetAllOrganisations();
+                        //        InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
+                        //        if (insuranceAttribute != null)
+                        //        {
+                                    
+                        //            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                        //            foreach (var org in orgList)
+                        //            {
+                        //                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
+                        //                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                        //                {
 
-                                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
-                                if (insuranceAttribute != null)
-                                {
-                                    var orgList = await _organisationService.GetAllOrganisations();
-                                    orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
-                                    foreach (var org in orgList)
-                                    {
-                                        InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
-                                        if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
-                                        {
+                        //                    org.IsApproved = true;
+                        //                }
+                        //            }
+                        //            //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
+                        //        }
 
-                                            org.IsApproved = true;
-                                        }
-                                    }
-                                    //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
-                                }
+                        //    }
 
-                            }
-
-                        }
+                        //}
                     }
 
                     if (agreement.Status != "Quoted")
@@ -2079,22 +2079,23 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
             try
             {
-                user = await CurrentUser();
-                ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
-                if (model.Owner != null)
-                {
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        foreach (Organisation org in model.Owner)
-                        {
-                            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
-                            organisation.PIRetroactivedate = org.PIRetroactivedate;
-                            organisation.DORetroactivedate = org.DORetroactivedate;
+                //user = await CurrentUser();
+                //Org Re write
+                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
+                //if (model.Owner != null)
+                //{
+                //    using (var uow = _unitOfWork.BeginUnitOfWork())
+                //    {
+                //        foreach (Organisation org in model.Owner)
+                //        {
+                //            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
+                //            organisation.PIRetroactivedate = org.PIRetroactivedate;
+                //            organisation.DORetroactivedate = org.DORetroactivedate;
 
-                        }
-                        await uow.Commit();
-                    }
-                }
+                //        }
+                //        await uow.Commit();
+                //    }
+                //}
 
                 return Redirect("/Agreement/ViewAcceptedAgreement/" + model.ProgId);
             }

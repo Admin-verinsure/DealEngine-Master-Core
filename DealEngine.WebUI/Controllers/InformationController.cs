@@ -387,30 +387,12 @@ namespace DealEngine.WebUI.Controllers
                 model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
                 model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-                model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
+
                 var locations = new List<LocationViewModel>();
                 var buildings = new List<BuildingViewModel>();
                 var waterLocations = new List<WaterLocationViewModel>();
                 var MarinaLocations = new List<OrganisationViewModel>();
                 var organisationalunit = new List<OrganisationalUnit>();
-
-
-                for (var i = 0; i < sheet.Owner.OrganisationalUnits.Count(); i++)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Id,
-                        Name = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Name
-                    });
-                }
-
-
-                //for (var i = 0; i < sheet.Locations.Count(); i++)
-                //{
-                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
-                //}
 
                 for (var i = 0; i < sheet.Buildings.Count(); i++)
                 {
@@ -452,29 +434,6 @@ namespace DealEngine.WebUI.Controllers
                     });
                 }
 
-                var availableorganisation = new List<SelectListItem>();
-
-                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
-                {
-                    availableorganisation.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = "" + organisation.Id,
-                        Text = organisation.Name
-                    });
-                }
-
-                availableorganisation.Add(new SelectListItem
-                {
-                    Selected = false,
-                    Value = "" + sheet.Owner.Id,
-                    Text = sheet.Owner.Name
-                });
-
-
-
-                model.AvailableOrganisations = availableorganisation;
-
                 model.AllVehicles = vehicles;
 
                 var userDetails = _mapper.Map<UserDetailsVM>(user);
@@ -490,7 +449,6 @@ namespace DealEngine.WebUI.Controllers
                     Website = sheet.Owner.Domain
                 };
 
-                model.OrganisationalUnits = organisationalUnits;
                 //model.Locations = locations;
                 model.Buildings = buildings;
                 //model.Buildings.

@@ -24,7 +24,6 @@ namespace DealEngine.Services.Interfaces
         Task<Programme> GetProgrammeById(Guid ProgrammeId);
         Task AttachProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate);
         Task AttachProgrammeToSharedRole(Programme programme, SharedDataRoleTemplate sharedRole);
-        Task AddOrganisationByMembership(Organisation organisation);
         Task AddClaimNotificationByMembership(ClaimNotification claimNotification);
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData);

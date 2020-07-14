@@ -178,10 +178,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.IsADNZmember && !bolAnyADNZMember)
+                    var unit = (PrincipalUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Principal");
+                    if(unit != null)
                     {
-                        bolAnyADNZMember = true;
-                    }
+                        if (unit.IsADNZmember && !bolAnyADNZMember)
+                        {
+                            bolAnyADNZMember = true;
+                        }
+                    }                    
                 }
             }
 
@@ -1156,9 +1160,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                         {
-                            if ((uisorg.IsADNZmember || uisorg.IsNZIAmember) && !bolAnyNZIAorADNZMember)
+                            var unit = (PrincipalUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Principal");
+                            if (unit != null)
                             {
-                                bolAnyNZIAorADNZMember = true;
+                                if ((unit.IsADNZmember || unit.IsNZIAmember) && !bolAnyNZIAorADNZMember)
+                                {
+                                    bolAnyNZIAorADNZMember = true;
+                                }
                             }
                         }
                     }

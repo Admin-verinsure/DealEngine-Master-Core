@@ -118,7 +118,7 @@ namespace DealEngine.Services.Impl
 			if(organisation != null)
             {
 				organisation = _mapper.Map(jsonOrganisation, organisation);
-				var unit = organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == jsonUnit.Type);
+				var unit = organisation.OrganisationalUnits.FirstOrDefault(ou=>ou.GetType() == jsonUnit.GetType());
 				if(unit != null)
                 {
 					_mapper.Map(jsonUnit, unit);
@@ -126,9 +126,9 @@ namespace DealEngine.Services.Impl
                 else
                 {
 					//check if existing
-					organisation.OrganisationalUnits.Add(jsonUnit);
-					organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, collection["Type"]));
-					organisation.OrganisationType = new OrganisationType(null, collection["OrganisationType"]);
+					//organisation.OrganisationalUnits.Add(jsonUnit);
+					//organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, collection["Type"]));
+					//organisation.OrganisationType = new OrganisationType(null, collection["OrganisationType"]);
 				}
 				
 				await Update(organisation);
@@ -158,9 +158,8 @@ namespace DealEngine.Services.Impl
 
 		public async Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet)
 		{
-			var organisations = new List<Organisation>();
-			var insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-			foreach (var organisation in sheet.Organisation.Where(o=>o.Removed != true && o.InsuranceAttributes.Contains(insuranceAttribute) || o.Type == "Advisor"))
+			var organisations = new List<Organisation>();			
+			foreach (var organisation in sheet.Organisation.Where(o=>o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
 			{
 				organisations.Add(organisation);
 			}
@@ -285,25 +284,6 @@ namespace DealEngine.Services.Impl
 			return organisation;
 		}
 
-        public async Task ChangeOwner(Organisation organisation, ClientInformationSheet sheet)
-        {
-			if(sheet != null)
-            {
-                try
-                {
-					var insuranceattribute = organisation.InsuranceAttributes.FirstOrDefault(IA => IA.InsuranceAttributeName == organisation.Type);
-					insuranceattribute.SetHistory(sheet);
-				}
-				catch(Exception ex)
-                {
-					throw ex;
-                }
-				
-			}
-			organisation.IsPrincipalAdvisor = true;
-			organisation.Removed = false;
-			await Update(organisation);
-		}
 
         public async  Task UpdateApplication(Organisation organisation)
         {
@@ -332,6 +312,7 @@ namespace DealEngine.Services.Impl
 		}
 		private object? GetModelDeserializedModel(Type type, IFormCollection collection)
 		{
+			string AssemblyName = "DealEngine.Domain.Entities.";
 			Dictionary<object, string> model = new Dictionary<object, string>();
 			//var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
 			foreach (var Key in collection.Keys)
@@ -387,7 +368,7 @@ namespace DealEngine.Services.Impl
 			//turn off IA Organisations
 			//run once for Units
 			//Run again to Create Attributes
-			await PrincipalUnit();
+			//await PrincipalUnit();
 			//turn off IA Organisations
 			//await PersonnelUnit();
 			//await PMINZ();
@@ -479,6 +460,7 @@ namespace DealEngine.Services.Impl
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
 			var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
 			//var CeasOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
+			var Count = attributeList.Count();
 			string Message = "";
 			string Id;
 			try

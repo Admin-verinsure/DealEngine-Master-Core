@@ -67,6 +67,8 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
         public virtual string MyCRMId { get; set; }
+        public virtual DateTime? PIRetroactivedate { get; set; }
+        public virtual DateTime? DORetroactivedate { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit
@@ -94,7 +96,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Association")]
         public virtual string OtherCompanyName { get; set; }
         [Display(Name = "Years as a Member")]
-        public virtual string YearofPractice { get; set; }
+        public virtual string YearOfPractice { get; set; }
         ///pminz
         [Display(Name = "Job title")]
         public virtual string JobTitle { get; set; }

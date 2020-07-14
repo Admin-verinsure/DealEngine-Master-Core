@@ -195,16 +195,6 @@ namespace DealEngine.Services.Impl
             await _programmeRepository.UpdateAsync(programme);
         }
 
-        public async Task AddOrganisationByMembership(Organisation organisation)
-        {
-            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == organisation.NZIAmembership);
-            if (clientProgramme != null)
-            {
-                clientProgramme.InformationSheet.Organisation.Add(organisation);
-                await _clientProgrammeRepository.UpdateAsync(clientProgramme);
-            }            
-        }
-
         public async Task AddClaimNotificationByMembership(ClaimNotification claimNotification)
         {
             var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == claimNotification.ClaimMembershipNumber);

@@ -174,11 +174,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
+                    var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                    if(unit!= null)
                     {
                         intnumberofadvisors += 1;
 
-                        if (!advisorhasnocrmid && string.IsNullOrEmpty(uisorg.MyCRMId))
+                        if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
                         {
                             advisorhasnocrmid = true;
                         }

@@ -208,41 +208,41 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[1];
+                            //organisation.NZIAmembership = parts[1];
                             organisation.Email = email;
                             organisation.Phone = "12345";
 
                             if (!string.IsNullOrEmpty(parts[6]))
                             {
-                                organisation.Qualifications = parts[6];
+                                //organisation.Qualifications = parts[6];
                             }
                             if (!string.IsNullOrEmpty(parts[7]))
                             {
-                                if (parts[7] == "1")
-                                {
-                                    organisation.IsNZIAmember = true;
-                                }
-                                else
-                                    organisation.IsNZIAmember = false;
+                                //if (parts[7] == "1")
+                                //{
+                                //    organisation.IsNZIAmember = true;
+                                //}
+                                //else
+                                //    organisation.IsNZIAmember = false;
                             }
                             if (!string.IsNullOrEmpty(parts[8]))
                             {
-                                if (parts[8] == "1")
-                                {
-                                    organisation.IsADNZmember = true;
-                                }
-                                else
-                                    organisation.IsADNZmember = false;
+                                //if (parts[8] == "1")
+                                //{
+                                //    organisation.IsADNZmember = true;
+                                //}
+                                //else
+                                //    organisation.IsADNZmember = false;
                             }
                             //clarify correct field
                             if (!string.IsNullOrEmpty(parts[9]))
                             {
-                                if (parts[9] == "1")
-                                {
-                                    organisation.IsOtherdirectorship = true;
-                                }
-                                else
-                                    organisation.IsOtherdirectorship = false;
+                                //if (parts[9] == "1")
+                                //{
+                                //    organisation.IsOtherdirectorship = true;
+                                //}
+                                //else
+                                //    organisation.IsOtherdirectorship = false;
                             }
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
@@ -259,7 +259,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             await _organisationService.CreateNewOrganisation(organisation);
-                            await _programmeService.AddOrganisationByMembership(organisation);
+                            //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
 
@@ -788,7 +788,7 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[4], organisationType, parts[10]);
                             //  organisation.IsPrincipalAdvisor = true;
-                            organisation.OfcPhoneno = parts[6];
+                            //organisation.OfcPhoneno = parts[6];
 
                             await _organisationService.CreateNewOrganisation(organisation);
                         }
@@ -822,12 +822,12 @@ namespace DealEngine.Services.Impl
                             //    insuranceAttribute = await _InsuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Advisor");
                             //}
                             Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
-                            advisororganisation.IsPrincipalAdvisor = true;
-                            advisororganisation.PIRetroactivedate = parts[8];
-                            advisororganisation.DORetroactivedate = parts[9];
+                            //advisororganisation.IsPrincipalAdvisor = true;
+                            //advisororganisation.PIRetroactivedate = parts[8];
+                            //advisororganisation.DORetroactivedate = parts[9];
                             if (!string.IsNullOrEmpty(parts[7]))
                             {
-                                advisororganisation.MyCRMId = parts[7];
+                                //advisororganisation.MyCRMId = parts[7];
                             }
                             await _organisationService.CreateNewOrganisation(advisororganisation);
                             //advisororganisation.InsuranceAttributes.Add(insuranceAttribute);
@@ -902,21 +902,21 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[1];
+                            //organisation.NZIAmembership = parts[1];
                             organisation.Email = email;
                             organisation.Phone = "12345";
 
                             if (!string.IsNullOrEmpty(parts[15]))
                             {
-                                organisation.Qualifications = parts[15];
+                                //organisation.Qualifications = parts[15];
                             }
                             if (!string.IsNullOrEmpty(parts[11]))
                             {
-                                organisation.IsIPENZmember = parts[11];
+
                             }
                             if (!string.IsNullOrEmpty(parts[12]))
                             {
-                                organisation.CPEngQualified = parts[12];
+                                //organisation.CPEngQualified = parts[12];
                             }
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
@@ -933,7 +933,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             await _organisationService.CreateNewOrganisation(organisation);
-                            await _programmeService.AddOrganisationByMembership(organisation);
+                            //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
 
@@ -1023,97 +1023,97 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[13];
+                            //organisation.NZIAmembership = parts[13];
                             organisation.Email = email;
                             organisation.Phone = "12345";
 
-                            if (!string.IsNullOrEmpty(parts[3]))
-                            {
-                                organisation.JobTitle = parts[3];
-                            }
-                            if (!string.IsNullOrEmpty(parts[4]))
-                            {
-                                organisation.Qualifications = parts[4];
-                            }
-                            if (!string.IsNullOrEmpty(parts[5]))
-                            {
-                                organisation.ProfAffiliation = parts[5];
-                            }
-                            if (!string.IsNullOrEmpty(parts[6]))
-                            {
-                                organisation.CurrentMembershipNo = parts[6];
-                            }
-                            if (!string.IsNullOrEmpty(parts[7]))
-                            {
-                                if (parts[7] == "1")
-                                {
-                                    organisation.IsCurrentMembership = true;
-                                }
-                                else
-                                {
-                                    organisation.IsCurrentMembership = false;
-                                }
-                            }
-                            if (!string.IsNullOrEmpty(parts[9]))
-                            {
-                                if (parts[9] == "1")
-                                {
-                                    organisation.CertType = "PMP";
-                                }
-                                else if (parts[9] == "2")
-                                {
-                                    organisation.CertType = "CAPM";
-                                }
-                                else if (parts[9] == "3")
-                                {
-                                    organisation.CertType = "ProjectDirector";
-                                }
-                                else
-                                {
-                                    organisation.CertType = "Ordinary";
-                                }
-                            }
-                            else
-                            {
-                                organisation.CertType = "Ordinary";
-                            }
-                            if (!string.IsNullOrEmpty(parts[10]))
-                            {
-                                if (parts[10] == "1")
-                                {
-                                    organisation.InsuredEntityRelation = "Director";
-                                }
-                                else if (parts[10] == "2")
-                                {
-                                    organisation.InsuredEntityRelation = "Employee";
-                                }
-                                else if (parts[10] == "3")
-                                {
-                                    organisation.InsuredEntityRelation = "Contractor";
-                                }
-                            }
-                            if (!string.IsNullOrEmpty(parts[11]))
-                            {
-                                if (parts[11] == "1")
-                                {
-                                    organisation.IsContractorInsured = true;
-                                }
-                                else
-                                {
-                                    organisation.IsContractorInsured = false;
-                                }
-                            }
-                            if (!string.IsNullOrEmpty(parts[12]))
-                            {
-                                if (parts[12] == "1")
-                                {
-                                    organisation.IsInsuredRequired = true;
-                                }
-                                else
-                                {
-                                    organisation.IsInsuredRequired = false;
-                                }
-                            }
+                            //if (!string.IsNullOrEmpty(parts[3]))
+                            //{
+                            //    organisation.JobTitle = parts[3];
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[4]))
+                            //{
+                            //    //organisation.Qualifications = parts[4];
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[5]))
+                            //{
+                            //    organisation.ProfAffiliation = parts[5];
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[6]))
+                            //{
+                            //    organisation.CurrentMembershipNo = parts[6];
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[7]))
+                            //{
+                            //    if (parts[7] == "1")
+                            //    {
+                            //        organisation.IsCurrentMembership = true;
+                            //    }
+                            //    else
+                            //    {
+                            //        organisation.IsCurrentMembership = false;
+                            //    }
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[9]))
+                            //{
+                            //    if (parts[9] == "1")
+                            //    {
+                            //        organisation.CertType = "PMP";
+                            //    }
+                            //    else if (parts[9] == "2")
+                            //    {
+                            //        organisation.CertType = "CAPM";
+                            //    }
+                            //    else if (parts[9] == "3")
+                            //    {
+                            //        organisation.CertType = "ProjectDirector";
+                            //    }
+                            //    else
+                            //    {
+                            //        organisation.CertType = "Ordinary";
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    organisation.CertType = "Ordinary";
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[10]))
+                            //{
+                            //    if (parts[10] == "1")
+                            //    {
+                            //        organisation.InsuredEntityRelation = "Director";
+                            //    }
+                            //    else if (parts[10] == "2")
+                            //    {
+                            //        organisation.InsuredEntityRelation = "Employee";
+                            //    }
+                            //    else if (parts[10] == "3")
+                            //    {
+                            //        organisation.InsuredEntityRelation = "Contractor";
+                            //    }
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[11]))
+                            //{
+                            //    if (parts[11] == "1")
+                            //    {
+                            //        organisation.IsContractorInsured = true;
+                            //    }
+                            //    else
+                            //    {
+                            //        organisation.IsContractorInsured = false;
+                            //    }
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[12]))
+                            //{
+                            //    if (parts[12] == "1")
+                            //    {
+                            //        organisation.IsInsuredRequired = true;
+                            //    }
+                            //    else
+                            //    {
+                            //        organisation.IsInsuredRequired = false;
+                            //    }
+                            //}
 
                             using (var uom = _unitOfWork.BeginUnitOfWork())
                             {
@@ -1129,7 +1129,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             await _organisationService.CreateNewOrganisation(organisation);
-                            await _programmeService.AddOrganisationByMembership(organisation);
+                            //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
 
@@ -1221,20 +1221,20 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[5];
-                            organisation.Email = email;
-                            organisation.Phone = "12345";
-                            organisation.PIRetroactivedate = parts[8];
-                            organisation.DORetroactivedate = parts[9];
+                            //organisation.NZIAmembership = parts[5];
+                            //organisation.Email = email;
+                            //organisation.Phone = "12345";
+                            //organisation.PIRetroactivedate = parts[8];
+                            //organisation.DORetroactivedate = parts[9];
 
-                            if (!string.IsNullOrEmpty(parts[6]))
-                            {
-                                organisation.OfcPhoneno = parts[6];
-                            }
-                            if (!string.IsNullOrEmpty(parts[7]))
-                            {
-                                organisation.MyCRMId = parts[7];
-                            }
+                            //if (!string.IsNullOrEmpty(parts[6]))
+                            //{
+                            //    organisation.OfcPhoneno = parts[6];
+                            //}
+                            //if (!string.IsNullOrEmpty(parts[7]))
+                            //{
+                            //    organisation.MyCRMId = parts[7];
+                            //}
 
 
 
@@ -1252,7 +1252,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             await _organisationService.CreateNewOrganisation(organisation);
-                            await _programmeService.AddOrganisationByMembership(organisation);
+                            //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
 
@@ -1717,66 +1717,66 @@ namespace DealEngine.Services.Impl
 
                             organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                            organisation.NZIAmembership = parts[12];
+                            //organisation.NZIAmembership = parts[12];
                             organisation.Email = email;
                             organisation.Phone = "12345";
 
                             if (!string.IsNullOrEmpty(parts[5]))
                             {
-                                organisation.Qualifications = parts[5];
+                                //organisation.Qualifications = parts[5];
                             }
                             if (!string.IsNullOrEmpty(parts[3]))
                             {
-                                organisation.DateQualified = parts[3];
+                                //organisation.DateQualified = parts[3];
                             }
                             if (!string.IsNullOrEmpty(parts[6]))
                             {
-                                if (parts[6] == "1")
-                                {
-                                    organisation.IsRegisteredLicensed = true;
-                                }
-                                else
-                                {
-                                    organisation.IsRegisteredLicensed = false;
-                                }
+                                //if (parts[6] == "1")
+                                //{
+                                //    organisation.IsRegisteredLicensed = true;
+                                //}
+                                //else
+                                //{
+                                //    organisation.IsRegisteredLicensed = false;
+                                //}
 
                             }
                             if (!string.IsNullOrEmpty(parts[7]))
                             {
-                                if (parts[7] == "1")
-                                {
-                                    organisation.DesignLicensed = "Yes";
-                                }
-                                else
-                                {
-                                    organisation.DesignLicensed = "No";
-                                }
+                                //if (parts[7] == "1")
+                                //{
+                                //    organisation.DesignLicensed = "Yes";
+                                //}
+                                //else
+                                //{
+                                //    organisation.DesignLicensed = "No";
+                                //}
                             }
                             if (!string.IsNullOrEmpty(parts[8]))
                             {
-                                if (parts[8] == "1")
-                                {
-                                    organisation.SiteLicensed = "Yes";
-                                }
-                                else
-                                {
-                                    organisation.SiteLicensed = "No";
-                                }
+                                //if (parts[8] == "1")
+                                //{
+                                //    organisation.SiteLicensed = "Yes";
+                                //}
+                                //else
+                                //{
+                                //    organisation.SiteLicensed = "No";
+                                //}
                             }
                             if (!string.IsNullOrEmpty(parts[9]))
                             {
-                                if (parts[9] == "1")
-                                {
-                                    organisation.InsuredEntityRelation = "Director";
-                                }
-                                else if (parts[9] == "2")
-                                {
-                                    organisation.InsuredEntityRelation = "Employee";
-                                }
-                                else if (parts[9] == "3")
-                                {
-                                    organisation.InsuredEntityRelation = "Contractor";
-                                }
+                                //if (parts[9] == "1")
+                                //{
+                                //    organisation.InsuredEntityRelation = "Director";
+                                //}
+                                //else if (parts[9] == "2")
+                                //{
+                                //    organisation.InsuredEntityRelation = "Employee";
+                                //}
+                                //else if (parts[9] == "3")
+                                //{
+                                //    organisation.InsuredEntityRelation = "Contractor";
+                                //}
                             }
 
 
@@ -1794,7 +1794,7 @@ namespace DealEngine.Services.Impl
                             }
 
                             await _organisationService.CreateNewOrganisation(organisation);
-                            await _programmeService.AddOrganisationByMembership(organisation);
+                            //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
 

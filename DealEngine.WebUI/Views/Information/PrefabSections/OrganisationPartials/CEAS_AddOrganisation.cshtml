@@ -24,7 +24,7 @@
                 <div class="form-group col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.InsuranceAttributes, new { @class = "label required" })
-                        <select id="Organisation.InsuranceAttribute" name="OrganisationViewModel.Organisation.InsuranceAttribute" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
+                        <select id="Organisation.InsuranceAttribute" name="OrganisationViewModel.InsuranceAttribute" class="custom-select" data-rule="OrganisationType" onchange="OnChange(this.id, this.name)" required>
                             @foreach (var option in @Model.OrganisationViewModel.InsuranceAttributes)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>

@@ -116,26 +116,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (!bolnonpmimember && uisorg.IsCurrentMembership)
+                    var unit = (PersonnelUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Personnel");
+                    if(unit != null)
                     {
-                        bolnonpmimember = true;
-                    }
-                    if (uisorg.CertType == "Ordinary")
-                    {
-                        intordnumber += 1;
-                    }
-                    else if (uisorg.CertType == "PMP")
-                    {
-                        intpmpnumber += 1;
-                    }
-                    else if (uisorg.CertType == "CAPM")
-                    {
-                        intcapmnumber += 1;
-                    }
-                    else if (uisorg.CertType == "ProjectDirector")
-                    {
-                        intpdnumber += 1;
-                    }
+                        if (!bolnonpmimember && unit.IsCurrentMembership)
+                        {
+                            bolnonpmimember = true;
+                        }
+                        if (unit.CertType == "Ordinary")
+                        {
+                            intordnumber += 1;
+                        }
+                        else if (unit.CertType == "PMP")
+                        {
+                            intpmpnumber += 1;
+                        }
+                        else if (unit.CertType == "CAPM")
+                        {
+                            intcapmnumber += 1;
+                        }
+                        else if (unit.CertType == "ProjectDirector")
+                        {
+                            intpdnumber += 1;
+                        }
+                    }                    
                 }
 
                 totalnumberofpersonnel = intordnumber + intpmpnumber + intcapmnumber + intpdnumber;
