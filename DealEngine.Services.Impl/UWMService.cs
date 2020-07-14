@@ -155,6 +155,15 @@ namespace DealEngine.Services.Impl
                 new NZFSGCLUWModule(),
                 new NZFSGFIDUWModule(),
                 new NZFSGLPDUWModule(),
+                new TripleAPIUWModule(),
+                new TripleAPLUWModule(),
+                new TripleASLUWModule(),
+                new TripleADOUWModule(),
+                new TripleAEDUWModule(),
+                new TripleAELUWModule(),
+                new TripleACLUWModule(),
+                new TripleAOTUWModule(),
+                new TripleALPDUWModule(),
 
             };
             return modules;
