@@ -857,12 +857,15 @@ namespace DealEngine.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
             User user = null;
-
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+            ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+            ClientProgramme programme = answerSheet.Programme;
             try
             {
                 user = await CurrentUser();
                 ViewBag.Title = "Bind Agreements ";
-                model.InformationSheetId = id;
+                model.InformationSheetId = answerSheet.Id;
+                model.ClientProgrammeId = programme.Id;
                 return View(model);
             }
             catch (Exception ex)

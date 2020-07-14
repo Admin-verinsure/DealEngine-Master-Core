@@ -757,25 +757,31 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-        //[HttpGet]
-        //public Dictionary generatequeryField(string Query)
-        //{
-        //    Dictionary listing = new SortedDictionaryList();
 
-        //    if (Query == "PI Cover Limit")
-        //    {
-        //        // Adding pairs to fslist 
-        //        listing.Add("ReferenceID", clientprog.InformationSheet.ReferenceId);
-        //        listing.Add("IndividualName", "clientprog.Owner.Name");
-        //        listing.Add("CompanyName", "clientprog.Owner.Name");
-        //        listing.Add("Limit", "clientprog.InformationSheet.ReferenceId");
-        //        listing.Add("Premium", "clientprog.InformationSheet.ReferenceId");
-        //        listing.Add("Inceptiondate", "clientprog.InformationSheet.ReferenceId");
-        //    }
+        [HttpGet]
+        public PropertyDescriptorCollection generatequeryField(string Query)
+        {
+            PropertyDescriptorCollection props = null ;
 
+            if (Query == "PI Cover Limit")
+            {
+                props = TypeDescriptor.GetProperties(typeof(PIReport));
+            }
+            if (Query == "ED Premium")
+            {
+                props = TypeDescriptor.GetProperties(typeof(PIReport));
+            }
+            if (Query == "Cyber Premium")
+            {
+                props = TypeDescriptor.GetProperties(typeof(PIReport));
+            }
+            if (Query == "Limit and Premium Breakdown")
+            {
+                props = TypeDescriptor.GetProperties(typeof(PIReport));
+            }
 
-        //    return listing;
-        //}
+            return props;
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection, Object reporttype)
@@ -785,17 +791,21 @@ namespace DealEngine.WebUI.Controllers
             {
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(formCollection["ProgrammeId"]));
                 string queryselect = formCollection["queryselect"];
-              //  List<string> queryfields = generatequeryField(queryselect);
+                // PropertyDescriptorCollection props = generatequeryField(queryselect);
+                ViewBag.reportName = queryselect;
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(PIReport));
                 List<PIReport> reportset = new List<PIReport>();
                 DataTable table = new DataTable();
                 List<String> ListReport = new List<String>();
+
                 foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.Status=="Submitted"))
                 {
                     try
                     {
-                        if (queryselect == "PI Cover Limit")
-                        {
-                            ViewBag.Title = "PI Cover Limit and Premium Selected";
+
+                        //if (queryselect == "PI Cover Limit")
+                        //{
+                            ViewBag.Title = " Cover Limit and Premium Selected";
                             PIReport report = new PIReport();
                             report.ReferenceID = cp.InformationSheet.ReferenceId;
                             report.IndividualName = cp.Owner.Name;
@@ -805,7 +815,7 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 foreach (ClientAgreement agreement in cp.Agreements)
                                 {
-                                    var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == "PI" && ter.Bound == true);
+                                    var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == queryselect && ter.Bound == true);
                                     if (term != null)
                                     {
                                         report.selectedlimit = term.TermLimit.ToString();
@@ -829,13 +839,12 @@ namespace DealEngine.WebUI.Controllers
                                 report.Inceptiondate = "0";
                             }
                             reportset.Add(report);
-                        }
+                       // }
                     }
                     catch (Exception ex)
                     {}
                 }
 
-                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(PIReport));
                 try
                 {
                     for (int i = 0; i < props.Count; i++)
@@ -886,8 +895,8 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-       [HttpGet]
-        public void ExportExcel(IFormCollection formCollection)
+       [HttpPost]
+        public void ExportExcel(DataTable values)
         {
 
             //var json = json.
