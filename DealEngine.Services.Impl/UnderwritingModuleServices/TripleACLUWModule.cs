@@ -41,7 +41,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl100klimitpremium", "clsocialengineeringextpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "clsocialengineeringextpremium", "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium",
+                "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium",
+                "cl2millimitincomeunder500k", "cl2millimitincome500kto2andhalfmilpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -171,7 +173,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
-            TermPremium250k = (GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium) * intnumberofadvisors;
+            //TermPremium250k = (GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium) * intnumberofadvisors;
 
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
@@ -187,7 +189,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
-            TermPremium500k = (GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium) * intnumberofadvisors;
+            //TermPremium500k = (GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium) * intnumberofadvisors;
 
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
@@ -203,7 +205,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            TermPremium1mil = (GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium) * intnumberofadvisors;
+            //TermPremium1mil = (GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium) * intnumberofadvisors;
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -219,7 +221,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
-            TermPremium2mil = (GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium) * intnumberofadvisors;
+            //TermPremium2mil = (GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium) * intnumberofadvisors;
 
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
@@ -232,11 +234,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl2millimitoption.DateDeleted = null;
             termcl2millimitoption.DeletedBy = null;
 
-            //Referral points per agreement
-            //Not a renewal of an existing policy
-            uwrfnotrenewalcl(underwritingUser, agreement);
-            //Cyber Issue
-            uwrclissue(underwritingUser, agreement, feeincome);
+            ////Referral points per agreement
+            ////Not a renewal of an existing policy
+            //uwrfnotrenewalcl(underwritingUser, agreement);
+            ////Cyber Issue
+            //uwrclissue(underwritingUser, agreement, feeincome);
 
 
             //Update agreement status
