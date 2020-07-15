@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "5millimitpremium");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "5millimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -229,19 +229,19 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DeletedBy = null;
 
 
-            //Referral points per agreement
-            //Claims / Insurance History
-            uwrfpriorinsurance(underwritingUser, agreement);
-            //F&G over 50%
-            uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
-            //Other Business Activities
-            uwrfotheractivities(underwritingUser, agreement, decOther);
-            //Other Investment Activities
-            uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
-            //Advisor Claims / Insurance History
-            uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
-            //Custom Endorsement renew
-            uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
+            ////Referral points per agreement
+            ////Claims / Insurance History
+            //uwrfpriorinsurance(underwritingUser, agreement);
+            ////F&G over 50%
+            //uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
+            ////Other Business Activities
+            //uwrfotheractivities(underwritingUser, agreement, decOther);
+            ////Other Investment Activities
+            //uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
+            ////Advisor Claims / Insurance History
+            //uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
+            ////Custom Endorsement renew
+            //uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -338,154 +338,154 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, decimal decPIPremiumTopUp)
-        {
-            decimal indadvisorpremiumoption = 0M;
-            decimal decbrokerfee = 50M;
-            decimal clextrapremium = 0M;
-            decimal premiumoption = 0M;
+        //decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, decimal decPIPremiumTopUp)
+        //{
+        //    decimal indadvisorpremiumoption = 0M;
+        //    decimal decbrokerfee = 50M;
+        //    decimal clextrapremium = 0M;
+        //    decimal premiumoption = 0M;
 
-            switch (limitoption)
-            {
-                case 2000000:
-                    {
-                        if (intnumberofadvisors >= 4)
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincomeunder500kdiscountpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"];
-                            }
-                        }
-                        else
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincomeunder500kpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"];
-                            }
-                        }
-                        clextrapremium = rates["2millimitclextrapremium"];
-                        break;
-                    }
-                case 3000000:
-                    {
-                        if (intnumberofadvisors >= 4)
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi3millimitincomeunder500kdiscountpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                        }
-                        else
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi3millimitincomeunder500kpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi3millimitextrapremium"];
-                            }
-                        }
-                        clextrapremium = rates["3millimitclextrapremium"];
-                        break;
-                    }
-                case 5000000:
-                    {
-                        if (intnumberofadvisors >= 4)
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi5millimitincomeunder500kdiscountpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                        }
-                        else
-                        {
-                            if (feeincome >= 0 && feeincome <= 500000)
-                            {
-                                indadvisorpremiumoption = rates["pi5millimitincomeunder500kpremium"];
-                            }
-                            else if (feeincome > 500000 && feeincome <= 600000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                            else if (feeincome > 600000 && feeincome <= 800000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                            else if (feeincome > 800000 && feeincome <= 1000000)
-                            {
-                                indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi5millimitextrapremium"];
-                            }
-                        }
-                        clextrapremium = rates["5millimitclextrapremium"];
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception(string.Format("Can not calculate premium for PI"));
-                    }
-            }
+        //    switch (limitoption)
+        //    {
+        //        case 2000000:
+        //            {
+        //                if (intnumberofadvisors >= 4)
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincomeunder500kdiscountpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"];
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincomeunder500kpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"];
+        //                    }
+        //                }
+        //                clextrapremium = rates["2millimitclextrapremium"];
+        //                break;
+        //            }
+        //        case 3000000:
+        //            {
+        //                if (intnumberofadvisors >= 4)
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi3millimitincomeunder500kdiscountpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi3millimitincomeunder500kpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi3millimitextrapremium"];
+        //                    }
+        //                }
+        //                clextrapremium = rates["3millimitclextrapremium"];
+        //                break;
+        //            }
+        //        case 5000000:
+        //            {
+        //                if (intnumberofadvisors >= 4)
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi5millimitincomeunder500kdiscountpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (feeincome >= 0 && feeincome <= 500000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi5millimitincomeunder500kpremium"];
+        //                    }
+        //                    else if (feeincome > 500000 && feeincome <= 600000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 600000 && feeincome <= 800000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                    else if (feeincome > 800000 && feeincome <= 1000000)
+        //                    {
+        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi5millimitextrapremium"];
+        //                    }
+        //                }
+        //                clextrapremium = rates["5millimitclextrapremium"];
+        //                break;
+        //            }
+        //        default:
+        //            {
+        //                throw new Exception(string.Format("Can not calculate premium for PI"));
+        //            }
+        //    }
 
-            premiumoption = (indadvisorpremiumoption + clextrapremium + decPIPremiumTopUp + decbrokerfee) * intnumberofadvisors;
+        //    premiumoption = (indadvisorpremiumoption + clextrapremium + decPIPremiumTopUp + decbrokerfee) * intnumberofadvisors;
 
-            return premiumoption;
-        }
+        //    return premiumoption;
+        //}
 
 
 
@@ -587,51 +587,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        void uwrfotheractivity(User underwritingUser, ClientAgreement agreement, decimal decOther)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (decOther > 0)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfnotrenewal(User underwritingUser, ClientAgreement agreement)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasExistingPolicyOptions").First().Value == "2")
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
 
         void uwrfadvisorpriorinsurance(User underwritingUser, ClientAgreement agreement, bool subuisreferred)
         {
