@@ -653,7 +653,7 @@ namespace DealEngine.Services.Impl
                     var principalUnit = (PrincipalUnit)agreement.ClientInformationSheet.Programme.Owner.OrganisationalUnits.FirstOrDefault(o => o.Name == "Principal");
                     if(principalUnit != null)
                     {
-                        mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", principalUnit.PartyName));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", principalUnit.TradingName));
                     }
                     
                     mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -20,11 +21,13 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;               
         IUnitOfWork _unitOfWork;
+        IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<OrganisationController> _logger;
 
         public OrganisationController(
             ILogger<OrganisationController> logger,
+            IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
             IOrganisationTypeService organisationTypeService, 
@@ -34,6 +37,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _clientInformationService = clientInformationService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _organisationService = organisationService;            
@@ -77,36 +81,71 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(OrganisationViewModel model)
+        public async Task<IActionResult> GetOrganisation(OrganisationViewModel model)
         {
             User user = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
-            //    if (org != null)
-            //    {
-            //        org.ChangeOrganisationName(model.OrganisationName);
-            //        // Org type here
-            //        org.Domain = (model.Website != "Empty") ? model.Website : "";
-            //        org.Email = (model.Email != "Empty") ? model.Email : "";
-            //        org.Phone = (model.Phone != "Empty") ? model.Phone : "";
+            Guid OrganisationId = Guid.Parse(model.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
+            IList<object> JsonObjects = new List<object>();
+            try
+            {
+                Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
+                User orgUser = await _userService.GetUserByEmail(organisation.Email);
+                JsonObjects.Add(orgUser);
+                JsonObjects.Add(organisation);
+                var jsonObj = GetSerializedModel(JsonObjects);
 
-            //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            //        {
-            //            await _organisationService.UpdateOrganisation(org);
-            //            await uow.Commit();
-            //        }
-            //        return Content("success");
-            //    }
-            //    throw new Exception("No organisation found with Id '" + model.ID + "'");
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
+                return Json(jsonObj);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisation(IFormCollection collection)
+        {
+            User currentUser = await CurrentUser();
+            Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
+            ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
+
+            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
+
+            string Email = jsonOrganisation.Email;
+            string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+            string Name = jsonOrganisation.Name;
+            string FirstName = jsonUser.FirstName;
+            string LastName = jsonUser.LastName;
+            string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
+            Organisation organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
+            //condition for organisation exists
+            try
+            {
+                if (organisation != null)
+                {
+                    await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+                    //await _organisationService.ChangeOwner(organisation, Sheet);
+                }
+                if (organisation == null)
+                {
+                    organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+                }
+
+                await _organisationService.UpdateOrganisation(collection);
+
+                if (!Sheet.Organisation.Contains(organisation))
+                    Sheet.Organisation.Add(organisation);
+
+                await _clientInformationService.UpdateInformation(Sheet);
+                return Redirect("../Information/EditInformation?Id=" + Sheet.Programme.Id.ToString());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]

@@ -28,7 +28,7 @@
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
                 $.ajax({
-                    url: '@Url.Action("AddOrganisation", "Services")',
+                    url: '@Url.Action("AddOrganisation", "Organisation")',
                     type: "POST",
                     data: $("#" + form.id).serialize(),
                     success: function (Data) {

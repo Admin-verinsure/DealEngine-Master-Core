@@ -2358,73 +2358,73 @@ namespace DealEngine.WebUI.Controllers
             return Ok();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddOrganisation(IFormCollection collection)
-        {
-            User currentUser = await CurrentUser();
-            Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
-            ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
+        //[HttpPost]
+        //public async Task<IActionResult> AddOrganisation(IFormCollection collection)
+        //{
+        //    User currentUser = await CurrentUser();
+        //    Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
+        //    ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
 
-            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
+        //    var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+        //    var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 
-            string Email = jsonOrganisation.Email;
-            string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
-            string Name = jsonOrganisation.Name;
-            string FirstName = jsonUser.FirstName;
-            string LastName = jsonUser.LastName;
-            string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-            Organisation organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
-            //condition for organisation exists
-            try
-            {
-                if (organisation != null)
-                {
-                    await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    //await _organisationService.ChangeOwner(organisation, Sheet);
-                }
-                if (organisation == null)
-                {
-                    organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
-                }
+        //    string Email = jsonOrganisation.Email;
+        //    string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+        //    string Name = jsonOrganisation.Name;
+        //    string FirstName = jsonUser.FirstName;
+        //    string LastName = jsonUser.LastName;
+        //    string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
+        //    Organisation organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
+        //    //condition for organisation exists
+        //    try
+        //    {
+        //        if (organisation != null)
+        //        {
+        //            await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+        //            //await _organisationService.ChangeOwner(organisation, Sheet);
+        //        }
+        //        if (organisation == null)
+        //        {
+        //            organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+        //        }
 
-                await _organisationService.UpdateOrganisation(collection);
+        //        await _organisationService.UpdateOrganisation(collection);
 
-                if (!Sheet.Organisation.Contains(organisation))
-                    Sheet.Organisation.Add(organisation);
+        //        if (!Sheet.Organisation.Contains(organisation))
+        //            Sheet.Organisation.Add(organisation);
 
-                await _clientInformationService.UpdateInformation(Sheet);
-                return Redirect("../Information/EditInformation?Id="+ Sheet.Programme.Id.ToString());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }        
+        //        await _clientInformationService.UpdateInformation(Sheet);
+        //        return Redirect("../Information/EditInformation?Id="+ Sheet.Programme.Id.ToString());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}        
 
-        [HttpPost]
-        public async Task<IActionResult> GetOrganisation(OrganisationViewModel model)
-        {
-            User user = null;
-            Guid OrganisationId = Guid.Parse(model.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
-            IList<object> JsonObjects = new List<object>();
-            try
-            {                   
-                Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                User orgUser = await _userService.GetUserByEmail(organisation.Email);                
-                JsonObjects.Add(orgUser);
-                JsonObjects.Add(organisation);
-                var jsonObj = GetSerializedModel(JsonObjects);
+        //[HttpPost]
+        //public async Task<IActionResult> GetOrganisation(OrganisationViewModel model)
+        //{
+        //    User user = null;
+        //    Guid OrganisationId = Guid.Parse(model.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
+        //    IList<object> JsonObjects = new List<object>();
+        //    try
+        //    {                   
+                //Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
+        //        User orgUser = await _userService.GetUserByEmail(organisation.Email);                
+        //        JsonObjects.Add(orgUser);
+        //        JsonObjects.Add(organisation);
+        //        var jsonObj = GetSerializedModel(JsonObjects);
 
-               return Json(jsonObj);
-            }
-            catch(Exception ex)
-            {               
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return Json(ex.Message);
-            }
-        }
+        //       return Json(jsonObj);
+        //    }
+        //    catch(Exception ex)
+        //    {               
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return Json(ex.Message);
+        //    }
+        //}
 
 
         [HttpPost]

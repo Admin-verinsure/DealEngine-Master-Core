@@ -32,7 +32,6 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual string PartyName { get; set; }
         public virtual string Name { get; set; }
         public virtual IList<Location> Locations { get; set; }
 
@@ -135,7 +134,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "CPEng Qualified")]
         public virtual string CPEngQualified { get; set; }
         [Display(Name = "How long as a Principal of this practice")]
-        public virtual string YearofPracticeCEAS { get; set; }
+        public virtual string YearOfPracticeCEAS { get; set; }
         [Display(Name = "How long as a Principal of any practice")]
         public virtual string PrevPracticeCEAS { get; set; }
         [Display(Name = "Are you a member of NZIA")]
@@ -147,13 +146,13 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Do you hold LPB Category 3 classification")]
         public virtual bool IsLPBCategory3 { get; set; }
         [Display(Name = "How long have you been at this practice")]
-        public virtual string YearofPracticeNZACS { get; set; }
+        public virtual string YearOfPracticeNZACS { get; set; }
         [Display(Name = "Name of previous practice")]
         public virtual string PrevPracticeNZACS { get; set; }
         [Display(Name = "Do you require coverage for other directorship appointments held by you on behalf of your practice")]
         public virtual bool IsOtherdirectorship { get; set; }
-        //[Display(Name = "Please list all Name of company(s)")]
-        //public virtual string TradingName { get; set; }
+        [Display(Name = "Please list all Name of company(s)")]
+        public virtual string TradingName { get; set; }
     }
 }
 

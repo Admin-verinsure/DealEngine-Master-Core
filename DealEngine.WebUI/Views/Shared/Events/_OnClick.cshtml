@@ -2,7 +2,7 @@
     function OnClick(Method, Type, Id, SheetId) {
         if (Type == "Organisation") {
             $.ajax({
-                url: '@Url.Action("GetOrganisation", "Services")',
+                url: '@Url.Action("GetOrganisation", "Organisation")',
                 type: "POST",
                 data: { ID: Id, AnswerSheetId: SheetId },
                 success: function (Data) {
