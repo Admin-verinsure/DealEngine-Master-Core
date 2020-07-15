@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
 
-    <form id="programmeform" method="post" class="is-valid" action="EditProgramme">
+    <form id="programmeform" method="POST" class="is-valid" action="~/Programme/EditProgramme">
         @Html.HiddenFor(m => m.Id)
         <div class="card">
             <div class="card-header text-white" style="background-color:#3276b1">
@@ -10,30 +10,30 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-4">
-                            <label class="label required"><strong>Programme Name: </strong></label>
+                            <label class="label"><strong>Programme Name: </strong></label>
                         </div>
                         <div class="col-8">
-                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @required = "", @id="pname"})
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @id = "pname" })
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-4">
-                            <label class="label required"><strong>Tax Rate: </strong></label>
+                            <label class="label"><strong>Tax Rate: </strong></label>
                         </div>
                         <div class="col-8">
-                            @Html.TextBoxFor(m => m.Programme.TaxRate, new { @class = "form-control", @required = "required" })
+                            @Html.TextBoxFor(m => m.Programme.TaxRate, new { @class = "form-control"})
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-4">
-                            <label class="label required"><strong>Policy Number Prefix String: </strong></label>
+                            <label class="label"><strong>Policy Number Prefix String: </strong></label>
                         </div>
                         <div class="col-8">
-                            @Html.TextBoxFor(m => m.Programme.PolicyNumberPrefixString, new { @class = "form-control", @required = "required" })
+                            @Html.TextBoxFor(m => m.Programme.PolicyNumberPrefixString, new { @class = "form-control"})
                         </div>
                     </div>
                 </div>
@@ -43,30 +43,30 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-4">
-                                <label class="label required"><strong>Declaration: </strong></label>
+                                <label class="label"><strong>Declaration: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextAreaFor(m => m.Programme.Declaration, new { @class = "form-control", @required = "required" })
+                                @Html.TextAreaFor(m => m.Programme.Declaration, new { @class = "form-control"})
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col-4">
-                                <label class="label required"><strong>No Payment Required Message: </strong></label>
+                                <label class="label"><strong>No Payment Required Message: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control", @required = "required" })
+                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control"})
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col-4">
-                                <label class="label required"><strong>Broker user email: </strong></label>
+                                <label class="label"><strong>Broker user email: </strong></label>
                             </div>
                             <div class="col-8">
-                                <select id="brokers" name="BrokerContactUser" class="custom-select" required>
+                                <select id="brokers" name="BrokerContactUser" class="custom-select">
                                     @foreach (var option in Model.Brokers)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -130,7 +130,7 @@
                                     </label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control", @required = "required" })
+                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control"})
                                 </div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                                     <label class="label required"><strong>Subsystem Declaration: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control", @required = "required" })
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control"})
                                 </div>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
                                     <label class="label required"><strong>Subsystem Stop Agreement Message: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @required = "required" })
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control"})
                                 </div>
                             </div>
                         </div>
@@ -173,16 +173,16 @@
                 }
             </div>
             @if (User.HasClaim("EditProgramme", "EditProgramme"))
+            {
+                <div class="card-footer">
+                    @if (Model.ProductViewModel == null)
                     {
-                        <div class="card-footer">
-                            @if (Model.ProductViewModel == null)
-                            {
-                                <button type="submit" class="btn btn-success"> Save</button>
-                            }
-                        </div>
+                        <button type="submit" class="btn btn-success"> Save</button>
                     }
+                </div>
+            }
         </div>
     </form>
-@section pagespecific {
-    @Html.PartialAsync("_ProgrammeScripts")
-}
+    @section pagespecific {
+        @Html.PartialAsync("_ProgrammeScripts")
+    }

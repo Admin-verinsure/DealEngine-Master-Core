@@ -1115,7 +1115,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-                            if (key == "Claim")
+                            if (field == "Claim")
                             {
                                 if (string.IsNullOrWhiteSpace(collection[key].ToString()))
                                 {
@@ -1125,6 +1125,7 @@ namespace DealEngine.WebUI.Controllers
                                 else
                                 {
                                     Claim claim = new Claim(collection[key].ToString(), collection[key].ToString());
+                                    programme.Claim = claim.Value;
                                     await _claimService.AddClaim(claim);
                                 }
                             }
@@ -1139,7 +1140,7 @@ namespace DealEngine.WebUI.Controllers
 
                 return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
