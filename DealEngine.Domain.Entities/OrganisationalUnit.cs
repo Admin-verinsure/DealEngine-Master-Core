@@ -152,8 +152,8 @@ namespace DealEngine.Domain.Entities
         public virtual string PrevPracticeNZACS { get; set; }
         [Display(Name = "Do you require coverage for other directorship appointments held by you on behalf of your practice")]
         public virtual bool IsOtherdirectorship { get; set; }
-        [Display(Name = "Please list all Name of company(s)")]
-        public virtual string TradingName { get; set; }
+        //[Display(Name = "Please list all Name of company(s)")]
+        //public virtual string TradingName { get; set; }
     }
 }
 

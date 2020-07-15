@@ -1,11 +1,50 @@
 ﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
 
-<div class="container">
+
+    <div class="container">
+        <div class="form-group">
+            <h1 class="page-title txt-color-blueDark">
+                <i class="fa-fw fa fa-home"></i>
+                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId"> Agreement</a>
+                > <span>Edit Agreement Term</span>
+            </h1>
+        </div>
+        <div class="form-group">
+            <span>
+                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ProgId })'" id="backbutton"><i class="fa fa-home"></i> Back </a>
+            </span>
+        </div>
+        <div class="form-group">
+            <div class="card">
+                <div class="card-header">
+                    <span class="widget-icon">
+                        <h2><i class="fa fa-comment"></i> @ViewBag.Title </h2>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <form action="~/Agreement/EditAdvisor" method="POST" id="update-form">
+                        @Html.HiddenFor(m => m.AgreementId)
+                        @Html.HiddenFor(m => m.ProgId)
+
+                        
+
+                        <div class="form-group">
+                            <button type="submit" value="Submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Update Date</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId" class="btn btn-danger btn-sm text-white"><i class="fa fa-trash"></i> Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+@*<div class="container">
     <div class="row">
         <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i>
-            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId"> Agreement</a>
+             PAGE HEADER 
+
             > <span>Edit Agreement Rule</span>
         </h1>
     </div>
@@ -28,7 +67,7 @@
             <h2>@ViewBag.Title </h2>
         </header>
 
-        <!-- widget div-->
+         widget div
         <form action="~/Agreement/EditAdvisor" method="POST" id="update-form">
             @Html.HiddenFor(m => m.AgreementId)
             @Html.HiddenFor(m => m.ProgId)
@@ -69,10 +108,7 @@
                 }
                 <tr>
                     <td>
-                        <div class="form-group">
-                            <button type="submit" value="Submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Update Date</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ProgId" class="btn btn-danger btn-sm text-white"><i class="fa fa-trash"></i> Cancel</a>
-                        </div>
+
                     </td>
                     <td>
                     </td>
@@ -81,7 +117,7 @@
 
         </form>
     </div>
-    <!-- end widget -->
-</div>
+     end widget 
+</div>*@
 
 
