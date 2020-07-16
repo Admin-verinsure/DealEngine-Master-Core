@@ -75,11 +75,17 @@ namespace DealEngine.WebUI.Controllers
                 SystemDocument doc = await _documentRepository.GetByIdAsync(id);
                 string extension = "";
                 var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                // DOCX & HTML
                 if (doc.ContentType == MediaTypeNames.Text.Html)
                 {
                     extension = ".html";
                     string html = _fileService.FromBytes(doc.Contents);
                     string html2 = html;
+
+                    // Bugfix for images added before Image Path fix
+                    string badURL = "../../../images/";
+                    var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+                    html2 = html2.Replace(badURL, newURL);
 
                     // Image resize/positioning
                     string centerImage = "<figure class=\"image\"><img src=\"";
@@ -95,10 +101,11 @@ namespace DealEngine.WebUI.Controllers
                     string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
                     string noBorder = "<figure class=\"table\"><table><tbody><tr>";
 
-                    // array of elements that need
+                    // array of elements that need updated
                     string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
 
                     // Reason you check the Content Type and then the format is for when you want a docx from html
+                    // HTML
                     if (!(format == "docx") & !(format == "pdf"))
                     {
                         foreach (string ele in badHtml)
@@ -127,7 +134,7 @@ namespace DealEngine.WebUI.Controllers
                                 else
                                 {
                                     int widthIndex = ele.Length;                                                            // length of figure tag up until style=
-                                    string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in % plus extra characters sometimes which we delete now                       
+                                    string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in % plus extra characters sometimes which we delete below                       
                                     width = width.Replace("%", "");
                                     width = width.Replace("\"", "");
                                     width = width.Replace(";", "");
@@ -202,7 +209,7 @@ namespace DealEngine.WebUI.Controllers
                         // Put document contents back in for HTML output (see return)
                         docContents = _fileService.ToBytes(html);
                     }
-
+                    // DOCX
                     else if (format == "docx")
                     {
                         using (MemoryStream virtualFile = new MemoryStream())
@@ -213,13 +220,13 @@ namespace DealEngine.WebUI.Controllers
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
 
                                 // Border Fix (show & no border use cases)
-                                if (html.Contains(showBorder))
+                                if (html2.Contains(showBorder))
                                 {
-                                    html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");                 // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
+                                    html2 = html2.Replace(showBorder, "<table border=\"1\"><tbody><tr>");                 // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
                                 }
-                                if (html.Contains(noBorder))
+                                if (html2.Contains(noBorder))
                                 {
-                                    html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+                                    html2 = html2.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
                                 }
 
                                 foreach (string ele in badHtml)
@@ -337,14 +344,16 @@ namespace DealEngine.WebUI.Controllers
                                 // converter.RefreshStyles();
                                 #endregion 
                             }
+                            // RETURN DOCX
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
                     }
 
                 }
-
+                // PDF
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
+                    // RETURN PDF
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
 
