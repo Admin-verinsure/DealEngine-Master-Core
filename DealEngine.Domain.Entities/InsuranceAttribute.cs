@@ -19,7 +19,7 @@ namespace DealEngine.Domain.Entities
         {
             Name = name;
             InsuranceAttributeName = name;
-            //IAOrganisations = new List<Organisation>();
+            IAOrganisations = new List<Organisation>();
             AuditHistory = new List<AuditHistory>();
         }
 

@@ -378,10 +378,9 @@ namespace DealEngine.Services.Impl
         private async Task PersonnelUnit()
         {
 			int value = 0;
-			var Personnel = await _insuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			//var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
-			var PersonnelOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Personnel));
+			//var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));			
+			var PersonnelOrg = organisations.Where(o => o.InsuranceAttributes.Any(i => i.InsuranceAttributeName == "project management personnel")).ToList();
 
 			string Message = "";
 			string Id;
@@ -455,11 +454,9 @@ namespace DealEngine.Services.Impl
         private async Task PrincipalUnit()
         {
 			int value = 0;
-			var Principal = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
 			var organisations = await _organisationRepository.FindAll().ToListAsync();
 			//var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
-			var PrincipalOrg = organisations.Where(o => o.InsuranceAttributes.Contains(Principal));
-			//var Count = attributeList.Count();
+			var PrincipalOrg = organisations.Where(o => o.InsuranceAttributes.Any(i=>i.InsuranceAttributeName =="Principal")).ToList();			
 			string Message = "";
 			string Id;
 			try
