@@ -41,7 +41,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "5millimitpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piindividualpremium", "1millimitfappremium2advisor", "2millimitfappremium2advisor", "5millimitfappremium2advisor", 
+                "1millimitfappremium3advisor", "2millimitfappremium3advisor", "5millimitfappremium3advisor", "1millimitfappremium4advisor", "2millimitfappremium4advisor", "5millimitfappremium4advisor", 
+                "1millimitfappremium5advisor", "2millimitfappremium5advisor", "5millimitfappremium5advisor", "1millimitfappremium6advisor", "2millimitfappremium6advisor", "5millimitfappremium6advisor", 
+                "1millimitfappremium7advisor", "2millimitfappremium7advisor", "5millimitfappremium7advisor", "1millimitfappremium8advisor", "2millimitfappremium8advisor", "5millimitfappremium8advisor", 
+                "1millimitfappremium9advisor", "2millimitfappremium9advisor", "5millimitfappremium9advisor", "1millimitfappremium10advisor", "2millimitfappremium10advisor", "5millimitfappremium10advisor", 
+                "1millimitfappremium11advisor", "2millimitfappremium11advisor", "5millimitfappremium11advisor");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -98,7 +103,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
             int intnumberofadvisors = 0;
-            bool advisorhasnocrmid = false;
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
@@ -106,11 +110,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
                     {
                         intnumberofadvisors += 1;
-
-                        if (!advisorhasnocrmid && string.IsNullOrEmpty(uisorg.MyCRMId))
-                        {
-                            advisorhasnocrmid = true;
-                        }
                     }
                 }
             }
@@ -176,7 +175,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil = 0M;
             decimal TermBrokerage1mil = 0M;
 
-            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors, decPIPremiumTopUp);
+            TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors);
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -195,7 +194,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium2mil = 0M;
             decimal TermBrokerage2mil = 0M;
 
-            //TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors, decPIPremiumTopUp);
+            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors);
 
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
@@ -214,7 +213,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
 
-            //TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, intnumberofadvisors, decPIPremiumTopUp);
+            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, intnumberofadvisors);
 
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
@@ -229,19 +228,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DeletedBy = null;
 
 
-            ////Referral points per agreement
-            ////Claims / Insurance History
-            //uwrfpriorinsurance(underwritingUser, agreement);
-            ////F&G over 50%
-            //uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
-            ////Other Business Activities
-            //uwrfotheractivities(underwritingUser, agreement, decOther);
-            ////Other Investment Activities
-            //uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
-            ////Advisor Claims / Insurance History
-            //uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
-            ////Custom Endorsement renew
-            //uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
+            //Referral points per agreement
+            //Claims / Insurance History
+            uwrfpriorinsurance(underwritingUser, agreement);
+            //F&G over 50%
+            uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
+            //Other Business Activities
+            uwrfotheractivities(underwritingUser, agreement, decOther);
+            //Other Investment Activities
+            uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
+            //Advisor Claims / Insurance History
+            uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
+            //Custom Endorsement renew
+            uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
+            //Advisor number over 11
+            uwrfadvisornumberover11(underwritingUser, agreement, intnumberofadvisors);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -338,154 +339,276 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        //decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, decimal decPIPremiumTopUp)
-        //{
-        //    decimal indadvisorpremiumoption = 0M;
-        //    decimal decbrokerfee = 50M;
-        //    decimal clextrapremium = 0M;
-        //    decimal premiumoption = 0M;
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors)
+        {
+            decimal indadvisorpremium = 0M;
+            decimal premiumoption = 0M;
 
-        //    switch (limitoption)
-        //    {
-        //        case 2000000:
-        //            {
-        //                if (intnumberofadvisors >= 4)
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincomeunder500kdiscountpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"];
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincomeunder500kpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"];
-        //                    }
-        //                }
-        //                clextrapremium = rates["2millimitclextrapremium"];
-        //                break;
-        //            }
-        //        case 3000000:
-        //            {
-        //                if (intnumberofadvisors >= 4)
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi3millimitincomeunder500kdiscountpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi3millimitincomeunder500kpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi3millimitextrapremium"];
-        //                    }
-        //                }
-        //                clextrapremium = rates["3millimitclextrapremium"];
-        //                break;
-        //            }
-        //        case 5000000:
-        //            {
-        //                if (intnumberofadvisors >= 4)
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi5millimitincomeunder500kdiscountpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kdiscountpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kdiscountpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1mildiscountpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (feeincome >= 0 && feeincome <= 500000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi5millimitincomeunder500kpremium"];
-        //                    }
-        //                    else if (feeincome > 500000 && feeincome <= 600000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome500kto600kpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 600000 && feeincome <= 800000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome600kto800kpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                    else if (feeincome > 800000 && feeincome <= 1000000)
-        //                    {
-        //                        indadvisorpremiumoption = rates["pi2millimitincome800kto1milpremium"] + rates["pi5millimitextrapremium"];
-        //                    }
-        //                }
-        //                clextrapremium = rates["5millimitclextrapremium"];
-        //                break;
-        //            }
-        //        default:
-        //            {
-        //                throw new Exception(string.Format("Can not calculate premium for PI"));
-        //            }
-        //    }
+            indadvisorpremium = rates["piindividualpremium"];
 
-        //    premiumoption = (indadvisorpremiumoption + clextrapremium + decPIPremiumTopUp + decbrokerfee) * intnumberofadvisors;
+            if (intnumberofadvisors > 1)
+            {
+                indadvisorpremium *= intnumberofadvisors;
 
-        //    return premiumoption;
-        //}
+                if (intnumberofadvisors == 2)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium2advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium2advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium2advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 3)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium3advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium3advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium3advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 4)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium4advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium4advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium4advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 5)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium5advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium5advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium5advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 6)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium6advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium6advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium6advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 7)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium7advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium7advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium7advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 8)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium8advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium8advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium8advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 9)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium9advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium9advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium9advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 10)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium10advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium10advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium10advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                if (intnumberofadvisors == 11)
+                {
+                    switch (limitoption)
+                    {
+                        case 1000000:
+                            {
+                                premiumoption = rates["1millimitfappremium11advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premiumoption = rates["2millimitfappremium11advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premiumoption = rates["5millimitfappremium11advisor"] + indadvisorpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+
+
+            } else
+            {
+                premiumoption = indadvisorpremium;
+            }
+
+            return premiumoption;
+        }
 
 
 
@@ -629,6 +752,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (bolcustomendorsementrenew) //Custom Endorsement Renew
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrfadvisornumberover11(User underwritingUser, ClientAgreement agreement, int intnumberofadvisors)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (intnumberofadvisors > 11)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }

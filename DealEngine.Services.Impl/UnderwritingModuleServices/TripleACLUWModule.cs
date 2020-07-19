@@ -77,18 +77,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            int intnumberofadvisors = 0;
-            if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-                {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed && uisorg.InsuranceAttributes.FirstOrDefault(uisorgia => uisorgia.InsuranceAttributeName == "Advisor" && uisorgia.DateDeleted == null) != null)
-                    {
-                        intnumberofadvisors += 1;
-                    }
-                }
-            }
-
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -112,8 +100,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
                 }
             }
-
-            
+                        
 
             ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
             ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
@@ -173,13 +160,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
-            //TermPremium250k = (GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium) * intnumberofadvisors;
+            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium;
 
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
             termcl250klimitoption.TermLimit = TermLimit250k;
             termcl250klimitoption.Premium = TermPremium250k;
+            termcl250klimitoption.BasePremium = TermPremium250k;
             termcl250klimitoption.Excess = TermExcess;
             termcl250klimitoption.BrokerageRate = agreement.Brokerage;
             termcl250klimitoption.Brokerage = TermBrokerage250k;
@@ -189,13 +177,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
-            //TermPremium500k = (GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium) * intnumberofadvisors;
+            TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
 
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit500k, TermExcess);
             termcl500klimitoption.TermLimit = TermLimit500k;
             termcl500klimitoption.Premium = TermPremium500k;
+            termcl500klimitoption.BasePremium = TermPremium500k;
             termcl500klimitoption.Excess = TermExcess;
             termcl500klimitoption.BrokerageRate = agreement.Brokerage;
             termcl500klimitoption.Brokerage = TermBrokerage500k;
@@ -205,13 +194,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            //TermPremium1mil = (GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium) * intnumberofadvisors;
+            TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium;
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit1mil, TermExcess);
             termcl1millimitoption.TermLimit = TermLimit1mil;
             termcl1millimitoption.Premium = TermPremium1mil;
+            termcl1millimitoption.BasePremium = TermPremium1mil;
             termcl1millimitoption.Excess = TermExcess;
             termcl1millimitoption.BrokerageRate = agreement.Brokerage;
             termcl1millimitoption.Brokerage = TermBrokerage1mil;
@@ -221,24 +211,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
-            //TermPremium2mil = (GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium) * intnumberofadvisors;
+            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium;
 
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit2mil, TermExcess);
             termcl2millimitoption.TermLimit = TermLimit2mil;
             termcl2millimitoption.Premium = TermPremium2mil;
+            termcl2millimitoption.BasePremium = TermPremium2mil;
             termcl2millimitoption.Excess = TermExcess;
             termcl2millimitoption.BrokerageRate = agreement.Brokerage;
             termcl2millimitoption.Brokerage = TermBrokerage2mil;
             termcl2millimitoption.DateDeleted = null;
             termcl2millimitoption.DeletedBy = null;
 
-            ////Referral points per agreement
-            ////Not a renewal of an existing policy
-            //uwrfnotrenewalcl(underwritingUser, agreement);
-            ////Cyber Issue
-            //uwrclissue(underwritingUser, agreement, feeincome);
+            //Referral points per agreement
+            //Not a renewal of an existing policy
+            uwrfnotrenewalcl(underwritingUser, agreement);
+            //Cyber Issue
+            uwrclissue(underwritingUser, agreement, feeincome);
 
 
             //Update agreement status

@@ -93,6 +93,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage100k = 0m;
 
             int TermExcess = 0;
+            TermExcess = 1000;
 
             TermBrokerage100k = TermPremium100k * agreement.Brokerage / 100;
 
