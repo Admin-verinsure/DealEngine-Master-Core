@@ -41,9 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl250klimitminpremium", "sl500klimitminpremium", "sl1millimitminpremium",
-            //    "sl250klimitunder6employeerate", "sl500klimitunder6employeerate", "sl1millimitunder6employeerate", "sl250klimit6to10employeerate", "sl500klimit6to10employeerate",
-            //    "sl1millimit6to10employeerate", "sl250klimitover10employeerate", "sl500klimitover10employeerate", "sl1millimitover10employeerate");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "slamlextensionpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -95,6 +93,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage2mil = 0m;
 
             int TermExcess = 0;
+
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasReportingEntityOptions").First().Value == "1" && 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasTrainingOptions").First().Value == "1" && 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasManageAMLOptions").First().Value == "1" &&
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
+            {
+                TermPremium2mil = rates["slamlextensionpremium"];
+            }
 
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
