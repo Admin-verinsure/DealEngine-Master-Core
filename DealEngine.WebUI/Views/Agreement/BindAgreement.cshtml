@@ -1,0 +1,62 @@
+﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
+
+<div id="content" class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+            > <span>Authorise Referrals</span>
+        </h1>
+    </div>
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    <div class="row">
+
+        <div class="jarviswidget container-fluid" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
+             data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2 style="color:black">@ViewBag.Title </h2>
+            </header>
+            
+           
+
+            <form action="~/Agreement/ByPassPayment" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+                @Html.Hidden("AnswerSheetId", Model.InformationSheetId)
+                @Html.Hidden("BindAgreement", "BindAgreement")
+
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <td>
+                            <label class="label"><strong>Bind notes: </strong></label>
+                        </td>
+                        <td>
+                            <label class="textarea">
+                                @Html.TextAreaFor(m => m.BindNotes)
+                            </label>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="Submit" class="btn btn-success btn-sm">Bind</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section pagespecific {
+
+    @await Html.PartialAsync("_AgreementScripts")
+}

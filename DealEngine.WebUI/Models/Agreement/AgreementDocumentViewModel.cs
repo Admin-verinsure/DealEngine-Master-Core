@@ -8,6 +8,8 @@ namespace DealEngine.WebUI.Models.Agreement
 
 		public string Url { get; set; }
 		public Guid ClientAgreementId { get; set; }
+
+		public int DocType { get; set; }
 	}
 }
 

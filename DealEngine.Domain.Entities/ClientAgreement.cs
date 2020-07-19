@@ -110,6 +110,10 @@ namespace DealEngine.Domain.Entities
         public virtual User UnbindByUserID { get; set; }
         public virtual bool IsPolicyDocSend { get; set; }
         public virtual DateTime DocIssueDate { get; set; }
+        public virtual string BindNotes { get; set; }
+        public virtual DateTime BindEffectiveDate { get; set; }
+        public virtual User BindByUserID { get; set; }
+
 
         public virtual List<Document> GetDocuments()
         {

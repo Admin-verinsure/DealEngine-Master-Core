@@ -57,7 +57,29 @@ namespace DealEngine.Services.Impl
                     try
                     {
                         if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
-                            continue;
+                        {
+                            if (product.IsOptionalProductBasedSub)
+                            {
+                                bool prodsubuiscoverrequired = false;
+                                foreach (var prodsubuis in sheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted != null))
+                                {
+                                    if (sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1" && !prodsubuiscoverrequired)
+                                    {
+                                        prodsubuiscoverrequired = true;
+                                    }
+                                }
+                                if (prodsubuiscoverrequired)
+                                {
+                                    continue;
+                                }
+                            } else
+                            {
+
+                                continue;
+                            }
+                        } 
+
+                            
                     }
                     catch (Exception ex)
                     {
@@ -155,6 +177,15 @@ namespace DealEngine.Services.Impl
                 new NZFSGCLUWModule(),
                 new NZFSGFIDUWModule(),
                 new NZFSGLPDUWModule(),
+                new TripleAPIUWModule(),
+                new TripleAPLUWModule(),
+                new TripleASLUWModule(),
+                new TripleADOUWModule(),
+                new TripleAEDUWModule(),
+                new TripleAELUWModule(),
+                new TripleACLUWModule(),
+                new TripleAOTUWModule(),
+                new TripleALPDUWModule(),
 
             };
             return modules;
