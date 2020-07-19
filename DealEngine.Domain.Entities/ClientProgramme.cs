@@ -28,6 +28,7 @@ namespace DealEngine.Domain.Entities
         public virtual string EGlobalClientStatus { get; set; }
         public virtual string EGlobalCustomDescription { get; set; }
         public virtual string ClientProgrammeMembershipNumber { get; set; }
+        public virtual bool IsDocsApproved { get; set; }
         protected ClientProgramme() : this(null, null, null) { }
 
         public ClientProgramme (User createdBy, Organisation createdFor, Programme baseProgramme)

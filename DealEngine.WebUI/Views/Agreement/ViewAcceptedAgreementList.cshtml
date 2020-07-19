@@ -253,6 +253,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         {
                             <h3><strong>Options </strong></h3>
                             <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
+                            <a class="btn btn-primary btn-sm" href="/Agreement/VerifyDocuments/@item.InformationSheetId">Verify Documents</a>
                             <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
                             <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
                         }
@@ -354,19 +355,12 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
              }
 
-           
-              @*if ("@ViewBag.Sheetstatus" == "Bound") { // changed for pending payment next button issue*@
+              if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "True")
+              {
+                  $("#7").hide();
+              }
 
-              @*if ("@ViewBag.Status.Contains("Bound")" == "True" ) {
-                debugger;
-                //var coveroptiontable = document.querySelector('[type="radio"]');
-                $("#Coveroptionssec :input").prop("disabled", true);
-              } else {
-                $("#Coveroptionssec :input").prop("disabled", false);
-              }*@
-
-             
-
+            
         });
 
     </script>

@@ -305,6 +305,11 @@ namespace DealEngine.WebUI.Controllers
                                     documentType = "Sub-Certificate";
                                     break;
                                 }
+                            case 7:
+                                {
+                                    documentType = "Premium Advice";
+                                    break;
+                                }
                             default:
                                 {
                                     throw new Exception(string.Format("Can not get Document Type for document", doc.Id));

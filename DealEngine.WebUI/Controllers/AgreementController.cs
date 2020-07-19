@@ -3192,13 +3192,14 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ProgrammeName = programme.BaseProgramme.Name;
+
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {
                         agreeDocList = agreement.GetDocuments();
                         foreach (Document doc in agreeDocList)
                         {
-                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id , ClientAgreementId = agreement.Id });
+                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id , ClientAgreementId = agreement.Id , DocType = doc.DocumentType });
                         }
                     }
                 }
@@ -3208,7 +3209,8 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
-
+                if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)
+                ViewBag.showDocs = true;
                 return View("ViewAcceptedAgreementList", models);
             }
             catch (Exception ex)
@@ -3278,6 +3280,35 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 return Redirect("~/Home/Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        public async Task<IActionResult> VerifyDocuments(Guid id)
+        {
+            User user = null;
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new ArgumentNullException(nameof(id));
+                ClientInformationSheet answerSheet = await _customerInformationService.GetInformation(id);
+                if (answerSheet == null)
+                    throw new Exception(string.Format("VerifyDocuments: No Answer Sheet found for [{0}]", id));
+                ClientProgramme clientProgramme = answerSheet.Programme;
+                if (clientProgramme == null)
+                    throw new Exception(string.Format("VerifyDocuments: No Client Programme found for information sheet [{0}]", id));
+               
+                user = await CurrentUser();
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    clientProgramme.IsDocsApproved = true;
+                     await uow.Commit();
+                }
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + clientProgramme.Id);
             }
             catch (Exception ex)
             {
