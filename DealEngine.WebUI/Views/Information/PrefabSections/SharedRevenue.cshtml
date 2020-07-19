@@ -71,7 +71,7 @@
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-9">
-                                        <label for="lastFinancialYear" class="label required">Estimated commission / fees for Last completed financial year</label>
+                                        <label for="lastFinancialYear" class="label required">Actual commission / fees for Last completed financial year</label>
                                     </div>
                                     <div class="col-3">
                                         @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
@@ -117,7 +117,7 @@
                                 <thread class="thead-dark">
                                     <tr>
                                         <th>Activities</th>
-                                        <th>Percentage Amount (%)</th>
+                                        <th>Percentage Amount for the Current Year (%)</th>
                                     </tr>
                                 </thread>
                                 <tbody>
