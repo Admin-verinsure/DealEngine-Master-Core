@@ -61,7 +61,10 @@
                                 @organisation.Name
                             </td>
                             <td>
-                                @organisation.InsuranceAttributes.FirstOrDefault().Name
+                                @if (organisation.InsuranceAttributes.Any())
+                                {
+                                    @organisation.InsuranceAttributes.FirstOrDefault().Name
+                                }
                             </td>
                             <td>
 

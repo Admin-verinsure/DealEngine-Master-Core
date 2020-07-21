@@ -129,7 +129,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -147,7 +147,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -176,7 +176,7 @@
                                             <th>
                                                 @if (User.IsInRole("TCUser"))
                                                 {
-                                                    <a href="/Programme/CreateProgramme" class="btn btn-sm btn-success">Create</a>
+                                                    <a href="/Programme/CreateProgramme" class="btn btn-sm btn-success pull-right" style="width:100px;">Create</a>
                                                 }
                                             </th>
                                         </tr>
@@ -199,7 +199,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -217,7 +217,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -246,7 +246,7 @@
                                             <tr>
                                                 <td>Territories</td>
                                                 <td>Territories</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Product/CreateTerritory"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Product/CreateTerritory"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewActivities", "ViewActivities"))
@@ -254,7 +254,7 @@
                                             <tr>
                                                 <td>Activities</td>
                                                 <td>ANZSIC Codes</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.IsInRole("TCUser"))
@@ -262,7 +262,7 @@
                                             <tr>
                                                 <td>Roles</td>
                                                 <td>Roles</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Product/CreateRole"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Product/CreateRole"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewEmploymentPrincipals", "ViewEmploymentPrincipals"))
@@ -270,7 +270,7 @@
                                             <tr>
                                                 <td>Employment Principal & Staff Roles</td>
                                                 <td>Roles for Employment Liability Product Disclosure</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Programme/SharedDataRoleBuilder"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/SharedDataRoleBuilder"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewAddresses", "ViewAddresses"))
@@ -278,7 +278,7 @@
                                             <tr>
                                                 <td>Addresses</td>
                                                 <td>Address API used </td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
@@ -286,7 +286,7 @@
                                             <tr>
                                                 <td>Manage Documents</td>
                                                 <td>Certs, Schedules, Wording, Invoices</td>
-                                                <td><a class="btn btn-success btn-sm" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewEmails", "ViewEmails"))
@@ -294,7 +294,7 @@
                                             <tr>
                                                 <td>Emails</td>
                                                 <td>System and Programme specific</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewMarinas/FinancialInstitutions", "ViewMarinas/FinancialInstitutions"))
@@ -302,25 +302,25 @@
                                             <tr>
                                                 <td>Financial Institutions</td>
                                                 <td>For selecting as Named Parties</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }                                      
                                         <tr>
                                             <td>File Manager</td>
                                             <td>Manage Images and Upload Files</td>
-                                            <td><a class="btn btn-success btn-sm" href="/Image/ManageImage"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Image/ManageImage"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Report Manager</td>
                                             <td>Generate a Report</td>
-                                            <td><a class="btn btn-success btn-sm" href="/Report/CreateReport"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Report/CreateReport"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
                                         {
                                             <tr>
                                                 <td>Milestones</td>
                                                 <td>Milestones</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewMotor", "ViewMotor"))
@@ -328,7 +328,7 @@
                                             <tr>
                                                 <td>Motor</td>
                                                 <td>Motor API used   </td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewProducts", "ViewProducts"))
@@ -336,7 +336,7 @@
                                             <tr>
                                                 <td>Products</td>
                                                 <td>Insurance Policies for adding to a programme   </td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewSections", "ViewSections"))
@@ -344,7 +344,7 @@
                                             <tr>
                                                 <td>Sections</td>
                                                 <td>Sections for the Client Information Sheet   </td>
-                                                <td><a class="btn btn-success btn-sm" href="/Information/GetProgrammes"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Information/GetProgrammes"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewSpecialTerms", "ViewSpecialTerms"))
@@ -352,7 +352,7 @@
                                             <tr>
                                                 <td>Special Terms</td>
                                                 <td>Endorsements</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewRules", "ViewRules"))
@@ -360,7 +360,7 @@
                                             <tr>
                                                 <td>Rules</td>
                                                 <td>Configure the Rules</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
                                             </tr>
                                         }
@@ -369,7 +369,7 @@
                                             <tr>
                                                 <td>Underwriting Rules</td>
                                                 <td>Underwriting Rules</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewUsers", "ViewUsers"))
@@ -377,7 +377,7 @@
                                             <tr>
                                                 <td>Users</td>
                                                 <td>User Management</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewWater", "ViewWater"))
@@ -385,7 +385,7 @@
                                             <tr>
                                                 <td>Water</td>
                                                 <td>Water Location API used</td>
-                                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
                                     </tbody>
@@ -408,19 +408,19 @@
                                     <tbody>
                                         <tr>
                                             <td>Manage Admin function</td>
-                                            <td><a class="btn btn-success btn-sm" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Manage Organisations</td>
-                                            <td><a class="btn btn-success btn-sm" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Manage Permissions</td>
-                                            <td><a class="btn btn-success btn-sm" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Manage Rsa Users</td>
-                                            <td><a class="btn btn-success btn-sm" href="~/Admin/ManageRsaUsers"><i class="fa fa-search"></i> View</a></td>
+                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Admin/ManageRsaUsers"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
