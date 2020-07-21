@@ -61,14 +61,17 @@ namespace DealEngine.Services.Impl
                             if (product.IsOptionalProductBasedSub)
                             {
                                 bool prodsubuiscoverrequired = false;
-                                foreach (var prodsubuis in sheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted != null))
+                                if (sheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
                                 {
-                                    if (sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1" && !prodsubuiscoverrequired)
+                                    foreach (var prodsubuis in sheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                                     {
-                                        prodsubuiscoverrequired = true;
+                                        if (sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1" && !prodsubuiscoverrequired)
+                                        {
+                                            prodsubuiscoverrequired = true;
+                                        }
                                     }
                                 }
-                                if (prodsubuiscoverrequired)
+                                if (!prodsubuiscoverrequired)
                                 {
                                     continue;
                                 }

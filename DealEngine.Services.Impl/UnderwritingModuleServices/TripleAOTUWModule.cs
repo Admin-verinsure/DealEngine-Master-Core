@@ -88,11 +88,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
+            int otnumberofadvisor = 0;
+
+            if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
+            {
+                otnumberofadvisor += 1;
+
+                if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
+                {
+                    foreach (var prodsubuis in informationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
+                    {
+                        if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
+                        {
+                            otnumberofadvisor += 1;
+                        }
+                    }
+                    
+                }
+               
+            }
+
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
 
-            TermPremium2mil = rates["ot2millimitpremium"];
+            TermPremium2mil = rates["ot2millimitpremium"] * otnumberofadvisor;
 
             int TermExcess = 0;
 
