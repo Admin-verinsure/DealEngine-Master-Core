@@ -57,7 +57,9 @@ namespace DealEngine.Domain.Entities
         public virtual string Qualifications { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
         public virtual bool IsRetiredorDeceased { get; set; }
-        [Display(Name = "Registered Status AFA,RFA or N/A")]
+        [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
+        public virtual bool IsTripleAApproval { get; set; }
+        [Display(Name = "Registered Status AFA, RFA or N/A")]
         public virtual string RegisteredStatus { get; set; }
         [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
