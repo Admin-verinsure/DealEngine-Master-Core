@@ -45,9 +45,9 @@
                             <td>
                                 Owner
                             </td>
-                            <td>                                
+                            <td>
                             </td>
-                            <td>                                
+                            <td>
                             </td>
                         </tr>
                     }
@@ -66,9 +66,20 @@
                                     @organisation.InsuranceAttributes.FirstOrDefault().Name
                                 }
                             </td>
-                            <td>
+                            @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
+                            {
+                        <td>
+                            @{
+                                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                            }
+                            @if (unit != null)
+                            {
+                                @unit.IsPrincipalAdvisor
+                                <input id="IsPrincipalAdvisor" data-IsPrincipalAdvisor="@unit.IsPrincipalAdvisor" value="" hidden>
+                            }
 
-                            </td>
+                        </td>
+                            }
                             <td>
                                 <button onclick="RemoveOrganisation('@organisation.Id', 'Insured Details / Named Parties')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
                             </td>
@@ -80,7 +91,7 @@
         <div id="OrganisationTab2" class="tab-pane" role="tabpanel">
             <div class="form-group">
                 <label>Select a Organisation from the 'List All' Tab and Click Edit Button</label>
-            </div>            
+            </div>
         </div>
         <div id="OrganisationTab3" class="tab-pane" role="tabpanel">
             @using (Html.BeginForm("AddOrganisation", "Services", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
@@ -151,7 +162,7 @@
                             <td>
                                 @organisation.InsuranceAttributes.FirstOrDefault().Name
                             </td>
-                            <td>                                
+                            <td>
                             </td>
                         </tr>
                     }

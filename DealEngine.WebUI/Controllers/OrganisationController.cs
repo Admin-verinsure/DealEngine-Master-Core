@@ -119,13 +119,13 @@ namespace DealEngine.WebUI.Controllers
             string FirstName = jsonUser.FirstName;
             string LastName = jsonUser.LastName;
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-            Organisation organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
+            Organisation organisation = await _organisationService.GetOrganisationByEmail(Email);
             //condition for organisation exists
             try
             {
                 if (organisation != null)
                 {
-                    await _clientInformationService.RemoveOrganisationFromSheets(organisation);
+                    //await _clientInformationService.RemoveOrganisationFromSheets(organisation);
                     //await _organisationService.ChangeOwner(organisation, Sheet);
                 }
                 if (organisation == null)
