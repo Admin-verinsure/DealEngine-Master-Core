@@ -139,6 +139,7 @@ namespace DealEngine.WebUI.Controllers
                     Sheet.Organisation.Add(organisation);
 
                 await _clientInformationService.UpdateInformation(Sheet);
+                //return Ok();
                 return Redirect("../Information/EditInformation?Id=" + Sheet.Programme.Id.ToString());
             }
             catch (Exception ex)
@@ -152,6 +153,28 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ManageOrganisations()
         {
             return View("ManageOrganisations");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> PrincipalAdvisor(IFormCollection collection)
+        {
+            User currentUser = await CurrentUser();
+            Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
+            string Name = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+            ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
+            foreach(var organisation in Sheet.Organisation)
+            {
+                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == Name);
+                if(advisorUnit!= null)
+                {
+                    advisorUnit.IsPrincipalAdvisor = false;
+                }
+
+                await _organisationService.Update(organisation);
+            }
+
+            return Ok();
         }
 
         [HttpGet]

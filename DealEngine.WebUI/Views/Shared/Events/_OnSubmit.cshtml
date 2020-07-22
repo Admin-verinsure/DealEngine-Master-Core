@@ -1,6 +1,8 @@
 ﻿<script type="text/javascript">
-    function OnSubmit(FormId, AccordionId) {
+    function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
+        var dataItem;
+        var dataRule;
         var form = document.getElementById(FormId);
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
@@ -8,6 +10,20 @@
                     if (form[i].id != "") {
                         var element = document.getElementById(form[i].id);
                         OnChange(element.id, element.name);
+                        var dataRule = element.getAttribute('data-rule');
+                        if (dataRule != null) {
+                            dataItem = element.getAttribute('data-item');
+                            if (dataRule != null) {
+                                $.ajax({
+                                    url: '@Url.Action("PrincipalAdvisor", "Organisation")',
+                                    type: "POST",
+                                    data: $("#" + form.id).serialize(),
+                                    error: function (request, error) {
+                                        debugger;
+                                    }
+                                });
+                            }
+                        }
                         if (element.classList.contains("is-invalid") && element.parentElement.parentElement.hidden != true) {
                             //write a message here or stop the process
                             window.alert("Please complete the form");
@@ -32,12 +48,8 @@
                     type: "POST",
                     data: $("#" + form.id).serialize(),
                     success: function (Data) {
-                        try {
-                            form.reset();
-                            location.reload();
-                        } catch (e) {
-                            debugger;
-                        }
+                        form.reset();
+                        location.reload();
                     }, error: function (request, error) {
                         debugger;
                     }
@@ -47,6 +59,8 @@
                 debugger;
                 console.log(ex, element.Name);
             }
+
+
         }
     }
 
