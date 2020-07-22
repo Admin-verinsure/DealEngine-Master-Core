@@ -3224,7 +3224,11 @@ namespace DealEngine.WebUI.Controllers
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
                 if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)
-                ViewBag.showDocs = true;
+                {
+                    ViewBag.showDocs = true;
+                } else {
+                    ViewBag.showDocs = false;
+                }
                 return View("ViewAcceptedAgreementList", models);
             }
             catch (Exception ex)

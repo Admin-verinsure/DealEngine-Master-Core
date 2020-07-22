@@ -572,6 +572,7 @@ namespace DealEngine.WebUI.Models
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
         }
 
+        public string TransitionalLicenseNum { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
             return new List<SelectListItem>()
@@ -632,6 +633,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasAdvisersOptions { get; set; }        
         public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
         public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
+
     }
     public class PIViewModel
     {

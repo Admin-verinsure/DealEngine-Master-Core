@@ -36,6 +36,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="transitionallicensenum" class="label required">
+                        If you have you transitional license number available please enter it here
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.FAPViewModel.TransitionalLicenseNum, new { @class = "form-control", @id = "transitionallicensenum", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                </div>
+            </div>
+        </div>
     </div>
     <div id="FAB.HasAdditionalTraditionalLicenceOptions" hidden>
         <div class="form-group">
@@ -55,5 +68,6 @@
                 </div>
             </div>
         </div>
+
     </div>
 </form>
