@@ -906,16 +906,21 @@ namespace DealEngine.Services.Impl
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
 
-                        var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                        if (organisationType == null)
-                        {
-                            organisationType = new OrganisationType(null, "Corporation – Limited liability");
-
-                            //organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                        }
+                       
 
                         if (organisation == null)
                         {
+                            var orgUnit = new OrganisationalUnit(null, "Head Office", "Corporation – Limited liability", null);
+                            var IA = new InsuranceAttribute(null, "Company");
+
+                            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                            if (organisationType == null)
+                            {
+                                organisationType = new OrganisationType(null, "Corporation – Limited liability");
+
+                                //organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                            }
+
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[7], organisationType, email);
                             //  organisation.IsPrincipalAdvisor = true;
                             //organisation.OfcPhoneno = parts[6];
@@ -945,21 +950,22 @@ namespace DealEngine.Services.Impl
 
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
-                            var AdvisororganisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-                            if (AdvisororganisationType == null)
-                            {
+                           var AdvisororganisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                           if (AdvisororganisationType == null)
+                           {
 
-                                AdvisororganisationType = new OrganisationType(null, "Private");
+                                AdvisororganisationType = new OrganisationType(null, "Person - Individual");
 
                                 // AdvisororganisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
                             }
 
                             var privateUnit = new OrganisationalUnit(null, "Private", "Person - Individual", null);
-                            var advisorUnit = new AdvisorUnit(null, null, null, null)
+                            var advisorUnit = new AdvisorUnit(null, "Private", "Advisor", null)
                             {
-                              RegisteredStatus = parts[14],
-                              Qualifications = parts[15],
-                              Duration = parts[16]
+                                RegisteredStatus = parts[14],
+                                Qualifications = parts[15],
+                                Duration = parts[16],
+                                IsPrincipalAdvisor = true
                             };
                             var IA = new InsuranceAttribute(null, "Advisor");
 
@@ -1439,7 +1445,7 @@ namespace DealEngine.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
             User user = null;
-            Organisation organisation = null;
+            Organisation organisation = new Organisation();
             bool readFirstLine = true;
             string line;
             string email;
@@ -1448,7 +1454,8 @@ namespace DealEngine.Services.Impl
             var fileName = WorkingDirectory + "NZFSGDataUploadAdvisor.csv";
 
             //var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Advisor" );
-            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            // var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            var organisationType = new OrganisationType(null, "Private");
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -1462,26 +1469,25 @@ namespace DealEngine.Services.Impl
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
                     user = null;
-                    organisation = null;
                     email = "";
                     try
                     {
-                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[5]);
-                        var fullname = parts[0] + " " + parts[1];
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[1]);
+                        var fullname = parts[10] + " " + parts[11];
                         if (hasProgramme)
                         {
-                            userName = parts[0].Replace(" ", string.Empty) + "_" + parts[1].Replace(" ", string.Empty);
+                            userName = parts[10].Replace(" ", string.Empty) + "_" + parts[11].Replace(" ", string.Empty);
 
-                            if (string.IsNullOrWhiteSpace(parts[10]))
+                            if (string.IsNullOrWhiteSpace(parts[13]))
                             {
-                                email = parts[0].Replace(" ", string.Empty) + parts[1].Replace(" ", string.Empty) + "@techcertain.com";
+                                email = parts[10].Replace(" ", string.Empty) + parts[11].Replace(" ", string.Empty) + "@techcertain.com";
                             }
                             else
                             {
-                                email = parts[10];
+                                email = parts[13];
                             }
 
-                            organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
+                           // organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
                             //organisation.InsuranceAttributes.Add(insuranceAttribute);
                             //organisation.NZIAmembership = parts[5];
                             //organisation.Email = email;

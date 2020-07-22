@@ -58,6 +58,16 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
+                       var pAdvisor = document.getElementById("IsPrincipalAdvisor");
+                       if (pAdvisor != null) {
+                           var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
+                           if (organisations.length != 1) {                               
+                               window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
+                               $("#Insured Details / Named Parties").trigger("click");
+                               throw "no principal advisor";
+                           }
+                       }
+
 
                        var forms = document.getElementsByClassName('needs-validation');   //invalid forms
                        var formIds = [];
@@ -129,20 +139,7 @@
                            form.classList.add("was-validated");
                        }
 
-
-                   var vesselExists = document.getElementById("Vessel");
-                   var namedPartyExists = document.getElementById("Insured Details / Named Parties");
-                   var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
-                       var IsboatNamecount = 0;
-                       var IsTradingnameexist =  document.querySelector('[aria-describedby="CommonNamedParties_TradingName"]') !== null;
-                       var Isnamedpartyexist = document.querySelector('[aria-describedby="PMINZNamedParties_OrganisationType"]') !== null;
-                       var IsDANZnamedpartyexist = document.querySelector('[aria-describedby="DANZNamedParties_OrganisationType"]') !== null;
-                       var IsPrincipalAdvisorexist = document.querySelector('[aria-describedby="CommonNamedParties_IsPrincipalAdvisor"]') !== null;
-                       var Isnamedpartycount = 0;
-                       var IsPrincipalAdvisor = 0;
                        var IsLocationCount = 0;
-                       var IsTradingnameCount = 0;
-                       var count = 0;
 
                        $('#tblLocation tr').each(function () {
                            var $tds = $(this).find('td'),
@@ -153,83 +150,32 @@
                            }
                        });
 
-
-                   $('#PMINZNamedParties tr').each(function () {
-                       var $tds = $(this).find('td'),
-                           value = $tds.eq(2).text().toString();
-
-                       if (value == "project management personnel" && value != "") {
-                           Isnamedpartycount++;
-                       }
-                   });
-
-                   $('#DANZNamedParties tr').each(function () {
-                       var $tds = $(this).find('td'),
-                           value = $tds.eq(2).text().toString();
-
-                       if (value == "project management personnel" && value != "") {
-                           Isnamedpartycount++;
-                       }
-                    });
-
-                   $('#tblBoat tr').each(function () {
-                       var $tds = $(this).find('td'),
-                           value = $tds.eq(1).text().toString();
-                        
-                       if (value == false && value != "") {
-                           IsboatNamecount++;
-                       }
-                   });
-
-
-                       $('#CommonNamedParties tr').each(function () {
-                           debugger;
-                       var $tds = $(this).find('td'),
-                           value = $tds.eq(3).text().toString();
-                           TradingValue = $tds.eq(4).text().toString();
-                         
-                            if (TradingValue != "NonTrading" && TradingValue == " " && count>0) {
-                           IsTradingnameCount++;
-                           }
-                           
-                       if (value == "true" && value != "") {
-                           IsPrincipalAdvisor++;
-                           }
-                            count++;
-                       });
-                       debugger;
                        if (informationsheetstatus != "Bound") {
-                           if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
+                           //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
 
-                               window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
-                               $("#Vessel").trigger("click");
-                               return false;
+                           //    window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
+                           //    $("#Vessel").trigger("click");
+                           //    return false;
 
-                           } else if (IsboatNamecount == 1  || Isboatexist == false && vesselExists != null) {
+                           //} else if (IsboatNamecount == 1  || Isboatexist == false && vesselExists != null) {
 
-                               window.alert("Please complete Vessel Information");
-                               $("#Vessel").trigger("click");
-                               return false;
+                           //    window.alert("Please complete Vessel Information");
+                           //    $("#Vessel").trigger("click");
+                           //    return false;
 
-                           } else if (Isnamedpartycount == 0 && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false)) {
+                           //} else if (Isnamedpartycount == 0 && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false)) {
 
-                               window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
-                               $("[id='Insured Details / Named Parties']").trigger("click");
-                               return false;
-                           }else if ((IsPrincipalAdvisorexist == true && IsPrincipalAdvisor == 0)) {
+                           //    window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
+                           //    $("[id='Insured Details / Named Parties']").trigger("click");
+                           //    return false;
+                           //}
+                           //if ((IsTradingnameexist == true && IsTradingnameCount != 0)) {
 
-                               window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                               $("#Insured Details / Named Parties").trigger("click");
-                               return false;
+                           //    window.alert("Please Add Trading Name for Owner with complete information to proceed for policy  ");
+                           //    $("[id='Insured Details / Named Parties']").trigger("click");
+                           //    return false;
 
-                           }
-                           if ((IsTradingnameexist == true && IsTradingnameCount != 0)) {
-
-                               window.alert("Please Add Trading Name for Owner with complete information to proceed for policy  ");
-                               $("[id='Insured Details / Named Parties']").trigger("click");
-                               return false;
-
-                           }
+                           //}
                        }
 
                    if ($('#CompanyName').val() === "AON") {

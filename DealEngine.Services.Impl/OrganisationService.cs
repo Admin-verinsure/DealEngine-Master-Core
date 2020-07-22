@@ -102,6 +102,7 @@ namespace DealEngine.Services.Impl
 		public async Task UpdateOrganisation(IFormCollection collection)
 		{
 			var UnitName = collection["Unit"].ToString();
+			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
 			Type UnitType = Type.GetType(UnitName);
 			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
@@ -123,14 +124,15 @@ namespace DealEngine.Services.Impl
                 {
 					_mapper.Map(jsonUnit, unit);
 				}
-                else
+				var IA = organisation.InsuranceAttributes.FirstOrDefault(i=>i.Name == TypeName);
+				if(IA != null)
                 {
-					//check if existing
-					//organisation.OrganisationalUnits.Add(jsonUnit);
-					//organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, collection["Type"]));
-					//organisation.OrganisationType = new OrganisationType(null, collection["OrganisationType"]);
+					organisation.InsuranceAttributes.Clear();					
 				}
-				
+				organisation.InsuranceAttributes.Add(
+						new InsuranceAttribute(user, TypeName)
+						);
+
 				await Update(organisation);
 			}			
 			//UpdateLDap(organisation);
@@ -169,16 +171,9 @@ namespace DealEngine.Services.Impl
 		public async Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();
-			var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-			foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
+			foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
 			{
-				//foreach (var org in IA.IAOrganisations)
-				//{
-				//	foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true && o.IsPrincipalAdvisor != true))
-				//	{
-				//		organisations.Add(organisation);
-				//	}
-				//}
+				organisations.Add(organisation);
 			}
 			return organisations;
 		}
@@ -310,36 +305,44 @@ namespace DealEngine.Services.Impl
 				await _organisationRepository.UpdateAsync(organisation);
 			}
 		}
-		private object? GetModelDeserializedModel(Type type, IFormCollection collection)
+		public object? GetModelDeserializedModel(Type type, IFormCollection collection)
 		{
-			string AssemblyName = "DealEngine.Domain.Entities.";
 			Dictionary<object, string> model = new Dictionary<object, string>();
-			//var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
-			foreach (var Key in collection.Keys)
-			{
-				//model.Add(Key, collection[Key].ToString());
-				var value = Key.Split(".").ToList().LastOrDefault();
-				model.Add(value, collection[Key].ToString());
-			}
-			var JsonString = GetSerializedModel(model);
+			object obj = null;
 			try
 			{
-				var obj = JsonConvert.DeserializeObject(JsonString, type,
+				foreach (var Key in collection.Keys)
+				{
+					var value = Key.Split(".").ToList().LastOrDefault();
+					if (model.ContainsKey(value))
+					{
+						model[value] = collection[Key].ToString();
+					}
+					else
+					{
+						model.Add(value, collection[Key].ToString());
+					}
+				}
+
+				var JsonString = GetSerializedModel(model);
+				obj = JsonConvert.DeserializeObject(JsonString, type,
 					new JsonSerializerSettings()
 					{
+						MaxDepth = 1,
 						ObjectCreationHandling = ObjectCreationHandling.Auto,
 						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 						NullValueHandling = NullValueHandling.Ignore,
 						DateFormatHandling = DateFormatHandling.IsoDateFormat,
 						FloatFormatHandling = FloatFormatHandling.DefaultValue,
-					});
-				return obj;
+						TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
+					}); ;
 			}
 			catch (Exception ex)
 			{
 				throw ex;
 			}
 
+			return obj;
 		}
 
 		private string GetSerializedModel(object model)
@@ -363,154 +366,154 @@ namespace DealEngine.Services.Impl
 
 		}
 
-        public async Task RefactorOrganisations(Guid programmeId)
-        {
-			//turn off IA Organisations
-			//run once for Units
-			//Run again to Create Attributes
-			await PrincipalUnit();
-			//turn off IA Organisations
-			await PersonnelUnit();
-			//await PMINZ();
-			//await NZACS();
-		}
+  //      public async Task RefactorOrganisations(Guid programmeId)
+  //      {
+		//	//turn off IA Organisations
+		//	//run once for Units
+		//	//Run again to Create Attributes
+		//	await PrincipalUnit();
+		//	//turn off IA Organisations
+		//	await PersonnelUnit();
+		//	//await PMINZ();
+		//	//await NZACS();
+		//}
 
-        private async Task PersonnelUnit()
-        {
-			int value = 0;
-			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));			
-			//var PersonnelOrg = organisations.Where(o => o.InsuranceAttributes.Any(i => i.InsuranceAttributeName == "project management personnel")).ToList();
+  //      private async Task PersonnelUnit()
+  //      {
+		//	int value = 0;
+		//	var organisations = await _organisationRepository.FindAll().ToListAsync();
+		//	var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));			
+		//	//var PersonnelOrg = organisations.Where(o => o.InsuranceAttributes.Any(i => i.InsuranceAttributeName == "project management personnel")).ToList();
 
-			string Message = "";
-			string Id;
-			try
-			{
-				foreach (var organisation in attributeList)
-				{
-					value++;
-					Id = organisation.Id.ToString();
-					Message = "Start Id:" + Id;
-                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Personnel"));
-                    Message = "Added Attribute";
+		//	string Message = "";
+		//	string Id;
+		//	try
+		//	{
+		//		foreach (var organisation in attributeList)
+		//		{
+		//			value++;
+		//			Id = organisation.Id.ToString();
+		//			Message = "Start Id:" + Id;
+  //                  organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Personnel"));
+  //                  Message = "Added Attribute";
 
-                    //DateTime DateQualified = DateTime.MinValue;
-                    //DateTime.TryParse(organisation.DateQualified, out DateQualified);
-                    //bool IsCurrentMembershipPMINZ = false;
-                    //string CurrentMembershipNo = organisation.CurrentMembershipNo;
-                    //if (!string.IsNullOrWhiteSpace(organisation.CurrentMembershipNo))
-                    //{
-                    //    IsCurrentMembershipPMINZ = true;
-                    //    CurrentMembershipNo = organisation.CurrentMembershipNo;
-                    //}
+  //                  //DateTime DateQualified = DateTime.MinValue;
+  //                  //DateTime.TryParse(organisation.DateQualified, out DateQualified);
+  //                  //bool IsCurrentMembershipPMINZ = false;
+  //                  //string CurrentMembershipNo = organisation.CurrentMembershipNo;
+  //                  //if (!string.IsNullOrWhiteSpace(organisation.CurrentMembershipNo))
+  //                  //{
+  //                  //    IsCurrentMembershipPMINZ = true;
+  //                  //    CurrentMembershipNo = organisation.CurrentMembershipNo;
+  //                  //}
 
-                    //organisation.OrganisationalUnits.Add(
-                    //                   new PersonnelUnit()
-                    //                   {
-                    //                       Name = "Personnel",
-                    //                       Type = "Person - Individual",
-                    //                       IsRegisteredLicensed = organisation.IsRegisteredLicensed,
-                    //                       InsuredEntityRelation = organisation.InsuredEntityRelation,
-                    //                       DateQualified = DateQualified,
-                    //                       DesignLicensed = organisation.DesignLicensed,
-                    //                       SiteLicensed = organisation.SiteLicensed,
-                    //                       IsCurrentMembership = organisation.IsCurrentMembership,
-                    //                       OtherCompanyName = organisation.OtherCompanyname,
-                    //                       YearOfPractice = organisation.YearofPractice,
-                    //                       Qualifications = organisation.Qualifications,
-                    //                       JobTitle = organisation.JobTitle,
-                    //                       ProfAffiliation = organisation.ProfAffiliation,
-                    //                       IsInsuredRequired = organisation.IsInsuredRequired,
-                    //                       IsContractorInsured = organisation.IsContractorInsured,
-                    //                       CertType = organisation.CertType,
-                    //                       MajorShareHolder = organisation.MajorShareHolder,
-                    //                       IsCurrentMembershipPMINZ = IsCurrentMembershipPMINZ,
-                    //                       CurrentMembershipNo = CurrentMembershipNo
-                    //                   });
+  //                  //organisation.OrganisationalUnits.Add(
+  //                  //                   new PersonnelUnit()
+  //                  //                   {
+  //                  //                       Name = "Personnel",
+  //                  //                       Type = "Person - Individual",
+  //                  //                       IsRegisteredLicensed = organisation.IsRegisteredLicensed,
+  //                  //                       InsuredEntityRelation = organisation.InsuredEntityRelation,
+  //                  //                       DateQualified = DateQualified,
+  //                  //                       DesignLicensed = organisation.DesignLicensed,
+  //                  //                       SiteLicensed = organisation.SiteLicensed,
+  //                  //                       IsCurrentMembership = organisation.IsCurrentMembership,
+  //                  //                       OtherCompanyName = organisation.OtherCompanyname,
+  //                  //                       YearOfPractice = organisation.YearofPractice,
+  //                  //                       Qualifications = organisation.Qualifications,
+  //                  //                       JobTitle = organisation.JobTitle,
+  //                  //                       ProfAffiliation = organisation.ProfAffiliation,
+  //                  //                       IsInsuredRequired = organisation.IsInsuredRequired,
+  //                  //                       IsContractorInsured = organisation.IsContractorInsured,
+  //                  //                       CertType = organisation.CertType,
+  //                  //                       MajorShareHolder = organisation.MajorShareHolder,
+  //                  //                       IsCurrentMembershipPMINZ = IsCurrentMembershipPMINZ,
+  //                  //                       CurrentMembershipNo = CurrentMembershipNo
+  //                  //                   });
 
-                    //organisation.OrganisationalUnits.Add(
-                    //    new OrganisationalUnit()
-                    //    {
-                    //        Name = "Private",
-                    //        Type = "Person - Individual",
-                    //    });
+  //                  //organisation.OrganisationalUnits.Add(
+  //                  //    new OrganisationalUnit()
+  //                  //    {
+  //                  //        Name = "Private",
+  //                  //        Type = "Person - Individual",
+  //                  //    });
 
-                    Message = "Added Units";
+  //                  Message = "Added Units";
 
-                    await _organisationRepository.UpdateAsync(organisation);
-					Message = "Updated Organisation";
-					Console.WriteLine(Message);
-					Console.WriteLine(value);
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+  //                  await _organisationRepository.UpdateAsync(organisation);
+		//			Message = "Updated Organisation";
+		//			Console.WriteLine(Message);
+		//			Console.WriteLine(value);
+		//		}
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		throw ex;
+		//	}
 
-			Console.WriteLine(value);
-		}
+		//	Console.WriteLine(value);
+		//}
 
-        private async Task PrincipalUnit()
-        {
-			int value = 0;
-			var organisations = await _organisationRepository.FindAll().ToListAsync();
-			var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
-			//var PrincipalOrg = organisations.Where(o => o.InsuranceAttributes.Any(i=>i.InsuranceAttributeName =="Principal")).ToList();			
-			string Message = "";
-			string Id;
-			try
-			{
-                foreach (var organisation in attributeList)
-                {
-                    value++;
-                    Id = organisation.Id.ToString();
-                    Message = "Start Id:" + Id;
-                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Principal"));
-                    Message = "Added Attribute";
+  //      private async Task PrincipalUnit()
+  //      {
+		//	int value = 0;
+		//	var organisations = await _organisationRepository.FindAll().ToListAsync();
+		//	var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
+		//	//var PrincipalOrg = organisations.Where(o => o.InsuranceAttributes.Any(i=>i.InsuranceAttributeName =="Principal")).ToList();			
+		//	string Message = "";
+		//	string Id;
+		//	try
+		//	{
+  //              foreach (var organisation in attributeList)
+  //              {
+  //                  value++;
+  //                  Id = organisation.Id.ToString();
+  //                  Message = "Start Id:" + Id;
+  //                  organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Principal"));
+  //                  Message = "Added Attribute";
 
-                    //organisation.OrganisationalUnits.Add(
-                    //    new PrincipalUnit()
-                    //    {
-                    //        Name = "Principal",
-                    //        Type = "Person - Individual",
-                    //        DateofRetirement = organisation.DateofRetirement,
-                    //        IsRetiredorDeceased = organisation.IsRetiredorDecieved,
-                    //        Qualifications = organisation.Qualifications,
-                    //        IsIPENZmember = organisation.IsIPENZmember,
-                    //        CPEngQualified = organisation.CPEngQualified,
-                    //        YearOfPracticeCEAS = organisation.YearofPractice,
-                    //        IsNZIAmember = organisation.IsNZIAmember,
-                    //        IsADNZmember = organisation.IsADNZmember,
-                    //        NZIAmembership = organisation.NZIAmembership,
-                    //        IsLPBCategory3 = organisation.IsLPBCategory3,
-                    //        IsOtherdirectorship = organisation.IsOtherdirectorship,
-                    //        TradingName = organisation.TradingName,
-                    //        YearOfPracticeNZACS = organisation.YearofPractice,
-                    //        PrevPracticeNZACS = organisation.PrevPractice
-                    //    });
+  //                  //organisation.OrganisationalUnits.Add(
+  //                  //    new PrincipalUnit()
+  //                  //    {
+  //                  //        Name = "Principal",
+  //                  //        Type = "Person - Individual",
+  //                  //        DateofRetirement = organisation.DateofRetirement,
+  //                  //        IsRetiredorDeceased = organisation.IsRetiredorDecieved,
+  //                  //        Qualifications = organisation.Qualifications,
+  //                  //        IsIPENZmember = organisation.IsIPENZmember,
+  //                  //        CPEngQualified = organisation.CPEngQualified,
+  //                  //        YearOfPracticeCEAS = organisation.YearofPractice,
+  //                  //        IsNZIAmember = organisation.IsNZIAmember,
+  //                  //        IsADNZmember = organisation.IsADNZmember,
+  //                  //        NZIAmembership = organisation.NZIAmembership,
+  //                  //        IsLPBCategory3 = organisation.IsLPBCategory3,
+  //                  //        IsOtherdirectorship = organisation.IsOtherdirectorship,
+  //                  //        TradingName = organisation.TradingName,
+  //                  //        YearOfPracticeNZACS = organisation.YearofPractice,
+  //                  //        PrevPracticeNZACS = organisation.PrevPractice
+  //                  //    });
 
-                    //organisation.OrganisationalUnits.Add(
-                    //    new OrganisationalUnit()
-                    //    {
-                    //        Name = "Private",
-                    //        Type = "Person - Individual",
-                    //    });
+  //                  //organisation.OrganisationalUnits.Add(
+  //                  //    new OrganisationalUnit()
+  //                  //    {
+  //                  //        Name = "Private",
+  //                  //        Type = "Person - Individual",
+  //                  //    });
 
-                    await _organisationRepository.UpdateAsync(organisation);
-					Message = "Updated Organisation";
-					Console.WriteLine(Message);
-					Console.WriteLine(value);
+  //                  await _organisationRepository.UpdateAsync(organisation);
+		//			Message = "Updated Organisation";
+		//			Console.WriteLine(Message);
+		//			Console.WriteLine(value);
 
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+		//		}
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		throw ex;
+		//	}
 
-			Console.WriteLine(value);
-		}
+		//	Console.WriteLine(value);
+		//}
     }
 
 }

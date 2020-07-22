@@ -83,34 +83,41 @@ namespace DealEngine.WebUI.Controllers
         public object? GetModelDeserializedModel(Type type, IFormCollection collection)
         {
             Dictionary<object, string> model = new Dictionary<object, string>();
-            //var Keys = collection.Keys.Where(s => s.StartsWith(ModelName + "." + type.Name, StringComparison.CurrentCulture));
-            foreach (var Key in collection.Keys)
-            {
-                //model.Add(Key, collection[Key].ToString());
-                var value = Key.Split(".").ToList().LastOrDefault();
-                model.Add(value, collection[Key].ToString());
-            }
-            var JsonString = GetSerializedModel(model);
+            object obj = null;
             try
             {
-                var obj = JsonConvert.DeserializeObject(JsonString, type,
-                    new JsonSerializerSettings()
+                foreach (var Key in collection.Keys)
+                {
+                    var value = Key.Split(".").ToList().LastOrDefault();
+                    if (model.ContainsKey(value))
                     {
-                        MaxDepth = 1,
-                        ObjectCreationHandling = ObjectCreationHandling.Auto,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        NullValueHandling = NullValueHandling.Ignore,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
-                    }); ;
-                return obj;
+                        model[value] = collection[Key].ToString();
+                    }
+                    else
+                    {
+                        model.Add(value, collection[Key].ToString());
+                    }
+                }
+                
+                var JsonString = GetSerializedModel(model);
+                obj = JsonConvert.DeserializeObject(JsonString, type,
+                    new JsonSerializerSettings()
+                        {
+                            MaxDepth = 1,
+                            ObjectCreationHandling = ObjectCreationHandling.Auto,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            NullValueHandling = NullValueHandling.Ignore,
+                            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                            FloatFormatHandling = FloatFormatHandling.DefaultValue,
+                            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
+                        }); ;                                    
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
+            return obj;
         }
 
         /// <summary>

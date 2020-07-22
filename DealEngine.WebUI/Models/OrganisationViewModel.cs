@@ -24,29 +24,25 @@ namespace DealEngine.WebUI.Models
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                if(Programme.Name == "NZFSG Programme")
+                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme")
                 {
-                    AdvisorUnit = new AdvisorUnit();
-                    InsuranceAttributes = GetNZFSGTypes();
+                    AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+                    InsuranceAttributes = GetAdvisorTypes();
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalAdvisor = GetStandardSelectOptions();
+                    HasIsTripleAApprovalOptions = GetStandardSelectOptions();
                 }
-                if (Programme.Name == "DANZ Programme")
+                if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
                 {
-                    InsuranceAttributes = GetDANZTypes();
-                    PersonnelUnit = new PersonnelUnit();
+                    InsuranceAttributes = GetPersonnelTypes();
+                    PersonnelUnit = new PersonnelUnit(null, null, null, null); //(PersonnelUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Personnel");
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
                     HasSiteLicensedOptions = GetLicencedOptions();
                     HasCurrentMembershipOptions = GetStandardSelectOptions();
-                }
-                if (Programme.Name == "PMINZ Programme")
-                {
-                    InsuranceAttributes = GetPMINZTypes();
-                    PersonnelUnit = new PersonnelUnit();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasContractorInsuredOptions = GetStandardSelectOptions();
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
@@ -54,19 +50,13 @@ namespace DealEngine.WebUI.Models
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetStandardSelectOptions();
                 }
-                if (Programme.Name == "CEAS Programme")
+                if (Programme.Name == "CEAS Programme" || Programme.Name == "NZACS Programme")
                 {
-                    InsuranceAttributes = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit();
+                    InsuranceAttributes = GetPrincipalTypes();
+                    PrincipalUnit = new PrincipalUnit(null, null, null, null); //(PrincipalUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Principal");
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasIsIPENZmemberOptions = GetStandardSelectOptions();
                     HasCPEngQualifiedOptions = GetStandardSelectOptions();
-                }
-                if (Programme.Name == "NZACS Programme")
-                {
-                    InsuranceAttributes = GetCEASTypes();
-                    PrincipalUnit = new PrincipalUnit();
-                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasIsNZIAmemberOptions = GetStandardSelectOptions();
                     HasIsADNZmemberOptions = GetStandardSelectOptions();
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
@@ -88,7 +78,7 @@ namespace DealEngine.WebUI.Models
             }
         }
 
-        private IList<SelectListItem> GetCEASTypes()
+        private IList<SelectListItem> GetPrincipalTypes()
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
@@ -196,7 +186,7 @@ namespace DealEngine.WebUI.Models
             };
             return _Types;
         }
-        private IList<SelectListItem> GetPMINZTypes()
+        private IList<SelectListItem> GetPersonnelTypes()
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
@@ -241,45 +231,45 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
-        private IList<SelectListItem> GetDANZTypes()
-        {
-            var _Types = new List<SelectListItem>();
-            _Types = new List<SelectListItem>() {
-                    new SelectListItem
-                    {
-                        Text = "-- Select --",
-                        Value = "0"
-                    },
-                    new SelectListItem
-                    {
-                        Text = "Personnel",
-                        Value = "Personnel"
-                    },
-                    new SelectListItem
-                    {
-                        Text = "Subsidiary",
-                        Value = "Subsidiary"
-                    },
-                    new SelectListItem
-                    {
-                        Text = "Previous Consulting Business",
-                        Value = "Previous Consulting Business"
-                    }
-                    ,
-                    new SelectListItem
-                    {
-                        Text = "Mergers",
-                        Value = "Mergers"
-                    }
-                    ,
-                    new SelectListItem
-                    {
-                        Text = "Joint Venture",
-                        Value = "Joint Venture"
-                    }
-                };
-            return _Types;
-        }
+        //private IList<SelectListItem> GetDANZTypes()
+        //{
+        //    var _Types = new List<SelectListItem>();
+        //    _Types = new List<SelectListItem>() {
+        //            new SelectListItem
+        //            {
+        //                Text = "-- Select --",
+        //                Value = "0"
+        //            },
+        //            new SelectListItem
+        //            {
+        //                Text = "Personnel",
+        //                Value = "Personnel"
+        //            },
+        //            new SelectListItem
+        //            {
+        //                Text = "Subsidiary",
+        //                Value = "Subsidiary"
+        //            },
+        //            new SelectListItem
+        //            {
+        //                Text = "Previous Consulting Business",
+        //                Value = "Previous Consulting Business"
+        //            }
+        //            ,
+        //            new SelectListItem
+        //            {
+        //                Text = "Mergers",
+        //                Value = "Mergers"
+        //            }
+        //            ,
+        //            new SelectListItem
+        //            {
+        //                Text = "Joint Venture",
+        //                Value = "Joint Venture"
+        //            }
+        //        };
+        //    return _Types;
+        //}
         private IList<SelectListItem> GetLicencedOptions()
         {
             var _Types = new List<SelectListItem>()
@@ -320,6 +310,11 @@ namespace DealEngine.WebUI.Models
         {
             var _Types = new List<SelectListItem>()
             {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
                 new SelectListItem
                     {
                         Text = "No",
@@ -387,31 +382,36 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
-        private IList<SelectListItem> GetNZFSGTypes()
+        private IList<SelectListItem> GetAdvisorTypes()
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
-                    new SelectListItem
+                new SelectListItem
                     {
                         Text = "-- Select --",
                         Value = "0"
                     },
-                    new SelectListItem
+                new SelectListItem
                     {
                         Text = "Advisor",
                         Value = "Advisor"
                     },
-                    new SelectListItem
+                new SelectListItem
                     {
-                        Text = "Nominated Representative",
-                        Value = "Nominated Representative"
+                        Text = "Administration",
+                        Value = "Administration"
                     },
-                    new SelectListItem
-                    {
-                        Text = "Other Consulting Business",
-                        Value = "Other Consulting Business"
-                    }
-                };
+                new SelectListItem
+                {
+                    Text = "Nominated Representative",
+                    Value = "Nominated Representative"
+                },
+                new SelectListItem
+                {
+                    Text = "Other Consulting Business",
+                    Value = "Other Consulting Business"
+                }
+            };
             return _Types;
 
         }
@@ -451,6 +451,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> InsuredEntityRelationOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> CertTypes { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasIsTripleAApprovalOptions { get; set; }        
         [JsonIgnore]
         public IList<SelectListItem> HasMajorShareHolder { get; set; }
         [JsonIgnore]

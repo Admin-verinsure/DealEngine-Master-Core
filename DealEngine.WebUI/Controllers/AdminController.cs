@@ -836,7 +836,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AONOrganisationRefactor()
         {
             var programmeId = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
-            await _organisationService.RefactorOrganisations(programmeId);
+            //await _organisationService.RefactorOrganisations(programmeId);
 
             return Redirect("~/Home/Index");
 
