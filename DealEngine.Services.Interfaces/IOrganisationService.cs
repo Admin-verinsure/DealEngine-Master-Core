@@ -24,7 +24,7 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
         Task<Organisation> GetAnyRemovedAdvisor(string email);
         Task Update(Organisation organisation);
-        Task RefactorOrganisations(Guid programmeId);
+        //Task RefactorOrganisations(Guid programmeId);
     }
 }
 

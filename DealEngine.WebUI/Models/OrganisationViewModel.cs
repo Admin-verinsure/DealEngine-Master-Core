@@ -312,6 +312,11 @@ namespace DealEngine.WebUI.Models
             {
                 new SelectListItem
                     {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
                         Text = "No",
                         Value = "false"
                     },
@@ -381,27 +386,32 @@ namespace DealEngine.WebUI.Models
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
-                    new SelectListItem
+                new SelectListItem
                     {
                         Text = "-- Select --",
                         Value = "0"
                     },
-                    new SelectListItem
+                new SelectListItem
                     {
                         Text = "Advisor",
                         Value = "Advisor"
                     },
-                    new SelectListItem
+                new SelectListItem
                     {
-                        Text = "Nominated Representative",
-                        Value = "Nominated Representative"
+                        Text = "Administration",
+                        Value = "Administration"
                     },
-                    new SelectListItem
-                    {
-                        Text = "Other Consulting Business",
-                        Value = "Other Consulting Business"
-                    }
-                };
+                new SelectListItem
+                {
+                    Text = "Nominated Representative",
+                    Value = "Nominated Representative"
+                },
+                new SelectListItem
+                {
+                    Text = "Other Consulting Business",
+                    Value = "Other Consulting Business"
+                }
+            };
             return _Types;
 
         }
