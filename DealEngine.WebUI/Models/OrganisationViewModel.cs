@@ -26,7 +26,7 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme")
                 {
-                    AdvisorUnit = new AdvisorUnit();
+                    AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
                     InsuranceAttributes = GetAdvisorTypes();
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
@@ -37,7 +37,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
                 {
                     InsuranceAttributes = GetPersonnelTypes();
-                    PersonnelUnit = new PersonnelUnit();
+                    PersonnelUnit = new PersonnelUnit(null, null, null, null); //(PersonnelUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Personnel");
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasRegisteredLicensedOptions = GetStandardSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
@@ -53,7 +53,7 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "CEAS Programme" || Programme.Name == "NZACS Programme")
                 {
                     InsuranceAttributes = GetPrincipalTypes();
-                    PrincipalUnit = new PrincipalUnit();
+                    PrincipalUnit = new PrincipalUnit(null, null, null, null); //(PrincipalUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Principal");
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasIsIPENZmemberOptions = GetStandardSelectOptions();
                     HasCPEngQualifiedOptions = GetStandardSelectOptions();

@@ -7,7 +7,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.RegisteredStatus, new { @class = "label required" })
-            <select id="AdvisorUnit.RegisteredStatus" name="Organisation.AdvisorUnit.RegisteredStatus" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdvisorUnit.RegisteredStatus" name="OrganisationViewModel.AdvisorUnit.RegisteredStatus" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in @Model.OrganisationViewModel.HasRegisteredOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">
@@ -18,14 +18,14 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased)
-            <select id="AdvisorUnit.IsRetiredorDeceased" name="Organisation.AdvisorUnit.IsRetiredorDeceased" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdvisorUnit.IsRetiredorDeceased" name="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in Model.OrganisationViewModel.HasRetiredorDeceasedOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                 }
             </select>
         </div>
-        <div id="Organisation.AdvisorUnit.IsRetiredorDeceased" hidden>
+        <div id="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" hidden>
             <div class="form-group">
                 @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
                 @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @required = "" })
@@ -39,7 +39,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsTripleAApproval)
-            <select id="AdvisorUnit.IsTripleAApproval" name="Organisation.AdvisorUnit.IsTripleAApproval" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdvisorUnit.IsTripleAApproval" name="OrganisationViewModel.AdvisorUnit.IsTripleAApproval" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in Model.OrganisationViewModel.HasIsTripleAApprovalOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
