@@ -89,6 +89,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             int otnumberofadvisor = 0;
+            bool otclaim = false;
 
             if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
             {
@@ -101,6 +102,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
                         {
                             otnumberofadvisor += 1;
+
+                            if (informationSheet.Answers.Where(sa => sa.ItemName == "OTViewModel.HasClaimQuestionsOptions").First().Value == "1" && !otclaim)
+                            {
+                                otclaim = true;
+                            }
                         }
                     }
                     
@@ -129,7 +135,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termot2millimitoption.DeletedBy = null;
 
             //Referral points per agreement
-
+            //OT Cover Selected by any advisor
+            uwrfbrokerreferral(underwritingUser, agreement);
+            //OT Individual
+            uwrfotclaim(underwritingUser, agreement, otclaim);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -225,6 +234,49 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
+        void uwrfbrokerreferral(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfbrokerreferral").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfbrokerreferral" && cref.DateDeleted == null).Status = "Pending";
+                }
+            }
+        }
+
+        void uwrfotclaim(User underwritingUser, ClientAgreement agreement, bool otclaim)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotclaim" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotclaim") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotclaim").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotclaim").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotclaim").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotclaim").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotclaim" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (otclaim)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotclaim" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                    
+                }
+            }
+        }
 
 
 
