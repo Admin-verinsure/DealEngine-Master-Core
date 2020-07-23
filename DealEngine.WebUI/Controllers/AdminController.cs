@@ -179,13 +179,13 @@ namespace DealEngine.WebUI.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> AAAImportUsers()
+        public async Task<IActionResult> AAAImportAdvisors()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServiceIndividuals(user);
+                await _importService.ImportAAAServiceIndividuals(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -203,7 +203,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServicePrincipals(user);
+                await _importService.ImportAAAServicePrincipals(user);
 
                 return RedirectToAction("Index", "Home");
             }

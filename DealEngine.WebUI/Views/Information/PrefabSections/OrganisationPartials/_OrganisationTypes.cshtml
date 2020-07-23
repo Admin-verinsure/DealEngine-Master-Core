@@ -25,24 +25,24 @@
         <div id="Else" hidden>
             <div class="form-group col-md-6">
                 <div class="form-group">
-                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)"})
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "label required" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "form-control", @id = "Organisation.Phone", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "label" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "form-control", @id = "Organisation.Phone", @onchange = "OnChange(this.id, this.name)" })
                 </div>
             </div>
             <div class="form-group col-md-6">
                 <div class="form-group">
                     @Html.LabelFor(m => m.OrganisationViewModel.User.Email, new { @class = "label required" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.User.Email, new { @class = "form-control", @id = "User.Email", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.User.Email, new { @class = "form-control", @id = "User.Email", @onchange = "OnChange(this.id, this.name)"})
                 </div>
                 @if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
                 {
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "label required" })
-                        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "form-control", @id = "PrincipalUnit.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "form-control", @id = "PrincipalUnit.TradingName", @onchange = "OnChange(this.id, this.name)" })
                     </div>
                 }
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
