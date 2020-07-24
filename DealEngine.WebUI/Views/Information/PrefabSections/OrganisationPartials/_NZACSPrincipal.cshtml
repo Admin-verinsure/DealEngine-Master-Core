@@ -13,13 +13,13 @@
 <div id="OrganisationViewModel.PrincipalUnit.IsRetiredorDeceased" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "form-control", @id = "PrincipalUnit.DateofRetirement", @type = "date", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.DateofRetirement, new { @class = "form-control", @id = "PrincipalUnit.DateofRetirement", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)" })
     </div>
 </div>
 
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.Qualifications, new { @class = "label required" })
-    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.Qualifications, new { @class = "form-control", @id = "Organisation.Qualifications", @required = "" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.Qualifications, new { @class = "form-control", @id = "Organisation.Qualifications", @required = "", @onchange = "OnChange(this.id, this.name)" })
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsNZIAmember, new { @class = "label required" })
@@ -35,7 +35,7 @@
 <div id="OrganisationViewModel.PrincipalUnit.IsNZIAmember" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.NZIAmembership, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.NZIAmembership, new { @class = "form-control", @id = "PrincipalUnit.NZIAmembership", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.NZIAmembership, new { @class = "form-control", @id = "PrincipalUnit.NZIAmembership", @required = "", @onchange = "OnChange(this.id, this.name)" })
     </div>
 </div>
 <div class="form-group">
@@ -52,16 +52,16 @@
 <div id="OrganisationViewModel.PrincipalUnit.IsNZIAmember" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsLPBCategory3, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.IsLPBCategory3, new { @class = "form-control", @id = "PrincipalUnit.IsLPBCategory3", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.IsLPBCategory3, new { @class = "form-control", @id = "PrincipalUnit.IsLPBCategory3", @required = "", @onchange = "OnChange(this.id, this.name)" })
     </div>
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.YearOfPracticeNZACS, new { @class = "label required" })
-    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.YearOfPracticeNZACS, new { @class = "form-control", @id = "PrincipalUnit.YearOfPracticeNZACS", @required = "" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.YearOfPracticeNZACS, new { @class = "form-control", @id = "PrincipalUnit.YearOfPracticeNZACS", @required = "", @onchange = "OnChange(this.id, this.name)" })
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeNZACS, new { @class = "label required" })
-    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeNZACS, new { @class = "form-control", @id = "PrincipalUnit.PrevPracticeNZACS", @required = "" })
+    @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.PrevPracticeNZACS, new { @class = "form-control", @id = "PrincipalUnit.PrevPracticeNZACS", @required = "", @onchange = "OnChange(this.id, this.name)" })
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.IsOtherdirectorship, new { @class = "label required" })
@@ -77,6 +77,6 @@
 <div id="OrganisationViewModel.PrincipalUnit.IsOtherdirectorship" hidden>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "form-control", @id = "PrincipalUnit.TradingName", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "form-control", @id = "PrincipalUnit.TradingName", @required = "", @onchange = "OnChange(this.id, this.name)" })
     </div>
 </div>

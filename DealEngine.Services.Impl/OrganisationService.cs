@@ -120,9 +120,16 @@ namespace DealEngine.Services.Impl
             {
 				organisation = _mapper.Map(jsonOrganisation, organisation);
 				var unit = organisation.OrganisationalUnits.FirstOrDefault(ou=>ou.GetType() == jsonUnit.GetType());
-				if(unit != null)
+				
+				if (unit != null)
                 {
 					_mapper.Map(jsonUnit, unit);
+				}
+                else
+                {
+					var instance = (OrganisationalUnit)Activator.CreateInstance(UnitType);
+					_mapper.Map(jsonUnit, instance);
+					organisation.OrganisationalUnits.Add(instance);
 				}
 				var IA = organisation.InsuranceAttributes.FirstOrDefault(i=>i.Name == TypeName);
 				if(IA != null)
@@ -214,7 +221,7 @@ namespace DealEngine.Services.Impl
 					User.Organisations.Add(foundOrg);
 
 				User.SetPrimaryOrganisation(foundOrg);
-				await _userService.Update(User);
+				await _userService.Create(User);
 			}
 			return foundOrg;			
         }
