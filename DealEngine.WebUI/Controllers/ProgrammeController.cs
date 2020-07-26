@@ -820,38 +820,39 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
-            return NoContent();
-            //ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            //var rules = new List<Rule>();
-            //User user = null;
+            //return NoContent();
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            var rules = new List<Rule>();
+            User user = null;
 
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    Programme programme = await _programmeService.GetProgramme(Id);
-            //    model.Id = Id;
+            try
+            {
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgramme(Id);
+                model.Id = Id;
 
-            //    foreach (var programmeProduct in programme.Products)
-            //    {
-            //        var product = await _productService.GetProductById(programmeProduct.Id);
+                foreach (var programmeProduct in programme.Products)
+                {
+                    var product = await _productService.GetProductById(programmeProduct.Id);
 
-            //        foreach (var rule in product.Rules)
-            //        {
-            //            rules.Add(rule);
-            //        }
-            //    }
+                    foreach (var rule in product.Rules)
+                    {
+                        rules.Add(rule);
+                    }
+                }
 
-            //    model.Rules = rules;
+                model.Rules = rules;
+                model.ProductId = productId;
 
-            //    ViewBag.Title = "Manage Product Rules";
+                ViewBag.Title = "Manage Product Rules";
 
-            //    return View("ProductRules", model);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
+                return View("ProductRules", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
