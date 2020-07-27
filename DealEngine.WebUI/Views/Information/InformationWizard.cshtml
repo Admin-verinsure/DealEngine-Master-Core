@@ -1149,7 +1149,6 @@
                 if (section.parentElement.id == "later") {
                     $("#more").trigger("click");
                 }
-                debugger;
                 $("[id='" + accordianPanel + "']").trigger("click");
                 sessionStorage.removeItem("accordianTrigger");
             }
@@ -1160,7 +1159,6 @@
             }
 
             if ("@Model.Status" == "Submitted") {
-                debugger;
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {

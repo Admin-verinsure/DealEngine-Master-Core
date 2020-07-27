@@ -123,11 +123,7 @@ namespace DealEngine.WebUI.Controllers
             //condition for organisation exists
             try
             {
-                if (organisation != null)
-                {
-                    //await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    //await _organisationService.ChangeOwner(organisation, Sheet);
-                }
+
                 if (organisation == null)
                 {
                     organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
@@ -161,12 +157,12 @@ namespace DealEngine.WebUI.Controllers
         {
             User currentUser = await CurrentUser();
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
-            string Name = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+            string Type = "Advisor";
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
             foreach(var organisation in Sheet.Organisation)
             {
-                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == Name);
-                if(advisorUnit!= null)
+                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Type == Type);
+                if(advisorUnit != null)
                 {
                     advisorUnit.IsPrincipalAdvisor = false;
                 }

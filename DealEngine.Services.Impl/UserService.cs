@@ -179,7 +179,7 @@ namespace DealEngine.Services.Impl
 			{
 				_logger.LogWarning(ex.Message);
 			}
-            await Update (user);
+            //await Update (user);
 		}
 
 		public async Task Update (User user)
@@ -244,10 +244,10 @@ namespace DealEngine.Services.Impl
         protected async Task CreateDefaultUserOrganisation (User user)
 		{
             OrganisationType personalOrganisationType = null;
-            personalOrganisationType = await _organisationTypeService.GetOrganisationTypeByName("personal");
+            personalOrganisationType = await _organisationTypeService.GetOrganisationTypeByName("default");
             if (personalOrganisationType == null)
             {
-                personalOrganisationType = new OrganisationType(user, "personal");
+                personalOrganisationType = new OrganisationType(user, "default");
             }
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);

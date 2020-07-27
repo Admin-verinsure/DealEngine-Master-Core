@@ -338,21 +338,21 @@ namespace DealEngine.WebUI.Controllers
                     //}
                 }
 
-                model.InterestedParties = interestedParties;
+                //model.InterestedParties = interestedParties;
 
-                List<SelectListItem> linterestedparty = new List<SelectListItem>();
+                //List<SelectListItem> linterestedparty = new List<SelectListItem>();
 
-                for (var i = 0; i < model.InterestedParties.Count(); i++)
-                {
-                    linterestedparty.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Text = model.InterestedParties.ElementAtOrDefault(i).Organisation.Name,
-                        Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
-                    });
-                }
+                //for (var i = 0; i < model.InterestedParties.Count(); i++)
+                //{
+                //    linterestedparty.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Text = model.InterestedParties.ElementAtOrDefault(i).Organisation.Name,
+                //        Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
+                //    });
+                //}
 
-                model.InterestedPartyList = linterestedparty;
+                //model.InterestedPartyList = linterestedparty;
 
                 var boatUses = new List<BoatUseViewModel>();
                 for (var i = 0; i < sheet.BoatUses.Count(); i++)

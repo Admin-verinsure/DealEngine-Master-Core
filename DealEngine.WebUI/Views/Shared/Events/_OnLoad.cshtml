@@ -1,6 +1,6 @@
 ﻿<script type="text/javascript">   
 
-    function PopulateOrganisationView(OutPut) {
+    function PopulateOrganisationView(Method, OutPut) {
         var Form;
         Form = document.getElementById("organisationViewModel");
         try {
@@ -76,6 +76,11 @@
                         OnChange(Element.id, Element.name);
                     }
                     else { console.log(Id) }
+                }
+                if (Method == "Owner") {
+                    document.getElementById("Organisation.OrganisationType").disabled = true;
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    document.getElementById("Else").hidden = false;
                 }
             }
         } catch (ex) { debugger; }

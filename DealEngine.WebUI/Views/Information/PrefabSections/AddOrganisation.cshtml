@@ -37,7 +37,7 @@
                     {
                         <tr id="@organisation.Id">
                             <td>
-                                @*<button class="btn btn-success btn-sm" onclick="OnClick('Get', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>*@
+                                <button class="btn btn-success btn-sm" onclick="OnClick('Owner', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
                             </td>
                             <td>
                                 @organisation.Name
@@ -55,7 +55,7 @@
                     {
                         <tr id="@organisation.Id">
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="OnClick('Get', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-success btn-sm" onclick="OnClick('', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
                             </td>
                             <td>
                                 @organisation.Name
@@ -94,7 +94,7 @@
             </div>
         </div>
         <div id="OrganisationTab3" class="tab-pane" role="tabpanel">
-            @using (Html.BeginForm("AddOrganisation", "Services", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
+            @using (Html.BeginForm("AddOrganisation", "Organisation", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
             {
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")

@@ -8,7 +8,7 @@
                 success: function (Data) {
                     try {
                         var OutPut = JSON.parse(Data);
-                        PopulateOrganisationView(OutPut);
+                        PopulateOrganisationView(Method, OutPut);
                     } catch (e) {
                         debugger;
                     }

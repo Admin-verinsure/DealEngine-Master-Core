@@ -3,6 +3,7 @@
         var PostAjax = true;
         var dataItem;
         var dataRule;
+        var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
@@ -11,23 +12,17 @@
                         var element = document.getElementById(form[i].id);
                         OnChange(element.id, element.name);
                         var dataRule = element.getAttribute('data-rule');
-                        if (dataRule != null) {
-                            dataItem = element.getAttribute('data-item');
-                            if (dataRule != null) {
-                                $.ajax({
-                                    url: '@Url.Action("PrincipalAdvisor", "Organisation")',
-                                    type: "POST",
-                                    data: $("#" + form.id).serialize(),
-                                    error: function (request, error) {
-                                        debugger;
-                                    }
-                                });
+                        if (dataRule == "PrincipalAdvisor") {
+                            if (element[element.selectedIndex].value == "True") {
+                                RemoveAdvisors = true;
                             }
                         }
-                        if (element.classList.contains("is-invalid") && element.parentElement.parentElement.hidden != true) {
+                        var isHidden = element.parentElement.parentElement.hidden;                        
+                        if (element.classList.contains("is-invalid") && (isHidden != true)) {
+                            PostAjax = false;
                             //write a message here or stop the process
-                            window.alert("Please complete the form");
-                            throw FormId + " incomplete";
+                            debugger;            
+                            throw element.id + " incomplete";
                         }
                     }
                 }
@@ -43,6 +38,15 @@
         if (PostAjax) {
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
+                $.ajax({
+                    url: '@Url.Action("PrincipalAdvisor", "Organisation")',
+                    type: "POST",
+                    data: $("#" + form.id).serialize(),
+                    error: function (request, error) {
+                        debugger;
+                    }
+                });
+
                 $.ajax({
                     url: '@Url.Action("AddOrganisation", "Organisation")',
                     type: "POST",
@@ -61,6 +65,9 @@
             }
 
 
+        }
+        else {
+            window.alert("Please complete the form");
         }
     }
 

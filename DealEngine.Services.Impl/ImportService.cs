@@ -1438,7 +1438,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "NZFSGDataUploadAdvisor.csv";
+            var fileName = WorkingDirectory + "TripleAUserAdvisors.csv";
 
             var organisationType = new OrganisationType(null, "Person - Individual");
             using (reader = new StreamReader(fileName))
@@ -1484,11 +1484,13 @@ namespace DealEngine.Services.Impl
                             var IA = new InsuranceAttribute(null, "Advisor");
                             var orgname = parts[9].Trim() + " " + parts[10].Trim();
                             Organisation Advisororganisation = new Organisation(currentUser, Guid.NewGuid(), orgname, AdvisororganisationType, email);
-
+                            Advisororganisation.Clientmembership = parts[0];
                             Advisororganisation.InsuranceAttributes.Add(IA);
                             Advisororganisation.OrganisationalUnits.Add(privateUnit);
                             Advisororganisation.OrganisationalUnits.Add(advisorUnit);
                             await _organisationService.CreateNewOrganisation(Advisororganisation);
+                            await _programmeService.AddOrganisationByMembership(Advisororganisation);
+
                             //await _programmeService.AddOrganisationByMembership(organisation);
 
                             user = await _userService.GetUserByEmail(email);
@@ -1505,6 +1507,7 @@ namespace DealEngine.Services.Impl
                                     int randomNumber = random.Next(10, 99);
                                     userName = userName + randomNumber.ToString();
                                 }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
                                 user.FirstName = parts[9].Trim();
                                 user.LastName = parts[10].Trim();
                                 user.FullName = user.FirstName + " " + user.LastName;
