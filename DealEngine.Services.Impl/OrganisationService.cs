@@ -103,46 +103,52 @@ namespace DealEngine.Services.Impl
 		{
 			var UnitName = collection["Unit"].ToString();
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+			bool IsOwner = false;
+            if (string.IsNullOrWhiteSpace(TypeName))
+            {
+				IsOwner = true;
+			}
 			Type UnitType = Type.GetType(UnitName);
 			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 			var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
 
 			var user = await _userService.GetUserByEmail(jsonUser.Email);
-			if(user != null)
-            {
-				user = _mapper.Map(jsonUser, user);
-				await _userService.Update(user);
-			}
-
 			var organisation = await GetOrganisationByEmail(jsonOrganisation.Email);			
+
 			if(organisation != null)
             {
 				organisation = _mapper.Map(jsonOrganisation, organisation);
-				var unit = organisation.OrganisationalUnits.FirstOrDefault(ou=>ou.GetType() == jsonUnit.GetType());
-				
-				if (unit != null)
+                if (!IsOwner)
                 {
-					_mapper.Map(jsonUnit, unit);
-				}
-                else
-                {
-					var instance = (OrganisationalUnit)Activator.CreateInstance(UnitType);
-					_mapper.Map(jsonUnit, instance);
-					organisation.OrganisationalUnits.Add(instance);
-				}
-				var IA = organisation.InsuranceAttributes.FirstOrDefault(i=>i.Name == TypeName);
-				if(IA != null)
-                {
-					organisation.InsuranceAttributes.Clear();					
-				}
-				organisation.InsuranceAttributes.Add(
-						new InsuranceAttribute(user, TypeName)
-						);
+					if (user != null)
+					{
+						user = _mapper.Map(jsonUser, user);
+						await _userService.Update(user);
+					}
 
+					var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
+					if (unit != null)
+					{
+						_mapper.Map(jsonUnit, unit);
+					}
+					else
+					{
+						var instance = (OrganisationalUnit)Activator.CreateInstance(UnitType);
+						_mapper.Map(jsonUnit, instance);
+						organisation.OrganisationalUnits.Add(instance);
+					}
+					var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
+					if (IA != null)
+					{
+						organisation.InsuranceAttributes.Clear();
+					}
+					organisation.InsuranceAttributes.Add(
+							new InsuranceAttribute(user, TypeName)
+							);
+				}
 				await Update(organisation);
 			}			
-			//UpdateLDap(organisation);
 		}
 
 		public async Task<Organisation> GetOrganisationByName(string organisationName)
@@ -321,13 +327,25 @@ namespace DealEngine.Services.Impl
 				foreach (var Key in collection.Keys)
 				{
 					var value = Key.Split(".").ToList().LastOrDefault();
-					if (model.ContainsKey(value))
+					var Field = type.GetProperty(value);
+					if (Field != null)
 					{
-						model[value] = collection[Key].ToString();
-					}
-					else
-					{
-						model.Add(value, collection[Key].ToString());
+						var fieldType = Field.PropertyType;
+						if (
+							(fieldType == typeof(string)) ||
+							(fieldType == typeof(int)) ||
+							(fieldType == typeof(decimal)) ||
+							(fieldType == typeof(DateTime)))
+						{
+							if (model.ContainsKey(value))
+							{
+								model[value] = collection[Key].ToString();
+							}
+							else
+							{
+								model.Add(value, collection[Key].ToString());
+							}
+						}
 					}
 				}
 

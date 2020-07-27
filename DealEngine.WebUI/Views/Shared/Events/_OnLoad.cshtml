@@ -79,7 +79,10 @@
                 }
                 if (Method == "Owner") {
                     document.getElementById("Organisation.OrganisationType").disabled = true;
-                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    var IA = document.getElementById("Organisation.InsuranceAttribute");
+                    IA.options[IA.selectedIndex].value = "Person - Individual";
+                    IA.options[IA.selectedIndex].text = "Person - Individual";
+                    IA.disabled = true;
                     document.getElementById("Else").hidden = false;
                 }
             }

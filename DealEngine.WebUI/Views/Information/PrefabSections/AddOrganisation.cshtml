@@ -94,7 +94,7 @@
             </div>
         </div>
         <div id="OrganisationTab3" class="tab-pane" role="tabpanel">
-            @using (Html.BeginForm("AddOrganisation", "Services", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
+            @using (Html.BeginForm("AddOrganisation", "Organisation", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
             {
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
