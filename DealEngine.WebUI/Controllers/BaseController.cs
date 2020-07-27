@@ -89,13 +89,25 @@ namespace DealEngine.WebUI.Controllers
                 foreach (var Key in collection.Keys)
                 {
                     var value = Key.Split(".").ToList().LastOrDefault();
-                    if (model.ContainsKey(value))
+                    var Field = type.GetProperty(value);
+                    if (Field != null)
                     {
-                        model[value] = collection[Key].ToString();
-                    }
-                    else
-                    {
-                        model.Add(value, collection[Key].ToString());
+                        var fieldType = Field.PropertyType;                        
+                        if(
+                            (fieldType == typeof(string))|| 
+                            (fieldType == typeof(int)) ||
+                            (fieldType == typeof(decimal)) ||
+                            (fieldType == typeof(DateTime)))
+                        {
+                            if (model.ContainsKey(value))
+                            {
+                                model[value] = collection[Key].ToString();
+                            }
+                            else
+                            {
+                                model.Add(value, collection[Key].ToString());
+                            }
+                        }
                     }
                 }
                 
@@ -109,15 +121,16 @@ namespace DealEngine.WebUI.Controllers
                             NullValueHandling = NullValueHandling.Ignore,
                             DateFormatHandling = DateFormatHandling.IsoDateFormat,
                             FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
+                            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+                            DefaultValueHandling = DefaultValueHandling.Ignore
                         }); ;                                    
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-            return obj;
+            
+            return obj;          
         }
 
         /// <summary>

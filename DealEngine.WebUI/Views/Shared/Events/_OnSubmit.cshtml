@@ -4,7 +4,9 @@
         var dataItem;
         var dataRule;
         var RemoveAdvisors = false;
+        var IsPrivate = document.getElementById('Private').hidden;
         var form = document.getElementById(FormId);
+        
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
                 try {
@@ -17,8 +19,8 @@
                                 RemoveAdvisors = true;
                             }
                         }
-                        var isHidden = element.parentElement.parentElement.hidden;                        
-                        if (element.classList.contains("is-invalid") && (isHidden != true)) {
+                        var IsHidden = IsElementHidden(element);                            
+                        if (element.classList.contains("is-invalid") && (IsHidden != true)) {
                             PostAjax = false;
                             //write a message here or stop the process
                             debugger;            
