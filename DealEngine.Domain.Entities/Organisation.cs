@@ -107,6 +107,12 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
+        public virtual string TradingName
+        {
+            get;
+            set;
+        }
+
         public virtual IList<string> Marinaorgmooredtype
         {
             get;
