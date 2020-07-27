@@ -105,7 +105,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int intnumberofadvisors = 0;
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name== "Advisor")))
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name == "Advisor" || i.Name == "Nominated Representative")))
                 {
                     if (uisorg.DateDeleted == null && !uisorg.Removed)
                     {
