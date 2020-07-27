@@ -272,9 +272,9 @@
 
                                 <select data-placeholder="Choose Responsible Principal..." id="ResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
                                     <option selected="selected" value="">-- Select here --</option>
-                                    @foreach (var bwloc in Model.AvailableOrganisations)
+                                    @foreach (var org in Model.OrganisationViewModel.Organisations)
                                     {
-                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                        <option value="@org.Id"> @org.Name</option>
                                     }
 
                                 </select>
@@ -475,9 +475,9 @@
 
                                     <option selected="selected" value="">-- Select here --</option>
 
-                                    @foreach (var bwloc in Model.AvailableOrganisations)
+                                    @foreach (var org in Model.OrganisationViewModel.Organisations)
                                     {
-                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                        <option value="@org.Id"> @org.Name</option>
                                     }
 
                                 </select>

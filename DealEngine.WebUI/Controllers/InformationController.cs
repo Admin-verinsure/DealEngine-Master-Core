@@ -960,29 +960,6 @@ namespace DealEngine.WebUI.Controllers
                     });
                 }
 
-                var availableorganisation = new List<SelectListItem>();
-
-                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
-                {
-                    availableorganisation.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = "" + organisation.Id,
-                        Text = organisation.Name
-                    });
-                }
-
-                availableorganisation.Add(new SelectListItem
-                {
-                    Selected = false,
-                    Value = "" + sheet.Owner.Id,
-                    Text = sheet.Owner.Name
-                });
-
-
-
-                model.AvailableOrganisations = availableorganisation;
-
                 //model.AllVehicles = vehicles;
 
                 var userDetails = _mapper.Map<UserDetailsVM>(user);

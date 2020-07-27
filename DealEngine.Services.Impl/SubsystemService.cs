@@ -45,7 +45,7 @@ namespace DealEngine.Services.Impl
 
         public async Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
-            var principalOrganisations = await _organisationService.GetSubsystemOrganisationPrincipals(sheet);
+            var principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
             try
             {
@@ -195,20 +195,18 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task ValidateSubObjects(ClientInformationSheet informationSheet, User user)
+        public async Task ValidateSubObjects(ClientInformationSheet informationSheet,  User user, List<Organisation> Advisors)
         {
-            var principalOrganisations = await _organisationService.GetSubsystemOrganisationPrincipals(informationSheet);
-
             for (var i = informationSheet.SubClientInformationSheets.Count - 1; i >= 0; i--)
             {
                 RemoveSubObjects(informationSheet, informationSheet.SubClientInformationSheets[i]);
             }
-            
-            if(principalOrganisations.Count > 0)
+
+            if (Advisors.Count > 0)
             {
                 List<SubClientInformationSheet> subSheets = new List<SubClientInformationSheet>();
 
-                foreach (var principal in principalOrganisations)
+                foreach (var principal in Advisors)
                 {
                     var subSheet = await CreateSubObjectProcess(informationSheet.Programme, informationSheet, principal);
 
@@ -223,6 +221,19 @@ namespace DealEngine.Services.Impl
 
             informationSheet.submitted(user);
             await _clientInformationService.UpdateInformation(informationSheet);
+        }
+
+        public async Task ValidateProgramme(ClientInformationSheet informationSheet, User user)
+        {
+            if (informationSheet.Programme.BaseProgramme.Name == "")
+            {
+                var principalOrganisations = await _organisationService.GetNZFSGSubsystemAdvisors(informationSheet);
+            }
+            else
+            {
+                var advisors = await _organisationService.GetTripleASubsystemAdvisors(informationSheet);
+                ValidateSubObjects(informationSheet, user, advisors);
+            }                        
         }
 
         private void RemoveSubObjects(ClientInformationSheet informationSheet, SubClientInformationSheet subsheet)

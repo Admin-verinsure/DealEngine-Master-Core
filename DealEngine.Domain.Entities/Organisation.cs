@@ -135,6 +135,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsApproved { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
 
+
         #endregion
 
         #region OldGetters
@@ -251,6 +252,5 @@ namespace DealEngine.Domain.Entities
                 Domain = "#"
             };
         }
-
     }
 }

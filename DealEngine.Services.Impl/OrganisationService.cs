@@ -130,6 +130,10 @@ namespace DealEngine.Services.Impl
 					var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
 					if (unit != null)
 					{
+                        if (string.IsNullOrWhiteSpace(TypeName))
+                        {
+							unit.Name = TypeName;
+						}						
 						_mapper.Map(jsonUnit, unit);
 					}
 					else
@@ -171,22 +175,34 @@ namespace DealEngine.Services.Impl
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed==true);
 		}
 
-		public async Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet)
+		public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();			
 			foreach (var organisation in sheet.Organisation.Where(o=>o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
 			{
-				organisations.Add(organisation);
+				var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Type == "Advisor" || u.Type == "Nominated Representative");
+				if (unit != null)
+				{
+					organisations.Add(organisation);
+				}
 			}
 			return organisations;
 		}
 
-		public async Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet)
+		public async Task<List<Organisation>> GetTripleASubsystemAdvisors(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();
-			foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
+			foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor" || i.Name == "Nominated Representative")))
 			{
-				organisations.Add(organisation);
+				var UnitName = organisation.InsuranceAttributes.FirstOrDefault().Name;
+				var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == UnitName);
+				if (unit != null)
+                {
+					if(!unit.IsPrincipalAdvisor)
+                    {
+						organisations.Add(organisation);
+					}					
+				}				
 			}
 			return organisations;
 		}
@@ -258,7 +274,7 @@ namespace DealEngine.Services.Impl
 				{										
 					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 				}
-				if(Type == "Advisor")
+				if(Type == "Advisor" || Type == "Nominated Representative")
                 {
 					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
 					OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
@@ -335,6 +351,7 @@ namespace DealEngine.Services.Impl
 							(fieldType == typeof(string)) ||
 							(fieldType == typeof(int)) ||
 							(fieldType == typeof(decimal)) ||
+							(fieldType == typeof(bool)) ||
 							(fieldType == typeof(DateTime)))
 						{
 							if (model.ContainsKey(value))
