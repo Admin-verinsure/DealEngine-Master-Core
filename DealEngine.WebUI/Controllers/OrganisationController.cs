@@ -7,7 +7,6 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -153,15 +152,15 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> PrincipalAdvisor(IFormCollection collection)
+        public async Task<IActionResult> RemovePrincipalAdvisors(IFormCollection collection)
         {
             User currentUser = await CurrentUser();
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
-            string Type = "Advisor";
+            string Name = "Advisor";
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
             foreach(var organisation in Sheet.Organisation)
             {
-                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Type == Type);
+                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == Name);
                 if(advisorUnit != null)
                 {
                     advisorUnit.IsPrincipalAdvisor = false;

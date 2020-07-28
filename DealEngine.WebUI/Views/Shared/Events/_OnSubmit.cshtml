@@ -1,12 +1,8 @@
 ﻿<script type="text/javascript">
     function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
-        var dataItem;
-        var dataRule;
         var RemoveAdvisors = false;
-        var IsPrivate = document.getElementById('Private').hidden;
         var form = document.getElementById(FormId);
-        
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
                 try {
@@ -14,16 +10,16 @@
                         var element = document.getElementById(form[i].id);
                         OnChange(element.id, element.name);
                         var dataRule = element.getAttribute('data-rule');
-                        if (dataRule == "PrincipalAdvisor") {
-                            if (element[element.selectedIndex].value == "True") {
+                        if (dataRule == "PrincipalAdvisor") {                            
+                            if (element[element.selectedIndex].value == "true") {                                
                                 RemoveAdvisors = true;
                             }
                         }
-                        var IsHidden = IsElementHidden(element);                            
+                        var IsHidden = IsElementHidden(element);
                         if (element.classList.contains("is-invalid") && (IsHidden != true)) {
                             PostAjax = false;
                             //write a message here or stop the process
-                            debugger;            
+                            debugger;
                             throw element.id + " incomplete";
                         }
                     }
@@ -40,18 +36,21 @@
         if (PostAjax) {
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
-                $.ajax({
-                    url: '@Url.Action("PrincipalAdvisor", "Organisation")',
-                    type: "POST",
-                    data: $("#" + form.id).serialize(),
-                    error: function (request, error) {
-                        debugger;
-                    }
-                });
-
+                if (RemoveAdvisors) {
+                    $.ajax({
+                        url: '@Url.Action("RemovePrincipalAdvisors", "Organisation")',
+                        type: "POST",
+                        async: false,
+                        data: $("#" + form.id).serialize(),
+                        error: function (request, error) {
+                            debugger;
+                        }
+                    });
+                }
                 $.ajax({
                     url: '@Url.Action("AddOrganisation", "Organisation")',
                     type: "POST",
+                    async: false,
                     data: $("#" + form.id).serialize(),
                     success: function (Data) {
                         form.reset();

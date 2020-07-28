@@ -202,7 +202,7 @@ namespace DealEngine.Services.Impl
                 RemoveSubObjects(informationSheet, user, informationSheet.SubClientInformationSheets[i]);
             }
 
-            if (Advisors.Count > 0)
+            if (Advisors.Any())
             {
                 List<SubClientInformationSheet> subSheets = new List<SubClientInformationSheet>();
 
