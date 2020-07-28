@@ -1529,6 +1529,110 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportAAAAdministrationIndividuals(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            User user = null;
+            // Organisation organisation = new Organisation();
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string userName;
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "TripleAUserAdministrationAdvisor.csv";
+
+            var organisationType = new OrganisationType(null, "Person - Individual");
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    email = "";
+                    try
+                    {
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[0]);
+                        var fullname = parts[9].Trim() + " " + parts[10].Trim();
+                        if (hasProgramme)
+                        {
+                            userName = parts[9].Replace(" ", string.Empty) + "_" + parts[10].Replace(" ", string.Empty);
+
+                            if (string.IsNullOrWhiteSpace(parts[12]))
+                            {
+                                email = email = parts[9].Replace(" ", string.Empty) + parts[10].Replace(" ", string.Empty) + "@techcertain.com";
+                            }
+                            else
+                            {
+                                email = parts[12];
+                            }
+                            var privateUnit = new OrganisationalUnit(null, "Private", "Person - Individual", null);
+                            var advisorUnit = new AdvisorUnit(null, "Private", "Advisor", null)
+                            {
+                                RegisteredStatus = parts[13],
+                                Qualifications = parts[14],
+                                Duration = parts[15],
+                                IsPrincipalAdvisor = false
+                            };
+                            var AdvisororganisationType = new OrganisationType(null, "Person - Individual");
+
+                            var IA = new InsuranceAttribute(null, "Administration");
+                            var orgname = parts[9].Trim() + " " + parts[10].Trim();
+                            Organisation Advisororganisation = new Organisation(currentUser, Guid.NewGuid(), orgname, AdvisororganisationType, email);
+                            Advisororganisation.Clientmembership = parts[0];
+                            Advisororganisation.InsuranceAttributes.Add(IA);
+                            Advisororganisation.OrganisationalUnits.Add(privateUnit);
+                            Advisororganisation.OrganisationalUnits.Add(advisorUnit);
+                            await _organisationService.CreateNewOrganisation(Advisororganisation);
+                            await _programmeService.AddOrganisationByMembership(Advisororganisation);
+
+                            //await _programmeService.AddOrganisationByMembership(organisation);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user == null)
+                            {
+                                try
+                                {
+                                    user = await _userService.GetUser(userName);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    userName = userName + randomNumber.ToString();
+                                }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[9].Trim();
+                                user.LastName = parts[10].Trim();
+                                user.FullName = user.FirstName + " " + user.LastName;
+                                user.Email = email;
+                                user.Address = "";
+                                if (!user.Organisations.Contains(Advisororganisation))
+                                    user.Organisations.Add(Advisororganisation);
+
+                                user.SetPrimaryOrganisation(Advisororganisation);
+                                await _userService.ApplicationCreateUser(user);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+        }
+
         public async Task ImportCEASServiceClaims(User CreatedUser)
         {
             var currentUser = CreatedUser;

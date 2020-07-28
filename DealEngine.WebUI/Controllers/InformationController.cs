@@ -226,6 +226,7 @@ namespace DealEngine.WebUI.Controllers
                     sections.Add(Section.CustomView);
                 }
                 model.ListSection = sections;
+                
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
             }
@@ -435,7 +436,26 @@ namespace DealEngine.WebUI.Controllers
                         Text = product.Name
                     });
                 }
+                var availableorganisation = new List<SelectListItem>();
 
+                foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
+                {
+                    availableorganisation.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = "" + organisation.Id,
+                        Text = organisation.Name
+                    });
+                }
+
+                availableorganisation.Add(new SelectListItem
+                {
+                    Selected = false,
+                    Value = "" + sheet.Owner.Id,
+                    Text = sheet.Owner.Name
+                });
+
+                model.AvailableOrganisations = availableorganisation;
                 model.AllVehicles = vehicles;
 
                 var userDetails = _mapper.Map<UserDetailsVM>(user);

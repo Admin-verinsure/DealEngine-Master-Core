@@ -45,9 +45,11 @@
                         @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
                         if (Section == "CommonYou")
                         {
-                            <div id="ReportCommonyouView" hidden>
-                                @Html.Partial("PrefabSections/" + Section, Model)
-                            </div>
+                         <div id="ReportCommonyouView" hidden>
+                           @await Html.PartialAsync("PrefabSections/" + Section, Model)
+
+                           @*@Html.Partial("PrefabSections/" + Section, Model)*@
+                          </div>
                             <br />
 
                         }
