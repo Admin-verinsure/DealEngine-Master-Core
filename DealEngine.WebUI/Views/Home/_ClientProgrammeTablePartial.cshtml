@@ -23,18 +23,10 @@
                         <div class="accordion" id="subsystemAccodion">
                             <div class="card">
                                 <div class="card-header" id="heading_@item.Id">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_@item.Id" aria-expanded="true" aria-controls="collapse_@item.Id">
-                                            @(item.Name + "  (Reference: " + item.ReferenceId + ") ")
-                                        </button>
-                                    </h2>
-                                </div>
-
-                                <div id="collapse_@item.Id" class="collapse" aria-labelledby="heading_@item.Id" data-parent="#subsystemAccodion">
-                                    <div class="card-body">
+                                    <h5 class="mb-0">
                                         @(item.Name + "  (Reference: " + item.ReferenceId + ") ")
-                                    </div>
-                                </div>
+                                    </h5>
+                                </div>                                
                             </div>
                             <div class="card">
                                 <div class="card-header" id="heading_@item.SubClientProgrammes.FirstOrDefault().Id">
