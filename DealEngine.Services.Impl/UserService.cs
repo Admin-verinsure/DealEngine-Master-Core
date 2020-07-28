@@ -177,6 +177,7 @@ namespace DealEngine.Services.Impl
 			}
             catch(Exception ex)
 			{
+				await Update(user);
 				_logger.LogWarning(ex.Message);
 			}
             //await Update (user);
