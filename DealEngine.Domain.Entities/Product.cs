@@ -50,6 +50,7 @@ namespace DealEngine.Domain.Entities
         public virtual Product DependableProduct { get; set; }
         public virtual string WordingDownloadURL { get; set; }
         public virtual bool IsOptionalProductBasedSub { get; set; }
+        public virtual bool IsOptionalCombinedProduct { get; set; }
 
         protected Product() : base(null) { }
 

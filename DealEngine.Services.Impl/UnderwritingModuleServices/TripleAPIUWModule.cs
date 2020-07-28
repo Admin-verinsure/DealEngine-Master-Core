@@ -162,53 +162,58 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decOtherInvetmentPerc = 0m;
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.HasClientFundsOptions").First().Value == "1")
             {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds").First().Value != null)
+                var sss = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds");
+
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds").Any())
                 {
                     decOtherInvetmentPerc = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds").First().Value);
                 }
             }
 
+
             int TermExcess = 0;
             TermExcess = 1000;
 
-            int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = 0M;
-            decimal TermBrokerage1mil = 0M;
+            if (intnumberofadvisors > 1)
+            {
+                int TermLimit1mil = 1000000;
+                decimal TermPremium1mil = 0M;
+                decimal TermBrokerage1mil = 0M;
 
-            TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors);
+                TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors);
 
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
+                TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
-            term1millimitpremiumoption.TermLimit = TermLimit1mil;
-            term1millimitpremiumoption.Premium = TermPremium1mil;
-            term1millimitpremiumoption.BasePremium = TermPremium1mil;
-            term1millimitpremiumoption.Excess = TermExcess;
-            term1millimitpremiumoption.BrokerageRate = agreement.Brokerage;
-            term1millimitpremiumoption.Brokerage = TermBrokerage1mil;
-            term1millimitpremiumoption.DateDeleted = null;
-            term1millimitpremiumoption.DeletedBy = null;
-
-
-            int TermLimit2mil = 2000000;
-            decimal TermPremium2mil = 0M;
-            decimal TermBrokerage2mil = 0M;
-
-            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors);
-
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
-
-            ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
-            term2millimitpremiumoption.TermLimit = TermLimit2mil;
-            term2millimitpremiumoption.Premium = TermPremium2mil;
-            term2millimitpremiumoption.BasePremium = TermPremium2mil;
-            term2millimitpremiumoption.Excess = TermExcess;
-            term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
-            term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
-            term2millimitpremiumoption.DateDeleted = null;
-            term2millimitpremiumoption.DeletedBy = null;
+                ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
+                term1millimitpremiumoption.TermLimit = TermLimit1mil;
+                term1millimitpremiumoption.Premium = TermPremium1mil;
+                term1millimitpremiumoption.BasePremium = TermPremium1mil;
+                term1millimitpremiumoption.Excess = TermExcess;
+                term1millimitpremiumoption.BrokerageRate = agreement.Brokerage;
+                term1millimitpremiumoption.Brokerage = TermBrokerage1mil;
+                term1millimitpremiumoption.DateDeleted = null;
+                term1millimitpremiumoption.DeletedBy = null;
 
 
+                int TermLimit2mil = 2000000;
+                decimal TermPremium2mil = 0M;
+                decimal TermBrokerage2mil = 0M;
+
+                TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors);
+
+                TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
+
+                ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
+                term2millimitpremiumoption.TermLimit = TermLimit2mil;
+                term2millimitpremiumoption.Premium = TermPremium2mil;
+                term2millimitpremiumoption.BasePremium = TermPremium2mil;
+                term2millimitpremiumoption.Excess = TermExcess;
+                term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
+                term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
+                term2millimitpremiumoption.DateDeleted = null;
+                term2millimitpremiumoption.DeletedBy = null;
+            }
+           
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
@@ -281,6 +286,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
+
+                if (DateTime.UtcNow > product.DefaultInceptionDate.AddMonths(1))
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

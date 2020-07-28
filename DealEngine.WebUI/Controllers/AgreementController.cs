@@ -2424,64 +2424,68 @@ namespace DealEngine.WebUI.Controllers
                             doc.Delete(user);
                         }
 
-                        foreach (SystemDocument template in agreeTemplateList)
+                        if (!agreement.Product.IsOptionalCombinedProduct)
                         {
-                            if (template.ContentType == MediaTypeNames.Application.Pdf)
+                            foreach (SystemDocument template in agreeTemplateList)
                             {
-                                SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
-                                agreement.Documents.Add(notRenderedDoc);
-                                documents.Add(notRenderedDoc);
-                            }
-                            else
-                            {
-                                //render docs except invoice
-                                if (template.DocumentType != 4 && template.DocumentType != 6)
+                                if (template.ContentType == MediaTypeNames.Application.Pdf)
                                 {
-                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                    agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
-                                    await _fileService.UploadFile(renderedDoc);
+                                    SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
+                                    agreement.Documents.Add(notRenderedDoc);
+                                    documents.Add(notRenderedDoc);
                                 }
-                                //render all subsystem
-                                if (template.DocumentType == 6)
+                                else
                                 {
-                                    foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                                    //render docs except invoice
+                                    if (template.DocumentType != 4 && template.DocumentType != 6)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDoc);
                                         documents.Add(renderedDoc);
                                         await _fileService.UploadFile(renderedDoc);
                                     }
-                                }
-                            }
-                        }
-
-                        if (programme.BaseProgramme.ProgEnableEmail)
-                        {
-                            if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
-                            {
-                                //send out policy document email
-                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                if (emailTemplate != null)
-                                {
-                                   await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-
-                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    //render all subsystem
+                                    if (template.DocumentType == 6)
                                     {
-                                        if (!agreement.IsPolicyDocSend)
+                                        foreach (var subSystemClient in sheet.SubClientInformationSheets)
                                         {
-                                            agreement.IsPolicyDocSend = true;
-                                            agreement.DocIssueDate = DateTime.Now;
-                                            await uow.Commit();
+                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            documents.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
                                         }
                                     }
                                 }
                             }
-                            //send out agreement bound notification email
-                          await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+
+                            if (programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
+                                {
+                                    //send out policy document email
+                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                    if (emailTemplate != null)
+                                    {
+                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+
+                                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                                        {
+                                            if (!agreement.IsPolicyDocSend)
+                                            {
+                                                agreement.IsPolicyDocSend = true;
+                                                agreement.DocIssueDate = DateTime.Now;
+                                                await uow.Commit();
+                                            }
+                                        }
+                                    }
+                                }
+                                //send out agreement bound notification email
+                                await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                            }
                         }
+                        
                     }
                     else
                     {
