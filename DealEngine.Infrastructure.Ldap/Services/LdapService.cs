@@ -115,9 +115,9 @@ namespace DealEngine.Infrastructure.Ldap.Services
 				if (response.ResultCode > 0)
 					throw new Exception ("Unable to create user in Ldap: " + response.ErrorMessage);
 			}
-			foreach (Organisation org in user.Organisations)
-				if (GetOrganisation(org.Id) == null)
-					Create (org);
+			//foreach (Organisation org in user.Organisations)
+			//	if (GetOrganisation(org.Id) == null)
+			//		Create (org);
 		}
 
 		public void Create (Organisation organisation)

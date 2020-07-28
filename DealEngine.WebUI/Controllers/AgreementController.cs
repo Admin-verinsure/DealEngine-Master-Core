@@ -1650,7 +1650,7 @@ namespace DealEngine.WebUI.Controllers
                 bool isComplete;
                 if (clientProgramme.SubClientProgrammes.Count != 0)
                 {
-                    await _subsystemService.ValidateSubObjects(clientProgramme.InformationSheet,user);
+                    await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet,user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
                 }
                 else
@@ -2060,30 +2060,9 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
                 ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
-                List<Organisation> organisations = await _organisationService.GetOrganisationPrincipals(answerSheet);
-                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-                List<Organisation> Advisors = new List<Organisation>();
-                try
-                {
-                    foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Advisor"))
-
-                    {
-                        //for (var ind = 0; ind <= IA.IAOrganisations.Count; ind++)
-                        //{
-                        //    foreach (var organisation in organisations.Where(o => o.Id == IA.IAOrganisations[ind].Id && o.Removed != true))
-                        //    {
-                        //        Advisors.Add(organisation);
-                        //    }
-                        //}
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                }
-
+                List<Organisation> organisations = await _organisationService.GetNZFSGSubsystemAdvisors(answerSheet);
                 model.ProgId = answerSheet.Programme.Id;
-                model.Owner = Advisors;
+                model.Owner = organisations;
                 model.AgreementId = id;
                 //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
 

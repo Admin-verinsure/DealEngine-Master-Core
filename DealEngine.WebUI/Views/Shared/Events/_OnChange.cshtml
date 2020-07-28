@@ -252,6 +252,12 @@
                 List.disabled = false;
                 OrganisationTypeOnChange(List, Value);                
             }
+            if (Rule === "RemoveOrganisationName") {
+                if (obj.options[obj.selected].value == "Private") {
+                    document.getElementById("Organisation.Name").value = "";
+                    debugger;
+                }                    
+            }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
 

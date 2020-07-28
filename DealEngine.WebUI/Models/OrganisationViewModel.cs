@@ -62,7 +62,7 @@ namespace DealEngine.WebUI.Models
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
 
-                Organisations.Add(ClientInformationSheet.Owner);
+                //Organisations.Add(ClientInformationSheet.Owner);
                 if (ClientInformationSheet.Organisation.Any())
                 {
                     foreach(var sheetOrg in ClientInformationSheet.Organisation)

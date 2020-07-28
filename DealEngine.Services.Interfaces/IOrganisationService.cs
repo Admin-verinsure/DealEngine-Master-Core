@@ -18,8 +18,8 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
         Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail);
         Task UpdateOrganisation(IFormCollection collection);
-        Task<List<Organisation>> GetOrganisationPrincipals(ClientInformationSheet sheet);
-        Task<List<Organisation>> GetSubsystemOrganisationPrincipals(ClientInformationSheet sheet);
+        Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet); 
+        Task<List<Organisation>> GetTripleASubsystemAdvisors(ClientInformationSheet sheet);
         Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
         Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
         Task<Organisation> GetAnyRemovedAdvisor(string email);

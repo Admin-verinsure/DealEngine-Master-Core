@@ -3,7 +3,7 @@
     <div class="form-group col-md-6">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.OrganisationTypes, new { @class = "label required" })
-            <select id="Organisation.OrganisationType" name="OrganisationViewModel.OrganisationType" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="Organisation.OrganisationType" name="OrganisationViewModel.OrganisationType" class="custom-select" data-rule="RemoveOrganisationName" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in Model.OrganisationViewModel.OrganisationTypes)
                 {
                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -36,11 +36,11 @@
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Phone, new { @class = "form-control", @id = "Organisation.Phone", @onchange = "OnChange(this.id, this.name)" })
     </div>
-    @if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
+    @if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
     {
         <div class="form-group col-md-6">
-            @Html.LabelFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.PrincipalUnit.TradingName, new { @class = "form-control", @id = "PrincipalUnit.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+            @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
         </div>
         }
     @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
