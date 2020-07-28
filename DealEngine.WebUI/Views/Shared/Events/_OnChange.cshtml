@@ -280,7 +280,7 @@
     }
 
     function OrganisationTypeOnChange(List, Value) {
-        if (Value == "Advisor" || Value == "Personnel" || Value == "Principal") {
+        if (Value == "Advisor" || Value == "Personnel" || Value == "Principal" || Value == "Administration") {
             //readonly Organisation Type personal
             for (var i = 0; i < List.options.length; i++) {
                 if (List.options[i].value == "Person - Individual") {
