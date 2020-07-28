@@ -3603,33 +3603,19 @@ namespace DealEngine.WebUI.Controllers
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
 
             Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
-            Organisation organisation;
-            Organisation principalAdvisor = null;
+            Organisation organisation = null;
             string membershipNumber = collection["MemberShipNo"];
 
             try
             {
                 currentUser = await CurrentUser();
-                organisation = await _organisationService.GetAnyRemovedAdvisor(Email);
-                //condition for organisation exists
-                if (organisation != null)
-                {
-                    await _clientInformationService.RemoveOrganisationFromSheets(organisation);
-                    //await _organisationService.ChangeOwner(organisation, null);
-                    principalAdvisor = organisation;
-                    organisation = null;
-                }
-                if (organisation == null)
-                {
-                    organisation = await _organisationService.GetOrCreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                    
-                }
-                
+                organisation = await _organisationService.GetOrCreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
                 var user = await _userService.GetUserByEmail(Email);
                 var sheet = await _programmeService.CreateUIS(programmeId, user, organisation);
                 
-                if (principalAdvisor != null)
+                if (organisation != null)
                 {
-                    sheet.Organisation.Add(principalAdvisor);
+                    sheet.Organisation.Add(organisation);
                 }                                
                 if (!string.IsNullOrWhiteSpace(membershipNumber))
                 {

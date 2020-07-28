@@ -315,6 +315,186 @@
 
         function AddDropdownInput() {
             document.getElementById('dropdownTemplate').innerHTML
+    }
+
+    $("#checkedAll").click(function () {
+        debugger;
+        if (this.checked) {
+            $(".PartyOrg").each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(".PartyOrg").each(function () {
+                this.checked = false;
+            });
         }
+    });
+
+
+    $(".PartyOrg").click(function () {
+        debugger;
+
+        if ($(this).is(":checked")) {
+            var isAllChecked = 0;
+
+            $(".PartyOrg").each(function () {
+                if (!this.checked)
+                    isAllChecked = 1;
+            });
+
+            if (isAllChecked == 0) {
+                $("#checkedAll").prop("checked", true);
+            }
+        }
+        else {
+            $("#checkedAll").prop("checked", false);
+        }
+    });
+
+
+     function getseletedorgUser() {
+        debugger;
+        var InformationId = $('#Id').val();
+        var postdata = { informationId: InformationId};
+         $.ajax({
+             url: '@Url.Action("getselectedParty", "Programme")',
+             type: "Post",
+             data: postdata
+         })
+            .done(function (data) {
+                debugger;
+
+                $.each(data, function (i, item) {
+                      $("input[value = '" + item + "']").attr('checked', 'checked');
+                });
+
+            }).fail(function (a, s, d) {
+                debugger;
+            });
+     };
+
+    function selectorgUser() {
+        var SelectedParty = $('#selectParty').val();
+        var InformationId = $('#Id').val();
+        var postdata = {selectedParty : SelectedParty , informationId: InformationId};
+        $.ajax({
+            url: '@Url.Action("selectedParty", "Programme")',
+            type: "Post",
+            data: postdata
+        })
+            .done(function (data) {
+                debugger;
+                var availableoptions = [];
+                $.each(data, function (i, item) {
+
+                    availableoptions[i] = item.email;
+                });
+
+                  if (data.length > 0) {
+                    $('#div1').empty();
+                    $('#div1').append("<label class=\"label\" id=\"SelectedUser\">Select User to notify:</label><br>");
+                } else {
+                    $('#div1').empty();
+                };
+
+                $.each(data, function (i, item) {
+                    $('#div1').append("<div class=\"input-group\"><div class=\"input-group-prepend\"> " +
+                        "<div class=\"input-group-text\"><input type=\"checkbox\" name=\"selectedEmail\" value=\"" + item.email + "\"> " +
+                        "</div ></div > <input type=\"text\" class=\"form-control\" name=\"PartyOrg\" value=" + item.name + ">" +
+                            "</div ></div >");
+                });
+
+                getseletedorgUser();
+
+            });
+    };
+
+    function boxdisable(source) {
+       debugger;
+     var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+    }
+
+    function addselectorgUser(Title) {
+
+        var test = document.getElementById("issueNotifyForm");
+
+        $.ajax({
+            url: '@Url.Action("AddselectedParty", "Programme")',
+            type: "Post"
+        })
+        .done(function (data) {
+            debugger;
+        }).fail(function (a, s, d) {
+            debugger;
+        });
+    };
+
+    $('#myModal').on('show.bs.modal', function (e) {
+        debugger;
+
+        $('.modal').css('width', '600px');
+        var RuleName = $(e.relatedTarget).data('rule-name');
+        debugger;
+        var RuleDesc = $(e.relatedTarget).data('rule-desc');
+        var RuleOrder = $(e.relatedTarget).data('rule-order');
+        var RuleVal = $(e.relatedTarget).data('rule-val');
+        var RulId = $(e.relatedTarget).data('rule-id');
+        $(e.currentTarget).find('input[name="Name"]').val(RuleName);
+        $(e.currentTarget).find('input[name="Description"]').val(RuleDesc);
+        $(e.currentTarget).find('input[name="OrderNumber"]').val(RuleOrder);
+        $(e.currentTarget).find('input[name="Value"]').val(RuleVal);
+        $(e.currentTarget).find('input[name="Id"]').val(RulId);
+
+    });
+
+
+    $("#rulebtnSubmit").click(function () {
+            RuleSubmit();
+    });
+
+    function RuleSubmit() {
+        debugger;
+        var productId = $("#ProductId").val();
+        var ID = $("#Id").val();
+
+        var RuleId = $("#RuleId").val();
+        var RuleName = $("#RuleName").val();
+        var RuleDesc = $("#RuleDesc").val();
+        var RuleOrder = parseInt($("#RuleOrder").val());
+        var RuleVal = $("#RuleVal").val();
+
+        var prodData = {
+            "Name": RuleName,
+            "Description": RuleDesc,
+            "OrderNumber": RuleOrder,
+            "Value": RuleVal,
+            "ClientAgreementRuleID": RuleId
+        };
+
+          $.ajax({
+                url: '@Url.Action("EditRule", "Programme")',
+              type: "Post",
+              data: prodData
+
+            })
+                .done(function (data) {
+                    debugger;
+                    alert("success");
+                    $("#myModalId").click();
+                    location.reload(true);
+
+                })
+              .fail(function (jqXHR, textStatus, errorThrown) {
+                  debugger;
+                    alert("There was an error while trying to save the Boat Use.");
+            });
+
+
+    }
+
 
 </script>

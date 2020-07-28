@@ -157,11 +157,11 @@ namespace DealEngine.WebUI.Controllers
         {
             User currentUser = await CurrentUser();
             Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
-            string Name = "Advisor";
+            string Type = "Advisor";
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
             foreach(var organisation in Sheet.Organisation)
             {
-                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == Name);
+                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Type == Type);
                 if(advisorUnit != null)
                 {
                     advisorUnit.IsPrincipalAdvisor = false;

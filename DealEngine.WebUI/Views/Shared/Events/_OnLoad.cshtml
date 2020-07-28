@@ -25,11 +25,16 @@
                                 Element = document.getElementById(Id);
                                 Value = "Principal";
                             }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor" ) {
                                 PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
                                 var Id = Type + ".InsuranceAttribute";
                                 Element = document.getElementById(Id);
                                 Value = "Advisor";
+                            }else if (OutPut[obj][Field]["0"]["Name"] === "Administration" ) {
+                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
+                                var Id = Type + ".InsuranceAttribute";
+                                Element = document.getElementById(Id);
+                                Value = "Administration";
                             }
                             else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
                                 PopulateOrganisationalUnit(OutPut, "PersonnelUnit");

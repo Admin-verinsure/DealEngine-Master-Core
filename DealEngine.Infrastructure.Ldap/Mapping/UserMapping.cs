@@ -44,10 +44,8 @@ namespace DealEngine.Infrastructure.Ldap.Mapping
 			AddNonNullAttribute (entry, "sn", entity.LastName);
 			AddNonNullAttribute (entry, "givenName", entity.FirstName);
 			AddNonNullAttribute (entry, "cn", entity.FullName);
-			AddNonNullAttribute (entry, "telephoneNumber", entity.Phone);
-			AddNonNullAttribute (entry, "description", entity.Description);
 			// TODO - add org Id map here
-			entry.AddAttribute ("o", entity.Organisations.Select (o => o.Id.ToString ()).ToArray());
+			//entry.AddAttribute ("o", entity.Organisations.Select (o => o.Id.ToString ()).ToArray());
 			
 			return entry;
 		}
