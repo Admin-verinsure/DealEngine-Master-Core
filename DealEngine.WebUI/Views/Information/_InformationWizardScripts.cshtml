@@ -41,8 +41,8 @@
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
 
-           var informationsheetstatus = $('#ClientInformationSheet_Status').val();
-           var clientInformationSheet = $('#ClientInformationSheet_Id').val();
+           var informationsheetstatus = '@Model.ClientInformationSheet.Status.ToString()';
+           var clientInformationSheet = '@Model.ClientInformationSheet.Id';
 
            if (stepDirection == "backward") {
                var stepNumber = stepNumber - 2;
@@ -58,17 +58,6 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-                       var pAdvisor = document.getElementById("IsPrincipalAdvisor");
-                       if (pAdvisor != null) {
-                           var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
-                           if (organisations.length != 1) {                               
-                               window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                               $("#Insured Details / Named Parties").trigger("click");
-                               throw "no principal advisor";
-                           }
-                       }
-
-
                        var forms = document.getElementsByClassName('needs-validation');   //invalid forms
                        var formIds = [];
                        for (var f = 0; f < forms.length; f++) {
@@ -150,7 +139,27 @@
                            }
                        });
 
-                       if (informationsheetstatus != "Bound") {
+                       if (informationsheetstatus !== "Bound") {
+                           if ('@Model.ClientProgramme.BaseProgramme.Name' === "TripleA Programme") {
+                               var pAdvisor = document.getElementById("IsPrincipalAdvisor");
+                               if (pAdvisor != null) {
+                                   var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
+                                   if (organisations.length != 1) {
+                                       window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
+                                       $("#Insured Details / Named Parties").trigger("click");
+                                       throw "no principal advisor";
+                                   }
+                               }
+                               var TradingName = document.getElementById("NoTradingName");
+                               if (TradingName != null) {
+                                   if (TradingName.value === "True") {
+                                       window.alert("Please Add Trading Name to Owner");
+                                       $("#Insured Details / Named Parties").trigger("click");
+                                       throw "no trading name";
+                                   }
+                               }
+                           }
+
                            //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
 
                            //    window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
@@ -178,32 +187,30 @@
                            //}
                        }
 
-                   if ($('#CompanyName').val() === "AON") {
-                       var nextbutton = document.getElementsByClassName("next");
-                       $(nextbutton).addClass("hidden");
-                       $(nextbutton).hide();
-                       var prevbutton = document.getElementsByClassName("previous");
-                       $(prevbutton).addClass("hidden");
-                       $(prevbutton).hide();
+                       if ($('#CompanyName').val() === "AON") {
+                           var nextbutton = document.getElementsByClassName("next");
+                           $(nextbutton).addClass("hidden");
+                           $(nextbutton).hide();
+                           var prevbutton = document.getElementsByClassName("previous");
+                           $(prevbutton).addClass("hidden");
+                           $(prevbutton).hide();
+                       }
+
                    }
 
-                  }
-               }
-
-               $.ajax({
-                   url: '@Url.Action("SubmitInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab_1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
-                       $("#agreementView").load(url, function () {
-                       });
+                   $.ajax({
+                       url: '@Url.Action("SubmitInformation", "Information")',
+                       type: "POST",
+                       data: $("#tab_1 :input").serialize({ json: true })
                    })
-                   .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();
-                   });
-
-
+                       .done(function (url) {
+                           $("#agreementView").load(url, function () {
+                           });
+                       })
+                       .fail(function (a, s, d) {
+                           $('#getAgreementModal').hide();
+                       });
+               }
            } else if (stepNumber === 1) {
                debugger;
                var status = $('#Status').val();
@@ -215,7 +222,7 @@
                    return false;
                    }
                }
- 
+
                $('.sw-btn-prev').hide();
                //$('#getAgreementDecModal').show();
                 var isvalid = 0;
@@ -603,7 +610,7 @@
                             checkInvestmentVal();
                         }
                         document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
-                        
+
                         $('.toast').toast('show');
                         $('#tblBuilding').trigger('reloadGrid');
                         $('#Principal,Partners or Directors').trigger('reloadGrid');
@@ -719,9 +726,9 @@
             if (ele.value != "") {
             var percent = parseInt(ele.value);
             totalpercent +=  percent;
-            
+
             }
-            
+
         });
 
          if (totalpercent != 100) {
@@ -2156,14 +2163,14 @@ function showAccordionPanel(id, panelNo) {
         var claimDescription = $('#AddClaimDescription').val();
         var claimStatus = $('#AddClaimStatus').val();
         //var claimReference = $('#AddClaimReference').val();
-     
+
         var claimant = $('#AddClaimant').val();
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var result = true;
         debugger;
 
-       
+
         if (claimant == "") {
             $('#Addvalidateclaimant').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2214,7 +2221,7 @@ function showAccordionPanel(id, panelNo) {
             $('#AddvalidateclaimStatus').html("<font></font>");
         }
 
-       
+
 
 
         if (result) {
@@ -2643,7 +2650,7 @@ function showAccordionPanel(id, panelNo) {
              document.getElementById("citydetails").value = cityVal;
              document.getElementById("countrydetails").value = countryVal;
              document.getElementById("suburbdetails").value = suburbVal;
-             document.getElementById("postcodedetails").value = postCodeVal;  
+             document.getElementById("postcodedetails").value = postCodeVal;
 
              $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
@@ -2658,19 +2665,19 @@ function showAccordionPanel(id, panelNo) {
                 })
                 .fail(function (a, s, d) {
                     debugger;
-                });             
+                });
          }
 
     }
 
     function AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, locationId) {
 
-        //$('#getLandLocModal').show();        
+        //$('#getLandLocModal').show();
         var street = streetLoc;
         var suburb = suburbLoc;
-        var postcode = postcodeLoc;  
-        var country = countryLoc;  
-        var loctype = loctype;  
+        var postcode = postcodeLoc;
+        var country = countryLoc;
+        var loctype = loctype;
 
             $('#addLocModal' + " :input").val("");
 
@@ -6502,7 +6509,7 @@ async: true
                 },
             }) .done(function (data) {
                 debugger;
-                  
+
                 }).fail(function (a, s, d) {
                     debugger;
                                alert("Unable to process payment.");

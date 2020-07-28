@@ -3609,7 +3609,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 currentUser = await CurrentUser();
-                organisation = await _organisationService.GetOrCreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
+                organisation = await _organisationService.CreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
                 var user = await _userService.GetUserByEmail(Email);
                 var sheet = await _programmeService.CreateUIS(programmeId, user, organisation);
                 

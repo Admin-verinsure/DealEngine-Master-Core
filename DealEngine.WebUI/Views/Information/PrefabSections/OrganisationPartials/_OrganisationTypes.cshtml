@@ -39,10 +39,17 @@
     @if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
     {
         <div class="form-group col-md-6">
-            @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+            @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+            {
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
+                @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
+                {
+                    @Html.Hidden("NoTradingName", true)
+                }
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+            }
         </div>
-        }
+    }
     @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
     {
         @*<div class="form-group">
@@ -50,6 +57,6 @@
             @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Email, new { @class = "form-control", @id = "User.Email", @onchange = "OnChange(this.id, this.name)", @required = "" })
             </div>*@
     }
-        </div>
+</div>
 
 

@@ -101,61 +101,90 @@ namespace DealEngine.Services.Impl
 
 		public async Task UpdateOrganisation(IFormCollection collection)
 		{
+			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+			Organisation organisation;
+			if (string.IsNullOrWhiteSpace(TypeName))
+            {
+				//Owner
+				organisation = await UpdateOwner(collection);				
+			}
+            else
+            {
+				var user = await UpdateOrganisationUser(collection);
+				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+				organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
+				if(organisation != null)
+                {
+					organisation = _mapper.Map(jsonOrganisation, organisation);
+					UpdateOrganisationUnit(organisation, collection);
+					UpdateInsuranceAttribute(organisation, collection);						
+				}				
+            }
+
+			await Update(organisation);			
+		}
+
+        private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
+        {
+			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+			var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
+			if (IA != null)
+			{
+				organisation.InsuranceAttributes.Clear();
+			}
+			organisation.InsuranceAttributes.Add(
+					new InsuranceAttribute(null, TypeName)
+					);
+		}
+
+        private void UpdateOrganisationUnit(Organisation organisation, IFormCollection collection)
+        {
 			var UnitName = collection["Unit"].ToString();
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
-			bool IsOwner = false;
-            if (string.IsNullOrWhiteSpace(TypeName))
-            {
-				IsOwner = true;
-			}
 			Type UnitType = Type.GetType(UnitName);
-			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 			var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
+			var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
+			if (unit != null)
+			{
+				_mapper.Map(jsonUnit, unit);
+			}
+			else
+			{
+				unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
+				_mapper.Map(jsonUnit, unit);
+				organisation.OrganisationalUnits.Add(unit);
+			}
+			if (string.IsNullOrWhiteSpace(TypeName))
+			{
+				unit.Name = TypeName;
+			}
+		}
 
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection)
+        {			
+			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 			var user = await _userService.GetUserByEmail(jsonUser.Email);
-			var organisation = await GetOrganisationByEmail(jsonOrganisation.Email);			
+			if (user != null)
+			{
+				user = _mapper.Map(jsonUser, user);
+				await _userService.Update(user);
+			}
+			return user;
+		}
 
+        private async Task<Organisation>  UpdateOwner(IFormCollection collection)
+        {
+			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+			var organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
 			if(organisation != null)
             {
 				organisation = _mapper.Map(jsonOrganisation, organisation);
-                if (!IsOwner)
-                {
-					if (user != null)
-					{
-						user = _mapper.Map(jsonUser, user);
-						await _userService.Update(user);
-					}
-
-					var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
-					if (unit != null)
-					{
-                        if (string.IsNullOrWhiteSpace(TypeName))
-                        {
-							unit.Name = TypeName;
-						}						
-						_mapper.Map(jsonUnit, unit);
-					}
-					else
-					{
-						var instance = (OrganisationalUnit)Activator.CreateInstance(UnitType);
-						_mapper.Map(jsonUnit, instance);
-						organisation.OrganisationalUnits.Add(instance);
-					}
-					var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
-					if (IA != null)
-					{
-						organisation.InsuranceAttributes.Clear();
-					}
-					organisation.InsuranceAttributes.Add(
-							new InsuranceAttribute(user, TypeName)
-							);
-				}
 				await Update(organisation);
-			}			
+			}
+			return organisation;
 		}
 
-		public async Task<Organisation> GetOrganisationByName(string organisationName)
+        public async Task<Organisation> GetOrganisationByName(string organisationName)
 		{
 			return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Name == organisationName);
 		}
@@ -192,13 +221,13 @@ namespace DealEngine.Services.Impl
 		public async Task<List<Organisation>> GetTripleASubsystemAdvisors(ClientInformationSheet sheet)
 		{
 			var organisations = new List<Organisation>();
-			foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor" || i.Name == "Nominated Representative")))
+			foreach (var organisation in sheet.Organisation.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Advisor" || i.Name == "Nominated Representative")))
 			{
 				var UnitName = organisation.InsuranceAttributes.FirstOrDefault().Name;
 				var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == UnitName);
 				if (unit != null)
                 {
-					if(!unit.IsPrincipalAdvisor)
+					if(!unit.IsPrincipalAdvisor && organisation.Removed != true)
                     {
 						organisations.Add(organisation);
 					}					
@@ -208,7 +237,7 @@ namespace DealEngine.Services.Impl
 		}
 
 
-        public async Task<Organisation> GetOrCreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
+        public async Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
 			Organisation foundOrg = await GetOrganisationByEmail(Email);
 			if (foundOrg == null)
