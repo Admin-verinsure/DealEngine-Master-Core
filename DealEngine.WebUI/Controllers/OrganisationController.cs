@@ -126,7 +126,7 @@ namespace DealEngine.WebUI.Controllers
 
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.GetOrCreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+                    organisation = await _organisationService.CreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
                 }
 
                 await _organisationService.UpdateOrganisation(collection);

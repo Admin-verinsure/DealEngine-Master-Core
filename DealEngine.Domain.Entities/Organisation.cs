@@ -21,7 +21,6 @@ namespace DealEngine.Domain.Entities
         {
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id)
@@ -30,7 +29,6 @@ namespace DealEngine.Domain.Entities
             Id = id;
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, string organisationName)
@@ -42,7 +40,6 @@ namespace DealEngine.Domain.Entities
             Name = organisationName;
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType)
@@ -114,11 +111,6 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        public virtual IList<string> Marinaorgmooredtype
-        {
-            get;
-            set;
-        }
         public virtual OrganisationType OrganisationType
         {
             get;

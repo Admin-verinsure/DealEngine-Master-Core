@@ -199,7 +199,7 @@ namespace DealEngine.Services.Impl
         {
             for (var i = informationSheet.SubClientInformationSheets.Count - 1; i >= 0; i--)
             {
-                RemoveSubObjects(informationSheet, informationSheet.SubClientInformationSheets[i]);
+                RemoveSubObjects(informationSheet, user, informationSheet.SubClientInformationSheets[i]);
             }
 
             if (Advisors.Count > 0)
@@ -225,9 +225,10 @@ namespace DealEngine.Services.Impl
 
         public async Task ValidateProgramme(ClientInformationSheet informationSheet, User user)
         {
-            if (informationSheet.Programme.BaseProgramme.Name == "")
+            if (informationSheet.Programme.BaseProgramme.Name == "NZFSG Programme")
             {
-                var principalOrganisations = await _organisationService.GetNZFSGSubsystemAdvisors(informationSheet);
+                var advisors = await _organisationService.GetNZFSGSubsystemAdvisors(informationSheet);
+                ValidateSubObjects(informationSheet, user, advisors);
             }
             else
             {
@@ -236,15 +237,13 @@ namespace DealEngine.Services.Impl
             }                        
         }
 
-        private void RemoveSubObjects(ClientInformationSheet informationSheet, SubClientInformationSheet subsheet)
+        private void RemoveSubObjects(ClientInformationSheet informationSheet, User user, SubClientInformationSheet subsheet)
         {
-            SubClientProgramme subProg = (SubClientProgramme)subsheet.Programme;
-
-            subsheet.Delete(informationSheet.Organisation.FirstOrDefault().CreatedBy, DateTime.Now);
-            subProg.Delete(informationSheet.Organisation.FirstOrDefault().CreatedBy, DateTime.Now);
-
             try
             {
+                SubClientProgramme subProg = (SubClientProgramme)subsheet.Programme;
+                subsheet.Delete(user, DateTime.Now);
+                subProg.Delete(user, DateTime.Now);
                 informationSheet.Programme.SubClientProgrammes.Remove(subProg);
                 informationSheet.SubClientInformationSheets.Remove(subsheet);
             }
