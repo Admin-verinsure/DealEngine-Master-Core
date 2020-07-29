@@ -20,8 +20,12 @@
 
     function PopulateOrganisationView(Method, OutPut) {
         var Form;
-        Form = document.getElementById("organisationViewModel");
+        Form = document.getElementById("organisationViewModel");        
         try {
+            var TradingName = document.getElementById("NoTradingName");
+            if (TradingName != null) {
+                TradingName.value = false;
+            }             
             for (obj in OutPut) {
                 var model = OutPut[obj];
                 if (obj == "0") {
@@ -101,6 +105,10 @@
                     else { console.log(Id) }
                 }
                 if (Method == "Owner") {
+                    var TradingName = document.getElementById("NoTradingName");
+                    if (TradingName != null) {
+                        TradingName.value = true;
+                    }
                     document.getElementById("Organisation.OrganisationType").disabled = true;
                     var IA = document.getElementById("Organisation.InsuranceAttribute");
                     IA.options[IA.selectedIndex].value = "Person - Individual";

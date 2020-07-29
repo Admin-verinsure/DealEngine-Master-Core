@@ -180,7 +180,7 @@ namespace DealEngine.Services.Impl
 				await Update(user);
 				_logger.LogWarning(ex.Message);
 			}
-            //await Update (user);
+            await Update (user);
 		}
 
 		public async Task Update (User user)

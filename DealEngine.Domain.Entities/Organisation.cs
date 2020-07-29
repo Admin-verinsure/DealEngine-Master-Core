@@ -21,7 +21,6 @@ namespace DealEngine.Domain.Entities
         {
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id)
@@ -30,7 +29,6 @@ namespace DealEngine.Domain.Entities
             Id = id;
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, string organisationName)
@@ -42,7 +40,6 @@ namespace DealEngine.Domain.Entities
             Name = organisationName;
             OrganisationalUnits = new List<OrganisationalUnit>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType)
@@ -56,7 +53,7 @@ namespace DealEngine.Domain.Entities
         {
             Id = id;
         }
-        
+
         public Organisation(User createdBy, string organisationName, OrganisationType organisationType)
             : this(createdBy, organisationName)
         {
@@ -89,7 +86,7 @@ namespace DealEngine.Domain.Entities
         }
 
         public Organisation(User creator, Guid id, string organisationName, OrganisationType organisationType, List<OrganisationalUnit> organisationalUnits, InsuranceAttribute insuranceAttribute, string email)
-            :this(creator, organisationName, organisationType)
+            : this(creator, organisationName, organisationType)
         {
             Name = organisationName;
             Id = id;
@@ -107,17 +104,13 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
+        [Display(Name = "Trading Name")]
         public virtual string TradingName
         {
             get;
             set;
         }
 
-        public virtual IList<string> Marinaorgmooredtype
-        {
-            get;
-            set;
-        }
         public virtual OrganisationType OrganisationType
         {
             get;
