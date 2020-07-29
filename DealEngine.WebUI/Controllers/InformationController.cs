@@ -217,8 +217,9 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
-
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
+                model.ClientInformationSheet = sheet;
+
                 model.ClientProgramme = clientProgramme;
                 List<string> sections = new List<string>();
                 foreach (var Section in model.Section.OrderBy(s => s.Position))
