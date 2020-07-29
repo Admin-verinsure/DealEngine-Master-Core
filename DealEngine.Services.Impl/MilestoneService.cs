@@ -6,6 +6,7 @@ using DealEngine.Services.Interfaces;
 using DealEngine.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace DealEngine.Services.Impl
 {
@@ -208,9 +209,11 @@ namespace DealEngine.Services.Impl
 
         private async void NotStartedCompleted(string activityName, User user, ClientInformationSheet sheet)
         {
-            string log = "User: " + user.UserName + " closed "+ activityName + " Advisory on " + DateTime.Now;
-            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, log));
-            await _clientInformationService.UpdateInformation(sheet);
+            if(!sheet.ClientInformationSheetAuditLogs.Any(l=>l.AuditLogDetail.Contains(activityName)))
+            {
+                string log = "User: " + user.UserName + " closed " + activityName + " Advisory on " + DateTime.Now;
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, log));
+            }
         }
 
         private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
