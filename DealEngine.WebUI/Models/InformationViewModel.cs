@@ -573,6 +573,7 @@ namespace DealEngine.WebUI.Models
         }
 
         public string TransitionalLicenseNum { get; set; }
+        public  string CoverStartDate { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
             return new List<SelectListItem>()
