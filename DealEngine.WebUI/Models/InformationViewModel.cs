@@ -996,7 +996,6 @@ namespace DealEngine.WebUI.Models
         public int LiabilityCurrent{ get; set; }
         public int AfterTaxNumber { get; set; }
         public int DebtTotal { get; set; }
-
         public DateTime FormDate { get; set; }
         public string CompanyNameDetails { get; set; }
         public string CircumstanceDetails { get; set; }

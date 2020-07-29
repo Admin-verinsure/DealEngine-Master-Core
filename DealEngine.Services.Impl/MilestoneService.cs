@@ -6,7 +6,6 @@ using DealEngine.Services.Interfaces;
 using DealEngine.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using NHibernate.Linq;
-using System.Collections.Generic;
 
 namespace DealEngine.Services.Impl
 {
@@ -19,8 +18,11 @@ namespace DealEngine.Services.Impl
         IActivityService _activityService;
         IAdvisoryService _advisoryService;
         IMilestoneTemplateService _milestoneTemplateService;
+        IClientInformationService _clientInformationService;
 
-        public MilestoneService(IMapperSession<Milestone> milestoneRepository,
+        public MilestoneService(
+            IClientInformationService clientInformationService,
+            IMapperSession<Milestone> milestoneRepository,
                                 IAdvisoryService advisoryService,
                                 ISystemEmailService systemEmailService,
                                 IProgrammeProcessService programmeProcessService,
@@ -29,6 +31,7 @@ namespace DealEngine.Services.Impl
                                 IMilestoneTemplateService milestoneTemplateService
                                 )
         {
+            _clientInformationService = clientInformationService;
             _milestoneTemplateService = milestoneTemplateService;
             _advisoryService = advisoryService;
             _activityService = activityService;
@@ -128,19 +131,38 @@ namespace DealEngine.Services.Impl
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
-        public async Task SetMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
+        public async Task<string> SetMilestoneFor(string activityName, User user, ClientInformationSheet sheet)
         {
-            var hasActivity = _activityService.GetActivityByName(activityType);
-
+            var hasActivity = _activityService.GetActivityByName(activityName);
+            string Discription = "";
             if(hasActivity == null)
             {
                 await _milestoneTemplateService.CreateMilestoneTemplate(user);
             }
-
-            if(activityType == "Agreement Status – Referred")
+            if (activityName == "Agreement Status - Not Started")
             {
-                await ReferredMilestone(activityType, user, sheet);
+                Discription = await NotStartedMilestone(activityName, user, sheet);
             }
+            if (activityName == "Agreement Status – Referred")
+            {
+                await ReferredMilestone(activityName, user, sheet);
+            }
+            return Discription;
+        }
+
+        private async Task<string> NotStartedMilestone(string activityName, User user, ClientInformationSheet sheet)
+        {
+            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            if(milestone != null)
+            {
+                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == activityName && a.DateDeleted == null);
+                if (advisory != null)
+                {
+                    return advisory.Description;
+                }
+            }
+            return "";
         }
 
         private async Task ReferredMilestone(string activityType, User user, ClientInformationSheet sheet)
@@ -172,12 +194,23 @@ namespace DealEngine.Services.Impl
             }         
         }
 
-        public async Task CompleteMilestoneFor(string activityType, User user, ClientInformationSheet sheet)
+        public async Task CompleteMilestoneFor(string activityName, User user, ClientInformationSheet sheet)
         {
-            if (activityType == "Agreement Status – Referred")
+            if (activityName == "Agreement Status - Not Started")
             {
-                await ReferredComplete(activityType, user, sheet);
+                NotStartedCompleted(activityName, user, sheet);
             }
+            if (activityName == "Agreement Status – Referred")
+            {
+                await ReferredComplete(activityName, user, sheet);
+            }
+        }
+
+        private async void NotStartedCompleted(string activityName, User user, ClientInformationSheet sheet)
+        {
+            string log = "User: " + user.UserName + " closed "+ activityName + " Advisory on " + DateTime.Now;
+            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, log));
+            await _clientInformationService.UpdateInformation(sheet);
         }
 
         private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
