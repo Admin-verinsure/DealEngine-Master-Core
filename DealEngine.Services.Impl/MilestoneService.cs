@@ -226,8 +226,11 @@ namespace DealEngine.Services.Impl
             }
 
             var activity = await _activityService.GetActivityByName(activityType);
-            var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
+            try
+            {
+                var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
 
+            
             if(tasks.Any())
             {
                 var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
@@ -236,6 +239,11 @@ namespace DealEngine.Services.Impl
                     task.Complete(user);
                     await _taskingService.UpdateUserTask(task);
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }
