@@ -28,15 +28,20 @@
     function ResetOrganisation(FormId) {
         var form = document.getElementById(FormId);
         document.getElementById("IsTripleAApproval").hidden = false;
+        document.getElementById("HideOrganisationType").hidden = false;
+        document.getElementById("HideInsuranceAttribute").hidden = false;
+        document.getElementById("Private").hidden = true;
+        document.getElementById("Else").hidden = true;
         form.reset();
-        form.classList.remove('is - valid'); 
-        form.classList.add('needs - validation');
+        form.classList.remove('is-valid'); 
+        form.classList.add('needs-validation');
+        debugger;
         for (var i = 0; i < form.length; i++) {
-            if (form[i].type == "email" || form[i].type == "text") {
+            if (form[i].tagName != "SELECT") {
                 form[i].value = "";
             }
             if (form[i].id == "Organisation.Id") {
-                form[i].value = "00000000 - 0000 - 0000 - 0000 - 000000000000";
+                form[i].value = null;
             }
             if (form[i].id == "Organisation.OrganisationType") {
                 form[i].options[0].selected = true;
