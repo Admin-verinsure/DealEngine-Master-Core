@@ -27,41 +27,34 @@
             }             
             for (obj in OutPut) {
                 var model = OutPut[obj];
-                if (obj == "0") {
-                    Type = "User";
-                }
-                else {
-                    Type = "Organisation";
-                }
+                var Type = obj;
                 for (var Field in model) {
                     var Element = null;
                     var Value = "";
 
                     if (model.hasOwnProperty("InsuranceAttributes")) {
                         if (Field === "InsuranceAttributes") {
+                            var Id = Type + ".InsuranceAttribute";
+                            Value = OutPut[obj][Field]["0"]["Name"];
+                            Element = document.getElementById(Id);
+                            debugger;
                             if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
-                                debugger;
                                 PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Principal";
                             }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor" ) {
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
                                 PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Advisor";
+                                document.getElementById("IsPrincipalAdvisor").hidden =false;
+                                
                             }else if (OutPut[obj][Field]["0"]["Name"] === "Administration" ) {
                                 PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Administration";
+                                document.getElementById("IsTripleAApproval").hidden = true;
+                            }
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Nominated Representative") {
+                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
+                                document.getElementById("IsTripleAApproval").hidden = true;
                             }
                             else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
                                 PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Personnel";
                             }
                             //}
                             //else if (OutPut[obj][Field]["0"]["Name"] != "") {
@@ -107,10 +100,12 @@
                     var TradingName = document.getElementById("NoTradingName");
                     if (TradingName != null) {
                         TradingName.value = true;
+                        document.getElementById("TradingName").hidden = false;
                     }
+                    document.getElementById("HideOrganisationType").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;
                     var IA = document.getElementById("Organisation.InsuranceAttribute");
-                    IA.options[IA.selectedIndex].value = "Person - Individual";
+                    IA.options[IA.selectedIndex].value = "Hide";
                     IA.options[IA.selectedIndex].text = "Person - Individual";
                     IA.disabled = true;
                     document.getElementById("Else").hidden = false;
@@ -120,12 +115,12 @@
     }
 
     function PopulateOrganisationalUnit(OutPut, UnitName) {
-        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
-            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
+        for (var Unit in OutPut["Organisation"]["OrganisationalUnits"]) {
+            for (var Item in OutPut["Organisation"]["OrganisationalUnits"][Unit]) {
                 id = UnitName + "." + Item;
                 var element = document.getElementById(id);
                 if (element != null) {
-                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
+                    var Value = OutPut["Organisation"]["OrganisationalUnits"][Unit][Item];
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string

@@ -390,7 +390,9 @@ namespace DealEngine.Services.Impl
 							(fieldType == typeof(int)) ||
 							(fieldType == typeof(decimal)) ||
 							(fieldType == typeof(bool)) ||
-							(fieldType == typeof(DateTime)))
+							(fieldType == typeof(DateTime?)) || 
+							(fieldType == typeof(DateTime))
+							)
 						{
 							if (model.ContainsKey(value))
 							{

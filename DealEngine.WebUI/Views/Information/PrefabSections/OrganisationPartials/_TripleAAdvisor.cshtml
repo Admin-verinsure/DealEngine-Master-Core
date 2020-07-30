@@ -17,7 +17,9 @@
         <div id="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" hidden>
             <div class="form-group">
                 @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder= "Date of Retirement" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Retirement" })
+            </div>
+            <div class="form-group">
                 @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
             </div>
         </div>
@@ -38,7 +40,7 @@
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "label required" })
             @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "form-control", @id = "AdvisorUnit.Duration", @required = "", @onchange = "OnChange(this.id, this.name)" })
         </div>
-        <div class="form-group">
+        <div class="form-group" id="IsTripleAApproval">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsTripleAApproval)
             <select id="AdvisorUnit.IsTripleAApproval" name="OrganisationViewModel.AdvisorUnit.IsTripleAApproval" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in Model.OrganisationViewModel.HasIsTripleAApprovalOptions)
@@ -47,7 +49,7 @@
                 }
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="IsPrincipalAdvisor" hidden>
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor, new { @class = "label required" })
             <select id="AdvisorUnit.IsPrincipalAdvisor" name="OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor" class="custom-select" data-rule="PrincipalAdvisor" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in @Model.OrganisationViewModel.HasPrincipalAdvisor)
