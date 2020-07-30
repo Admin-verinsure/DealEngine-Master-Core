@@ -37,7 +37,6 @@
                             var Id = Type + ".InsuranceAttribute";
                             Value = OutPut[obj][Field]["0"]["Name"];
                             Element = document.getElementById(Id);
-                            debugger;
                             if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
                                 PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
                             }
@@ -56,12 +55,6 @@
                             else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
                                 PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
                             }
-                            //}
-                            //else if (OutPut[obj][Field]["0"]["Name"] != "") {
-                            //    Value = OutPut[obj][Field]["0"]["Name"];
-                            //    var Id = Type + ".InsuranceAttribute";
-                            //    Element = document.getElementById(Id);
-                            //}
                         }
                     }
 
@@ -103,11 +96,9 @@
                         document.getElementById("TradingName").hidden = false;
                     }
                     document.getElementById("HideOrganisationType").hidden = true;
+                    document.getElementById("HideInsuranceAttribute").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;
-                    var IA = document.getElementById("Organisation.InsuranceAttribute");
-                    IA.options[IA.selectedIndex].value = "Hide";
-                    IA.options[IA.selectedIndex].text = "Person - Individual";
-                    IA.disabled = true;
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;                    
                     document.getElementById("Else").hidden = false;
                 }
             }
