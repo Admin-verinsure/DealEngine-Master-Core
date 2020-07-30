@@ -217,8 +217,9 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
-
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
+                model.ClientInformationSheet = sheet;
+
                 model.ClientProgramme = clientProgramme;
                 List<string> sections = new List<string>();
                 foreach (var Section in model.Section.OrderBy(s => s.Position))
@@ -804,6 +805,7 @@ namespace DealEngine.WebUI.Controllers
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
+                
                 //testing dynamic wizard here
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 if (isSubsystem)
@@ -815,29 +817,15 @@ namespace DealEngine.WebUI.Controllers
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
 
-
-                string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
-                    var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                    if (milestone != null)
-                    {
-                        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
-                        if (advisory != null)
-                        {
-                            advisoryDesc = advisory.Description;
-                        }
-                    }
-
+                    model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
                 }
-
-                model.Advisory = advisoryDesc;
 
                 var claims = new List<ClaimViewModel>();
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
@@ -1236,8 +1224,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
-
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));                
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
                 {
@@ -1246,6 +1233,7 @@ namespace DealEngine.WebUI.Controllers
 
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
+                        await _milestoneService.CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
                         await _clientInformationService.SaveAnswersFor(sheet, collection, user);
                         await GenerateUWM(user, sheet, reference);
                     }
@@ -1255,7 +1243,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     await _clientInformationService.SaveAnswersFor(sheet, collection, user);
-
                     return Redirect("/Information/QuoteToAgree?id=" + sheet.Programme.Id);
                 }
 

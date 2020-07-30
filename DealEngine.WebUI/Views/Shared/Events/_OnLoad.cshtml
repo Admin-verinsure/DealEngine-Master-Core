@@ -1,4 +1,21 @@
 ﻿<script type="text/javascript">   
+    //intialize objects on load
+           var d = new Date();
+           var currMonth = d.getMonth();
+           var currYear = d.getFullYear();
+           var currDate = d.getDate();
+
+           if (currMonth < 8) {
+                 currMonth = 8;
+                 var startDate = new Date(currYear, currMonth, 1);
+           } else {
+                 var startDate = new Date(currYear, currMonth, currDate);
+            }
+    
+    $('#FAPCoverStartDate').datepicker({
+           dateFormat: "dd/mm/yy",
+            minDate: startDate
+    });
 
     function PopulateOrganisationView(Method, OutPut) {
         var Form;
@@ -10,48 +27,34 @@
             }             
             for (obj in OutPut) {
                 var model = OutPut[obj];
-                if (obj == "0") {
-                    Type = "User";
-                }
-                else {
-                    Type = "Organisation";
-                }
+                var Type = obj;
                 for (var Field in model) {
                     var Element = null;
                     var Value = "";
 
                     if (model.hasOwnProperty("InsuranceAttributes")) {
                         if (Field === "InsuranceAttributes") {
+                            var Id = Type + ".InsuranceAttribute";
+                            Value = OutPut[obj][Field]["0"]["Name"];
+                            Element = document.getElementById(Id);
                             if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
-                                debugger;
                                 PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Principal";
                             }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor" ) {
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
                                 PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Advisor";
+                                document.getElementById("IsPrincipalAdvisor").hidden =false;
+                                
                             }else if (OutPut[obj][Field]["0"]["Name"] === "Administration" ) {
                                 PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Administration";
+                                document.getElementById("IsTripleAApproval").hidden = true;
+                            }
+                            else if (OutPut[obj][Field]["0"]["Name"] === "Nominated Representative") {
+                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
+                                document.getElementById("IsTripleAApproval").hidden = true;
                             }
                             else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
                                 PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
-                                var Id = Type + ".InsuranceAttribute";
-                                Element = document.getElementById(Id);
-                                Value = "Personnel";
                             }
-                            //}
-                            //else if (OutPut[obj][Field]["0"]["Name"] != "") {
-                            //    Value = OutPut[obj][Field]["0"]["Name"];
-                            //    var Id = Type + ".InsuranceAttribute";
-                            //    Element = document.getElementById(Id);
-                            //}
                         }
                     }
 
@@ -90,12 +93,12 @@
                     var TradingName = document.getElementById("NoTradingName");
                     if (TradingName != null) {
                         TradingName.value = true;
+                        document.getElementById("TradingName").hidden = false;
                     }
+                    document.getElementById("HideOrganisationType").hidden = true;
+                    document.getElementById("HideInsuranceAttribute").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;
-                    var IA = document.getElementById("Organisation.InsuranceAttribute");
-                    IA.options[IA.selectedIndex].value = "Person - Individual";
-                    IA.options[IA.selectedIndex].text = "Person - Individual";
-                    IA.disabled = true;
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;                    
                     document.getElementById("Else").hidden = false;
                 }
             }
@@ -103,12 +106,12 @@
     }
 
     function PopulateOrganisationalUnit(OutPut, UnitName) {
-        for (var ArrayNo in OutPut["1"]["OrganisationalUnits"]) {
-            for (var Item in OutPut["1"]["OrganisationalUnits"][ArrayNo]) {
+        for (var Unit in OutPut["Organisation"]["OrganisationalUnits"]) {
+            for (var Item in OutPut["Organisation"]["OrganisationalUnits"][Unit]) {
                 id = UnitName + "." + Item;
                 var element = document.getElementById(id);
                 if (element != null) {
-                    var Value = OutPut["1"]["OrganisationalUnits"][ArrayNo][Item];
+                    var Value = OutPut["Organisation"]["OrganisationalUnits"][Unit][Item];
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string

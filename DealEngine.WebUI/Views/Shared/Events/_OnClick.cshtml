@@ -65,7 +65,7 @@
         var addTabHTML = document.getElementById(AddTabId);
         editTabHTML.innerHTML = addTabHTML.innerHTML;
         addTabHTML.innerHTML = "";
-        document.getElementById(AddButtonId).innerText = "Update";
+        document.getElementById(AddButtonId).value = "Update";
         document.getElementById(CancelButtonId).innerText = "Cancel Update";
         SetCurrentTab(EditTabId);
     }

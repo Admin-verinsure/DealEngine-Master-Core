@@ -323,10 +323,9 @@ namespace DealEngine.Services.Impl
             return clientList;
         }
 
-        public async Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet)
+        public async Task<SubClientInformationSheet> IssueSubInformationFor()
         {
-            SubClientInformationSheet sheet = _mapper.Map<SubClientInformationSheet>(clientInformationSheet);
-            return sheet;
+            return new SubClientInformationSheet();            
         }
 
         public async Task UnlockSheet(ClientInformationSheet sheet, User user)

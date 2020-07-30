@@ -936,12 +936,10 @@ namespace DealEngine.WebUI.Controllers
                             if (isSubUis.Contains("true"))
                             {
                                 emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction");
-
                             }
                             else
                             {
                                 emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-
                             }
                             if (emailTemplate != null)
                             {

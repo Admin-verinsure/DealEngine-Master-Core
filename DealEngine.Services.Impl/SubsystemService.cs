@@ -72,31 +72,38 @@ namespace DealEngine.Services.Impl
 
         private async Task<SubClientInformationSheet> CreateSubObjectProcess(ClientProgramme clientProgramme, ClientInformationSheet sheet, Organisation org)
         {
-
-            var subClientSheet = await _clientInformationService.GetSubInformationSheetFor(org);
-            if (subClientSheet == null)
+            SubClientInformationSheet subClientSheet;
+            try
             {
-                var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
-                subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
-            }
-            else
-            {
-                if (subClientSheet.DateDeleted.HasValue || subClientSheet.DeletedBy != null)
+                subClientSheet = await _clientInformationService.GetSubInformationSheetFor(org);
+                if (subClientSheet == null)
                 {
-                    SubClientProgramme subProg = (SubClientProgramme)subClientSheet.Programme;
-                    subClientSheet.DateDeleted = null;
-                    subClientSheet.Programme.DateDeleted = null;
-                    subClientSheet.DeletedBy = null;
-                    subClientSheet.Programme.DeletedBy = null;
-
-                    clientProgramme.SubClientProgrammes.Add(subProg);
+                    var subClientProgramme = await _programmeService.GetSubClientProgrammeFor(org);
+                    if (subClientProgramme == null)
+                    {
+                        subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
+                    }
+                    subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
                 }
-            }
-            if (subClientSheet.Status == "Not Started")
+                else
+                {
+                    if (subClientSheet.DateDeleted.HasValue || subClientSheet.DeletedBy != null)
+                    {
+                        SubClientProgramme subProg = (SubClientProgramme)subClientSheet.Programme;
+                        subClientSheet.DateDeleted = null;
+                        subClientSheet.Programme.DateDeleted = null;
+                        subClientSheet.DeletedBy = null;
+                        subClientSheet.Programme.DeletedBy = null;
+
+                        clientProgramme.SubClientProgrammes.Add(subProg);
+                    }
+                }
+            }catch(Exception ex)
             {
-                //await _emailService.SendSystemEmailLogin(org.Email);
-                //await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                Exception subSystem = new Exception("Create Sub process Failed", ex);
+                throw subSystem;
             }
+
 
             return subClientSheet;
         }
@@ -105,7 +112,7 @@ namespace DealEngine.Services.Impl
         {
             try
             {
-                var subSheet = await _clientInformationService.IssueSubInformationFor(sheet);
+                var subSheet = await _clientInformationService.IssueSubInformationFor();
                 subSheet.BaseClientInformationSheet = sheet;
                 subSheet.Programme = subClientProgramme;
                 subSheet.Status = "Not Started";

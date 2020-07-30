@@ -1,4 +1,164 @@
 ﻿<script type="text/javascript">
+
+    function ElementOnSubmit(Element, TargetElement, Form, Panel) {
+        var tag = TargetElement.tagName;
+        //hardcoded for project table
+        if (tag == "TABLE") {
+            if (TargetElement.rows.length < 2) {
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                //go back to div// go back to accordion to get id
+                var accordianId = Form.getAttribute('data-accordianId');
+                window.alert("Please provide a project");
+                $("[id='" + accordianId + "']").trigger("click");
+                Element.scrollIntoView();
+                throw accordianId + " incomplete";
+            }
+        }
+    }
+
+    function RoleDataOnSubmit(ElementId, Form) {
+        var element = document.getElementById(ElementId);
+        var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
+        var multiElement = element.selectedOptions.length;
+        if (multiElement == 0) {
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            var accordianId = Form.getAttribute('data-accordianId');
+            $("[id='Roles']").trigger("click");
+            window.alert("Roles not selected");
+            SetCurrentTab(tabId);
+            element.scrollIntoView();
+            throw accordianId + " incomplete";
+        } else {
+            var tabNo = parseInt(tabId.substring(tabId.length - 1)) + 1;
+            var nextTab = tabId.substring(0, tabId.length - 1);
+            SetCurrentTab(nextTab + tabNo);
+        }
+    }
+
+    function RevenueDataOnSubmit(ElementId, Form) {
+        var element = document.getElementById(ElementId);
+        var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
+        var totalPercentage = 0;
+        var tableElement;
+        for (var v = 0; v < element.selectedOptions.length; v++) {
+            tableElement = document.getElementById(element.selectedOptions[v].text);
+            var value = parseInt(tableElement.value);
+            totalPercentage += value;
+        }
+        if (totalPercentage != 100) {
+            try {
+                tableElement.classList.remove("is-valid");
+                tableElement.classList.add("is-invalid");
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                var accordianId = Form.getAttribute('data-accordianId');
+                $("[id='Fee Income / Activities']").trigger("click");
+                window.alert("Activities or Territories percentage calculation does not equal to 100%");
+                SetCurrentTab(tabId);
+                element.scrollIntoView();
+                throw accordianId + " incomplete";
+            }
+            catch (ex) {
+                //assume the drop down is empty so divert back to income
+                event.preventDefault();
+                event.stopPropagation();
+                $("#more").trigger("click");
+                var accordianId = Form.getAttribute('data-accordianId');
+                $("[id='Fee Income / Activities']").trigger("click");
+                window.alert("Activities or Territories not selected");
+                SetCurrentTab(tabId);
+                element.scrollIntoView();
+                throw accordianId + " incomplete";
+            }
+
+        }
+        else {
+            tableElement.classList.add("is-valid");
+            tableElement.classList.remove("is-invalid");
+            var tabNo = parseInt(tabId.substring(tabId.length - 1)) + 1;
+            var nextTab = tabId.substring(0, tabId.length - 1);
+            SetCurrentTab(nextTab + tabNo);
+        }
+    }
+
+    function InformationSheetSubmit() {
+        var forms = document.getElementsByClassName('needs-validation');   //invalid forms
+        var formIds = [];
+        for (var f = 0; f < forms.length; f++) {
+            //get each form id
+            if (forms[f].id != "myForm") {
+                formIds.push(forms[f].id);
+            }
+        }
+        for (var i = 0; i < formIds.length; i++) {
+            var form = document.getElementById(formIds[i]);
+            var element = null;
+            for (var e = 0; e < form.length; e++) {
+                //for (var e = form.length-1; e > 0; e--) {
+                try {
+                    if (form[e].id != "") {
+                        element = document.getElementById(form[e].id);
+                    }
+                    else {
+                        element = null;
+                    }
+                }
+                catch (ex) {
+                    //will have to add further function for forms with added elements
+                }
+                if (element != null) {
+                    if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
+                        //need to cancel event for build tables i.e role/revenue
+                        if (form.id == "RevenueDataViewModel") {
+                            RevenueDataOnSubmit(element.id, form);
+                        }
+                        if (form.id == "RoleDataViewModel") {
+                            RoleDataOnSubmit(element.id, form);
+                        }
+                    }
+                    else {
+                        //hardcoded to find the div visibility - need to find a better way
+                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                        if (isHidden == false) {
+                            OnChange(element.id, element.name);
+                            //onsubmitfunction trigger
+                            var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
+                            var validationelement = document.getElementById(hasOnsubmitValidation);
+                            if (validationelement != null) {
+                                ElementOnSubmit(element, validationelement, form)
+                            }
+                            if (element.classList.contains("is-invalid")) {
+                                //write a message here or stop the process
+                                debugger;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                $("#more").trigger("click");
+                                //go back to div// go back to accordion to get id
+                                var accordianId = form.getAttribute('data-accordianId');
+                                if (accordianId == null) {
+                                    throw "update form accordianId " + form.id;
+                                    debugger;
+                                }
+                                window.alert("Please complete this section " + accordianId);
+                                $("[id='" + accordianId + "']").trigger("click");
+                                element.scrollIntoView();
+                                throw accordianId + " incomplete";
+                            }
+                        }
+                    }
+                }
+            }
+            form.classList.remove("needs-validation");
+            form.classList.add("was-validated");
+        }
+    }
+
+
     function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
         var RemoveAdvisors = false;

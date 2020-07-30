@@ -38,7 +38,7 @@ namespace DealEngine.Services.Interfaces
         Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
         Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation);
         Task AddOrganisationByMembership(Organisation organisation);
-
+        Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
     }
 }
 
