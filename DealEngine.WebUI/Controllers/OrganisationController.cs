@@ -46,16 +46,20 @@ namespace DealEngine.WebUI.Controllers
             _insuranceAttributeService = insuranceAttributeService;            
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
+            Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
-            if(organisation!= null)
+            if(organisation != null)
             {
-                ModelState.AddModelError("OrganisationViewModel.User.Email", "Email not found or matched");                
+                if (organisation.Id != OrganisationId)
+                {
+                    return Json(true);
+                }                
             }
-            return View(collection);
+            return Json(false);
         }
 
         [HttpPost]
