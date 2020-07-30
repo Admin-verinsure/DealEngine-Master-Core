@@ -306,6 +306,11 @@ namespace DealEngine.Services.Impl
                 await _clientProgrammeRepository.UpdateAsync(clientProgramme);
             }
         }
+
+        public async Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation Owner)
+        {
+            return (SubClientProgramme)await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner == Owner);
+        }
     }
 }
 

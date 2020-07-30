@@ -85,18 +85,22 @@ namespace DealEngine.Services.Impl
 
 		public async Task<Organisation> GetOrganisation(Guid organisationId)
 		{
-			Organisation organisation = await _organisationRepository.GetByIdAsync(organisationId);
-			// have a repo organisation? Return it
-			if (organisation != null)
-				return organisation;
-			organisation = _ldapService.GetOrganisation(organisationId);
-			// have a ldap organisation but no repo? Update NHibernate & return
-			if (organisation != null) {
-				await Update(organisation);
-				return organisation;
+			if(organisationId != Guid.Empty)
+            {
+				Organisation organisation = await _organisationRepository.GetByIdAsync(organisationId);
+				// have a repo organisation? Return it
+				if (organisation != null)
+					return organisation;
+				organisation = _ldapService.GetOrganisation(organisationId);
+				// have a ldap organisation but no repo? Update NHibernate & return
+				if (organisation != null)
+				{
+					await Update(organisation);
+					return organisation;
+				}
+				throw new Exception("Organisation with id [" + organisationId + "] does not exist in the system");
 			}
-			// no organisation at all? Throw exception
-			throw new Exception("Organisation with id [" + organisationId + "] does not exist in the system");
+			return null;			
 		}
 
 		public async Task UpdateOrganisation(IFormCollection collection)
@@ -114,8 +118,13 @@ namespace DealEngine.Services.Impl
 				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
 				organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
 				if(organisation != null)
-                {
+                {					
 					organisation = _mapper.Map(jsonOrganisation, organisation);
+					if (organisation.OrganisationType.Name == "Person - Individual")
+                    {
+						organisation.Name = user.FirstName + " " + user.LastName;
+
+					}
 					UpdateOrganisationUnit(organisation, collection);
 					UpdateInsuranceAttribute(organisation, collection);						
 				}				

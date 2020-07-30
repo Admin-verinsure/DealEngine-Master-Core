@@ -144,7 +144,11 @@ namespace DealEngine.Domain.Entities
             if (collection.Any())
             {
                 PopulateEntity(collection);
-                UserName = FirstName.Replace(" ", string.Empty) + "_" + LastName.Replace(" ", string.Empty);
+                Random random = new Random();
+                UserName = FirstName.Replace(" ", string.Empty)
+                    + "_"
+                    + LastName.Replace(" ", string.Empty)
+                    + random.Next(1000);
                 FullName = FirstName + " " + LastName;
             }
         }

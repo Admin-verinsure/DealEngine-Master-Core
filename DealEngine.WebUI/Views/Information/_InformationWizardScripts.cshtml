@@ -53,12 +53,12 @@
            }
 
            if (stepNumber === 0) {
-               if (informationsheetstatus != "Submitted") {
+               //if (informationsheetstatus != "Submitted") {
 
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-
+                       debugger;
                        InformationSheetSubmit();
 
                        var IsLocationCount = 0;
@@ -75,26 +75,29 @@
                        if (informationsheetstatus !== "Bound") {
                            if ('@Model.ClientProgramme.BaseProgramme.Name' === "TripleA Programme") {
                                debugger;
-                               var pAdvisor = document.getElementById("IsPrincipalAdvisor");
-                               if (pAdvisor == null) {
-                                   window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                                   $("#Insured Details / Named Parties").trigger("click");
-                                   throw "no principal advisor";
-                               }
-                               else {
-                                   var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
-                                   if (organisations.length != 1) {
+                               var advisor = document.getElementById("AddOrganisation");
+                               if (advisor != null) {
+                                   var pAdvisor = document.getElementById("IsPrincipalAdvisor");
+                                   if (pAdvisor == null) {
                                        window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
                                        $("#Insured Details / Named Parties").trigger("click");
                                        throw "no principal advisor";
                                    }
-                               }
-                               var TradingName = document.getElementById("NoTradingName");
-                               if (TradingName != null) {
-                                   if (TradingName.value === "True") {
-                                       window.alert("Please Add Trading Name to Owner");
-                                       $("#Insured Details / Named Parties").trigger("click");
-                                       throw "no trading name";
+                                   else {
+                                       var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
+                                       if (organisations.length != 1) {
+                                           window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
+                                           $("#Insured Details / Named Parties").trigger("click");
+                                           throw "no principal advisor";
+                                       }
+                                   }
+                                   var TradingName = document.getElementById("NoTradingName");
+                                   if (TradingName != null) {
+                                       if (TradingName.value === "True") {
+                                           window.alert("Please Add Trading Name to Owner");
+                                           $("#Insured Details / Named Parties").trigger("click");
+                                           throw "no trading name";
+                                       }
                                    }
                                }
                            }
@@ -136,7 +139,7 @@
                        }
 
                    }
-
+                   debugger;
                    $.ajax({
                        url: '@Url.Action("SubmitInformation", "Information")',
                        type: "POST",
@@ -147,9 +150,10 @@
                            });
                        })
                        .fail(function (a, s, d) {
+                           debugger;
                            $('#getAgreementModal').hide();
                        });
-               }
+               //}
            } else if (stepNumber === 1) {
                debugger;
                var status = $('#Status').val();

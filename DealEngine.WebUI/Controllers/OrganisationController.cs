@@ -47,36 +47,15 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
-            BaseListViewModel<OrganisationViewModel> organisations = new BaseListViewModel<OrganisationViewModel>();
-            User user = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    foreach (Organisation org in user.Organisations)
-            //    {
-            //        OrganisationViewModel model = new OrganisationViewModel
-            //        {
-            //            ID = org.Id,
-            //            OrganisationName = org.Name,
-            //            OrganisationTypeName = org.OrganisationType != null ? org.OrganisationType.Name : string.Empty,
-            //            Website = org.Domain,
-            //            Phone = org.Phone,
-            //            Email = org.Email,
-            //            IsPrimary = org.Id == user.PrimaryOrganisation.Id
-            //        };
-            //        organisations.Add(model);
-            //    }
-
-            //    return View(organisations);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
+            var email = collection["OrganisationViewModel.User.Email"].ToString();
+            Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
+            if(organisation!= null)
+            {
+                ModelState.AddModelError("OrganisationViewModel.User.Email", "Email not found or matched");                
+            }
+            return View(collection);
         }
 
         [HttpPost]
@@ -106,7 +85,8 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddOrganisation(IFormCollection collection)
         {
             User currentUser = await CurrentUser();
-            Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
+            Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"], out Guid OrganisationId);
+            Guid.TryParse(collection["ClientInformationSheet.Id"], out Guid Id);
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
 
             var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
@@ -118,7 +98,7 @@ namespace DealEngine.WebUI.Controllers
             string FirstName = jsonUser.FirstName;
             string LastName = jsonUser.LastName;
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-            Organisation organisation = await _organisationService.GetOrganisationByEmail(Email);
+            Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
             //condition for organisation exists
             try
             {

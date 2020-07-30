@@ -32,6 +32,15 @@
             if (form[i].type == "email" || form[i].type == "text") {
                 form[i].value = "";
             }
+            if (form[i].id == "Organisation.Id") {
+                form[i].value = "00000000 - 0000 - 0000 - 0000 - 000000000000";
+            }
+            if (form[i].id == "Organisation.OrganisationType") {
+                form[i].options[0].selected = true;
+            }
+            if (form[i].id == "Organisation.InsuranceAttribute") {
+                form[i].options[0].selected = true;
+            }
             form[i].disabled = false;
         }
         //var form = $("#" + FormId);        

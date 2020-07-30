@@ -250,13 +250,30 @@
                 document.getElementById("Else").hidden = true;
                 var List = document.getElementById("Organisation.OrganisationType");
                 List.disabled = false;
-                OrganisationTypeOnChange(List, Value);                
+                OrganisationTypeOnChange(List, Value);
             }
             if (Rule === "RemoveOrganisationName") {
                 if (obj.options[obj.selected].value == "Private") {
                     document.getElementById("Organisation.Name").value = "";
                     debugger;
-                }                    
+                }
+            }
+            if (Rule === "RemoveOrganisationName") {
+                if (obj.options[obj.selected].value == "Private") {
+                    document.getElementById("Organisation.Name").value = "";
+                    debugger;
+                }
+            }
+            if (Rule === "OrganisationEmail") {
+                $.ajax({
+                        url: '@Url.Action("ValidateOrganisationEmail", "Organisation")',
+                        type: "POST",
+                        async: false,
+                        data: $("#" + form.id).serialize(),
+                        error: function (request, error) {
+                            debugger;
+                        }
+                    });
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
@@ -300,7 +317,7 @@
                 organisationUnit.hidden = false;
             }
         } else {
-            document.getElementById("Else").hidden = false;        
+            document.getElementById("Else").hidden = false;
         }
 
         DefaultRule("1", Value);

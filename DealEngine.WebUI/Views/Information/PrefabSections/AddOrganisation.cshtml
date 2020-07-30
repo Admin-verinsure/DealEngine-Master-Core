@@ -96,6 +96,7 @@
         <div id="OrganisationTab3" class="tab-pane" role="tabpanel">
             @using (Html.BeginForm("AddOrganisation", "Organisation", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
             {
+                @Html.HiddenFor(m => m.OrganisationViewModel.Organisation.Id, new { id="Organisation.Id"})
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
                 {

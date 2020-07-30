@@ -19,7 +19,7 @@ namespace DealEngine.Services.Interfaces
         Task UpdateInformation (ClientInformationSheet sheet);
 		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection, User user);
         Task<List<ClientInformationSheet>> FindByBoatName(string searchValue);
-        Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet);
+        Task<SubClientInformationSheet> IssueSubInformationFor();
         Task<bool> IsBaseClass(ClientInformationSheet sheet);
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
