@@ -67,13 +67,13 @@ namespace DealEngine.WebUI.Controllers
         {
             User user = null;
             Guid OrganisationId = Guid.Parse(model.ID.ToString());//Guid.Parse(collection["OrganisationId"]);
-            IList<object> JsonObjects = new List<object>();
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
             try
             {
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
                 User orgUser = await _userService.GetUserByEmail(organisation.Email);
-                JsonObjects.Add(orgUser);
-                JsonObjects.Add(organisation);
+                JsonObjects.Add("Organisation", organisation);
+                JsonObjects.Add("User", orgUser);
                 var jsonObj = GetSerializedModel(JsonObjects);
 
                 return Json(jsonObj);
@@ -154,32 +154,6 @@ namespace DealEngine.WebUI.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AddNewOrganisation(Guid programmeId)
-        {
-            OrganisationViewModel organisationViewModel = new OrganisationViewModel();
-            User user = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    organisationViewModel.ProgrammeId = programmeId;
-
-            //    organisationViewModel.OrgMooredType = new List<SelectListItem>()
-            //    {
-            //        new SelectListItem {Text = "Berthed", Value = "Berthed"},
-            //        new SelectListItem {Text = "Pile", Value = "Pile"},
-            //        new SelectListItem {Text = "Swing", Value = "Swing"},
-            //    };
-
-            //    return View("AddNewOrganisation", organisationViewModel);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
         }
 
         [HttpPost]

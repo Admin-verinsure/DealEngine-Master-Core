@@ -27,7 +27,10 @@
 
     function ResetOrganisation(FormId) {
         var form = document.getElementById(FormId);
+        document.getElementById("IsTripleAApproval").hidden = false;
         form.reset();
+        form.classList.remove('is - valid'); 
+        form.classList.add('needs - validation');
         for (var i = 0; i < form.length; i++) {
             if (form[i].type == "email" || form[i].type == "text") {
                 form[i].value = "";
@@ -43,10 +46,6 @@
             }
             form[i].disabled = false;
         }
-        //var form = $("#" + FormId);        
-        ////$form.find('input:text, input:password, input:file, input:email, select, textarea').val('');
-        //$form.find('input:radio, input:checkbox')
-        //    .removeAttr('checked').removeAttr('selected');  
     }
 
     function CreateEditLabel(ObjectLabel) {
