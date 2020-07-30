@@ -31,17 +31,17 @@ namespace DealEngine.Services.Impl
 		IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementBVTermService _clientAgreementBVTermService;
         IProgrammeService _programmeService;
-
+        IProductService _productService;
 
         public FileService(IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository,
-        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
+        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, IProductService productService)
 		{
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
 			_clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementBVTermService = clientAgreementBVTermService;
             _programmeService = programmeService;
-
+            _productService = productService;
 
             FileDirectory = Path.Combine (
 				Directory.GetCurrentDirectory (),
@@ -156,18 +156,18 @@ namespace DealEngine.Services.Impl
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
-			// store all the fields to be merged
-			List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
+            // store all the fields to be merged
+            clientInformationSheet = agreement.ClientInformationSheet;
+
+            List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;
-            clientInformationSheet = agreement.ClientInformationSheet;
             Decimal PremiumTotal = 0.0m;
             // loop over terms and set merge feilds
             foreach (var agreementlist in clientInformationSheet.Programme.Agreements)
             {
                 foreach (var term in agreementlist.ClientAgreementTerms)
                 {
-
                     if (term.Bound)
                     {
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
@@ -192,7 +192,7 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-                            PremiumTotal += term.Excess;
+                            PremiumTotal += term.PremiumDiffer;
                         }
                         else
                         {
@@ -207,12 +207,34 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-                            PremiumTotal += term.Excess;
+                            PremiumTotal += term.Premium;
                         }
-                    }
+
+                        if (term.SubTermType == "CL")
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                            }
+                            else
+                            {
+                                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension Included"));
+                                }
+                                else
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
+                                }
+                            }
+                        }
+                    } 
                 }
             }
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[EmployeeNumber_EL]]", ""), Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value).ToString()));
 
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
@@ -537,7 +559,7 @@ namespace DealEngine.Services.Impl
             string stradvisorlist1 = "";
             string strnominatedrepresentative = "";
             string strotherconsultingbusiness = "";
-
+            
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
 
@@ -615,7 +637,133 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
-            }            
+            }
+
+            //Advisor list with FAP Number
+
+            string stradvisornominatedrepresentative = "";
+            string strprincipleadvisorname = "";
+
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+
+                    if (principleadvisorunit != null)
+                    {
+                        if (principleadvisorunit.IsPrincipalAdvisor)
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").Any())
+                            {
+                                stradvisornominatedrepresentative = uisorg.Name + "(FAP number: " +
+                                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").First().Value + ")";
+                            }
+                            else
+                            {
+                                stradvisornominatedrepresentative = uisorg.Name + "(FAP number: None)";
+                            }
+
+                            strprincipleadvisorname = uisorg.Name;
+                        }
+                    }
+
+                }
+
+                foreach (var advsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(advisorsubuis => advisorsubuis.DateDeleted == null))
+                {
+                    if (string.IsNullOrEmpty(stradvisornominatedrepresentative))
+                    {
+                        if (advsubuis.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").Any())
+                        {
+                            stradvisornominatedrepresentative = advsubuis.Owner.Name + "(FAP number: " +
+                                advsubuis.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").First().Value + ")";
+                        }
+                        else
+                        {
+                            stradvisornominatedrepresentative = advsubuis.Owner.Name + "(FAP number: None)";
+                        }
+                    }
+                    else
+                    {
+                        if (advsubuis.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").Any())
+                        {
+                            stradvisornominatedrepresentative += "<br />" + advsubuis.Owner.Name + "(FAP number: " +
+                                advsubuis.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").First().Value + ")";
+                        }
+                        else
+                        {
+                            stradvisornominatedrepresentative += "<br />" + advsubuis.Owner.Name + "(FAP number: None)";
+                        }
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(stradvisornominatedrepresentative))
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorsList]]", "No Advisor insured under this policy"));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorsList]]", stradvisornominatedrepresentative));
+            }
+            if (string.IsNullOrEmpty(strprincipleadvisorname))
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[PrincipleAdvisorName]]", "No Principle Advisor insured under this policy"));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[PrincipleAdvisorName]]", strprincipleadvisorname));
+            }
+
+
+            //OT merge fields
+            string OTAdvisorList = "";
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).Any())
+            {
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                {
+                    if (agreement.ClientInformationSheet.Organisation.Count > 0)
+                    {
+
+                        foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                        {
+                            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+
+                            if (principleadvisorunit.IsPrincipalAdvisor)
+                            {
+                                OTAdvisorList = uisorg.Name;
+                            }
+                        }
+                    }
+                }
+            }
+            if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
+            {
+                Product OTProduct = await _productService.GetProductById(new Guid("feb30dcf-c2d1-43e4-92df-d9c0fb555e5c"));
+                foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
+                {
+                    if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                    {
+                        if (string.IsNullOrEmpty(OTAdvisorList))
+                        {
+                            OTAdvisorList += prodsubuis.Owner.Name;
+                        }
+                        else
+                        {
+                            OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                        }
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(OTAdvisorList))
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorTrustees_OT]]", "No Advisor insured under the Outside Trustees policy"));
+            } else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorTrustees_OT]]", OTAdvisorList));
+            }
+           
+
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
@@ -665,17 +813,36 @@ namespace DealEngine.Services.Impl
             if (clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
+
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByName]]", clientInformationSheet.SubmittedBy.FullName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByEmail]]", clientInformationSheet.SubmittedBy.Email));
+
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").Any())
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[EmployeeNumber]]", Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value).ToString()));
+                } else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[EmployeeNumber]]", " "));
+                }
+
+                if (clientInformationSheet.RevenueData != null)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeCurrentYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.CurrentYearTotal).ToString("C2")));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeLastYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.LastFinancialYearTotal).ToString("C2")));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeNextYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.NextFinancialYearTotal).ToString("C2")));
+                }
+
             }
             if (agreement.ClientInformationSheet != null)
             {
                 if (agreement.ClientInformationSheet.Programme.Owner != null)
                 {
-                    var principalUnit = (PrincipalUnit)agreement.ClientInformationSheet.Programme.Owner.OrganisationalUnits.FirstOrDefault(o => o.Name == "Principal");
-                    if(principalUnit != null)
-                    {
-                        mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", principalUnit.TradingName));
-                    }
-                    
+                    //var principalUnit = (PrincipalUnit)agreement.ClientInformationSheet.Programme.Owner.OrganisationalUnits.FirstOrDefault(o => o.Name == "Principal");
+                    //if(principalUnit != null)
+                    //{
+                    //    mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", principalUnit.TradingName));
+                    //}
+                    mergeFields.Add(new KeyValuePair<string, string>("[[TradingName]]", agreement.ClientInformationSheet.Programme.Owner.TradingName));
                     mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", agreement.ClientInformationSheet.Programme.Owner.Email));
                 }
             }
