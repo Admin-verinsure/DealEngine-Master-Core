@@ -43,7 +43,7 @@ namespace DealEngine.Services.Impl
             _clientInformationService = clientInformationService;
         }
 
-        public async Task CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
+        public async Task<bool> CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
             var principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
@@ -57,11 +57,10 @@ namespace DealEngine.Services.Impl
                 }
                 if (principalOrganisations.Count != 0)
                 {
-                    sheet.submitted(user);
-                    
-                }
-                             
+                    sheet.submitted(user);                    
+                }                
                 await _clientInformationService.UpdateInformation(sheet);
+                return true;
             }
             catch(Exception ex)
             {
@@ -118,10 +117,7 @@ namespace DealEngine.Services.Impl
                 subSheet.Status = "Not Started";
                 subSheet.Owner = organisation;
                 subSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
-                //await _clientInformationService.UpdateInformation(subSheet);
-                
                 subClientProgramme.InformationSheet = subSheet;
-                await _programmeService.Update(subClientProgramme);
 
                 return subSheet;
 
@@ -140,8 +136,7 @@ namespace DealEngine.Services.Impl
                 var subClientProgramme = await _programmeService.CreateSubClientProgrammeFor(clientProgramme.Id);
                 subClientProgramme.InformationSheet = sheet;
                 subClientProgramme.Owner = org;
-                clientProgramme.SubClientProgrammes.Add(subClientProgramme);
-                await _programmeService.Update(clientProgramme);
+                clientProgramme.SubClientProgrammes.Add(subClientProgramme);                
 
                 return subClientProgramme;
             }
@@ -215,7 +210,6 @@ namespace DealEngine.Services.Impl
                 foreach (var principal in Advisors)
                 {
                     var subSheet = await CreateSubObjectProcess(informationSheet.Programme, informationSheet, principal);
-
                     subSheets.Add(subSheet);
                 }
 
@@ -229,18 +223,20 @@ namespace DealEngine.Services.Impl
             await _clientInformationService.UpdateInformation(informationSheet);
         }
 
-        public async Task ValidateProgramme(ClientInformationSheet informationSheet, User user)
+        public async Task<bool> ValidateProgramme(ClientInformationSheet informationSheet, User user)
         {
             if (informationSheet.Programme.BaseProgramme.Name == "NZFSG Programme")
             {
                 var advisors = await _organisationService.GetNZFSGSubsystemAdvisors(informationSheet);
-                ValidateSubObjects(informationSheet, user, advisors);
+                await ValidateSubObjects(informationSheet, user, advisors);
             }
             else
             {
                 var advisors = await _organisationService.GetTripleASubsystemAdvisors(informationSheet);
-                ValidateSubObjects(informationSheet, user, advisors);
-            }                        
+                await ValidateSubObjects(informationSheet, user, advisors);
+            }
+
+            return true;
         }
 
         private void RemoveSubObjects(ClientInformationSheet informationSheet, User user, SubClientInformationSheet subsheet)

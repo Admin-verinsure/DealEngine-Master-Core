@@ -1651,12 +1651,12 @@ namespace DealEngine.WebUI.Controllers
                 if (clientProgramme.SubClientProgrammes.Count != 0)
                 {
                     await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet,user);
-                    isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
+                    isComplete = await _programmeService.SubsystemCompleted(clientProgramme);                   
                 }
                 else
                 {
                     await _subsystemService.CreateSubObjects(clientProgramme.Id, clientProgramme.InformationSheet, user);
-                    isComplete = clientProgramme.SubClientProgrammes.Count == 0;
+                    isComplete = clientProgramme.SubClientProgrammes.Count == 0;                  
                 }
                 if (isComplete)
                 {
