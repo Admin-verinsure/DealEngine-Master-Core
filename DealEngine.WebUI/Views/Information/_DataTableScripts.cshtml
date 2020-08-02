@@ -28,7 +28,6 @@
     function ResetOrganisation() {
         var form = document.getElementById("organisationViewModel");
         form.reset();
-        document.getElementById("IsTripleAApproval").hidden = false;
         document.getElementById("HideOrganisationType").hidden = false;
         document.getElementById("HideInsuranceAttribute").hidden = false;
         document.getElementById("Private").hidden = true;
@@ -70,9 +69,10 @@
             addTabHTML.innerHTML = editTabHTML.innerHTML;
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
-            document.getElementById(AddButtonId).value = "Add";
-            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
+        debugger;
+        document.getElementById(AddButtonId).innerText = "Add";
+        document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         ResetOrganisation();
     }
 

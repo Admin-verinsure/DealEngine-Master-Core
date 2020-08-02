@@ -1,4 +1,5 @@
-﻿<script type="text/javascript">   
+﻿<script type="text/javascript">
+
     //intialize objects on load
            var d = new Date();
            var currMonth = d.getMonth();
@@ -11,20 +12,20 @@
            } else {
                  var startDate = new Date(currYear, currMonth, currDate);
             }
-    
+
     $('#FAPCoverStartDate').datepicker({
            dateFormat: "dd/mm/yy",
             minDate: startDate
     });
 
     function PopulateOrganisationView(Method, OutPut) {
-        var Form;
-        Form = document.getElementById("organisationViewModel");        
         try {
+            var Form = document.getElementById("organisationViewModel"); 
             var TradingName = document.getElementById("NoTradingName");
+            var Unit = document.getElementsByName("Unit");
             if (TradingName != null) {
                 TradingName.value = false;
-            }             
+            }
             for (obj in OutPut) {
                 var model = OutPut[obj];
                 var Type = obj;
@@ -37,24 +38,7 @@
                             var Id = Type + ".InsuranceAttribute";
                             Value = OutPut[obj][Field]["0"]["Name"];
                             Element = document.getElementById(Id);
-                            if (OutPut[obj][Field]["0"]["Name"] === "Principal") {
-                                PopulateOrganisationalUnit(OutPut, "PrincipalUnit");
-                            }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Advisor") {
-                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                document.getElementById("IsPrincipalAdvisor").hidden =false;
-                                
-                            }else if (OutPut[obj][Field]["0"]["Name"] === "Administration" ) {
-                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                document.getElementById("IsTripleAApproval").hidden = true;
-                            }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Nominated Representative") {
-                                PopulateOrganisationalUnit(OutPut, "AdvisorUnit");
-                                document.getElementById("IsTripleAApproval").hidden = true;
-                            }
-                            else if (OutPut[obj][Field]["0"]["Name"] === "Personnel") {
-                                PopulateOrganisationalUnit(OutPut, "PersonnelUnit");
-                            }
+                            PopulateOrganisationalUnit(OutPut, Unit[0].id);
                         }
                     }
 
@@ -64,8 +48,6 @@
                         Value = OutPut[obj][Field];
                     }
                     if (Element != null) {
-                        
-                        //ImportValue(element, Value);
                         if (Element.tagName == "INPUT") {
                             if (Element.type == "date") {
                                 //hardcord date string
@@ -77,7 +59,6 @@
                             }
                         }
                         else if (Element.tagName == "SELECT") {
-                            //debugger;
                             for (var o = 0; o < Element.options.length; o++) {
                                 if (Element.options[o].value == Value.toString()) {
                                     Element.options[o].selected = true;
@@ -87,7 +68,9 @@
                         }
                         OnChange(Element.id, Element.name);
                     }
-                    else { console.log(Id) }
+                    else {
+                        //unfound html ids are here
+                    }
                 }
                 if (Method == "Owner") {
                     var TradingName = document.getElementById("NoTradingName");
@@ -98,7 +81,7 @@
                     document.getElementById("HideOrganisationType").hidden = true;
                     document.getElementById("HideInsuranceAttribute").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;
-                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;                    
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;
                     document.getElementById("Else").hidden = false;
                 }
             }

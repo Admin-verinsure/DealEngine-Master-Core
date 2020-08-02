@@ -32,7 +32,7 @@ namespace DealEngine.WebUI.Models
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalAdvisor = GetBooleanSelectOptions();
-                    HasIsTripleAApprovalOptions = GetStandardSelectOptions();
+                    HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
                 }
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
                 {

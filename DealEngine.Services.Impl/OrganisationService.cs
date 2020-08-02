@@ -137,13 +137,13 @@ namespace DealEngine.Services.Impl
         {
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
 			var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
-			if (IA != null)
+			if (IA == null)
 			{
 				organisation.InsuranceAttributes.Clear();
-			}
-			organisation.InsuranceAttributes.Add(
+				organisation.InsuranceAttributes.Add(
 					new InsuranceAttribute(null, TypeName)
 					);
+			}
 		}
 
         private void UpdateOrganisationUnit(Organisation organisation, IFormCollection collection)
@@ -156,16 +156,14 @@ namespace DealEngine.Services.Impl
 			if (unit != null)
 			{
 				_mapper.Map(jsonUnit, unit);
+				unit.Name = TypeName;
 			}
 			else
 			{
 				unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
 				_mapper.Map(jsonUnit, unit);
-				organisation.OrganisationalUnits.Add(unit);
-			}
-			if (string.IsNullOrWhiteSpace(TypeName))
-			{
 				unit.Name = TypeName;
+				organisation.OrganisationalUnits.Add(unit);
 			}
 		}
 
@@ -312,7 +310,10 @@ namespace DealEngine.Services.Impl
 				{										
 					OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
 				}
-				if(Type == "Advisor" || Type == "Nominated Representative")
+				if(Type == "Advisor" || 
+					Type == "Nominated Representative" ||
+					Type == "Administration"
+					)
                 {
 					OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
 					OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
