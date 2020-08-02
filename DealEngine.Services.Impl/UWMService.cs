@@ -56,6 +56,8 @@ namespace DealEngine.Services.Impl
                     //Check if the cover is required
                     try
                     {
+                        var val = sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value;
+
                         if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
                         {
                             if (product.IsOptionalProductBasedSub)
@@ -65,13 +67,13 @@ namespace DealEngine.Services.Impl
                                 {
                                     foreach (var prodsubuis in sheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                                     {
-                                        if (sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1" && !prodsubuiscoverrequired)
+                                        if (prodsubuis.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1" && !prodsubuiscoverrequired)
                                         {
                                             prodsubuiscoverrequired = true;
                                         }
                                     }
                                 }
-                                if (!prodsubuiscoverrequired)
+                                if (prodsubuiscoverrequired)
                                 {
                                     continue;
                                 }

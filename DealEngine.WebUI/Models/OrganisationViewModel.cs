@@ -31,7 +31,7 @@ namespace DealEngine.WebUI.Models
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
-                    HasPrincipalAdvisor = GetStandardSelectOptions();
+                    HasPrincipalAdvisor = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetStandardSelectOptions();
                 }
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
@@ -302,6 +302,23 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Category 3",
                         Value = "Category 3"
+                    }
+            };
+            return _Types;
+        }
+        private IList<SelectListItem> GetBooleanSelectOptions()
+        {
+            var _Types = new List<SelectListItem>()
+            {
+                new SelectListItem
+                    {
+                        Text = "No",
+                        Value = "false"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Yes",
+                        Value = "true"
                     }
             };
             return _Types;
