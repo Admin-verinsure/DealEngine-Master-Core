@@ -783,6 +783,10 @@ namespace DealEngine.WebUI.Controllers
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
 
+                //remove as soon as possible
+                model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
+                //
+
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
@@ -820,6 +824,8 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet.Status == "Not Started")
                 {
                     model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
+                    await _milestoneService.CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);                    
+
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Started";
@@ -1233,7 +1239,6 @@ namespace DealEngine.WebUI.Controllers
 
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
-                        await _milestoneService.CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
                         await _clientInformationService.SaveAnswersFor(sheet, collection, user);
                         await GenerateUWM(user, sheet, reference);
                     }

@@ -27,7 +27,7 @@ namespace DealEngine.WebUI.Models
             ResearchHouseViewModel = new ResearchHouseViewModel(ClientInformationSheet);
             OTViewModel = new  OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
-            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, OrgUser);
+            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, OrgUser);            
         }
         public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme;
@@ -42,6 +42,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
         // TODO - find a better way to pass these in
+        public string HardCodedAdvisory { get; set; }
         public bool HasVehicles { get; set; }
         public IEnumerable<VehicleViewModel> AllVehicles { get; set; }
         public IEnumerable<VehicleViewModel> RegisteredVehicles { get; set; }
