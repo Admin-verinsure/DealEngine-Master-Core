@@ -144,11 +144,30 @@ namespace DealEngine.Services.Impl
             {
                 Discription = await NotStartedMilestone(activityName, user, sheet);
             }
+            if (activityName == "Agreement Status - Started")
+            {
+                Discription = await StartedMilestone(activityName, user, sheet);
+            }
             if (activityName == "Agreement Status – Referred")
             {
                 await ReferredMilestone(activityName, user, sheet);
             }
             return Discription;
+        }
+
+        private async Task<string> StartedMilestone(string activityName, User user, ClientInformationSheet sheet)
+        {
+            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            if (milestone != null)
+            {
+                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == activityName && a.DateDeleted == null);
+                if (advisory != null)
+                {
+                    return advisory.Description;
+                }
+            }
+            return "";
         }
 
         private async Task<string> NotStartedMilestone(string activityName, User user, ClientInformationSheet sheet)
