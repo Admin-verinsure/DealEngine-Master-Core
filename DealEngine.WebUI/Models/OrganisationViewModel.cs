@@ -11,16 +11,11 @@ namespace DealEngine.WebUI.Models
     public class OrganisationViewModel : BaseViewModel
     {
         public OrganisationViewModel() { }
-        public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, Organisation organisation, User OrgUser)
+        public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser)
         {
             User = new User(null, Guid.NewGuid());
-            Organisations = new List<Organisation>();
-            
+            Organisations = new List<Organisation>();            
             OrganisationTypes = GetOrganisationTypes();
-            if (organisation != null)
-            {
-                Organisation = organisation;
-            }
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
@@ -62,14 +57,13 @@ namespace DealEngine.WebUI.Models
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
 
+                Organisation = ClientInformationSheet.Owner;
+                //if (Organisations.Any(o => o.Id != (ClientInformationSheet.Owner.Id)))
                 Organisations.Add(ClientInformationSheet.Owner);
-                if (ClientInformationSheet.Organisation.Any())
+                foreach(var sheetOrg in ClientInformationSheet.Organisation)
                 {
-                    foreach(var sheetOrg in ClientInformationSheet.Organisation)
-                    {
-                        if(!Organisations.Contains(sheetOrg))
-                            Organisations.Add(sheetOrg);
-                    }                    
+                    if(Organisations.FirstOrDefault(o=>o.Id == sheetOrg.Id) == null)
+                        Organisations.Add(sheetOrg);                                        
                 }
                 
             }

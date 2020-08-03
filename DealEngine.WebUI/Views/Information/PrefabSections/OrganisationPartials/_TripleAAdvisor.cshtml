@@ -17,10 +17,10 @@
         <div id="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" hidden>
             <div class="form-group">
                 @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement",  @type = "date",@data_rule="RetirementDateValidation", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Retirement" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement",  @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Retirement" })
             </div>
             <div class="form-group">
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @required = "",@data_rule="RetirementDateValidation", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
             </div>
         </div>
     </div>
