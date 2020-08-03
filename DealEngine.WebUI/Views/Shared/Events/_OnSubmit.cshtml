@@ -176,6 +176,11 @@
                                 RemoveAdvisors = true;
                             }
                         }
+                         if (dataRule == "RetirementDateValidation") {                            
+                            if (element[element.selectedIndex].value == "true") {                                
+                                RemoveAdvisors = true;
+                            }
+                        }
                         var IsHidden = IsElementHidden(element);
                         if (element.classList.contains("is-invalid") && (IsHidden != true)) {
                             PostAjax = false;

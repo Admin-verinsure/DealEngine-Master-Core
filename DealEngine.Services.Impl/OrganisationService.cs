@@ -116,8 +116,10 @@ namespace DealEngine.Services.Impl
             {
 				var user = await UpdateOrganisationUser(collection);
 				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-				organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
-				if(organisation != null)
+				//organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
+			    organisation = await _organisationRepository.GetByIdAsync(Guid.Parse(collection["OrganisationViewModel.Organisation.Id"]));
+
+				if (organisation != null)
                 {					
 					organisation = _mapper.Map(jsonOrganisation, organisation);
 					if (organisation.OrganisationType.Name == "Person - Individual")
@@ -170,7 +172,8 @@ namespace DealEngine.Services.Impl
         private async Task<User> UpdateOrganisationUser(IFormCollection collection)
         {			
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-			var user = await _userService.GetUserByEmail(jsonUser.Email);
+			Organisation organisation = await _organisationRepository.GetByIdAsync(Guid.Parse(collection["OrganisationViewModel.Organisation.Id"]));
+			var user = await _userService.GetUserByOrganisation(organisation);
 			if (user != null)
 			{
 				user = _mapper.Map(jsonUser, user);
