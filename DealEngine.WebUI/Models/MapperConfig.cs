@@ -63,7 +63,6 @@ namespace DealEngine.WebUI.Models
             CreateMap<User, User>()
                 .ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.Organisations, map => map.Ignore())
-                .ForMember(dest => dest.Email, map => map.Ignore())
                 .ForMember(dest => dest.UserName, map => map.Ignore())
                 .ForMember(dest => dest.Branches, map => map.Ignore())
                 .ForMember(dest => dest.Departments, map => map.Ignore())

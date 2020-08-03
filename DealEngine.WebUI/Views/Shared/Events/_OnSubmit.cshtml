@@ -163,7 +163,8 @@
         var PostAjax = true;
         var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
-        $('#getDetailsModal').modal('show')
+         var ErrorMessage = "";
+
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
                 try {
@@ -176,17 +177,19 @@
                                 RemoveAdvisors = true;
                             }
                         }
-                        // if (dataRule == "RetirementDateValidation") {                            
-                        //    if (element[element.selectedIndex].value == "true") {                                
-                        //        RemoveAdvisors = true;
-                        //    }
-                        //}
+                        if (dataRule == "RetirementDateValidation") { 
+                            if (element[element.selectedIndex].value == "true") { 
+                                if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
+                                    && document.getElementById("AdvisorUnit.DateofDeceased").value == "") {
+                                    throw "if This Person has retired or deceased is yes ,then Please complete either DateofRetirement or DateofDeceased ";
+                                }
+                            }
+                        }
                         var IsHidden = IsElementHidden(element);
                         if (element.classList.contains("is-invalid") && (IsHidden != true)) {
                             PostAjax = false;
-                            //write a message here or stop the process
                             debugger;
-                            throw element.id + " incomplete";
+                            throw  "Please complete the form";
                         }
                     }
                 }
@@ -194,12 +197,15 @@
                     debugger;
                     PostAjax = false;
                     console.log(ex, element.Name);
+                    ErrorMessage = ex;
                     event.preventDefault();
                     event.stopPropagation();
                 }
             }
         }
         if (PostAjax) {
+            $('#getDetailsModal').modal('show');
+
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
                 if (RemoveAdvisors) {
@@ -227,11 +233,14 @@
             }
             catch (ex) {
                 debugger;
+                 $('#getDetailsModal').modal('hide');
+
                 console.log(ex, element.Name);
             }
         }
         else {
-            window.alert("Please complete the form");
+             window.alert(ErrorMessage);
+           
         }
     }
 
