@@ -648,11 +648,11 @@ namespace DealEngine.Services.Impl
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
 
                     if (principleadvisorunit != null)
                     {
-                        if (principleadvisorunit.IsPrincipalAdvisor)
+                        if (principleadvisorunit.IsPrincipalAdvisor && uisorg.DateDeleted == null && !uisorg.Removed)
                         {
                             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.TransitionalLicenseNum").Any())
                             {
@@ -727,12 +727,16 @@ namespace DealEngine.Services.Impl
 
                         foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                         {
-                            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
 
-                            if (principleadvisorunit.IsPrincipalAdvisor)
+                            if (principleadvisorunit != null && uisorg.DateDeleted == null && !uisorg.Removed)
                             {
-                                OTAdvisorList = uisorg.Name;
+                                if (principleadvisorunit.IsPrincipalAdvisor)
+                                {
+                                    OTAdvisorList = uisorg.Name;
+                                }
                             }
+                            
                         }
                     }
                 }

@@ -25,23 +25,20 @@
         SetCurrentTab(Tab);
     }
 
-    function ResetOrganisation(FormId) {
-        var form = document.getElementById(FormId);
-        document.getElementById("IsTripleAApproval").hidden = false;
+    function ResetOrganisation() {
+        var form = document.getElementById("organisationViewModel");
+        form.reset();
         document.getElementById("HideOrganisationType").hidden = false;
         document.getElementById("HideInsuranceAttribute").hidden = false;
         document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;
-        form.reset();
-        form.classList.remove('is-valid'); 
-        form.classList.add('needs-validation');
-        debugger;
+        document.getElementById("Else").hidden = true;        
         for (var i = 0; i < form.length; i++) {
-            if (form[i].tagName != "SELECT") {
+            if (form[i].type != "hidden"
+                && form[i].tagName != "SELECT") {
                 form[i].value = "";
             }
             if (form[i].id == "Organisation.Id") {
-                form[i].value = null;
+                form[i].value = "";
             }
             if (form[i].id == "Organisation.OrganisationType") {
                 form[i].options[0].selected = true;
@@ -49,8 +46,11 @@
             if (form[i].id == "Organisation.InsuranceAttribute") {
                 form[i].options[0].selected = true;
             }
+            form[i].classList.add('is-up');
+            form[i].classList.remove('is-valid');
+            form[i].classList.remove('is-invalid');
             form[i].disabled = false;
-        }
+        }        
     }
 
     function CreateEditLabel(ObjectLabel) {
@@ -62,17 +62,18 @@
         return div;
     }
 
-    function ResetForm(Form, AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
-        ResetOrganisation(Form);
+    function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        var editTabHTML = document.getElementById(EditTabId);     
         if (editTabHTML.firstElementChild.tagName == "FORM") {            
             var addTabHTML = document.getElementById(AddTabId);
             addTabHTML.innerHTML = editTabHTML.innerHTML;
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
-            document.getElementById(AddButtonId).innerText = "Add";
-            document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
         }
+        debugger;
+        document.getElementById(AddButtonId).innerText = "Add";
+        document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
+        ResetOrganisation();
     }
 
 

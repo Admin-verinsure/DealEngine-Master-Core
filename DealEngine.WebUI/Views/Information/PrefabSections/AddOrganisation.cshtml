@@ -3,13 +3,13 @@
 <div id="AddOrganisation">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" id="tab1">
-            <a class="nav-link active" href="#OrganisationTab1" data-toggle="tab" onclick="ResetForm('organisationViewModel', 'OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> List All </a>
+            <a class="nav-link active" href="#OrganisationTab1" data-toggle="tab" onclick="ResetForm('OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> List All </a>
         </li>
         <li class="nav-item" id="tab2">
             <a class="nav-link" href="#OrganisationTab2" data-toggle="tab"> Edit </a>
         </li>
         <li class="nav-item" id="tab3">
-            <a class="nav-link" href="#OrganisationTab3" data-toggle="tab" onclick="ResetForm('organisationViewModel', 'OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> Add </a>
+            <a class="nav-link" href="#OrganisationTab3" data-toggle="tab" onclick="ResetForm('OrganisationTab3','OrganisationTab2', 'Organisation', 'OrganisationSubmitBtn', 'OrganisationClearButton')"> Add </a>
         </li>
         <li class="nav-item" id="tab4">
             <a class="nav-link" href="#OrganisationTab4" data-toggle="tab"> Removed </a>
@@ -75,7 +75,7 @@
                             @if (unit != null)
                             {
                                 @unit.IsPrincipalAdvisor
-                                <input id="IsPrincipalAdvisor" data-IsPrincipalAdvisor="@unit.IsPrincipalAdvisor" value="" hidden>
+                                <input id="IsPrincipalAdvisor" data-IsPrincipalAdvisor="@unit.IsPrincipalAdvisor" value="" type="hidden">
                             }
 
                         </td>
@@ -100,36 +100,36 @@
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id= "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName, new { @id = "PersonnelUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/PMINZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "DANZ Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName, new { @id = "PersonnelUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/DANZ_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "CEAS Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName, new { @id = "PrincipalUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/CEAS_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "NZACS Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName, new { @id = "PrincipalUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZACS_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName)
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/TripleA_AddOrganisation", Model)
                 }
                 <div class="form-group">
-                    <input class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')" value="Add" />
+                    <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')" >Add</button>
                     <button class="btn btn-danger" id="OrganisationClearButton" onclick="ResetOrganisation('organisationViewModel')"> Clear</button>
                 </div>
             }

@@ -118,10 +118,9 @@ namespace DealEngine.Services.Impl
                 subSheet.Status = "Not Started";
                 subSheet.Owner = organisation;
                 subSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
-                await _clientInformationService.UpdateInformation(subSheet);
+                //await _clientInformationService.UpdateInformation(subSheet);
                 
                 subClientProgramme.InformationSheet = subSheet;
-
                 await _programmeService.Update(subClientProgramme);
 
                 return subSheet;
@@ -247,11 +246,9 @@ namespace DealEngine.Services.Impl
         private void RemoveSubObjects(ClientInformationSheet informationSheet, User user, SubClientInformationSheet subsheet)
         {
             try
-            {
-                SubClientProgramme subProg = (SubClientProgramme)subsheet.Programme;
-                subsheet.Delete(user, DateTime.Now);
-                subProg.Delete(user, DateTime.Now);
-                informationSheet.Programme.SubClientProgrammes.Remove(subProg);
+            {                
+                subsheet.Delete(user, DateTime.Now);                
+                informationSheet.Programme.SubClientProgrammes.Clear();
                 informationSheet.SubClientInformationSheets.Remove(subsheet);
             }
             catch(Exception ex)
