@@ -115,7 +115,7 @@ namespace DealEngine.WebUI.Models
         {
             try
             {
-				OrganisationViewModel = new OrganisationViewModel(null, null, null);
+				OrganisationViewModel = new OrganisationViewModel(null, null);
 			}
 			catch(Exception ex)
             {

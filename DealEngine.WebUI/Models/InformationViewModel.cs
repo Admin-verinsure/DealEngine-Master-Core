@@ -27,7 +27,7 @@ namespace DealEngine.WebUI.Models
             ResearchHouseViewModel = new ResearchHouseViewModel(ClientInformationSheet);
             OTViewModel = new  OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
-            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, ClientInformationSheet.Owner, OrgUser);
+            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, OrgUser);
         }
         public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme;
