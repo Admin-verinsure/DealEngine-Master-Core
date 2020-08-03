@@ -163,6 +163,7 @@
         var PostAjax = true;
         var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
+        $('#getDetailsModal').modal('show')
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
                 try {
@@ -213,7 +214,6 @@
                     async: false,
                     data: $("#" + form.id).serialize(),
                     success: function (Data) {
-                        form.reset();
                         location.reload();
                     }, error: function (request, error) {
                         debugger;
@@ -224,8 +224,6 @@
                 debugger;
                 console.log(ex, element.Name);
             }
-
-
         }
         else {
             window.alert("Please complete the form");
