@@ -59,10 +59,10 @@ namespace DealEngine.WebUI.Models
 
                 Organisation = ClientInformationSheet.Owner;
                 //if (Organisations.Any(o => o.Id != (ClientInformationSheet.Owner.Id)))
-                //    Organisations.Add(ClientInformationSheet.Owner);
+                Organisations.Add(ClientInformationSheet.Owner);
                 foreach(var sheetOrg in ClientInformationSheet.Organisation)
                 {
-                    if(!Organisations.Contains(sheetOrg))
+                    if(Organisations.FirstOrDefault(o=>o.Id == sheetOrg.Id) == null)
                         Organisations.Add(sheetOrg);                                        
                 }
                 
