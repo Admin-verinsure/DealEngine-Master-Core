@@ -119,7 +119,7 @@ namespace DealEngine.Services.Impl
 					organisation = _mapper.Map(jsonOrganisation, organisation);
 					if (organisation.OrganisationType.Name == "Person - Individual")
                     {
-						organisation.Name = user.FirstName + " " + user.LastName;
+						organisation.Name = collection["OrganisationViewModel.User.FirstName"] + " " + collection["OrganisationViewModel.User.LastName"];
 					}
 					UpdateOrganisationUnit(organisation, collection);
 					UpdateInsuranceAttribute(organisation, collection);	
@@ -165,7 +165,7 @@ namespace DealEngine.Services.Impl
         {			
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 			User user = null;
-		    user = await _userService.GetUserByOrganisation(organisation);
+			user = await _userService.GetUserById(jsonUser.Id);
 			
 
 			if (user != null)
@@ -384,6 +384,7 @@ namespace DealEngine.Services.Impl
 							(fieldType == typeof(int)) ||
 							(fieldType == typeof(decimal)) ||
 							(fieldType == typeof(bool)) ||
+							(fieldType == typeof(Guid)) ||
 							(fieldType == typeof(DateTime?)) || 
 							(fieldType == typeof(DateTime))
 							)
