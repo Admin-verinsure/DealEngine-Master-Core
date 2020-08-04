@@ -81,10 +81,13 @@ namespace DealEngine.Services.Impl
                                 {
                                     continue;
                                 }
-                            } 
-                        } 
+                            }
+                            else
+                            {
 
-                            
+                                continue;
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
