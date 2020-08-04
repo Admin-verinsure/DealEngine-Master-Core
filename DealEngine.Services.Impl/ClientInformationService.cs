@@ -15,19 +15,22 @@ namespace DealEngine.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
+        IMapperSession<Reference> _referenceRepository;
         IMapperSession<Boat> _boatRepository;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<User> _userRepository;
         IMapper _mapper;
 
         public ClientInformationService(
-            IMapperSession<User> userRepository,
+            IMapperSession<Reference> referenceRepository,
+        IMapperSession<User> userRepository,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
             IMapper mapper
             )
         {
+            _referenceRepository = referenceRepository;
             _userRepository = userRepository;
             _organisationRepository = organisationRepository;
             _mapper = mapper;
@@ -51,7 +54,8 @@ namespace DealEngine.Services.Impl
             
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;
-            await _customerInformationRepository.AddAsync(sheet);            
+            await _customerInformationRepository.AddAsync(sheet);
+            await _referenceRepository.AddAsync(new Reference(sheet.Id, sheet.ReferenceId));
             return sheet;
         }
 
