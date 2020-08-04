@@ -20,7 +20,8 @@
                 @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement",  @type = "date", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Retirement" })
             </div>
             <div class="form-group">
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date",  @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
+                @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
             </div>
         </div>
     </div>
