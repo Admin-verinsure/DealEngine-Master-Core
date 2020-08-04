@@ -103,19 +103,19 @@ namespace DealEngine.Services.Impl
 			return null;			
 		}
 
-		public async Task UpdateOrganisation(IFormCollection collection,Organisation organisation)
+		public async Task UpdateOrganisation(IFormCollection collection, Organisation organisation)
 		{
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
 			if (string.IsNullOrWhiteSpace(TypeName))
             {
 				//Owner
-				organisation = await UpdateOwner(collection,organisation);
+				organisation = await UpdateOwner(collection, organisation);
 				var user = await UpdateOrganisationUser(collection, organisation);
 			}
 			else
             {
 				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-					var user = await UpdateOrganisationUser(collection,organisation);
+					var user = await UpdateOrganisationUser(collection, organisation);
 					organisation = _mapper.Map(jsonOrganisation, organisation);
 					if (organisation.OrganisationType.Name == "Person - Individual")
                     {
@@ -161,7 +161,7 @@ namespace DealEngine.Services.Impl
 			}
 		}
 
-        private async Task<User> UpdateOrganisationUser(IFormCollection collection,Organisation organisation)
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection, Organisation organisation)
         {			
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
 			User user = null;
@@ -176,7 +176,7 @@ namespace DealEngine.Services.Impl
 			return user;
 		}
 
-        private async Task<Organisation>  UpdateOwner(IFormCollection collection,Organisation organisation)
+        private async Task<Organisation>  UpdateOwner(IFormCollection collection, Organisation organisation)
         {
 			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
 			organisation = _mapper.Map(jsonOrganisation, organisation);

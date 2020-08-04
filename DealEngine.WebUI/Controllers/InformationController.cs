@@ -784,7 +784,7 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
 
                 //remove as soon as possible
-                model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
+                //model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
                 //
 
                 //build custom models
