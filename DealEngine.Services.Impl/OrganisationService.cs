@@ -107,7 +107,7 @@ namespace DealEngine.Services.Impl
 		{
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
 			organisation = await UpdateOrganisation(collection, organisation);
-			if (string.IsNullOrWhiteSpace(TypeName))
+			if (!string.IsNullOrWhiteSpace(TypeName))
             {
 				UpdateOrganisationUnit(organisation, collection);
 				UpdateInsuranceAttribute(organisation, collection);
