@@ -94,24 +94,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
             {
                 otnumberofadvisor += 1;
+            }
 
-                if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
+            if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
+            {
+                foreach (var prodsubuis in informationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                 {
-                    foreach (var prodsubuis in informationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
+                    if (prodsubuis.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
-                        {
-                            otnumberofadvisor += 1;
+                        otnumberofadvisor += 1;
 
-                            if (informationSheet.Answers.Where(sa => sa.ItemName == "OTViewModel.HasClaimQuestionsOptions").First().Value == "1" && !otclaim)
-                            {
-                                otclaim = true;
-                            }
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == "OTViewModel.HasClaimQuestionsOptions").First().Value == "1" && !otclaim)
+                        {
+                            otclaim = true;
                         }
                     }
-                    
                 }
-               
+
             }
 
             int TermLimit2mil = 2000000;

@@ -105,11 +105,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int intnumberofadvisors = 0;
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name == "Advisor" || i.Name == "Nominated Representative")))
+                //foreach (var uisorg in agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name == "Advisor" || i.Name == "Nominated Representative")))
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed)
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor" || u.Name == "Nominated Representative") && u.DateDeleted == null);
+
+                    if (principleadvisorunit != null)
                     {
-                        intnumberofadvisors += 1;
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
+                        {
+                            intnumberofadvisors += 1;
+                        }
                     }
                 }
             }
