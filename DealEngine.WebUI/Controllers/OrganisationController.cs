@@ -95,12 +95,7 @@ namespace DealEngine.WebUI.Controllers
 
             var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
             var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-
-            string Email = jsonOrganisation.Email;
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
-            string Name = jsonOrganisation.Name;
-            string FirstName = jsonUser.FirstName;
-            string LastName = jsonUser.LastName;
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
             Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
             //condition for organisation exists
@@ -109,10 +104,10 @@ namespace DealEngine.WebUI.Controllers
 
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.CreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+                    organisation = await _organisationService.CreateOrganisation(jsonUser.Email, TypeName, jsonOrganisation.Name, OrganisationTypeName, jsonUser.FirstName, jsonUser.LastName, currentUser, collection);
                 }
 
-                await _organisationService.UpdateOrganisation(collection,organisation);
+                await _organisationService.PostOrganisation(collection,organisation);
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

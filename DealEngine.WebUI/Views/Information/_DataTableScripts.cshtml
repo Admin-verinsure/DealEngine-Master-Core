@@ -31,17 +31,17 @@
         document.getElementById("HideOrganisationType").hidden = false;
         document.getElementById("HideInsuranceAttribute").hidden = false;
         document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;        
+        document.getElementById("Else").hidden = true;
         for (var i = 0; i < form.length; i++) {
             if (form[i].type != "hidden"
                 && form[i].tagName != "SELECT") {
                 form[i].value = "";
             }
             if (form[i].id == "Organisation.Id") {
-                form[i].value = "";
+                form[i].value = '@System.Guid.Empty';
             }
             if (form[i].id == "User.Id") {
-                form[i].value = "";
+                form[i].value = '@System.Guid.Empty';
             }
             if (form[i].id == "Organisation.OrganisationType") {
                 form[i].options[0].selected = true;
@@ -53,7 +53,7 @@
             form[i].classList.remove('is-valid');
             form[i].classList.remove('is-invalid');
             form[i].disabled = false;
-        }        
+        }
     }
 
     function CreateEditLabel(ObjectLabel) {
@@ -66,8 +66,8 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);     
-        if (editTabHTML.firstElementChild.tagName == "FORM") {            
+        var editTabHTML = document.getElementById(EditTabId);
+        if (editTabHTML.firstElementChild.tagName == "FORM") {
             var addTabHTML = document.getElementById(AddTabId);
             addTabHTML.innerHTML = editTabHTML.innerHTML;
             editTabHTML.innerHTML = "";
@@ -81,7 +81,7 @@
 
 
 
-    function AddLocation() {        
+    function AddLocation() {
         var form = document.getElementById("LocationViewModel");
         var formValid = TableFormValidation(form , "location");
         if (formValid) {
@@ -111,7 +111,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -128,7 +128,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -147,7 +147,7 @@
         document.getElementById("citydetails").value = City;
         document.getElementById("countrydetails").value = Country;
         document.getElementById("suburbdetails").value = Suburb;
-        document.getElementById("postcodedetails").value = Postcode;        
+        document.getElementById("postcodedetails").value = Postcode;
 
         SetCurrentTab("locationtab2");
     }
@@ -165,7 +165,7 @@
                 async: false
             })
                 .done(function () {
-                    //Save the session and reload 
+                    //Save the session and reload
                     form.reset();
                     location.reload();
                 })
@@ -184,7 +184,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -201,7 +201,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -209,7 +209,7 @@
             });
     }
 
-    
+
     function RestoreResearchHouse(Id) {
         sessionStorage.setItem('accordianTrigger', 'Independent Research');
         var postData = { ProjectId: Id };
@@ -219,7 +219,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
@@ -297,7 +297,7 @@
                     window.alert("Please complete "+SectionName+" details");
                     return false;
                 }
-            }            
+            }
         }
         return true;
     }
@@ -315,7 +315,7 @@
         if (document.getElementById("researchServices") != null) {
             document.getElementById("researchServices").value = ResearchServices;
         }
-       
+
         SetCurrentTab("ResearchHouse2");
     }
 
@@ -333,7 +333,7 @@
                 async: false
             })
                 .done(function () {
-                    //Save the session and reload 
+                    //Save the session and reload
                     form.reset();
                     location.reload();
                 })
@@ -351,7 +351,7 @@
             data: postData
         })
             .done(function () {
-                //Save the session and reload                
+                //Save the session and reload
                 location.reload();
             })
             .fail(function (a, s, d) {
