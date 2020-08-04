@@ -103,33 +103,27 @@ namespace DealEngine.Services.Impl
 			return null;			
 		}
 
-		public async Task UpdateOrganisation(IFormCollection collection)
+		public async Task UpdateOrganisation(IFormCollection collection, Organisation organisation)
 		{
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
-			Organisation organisation;
 			if (string.IsNullOrWhiteSpace(TypeName))
             {
 				//Owner
-				organisation = await UpdateOwner(collection);				
+				organisation = await UpdateOwner(collection, organisation);
+				var user = await UpdateOrganisationUser(collection, organisation);
 			}
-            else
+			else
             {
-				var user = await UpdateOrganisationUser(collection);
 				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-				organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
-				if(organisation != null)
-                {					
+					var user = await UpdateOrganisationUser(collection, organisation);
 					organisation = _mapper.Map(jsonOrganisation, organisation);
 					if (organisation.OrganisationType.Name == "Person - Individual")
                     {
 						organisation.Name = user.FirstName + " " + user.LastName;
-
 					}
 					UpdateOrganisationUnit(organisation, collection);
-					UpdateInsuranceAttribute(organisation, collection);						
-				}				
+					UpdateInsuranceAttribute(organisation, collection);	
             }
-
 			await Update(organisation);			
 		}
 
@@ -167,10 +161,13 @@ namespace DealEngine.Services.Impl
 			}
 		}
 
-        private async Task<User> UpdateOrganisationUser(IFormCollection collection)
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection, Organisation organisation)
         {			
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-			var user = await _userService.GetUserByEmail(jsonUser.Email);
+			User user = null;
+		    user = await _userService.GetUserByOrganisation(organisation);
+			
+
 			if (user != null)
 			{
 				user = _mapper.Map(jsonUser, user);
@@ -179,15 +176,11 @@ namespace DealEngine.Services.Impl
 			return user;
 		}
 
-        private async Task<Organisation>  UpdateOwner(IFormCollection collection)
+        private async Task<Organisation>  UpdateOwner(IFormCollection collection, Organisation organisation)
         {
 			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-			var organisation = await GetOrganisationByEmail(jsonOrganisation.Email);
-			if(organisation != null)
-            {
-				organisation = _mapper.Map(jsonOrganisation, organisation);
-				await Update(organisation);
-			}
+			organisation = _mapper.Map(jsonOrganisation, organisation);
+			await Update(organisation);
 			return organisation;
 		}
 

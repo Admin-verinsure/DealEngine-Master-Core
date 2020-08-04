@@ -784,7 +784,7 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
 
                 //remove as soon as possible
-                model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
+                //model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
                 //
 
                 //build custom models
@@ -824,13 +824,8 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet.Status == "Not Started")
                 {
                     model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
-                    await _milestoneService.CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);                    
-
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        sheet.Status = "Started";
-                        await uow.Commit();
-                    }
+                    sheet.Status = "Started";
+                    await _clientInformationService.UpdateInformation(sheet);
                 }
 
                 var claims = new List<ClaimViewModel>();

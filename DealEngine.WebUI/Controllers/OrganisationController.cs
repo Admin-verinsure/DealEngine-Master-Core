@@ -112,7 +112,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation = await _organisationService.CreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
                 }
 
-                await _organisationService.UpdateOrganisation(collection);
+                await _organisationService.UpdateOrganisation(collection,organisation);
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

@@ -73,18 +73,21 @@ namespace DealEngine.Services.Impl
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    prodsubuiscoverrequired = true;
+                                }
                                 if (prodsubuiscoverrequired)
                                 {
                                     continue;
                                 }
-                            } else
+                            }
+                            else
                             {
 
                                 continue;
                             }
-                        } 
-
-                            
+                        }
                     }
                     catch (Exception ex)
                     {

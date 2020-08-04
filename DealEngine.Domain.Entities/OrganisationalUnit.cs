@@ -65,8 +65,10 @@ namespace DealEngine.Domain.Entities
         public virtual string Duration { get; set; }
         [Display(Name = "Is a Principal Advisor?")]
         public virtual bool IsPrincipalAdvisor { get; set; }
-        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
+        [Display(Name = "Date of Retirement(Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
+        [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
+
         public virtual DateTime? DateofDeceased { get; set; }        
         public virtual string MyCRMId { get; set; }
         public virtual DateTime? PIRetroactivedate { get; set; }
