@@ -181,7 +181,7 @@
                             if (element[element.selectedIndex].value == "true") { 
                                 if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
                                     && document.getElementById("AdvisorUnit.DateofDeceased").value == "") {
-                                    throw "If this person has retired or deceased is yes ,then please complete either Date of Retirement or Date of Deceased ";
+                                    throw "If this person has retired or deceased, then please complete either 'Date of Retirement' or 'Date of Deceased'";
                                 }
                             }
                         }
@@ -205,7 +205,6 @@
         }
         if (PostAjax) {
             $('#getDetailsModal').modal('show');
-
             try {
                 sessionStorage.setItem('accordianTrigger', AccordionId);
                 if (RemoveAdvisors) {
@@ -232,15 +231,13 @@
                 });
             }
             catch (ex) {
-                debugger;
-                 $('#getDetailsModal').modal('hide');
-
+                debugger;                 
                 console.log(ex, element.Name);
             }
+            $('#getDetailsModal').modal('hide');
         }
         else {
-             window.alert(ErrorMessage);
-           
+             window.alert(ErrorMessage);           
         }
     }
 

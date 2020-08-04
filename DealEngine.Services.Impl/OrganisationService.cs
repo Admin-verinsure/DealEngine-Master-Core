@@ -103,27 +103,15 @@ namespace DealEngine.Services.Impl
 			return null;			
 		}
 
-		public async Task UpdateOrganisation(IFormCollection collection, Organisation organisation)
+		public async Task PostOrganisation(IFormCollection collection, Organisation organisation)
 		{
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+			organisation = await UpdateOrganisation(collection, organisation);
 			if (string.IsNullOrWhiteSpace(TypeName))
             {
-				//Owner
-				organisation = await UpdateOwner(collection, organisation);
-				var user = await UpdateOrganisationUser(collection, organisation);
+				UpdateOrganisationUnit(organisation, collection);
+				UpdateInsuranceAttribute(organisation, collection);
 			}
-			else
-            {
-				var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-					var user = await UpdateOrganisationUser(collection, organisation);
-					organisation = _mapper.Map(jsonOrganisation, organisation);
-					if (organisation.OrganisationType.Name == "Person - Individual")
-                    {
-						organisation.Name = collection["OrganisationViewModel.User.FirstName"] + " " + collection["OrganisationViewModel.User.LastName"];
-					}
-					UpdateOrganisationUnit(organisation, collection);
-					UpdateInsuranceAttribute(organisation, collection);	
-            }
 			await Update(organisation);			
 		}
 
@@ -161,26 +149,34 @@ namespace DealEngine.Services.Impl
 			}
 		}
 
-        private async Task<User> UpdateOrganisationUser(IFormCollection collection, Organisation organisation)
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection)
         {			
 			var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-			User user = null;
-			user = await _userService.GetUserById(jsonUser.Id);
-			
-
-			if (user != null)
-			{
-				user = _mapper.Map(jsonUser, user);
-				await _userService.Update(user);
+			Guid.TryParse(collection["OrganisationViewModel.User.Id"], out Guid UserId);
+			if(UserId != Guid.Empty)
+            {
+				User user = await _userService.GetUserById(UserId);
+				if (user != null)
+				{
+					user = _mapper.Map(jsonUser, user);
+					await _userService.Update(user);
+					return user;
+				}
 			}
-			return user;
+			return null;
 		}
 
-        private async Task<Organisation>  UpdateOwner(IFormCollection collection, Organisation organisation)
-        {
+        private async Task<Organisation>  UpdateOrganisation(IFormCollection collection, Organisation organisation)
+        {			
 			var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+			var user = await UpdateOrganisationUser(collection);
 			organisation = _mapper.Map(jsonOrganisation, organisation);
-			await Update(organisation);
+			if (organisation.OrganisationType.Name == "Person - Individual" && 
+				user != null)
+			{
+				organisation.Name = user.FirstName + " " + user.LastName;
+			}
+
 			return organisation;
 		}
 
@@ -240,39 +236,40 @@ namespace DealEngine.Services.Impl
         public async Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
 			Organisation foundOrg = await GetOrganisationByEmail(Email);
+			User User = null;
 			if (foundOrg == null)
 			{
-				var User = await _userService.GetUserByEmail(Email);				
-				if (User != null)
-				{					
-					var SameUser = await _userService.GetUser(User.UserName);
-					if (User != SameUser)
-					{						
-						User = new User(Creator, Guid.NewGuid(), collection);
-					}
-				}
-                else
-                {
-					User = new User(Creator, Guid.NewGuid(), collection);
-				}
-
-				if(string.IsNullOrWhiteSpace(OrganisationName))
+				List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
+				InsuranceAttribute InsuranceAttribute = new InsuranceAttribute(Creator, Type);
+				if (string.IsNullOrWhiteSpace(OrganisationName))
                 {
 					OrganisationName = FirstName + " " + LastName;
 					OrganisationTypeName = "Person - Individual";
+					User = await _userService.GetUserByEmail(Email);
+					if (User != null)
+					{
+						var SameUser = await _userService.GetUser(User.UserName);
+						if (User != SameUser)
+						{
+							User = new User(Creator, Guid.NewGuid(), collection);
+						}
+					}
+					else
+					{
+						User = new User(Creator, Guid.NewGuid(), collection);
+					}
 				}
 
-				List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
-				//IList<OrganisationalUnit> OrganisationalUnit = await _organisationalUnitService.CreateOrganisationalUnit(OrganisationalUnit);
-				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName); 
-				InsuranceAttribute InsuranceAttribute = new InsuranceAttribute(Creator, Type);
+				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);				
 				foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
+                if (User != null)
+                {
+					if (!User.Organisations.Contains(foundOrg))
+						User.Organisations.Add(foundOrg);
 
-				if (!User.Organisations.Contains(foundOrg))
-					User.Organisations.Add(foundOrg);
-
-				User.SetPrimaryOrganisation(foundOrg);
-				await _userService.Create(User);
+					User.SetPrimaryOrganisation(foundOrg);
+					await _userService.Create(User);
+				}
 			}
 			return foundOrg;			
         }
