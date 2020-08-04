@@ -903,7 +903,7 @@ namespace DealEngine.Services.Impl
                         {
                             Random random = new Random();
                             int randomNumber = random.Next(10, 99);
-                            username = username + randomNumber.ToString();
+                           // username = username + randomNumber.ToString();
                             user = new User(currentUser, Guid.NewGuid(), username);
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
@@ -917,6 +917,7 @@ namespace DealEngine.Services.Impl
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[6], organisationType, email);
                             organisation.InsuranceAttributes.Add(orgIA);
                             organisation.OrganisationalUnits.Add(orgUnit);
+                            organisation.TradingName = parts[5];
                             await _organisationService.CreateNewOrganisation(organisation);
                         }
 
