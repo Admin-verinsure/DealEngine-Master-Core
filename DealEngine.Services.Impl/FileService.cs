@@ -157,14 +157,12 @@ namespace DealEngine.Services.Impl
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
             // store all the fields to be merged
-            clientInformationSheet = agreement.ClientInformationSheet;
-
             List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;
             Decimal PremiumTotal = 0.0m;
             // loop over terms and set merge feilds
-            foreach (var agreementlist in clientInformationSheet.Programme.Agreements)
+            foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements)
             {
                 foreach (var term in agreementlist.ClientAgreementTerms)
                 {
@@ -814,31 +812,33 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[Jurisdiction]]", agreement.Jurisdiction));
             mergeFields.Add(new KeyValuePair<string, string>("[[Territory]]", agreement.TerritoryLimit));
             mergeFields.Add(new KeyValuePair<string, string>("[[ProfessionalBusiness]]", agreement.ProfessionalBusiness));
+            
             if (clientInformationSheet != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
 
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByName]]", clientInformationSheet.SubmittedBy.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByEmail]]", clientInformationSheet.SubmittedBy.Email));
+            }
+            if (agreement.ClientInformationSheet != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByName]]", agreement.ClientInformationSheet.SubmittedBy.FullName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByEmail]]", agreement.ClientInformationSheet.SubmittedBy.Email));
 
                 if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").Any())
                 {
                     mergeFields.Add(new KeyValuePair<string, string>("[[EmployeeNumber]]", Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value).ToString()));
-                } else
+                }
+                else
                 {
                     mergeFields.Add(new KeyValuePair<string, string>("[[EmployeeNumber]]", " "));
                 }
 
-                if (clientInformationSheet.RevenueData != null)
+                if (agreement.ClientInformationSheet.RevenueData != null)
                 {
-                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeCurrentYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.CurrentYearTotal).ToString("C2")));
-                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeLastYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.LastFinancialYearTotal).ToString("C2")));
-                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeNextYear]]", Convert.ToDecimal(clientInformationSheet.RevenueData.NextFinancialYearTotal).ToString("C2")));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeCurrentYear]]", Convert.ToDecimal(agreement.ClientInformationSheet.RevenueData.CurrentYearTotal).ToString("C2")));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeLastYear]]", Convert.ToDecimal(agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal).ToString("C2")));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeNextYear]]", Convert.ToDecimal(agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal).ToString("C2")));
                 }
 
-            }
-            if (agreement.ClientInformationSheet != null)
-            {
                 if (agreement.ClientInformationSheet.Programme.Owner != null)
                 {
                     //var principalUnit = (PrincipalUnit)agreement.ClientInformationSheet.Programme.Owner.OrganisationalUnits.FirstOrDefault(o => o.Name == "Principal");

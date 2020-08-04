@@ -2439,22 +2439,52 @@ namespace DealEngine.WebUI.Controllers
                                     //render docs except invoice
                                     if (template.DocumentType != 4 && template.DocumentType != 6)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                        agreement.Documents.Add(renderedDoc);
-                                        documents.Add(renderedDoc);
-                                        await _fileService.UploadFile(renderedDoc);
+                                        if (template.Name == "TripleA Individual TL Certificate")
+                                        {
+                                            if (agreement.Product.IsOptionalProductBasedSub && 
+                                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                            {
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                        } else
+                                        {
+                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            documents.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
+                                        }
+                                       
                                     }
+
                                     //render all subsystem
                                     if (template.DocumentType == 6)
                                     {
                                         foreach (var subSystemClient in sheet.SubClientInformationSheets)
                                         {
-                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
-                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                            agreement.Documents.Add(renderedDoc);
-                                            documents.Add(renderedDoc);
-                                            await _fileService.UploadFile(renderedDoc);
+                                            if (agreement.Product.IsOptionalProductBasedSub)
+                                            {
+                                                if (subSystemClient.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                                {
+                                                    SystemDocument renderedDocSub = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                                    renderedDocSub.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                    agreement.Documents.Add(renderedDocSub);
+                                                    documents.Add(renderedDocSub);
+                                                    await _fileService.UploadFile(renderedDocSub);
+                                                }
+                                            } else
+                                            {
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                          
                                         }
                                     }
                                 }
@@ -2543,65 +2573,100 @@ namespace DealEngine.WebUI.Controllers
                             doc.Delete(user);
                         }
 
-                        foreach (SystemDocument template in agreeTemplateList)
+                        if (!agreement.Product.IsOptionalCombinedProduct)
                         {
-                            if (template.ContentType == MediaTypeNames.Application.Pdf)
+                            foreach (SystemDocument template in agreeTemplateList)
                             {
-                                SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
-                                agreement.Documents.Add(notRenderedDoc);
-                                documents.Add(notRenderedDoc);
-                            }
-                            else
-                            {
-                                //render docs except invoice
-                                if (template.DocumentType != 4 && template.DocumentType != 6)
+                                if (template.ContentType == MediaTypeNames.Application.Pdf)
                                 {
-                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                    agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
-                                    await _fileService.UploadFile(renderedDoc);
+                                    SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
+                                    agreement.Documents.Add(notRenderedDoc);
+                                    documents.Add(notRenderedDoc);
                                 }
-                                //render all subsystem
-                                if (template.DocumentType == 6)
+                                else
                                 {
-                                    foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                                    //render docs except invoice
+                                    if (template.DocumentType != 4 && template.DocumentType != 6)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
-                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                        agreement.Documents.Add(renderedDoc);
-                                        documents.Add(renderedDoc);
-                                        await _fileService.UploadFile(renderedDoc);
+                                        if (template.Name == "TripleA Individual TL Certificate")
+                                        {
+                                            if (agreement.Product.IsOptionalProductBasedSub &&
+                                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                            {
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            documents.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
+                                        }
+
+                                    }
+                                    //render all subsystem
+                                    if (template.DocumentType == 6)
+                                    {
+                                        foreach (var subSystemClient in sheet.SubClientInformationSheets)
+                                        {
+                                            if (agreement.Product.IsOptionalProductBasedSub)
+                                            {
+                                                if (subSystemClient.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                                {
+                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                    agreement.Documents.Add(renderedDoc);
+                                                    documents.Add(renderedDoc);
+                                                    await _fileService.UploadFile(renderedDoc);
+                                                }
+                                            } else
+                                            {
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                                    
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                //send out policy document email
+                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                if (emailTemplate != null)
+                                {
+                                    if (sendUser)
+                                    {
+                                        await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                    }
+                                    else
+                                    {
+                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                    }
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                            agreement.DocIssueDate = DateTime.Now;
+                                            await uow.Commit();
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        if (programme.BaseProgramme.ProgEnableEmail)
-                        {
-                            //send out policy document email
-                            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                            if (emailTemplate != null)
-                            {
-                                if (sendUser)
-                                {
-                                    await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-                                }
-                                else
-                                {
-                                    await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-                                }
-                                using (var uow = _unitOfWork.BeginUnitOfWork())
-                                {
-                                    if (!agreement.IsPolicyDocSend)
-                                    {
-                                        agreement.IsPolicyDocSend = true;
-                                        agreement.DocIssueDate = DateTime.Now;
-                                        await uow.Commit();
-                                    }
-                                }
-                            }
-                        }
+                            
                     }
 
                 }
@@ -3345,24 +3410,39 @@ namespace DealEngine.WebUI.Controllers
                         doc.Delete(user);
                     }
 
-                    foreach (Document template in agreement.Product.Documents)
+                    if (!agreement.Product.IsOptionalCombinedProduct)
                     {
-                        if (template.DocumentType == 6)
+                        foreach (Document template in agreement.Product.Documents)
                         {
-                            foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
+                            if (template.DocumentType == 6)
                             {
-                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
+                                foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
+                                {
+                                    if (agreement.Product.IsOptionalProductBasedSub)
+                                    {
+                                        if (subsheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                        {
+                                            renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
+                                        }
+                                    } else
+                                    {
+                                        renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
+                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                        agreement.Documents.Add(renderedDoc);
+                                        await _fileService.UploadFile(renderedDoc);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                 agreement.Documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
-                        }
-                        else
-                        {
-                            renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                            agreement.Documents.Add(renderedDoc);
-                            await _fileService.UploadFile(renderedDoc);
                         }
                     }
                 }
