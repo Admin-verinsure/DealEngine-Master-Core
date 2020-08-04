@@ -19,13 +19,12 @@ namespace DealEngine.Services.Impl
 
         public async Task<string> GetLatestReferenceId()
         {
-            var reference = await _referenceRepository.FindAll().Where(r => r.DateDeleted == null).OrderByDescending(r => r.ReferenceId).FirstOrDefaultAsync();
-           
-            if (reference == null)
+            var references = await _referenceRepository.FindAll().ToListAsync();
+            if (!references.Any())
             {
                 return (1000000).ToString();
             }
-
+            var reference = references.LastOrDefault(r => r.DateDeleted == null);          
             int.TryParse(reference.ReferenceId, out int nextReference);            
             return (nextReference + 1).ToString();
         }

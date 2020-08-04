@@ -141,8 +141,9 @@ namespace DealEngine.Services.Impl
                 await _milestoneTemplateService.CreateMilestoneTemplate(user);
             }
             if (activityName == "Agreement Status - Not Started")
-            {
+            {                
                 Discription = await NotStartedMilestone(activityName, user, sheet);
+                await CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
             }
             if (activityName == "Agreement Status - Started")
             {
