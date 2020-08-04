@@ -716,42 +716,44 @@ namespace DealEngine.Services.Impl
 
             //OT merge fields
             string OTAdvisorList = "";
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).Any())
+            Product OTProduct = await _productService.GetProductById(new Guid("feb30dcf-c2d1-43e4-92df-d9c0fb555e5c"));
+            if (OTProduct != null)
             {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).Any())
                 {
-                    if (agreement.ClientInformationSheet.Organisation.Count > 0)
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-
-                        foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                        if (agreement.ClientInformationSheet.Organisation.Count > 0)
                         {
-                            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
-
-                            if (principleadvisorunit != null)
+                            foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                             {
-                                if (principleadvisorunit.IsPrincipalAdvisor && uisorg.DateDeleted == null && !uisorg.Removed && string.IsNullOrEmpty(OTAdvisorList))
+                                var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
+
+                                if (principleadvisorunit != null)
                                 {
-                                    OTAdvisorList = uisorg.Name;
+                                    if (principleadvisorunit.IsPrincipalAdvisor && uisorg.DateDeleted == null && !uisorg.Removed && string.IsNullOrEmpty(OTAdvisorList))
+                                    {
+                                        OTAdvisorList = uisorg.Name;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
-            {
-                Product OTProduct = await _productService.GetProductById(new Guid("feb30dcf-c2d1-43e4-92df-d9c0fb555e5c"));
-                foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
+                if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
                 {
-                    if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                    foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (string.IsNullOrEmpty(OTAdvisorList))
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                         {
-                            OTAdvisorList += prodsubuis.Owner.Name;
-                        }
-                        else
-                        {
-                            OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                            if (string.IsNullOrEmpty(OTAdvisorList))
+                            {
+                                OTAdvisorList += prodsubuis.Owner.Name;
+                            }
+                            else
+                            {
+                                OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                            }
                         }
                     }
                 }
@@ -763,8 +765,6 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorTrustees_OT]]", OTAdvisorList));
             }
-           
-
 
             // merge the configured merge feilds into the document
             string content = FromBytes (template.Contents);
