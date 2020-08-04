@@ -125,7 +125,7 @@
                 }
                 else if (Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
                 {
-                    @Html.Hidden("OrganisationViewModel.User.Id", Model.OrganisationViewModel.User.Id, new { @id = "User.Id" })
+                    @*@Html.Hidden("OrganisationViewModel.User.Id", Model.OrganisationViewModel.User.Id, new { @id = "User.Id" })*@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/TripleA_AddOrganisation", Model)
                 }
