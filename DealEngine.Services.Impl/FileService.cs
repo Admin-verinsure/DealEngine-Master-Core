@@ -727,14 +727,13 @@ namespace DealEngine.Services.Impl
                         {
                             var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
 
-                            if (principleadvisorunit != null && uisorg.DateDeleted == null && !uisorg.Removed)
+                            if (principleadvisorunit != null)
                             {
-                                if (principleadvisorunit.IsPrincipalAdvisor)
+                                if (principleadvisorunit.IsPrincipalAdvisor && uisorg.DateDeleted == null && !uisorg.Removed && string.IsNullOrEmpty(OTAdvisorList))
                                 {
                                     OTAdvisorList = uisorg.Name;
                                 }
                             }
-                            
                         }
                     }
                 }

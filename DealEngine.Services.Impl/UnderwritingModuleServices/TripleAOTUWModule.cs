@@ -99,11 +99,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     foreach (var prodsubuis in informationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (informationSheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value == "1")
                         {
                             otnumberofadvisor += 1;
 
-                            if (informationSheet.Answers.Where(sa => sa.ItemName == "OTViewModel.HasClaimQuestionsOptions").First().Value == "1" && !otclaim)
+                            if (prodsubuis.Answers.Where(sa => sa.ItemName == "OTViewModel.HasClaimQuestionsOptions").First().Value == "1" && !otclaim)
                             {
                                 otclaim = true;
                             }
