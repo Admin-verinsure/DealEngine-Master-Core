@@ -55,9 +55,12 @@ namespace DealEngine.WebUI.Controllers
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
 
-
             if(organisation != null)
             {
+                if (OrganisationId == Guid.Empty)
+                {
+                    return Json(true);
+                }
                 if (organisation.Id != OrganisationId && organisation.Id != sheet.Owner.Id)
                 {
                     return Json(true);

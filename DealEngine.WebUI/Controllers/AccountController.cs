@@ -130,7 +130,7 @@ namespace DealEngine.WebUI.Controllers
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
                     //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
-                    SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
+                    SingleUseToken token = await _authenticationService.GenerateSingleUseToken(viewModel.Email);
                     user = await _userService.GetUserById(token.UserID);
                     if (user != null)
                     {
@@ -789,29 +789,6 @@ namespace DealEngine.WebUI.Controllers
 				ModelState.AddModelError ("", ex.Message);
 			}
 			return PartialView ("_ChangeOwnPassword", model);
-		}
-
-		[HttpGet]
-		public async Task<IActionResult> ListAllUsers ()
-		{
-			BaseListViewModel<UserViewModel> userList = new BaseListViewModel<UserViewModel> ();
-            var allUsers = await _userService.GetAllUsers();
-            foreach (var user in allUsers) {
-				userList.Add (new UserViewModel {
-					ID = user.Id,
-					UserName = user.UserName,
-					FirstName = user.FirstName,
-					LastName = user.LastName,
-					Email = user.Email
-				});
-			}
-			return View (userList);
-		}
-
-		[HttpGet]
-		public async Task<PartialViewResult> UserPermissions (Guid Id)
-		{
-            throw new Exception("Method needs to be rewritten");			
 		}
 
 		[HttpGet]

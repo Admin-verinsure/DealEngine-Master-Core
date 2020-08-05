@@ -46,7 +46,7 @@ namespace DealEngine.Services.Impl
 			}			
 		}
 
-		public SingleUseToken GenerateSingleUseToken(string email)
+		public async Task<SingleUseToken> GenerateSingleUseToken(string email)
 		{
 			if (string.IsNullOrWhiteSpace (email))
 				throw new ArgumentException ("Parameter cannot be null, empty or whitespace.", "email");
@@ -54,7 +54,7 @@ namespace DealEngine.Services.Impl
 			SingleUseToken request = null;
 			try
 			{
-				User user = _userService.GetUserByEmail(email).Result;
+				User user = await _userService.GetUserByEmail(email);
 				if (user == null)
 					throw new ObjectNotFoundException("Email may be incorrect in ldap and/or application database.");
 
@@ -62,7 +62,7 @@ namespace DealEngine.Services.Impl
 				if (request == null)
 					throw new Exception("Exception while creating token.");
 
-	         _singleTokenRepository.AddAsync(request);
+	         await _singleTokenRepository.AddAsync(request);
 
 			}
 			catch (Exception ex) {
