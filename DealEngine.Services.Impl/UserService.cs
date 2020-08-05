@@ -270,9 +270,14 @@ namespace DealEngine.Services.Impl
 			return users;
 		}
 		
-		public async Task<User> GetUserByOrganisation(Organisation org)
+		public async Task<User> GetUserPrimaryOrganisation(Organisation org)
 		{
-			return await _userRepository.FindAll().FirstOrDefaultAsync(u => u.PrimaryOrganisation == org);
+			var user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.PrimaryOrganisation == org);
+			if(user == null)
+            {
+				user = await GetUserByEmail(org.Email);
+            }
+			return user;
 		}
 		public async Task<List<User>> GetAllUserByOrganisation(Organisation org)
 		{

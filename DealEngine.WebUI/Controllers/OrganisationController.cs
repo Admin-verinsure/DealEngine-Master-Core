@@ -51,10 +51,17 @@ namespace DealEngine.WebUI.Controllers
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
             Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
+            Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
+
             if(organisation != null)
             {
-                if (organisation.Id != OrganisationId)
+                if (OrganisationId == Guid.Empty)
+                {
+                    return Json(true);
+                }
+                if (organisation.Id != OrganisationId && organisation.Id != sheet.Owner.Id)
                 {
                     return Json(true);
                 }                
@@ -71,7 +78,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                User orgUser = await _userService.GetUserByEmail(organisation.Email);
+                User orgUser = await _userService.GetUserPrimaryOrganisation(organisation);
                 JsonObjects.Add("Organisation", organisation);
                 JsonObjects.Add("User", orgUser);
                 var jsonObj = GetSerializedModel(JsonObjects);
@@ -95,12 +102,7 @@ namespace DealEngine.WebUI.Controllers
 
             var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
             var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
-
-            string Email = jsonOrganisation.Email;
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
-            string Name = jsonOrganisation.Name;
-            string FirstName = jsonUser.FirstName;
-            string LastName = jsonUser.LastName;
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
             Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
             //condition for organisation exists
@@ -109,10 +111,10 @@ namespace DealEngine.WebUI.Controllers
 
                 if (organisation == null)
                 {
-                    organisation = await _organisationService.CreateOrganisation(Email, TypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);
+                    organisation = await _organisationService.CreateOrganisation(jsonUser.Email, TypeName, jsonOrganisation.Name, OrganisationTypeName, jsonUser.FirstName, jsonUser.LastName, currentUser, collection);
                 }
 
-                await _organisationService.UpdateOrganisation(collection,organisation);
+                await _organisationService.PostOrganisation(collection,organisation);
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

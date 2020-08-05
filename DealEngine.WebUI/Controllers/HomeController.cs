@@ -914,6 +914,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                var isSubUis = formCollection["IsSubUIS"];
                 foreach (var key in formCollection.Keys)
                 {
 
@@ -931,7 +932,6 @@ namespace DealEngine.WebUI.Controllers
                             await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
                             EmailTemplate emailTemplate = null;
-                            var isSubUis = formCollection["IsSubUIS"];
 
                             if (isSubUis.Contains("true"))
                             {

@@ -219,7 +219,7 @@ namespace DealEngine.Services.Impl
         {
             if (activityName == "Agreement Status - Not Started")
             {
-                NotStartedCompleted(activityName, user, sheet);
+                await NotStartedCompleted(activityName, user, sheet);
             }
             if (activityName == "Agreement Status – Referred")
             {
@@ -227,7 +227,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async void NotStartedCompleted(string activityName, User user, ClientInformationSheet sheet)
+        private async Task NotStartedCompleted(string activityName, User user, ClientInformationSheet sheet)
         {
             if(!sheet.ClientInformationSheetAuditLogs.Any(l=>l.AuditLogDetail.Contains(activityName)))
             {
