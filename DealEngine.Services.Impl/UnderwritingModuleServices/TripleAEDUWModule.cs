@@ -60,6 +60,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -92,7 +95,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium200k = 0m;
             decimal TermBrokerage200k = 0m;
 
-            TermPremium200k = rates["ed200klimitpremium"];
+            TermPremium200k = rates["ed200klimitpremium"] * agreementperiodindays / coverperiodindays;
 
             int TermExcess = 0;
 
@@ -100,7 +103,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 5)
             {
-                TermPremium200k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 5) * rates["edtopuppremiumover5employee"];
+                TermPremium200k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 5) * rates["edtopuppremiumover5employee"] * agreementperiodindays / coverperiodindays;
             }
 
             TermBrokerage200k = TermPremium200k * agreement.Brokerage / 100;

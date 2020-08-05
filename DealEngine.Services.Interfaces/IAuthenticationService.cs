@@ -23,7 +23,7 @@ namespace DealEngine.Services.Interfaces
 		/// </summary>
 		/// <returns>The single use token.</returns>
 		/// <param name="email">Email.</param>
-		SingleUseToken GenerateSingleUseToken(string email);
+		Task<SingleUseToken> GenerateSingleUseToken(string email);
 
 		SingleUseToken GetToken(Guid token);
 

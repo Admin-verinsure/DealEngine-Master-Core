@@ -107,7 +107,7 @@ namespace DealEngine.Services.Impl
 		{
 			string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
 			organisation = await UpdateOrganisation(collection, organisation);
-			if (string.IsNullOrWhiteSpace(TypeName))
+			if (!string.IsNullOrWhiteSpace(TypeName))
             {
 				UpdateOrganisationUnit(organisation, collection);
 				UpdateInsuranceAttribute(organisation, collection);
@@ -241,12 +241,14 @@ namespace DealEngine.Services.Impl
 			User User = null;
 			if (foundOrg == null)
 			{
-				List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
-				InsuranceAttribute InsuranceAttribute = new InsuranceAttribute(Creator, Type);
 				if (string.IsNullOrWhiteSpace(OrganisationName))
-                {
+				{
 					OrganisationName = FirstName + " " + LastName;
 					OrganisationTypeName = "Person - Individual";
+
+				}
+				if (!string.IsNullOrWhiteSpace(Email))
+                {
 					User = await _userService.GetUserByEmail(Email);
 					if (User != null)
 					{
@@ -261,7 +263,8 @@ namespace DealEngine.Services.Impl
 						User = new User(Creator, Guid.NewGuid(), collection);
 					}
 				}
-
+				List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
+				InsuranceAttribute InsuranceAttribute = new InsuranceAttribute(Creator, Type);
 				OrganisationType OrganisationType = await _organisationTypeService.GetOrganisationTypeByName(OrganisationTypeName);				
 				foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
                 if (User != null)

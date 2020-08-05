@@ -831,6 +831,37 @@ namespace DealEngine.Services.Impl
                     mergeFields.Add(new KeyValuePair<string, string>("[[EmployeeNumber]]", " "));
                 }
 
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").Any())
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FAPCoverStartDate]]", agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value.ToString()));
+                }
+                else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[FAPCoverStartDate]]", " "));
+                }
+
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasReportingEntityOptions").Count() == 0 ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasTrainingOptions").Count() == 0 ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasManageAMLOptions").Count() == 0 ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").Count() == 0)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresAML_SL]]", "Extension NOT Included"));
+                }
+                else
+                {
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasReportingEntityOptions").First().Value == "1" &&
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasTrainingOptions").First().Value == "1" &&
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasManageAMLOptions").First().Value == "1" &&
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[RequiresAML_SL]]", "Extension Included"));
+                    }
+                    else
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[RequiresAML_SL]]", "Extension NOT Included"));
+                    }
+                }
+
                 if (agreement.ClientInformationSheet.RevenueData != null)
                 {
                     mergeFields.Add(new KeyValuePair<string, string>("[[FeeIncomeCurrentYear]]", Convert.ToDecimal(agreement.ClientInformationSheet.RevenueData.CurrentYearTotal).ToString("C2")));
