@@ -60,6 +60,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -117,7 +120,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
 
-            TermPremium2mil = rates["ot2millimitpremium"] * otnumberofadvisor;
+            TermPremium2mil = rates["ot2millimitpremium"] * otnumberofadvisor * agreementperiodindays / coverperiodindays;
 
             int TermExcess = 0;
 

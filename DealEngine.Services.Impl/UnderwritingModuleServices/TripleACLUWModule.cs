@@ -62,6 +62,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
             decimal feeincome = 0;
             decimal extpremium = 0m;
 
@@ -160,7 +163,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
-            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium;
+            TermPremium250k = (GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium) * agreementperiodindays / coverperiodindays;
 
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
@@ -177,7 +180,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
-            TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
+            TermPremium500k = (GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium) * agreementperiodindays / coverperiodindays;
 
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
@@ -194,7 +197,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium;
+            TermPremium1mil = (GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium) * agreementperiodindays / coverperiodindays;
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -211,7 +214,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
-            TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium;
+            TermPremium2mil = (GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium) * agreementperiodindays / coverperiodindays;
 
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 

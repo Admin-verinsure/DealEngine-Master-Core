@@ -65,6 +65,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
+            int fapagreementperiodindays = 0;
+            fapagreementperiodindays = (agreement.ExpiryDate - Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value)).Days;
+
             decimal feeincome = 0;
             decimal decFGD = 0M;
             decimal decFGC = 0M;
@@ -186,7 +192,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermPremium1mil = 0M;
                 decimal TermBrokerage1mil = 0M;
 
-                TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors);
+                TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
 
                 TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -205,7 +211,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermPremium2mil = 0M;
                 decimal TermBrokerage2mil = 0M;
 
-                TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors);
+                TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
 
                 TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
@@ -224,7 +230,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
 
-            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, intnumberofadvisors);
+            TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
 
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
@@ -355,12 +361,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors)
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, int agreementperiodindays, int coverperiodindays, int fapagreementperiodindays)
         {
             decimal indadvisorpremium = 0M;
             decimal premiumoption = 0M;
 
-            indadvisorpremium = rates["piindividualpremium"];
+            indadvisorpremium = rates["piindividualpremium"] * agreementperiodindays / coverperiodindays;
 
             if (intnumberofadvisors > 1)
             {
@@ -372,17 +378,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium2advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium2advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium2advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -397,17 +403,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium3advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium3advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium3advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -422,17 +428,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium4advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium4advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium4advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -447,17 +453,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium5advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium5advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium5advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -472,17 +478,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium6advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium6advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium6advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -497,17 +503,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium7advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium7advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium7advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -522,17 +528,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium8advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium8advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium8advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -547,17 +553,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium9advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium9advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium9advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -572,17 +578,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium10advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium10advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium10advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
@@ -597,17 +603,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premiumoption = rates["1millimitfappremium11advisor"] + indadvisorpremium;
+                                premiumoption = rates["1millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 2000000:
                             {
-                                premiumoption = rates["2millimitfappremium11advisor"] + indadvisorpremium;
+                                premiumoption = rates["2millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         case 5000000:
                             {
-                                premiumoption = rates["5millimitfappremium11advisor"] + indadvisorpremium;
+                                premiumoption = rates["5millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays + indadvisorpremium;
                                 break;
                             }
                         default:
