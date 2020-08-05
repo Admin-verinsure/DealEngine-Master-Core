@@ -633,7 +633,7 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    if (client.DateDeleted == null)
+                    if (client.DateDeleted == null && client.InformationSheet.Status != "Bound")
                     {
                         clientProgrammes.Add(client);
                     }
