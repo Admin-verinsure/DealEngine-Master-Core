@@ -18,15 +18,15 @@ namespace DealEngine.Services.Impl
             _milestoneTemplateRepository = milestoneTemplateRepository;
         }
 
-        public async Task<MilestoneTemplate> GetMilestoneTemplate(User user)
-        {
-            MilestoneTemplate milestoneTemplate = await _milestoneTemplateRepository.FindAll().FirstOrDefaultAsync(m => m.CreatedBy == user);
-            if (milestoneTemplate == null)
-            {
-                milestoneTemplate = await CreateMilestoneTemplate(user);
-            }
-            return milestoneTemplate;
-        }
+        //public async Task<MilestoneTemplate> GetMilestoneTemplate(User user)
+        //{
+        //    MilestoneTemplate milestoneTemplate = await _milestoneTemplateRepository.FindAll().FirstOrDefaultAsync(m => m.CreatedBy == user);
+        //    if (milestoneTemplate == null)
+        //    {
+        //        milestoneTemplate = await CreateMilestoneTemplate(user);
+        //    }
+        //    return milestoneTemplate;
+        //}
 
         public async Task<MilestoneTemplate> CreateMilestoneTemplate(User user)
         {

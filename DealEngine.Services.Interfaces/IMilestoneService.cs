@@ -12,7 +12,7 @@ namespace DealEngine.Services.Interfaces
         Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId);
         Task CreateAdvisory(User user, Milestone milestone, Activity activity, string advisory);
         Task CreateMilestoneUserTask(User user, Organisation createdFor, DateTime dueDate, Milestone milestone, Activity activity, int priority, string description, string details);
-        Task<Milestone> GetMilestoneByBaseProgramme(Guid programmeId);
+        Task<Milestone> GetMilestoneProgrammeId(Guid programmeId);
         Task UpdateMilestone(Milestone milestone);
         Task<string> SetMilestoneFor(string activityName, User user, ClientInformationSheet sheet);
         Task CompleteMilestoneFor(string activityType, User user, ClientInformationSheet sheet);

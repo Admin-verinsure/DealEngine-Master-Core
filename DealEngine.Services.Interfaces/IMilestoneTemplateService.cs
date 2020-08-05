@@ -6,7 +6,7 @@ namespace DealEngine.Services.Interfaces
 {
     public interface IMilestoneTemplateService
     {
-        Task<MilestoneTemplate> GetMilestoneTemplate(User user);
+        //Task<MilestoneTemplate> GetMilestoneTemplate(User user);
         Task<MilestoneTemplate> CreateMilestoneTemplate(User user);
     }
 }

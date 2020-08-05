@@ -135,7 +135,7 @@ namespace DealEngine.Services.Impl
             await _taskingService.CreateTask(userTask);
         }
 
-        public async Task<Milestone> GetMilestoneByBaseProgramme(Guid programmeId)
+        public async Task<Milestone> GetMilestoneProgrammeId(Guid programmeId)
         {
             return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Programme.Id == programmeId);
         }
@@ -171,7 +171,7 @@ namespace DealEngine.Services.Impl
 
         private async Task<string> StartedMilestone(string activityName, User user, ClientInformationSheet sheet)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
             if (milestone != null)
             {
                 var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
@@ -186,7 +186,7 @@ namespace DealEngine.Services.Impl
 
         private async Task<string> NotStartedMilestone(string activityName, User user, ClientInformationSheet sheet)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
             if(milestone != null)
             {
                 var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
@@ -203,7 +203,7 @@ namespace DealEngine.Services.Impl
         {            
             UserTask task;
             var activity = await _activityService.GetActivityByName(activityType);
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
             if (milestone == null)
             {
                 milestone = new Milestone(user);
@@ -251,7 +251,7 @@ namespace DealEngine.Services.Impl
 
         private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
             if (milestone == null)
             {
                 milestone = new Milestone(user);

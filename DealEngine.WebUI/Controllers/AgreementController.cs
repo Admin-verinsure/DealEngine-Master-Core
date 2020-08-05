@@ -1751,7 +1751,7 @@ namespace DealEngine.WebUI.Controllers
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
                 var advisoryDesc = "";
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                var milestone = await _milestoneService.GetMilestoneProgrammeId(clientProgramme.BaseProgramme.Id);
                 if (milestone != null)
                 {
                     var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
