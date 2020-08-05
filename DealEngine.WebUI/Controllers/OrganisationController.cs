@@ -75,7 +75,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                User orgUser = await _userService.GetUserByEmail(organisation.Email);
+                User orgUser = await _userService.GetUserPrimaryOrganisation(organisation);
                 JsonObjects.Add("Organisation", organisation);
                 JsonObjects.Add("User", orgUser);
                 var jsonObj = GetSerializedModel(JsonObjects);
