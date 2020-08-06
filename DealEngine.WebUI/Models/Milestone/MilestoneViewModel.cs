@@ -7,12 +7,11 @@ namespace DealEngine.WebUI.Models.Milestone
 {
     public class MilestoneViewModel : BaseViewModel
     {
-        public MilestoneViewModel(List<Domain.Entities.Programme> programmes, Domain.Entities.Milestone milestone)
+        public MilestoneViewModel(List<Domain.Entities.Programme> programmes)
         {
             Programmes = GetProgrammeList(programmes);
             ProgrammeProcesses = GetProgrammeProcesses();
             Activities = GetActivities();
-            Milestone = milestone;
         }
 
         public Domain.Entities.Milestone Milestone { get; set; }
@@ -116,7 +115,7 @@ namespace DealEngine.WebUI.Models.Milestone
             return list;
         }
         public Advisory Advisory { get;set;}
-
+        public UserTask UserTask { get; set; }
     }
 
 }

@@ -70,15 +70,36 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
+                                    <h3 class="modal-title" style="color:blue; font-size:22px">Advisory Details</h3>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.Advisory.Description, new { id = "Advisory.Description", name = "MilestoneViewModel.Advisory.Description", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory" })
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="next" type="submit" type="submit" class="btn btn-success btn-sm">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="TaskModal" class="modal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
                                     <h3 class="modal-title" style="color:blue; font-size:22px">Task Details</h3>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <div hidden>
-
-                                        </div>
-                                        @Html.TextAreaFor(m => m.Advisory.Description, new { id = "Advisory.Description", name = "MilestoneViewModel.Advisory.Description", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory" })
+                                        @Html.TextAreaFor(m => m.UserTask.Header, new { id = "UserTask.Header", name = "MilestoneViewModel.UserTask.Header", @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.UserTask.Body, new { id = "UserTask.Body", name = "MilestoneViewModel.UserTask.Body", cols = "100", rows = "10", @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.UserTask.Count, new { id = "UserTask.Count", name = "MilestoneViewModel.UserTask.Count", @class = "form-control", @type="number" })
                                     </div>
                                 </div>
                                 <div class="modal-footer">

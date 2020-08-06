@@ -48,7 +48,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var programmeList = await _programmeService.GetAllProgrammes();
-                MilestoneViewModel model = new MilestoneViewModel(programmeList, null);               
+                MilestoneViewModel model = new MilestoneViewModel(programmeList);               
 
                 return View(model);
             }
