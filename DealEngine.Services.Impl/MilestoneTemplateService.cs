@@ -28,39 +28,39 @@ namespace DealEngine.Services.Impl
         //    return milestoneTemplate;
         //}
 
-        public async Task<MilestoneTemplate> CreateMilestoneTemplate(User user)
-        {
-            MilestoneTemplate milestoneTemplate = new MilestoneTemplate(user);
-            string[] programmeProcess = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
-            string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status – Referred", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
+        //public async Task<MilestoneTemplate> CreateMilestoneTemplate(User user)
+        //{
+        //    MilestoneTemplate milestoneTemplate = new MilestoneTemplate(user);
+        //    string[] programmeProcess = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
+        //    string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status – Referred", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
 
-            var programmeProcessList = new List<ProgrammeProcess>();
-            foreach(string pp in programmeProcess)
-            {
-                var process = new ProgrammeProcess(user)
-                {
-                    Name = pp
-                };
+        //    var programmeProcessList = new List<ProgrammeProcess>();
+        //    foreach(string pp in programmeProcess)
+        //    {
+        //        var process = new ProgrammeProcess(user)
+        //        {
+        //            Name = pp
+        //        };
 
-                programmeProcessList.Add(process);
-            }
+        //        programmeProcessList.Add(process);
+        //    }
 
-            var activityList = new List<Activity>();
-            foreach (string act in activity)
-            {
-                var active = new Activity(user)
-                {
-                    Name = act
-                };
+        //    var activityList = new List<Activity>();
+        //    foreach (string act in activity)
+        //    {
+        //        var active = new Activity(user)
+        //        {
+        //            Name = act
+        //        };
 
-                activityList.Add(active);
-            }
+        //        activityList.Add(active);
+        //    }
 
-            milestoneTemplate.Activities = activityList;
-            milestoneTemplate.ProgrammeProcesses = programmeProcessList;
-            await _milestoneTemplateRepository.AddAsync(milestoneTemplate);
+        //    milestoneTemplate.Activities = activityList;
+        //    milestoneTemplate.ProgrammeProcesses = programmeProcessList;
+        //    await _milestoneTemplateRepository.AddAsync(milestoneTemplate);
 
-            return milestoneTemplate;
-        }
+        //    return milestoneTemplate;
+        //}
     }
 }

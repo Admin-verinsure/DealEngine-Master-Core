@@ -1751,17 +1751,17 @@ namespace DealEngine.WebUI.Controllers
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
                 var advisoryDesc = "";
-                var milestone = await _milestoneService.GetMilestoneProgrammeId(clientProgramme.BaseProgramme.Id);
-                if (milestone != null)
-                {
-                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
-                    if (advisory != null)
-                    {
-                        advisoryDesc = advisory.Description;
-                    }
+                //var milestone = await _milestoneService.GetMilestoneProgrammeId(clientProgramme.BaseProgramme.Id);
+                //if (milestone != null)
+                //{
+                //    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                //    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
+                //    if (advisory != null)
+                //    {
+                //        advisoryDesc = advisory.Description;
+                //    }
 
-                }
+                //}
 
                 if (!isBaseSheet)
                 {

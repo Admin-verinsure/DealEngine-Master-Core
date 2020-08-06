@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities.Abstracts;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Domain.Entities
 {
@@ -12,33 +13,32 @@ namespace DealEngine.Domain.Entities
         public MilestoneTemplate(User createdBy)
             : base(createdBy)
         {
-        }
-
-        public virtual IList<ProgrammeProcess> ProgrammeProcesses { get; set; }        
-        public virtual IList<Activity> Activities { get; set; }        
+        }     
     }
 
     public class Activity : EntityBase, IAggregateRoot
     {
         public Activity() : base(null) { }        
-        public Activity(string name) : base(null) { }
-
-        public Activity(User createdBy)
+        public Activity(User createdBy, string activity, IFormCollection collection)
             : base(createdBy)
         {
+            Name = activity;
+            if(collection != null)
+            {
+                Advisory = new Advisory(createdBy, collection);
+                UserTask = new UserTask(createdBy, Name, collection);
+                //email
+            }
         }
 
         public virtual string Name { get; set; }
         public virtual Advisory Advisory { get; set; }
         public virtual UserTask UserTask { get; set; }
-        //public virtual EmailTemplate EmailTemplate { get; set; }
     }
 
     public class ProgrammeProcess : EntityBase, IAggregateRoot
     {
         public ProgrammeProcess() : base(null) { }
-        public ProgrammeProcess(string name) : base(null) { }
-
         public ProgrammeProcess(User createdBy, string programmeProcess)
             : base(createdBy)
         {
@@ -52,17 +52,20 @@ namespace DealEngine.Domain.Entities
 
     public class Advisory : EntityBase, IAggregateRoot
     {
-        public Advisory(string description) : base(null)
+        protected Advisory() : base(null) { }
+        public Advisory(User createdBy, IFormCollection collection) 
+            : base(createdBy) 
         {
-            Description = description;
+            PopulateEntity(collection);
         }
-        public Advisory() : base(null) { }
+
         public virtual string Description { get; set; }
     }
 
     public class UserTask : EntityBase, IAggregateRoot
     {
-        public virtual Organisation For { get; protected set; }
+
+        public virtual string Name { get; set; }
         public virtual string Description { get; set; }
         public virtual string Details { get; set; }
         public virtual DateTime DueDate { get; set; }
@@ -71,15 +74,21 @@ namespace DealEngine.Domain.Entities
         public virtual DateTime CompletedOn { get; set; }
         public virtual bool IsActive { get; set; }
 
-        protected UserTask() : base(null) { }
+        protected UserTask() : base(null) {
+            IsActive = true;
+            DateTime today = DateTime.Now;
+            DueDate = today.AddDays(7);
+        }
 
         public UserTask(User createdBy, Organisation createdFor)
             : base(createdBy)
         {
-            For = createdFor;
-            DateTime today = DateTime.Now;
-            DueDate = today.AddDays(7);
-            IsActive = true;
+        }
+
+        public UserTask(User createdBy, string name, IFormCollection collection) : base(createdBy)
+        {
+            Name = name;
+            PopulateEntity(collection);
         }
 
         public virtual void Complete(User completedBy)

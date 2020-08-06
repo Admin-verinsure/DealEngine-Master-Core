@@ -21,6 +21,7 @@ namespace DealEngine.Domain.Entities
 			Organisations = new List<Organisation> ();
 			Branches = new List<OrganisationalUnit> ();
 			Departments = new List<Department> ();
+            UserTasks = new List<UserTask>();
             UISIssueNotifyProgrammes = new List<Programme>();
             UISSubmissionNotifyProgrammes = new List<Programme>();
             AgreementReferNotifyProgrammes = new List<Programme>();
@@ -119,7 +120,9 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Programme> PaymentConfigNotifyProgrammes { get; set; }
         [JsonIgnore]
         public virtual IList<Programme> InvoiceConfigNotifyProgrammes { get; set; }
-        
+        [JsonIgnore]
+        public virtual IList<UserTask> UserTasks { get; set; }
+
 
         public User(User createdBy, string strUsername)
 			: this (createdBy)

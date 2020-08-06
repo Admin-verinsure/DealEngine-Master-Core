@@ -115,12 +115,10 @@ namespace DealEngine.WebUI.Controllers
                 if (user.PrimaryOrganisation.IsInsurer)
                 {
                     model.CurrentUserType = "Insurer";
-                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
                 if (user.PrimaryOrganisation.IsTC)
                 {
                     model.CurrentUserType = "TC";
-                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
 
                 IList<string> languages = new List<string>();

@@ -197,7 +197,7 @@
                 if (Value == "1") {
                     document.getElementById(ids[0]).hidden = false;
                 }
-                else if (Value == "2"){
+                else if (Value == "2") {
                     document.getElementById(ids[1]).hidden = false;
                 }
             }
@@ -255,7 +255,7 @@
                 OrganisationTypeOnChange(Value);
             }
             if (Rule === "OrganisationEmail") {
-                var Form = document.getElementById("organisationViewModel"); 
+                var Form = document.getElementById("organisationViewModel");
                 $.ajax({
                     url: '@Url.Action("ValidateOrganisationEmail", "Organisation")',
                     type: "POST",
@@ -275,6 +275,21 @@
                     }
                 });
             }
+            if (Rule === "GetMilestone") {
+                var Form = document.getElementById("MilestoneViewModel");
+                $.ajax({
+                    url: '@Url.Action("GetMilestone", "Milestone")',
+                    type: "POST",
+                    data: $("#" + Form.id).serialize(),
+                    success: function (Data) {
+                        var OutPut = JSON.parse(Data);
+                        PopulateMilestoneView("", OutPut);
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }      
+            
         } catch (ex) {
             //these rules need to be re-run regardless of the catch            
             ////we expect this to fail for form elements with no change events but could use this later

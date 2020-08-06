@@ -8,7 +8,7 @@
                 <h2>Create Milestone</h2>
             </div>
             <div class="card-body">
-                @using (Html.BeginForm("CreateMilestone", "Milestone", FormMethod.Post, new { @id = "MilestoneViewModel", @name = "MilestoneViewModel" }))
+                @using (Html.BeginForm("PostMilestone", "Milestone", FormMethod.Post, new { @id = "MilestoneViewModel", @name = "MilestoneViewModel" }))
                 {
                     <div id="smartwizard" class="sw-main sw-theme-circles">
                         <ul class="nav nav-tabs step-anchor">
@@ -40,7 +40,7 @@
                             </div>
                             <div id="milestone3" class="tab-pane step-content">
                                 @Html.LabelFor(m => m.Activities, new { @class = "label required" })
-                                <select id="Milestone.Activity" name="MilestoneViewModel.Activity" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                <select id="Milestone.Activity" name="MilestoneViewModel.Activity" class="custom-select" data-rule="GetMilestone" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.Activities)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -75,7 +75,10 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        @Html.TextAreaFor(m => m.Advisory.Description, new { id = "MilestoneViewModel.Advisory.Description", name = "Advisory.Description", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory" })
+                                        <div hidden>
+
+                                        </div>
+                                        @Html.TextAreaFor(m => m.Advisory.Description, new { id = "Advisory.Description", name = "MilestoneViewModel.Advisory.Description", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory" })
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -131,19 +134,6 @@
                 transitionSpeed: '400'
             });
 
-            $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-                //if (stepNumber === 0 && stepDirection != "backward") {
-                //    $('.sw-btn-next').hide();
-                //    $("#TaskPartial").hide();
-                //    $("#EmailPartial").hide();
-                //    $("#AdvisoryPartial").hide();
-                //}
-
-                //if (stepNumber === 1 && stepDirection != "backward") {
-                //    Submit();
-                //}
-            })
-
             ClassicEditor
                 .create(document.querySelector('#MilestoneViewModel.Advisory.Description'))
                 .then(newAdvisory => {
@@ -153,89 +143,6 @@
                     console.error(error);
                 });
         });
-
-        function getActivityId() {
-            return $('input[name=activityRadio]:checked').attr('id');
-        }
-
-        function getMilestoneModel() {
-            return $('input[name=milestoneOptions]:checked').attr('id');
-        }
-
-        function SaveStatus() {
-            $('.sw-btn-next').show();
-        }
-
-        function PartialView(button) {
-            LoadMilestoneActivity(button);
-        }
-
-        function LoadMilestoneActivity(button) {
-            var activityId = getActivityId();
-            var programmeId = $('#ProgrammeId').val();
-            var programmeProcessId = $('#ProgrammeProcessId').val();
-
-            var mergedData = {
-                strProgrammeProcessId: programmeProcessId,
-                strProgrammeId: programmeId,
-                strMilestoneActivityId: activityId,
-                type: button
-            };
-
-            $.ajax({
-                url: "/Milestone/MilestoneSelect",
-                type: "POST",
-                data:  mergedData  // serializes the form's elements.
-            })
-                .done(function (url) {
-                    $("#MilestoneType").load(url, function () {
-                    });
-                })
-                .fail(function (err) {
-                    alert("Unable to save." + err.responseText);
-                });
-
-        }
-
-        function RedirectList() {
-            location.href='@Url.Action("MilestoneList", "Milestone")'
-        }
-
-        function Submit() {
-
-            var milestoneModel = getMilestoneModel();
-            var emailModel = null, advisoryModel = null, taskModel = null;
-
-            if (milestoneModel == 'Email') {
-                emailModel = GetEmailContentJson();
-            } else if (milestoneModel == 'Task') {
-                taskModel = GetUserTaskContentJson();
-            }
-            else
-                advisoryModel = GetAdvisoryContentJson();
-
-            console.log(taskModel);
-
-            var mergedData = {
-                EmailTemplate: emailModel,
-                AdvisoryContent: advisoryModel,
-                ActivityId: getActivityId(),
-                UserTask: taskModel,
-                ProgrammeId: $('#ProgrammeId').val(),
-                ProgrammeProcessId: $('#ProgrammeProcessId').val()
-            };
-
-            $.ajax({
-                url: "/Milestone/SubmitMilestone",
-                type: "POST",
-                data:  mergedData  // serializes the form's elements.
-            })
-                .done(function (json) {
-
-                })
-                .fail(function (err) {
-                    alert("Unable to save." + err.responseText);
-                });
-        }
+        
     </script>
 }

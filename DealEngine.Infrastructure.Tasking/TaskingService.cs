@@ -13,28 +13,21 @@ namespace DealEngine.Infrastructure.Tasking
         IMapperSession<UserTask> _taskRespository;
         //Services.Interfaces.IMilestoneService _milestoneService;
 
-		public TaskingService (
-            IMapperSession<UserTask> taskRespository)
-            //Services.Interfaces.IMilestoneService milestoneService)
+        public TaskingService (IMapperSession<UserTask> taskRespository)
 		{
-            //_milestoneService = milestoneService;
-            _taskRespository = taskRespository;
-		}
+			_taskRespository = taskRespository;
 
-        public async Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation)
-		{
-			if (organisation == null)
-				throw new ArgumentNullException (nameof (organisation));
-
-            return await _taskRespository.FindAll().Where(t => t.For == organisation && t.Completed == false).ToListAsync();		
-		}
-
-        public async Task<List<UserTask>> GetUserTasksByMilestone(Milestone milestone)
-        {
-            return await _taskRespository.FindAll().Where(t => t.Milestone == milestone).ToListAsync();            
         }
 
-        public async Task UpdateUserTask(UserTask userTask)
+        public async Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation)
+        {
+            //if (organisation == null)
+                throw new ArgumentNullException(nameof(organisation));
+
+            //return await _taskRespository.FindAll().Where(t => t.For == organisation && t.Completed == false).ToListAsync();
+        }
+
+        public async Task Update(UserTask userTask)
         {
            await _taskRespository.UpdateAsync(userTask);
         }

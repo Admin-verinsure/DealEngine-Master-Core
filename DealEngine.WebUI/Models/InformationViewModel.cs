@@ -38,7 +38,6 @@ namespace DealEngine.WebUI.Models
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
-        public Domain.Entities.Programme Programme;
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
         public string Status { get; set; }

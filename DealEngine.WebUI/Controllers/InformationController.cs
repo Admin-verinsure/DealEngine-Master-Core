@@ -303,16 +303,16 @@ namespace DealEngine.WebUI.Controllers
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
-                    var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                    if (milestone != null)
-                    {
-                        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
-                        if (advisory != null)
-                        {
-                            advisoryDesc = advisory.Description;
-                        }
-                    }
+                    //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                    //if (milestone != null)
+                    //{
+                    //    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                    //    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
+                    //    if (advisory != null)
+                    //    {
+                    //        advisoryDesc = advisory.Description;
+                    //    }
+                    //}
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -387,8 +387,9 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                model.BoatUseslist = list;
+                //model.BoatUseslist = list;
                 // TODO - find a better way to pass these in
+                //model.HasVehicles = sheet.Vehicles.Count > 0;
                 //var vehicles = new List<VehicleViewModel>();
                 //foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
                 //{
@@ -399,17 +400,17 @@ namespace DealEngine.WebUI.Controllers
                 //model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
 
-                var locations = new List<LocationViewModel>();
-                var buildings = new List<BuildingViewModel>();
-                var waterLocations = new List<WaterLocationViewModel>();
-                var MarinaLocations = new List<OrganisationViewModel>();
-                var organisationalunit = new List<OrganisationalUnit>();
+                //var locations = new List<LocationViewModel>();
+                //var buildings = new List<BuildingViewModel>();
+                //var waterLocations = new List<WaterLocationViewModel>();
+                //var MarinaLocations = new List<OrganisationViewModel>();
+                //var organisationalunit = new List<OrganisationalUnit>();
 
-                for (var i = 0; i < sheet.Buildings.Count(); i++)
-                {
-                    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
+                //for (var i = 0; i < sheet.Buildings.Count(); i++)
+                //{
+                //    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
 
-                }
+                //}
 
                 var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
@@ -426,24 +427,24 @@ namespace DealEngine.WebUI.Controllers
                     //}
                 }
 
-                model.MarinaLocations = MarinaLocations;
+                //model.MarinaLocations = MarinaLocations;
 
-                for (var i = 0; i < sheet.WaterLocations.Count(); i++)
-                {
-                    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
-                }
+                //for (var i = 0; i < sheet.WaterLocations.Count(); i++)
+                //{
+                //    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
+                //}
 
-                var availableProducts = new List<SelectListItem>();
+                //var availableProducts = new List<SelectListItem>();
 
-                foreach (Product product in clientProgramme.BaseProgramme.Products)
-                {
-                    availableProducts.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = "" + product.Id,
-                        Text = product.Name
-                    });
-                }
+                //foreach (Product product in clientProgramme.BaseProgramme.Products)
+                //{
+                //    availableProducts.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Value = "" + product.Id,
+                //        Text = product.Name
+                //    });
+                //}
                 //var availableorganisation = new List<SelectListItem>();
 
                 //foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
@@ -1115,7 +1116,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 var sheet = clientProgramme.InformationSheet;
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
 
@@ -1153,7 +1154,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (agreement.Status == "Referred")
                             {
-                                await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
+                                //await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
                                 await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
                         }

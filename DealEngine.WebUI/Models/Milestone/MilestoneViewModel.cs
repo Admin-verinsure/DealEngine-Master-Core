@@ -7,13 +7,15 @@ namespace DealEngine.WebUI.Models.Milestone
 {
     public class MilestoneViewModel : BaseViewModel
     {
-        public MilestoneViewModel(List<Domain.Entities.Programme> programmes)
+        public MilestoneViewModel(List<Domain.Entities.Programme> programmes, Domain.Entities.Milestone milestone)
         {
             Programmes = GetProgrammeList(programmes);
             ProgrammeProcesses = GetProgrammeProcesses();
             Activities = GetActivities();
+            Milestone = milestone;
         }
 
+        public Domain.Entities.Milestone Milestone { get; set; }
         public IList<SelectListItem> Activities { get; set; }
         public IList<SelectListItem> Programmes { get; set; }
         public IList<SelectListItem> ProgrammeProcesses { get; set; }
