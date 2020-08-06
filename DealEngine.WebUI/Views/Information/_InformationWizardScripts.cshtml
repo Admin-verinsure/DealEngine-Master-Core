@@ -58,47 +58,7 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-                       InformationSheetSubmit();
-
-                       var IsLocationCount = 0;
-
-                       $('#tblLocation tr').each(function () {
-                           var $tds = $(this).find('td'),
-                               value = $tds.eq(2).text().toString();
-
-                           if (value != "") {
-                               IsLocationCount++;
-                           }
-                       });
-
-                       if (informationsheetstatus !== "Bound") {
-                           if ('@Model.ClientProgramme.BaseProgramme.Name' === "TripleA Programme") {
-                               var advisor = document.getElementById("AddOrganisation");
-                               if (advisor != null) {
-                                   var pAdvisor = document.getElementById("IsPrincipalAdvisor");
-                                   if (pAdvisor == null) {
-                                       window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                                       $("#Insured Details / Named Parties").trigger("click");
-                                       throw "no principal advisor";
-                                   }
-                                   else {
-                                       var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
-                                       if (organisations.length != 1) {
-                                           window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                                           $("#Insured Details / Named Parties").trigger("click");
-                                           throw "no principal advisor";
-                                       }
-                                   }
-                                   var TradingName = document.getElementById("NoTradingName");
-                                   if (TradingName != null) {
-                                       if (TradingName.value === "True") {
-                                           window.alert("Please Add Trading Name to Owner");
-                                           $("#Insured Details / Named Parties").trigger("click");
-                                           throw "no trading name";
-                                       }
-                                   }
-                               }
-                           }
+                       InformationSheetSubmit();                       
 
                            //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
 
@@ -125,7 +85,7 @@
                            //    return false;
 
                            //}
-                       }
+                       
 
                        if ($('#CompanyName').val() === "AON") {
                            var nextbutton = document.getElementsByClassName("next");
@@ -137,7 +97,7 @@
                        }
 
                    }
-                   debugger;
+
                    $.ajax({
                        url: '@Url.Action("SubmitInformation", "Information")',
                        type: "POST",

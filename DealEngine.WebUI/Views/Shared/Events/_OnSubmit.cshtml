@@ -87,76 +87,111 @@
     }
 
     function InformationSheetSubmit() {
-        var forms = document.getElementsByClassName('needs-validation');   //invalid forms
-        var formIds = [];
-        for (var f = 0; f < forms.length; f++) {
-            //get each form id
-            if (forms[f].id != "myForm") {
-                formIds.push(forms[f].id);
+        if ('@Model.ClientClientInformationSheet.Status' == "Started") {
+            var forms = document.getElementsByClassName('needs-validation');   //invalid forms
+            var formIds = [];
+            for (var f = 0; f < forms.length; f++) {
+                //get each form id
+                if (forms[f].id != "myForm" || "organisationViewModel") {
+                    formIds.push(forms[f].id);
+                }
             }
-        }
-        for (var i = 0; i < formIds.length; i++) {
-            var form = document.getElementById(formIds[i]);
-            var element = null;
-            for (var e = 0; e < form.length; e++) {
-                //for (var e = form.length-1; e > 0; e--) {
-                try {
-                    if (form[e].id != "") {
-                        element = document.getElementById(form[e].id);
-                    }
-                    else {
-                        element = null;
-                    }
-                }
-                catch (ex) {
-                    //will have to add further function for forms with added elements
-                }
-                if (element != null) {
-                    if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
-                        //need to cancel event for build tables i.e role/revenue
-                        if (form.id == "RevenueDataViewModel") {
-                            RevenueDataOnSubmit(element.id, form);
+            for (var i = 0; i < formIds.length; i++) {
+                var form = document.getElementById(formIds[i]);
+                var element = null;
+                for (var e = 0; e < form.length; e++) {
+                    //for (var e = form.length-1; e > 0; e--) {
+                    try {
+                        if (form[e].id != "") {
+                            element = document.getElementById(form[e].id);
                         }
-                        if (form.id == "RoleDataViewModel") {
-                            RoleDataOnSubmit(element.id, form);
+                        else {
+                            element = null;
                         }
                     }
-                    else {
-                        //hardcoded to find the div visibility - need to find a better way
-                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
-                        if (isHidden == false) {
-                            OnChange(element.id, element.name);
-                            //onsubmitfunction trigger
-                            var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
-                            var validationelement = document.getElementById(hasOnsubmitValidation);
-                            if (validationelement != null) {
-                                ElementOnSubmit(element, validationelement, form)
+                    catch (ex) {
+                        //will have to add further function for forms with added elements
+                    }
+                    if (element != null) {
+                        if (element.multiple == true && (form.id == "RoleDataViewModel" || form.id == "RevenueDataViewModel")) {
+                            //need to cancel event for build tables i.e role/revenue
+                            if (form.id == "RevenueDataViewModel") {
+                                RevenueDataOnSubmit(element.id, form);
                             }
-                            if (element.classList.contains("is-invalid")) {
-                                //write a message here or stop the process
-                                debugger;
-                                event.preventDefault();
-                                event.stopPropagation();
-                                $("#more").trigger("click");
-                                //go back to div// go back to accordion to get id
-                                var accordianId = form.getAttribute('data-accordianId');
-                                if (accordianId == null) {
-                                    throw "update form accordianId " + form.id;
-                                    debugger;
+                            if (form.id == "RoleDataViewModel") {
+                                RoleDataOnSubmit(element.id, form);
+                            }
+                        }
+                        else {
+                            //hardcoded to find the div visibility - need to find a better way
+                            var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                            if (isHidden == false) {
+                                OnChange(element.id, element.name);
+                                //onsubmitfunction trigger
+                                var hasOnsubmitValidation = element.getAttribute("data-onsubmititem");
+                                var validationelement = document.getElementById(hasOnsubmitValidation);
+                                if (validationelement != null) {
+                                    ElementOnSubmit(element, validationelement, form)
                                 }
-                                window.alert("Please complete this section " + accordianId);
-                                $("[id='" + accordianId + "']").trigger("click");
-                                element.scrollIntoView();
-                                throw accordianId + " incomplete";
+                                if (element.classList.contains("is-invalid")) {
+                                    //write a message here or stop the process
+                                    debugger;
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    $("#more").trigger("click");
+                                    //go back to div// go back to accordion to get id
+                                    var accordianId = form.getAttribute('data-accordianId');
+                                    if (accordianId == null) {
+                                        throw "update form accordianId " + form.id;
+                                        debugger;
+                                    }
+                                    window.alert("Please complete this section " + accordianId);
+                                    $("[id='" + accordianId + "']").trigger("click");
+                                    element.scrollIntoView();
+                                    throw accordianId + " incomplete";
+                                }
                             }
                         }
                     }
                 }
+                form.classList.remove("needs-validation");
+                form.classList.add("was-validated");
             }
-            form.classList.remove("needs-validation");
-            form.classList.add("was-validated");
+
+            if ('@Model.ClientProgramme.BaseProgramme.Name' === "TripleA Programme") {
+                TrippleAValidationOnSubmit();
+            }
         }
     }
+
+    function TrippleAValidationOnSubmit() {
+        var advisor = document.getElementById("AddOrganisation");
+        if (advisor != null) {
+            var pAdvisor = document.getElementById("IsPrincipalAdvisor");
+            if (pAdvisor == null) {
+                window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
+                $("#Insured Details / Named Parties").trigger("click");
+                throw "no principal advisor";
+            }
+            else {
+                var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
+                if (organisations.length != 1) {
+                    window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
+                    $("#Insured Details / Named Parties").trigger("click");
+                    throw "no principal advisor";
+                }
+            }
+            var TradingName = document.getElementById("NoTradingName");
+            if (TradingName != null) {
+                if (TradingName.value === "True") {
+                    window.alert("Please Add Trading Name to Owner");
+                    $("#Insured Details / Named Parties").trigger("click");
+                    throw "no trading name";
+                }
+            }
+        }
+    }
+
 
 
     function OnOrganisationSubmit(FormId, AccordionId) {
@@ -172,13 +207,13 @@
                         var element = document.getElementById(form[i].id);
                         OnChange(element.id, element.name);
                         var dataRule = element.getAttribute('data-rule');
-                        if (dataRule == "PrincipalAdvisor") {                            
-                            if (element[element.selectedIndex].value == "true") {                                
+                        if (dataRule == "PrincipalAdvisor") {
+                            if (element[element.selectedIndex].value == "true") {
                                 RemoveAdvisors = true;
                             }
                         }
-                        if (dataRule == "RetirementDateValidation") { 
-                            if (element[element.selectedIndex].value == "true") { 
+                        if (dataRule == "RetirementDateValidation") {
+                            if (element[element.selectedIndex].value == "true") {
                                 if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
                                     && document.getElementById("AdvisorUnit.DateofDeceased").value == "") {
                                     throw "If this person has retired or deceased, then please complete either 'Date of Retirement' or 'Date of Deceased'";
@@ -231,13 +266,13 @@
                 });
             }
             catch (ex) {
-                debugger;                 
+                debugger;
                 console.log(ex, element.Name);
             }
             $('#getDetailsModal').modal('hide');
         }
         else {
-             window.alert(ErrorMessage);           
+             window.alert(ErrorMessage);
         }
     }
 
