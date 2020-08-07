@@ -35,9 +35,9 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
-            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "/tmp/";
             //WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
-            WorkingDirectory = "C:\\Users\\Public\\DataImport\\"; //Ashu Local
+            //WorkingDirectory = "C:\\Users\\Public\\DataImport\\"; //Ashu Local
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -1830,6 +1830,49 @@ namespace DealEngine.Services.Impl
                             preRenewOrRefData.EndorsementTitle = parts[12];
                         if (!string.IsNullOrEmpty(parts[13]))
                             preRenewOrRefData.EndorsementText = parts[13];
+
+                        await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportAAAServicePreRenewData(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            PreRenewOrRefData preRenewOrRefData;
+            bool readFirstLine = true;
+            string line;
+            var fileName = WorkingDirectory + "TripleAPolicyData2019.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            preRenewOrRefData.CLRetro = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            preRenewOrRefData.EndorsementProduct = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            preRenewOrRefData.EndorsementTitle = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            preRenewOrRefData.EndorsementText = parts[5];
 
                         await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
 

@@ -51,7 +51,7 @@ namespace DealEngine.Domain.Entities
         public virtual string WordingDownloadURL { get; set; }
         public virtual bool IsOptionalProductBasedSub { get; set; }
         public virtual bool IsOptionalCombinedProduct { get; set; }
-
+        public virtual bool ProductEnablePremiumAdvice { get; set; }
         protected Product() : base(null) { }
 
         protected Product(User createdBy)
