@@ -896,14 +896,10 @@ namespace DealEngine.Services.Impl
                             email = parts[12];
                         }
 
-                        //organisation = await _organisationService.GetOrganisationByEmail(email);
                         string username = parts[4].Trim();
                         user = await _userService.GetUserByUserName(username);
                         if (user == null)
                         {
-                            Random random = new Random();
-                            int randomNumber = random.Next(10, 99);
-                           // username = username + randomNumber.ToString();
                             user = new User(currentUser, Guid.NewGuid(), username);
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
@@ -946,7 +942,7 @@ namespace DealEngine.Services.Impl
                            var AdvisororganisationType = new OrganisationType(null, "Person - Individual");
 
                             var privateUnit = new OrganisationalUnit(null, "Private", "Person - Individual", null);
-                            var advisorUnit = new AdvisorUnit(null, "Private", "Advisor", null)
+                            var advisorUnit = new AdvisorUnit(null, "Advisor", "Private", null)
                             {
                                 RegisteredStatus = parts[13],
                                 Qualifications = parts[14],
@@ -955,16 +951,12 @@ namespace DealEngine.Services.Impl
                             };
                             var IA = new InsuranceAttribute(null, "Advisor");
                             var orgname = parts[9].Trim() + " " + parts[10].Trim();
-                            // Organisation Advisororganisation = new Organisation(currentUser,, Guid.NewGuid(), parts[6], "Person - Individual", email);
                             Organisation Advisororganisation = new Organisation(currentUser, Guid.NewGuid(), orgname, AdvisororganisationType, email);
 
                             Advisororganisation.InsuranceAttributes.Add(IA);
                             Advisororganisation.OrganisationalUnits.Add(privateUnit);
                             Advisororganisation.OrganisationalUnits.Add(advisorUnit);
 
-                       //     Organisation advisororganisation = new Organisation(currentUser, Guid.NewGuid(), parts[0] + " " + parts[1], AdvisororganisationType, parts[10]);
-                            //advisororganisation.IsPrincipalAdvisor = true;
-                            
                             await _organisationService.CreateNewOrganisation(Advisororganisation);
                             sheet.Organisation.Add(Advisororganisation);
                             //check with ray
@@ -1473,7 +1465,7 @@ namespace DealEngine.Services.Impl
                                 email = parts[12];
                             }
                             var privateUnit = new OrganisationalUnit(null, "Private", "Person - Individual", null);
-                            var advisorUnit = new AdvisorUnit(null, "Private", "Advisor", null)
+                            var advisorUnit = new AdvisorUnit(null, "Advisor", "Private", null)
                             {
                                 RegisteredStatus = parts[13],
                                 Qualifications = parts[14],
@@ -1562,31 +1554,39 @@ namespace DealEngine.Services.Impl
                     try
                     {
                         var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[0]);
-                        var fullname = parts[9].Trim() + " " + parts[10].Trim();
+                        var fullname = parts[6].Trim() + " " + parts[7].Trim();
                         if (hasProgramme)
                         {
-                            userName = parts[9].Replace(" ", string.Empty) + "_" + parts[10].Replace(" ", string.Empty);
+                            userName = parts[6].Replace(" ", string.Empty) + "_" + parts[7].Replace(" ", string.Empty);
 
-                            if (string.IsNullOrWhiteSpace(parts[12]))
+                            if (string.IsNullOrWhiteSpace(parts[9]))
                             {
-                                email = email = parts[9].Replace(" ", string.Empty) + parts[10].Replace(" ", string.Empty) + "@techcertain.com";
+                                email = email = parts[6].Replace(" ", string.Empty) + parts[7].Replace(" ", string.Empty) + "@techcertain.com";
                             }
                             else
                             {
-                                email = parts[12];
+                                if (!string.IsNullOrEmpty(parts[9]))
+                                    email = parts[9];
                             }
                             var privateUnit = new OrganisationalUnit(null, "Private", "Person - Individual", null);
-                            var advisorUnit = new AdvisorUnit(null, "Private", "Advisor", null)
+                            var status = "";
+                            var Qualifications = "";
+                            if (!string.IsNullOrEmpty(parts[10]))
+                                status = parts[10];
+                            if (!string.IsNullOrEmpty(parts[12]))
+                                Qualifications = parts[12];
+
+                            var advisorUnit = new AdvisorUnit(null, "Administration", "Private", null)
                             {
-                                RegisteredStatus = parts[13],
-                                Qualifications = parts[14],
-                                Duration = parts[15],
+
+                                RegisteredStatus = status,
+                                Qualifications = Qualifications,
                                 IsPrincipalAdvisor = false
                             };
                             var AdvisororganisationType = new OrganisationType(null, "Person - Individual");
 
                             var IA = new InsuranceAttribute(null, "Administration");
-                            var orgname = parts[9].Trim() + " " + parts[10].Trim();
+                            var orgname = parts[6].Trim() + " " + parts[7].Trim();
                             Organisation Advisororganisation = new Organisation(currentUser, Guid.NewGuid(), orgname, AdvisororganisationType, email);
                             Advisororganisation.Clientmembership = parts[0];
                             Advisororganisation.InsuranceAttributes.Add(IA);
@@ -1612,8 +1612,8 @@ namespace DealEngine.Services.Impl
                                     userName = userName + randomNumber.ToString();
                                 }
                                 user = new User(currentUser, Guid.NewGuid(), userName);
-                                user.FirstName = parts[9].Trim();
-                                user.LastName = parts[10].Trim();
+                                user.FirstName = parts[6].Trim();
+                                user.LastName = parts[7].Trim();
                                 user.FullName = user.FirstName + " " + user.LastName;
                                 user.Email = email;
                                 user.Address = "";
