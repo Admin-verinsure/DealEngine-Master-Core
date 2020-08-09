@@ -1,0 +1,88 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+
+    <div class="form-group col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.DateQualified, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.PersonnelUnit.DateQualified, new { @class = "form-control", @id = "PersonnelUnit.DateQualified", @type = "date", @required = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.InsuredEntityRelation, new { @class = "label required" })
+            <select id="PersonnelUnit.InsuredEntityRelation" name="OrganisationViewModel.PersonnelUnit.InsuredEntityRelation" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.InsuredEntityRelationOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.IsCurrentMembership, new { @class = "label required" })
+            <select id="PersonnelUnit.IsCurrentMembership" name="OrganisationViewModel.PersonnelUnit.IsCurrentMembership" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasCurrentMembershipOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div id="OrganisationViewModel.PersonnelUnit.IsCurrentMembership" hidden>
+            <div class="form-group">
+                @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.OtherCompanyName, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.PersonnelUnit.OtherCompanyName, new { @class = "form-control", @id = "PersonnelUnit.OtherCompanyName", @required = "" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.YearOfPractice, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.PersonnelUnit.YearOfPractice, new { @class = "form-control", @id = "PersonnelUnit.YearOfPractice", @required = "" })
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.Qualifications, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.PersonnelUnit.Qualifications, new { @class = "form-control", @id = "PersonnelUnit.Qualifications", @required = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.IsRegisteredLicensed, new { @class = "label required" })
+            <select id="PersonnelUnit.IsRegisteredLicensed" name="OrganisationViewModel.PersonnelUnit.IsRegisteredLicensed" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasRegisteredLicensedOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.DesignLicensed, new { @class = "label required" })
+            <select id="PersonnelUnit.DesignLicensed" name="OrganisationViewModel.PersonnelUnit.DesignLicensed" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasDesignLicencedOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.PersonnelUnit.SiteLicensed, new { @class = "label required" })
+            <select id="PersonnelUnit.SiteLicensed" name="OrganisationViewModel.PersonnelUnit.SiteLicensed" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasSiteLicensedOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
