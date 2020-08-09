@@ -1438,9 +1438,9 @@
 
                                             <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
 
-                                                @foreach (var bwloc in Model.InterestedPartyList)
+                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                                                 {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
                                                 }
 
                                             </select>

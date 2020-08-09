@@ -47,11 +47,8 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<VehicleViewModel> AllVehicles { get; set; }
         public IEnumerable<VehicleViewModel> RegisteredVehicles { get; set; }
         public IEnumerable<VehicleViewModel> UnregisteredVehicles { get; set; }
-        public IEnumerable<OrganisationalUnitViewModel> OrganisationalUnits { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
-        public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
         public IEnumerable<SelectListItem> ClaimProducts { get; set; }
-        public IEnumerable<SelectListItem> AvailableOrganisations { get; set; }
         public OrganisationDetailsVM OrganisationDetails { get; set; }
         public UserDetailsVM UserDetails { get; set; }
         public IEnumerable<BuildingViewModel> Buildings { get; set; }
@@ -59,7 +56,6 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<WaterLocationViewModel> WaterLocations { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
-        public List<SelectListItem> InterestedPartyList { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
         public string Advisory { get; set; }
         public RevenueDataViewModel RevenueDataViewModel { get; set; }

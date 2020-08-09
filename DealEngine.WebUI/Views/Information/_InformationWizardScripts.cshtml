@@ -40,8 +40,6 @@
         });
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-
-           var informationsheetstatus = '@Model.ClientInformationSheet.Status.ToString()';
            var clientInformationSheet = '@Model.ClientInformationSheet.Id';
 
            if (stepDirection == "backward") {
@@ -58,7 +56,7 @@
                    event.preventDefault();
                    if (stepDirection == "forward") {
                        //<--!Boostrap validation method
-                       InformationSheetSubmit();                       
+                       InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status');
 
                            //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
 
@@ -85,7 +83,7 @@
                            //    return false;
 
                            //}
-                       
+
 
                        if ($('#CompanyName').val() === "AON") {
                            var nextbutton = document.getElementsByClassName("next");
