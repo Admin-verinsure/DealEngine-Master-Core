@@ -162,6 +162,12 @@
                 }
                 DefaultRule(Value, Name);
             }
+            if (Rule === "OptionOnChange") {
+                OptionOnChange(obj)
+                Name = obj.options[obj.selectedIndex].value;
+                Value = "1";
+                DefaultRule(Value, Name);
+            }
             if (Rule === "BuildSharedTable") {
                 BuildSharedTable(DataItem, Name);
                 Value = "1";
@@ -537,6 +543,12 @@
             return false;
         }
         return true;
+    }
+
+    function OptionOnChange(Element) {
+        for (var i = 0; i < Element.options.length; i++) {
+            DefaultRule("2", Element.options[i].value);
+        }
     }
 
     function ShowAlert(Value, show) {
