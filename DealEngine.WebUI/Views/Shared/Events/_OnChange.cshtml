@@ -270,9 +270,7 @@
                 });
             }
         } catch (ex) {
-            //these rules need to be re-run regardless of the catch
-
-            //console.log(ex);
+            //these rules need to be re-run regardless of the catch            
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
@@ -319,7 +317,6 @@
             Value == "Nominated Representative") {
             //readonly Organisation Type personal
 
-            debugger;
             if (Value == "Administration") {
                 IsPrincipalAdvisor.hidden = true;
                 IsTripleAApproval.hidden = true;
@@ -541,90 +538,6 @@
         }
         return true;
     }
-
-    //function ElementOnSubmit(Element, TargetElement, Form, Panel) {
-    //    var tag = TargetElement.tagName;
-    //    //hardcoded for project table
-    //    if (tag == "TABLE") {
-    //        if (TargetElement.rows.length < 2) {
-    //            event.preventDefault();
-    //            event.stopPropagation();
-    //            $("#more").trigger("click");
-    //            //go back to div// go back to accordion to get id
-    //            var accordianId = Form.getAttribute('data-accordianId');
-    //            window.alert("Please provide a project");
-    //            $("[id='" + accordianId + "']").trigger("click");
-    //            Element.scrollIntoView();
-    //            throw accordianId + " incomplete";
-    //        }
-    //    }
-    //}
-
-    //function RoleDataOnSubmit(ElementId, Form) {
-    //    var element = document.getElementById(ElementId);
-    //    var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
-    //    var multiElement = element.selectedOptions.length;
-    //    if (multiElement == 0) {
-    //        event.preventDefault();
-    //        event.stopPropagation();
-    //        $("#more").trigger("click");
-    //        var accordianId = Form.getAttribute('data-accordianId');
-    //        $("[id='Roles']").trigger("click");
-    //        window.alert("Roles not selected");
-    //        SetCurrentTab(tabId);
-    //        element.scrollIntoView();
-    //        throw accordianId + " incomplete";
-    //    } else {
-    //        var tabNo = parseInt(tabId.substring(tabId.length - 1)) + 1;
-    //        var nextTab = tabId.substring(0, tabId.length - 1);
-    //        SetCurrentTab(nextTab + tabNo);
-    //    }
-    //}
-
-    //function RevenueDataOnSubmit(ElementId, Form) {
-    //    var element = document.getElementById(ElementId);
-    //    var tabId = element.parentElement.parentElement.parentElement.parentElement.id;
-    //    var totalPercentage = 0;
-    //    var tableElement;
-    //    for (var v = 0; v < element.selectedOptions.length; v++) {
-    //        tableElement = document.getElementById(element.selectedOptions[v].text);
-    //        var value = parseInt(tableElement.value);
-    //        totalPercentage += value;
-    //    }
-    //    if (totalPercentage != 100) {
-    //        try {
-    //            tableElement.classList.remove("is-valid");
-    //            tableElement.classList.add("is-invalid");
-    //            event.preventDefault();
-    //            event.stopPropagation();
-    //            $("#more").trigger("click");
-    //            var accordianId = Form.getAttribute('data-accordianId');
-    //            $("[id='Fee Income / Activities']").trigger("click");
-    //            window.alert("Activities or Territories percentage calculation does not equal to 100%");
-    //            SetCurrentTab(tabId);
-    //            element.scrollIntoView();
-    //            throw accordianId + " incomplete";
-    //        }
-    //        catch (ex) {
-    //            //assume the drop down is empty so divert back to income
-    //            event.preventDefault();
-    //            event.stopPropagation();
-    //            $("#more").trigger("click");
-    //            var accordianId = Form.getAttribute('data-accordianId');
-    //            $("[id='Fee Income / Activities']").trigger("click");
-    //            window.alert("Activities or Territories not selected");
-    //            SetCurrentTab(tabId);
-    //            element.scrollIntoView();
-    //            throw accordianId + " incomplete";
-    //        }
-
-    //    }
-    //    else {
-    //        var tabNo = parseInt(tabId.substring(tabId.length-1))+1;
-    //        var nextTab = tabId.substring(0, tabId.length - 1);
-    //        SetCurrentTab(nextTab+tabNo);
-    //    }
-    //}
 
     function ShowAlert(Value, show) {
         if (Value == "1") {

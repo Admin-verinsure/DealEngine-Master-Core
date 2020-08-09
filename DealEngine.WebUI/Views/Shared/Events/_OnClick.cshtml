@@ -91,5 +91,335 @@
             }
         }
     }
-    
+
+    function Cancel(Form, Tab) {
+        document.getElementById(Form).reset();
+        SetCurrentTab(Tab);
+    }
+
+    function ResetOrganisation() {
+        var form = document.getElementById("organisationViewModel");
+        form.reset();
+        document.getElementById("HideOrganisationType").hidden = false;
+        document.getElementById("HideInsuranceAttribute").hidden = false;
+        document.getElementById("Private").hidden = true;
+        document.getElementById("Else").hidden = true;
+        for (var i = 0; i < form.length; i++) {
+            if (form[i].type != "hidden"
+                && form[i].tagName != "SELECT") {
+                form[i].value = "";
+            }
+            if (form[i].id == "Organisation.Id") {
+                form[i].value = '@System.Guid.Empty';
+            }
+            if (form[i].id == "User.Id") {
+                form[i].value = '@System.Guid.Empty';
+            }
+            if (form[i].id == "Organisation.OrganisationType") {
+                form[i].options[0].selected = true;
+            }
+            if (form[i].id == "Organisation.InsuranceAttribute") {
+                form[i].options[0].selected = true;
+            }
+            form[i].classList.add('is-up');
+            form[i].classList.remove('is-valid');
+            form[i].classList.remove('is-invalid');
+            form[i].disabled = false;
+        }
+    }
+
+    function CreateEditLabel(ObjectLabel) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "form-group");
+        var label = document.createElement("label");
+        label.innerHTML = "Select a " + ObjectLabel + " from the 'List All' Tab and Click Edit Button";
+        div.appendChild(label);
+        return div;
+    }
+
+    function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        var editTabHTML = document.getElementById(EditTabId);
+        if (editTabHTML.firstElementChild.tagName == "FORM") {
+            var addTabHTML = document.getElementById(AddTabId);
+            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            editTabHTML.innerHTML = "";
+            editTabHTML.appendChild(CreateEditLabel(Object));
+        }
+        document.getElementById(AddButtonId).innerText = "Add";
+        document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
+        ResetOrganisation();
+    }
+
+    function AddLocation() {
+        var form = document.getElementById("LocationViewModel");
+        var formValid = TableFormValidation(form , "location");
+        if (formValid) {
+            sessionStorage.setItem('accordianTrigger', 'Location');
+            $.ajax({
+                url: '@Url.Action("AddLocation", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true })
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function RemoveLocation(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Location');
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveLocation", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RestoreLocation(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Location');
+        var postData = { LocationId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreLocation", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
+        event.preventDefault();
+        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
+
+        document.getElementById("LocationId").value = Id;
+        document.getElementById("locationtypeoptions").value = LocationType;
+        document.getElementById("commonnamedetails").value = CommonName;
+        document.getElementById("streetdetails").value = Street;
+        document.getElementById("citydetails").value = City;
+        document.getElementById("countrydetails").value = Country;
+        document.getElementById("suburbdetails").value = Suburb;
+        document.getElementById("postcodedetails").value = Postcode;
+
+        SetCurrentTab("locationtab2");
+    }
+
+    function AddProject(SectionName) {
+        var form = document.getElementById("ProjectViewModel");
+        var formValid = TableFormValidation(form, "project");
+        if (formValid) {
+            //add section name here
+            sessionStorage.setItem('accordianTrigger', SectionName);
+            $.ajax({
+                url: '@Url.Action("AddProject", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function RemoveProject(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Projects');
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveProject", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function RestoreProject(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Projects');
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreProject", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+
+    function RestoreResearchHouse(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Independent Research');
+        var postData = { ProjectId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreResearchHouse", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function EditProject(Id, ProjectDescription, Fees, ConstructionValue, ProjectDuration, ProjectYear,
+        ProjectTitle, ProjectType, ProjectCountry, ProjectMajorResponsibilities, ProjectResponsibilityData) {
+
+        event.preventDefault();
+        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
+
+        document.getElementById("ProjectId").value = Id;
+        if (document.getElementById("projectdetails") != null) {
+            document.getElementById("projectdetails").value = ProjectDescription;
+        }
+        if (document.getElementById("projectfees") != null) {
+            document.getElementById("projectfees").value = Fees;
+        }
+        if (document.getElementById("contractdetails") != null) {
+            document.getElementById("contractdetails").value = ConstructionValue;
+        }
+        if (document.getElementById("durationdetails") != null) {
+            document.getElementById("durationdetails").value = ProjectDuration;
+        }
+        if (document.getElementById("projectyear") != null) {
+            document.getElementById("projectyear").value = ProjectYear;
+        }
+        if (document.getElementById("projecttitle") != null) {
+            document.getElementById("projecttitle").value = ProjectTitle;
+        }
+        if (document.getElementById("hascontracttype") != null) {
+            document.getElementById("hascontracttype").value = ProjectType;
+        }
+        if (document.getElementById("projectcountry") != null) {
+            document.getElementById("projectcountry").value = ProjectCountry;
+        }
+        if (document.getElementById("projectmajorresponsibilities") != null) {
+            document.getElementById("projectmajorresponsibilities").value = ProjectMajorResponsibilities;
+        }
+
+        var array = ProjectResponsibilityData.split(',');
+        for (var i = 0; i < array.length; i++) {
+            if(document.getElementById("responsibility." + i) != null) {
+                var cb = document.getElementById("responsibility." + i);
+                if (array[i] == "True") {
+                    cb.setAttribute("checked", "true");
+                }
+            }
+        }
+
+        SetCurrentTab("projecttab2");
+    }
+
+    function TableFormValidation(Form, SectionName) {
+        for (var e = 0; e < Form.length; e++) {
+            var element = null;
+            try {
+                if (Form[e].id != "") {
+                    element = document.getElementById(Form[e].id);
+                }
+            }
+            catch (ex) {
+                //will have to add further function for forms with added elements
+            }
+            if (element != null) {
+                OnChange(element.id, element.name);
+                if ((element.classList.contains("is-invalid") || element.classList.contains("is-up")) && element.hidden == false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    window.alert("Please complete "+SectionName+" details");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function EditResearchHouse(Id, ResearchServices, ResearchName) {
+        event.preventDefault();
+        CloneFormView("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
+
+        document.getElementById("ProjectId").value = Id;
+        if (document.getElementById("researchName") != null) {
+            document.getElementById("researchName").value = ResearchName;
+        }
+        if (document.getElementById("researchServices") != null) {
+            document.getElementById("researchServices").value = ResearchServices;
+        }
+
+        SetCurrentTab("ResearchHouse2");
+    }
+
+    function AddResearchHouse(SectionName) {
+        var form = document.getElementById("ResearchHouseViewModel");
+        var formValid = TableFormValidation(form, "Independent Research");
+        if (formValid) {
+            //add section name here
+            sessionStorage.setItem('accordianTrigger', SectionName);
+            $.ajax({
+                url: '@Url.Action("AddResearchHouse", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+    function RestoreResearchHouse(Id) {
+        sessionStorage.setItem('accordianTrigger', 'Projects');
+        var postData = { researchHouseId: Id };
+        $.ajax({
+            url: '@Url.Action("RestoreResearchHouse", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
 </script>

@@ -192,6 +192,23 @@ namespace DealEngine.Services.Impl
 			email.Send ();
         }
 
+        public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
+        {
+            string PremiumAdviceEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Premium Advice for " + clientInformationSheet.Owner.Name;
+            string PremiumAdviceEmailbody = "<p>Hi There,</p><p>Please check the attached premium advice.</p>";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            email.WithSubject(PremiumAdviceEmailsubject);
+            email.WithBody(PremiumAdviceEmailbody);
+            email.UseHtmlBody(true);
+            if (documents != null)
+            {
+                var documentsList = await ToAttachments(documents);
+                email.Attachments(documentsList.ToArray());
+            }
+            email.Send();
+        }
 
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {

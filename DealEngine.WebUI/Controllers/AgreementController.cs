@@ -2400,6 +2400,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
                         var documents = new List<SystemDocument>();
+                        var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
 
@@ -2450,7 +2451,15 @@ namespace DealEngine.WebUI.Controllers
                                                 documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
-                                        } else
+                                        } else if (template.DocumentType == 7)
+                                        {
+                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            //documents.Add(renderedDoc);
+                                            documentspremiumadvice.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
+                                        } else 
                                         {
                                             SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -2511,6 +2520,14 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                     }
                                 }
+
+                                //send out premium advice
+                                if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
+                                    agreement.Product.ProductEnablePremiumAdvice)
+                                {
+                                    await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement);
+                                }
+
                                 //send out agreement bound notification email
                                 await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                             }
@@ -2565,6 +2582,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
                         var documents = new List<SystemDocument>();
+                        var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
 
@@ -2599,6 +2617,15 @@ namespace DealEngine.WebUI.Controllers
                                                 documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
+                                        }
+                                        else if (template.DocumentType == 7)
+                                        {
+                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                            agreement.Documents.Add(renderedDoc);
+                                            //documents.Add(renderedDoc);
+                                            documentspremiumadvice.Add(renderedDoc);
+                                            await _fileService.UploadFile(renderedDoc);
                                         }
                                         else
                                         {

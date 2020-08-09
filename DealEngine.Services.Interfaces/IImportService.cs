@@ -29,6 +29,7 @@ namespace DealEngine.Services.Interfaces
         Task ImportAAAServiceIndividuals(User user);
         Task ImportAAAAdministrationIndividuals(User user);
         Task ImportAAAServicePrincipals(User user);
+        Task ImportAAAServicePreRenewData(User user);
 
     }
 }
