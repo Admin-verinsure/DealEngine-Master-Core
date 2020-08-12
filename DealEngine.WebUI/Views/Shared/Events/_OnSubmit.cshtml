@@ -86,14 +86,13 @@
         }
     }
 
-    function InformationSheetSubmit(Programme, Status) {
+    function InformationSheetSubmit(Programme, Status, Forms) {
         if (Status === "Started") {
-            var forms = document.getElementsByClassName('needs-validation');   //invalid forms
             var formIds = [];
-            for (var f = 0; f < forms.length; f++) {
+            for (var f = 0; f < Forms.length; f++) {
                 //get each form id
-                if (forms[f].id != "myForm" || forms[f].id != "organisationViewModel") {
-                    formIds.push(forms[f].id);
+                if (Forms[f].id != "myForm" || Forms[f].id != "organisationViewModel") {
+                    formIds.push(Forms[f].id);
                 }
             }
             for (var i = 0; i < formIds.length; i++) {
@@ -124,7 +123,7 @@
                         }
                         else {
                             //hardcoded to find the div visibility - need to find a better way
-                            var isHidden = IsElementHidden(element);
+                            var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;//IsElementHidden(element);
                             if (isHidden == false) {
                                 OnChange(element.id, element.name);
                                 //onsubmitfunction trigger
@@ -157,7 +156,6 @@
                 form.classList.remove("needs-validation");
                 form.classList.add("was-validated");
             }
-            debugger;
             if (Programme === "TripleA Programme") {
                 TrippleAValidationOnSubmit();
             }
@@ -172,19 +170,19 @@
                 event.preventDefault();
                 event.stopPropagation();
                 $("#more").trigger("click");
-                $("#Insured Details / Named Parties").trigger("click");
+                $("[id='Insured Details / Named Parties']").trigger("click");
                 window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");                
                 throw "no principal advisor";
             }
             else {
                 var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
                 if (organisations.length != 1) {
-                    debugger;
+                    
                     event.preventDefault();
                     event.stopPropagation();
                     $("#more").trigger("click");
                     window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                    $("#Insured Details / Named Parties").trigger("click");
+                    $("[id='Insured Details / Named Parties']").trigger("click");
                     element.scrollIntoView();                                      
                     throw "no principal advisor";
                 }
@@ -195,8 +193,8 @@
                     event.preventDefault();
                     event.stopPropagation();
                     $("#more").trigger("click");
-                    window.alert("Please Add Trading Name to Owner");
-                    $("#Insured Details / Named Parties").trigger("click");
+                    window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                    $("[id='Insured Details / Named Parties']").trigger("click");
                     throw "no trading name";
                 }
             }
