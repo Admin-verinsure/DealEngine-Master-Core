@@ -58,6 +58,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool ProgEnableHidedoctoClient { get; set; }
         public virtual bool ProgEnableSendPremiumAdvice { get; set; }
         public virtual string PremiumAdviceRecipent { get; set; }
+        public virtual string PremiumAdviceRecipentCC { get; set; }
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)

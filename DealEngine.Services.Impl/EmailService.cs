@@ -192,13 +192,17 @@ namespace DealEngine.Services.Impl
 			email.Send ();
         }
 
-        public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
+        public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
         {
             string PremiumAdviceEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Premium Advice for " + clientInformationSheet.Owner.Name;
             string PremiumAdviceEmailbody = "<p>Hi There,</p><p>Please check the attached premium advice.</p>";
 
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
+            if (!string.IsNullOrEmpty(recipentcc))
+            {
+                email.CC(recipentcc);
+            }
             email.WithSubject(PremiumAdviceEmailsubject);
             email.WithBody(PremiumAdviceEmailbody);
             email.UseHtmlBody(true);
