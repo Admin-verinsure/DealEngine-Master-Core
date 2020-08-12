@@ -784,7 +784,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetReportView(IFormCollection formCollection, Object reporttype)
+        public async Task<IActionResult> GetReportView(IFormCollection formCollection,String fileName)
         {
             User user = null;
             try
@@ -840,6 +840,7 @@ namespace DealEngine.WebUI.Controllers
                             }
                             reportset.Add(report);
                        // }
+
                     }
                     catch (Exception ex)
                     {}
@@ -884,8 +885,19 @@ namespace DealEngine.WebUI.Controllers
                         table.Rows.Add(values1);
                     }
 
-              //  table.ExportToExcel(@"c:\temp\exported.xls");
                 return View(table);
+                //if (formCollection["IsReport"] != "True")
+                //{
+                //    return View(table);
+                //}
+                //else
+                //{
+                    //Document document = new Document();
+                    //PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(strFilePath, FileMode.Create));
+                    //document.Open();
+                    //document.Add(table);
+                    //document.Close();
+               // }
             }
             catch (Exception ex)
             {

@@ -22,9 +22,10 @@
 <div class="container">
     <form method="post" action="~/Home/GetReportView" novalidate>
         <div class="card-footer">
-            <button class="btn btn-primary btn-xs" type="submit">Export</button>
+            <button class="btn btn-primary btn-xs" id="ReportView" onclick="getReport()" >Export</button>
         </div>
         <label name="queryselect" hidden>@ViewBag.reportName</label>
+        <input  name="IsReport" id="IsReport" />
         <div>
             @if (Model != null)
             {
@@ -118,6 +119,12 @@
         });
 
     });
+
+    function getReport() {
+        debugger;
+        $('#IsReport').val("True");
+
+    };
 
       function viewreport() {
           debugger;

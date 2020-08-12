@@ -17,12 +17,7 @@
 
                                 Name
                             </th>
-                            @*<th>
-                                Email
-                            </th>
-                            <th>
-                                Issued Date
-                            </th>*@
+                         
                         </tr>
                     </thread>
                     <tbody>
@@ -40,17 +35,17 @@
                                 </select>
 
                             </td>
-
+                           
                             @*<td>
-                                <select name="ClientProgramme">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    @foreach (var prog in Model.ListClientProgrammes)
-                                    {
-                                        <option value="@prog.Value">@prog.Text</option>
-                                    }
-                                </select>
+            <select name="ClientProgramme">
+                <option selected="selected" value="">-- Select --</option>
+                @foreach (var prog in Model.ListClientProgrammes)
+                {
+                    <option value="@prog.Value">@prog.Text</option>
+                }
+            </select>
 
-                            </td>*@
+        </td>*@
 
                         </tr>
                         
