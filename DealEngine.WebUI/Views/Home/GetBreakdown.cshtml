@@ -1,0 +1,106 @@
+﻿@model DealEngine.WebUI.Models.BreakdownModel
+@{
+    int TotalOrgs = Model.PrivateCount + Model.CorporationCount + Model.TrustCount + Model.PartnershipCount;
+    int TotalPrgrammes = Model.NotStartedCount + Model.StartedCount + Model.CompletedCount;
+    int TotalAgreements = Model.QuotedCount + Model.BoundCount;
+}
+
+
+<div class="container">
+    <div>
+        @* enter breadcrumb *@
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">
+                Breakdown for @Model.Programme.Name
+            </h2>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Organisation Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            Private Organisations : @Model.PrivateCount
+                        </div>
+                        <div class="form-group">
+                            Corporation – Limited liability Organisations : @Model.CorporationCount
+                        </div>
+                        <div class="form-group">
+                            Trust Organisations : @Model.TrustCount
+                        </div>
+                        <div class="form-group">
+                            Partnership Organisations : @Model.PartnershipCount
+                        </div>
+                        <div class="form-group">
+                            Total Organisations : @TotalOrgs
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Client Programme Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            Client Programmes : @TotalPrgrammes
+                        </div>
+                        <div class="form-group">
+                            Sub Client Programmes :
+                        </div>
+                        <div class="form-group">
+                            Total Client Programmes : N/A
+                        </div>
+                        <div class="form-group">
+                            Programmes Not Started : @Model.NotStartedCount
+                        </div>
+                        <div class="form-group">
+                            Programmes Started : @Model.StartedCount
+                        </div>
+                        <div class="form-group">
+                            Programmes Completed : @Model.CompletedCount
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Client Agreement Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            Total Client Agreements : @TotalAgreements
+                        </div>
+                        <div class="form-group">
+                            Client Agreement Quoted : @Model.QuotedCount
+                        </div>
+                        <div class="form-group">
+                            Client Agreement Bound : @Model.BoundCount
+                        </div>
+                        <div class="form-group">
+                            Client Docuements sent : N/A
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section pagespecific {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //$.noConflict();
+
+        });
+
+    </script>
+}
+

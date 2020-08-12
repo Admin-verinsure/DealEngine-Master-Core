@@ -1200,5 +1200,13 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetBreakdown(string ProgrammeId)
+        {
+            Guid.TryParse(ProgrammeId, out Guid Id);
+            Programme programme = await _programmeService.GetProgrammeById(Id);
+            BreakdownModel model = new BreakdownModel(programme);
+            return View(model);
+        }
     }
 }
