@@ -253,7 +253,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         {
                             <h3><strong>Options </strong></h3>
                             <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                            <a class="btn btn-primary btn-sm" href="/Agreement/VerifyDocuments/@item.InformationSheetId">Verify Documents</a>
+                            @*<a class="btn btn-primary btn-sm" href="/Agreement/VerifyDocuments/@item.InformationSheetId">Verify Documents</a>*@
                             <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
                             <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
                         }

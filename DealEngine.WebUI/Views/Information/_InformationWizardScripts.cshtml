@@ -52,11 +52,11 @@
 
            if (stepNumber === 0) {
                //if (informationsheetstatus != "Submitted") {
-
-                   event.preventDefault();
-                   if (stepDirection == "forward") {
+               event.preventDefault();
+               if (stepDirection == "forward") {
+                   var forms = document.getElementsByClassName('needs-validation');
                        //<--!Boostrap validation method
-                       InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status');
+                   InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status', forms);
 
                            //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
 
@@ -505,7 +505,6 @@
                 })
                     .done(function (data) {
                         if (ui.oldHeader[0].id == "Investment Product") {
-                            debugger;
                             checkInvestmentVal();
                         }
                         document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
@@ -616,27 +615,22 @@
     });
 
     function checkInvestmentVal() {
-        debugger;
-        var hjh = $("#HasClientFunds").val();
         if ($("#HasClientFunds").val() == "1") {
         var totalpercent = 0;
         $.each($(".Investment input[type=\"text\"]"), function (index, ele) {
-            debugger;
             if (ele.value != "") {
-            var percent = parseInt(ele.value);
-            totalpercent +=  percent;
-
+                var percent = parseInt(ele.value);
+                totalpercent += percent;
             }
-
         });
-
-         if (totalpercent != 100) {
-             alert("Percentage calculation does not equal to 100%");
-              $("[id='AAA Investment Products']").trigger("click");
-            return false;
-        }
+            if (totalpercent != 100) {
+                alert("Percentage calculation does not equal to 100%");
+                $("[id='AAA Investment Products']").trigger("click");
+                return false;
             }
+        }
     }
+
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
         var validity = true;
         if (claim1 == "") {

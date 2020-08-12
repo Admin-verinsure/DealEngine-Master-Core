@@ -641,6 +641,9 @@ namespace DealEngine.Services.Impl
 
             string stradvisornominatedrepresentative = "";
             string strprincipleadvisorname = "";
+            string strInceptionDateForFAP = "";
+
+            strInceptionDateForFAP = TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
 
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
@@ -667,6 +670,15 @@ namespace DealEngine.Services.Impl
                     }
 
                 }
+
+                
+                if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(advisorsubuis => advisorsubuis.DateDeleted == null).Count() > 0)
+                {
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").Any())
+                    {
+                        strInceptionDateForFAP = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value.ToString();
+                    }
+                } 
 
                 foreach (var advsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(advisorsubuis => advisorsubuis.DateDeleted == null))
                 {
@@ -696,6 +708,9 @@ namespace DealEngine.Services.Impl
                     }
                 }
             }
+
+            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDateForFAP]]", strInceptionDateForFAP));
+
             if (string.IsNullOrEmpty(stradvisornominatedrepresentative))
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorsList]]", "No Advisor insured under this policy"));
@@ -819,7 +834,7 @@ namespace DealEngine.Services.Impl
             }
             if (agreement.ClientInformationSheet != null)
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByName]]", agreement.ClientInformationSheet.SubmittedBy.FullName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByName]]", agreement.ClientInformationSheet.SubmittedBy.FirstName + " " + agreement.ClientInformationSheet.SubmittedBy.LastName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[UISSubmittedByEmail]]", agreement.ClientInformationSheet.SubmittedBy.Email));
 
                 if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").Any())
