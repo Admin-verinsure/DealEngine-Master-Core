@@ -576,7 +576,7 @@ namespace DealEngine.Services.Impl
                         Console.WriteLine(Message);
                         Console.WriteLine(value);
             //    }
-            }
+            
 
             }
             catch (Exception ex)
