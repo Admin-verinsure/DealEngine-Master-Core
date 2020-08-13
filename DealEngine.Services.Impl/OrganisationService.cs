@@ -485,7 +485,7 @@ namespace DealEngine.Services.Impl
 
                     if (attr.InsuranceAttributeName == "Advisor")
                     {
-                        organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
+                        //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
                         organisation.OrganisationalUnits.Add(
                             new AdvisorUnit()
                             {
@@ -513,7 +513,7 @@ namespace DealEngine.Services.Impl
                     }
                     if (attr.InsuranceAttributeName == "NominatedRepresentative")
                     {
-                        organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
+                        //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
                         organisation.OrganisationalUnits.Add(
                                 new AdvisorUnit()
                                 {
