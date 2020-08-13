@@ -134,7 +134,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<string> SetMilestoneFor(string activityName, User user, ClientInformationSheet sheet)
         {
-            var hasActivity = _activityService.GetActivityByName(activityName);
+            var hasActivity = await _activityService.GetActivityByName(activityName);
             string Discription = "";
             if(hasActivity == null)
             {
