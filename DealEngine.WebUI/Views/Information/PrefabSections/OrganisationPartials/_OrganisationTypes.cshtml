@@ -34,7 +34,7 @@
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
     </div>
-    @if (Model.OrganisationViewModel.Programme.Name == "PMINZ Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
+    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
     {
 <div class="form-group col-md-6" id="TradingName" hidden>
     @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
@@ -51,13 +51,6 @@
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
     }
 </div>
-    }
-    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
-    {
-        @*<div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit., new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Email, new { @class = "form-control", @id = "User.Email", @onchange = "OnChange(this.id, this.name)", @required = "" })
-            </div>*@
     }
 </div>
 
