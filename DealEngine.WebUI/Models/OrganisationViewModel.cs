@@ -105,12 +105,7 @@ namespace DealEngine.WebUI.Models
                     new SelectListItem
                     {
                         Text = "Joint Venture",
-                        Value = "JointVenture"
-                    },
-                    new SelectListItem
-                    {
-                        Text = "Previous Consulting Business",
-                        Value = "Previous Consulting Business"
+                        Value = "Joint Venture"
                     }
                 };
             return _Types;
@@ -176,7 +171,7 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                     {
                         Text = "Project Director",
-                        Value = "ProjectDirector"
+                        Value = "Project Director"
                     }
             };
             return _Types;
@@ -226,45 +221,7 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
-        //private IList<SelectListItem> GetDANZTypes()
-        //{
-        //    var _Types = new List<SelectListItem>();
-        //    _Types = new List<SelectListItem>() {
-        //            new SelectListItem
-        //            {
-        //                Text = "-- Select --",
-        //                Value = "0"
-        //            },
-        //            new SelectListItem
-        //            {
-        //                Text = "Personnel",
-        //                Value = "Personnel"
-        //            },
-        //            new SelectListItem
-        //            {
-        //                Text = "Subsidiary",
-        //                Value = "Subsidiary"
-        //            },
-        //            new SelectListItem
-        //            {
-        //                Text = "Previous Consulting Business",
-        //                Value = "Previous Consulting Business"
-        //            }
-        //            ,
-        //            new SelectListItem
-        //            {
-        //                Text = "Mergers",
-        //                Value = "Mergers"
-        //            }
-        //            ,
-        //            new SelectListItem
-        //            {
-        //                Text = "Joint Venture",
-        //                Value = "Joint Venture"
-        //            }
-        //        };
-        //    return _Types;
-        //}
+       
         private IList<SelectListItem> GetLicencedOptions()
         {
             var _Types = new List<SelectListItem>()
@@ -477,23 +434,11 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasIsADNZmemberOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasIsOtherdirectorshipOptions { get; set; }
-
-
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
 
-
-        #region OLD!
-        // Organisation Details --- 
-        public string OrganisationType { get; set; }
-        public string InsuranceAttribute { get; set; }
-        public Guid AnswerSheetId { get; set; }
-        
-        #endregion
     }
-
-
 }
 
 
