@@ -315,7 +315,7 @@
 
         var List = document.getElementById("Organisation.OrganisationType");
         List.disabled = false;
-
+        debugger;
         if (Value == "Advisor" ||
             Value == "Personnel" ||
             Value == "Principal" ||
@@ -324,13 +324,21 @@
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
-                IsPrincipalAdvisor.hidden = true;
-                IsTripleAApproval.hidden = true;
+                if (IsTripleAApproval != null) {
+                    IsTripleAApproval.hidden = true;
+                }
+                if (IsPrincipalAdvisor != null) {
+                    IsPrincipalAdvisor.hidden = true;
+                }                               
                 document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
             }
             if (Value == "Nominated Representative") {
-                IsPrincipalAdvisor.hidden = true;
-                IsTripleAApproval.hidden = true;
+                if (IsTripleAApproval != null) {
+                    IsTripleAApproval.hidden = true;
+                }
+                if (IsPrincipalAdvisor != null) {
+                    IsPrincipalAdvisor.hidden = true;
+                }
                 document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
             }
 
@@ -341,8 +349,7 @@
                 }
             }
 
-            List.disabled = true;
-            
+            List.disabled = true;            
         } else {
             document.getElementById("Else").hidden = false;
         }

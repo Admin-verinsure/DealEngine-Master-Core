@@ -21,8 +21,10 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme")
                 {
+                    if (Programme.Name == "NZFSG Programme") { InsuranceAttributes = GetAdvisorTypes1(); } else { InsuranceAttributes = GetAdvisorTypes2(); }
+                    
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
-                    InsuranceAttributes = GetAdvisorTypes();
+                    
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
@@ -351,7 +353,35 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
-        private IList<SelectListItem> GetAdvisorTypes()
+        private IList<SelectListItem> GetAdvisorTypes1()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Advisor",
+                        Value = "Advisor"
+                    },
+                new SelectListItem
+                {
+                    Text = "Nominated Representative",
+                    Value = "Nominated Representative"
+                },
+                new SelectListItem
+                {
+                    Text = "Other Consulting Business",
+                    Value = "Other Consulting Business"
+                }
+            };
+            return _Types;
+
+        }
+        private IList<SelectListItem> GetAdvisorTypes2()
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
