@@ -38,22 +38,11 @@ namespace DealEngine.WebUI.Models
         public string SectionView { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
-        public List<string> ListProductName { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
-
-        // TODO - find a better way to pass these in
-        public string HardCodedAdvisory { get; set; }
-        public bool HasVehicles { get; set; }
         public IEnumerable<VehicleViewModel> AllVehicles { get; set; }
-        public IEnumerable<VehicleViewModel> RegisteredVehicles { get; set; }
-        public IEnumerable<VehicleViewModel> UnregisteredVehicles { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
-        public IEnumerable<SelectListItem> ClaimProducts { get; set; }
         public OrganisationDetailsVM OrganisationDetails { get; set; }
         public UserDetailsVM UserDetails { get; set; }
-        public IEnumerable<BuildingViewModel> Buildings { get; set; }
-        public IEnumerable<ClientInformationAnswer> ClientInformationAnswers { get; set; }
-        public IEnumerable<WaterLocationViewModel> WaterLocations { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }

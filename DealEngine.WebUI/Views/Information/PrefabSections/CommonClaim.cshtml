@@ -254,9 +254,9 @@
                                 <select data-placeholder="Choose Primary Policy Product..." id="PrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
                                     <option selected="selected" value="">-- Select here --</option>
 
-                                    @foreach (var bwloc in Model.ClaimProducts)
+                                    @foreach (var product in Model.ClientProgramme.BaseProgramme.Products)
                                     {
-                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                        <option value="@product.Id"> @product.Name</option>
                                     }
 
                                 </select>
@@ -455,9 +455,9 @@
 
                                     <option selected="selected" value="">-- Select here --</option>
 
-                                    @foreach (var bwloc in Model.ClaimProducts)
+                                    @foreach (var Product in Model.ClientProgramme.BaseProgramme.Products)
                                     {
-                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                        <option value="@Product.Id"> @Product.Name</option>
                                     }
 
                                 </select>

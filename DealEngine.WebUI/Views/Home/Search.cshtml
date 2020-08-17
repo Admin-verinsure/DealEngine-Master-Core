@@ -10,6 +10,10 @@
         </div>
         <div class="card-body">
             <div class="form-group">
+                @foreach (var id in Model.Programmes)
+                {
+                    @Html.Hidden("Programme", id.Id, new { @id = "ProgrammeId" });
+                }
                 <select id="SearchId" name="SearchTerm" class="custom-select" required>
                     @foreach (var option in Model.SearchOptions)
                     {

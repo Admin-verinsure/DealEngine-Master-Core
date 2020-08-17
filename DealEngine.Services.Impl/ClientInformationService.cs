@@ -4,7 +4,6 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
-using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using NHibernate.Linq;
@@ -15,6 +14,7 @@ namespace DealEngine.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
+        IMapperSession<Programme> _programmeRepository;
         IMapperSession<Reference> _referenceRepository;
         IMapperSession<Boat> _boatRepository;
         IMapperSession<Organisation> _organisationRepository;
@@ -22,8 +22,9 @@ namespace DealEngine.Services.Impl
         IMapper _mapper;
 
         public ClientInformationService(
+            IMapperSession<Programme> programmeRepository,
             IMapperSession<Reference> referenceRepository,
-        IMapperSession<User> userRepository,
+            IMapperSession<User> userRepository,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
@@ -349,15 +350,16 @@ namespace DealEngine.Services.Impl
             return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);                     
         }
 
-        public async Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue)
+        public async Task<List<ClientInformationSheet>> FindByAdvisoryName(IFormCollection collection)
         {
-            var clientList = new List<ClientInformationSheet>();
-            var orgs = await _organisationRepository.FindAll().Where(b => b.Name.Contains(searchValue)).ToListAsync();
-            foreach (var org in orgs)
-            {
-                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
-            }
-            return clientList;
+            //var programmes = await 
+            //var clientList = new List<ClientInformationSheet>();
+            //var orgs = await _organisationRepository.FindAll().Where(b => b.Name.Contains(searchValue)).ToListAsync();
+            //foreach (var org in orgs)
+            //{
+            //    clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
+            //}
+            return null;
         }
         public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
         {
