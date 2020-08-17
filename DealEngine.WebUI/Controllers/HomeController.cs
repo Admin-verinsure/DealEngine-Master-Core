@@ -1,5 +1,6 @@
 ﻿#region Using
 using AutoMapper;
+using ClosedXML.Excel;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Tasking;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -784,7 +786,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetReportView(IFormCollection formCollection,String fileName)
+        public async Task<IActionResult> GetReportView(IFormCollection formCollection)
         {
             User user = null;
             try
@@ -793,6 +795,7 @@ namespace DealEngine.WebUI.Controllers
                 string queryselect = formCollection["queryselect"];
                 // PropertyDescriptorCollection props = generatequeryField(queryselect);
                 ViewBag.reportName = queryselect;
+                ViewBag.ProgrammeId = Guid.Parse(formCollection["ProgrammeId"]);
                 PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(PIReport));
                 List<PIReport> reportset = new List<PIReport>();
                 DataTable table = new DataTable();
@@ -805,7 +808,7 @@ namespace DealEngine.WebUI.Controllers
 
                         //if (queryselect == "PI Cover Limit")
                         //{
-                            ViewBag.Title = " Cover Limit and Premium Selected";
+                            ViewBag.Title = queryselect +"Cover Limit and Premium Selected";
                             PIReport report = new PIReport();
                             report.ReferenceID = cp.InformationSheet.ReferenceId;
                             report.IndividualName = cp.Owner.Name;
@@ -885,19 +888,54 @@ namespace DealEngine.WebUI.Controllers
                         table.Rows.Add(values1);
                     }
 
-                return View(table);
-                //if (formCollection["IsReport"] != "True")
-                //{
-                //    return View(table);
-                //}
-                //else
-                //{
-                    //Document document = new Document();
-                    //PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(strFilePath, FileMode.Create));
-                    //document.Open();
-                    //document.Add(table);
-                    //document.Close();
-               // }
+               
+                //return View(table);
+                if (formCollection["IsReport"] != "True")
+                {
+                    return View(table);
+                }
+                else
+                {
+                    table.TableName = "MyDt";
+                    try
+                    {
+                      XLWorkbook workbook = new XLWorkbook();
+                      workbook.Worksheets.Add(table, "WorksheetName");
+                      // wb.SaveAs(@"C:\\Users\\Public\\DataImport\\Students1.xlsx");
+
+                        //Defining the ContentType for excel file.
+                        string ContentType = "Application/msexcel";
+
+                        //Define the file name.
+                        string fileName = "Output.xlsx";
+
+                        //Creating stream object.
+                        MemoryStream stream = new MemoryStream();
+
+                        //Saving the workbook to stream in XLSX format
+                        workbook.SaveAs(stream);
+
+                        stream.Position = 0;
+
+                        //Closing the workbook.
+                       // workbook.Close();
+
+                        //Dispose the Excel engine
+                       // excelEngine.Dispose();
+
+                        //Creates a FileContentResult object by using the file contents, content type, and file name.
+                        return File(stream, ContentType, fileName);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                    return View(table);
+
+                }
+                   
             }
             catch (Exception ex)
             {

@@ -1,11 +1,13 @@
 ﻿@model System.Data.DataTable
 @using System.Data
 
-<h3>@ViewBag.reportName  @ViewBag.Title</h3>
+<h3>@ViewBag.Title</h3>
 
 <li class="nav-item">
-    <a onclick="location.href='@Url.Action("ExportExcel", "Home", new { Columns = @Model.Columns , Rows = @Model.Rows})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Export Report </a>
+
+    <a href="@("Export File")" >Export File</a>
 </li>
+
 
 @*<button onclick="viewreport()"> view rport </button>*@
 <br />
@@ -22,10 +24,14 @@
 <div class="container">
     <form method="post" action="~/Home/GetReportView" novalidate>
         <div class="card-footer">
-            <button class="btn btn-primary btn-xs" id="ReportView" onclick="getReport()" >Export</button>
+            <button class="btn btn-primary btn-xs" id="ReportView" onclick="getReport()">Export Report</button>
         </div>
-        <label name="queryselect" hidden>@ViewBag.reportName</label>
-        <input  name="IsReport" id="IsReport" />
+        <a href="@("Export File")">Export File</a>
+
+        <input type="text" class="form-control" value="@ViewBag.reportName" name="queryselect" hidden>
+
+        <input type="text" class="form-control" value="@ViewBag.ProgrammeId" name="ProgrammeId" hidden>
+        <input name="IsReport" id="IsReport" hidden />
         <div>
             @if (Model != null)
             {
