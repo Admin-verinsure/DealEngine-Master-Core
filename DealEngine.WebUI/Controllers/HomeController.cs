@@ -496,6 +496,7 @@ namespace DealEngine.WebUI.Controllers
                     string referenceId = client.InformationSheet.ReferenceId;
                     bool nextInfoSheet = false;
                     bool programmeAllowUsesChange = false;
+                    bool programmeUseEglobal = false;
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
                     string agreementSatus = "";
@@ -510,6 +511,10 @@ namespace DealEngine.WebUI.Controllers
                     if (client.BaseProgramme.AllowUsesChange)
                     {
                         programmeAllowUsesChange = true;
+                    }
+                    if (client.BaseProgramme.UsesEGlobal)
+                    {
+                        programmeUseEglobal = true;
                     }
 
                     if (null != client.InformationSheet.PreviousInformationSheet)
@@ -528,13 +533,14 @@ namespace DealEngine.WebUI.Controllers
                         Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
                         NextInfoSheet = nextInfoSheet,
                         ProgrammeAllowUsesChange = programmeAllowUsesChange,
+                        ProgrammeUseEglobal = programmeUseEglobal,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
                         SubClientProgrammes = client.SubClientProgrammes,
                         AgreementStatus = agreementSatus
-                    });
+                    }); ;
                 }
             }
             model.Deals = deals;

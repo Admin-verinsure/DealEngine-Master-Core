@@ -93,7 +93,8 @@
                             {
                                 <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
                             }
-                            if (item.Status == "Bound and invoiced" && item.ProgrammeAllowUsesChange && item.NextInfoSheet == false)
+                            if (((item.Status == "Bound and invoiced" && item.ProgrammeUseEglobal) || (item.Status == "Bound" && !item.ProgrammeUseEglobal)) && 
+                                item.ProgrammeAllowUsesChange && item.NextInfoSheet == false)
                             {
                                 <a href="#myChangeModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Update</a>
                             }

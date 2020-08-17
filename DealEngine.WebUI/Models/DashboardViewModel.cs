@@ -85,7 +85,7 @@ namespace DealEngine.WebUI.Models
 		public string LocalDateSubmitted { get; set; }
 		public Boolean NextInfoSheet { get; set; }
 		public Boolean ProgrammeAllowUsesChange { get; set; }
-
+		public Boolean ProgrammeUseEglobal { get; set; }
 		public IList<SubClientProgramme> SubClientProgrammes { get; set; }
 		public string AgreementStatus { get; set; }
 		public string DocSendDate { get; set; }
