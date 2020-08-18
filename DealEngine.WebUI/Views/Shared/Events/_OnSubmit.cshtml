@@ -158,8 +158,10 @@
             }
             var Unit = document.getElementsByName("Unit");
             if (Unit != null) {
-                if (Unit[0].id == "AdvisorUnit") {
-                    AdvisorUnitValidationOnSubmit();
+                if (Unit.length > 0) {
+                    if (Unit[0].id == "AdvisorUnit") {
+                        AdvisorUnitValidationOnSubmit();
+                    }
                 }
             }
         }

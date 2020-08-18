@@ -7,20 +7,23 @@ using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using FluentNHibernate.Conventions;
+using NHibernate.Util;
 
 namespace DealEngine.Services.Impl
 {
-	public class ProgrammeService : IProgrammeService
-	{
-		IMapperSession<Programme> _programmeRepository;
-		IMapperSession<ClientProgramme> _clientProgrammeRepository;
+    public class ProgrammeService : IProgrammeService
+    {
+        IMapperSession<Programme> _programmeRepository;
+        IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IClientInformationService _clientInformationService;
         IReferenceService _referenceService;
         IMapper _mapper;
 
-        public ProgrammeService (IMapperSession<Programme> programmeRepository,
+        public ProgrammeService(IMapperSession<Programme> programmeRepository,
             IClientInformationService clientInformationService,
-            IMapperSession<ClientProgramme> clientProgrammeRepository, 
+            IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
             IMapper mapper
             )
@@ -28,42 +31,42 @@ namespace DealEngine.Services.Impl
             _mapper = mapper;
             _clientInformationService = clientInformationService;
             _programmeRepository = programmeRepository;
-			_clientProgrammeRepository = clientProgrammeRepository;
+            _clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
         }
 
-		public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
-		{
+        public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
+        {
             var programme = await GetProgramme(programmeId);
             return await CreateClientProgrammeFor(programme, creatingUser, owner);
-		}
+        }
 
-		public async Task<ClientProgramme> CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
-		{            
+        public async Task<ClientProgramme> CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
+        {
             ClientProgramme clientProgramme = new ClientProgramme(creatingUser, owner, programme);
             clientProgramme.BrokerContactUser = programme.BrokerContactUser;
             await Update(clientProgramme);
-			return clientProgramme;
-		}
+            return clientProgramme;
+        }
 
-		public async Task<ClientProgramme> GetClientProgramme(Guid id)
-		{
-			return await _clientProgrammeRepository.GetByIdAsync(id);
-		}
+        public async Task<ClientProgramme> GetClientProgramme(Guid id)
+        {
+            return await _clientProgrammeRepository.GetByIdAsync(id);
+        }
 
-        public async Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId)
+        public async Task<List<ClientProgramme>> GetClientProgrammesByOwner(Guid ownerOrganisationId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
             return list;
         }
 
-		public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
-		{
-			Programme programme = await GetProgramme(programmeId);
+        public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
+        {
+            Programme programme = await GetProgramme(programmeId);
             var clientList = new List<ClientProgramme>();
             if (programme == null)
-				return null;
-            foreach(var client in programme.ClientProgrammes)
+                return null;
+            foreach (var client in programme.ClientProgrammes)
             {
                 var isBaseClass = await IsBaseClass(client);
                 if (isBaseClass)
@@ -76,7 +79,7 @@ namespace DealEngine.Services.Impl
             }
 
             return clientList;
-		}
+        }
 
         public async Task<List<ClientProgramme>> GetSubClientProgrammesForProgramme(Guid programmeId)
         {
@@ -99,7 +102,7 @@ namespace DealEngine.Services.Impl
             return clientList;
         }
 
-        
+
         public async Task<bool> IsBaseClass(ClientProgramme client)
         {
             var objectType = client.GetType();
@@ -111,12 +114,12 @@ namespace DealEngine.Services.Impl
         }
 
         public async Task<Programme> GetProgramme(Guid id)
-		{
-			return await _programmeRepository.GetByIdAsync(id);
-		}
+        {
+            return await _programmeRepository.GetByIdAsync(id);
+        }
 
-		public async Task<List<Programme>> GetProgrammesByOwner (Guid ownerOrganisationId)
-		{
+        public async Task<List<Programme>> GetProgrammesByOwner(Guid ownerOrganisationId)
+        {
             return await _programmeRepository.FindAll().Where(p => p.Owner.Id == ownerOrganisationId || p.IsPublic == true).ToListAsync();
         }
 
@@ -125,14 +128,14 @@ namespace DealEngine.Services.Impl
             return await _programmeRepository.FindAll().FirstOrDefaultAsync(p => p.Name == "First Mate Cover");
         }
 
-        public async Task Update (params ClientProgramme [] clientProgrammes)
-		{
+        public async Task Update(params ClientProgramme[] clientProgrammes)
+        {
             foreach (ClientProgramme clientProgramme in clientProgrammes)
             {
                 await _clientProgrammeRepository.AddAsync(clientProgramme);
             }
 
-		}
+        }
 
         public async Task<ClientProgramme> CloneForUpdate(ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason)
         {
@@ -165,8 +168,8 @@ namespace DealEngine.Services.Impl
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, _mapper);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 
-			return newClientProgramme;
-		}
+            return newClientProgramme;
+        }
 
         public async Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate)
         {
@@ -199,7 +202,7 @@ namespace DealEngine.Services.Impl
         public async Task AddClaimNotificationByMembership(ClaimNotification claimNotification)
         {
             var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == claimNotification.ClaimMembershipNumber);
-            if(clientProgramme != null)
+            if (clientProgramme != null)
             {
                 clientProgramme.InformationSheet.ClaimNotifications.Add(claimNotification);
                 await _clientProgrammeRepository.UpdateAsync(clientProgramme);
@@ -213,7 +216,7 @@ namespace DealEngine.Services.Impl
             {
                 clientProgramme.InformationSheet.BusinessContracts.Add(businessContract);
                 await _clientProgrammeRepository.UpdateAsync(clientProgramme);
-            }            
+            }
         }
 
         public async Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData)
@@ -231,11 +234,6 @@ namespace DealEngine.Services.Impl
             return await _clientProgrammeRepository.GetByIdAsync(clientProgrammeID);
         }
 
-        public async Task<List<ClientProgramme>> FindByOwnerName(string insuredName)
-        {
-            return await _clientProgrammeRepository.FindAll().Where(c => c.Owner.Name.Contains(insuredName)).ToListAsync();
-        }
-
         public async Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId)
         {
             var programme = await GetClientProgrammebyId(programmeId);
@@ -244,7 +242,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme)
         {
-            SubClientProgramme subClientProgramme = _mapper.Map<SubClientProgramme>(programme);                        
+            SubClientProgramme subClientProgramme = _mapper.Map<SubClientProgramme>(programme);
             return subClientProgramme;
         }
 
@@ -255,7 +253,7 @@ namespace DealEngine.Services.Impl
             {
                 return false;
             }
-            return true;    
+            return true;
         }
 
         public async Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId)
@@ -264,8 +262,8 @@ namespace DealEngine.Services.Impl
         }
 
         public async Task<bool> SubsystemCompleted(ClientProgramme clientProgramme)
-        {            
-            foreach(var subClient in clientProgramme.SubClientProgrammes)
+        {
+            foreach (var subClient in clientProgramme.SubClientProgrammes)
             {
                 if (subClient.InformationSheet.Status != "Submitted")
                 {
@@ -311,6 +309,106 @@ namespace DealEngine.Services.Impl
         public async Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation Owner)
         {
             return (SubClientProgramme)await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner == Owner);
+        }
+
+        private async Task<List<Programme>> GetProgrammes(IFormCollection collection)
+        {
+            var programmes = new List<Programme>();
+            foreach (var Key in collection.Keys)
+            {
+                Guid.TryParse(collection[Key], out Guid Id);
+                if (Id != null)
+                {
+                    var Programme = await GetProgrammeById(Id);
+                    if (Programme != null)
+                    {
+                        programmes.Add(Programme);
+                    }
+                }
+
+            }
+            return programmes;
+        }
+
+        public async Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection)
+        {
+            var Value = collection["Value"].ToString();
+            var Term = collection["Term"].ToString();
+            var programmes = await GetProgrammes(collection);
+
+            if (Term == "Advisor")
+            {
+                return await AdvisorSearch(programmes, Value);
+            }
+            if (Term == "Boat")
+            {
+                return await BoatSearch(programmes, Value);
+            }
+            if (Term == "Name")
+            {
+                return await ClientNameSearch(programmes, Value);
+            }
+            if (Term == "Reference")
+            {
+                return await ReferenceSearch(programmes, Value);
+            }
+            return null;
+        }
+
+        private async Task<List<ClientInformationSheet>> ReferenceSearch(List<Programme> programmes, string value)
+        {
+            var Sheets = new List<ClientInformationSheet>();
+            foreach (var Programme in programmes)
+            {
+                foreach (var ClientProgrammes in Programme.ClientProgrammes.Where(c => c.InformationSheet.ReferenceId == value && c.DateDeleted == null || c.Agreements.Any(a => a.ReferenceId == value) && c.DateDeleted == null))
+                {
+                    Sheets.Add(ClientProgrammes.InformationSheet);
+                }
+            }
+            return Sheets;
+        }
+
+        private async Task<List<ClientInformationSheet>> ClientNameSearch(List<Programme> programmes, string value)
+        {
+            var Sheets = new List<ClientInformationSheet>();
+            foreach (var Programme in programmes)
+            {
+                foreach (var ClientProgrammes in Programme.ClientProgrammes.Where(c => c.Owner.Name == value && c.DateDeleted == null))
+                {
+                    Sheets.Add(ClientProgrammes.InformationSheet);
+                }
+            }
+            return Sheets;
+        }
+
+        private async Task<List<ClientInformationSheet>> BoatSearch(List<Programme> programmes, string value)
+        {
+            var Sheets = new List<ClientInformationSheet>();
+            foreach (var Programme in programmes)
+            {
+                foreach (var ClientProgrammes in Programme.ClientProgrammes.Where(c => c.InformationSheet.Boats.Any(b => b.BoatName == value) && c.DateDeleted == null))
+                {
+                    Sheets.Add(ClientProgrammes.InformationSheet);
+                }
+            }
+            return Sheets;
+        }
+
+        private async Task<List<ClientInformationSheet>> AdvisorSearch(List<Programme> programmes, string value)
+        {
+            var Sheets = new List<ClientInformationSheet>();
+            foreach (var Programme in programmes)
+            {
+                foreach (var ClientProgrammes in Programme.ClientProgrammes.Where(c => c.InformationSheet.Organisation.Any(s => s.InsuranceAttributes.Any(i => i.Name == "Advisor")) && c.DateDeleted == null))
+                {
+                    var organisation = ClientProgrammes.InformationSheet.Organisation.FirstOrDefault(o => o.Name == value);
+                    if (organisation != null)
+                    {
+                        Sheets.Add(ClientProgrammes.InformationSheet);
+                    }
+                }
+            }
+            return Sheets;
         }
     }
 }

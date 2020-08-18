@@ -95,20 +95,20 @@ namespace DealEngine.Services.Impl
             return list;
         }
 
-        public async Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId)
-        {
-            var list = new List<ClientInformationSheet>();
-            var sheetList = await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
-            foreach (var sheet in sheetList)
-            {
-                var isBaseClass = await IsBaseClass(sheet);
-                if (isBaseClass)
-                {
-                    list.Add(sheet);
-                }
-            }
-            return list;
-        }
+        //public async Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId)
+        //{
+        //    var list = new List<ClientInformationSheet>();
+        //    var sheetList = await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
+        //    foreach (var sheet in sheetList)
+        //    {
+        //        var isBaseClass = await IsBaseClass(sheet);
+        //        if (isBaseClass)
+        //        {
+        //            list.Add(sheet);
+        //        }
+        //    }
+        //    return list;
+        //}
 
         public async Task<bool> IsBaseClass(ClientInformationSheet sheet)
         {
@@ -317,17 +317,6 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
-        {
-            var clientList = new List<ClientInformationSheet>();
-            var boats = await _boatRepository.FindAll().Where(b => b.BoatName == searchValue).ToListAsync();
-            foreach(var boat in boats)
-            {
-                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(boat)).ToList());
-            }
-            return clientList;
-        }
-
         public async Task<SubClientInformationSheet> IssueSubInformationFor()
         {
             return new SubClientInformationSheet();            
@@ -350,21 +339,9 @@ namespace DealEngine.Services.Impl
             return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);                     
         }
 
-        public async Task<List<ClientInformationSheet>> FindByAdvisoryName(IFormCollection collection)
-        {
-            //var programmes = await 
-            //var clientList = new List<ClientInformationSheet>();
-            //var orgs = await _organisationRepository.FindAll().Where(b => b.Name.Contains(searchValue)).ToListAsync();
-            //foreach (var org in orgs)
-            //{
-            //    clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
-            //}
-            return null;
-        }
         public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
         {
-                return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
-
+            return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
         }
 
         public async Task RemoveOrganisationFromSheets(Organisation organisation)

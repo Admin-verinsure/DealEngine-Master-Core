@@ -111,34 +111,56 @@ namespace DealEngine.WebUI.Models
 
 	public class ProgrammeItem : BaseViewModel
 	{
-		public ProgrammeItem()
+		[Obsolete]
+        public ProgrammeItem()
         {
-            try
-            {
-				OrganisationViewModel = new OrganisationViewModel(null, null);
-			}
-			catch(Exception ex)
-            {
-				throw ex;
-            }
+			OrganisationViewModel = new OrganisationViewModel(null, null);
 		}
-		public string Name { get; set; }
 
+        public ProgrammeItem(List<ClientInformationSheet> sheets)
+        {
+			OrganisationViewModel = new OrganisationViewModel(null, null);
+			BuildDeals(sheets);
+        }
+
+        private void BuildDeals(List<ClientInformationSheet> sheets)
+        {
+			Deals = new List<DealItem>();
+			foreach (ClientInformationSheet sheet in sheets)
+			{
+				ClientProgramme client = sheet.Programme;
+
+				string status = client.InformationSheet.Status;
+				string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
+				string localDateSubmitted = null;
+
+				if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+				{
+					localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
+				}
+
+				Deals.Add(new DealItem
+				{
+					Id = client.Id.ToString(),
+					Name = sheet.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+					LocalDateCreated = localDateCreated,
+					LocalDateSubmitted = localDateSubmitted,
+					Status = status,
+					SubClientProgrammes = client.SubClientProgrammes,
+					ReferenceId = client.InformationSheet.ReferenceId// Move into ClientProgramme?
+				});
+			}
+		}
+        public string Name { get; set; }
 		public string ProgrammeId { get; set; }
-
 		public IList<string> Languages { get; set; }
-
 		public IList<DealItem> Deals { get; set; }
-		public OrganisationViewModel OrganisationViewModel { get; set; }
-
 		public string CurrentUserIsBroker { get; set; }
-
 		public string CurrentUserIsInsurer { get; set; }
-
 		public string CurrentUserIsTC { get; set; }
 		public string ProgrammeClaim { get; set; }
 		public bool IsSubclientEnabled { get; set; }
-
+		public OrganisationViewModel OrganisationViewModel { get; set; }
 	}
 
 	public class TaskItem : BaseViewModel

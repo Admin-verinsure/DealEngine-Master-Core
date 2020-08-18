@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.SearchViewModel
 <div class="container">
-    <form id="SearchForm" class="client-form" action="ViewProgramme" method="post">
+    <form id="SearchForm" class="needs-validation" action="ViewProgramme" method="post">
         <div class="card">
             <div class="card-header">
                 <h5>
@@ -12,9 +12,13 @@
             <div class="form-group">
                 @foreach (var id in Model.Programmes)
                 {
-                    @Html.Hidden("Programme", id.Id, new { @id = "ProgrammeId" });
+                    if (User.HasClaim(id.Claim, id.Claim) || User.IsInRole("TCUser"))
+                    {
+                        @Html.Hidden(id.Claim, id.Id, new { @id = "ProgrammeId" });
+                    }
+
                 }
-                <select id="SearchId" name="SearchTerm" class="custom-select" required>
+                <select name="Term" class="custom-select" required>
                     @foreach (var option in Model.SearchOptions)
                     {
                         <option value="@option.Value">@option.Text</option>
@@ -22,7 +26,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" name="SearchValue" id="SearchValue" placeholder="Search Value">
+                <input type="text" class="form-control" name="Value" placeholder="Search Value" required="">
             </div>
         </div>
         <div class="card-footer">
