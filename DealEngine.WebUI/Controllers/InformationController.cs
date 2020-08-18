@@ -381,15 +381,14 @@ namespace DealEngine.WebUI.Controllers
 
                 model.BoatUseslist = list;
                 // TODO - find a better way to pass these in
-                model.HasVehicles = sheet.Vehicles.Count > 0;
-                var vehicles = new List<VehicleViewModel>();
-                foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
-                {
-                    vehicles.Add(VehicleViewModel.FromEntity(v));
-                }
-                model.AllVehicles = vehicles;
-                model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-                model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
+                //var vehicles = new List<VehicleViewModel>();
+                //foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
+                //{
+                //    vehicles.Add(VehicleViewModel.FromEntity(v));
+                //}
+                //model.AllVehicles = vehicles;
+                //model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
+                //model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
 
                 var locations = new List<LocationViewModel>();
@@ -457,7 +456,7 @@ namespace DealEngine.WebUI.Controllers
                 //});
 
                 //model.AvailableOrganisations = availableorganisation;
-                model.AllVehicles = vehicles;
+                //model.AllVehicles = vehicles;
 
                 var userDetails = _mapper.Map<UserDetailsVM>(user);
                 userDetails.PostalAddress = user.Address;
@@ -473,19 +472,18 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 //model.Locations = locations;
-                model.Buildings = buildings;
+                //model.Buildings = buildings;
                 //model.Buildings.
-                model.WaterLocations = waterLocations;
+                //model.WaterLocations = waterLocations;
                 //model.InterestedParties = interestedParties;
 
 
-                model.ClaimProducts = availableProducts;
+                //model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-                model.ClientInformationAnswers = informationAnswers;
 
                 ViewBag.Title = " View Information Sheet ";
                 if (model.SectionView == "")
@@ -783,10 +781,6 @@ namespace DealEngine.WebUI.Controllers
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
 
-                //remove as soon as possible
-                //model.HardCodedAdvisory = await _milestoneService.SetMilestoneFor("Agreement Status - Started", user, sheet);
-                //
-
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
@@ -822,8 +816,7 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 if (sheet.Status == "Not Started")
-                {
-                    model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
+                {                    
                     sheet.Status = "Started";
                     await _clientInformationService.UpdateInformation(sheet);
                 }
@@ -832,173 +825,17 @@ namespace DealEngine.WebUI.Controllers
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
                 {
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
-                }
-
-                model.Claims = claims;
-
-                //var interestedParties = new List<OrganisationViewModel>();
-
-                ////var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
-                ////foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
-                ////{
-
-                ////    foreach (var org in IA.IAOrganisations)
-                ////    {
-                ////        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
-                ////            org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
-                ////        {
-                ////            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                ////            ovm.Organisation.Name = org.Name;
-                ////            interestedParties.Add(ovm);
-                ////        }
-                ////    }
-                ////}
-
-                //model.InterestedParties = interestedParties;
-
-                //List<SelectListItem> linterestedparty = new List<SelectListItem>();
-
-                //for (var i = 0; i < model.InterestedParties.Count(); i++)
-                //{
-                //    linterestedparty.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Text = model.InterestedParties.ElementAtOrDefault(i).Organisation.Name,
-                //        Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
-                //    });
-                //}
-
-                //model.InterestedPartyList = linterestedparty;
-
-                //var boatUses = new List<BoatUseViewModel>();
-                //for (var i = 0; i < sheet.BoatUses.Count(); i++)
-                //{
-                //    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
-
-                //}
-
-                //List<SelectListItem> list = new List<SelectListItem>();
-
-                //for (var i = 0; i < boatUses.Count(); i++)
-                //{
-                //    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
-                //    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
-
-                //    list.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Value = val,
-                //        Text = text
-                //    });
-
-                //}
-
-                //model.BoatUseslist = list;
-                //// TODO - find a better way to pass these in
-                //model.HasVehicles = sheet.Vehicles.Count > 0;
-                //var vehicles = new List<VehicleViewModel>();
-                //foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
-                //{
-                //    vehicles.Add(VehicleViewModel.FromEntity(v));
-                //}
-                //model.AllVehicles = vehicles;
-                //model.RegisteredVehicles = vehicles.Where(v => !string.IsNullOrWhiteSpace(v.Registration));
-                //model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
-
-                //var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                //model.OrganisationalUnitsVM = new OrganisationalUnitVM();
-                //model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                //var buildings = new List<BuildingViewModel>();
-                //var waterLocations = new List<WaterLocationViewModel>();
-                //var MarinaLocations = new List<OrganisationViewModel>();
-                //var organisationalunit = new List<OrganisationalUnit>();
-
-
-                //for (var i = 0; i < sheet.Owner.OrganisationalUnits.Count(); i++)
-                //{
-                //    organisationalUnits.Add(new OrganisationalUnitViewModel
-                //    {
-                //        OrganisationalUnitId = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Id,
-                //        Name = sheet.Owner.OrganisationalUnits.ElementAtOrDefault(i).Name
-                //    });
-                //}
-
-
-                //for (var i = 0; i < sheet.Locations.Count(); i++)
-                //{
-                //    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
-                //}
-
-                //for (var i = 0; i < sheet.Buildings.Count; i++)
-                //{
-                //    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
-
-                //}
-
-                //var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
-                //foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
-                //{
-                //    foreach (var org in IA.IAOrganisations)
-                //    {
-                //        if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
-                //        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
-                //        {
-                //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                //            ovm.Organisation.Name = org.Name;
-                //            MarinaLocations.Add(ovm);
-                //        }
-                //    }
-                //}
-
-                //model.MarinaLocations = MarinaLocations;
-
-                //for (var i = 0; i < sheet.WaterLocations.Count; i++)
-                //{
-                //    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
-                //}
-
-                var availableProducts = new List<SelectListItem>();
-
-                foreach (Product product in clientProgramme.BaseProgramme.Products)
-                {
-                    availableProducts.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = "" + product.Id,
-                        Text = product.Name
-                    });
-                }
-
-                //model.AllVehicles = vehicles;
+                }               
 
                 var userDetails = _mapper.Map<UserDetailsVM>(user);
                 userDetails.PostalAddress = user.Address;
                 userDetails.StreetAddress = user.Address;
                 userDetails.FirstName = user.FirstName;
                 userDetails.Email = user.Email;
-
-                //var organisationDetails = new OrganisationDetailsVM
-                //{
-                //    Name = sheet.Owner.Name,
-                //    Phone = sheet.Owner.Phone,
-                //    Website = sheet.Owner.Domain
-                //};
-
-                //model.OrganisationalUnits = organisationalUnits;
-                ////model.Locations = locations;
-                //model.Buildings = buildings;
-                ////model.Buildings.
-                //model.WaterLocations = waterLocations;
-                //model.InterestedParties = interestedParties;
-
-
-                model.ClaimProducts = availableProducts;
-                //model.OrganisationDetails = organisationDetails;
+                model.Claims = claims;
+                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;
-                //List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
-                //informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-                //model.ClientInformationAnswers = informationAnswers;
 
                 return View("InformationWizard", model);
             }
@@ -1271,6 +1108,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
         [HttpGet]
         public async Task<IActionResult> QuoteToAgree(string id)
         {
@@ -1303,7 +1141,7 @@ namespace DealEngine.WebUI.Controllers
                         if (baseSheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
                             await GenerateUWM(user, baseSheet, baseSheet.ReferenceId);
-                         //   await _emailService.SendSystemEmailAllSubUISComplete(baseSheet.Owner, baseSheet.Programme.BaseProgramme, baseSheet);
+                            await _emailService.SendSystemEmailAllSubUISComplete(baseSheet.Owner, baseSheet.Programme.BaseProgramme, baseSheet);
                             sheet = baseSheet;
                         }
                     }
@@ -1311,9 +1149,9 @@ namespace DealEngine.WebUI.Controllers
                     if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                     {
                         //sheet owner is null
-                      //  await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                        await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                         //send out information sheet submission notification email
-                      //  await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                        await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                         //send out agreement refer notification email
                         foreach (ClientAgreement agreement in clientProgramme.Agreements)
                         {
@@ -1361,24 +1199,31 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateInformation(ChangeReason changeReason)
+        public async Task<IActionResult> UpdateInformation(IFormCollection formCollection)
         {
             User createdBy = null;
 
             try
             {
                 createdBy = await CurrentUser();
-                changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
-                ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
+                ChangeReason changeReason = new ChangeReason();
+               // changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(formCollection["BoatEffectiveDate"], "d"));
+                //ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
+                changeReason.DealId = Guid.Parse(formCollection["DealId"]);
+                changeReason.ChangeType = formCollection["ChangeType"];
+                changeReason.Reason = formCollection["Reason"];
+                changeReason.ReasonDesc = formCollection["ReasonDesc"];
+                changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(DateTime.Parse(formCollection["BoatEffectiveDate"]), "d"));
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(formCollection["DealId"]));
                 if (clientProgramme == null)
-                    throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
+                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, ChangeReason);
+                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
                 await _programmeService.Update(newClientProgramme);
-
-                var url = "/Information/EditInformation/" + newClientProgramme.Id;
-                return Json(new { url });
+                return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
+                //var url = "/Information/EditInformation/" + newClientProgramme.Id;
+                  //return Json(new { url });
+                //return Json(createdBy);
             }
             catch (Exception ex)
             {

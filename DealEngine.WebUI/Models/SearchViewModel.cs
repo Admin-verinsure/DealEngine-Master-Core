@@ -8,9 +8,11 @@ namespace DealEngine.WebUI.Models
 {
     public class SearchViewModel
     {
-        public SearchViewModel(string CompanyName)
+
+        public SearchViewModel(List<Domain.Entities.Programme> programmes, string companyName)
         {
-            SearchOptions = GetSearchOptions(CompanyName);
+            SearchOptions = GetSearchOptions(companyName);
+            Programmes = programmes;
         }
 
         private IList<SelectListItem> GetSearchOptions(string companyName)
@@ -50,8 +52,8 @@ namespace DealEngine.WebUI.Models
 
             return SearchOptions;
         }
-
         public IList<SelectListItem> SearchOptions;
+        public List<Domain.Entities.Programme> Programmes;
     }
 }
 

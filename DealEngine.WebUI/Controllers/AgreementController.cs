@@ -2372,7 +2372,7 @@ namespace DealEngine.WebUI.Controllers
             ClientInformationSheet sheet = null;
             User user = null;
             var Action = HttpContext.Request.Form["BindAgreement"];
-           
+
             try
             {
                 if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
@@ -2442,7 +2442,7 @@ namespace DealEngine.WebUI.Controllers
                                     {
                                         if (template.Name == "TripleA Individual TL Certificate")
                                         {
-                                            if (agreement.Product.IsOptionalProductBasedSub && 
+                                            if (agreement.Product.IsOptionalProductBasedSub &&
                                                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                             {
                                                 SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
@@ -2451,7 +2451,8 @@ namespace DealEngine.WebUI.Controllers
                                                 documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
-                                        } else if (template.DocumentType == 7)
+                                        }
+                                        else if (template.DocumentType == 7)
                                         {
                                             SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -2459,7 +2460,8 @@ namespace DealEngine.WebUI.Controllers
                                             //documents.Add(renderedDoc);
                                             documentspremiumadvice.Add(renderedDoc);
                                             await _fileService.UploadFile(renderedDoc);
-                                        } else 
+                                        }
+                                        else
                                         {
                                             SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -2467,7 +2469,7 @@ namespace DealEngine.WebUI.Controllers
                                             documents.Add(renderedDoc);
                                             await _fileService.UploadFile(renderedDoc);
                                         }
-                                       
+
                                     }
 
                                     //render all subsystem
@@ -2485,7 +2487,8 @@ namespace DealEngine.WebUI.Controllers
                                                     documents.Add(renderedDocSub);
                                                     await _fileService.UploadFile(renderedDocSub);
                                                 }
-                                            } else
+                                            }
+                                            else
                                             {
                                                 SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -2493,7 +2496,7 @@ namespace DealEngine.WebUI.Controllers
                                                 documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
-                                          
+
                                         }
                                     }
                                 }
@@ -2507,7 +2510,7 @@ namespace DealEngine.WebUI.Controllers
                                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                     if (emailTemplate != null)
                                     {
-                                        //await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
 
                                         using (var uow = _unitOfWork.BeginUnitOfWork())
                                         {
@@ -2525,14 +2528,14 @@ namespace DealEngine.WebUI.Controllers
                                 if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
                                     agreement.Product.ProductEnablePremiumAdvice)
                                 {
-                                   // await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
+                                    await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
                                 }
 
                                 //send out agreement bound notification email
-                               // await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                                await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -2550,9 +2553,12 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if (Action == "BindAgreement"){
+                if (Action == "BindAgreement")
+                {
                     return Redirect("/Agreement/ViewAcceptedAgreement/" + programme.Id);
-                }else{
+                }
+                else
+                {
                     var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
                     return Json(new { url });
                 }
@@ -2564,6 +2570,7 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> SendPolicyDocuments(Guid id, bool sendUser)

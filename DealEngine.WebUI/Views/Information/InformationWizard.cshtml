@@ -35,7 +35,6 @@
                         @Html.HiddenFor(m => m.Status)
                         @*@Html.HiddenFor(m => m.AgreementStatus)*@
                         @Html.HiddenFor(m => m.Id)
-                        @Html.HiddenFor(m => m.ListProductName)
 
                         <div role="content">
                             <!-- widget content -->
@@ -71,7 +70,12 @@
 
                                     <div class="sw-container tab-content">
                                         <div id="tab_1" class="tab-pane step-content" style="display: block;">
-                                            <h3><strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information</h3>
+                                            <h3>
+                                                <strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information                                             
+                                                <button type="button" class="btn btn-sm pull-right text-white" data-toggle="modal" data-target="#advisoryModal" style="background-color: #00A8C8">
+                                                    <i class="bi bi-node-plus"></i>Advisory
+                                                </button>
+                                            </h3>
                                             <div id="form-step-0" role="form" data-toggle="validator">
                                                 <div class="form-group">
                                                     <div class="row">
@@ -133,13 +137,13 @@
                                                                                 <label class="label cgmodalLabel">Marina Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
-                                                                                        <option selected="selected" value="">-- Select --</option>
-                                                                                        @foreach (var bwloc in Model.MarinaLocations)
-                                                                                        {
-                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
-                                                                                        }
-                                                                                        <option value="add">Add Marina Location</option>
-                                                                                    </select>*@
+                                                    <option selected="selected" value="">-- Select --</option>
+                                                    @foreach (var bwloc in Model.MarinaLocations)
+                                                    {
+                                                        <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
+                                                    }
+                                                    <option value="add">Add Marina Location</option>
+                                                </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -158,13 +162,13 @@
                                                                                 <label class="label cgmodalLabel">Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
-                                                                                        <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
-                                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                                                        {
-                                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                                                        }
-                                                                                        <option value="add">Add Location</option>
-                                                                                    </select>*@
+                                                    <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
+                                                    @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                    {
+                                                        <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                    }
+                                                    <option value="add">Add Location</option>
+                                                </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -212,13 +216,13 @@
                                                                                 <label class="label cgmodalLabel required">Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
-                                                                                        <option selected="selected" value="">-- Select --</option>
-                                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                                                        {
-                                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                                                        }
-                                                                                        <option value="add">Add Location</option>
-                                                                                    </select>*@
+                                                    <option selected="selected" value="">-- Select --</option>
+                                                    @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                    {
+                                                        <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                    }
+                                                    <option value="add">Add Location</option>
+                                                </select>*@
                                                                                 </label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -865,24 +869,21 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @if (!string.IsNullOrWhiteSpace(Model.Advisory))
-                                                        {
-                                                            <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title">Advisory</h5>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            @Html.Raw(Model.Advisory)
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-                                                                        </div>
+                                                        <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Advisory</h5>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        @Html.Raw(Model.Advisory)
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        </div>
                                                         <div class="modal" id="addLocModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
@@ -1138,7 +1139,7 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     @await Html.PartialAsync("_InformationWizardScripts")
     @await Html.PartialAsync("_DataTableScripts")
-    <script>
+<script>
 
         $(document).ready(function () {
             var accordianPanel = sessionStorage.getItem("accordianTrigger");
@@ -1152,7 +1153,7 @@
             }
 
             advisoryModal = document.getElementById('advisoryModal');
-            if (advisoryModal !== null) {
+            if ("@Model.ClientInformationSheet.Status" == "Not Started") {
                 $("#advisoryModal").modal('show');
             }
 
@@ -1193,7 +1194,7 @@
         }
 
 
-    </script>
+</script>
 
 }
 

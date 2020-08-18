@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="yes"?>
+<DocumentElement>
+  <MyDt>
+    <ReferenceID>1002372</ReferenceID>
+    <IndividualName>advisortesttripleafn305 advisortesttriplealn305</IndividualName>
+    <CompanyName>advisortesttripleafn305 advisortesttriplealn305</CompanyName>
+    <Inceptiondate>0</Inceptiondate>
+    <selectedlimit>0</selectedlimit>
+    <Premium>0</Premium>
+  </MyDt>
+  <MyDt>
+    <ReferenceID>1002443</ReferenceID>
+    <IndividualName>Common Sense Financial Planning Limited</IndividualName>
+    <CompanyName>Common Sense Financial Planning Limited</CompanyName>
+    <Inceptiondate>1/09/2020 12:00:00 AM</Inceptiondate>
+    <selectedlimit>0</selectedlimit>
+    <Premium>0</Premium>
+  </MyDt>
+  <MyDt>
+    <ReferenceID>1002472</ReferenceID>
+    <IndividualName>Advisortest0089347fn Advisortest0089347ln</IndividualName>
+    <CompanyName>Advisortest0089347fn Advisortest0089347ln</CompanyName>
+    <Inceptiondate>0</Inceptiondate>
+    <selectedlimit>0</selectedlimit>
+    <Premium>0</Premium>
+  </MyDt>
+</DocumentElement>

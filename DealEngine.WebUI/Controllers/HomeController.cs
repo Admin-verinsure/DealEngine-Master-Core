@@ -161,36 +161,33 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search()
         {
-            var companyName = _appSettingService.GetCompanyTitle;
-            SearchViewModel model = new SearchViewModel(companyName);
+            var CompanyName = _appSettingService.GetCompanyTitle;
+            var Programmes = await _programmeService.GetAllProgrammes();
+            SearchViewModel model = new SearchViewModel(Programmes, CompanyName);
             return View("Search", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> ViewProgramme(IFormCollection collection)
         {
-
             var searchTerm = collection["SearchTerm"].ToString();
-            var searchValue = collection["SearchValue"].ToString();
             ProgrammeItem model = new ProgrammeItem();
-            User user = await CurrentUser();
-
             if (searchTerm == "Advisory")
             {
-                model.Deals = await GetAdvisoryNameSearch(searchValue);
+                model.Deals = await GetAdvisoryNameSearch(collection);
             }
-            if (searchTerm == "Boat")
-            {
-                model.Deals = await GetBoatNameSearch(searchValue);
-            }
-            if (searchTerm == "Name")
-            {
-                model.Deals = await GetClientNameSearch(searchValue);
-            }
-            if (searchTerm == "Reference")
-            {
-                model.Deals = await GetReferenceSearch(searchValue);
-            }
+            //if (searchTerm == "Boat")
+            //{
+            //    model.Deals = await GetBoatNameSearch(searchValue);
+            //}
+            //if (searchTerm == "Name")
+            //{
+            //    model.Deals = await GetClientNameSearch(searchValue);
+            //}
+            //if (searchTerm == "Reference")
+            //{
+            //    model.Deals = await GetReferenceSearch(searchValue);
+            //}
 
             return View(model);
         }
@@ -297,10 +294,10 @@ namespace DealEngine.WebUI.Controllers
             return deals;
         }
 
-        private async Task<IList<DealItem>> GetAdvisoryNameSearch(string searchValue)
+        private async Task<IList<DealItem>> GetAdvisoryNameSearch(IFormCollection collection)
         {
             List<DealItem> deals = new List<DealItem>();
-            List<ClientInformationSheet> clients = await _clientInformationService.FindByAdvisoryName(searchValue);
+            List<ClientInformationSheet> clients = await _clientInformationService.FindByAdvisoryName(collection);
             if (clients.Count != 0)
             {
                 foreach (var client in clients)
@@ -498,6 +495,7 @@ namespace DealEngine.WebUI.Controllers
                     string referenceId = client.InformationSheet.ReferenceId;
                     bool nextInfoSheet = false;
                     bool programmeAllowUsesChange = false;
+                    bool programmeUseEglobal = false;
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
                     string agreementSatus = "";
@@ -512,6 +510,10 @@ namespace DealEngine.WebUI.Controllers
                     if (client.BaseProgramme.AllowUsesChange)
                     {
                         programmeAllowUsesChange = true;
+                    }
+                    if (client.BaseProgramme.UsesEGlobal)
+                    {
+                        programmeUseEglobal = true;
                     }
 
                     if (null != client.InformationSheet.PreviousInformationSheet)
@@ -530,13 +532,14 @@ namespace DealEngine.WebUI.Controllers
                         Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
                         NextInfoSheet = nextInfoSheet,
                         ProgrammeAllowUsesChange = programmeAllowUsesChange,
+                        ProgrammeUseEglobal = programmeUseEglobal,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
                         SubClientProgrammes = client.SubClientProgrammes,
                         AgreementStatus = agreementSatus
-                    });
+                    }); ;
                 }
             }
             model.Deals = deals;

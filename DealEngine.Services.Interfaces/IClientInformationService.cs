@@ -23,7 +23,7 @@ namespace DealEngine.Services.Interfaces
         Task<bool> IsBaseClass(ClientInformationSheet sheet);
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
-        Task<List<ClientInformationSheet>> FindByAdvisoryName(string searchValue);
+        Task<List<ClientInformationSheet>> FindByAdvisoryName(IFormCollection collection);
         Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation);
         Task RemoveOrganisationFromSheets(Organisation organisation);
     }
