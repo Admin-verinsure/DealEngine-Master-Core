@@ -1,9 +1,13 @@
 ﻿using FluentNHibernate.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using DealEngine.WebUI.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace DealEngine.WebUI.Models
 {
@@ -17,6 +21,21 @@ namespace DealEngine.WebUI.Models
 		public BaseViewModel ()
 		{
 			UserRoles = new List<string> ();
+		}
+
+		public CultureInfo UserCulture
+		{
+			//get
+			//{
+			//	return Request.HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.Culture;
+			//}
+
+			get { return CultureInfo.CreateSpecificCulture ("en-NZ"); }
+		}
+
+		protected string LocalizeTime(DateTime dateTime, string format)
+		{
+			return dateTime.ToTimeZoneTime(UserTimeZone).ToString("G", UserCulture);
 		}
 
 		public void SetRoles (params string [] roles)

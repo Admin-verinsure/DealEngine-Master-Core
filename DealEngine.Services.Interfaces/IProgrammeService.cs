@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Services.Interfaces
 {
@@ -28,7 +29,6 @@ namespace DealEngine.Services.Interfaces
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
-        Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
         Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);
         Task<bool> HasProgrammebyMembership(string membershipNumber);
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
@@ -39,6 +39,7 @@ namespace DealEngine.Services.Interfaces
         Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation);
         Task AddOrganisationByMembership(Organisation organisation);
         Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
+        Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
     }
 }
 
