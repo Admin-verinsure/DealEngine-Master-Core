@@ -36,14 +36,13 @@ namespace DealEngine.WebUI.Models
                     InsuranceAttributes = GetPersonnelTypes();
                     PersonnelUnit = new PersonnelUnit(null, null, null, null); //(PersonnelUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Personnel");
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
-                    HasRegisteredLicensedOptions = GetStandardSelectOptions();
+                    HasRegisteredLicensedOptions = GetBooleanSelectOptions();
                     HasDesignLicencedOptions = GetLicencedOptions();
                     HasSiteLicensedOptions = GetLicencedOptions();
-                    HasCurrentMembershipOptions = GetStandardSelectOptions();
+                    HasCurrentMembershipOptions = GetBooleanSelectOptions();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
                     HasContractorInsuredOptions = GetStandardSelectOptions();
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
-                    HasCurrentMembershipOptions = GetStandardSelectOptions();
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetStandardSelectOptions();
                 }
@@ -310,8 +309,8 @@ namespace DealEngine.WebUI.Models
                     },
                     new SelectListItem
                     {
-                        Text = "Corporation – Limited liability",
-                        Value = "Company"
+                        Text = "Company",
+                        Value = "Corporation – Limited liability"
                     },
                     new SelectListItem
                     {

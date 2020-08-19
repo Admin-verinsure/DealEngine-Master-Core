@@ -111,9 +111,23 @@ namespace DealEngine.Services.Impl
             {
                 UpdateOrganisationUnit(organisation, collection);
                 UpdateInsuranceAttribute(organisation, collection);
+                UpdateOrganisationType(organisation, collection);
             }
 
             await Update(organisation);
+        }
+
+        private void UpdateOrganisationType(Organisation organisation, IFormCollection collection)
+        {
+            try
+            {
+                string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
+                organisation.OrganisationType.Name = OrganisationTypeName;
+            }
+            catch(Exception ex)
+            {
+                new Exception("Organisation Type update failed " + ex.Message);
+            }
         }
 
         private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
@@ -134,19 +148,26 @@ namespace DealEngine.Services.Impl
             var UnitName = collection["Unit"].ToString();
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             Type UnitType = Type.GetType(UnitName);
-            var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
-            var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
-            if (unit != null)
+            try
             {
-                _mapper.Map(jsonUnit, unit);
-                unit.Name = TypeName;
+                var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
+                var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
+                if (unit != null)
+                {
+                    _mapper.Map(jsonUnit, unit);
+                    unit.Name = TypeName;
+                }
+                else
+                {
+                    unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
+                    _mapper.Map(jsonUnit, unit);
+                    unit.Name = TypeName;
+                    organisation.OrganisationalUnits.Add(unit);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
-                _mapper.Map(jsonUnit, unit);
-                unit.Name = TypeName;
-                organisation.OrganisationalUnits.Add(unit);
+                new Exception("Failed to add Organisational Unit " + ex.Message);
             }
         }
 
@@ -178,7 +199,6 @@ namespace DealEngine.Services.Impl
             {
                 organisation.Name = user.FirstName + " " + user.LastName;
             }
-
             return organisation;
         }
 
@@ -283,7 +303,7 @@ namespace DealEngine.Services.Impl
         {
             List<OrganisationalUnit> OrganisationalUnits = new List<OrganisationalUnit>();
             string OrganisationTypeName;
-            if (Type == "Company")
+            if (Type == "Corporation – Limited liability")
             {
                 OrganisationTypeName = "Corporation – Limited liability";
                 OrganisationalUnits.Add(new OrganisationalUnit(User, "Head Office", OrganisationTypeName, collection));
@@ -340,12 +360,6 @@ namespace DealEngine.Services.Impl
             var organisations = await GetAllOrganisationsByEmail(email);
             var organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
             return organisation;
-        }
-
-
-        public async Task UpdateApplication(Organisation organisation)
-        {
-            await _organisationRepository.AddAsync(organisation);
         }
 
         private void UpdateLDap(Organisation organisation)

@@ -20,13 +20,14 @@ namespace DealEngine.WebUI.Models
             SLViewModel = new SLViewModel(); //Statutory Liability
             FAPViewModel = new FAPViewModel(); //Financial Advisor
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
+            OTViewModel = new OTViewModel();//OutsideTrustees
+            IPViewModel = new IPViewModel();
+            Programme = ClientInformationSheet.Programme.BaseProgramme;
             RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(ClientInformationSheet);
             ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(ClientInformationSheet);
-            OTViewModel = new  OTViewModel();//OutsideTrustees
-            IPViewModel = new IPViewModel();
             OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, OrgUser);            
         }
         public OrganisationViewModel OrganisationViewModel { get; set; }
