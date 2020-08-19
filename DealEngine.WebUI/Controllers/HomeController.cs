@@ -8,8 +8,10 @@ using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NHibernate.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +19,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
+using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 #endregion
 
 namespace DealEngine.WebUI.Controllers
@@ -25,6 +27,7 @@ namespace DealEngine.WebUI.Controllers
     [Authorize]
     public class HomeController : BaseController
     {
+        UserManager<IdentityUser> _userManager;
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         ITaskingService _taskingService;
@@ -40,7 +43,9 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         IOrganisationService _organisationService;
         IUnitOfWork _unitOfWork;
+
         public HomeController(
+            UserManager<IdentityUser> userManager,
             IOrganisationService organisationService,
             IAppSettingService appSettingService,
             IEmailService emailService,
@@ -62,6 +67,7 @@ namespace DealEngine.WebUI.Controllers
 
             : base(userRepository)
         {
+            _userManager = userManager;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
             _emailService = emailService;
@@ -161,9 +167,8 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search()
         {
-            var CompanyName = _appSettingService.GetCompanyTitle;
             var Programmes = await _programmeService.GetAllProgrammes();
-            SearchViewModel model = new SearchViewModel(Programmes, CompanyName);
+            SearchViewModel model = new SearchViewModel(Programmes);
             return View("Search", model);
         }
 

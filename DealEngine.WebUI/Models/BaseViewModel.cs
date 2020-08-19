@@ -138,43 +138,7 @@ namespace DealEngine.WebUI.Models
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return this.GetEnumerator ();
-		}
-
-		public void PopulateEntity(Entity entity)
-        {
-			PropertyInfo propertyInfo;			
-			try
-			{
-				foreach (var property in GetType().GetProperties())
-				{
-					propertyInfo = entity.GetType().GetProperty(property.Name);
-					if (propertyInfo != null)
-                    {
-						//var value = propertyInfo.GetValue(propertyInfo);
-						//if (property.PropertyType == typeof(string))
-						//{
-						//	property.SetValue(this, value.ToString());
-						//}
-						//else if (property.PropertyType == typeof(bool))
-						//{
-						//	property.SetValue(this, bool.Parse(value));
-						//}
-						//else if (property.PropertyType == typeof(DateTime))
-						//{
-						//	property.SetValue(this, DateTime.Parse(dateValue));
-						//}
-						//else
-						//{
-						//	throw new Exception("add new type condition " + property.PropertyType.Name);
-						//}
-					}			
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-			}
-		}
+		}		
 	}
 }
 
