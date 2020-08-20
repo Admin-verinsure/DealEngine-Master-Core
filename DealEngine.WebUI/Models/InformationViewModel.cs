@@ -684,6 +684,10 @@ namespace DealEngine.WebUI.Models
             HasMortageOptions = GetSelectListOptions();
             HasBusinessChangesOptions = GetSelectListOptions();
             HasotherBusinessActivity = GetSelectListOptions();
+            HasStandardTermsServicesOptions = GetSelectListOptions();
+            HasHarmProvOptions = GetSelectListOptions();
+            HasIndependentsPIOptions = GetSelectListOptions();
+            HasIndependentsBoundOptions = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetCEASMembershipSelectListOptions()
@@ -903,7 +907,11 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasFormalProceduresOptions { get; set; }
         public IList<SelectListItem> HasBusinessChangesOptions { get; set; }
         public IList<SelectListItem> HasotherBusinessActivity { get; set; }
-        
+        public IList<SelectListItem> HasStandardTermsServicesOptions { get; set; }
+        public IList<SelectListItem> HasHarmProvOptions { get; set; }
+        public IList<SelectListItem> HasIndependentsPIOptions { get; set; }
+        public IList<SelectListItem> HasIndependentsBoundOptions { get; set; }
+
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
         public string LegalCouncelDetails { get; set; }
@@ -932,6 +940,8 @@ namespace DealEngine.WebUI.Models
         public string ContractingServicesDetails { get; set; }
         public int CoverAmount { get; set; }
         public int PercentFees { get; set; }
+        public decimal RevenueInsuredContractors { get; set; }
+        public string ContrctAgreeHarmProvDetails { get; set; }
         public string PercentDetails { get; set; }
         public string PersonnelDismisedDetails { get; set; }
         public string FormInPracticeDetails { get; set; }

@@ -851,7 +851,6 @@ namespace DealEngine.WebUI.Controllers
             //build models from answers
             foreach (var answer in Model)
             {
-                var value = 0;
                 try
                 {
                     var modelName = "";
@@ -880,8 +879,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(int) == property.PropertyType)
                         {
-                            int.TryParse(answer.Value, out value);
-                            property.SetValue(reflectModel, value);
+                            int.TryParse(answer.Value, out int intvalue);
+                            property.SetValue(reflectModel, intvalue);
+                        }
+                        if (typeof(decimal) == property.PropertyType)
+                        {
+                            decimal.TryParse(answer.Value, out decimal decvalue);
+                            property.SetValue(reflectModel, decvalue);
                         }
                         if (typeof(IList<SelectListItem>) == property.PropertyType)
                         {
