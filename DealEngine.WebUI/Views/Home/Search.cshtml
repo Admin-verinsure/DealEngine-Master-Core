@@ -21,7 +21,20 @@
                 <select name="Term" class="custom-select" required>
                     @foreach (var option in Model.SearchOptions)
                     {
-                        <option value="@option.Value">@option.Text</option>
+                        @if (option.Value == "Advisor")
+                        {
+                            if (User.HasClaim("TripleA", "TripleA") || User.HasClaim("NZFSG", "NZFSG"))
+                            {
+                                <option value="@option.Value">@option.Text</option>
+                            }
+                            else if(User.IsInRole("TCUser"))
+                            {
+                                <option value="@option.Value">@option.Text</option>
+                            }
+                        }
+                        else{
+                            <option value="@option.Value">@option.Text</option>
+                        }
                     }
                 </select>
             </div>

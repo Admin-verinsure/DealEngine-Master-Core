@@ -19,6 +19,7 @@ namespace DealEngine.Services.Impl
 {
     public class OrganisationService : IOrganisationService
     {
+        ISerializerationService _serializerationService;
         IMapperSession<Organisation> _organisationRepository;
         IOrganisationTypeService _organisationTypeService;
         ILdapService _ldapService;
@@ -28,6 +29,7 @@ namespace DealEngine.Services.Impl
         IMapper _mapper;
 
         public OrganisationService(IMapperSession<Organisation> organisationRepository,
+            ISerializerationService serializerationService,
             IMapper mapper,
             IUserService userService,
             IOrganisationTypeService organisationTypeService,
@@ -36,6 +38,7 @@ namespace DealEngine.Services.Impl
             ILogger<OrganisationService> logger
             )
         {
+            _serializerationService = serializerationService;
             _mapper = mapper;
             _logger = logger;
             _userService = userService;
@@ -111,9 +114,23 @@ namespace DealEngine.Services.Impl
             {
                 UpdateOrganisationUnit(organisation, collection);
                 UpdateInsuranceAttribute(organisation, collection);
+                UpdateOrganisationType(organisation, collection);
             }
 
             await Update(organisation);
+        }
+
+        private void UpdateOrganisationType(Organisation organisation, IFormCollection collection)
+        {
+            try
+            {
+                string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
+                organisation.OrganisationType.Name = OrganisationTypeName;
+            }
+            catch(Exception ex)
+            {
+                new Exception("Organisation Type update failed " + ex.Message);
+            }
         }
 
         private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
@@ -129,30 +146,37 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private void UpdateOrganisationUnit(Organisation organisation, IFormCollection collection)
+        private async Task UpdateOrganisationUnit(Organisation organisation, IFormCollection collection)
         {
             var UnitName = collection["Unit"].ToString();
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             Type UnitType = Type.GetType(UnitName);
-            var jsonUnit = (OrganisationalUnit)GetModelDeserializedModel(UnitType, collection);
-            var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
-            if (unit != null)
+            try
             {
-                _mapper.Map(jsonUnit, unit);
-                unit.Name = TypeName;
+                var jsonUnit = (OrganisationalUnit) await _serializerationService.GetDeserializedObject(UnitType, collection);
+                var unit = organisation.OrganisationalUnits.FirstOrDefault(ou => ou.GetType() == jsonUnit.GetType());
+                if (unit != null)
+                {
+                    _mapper.Map(jsonUnit, unit);
+                    unit.Name = TypeName;
+                }
+                else
+                {
+                    unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
+                    _mapper.Map(jsonUnit, unit);
+                    unit.Name = TypeName;
+                    organisation.OrganisationalUnits.Add(unit);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                unit = (OrganisationalUnit)Activator.CreateInstance(UnitType);
-                _mapper.Map(jsonUnit, unit);
-                unit.Name = TypeName;
-                organisation.OrganisationalUnits.Add(unit);
+                new Exception("Failed to add Organisational Unit " + ex.Message);
             }
         }
 
         private async Task<User> UpdateOrganisationUser(IFormCollection collection)
         {
-            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
+            var jsonUser = (User) await _serializerationService.GetDeserializedObject(typeof(User), collection);
 
             Guid.TryParse(collection["OrganisationViewModel.User.Id"], out Guid UserId);
             if (UserId != Guid.Empty)
@@ -170,7 +194,7 @@ namespace DealEngine.Services.Impl
 
         private async Task<Organisation> UpdateOrganisation(IFormCollection collection, Organisation organisation)
         {
-            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
+            var jsonOrganisation =  (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
             if (organisation.OrganisationType.Name == "Person - Individual" &&
@@ -178,7 +202,6 @@ namespace DealEngine.Services.Impl
             {
                 organisation.Name = user.FirstName + " " + user.LastName;
             }
-
             return organisation;
         }
 
@@ -283,7 +306,7 @@ namespace DealEngine.Services.Impl
         {
             List<OrganisationalUnit> OrganisationalUnits = new List<OrganisationalUnit>();
             string OrganisationTypeName;
-            if (Type == "Company")
+            if (Type == "Corporation – Limited liability")
             {
                 OrganisationTypeName = "Corporation – Limited liability";
                 OrganisationalUnits.Add(new OrganisationalUnit(User, "Head Office", OrganisationTypeName, collection));
@@ -342,12 +365,6 @@ namespace DealEngine.Services.Impl
             return organisation;
         }
 
-
-        public async Task UpdateApplication(Organisation organisation)
-        {
-            await _organisationRepository.AddAsync(organisation);
-        }
-
         private void UpdateLDap(Organisation organisation)
         {
             _ldapService.Update(organisation);
@@ -367,81 +384,6 @@ namespace DealEngine.Services.Impl
             {
                 await _organisationRepository.UpdateAsync(organisation);
             }
-        }
-        public object? GetModelDeserializedModel(Type type, IFormCollection collection)
-        {
-            Dictionary<object, string> model = new Dictionary<object, string>();
-            object obj = null;
-            try
-            {
-                foreach (var Key in collection.Keys)
-                {
-                    var value = Key.Split(".").ToList().LastOrDefault();
-                    var Field = type.GetProperty(value);
-                    if (Field != null)
-                    {
-                        var fieldType = Field.PropertyType;
-                        if (
-                            (fieldType == typeof(string)) ||
-                            (fieldType == typeof(int)) ||
-                            (fieldType == typeof(decimal)) ||
-                            (fieldType == typeof(bool)) ||
-                            (fieldType == typeof(DateTime?)) ||
-                            (fieldType == typeof(DateTime))
-                            )
-                        {
-                            if (model.ContainsKey(value))
-                            {
-                                model[value] = collection[Key].ToString();
-                            }
-                            else
-                            {
-                                model.Add(value, collection[Key].ToString());
-                            }
-                        }
-                    }
-                }
-
-                var JsonString = GetSerializedModel(model);
-                obj = JsonConvert.DeserializeObject(JsonString, type,
-                    new JsonSerializerSettings()
-                    {
-                        MaxDepth = 1,
-                        ObjectCreationHandling = ObjectCreationHandling.Auto,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        NullValueHandling = NullValueHandling.Ignore,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
-                    }); ;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return obj;
-        }
-
-        private string GetSerializedModel(object model)
-        {
-            try
-            {
-                return JsonConvert.SerializeObject(model,
-                    new JsonSerializerSettings()
-                    {
-                        // MaxDepth = 2,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        NullValueHandling = NullValueHandling.Ignore,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        DateParseHandling = DateParseHandling.DateTime
-                    });
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-
         }
 
         public async Task RefactorOrganisations()

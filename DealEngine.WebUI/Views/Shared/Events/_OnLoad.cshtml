@@ -1,26 +1,26 @@
 ﻿<script type="text/javascript">
 
     //intialize objects on load
-           var d = new Date();
-           var currMonth = d.getMonth();
-           var currYear = d.getFullYear();
-           var currDate = d.getDate();
+    var d = new Date();
+    var currMonth = d.getMonth();
+    var currYear = d.getFullYear();
+    var currDate = d.getDate();
 
-           if (currMonth < 8) {
-                 currMonth = 8;
-                 var startDate = new Date(currYear, currMonth, 1);
-           } else {
-                 var startDate = new Date(currYear, currMonth, currDate);
-            }
+    if (currMonth < 8) {
+        currMonth = 8;
+        var startDate = new Date(currYear, currMonth, 1);
+    } else {
+        var startDate = new Date(currYear, currMonth, currDate);
+    }
 
     $('#FAPCoverStartDate').datepicker({
-           dateFormat: "dd/mm/yy",
-            minDate: startDate
+        dateFormat: "dd/mm/yy",
+        minDate: startDate
     });
 
     function PopulateOrganisationView(Method, OutPut) {
         try {
-            var Form = document.getElementById("organisationViewModel"); 
+            var Form = document.getElementById("organisationViewModel");
             var TradingName = document.getElementById("NoTradingName");
             var Unit = document.getElementsByName("Unit");
             if (TradingName != null) {
@@ -74,13 +74,17 @@
                 }
                 if (Method == "Owner") {
                     var TradingName = document.getElementById("NoTradingName");
+                    var ProgrammeName = document.getElementById("Programme_Name");
                     if (TradingName != null) {
                         document.getElementById("TradingName").hidden = false;
                     }
-                    document.getElementById("HideOrganisationType").hidden = true;
-                    document.getElementById("HideInsuranceAttribute").hidden = true;
-                    document.getElementById("Organisation.OrganisationType").disabled = true;
-                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    debugger;
+                    if (ProgrammeName.value != "NZPI Programme") {
+                        document.getElementById("HideOrganisationType").hidden = true;
+                        document.getElementById("HideInsuranceAttribute").hidden = true;
+                        document.getElementById("Organisation.OrganisationType").disabled = true;
+                        document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    }
                     document.getElementById("Else").hidden = false;
                 }
             }
