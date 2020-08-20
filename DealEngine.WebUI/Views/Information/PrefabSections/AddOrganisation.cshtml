@@ -97,7 +97,7 @@
             @using (Html.BeginForm("AddOrganisation", "Organisation", FormMethod.Post, new { @id = "organisationViewModel", @name = "OrganisationViewModel" }))
             {
                 @Html.HiddenFor(m => m.OrganisationViewModel.Organisation.Id, new { id = "Organisation.Id" })
-                @Html.HiddenFor(m => m.OrganisationViewModel.User.Id, new { id = "User.Id" })                
+                @Html.HiddenFor(m => m.OrganisationViewModel.User.Id, new { id = "User.Id" })
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme")
                 {
@@ -129,6 +129,12 @@
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/TripleA_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "NZPI Programme")
+                {
+
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.ContractorUnit.GetType().AssemblyQualifiedName, new { @id = "ContractorUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZPI_AddOrganisation", Model)
                 }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>

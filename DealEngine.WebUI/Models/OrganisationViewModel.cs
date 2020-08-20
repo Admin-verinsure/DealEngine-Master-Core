@@ -57,6 +57,13 @@ namespace DealEngine.WebUI.Models
                     HasIsADNZmemberOptions = GetStandardSelectOptions();
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
+                if (Programme.Name == "NZPI Programme")
+                {
+                    InsuranceAttributes = GetContractorTypes();
+                    ContractorUnit = new ContractorUnit(null, null, null, null);
+                    HasNZPIAMemberOptions = GetBooleanSelectOptions();
+                    HasContractedInsuredOptions = GetBooleanSelectOptions();
+                }
 
                 Organisation = ClientInformationSheet.Owner;
                 //if (Organisations.Any(o => o.Id != (ClientInformationSheet.Owner.Id)))
@@ -73,7 +80,28 @@ namespace DealEngine.WebUI.Models
                 User = OrgUser;
             }
         }
-
+        private IList<SelectListItem> GetContractorTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Planner",
+                        Value = "Planner"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Contractor",
+                        Value = "Contractor"
+                    }
+                };
+            return _Types;
+        }
         private IList<SelectListItem> GetPrincipalTypes()
         {
             var _Types = new List<SelectListItem>();
@@ -221,8 +249,7 @@ namespace DealEngine.WebUI.Models
                     }
                 };
             return _Types;
-        }
-       
+        }      
         private IList<SelectListItem> GetLicencedOptions()
         {
             var _Types = new List<SelectListItem>()
@@ -463,9 +490,14 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasIsADNZmemberOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasIsOtherdirectorshipOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasNZPIAMemberOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasContractedInsuredOptions { get; set; }
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
+        public ContractorUnit ContractorUnit { get; set; }
 
     }
 }
