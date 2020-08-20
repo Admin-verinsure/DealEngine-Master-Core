@@ -55,6 +55,7 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _clientInformationAnswer;
         IOrganisationTypeService _organisationTypeService;
+        IMapperSession<ClientProgramme> _clientProgrammeRepository;
 
 
         public InformationController(
@@ -92,6 +93,8 @@ namespace DealEngine.WebUI.Controllers
             IBusinessActivityService businessActivityService,
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
+            IMapperSession<ClientProgramme> clientProgrammeRepository,
+
             IMapper mapper
             )
             : base(userService)
@@ -130,6 +133,8 @@ namespace DealEngine.WebUI.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _emailService = emailService;
+            _clientProgrammeRepository = clientProgrammeRepository;
+
         }
 
 
@@ -1217,9 +1222,16 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(formCollection["DealId"]));
                 if (clientProgramme == null)
                 throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
+                ClientProgramme newClientProgramme = null;
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
-                await _programmeService.Update(newClientProgramme);
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
+                    await _clientProgrammeRepository.UpdateAsync(newClientProgramme);
+                    await uow.Commit();
+                }
+                //await _programmeService.Update(newClientProgramme);
                 return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
                 //var url = "/Information/EditInformation/" + newClientProgramme.Id;
                   //return Json(new { url });

@@ -157,6 +157,7 @@ namespace DealEngine.Domain.Entities
 		{
 			ClientInformationSheet newSheet = new ClientInformationSheet (cloningUser, Owner, null);
             try { 
+                
             //newSheet = mapper.Map<ClientInformationSheet>(this);
             newSheet.PreviousInformationSheet = this;
 			newSheet.Product = Product;

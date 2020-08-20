@@ -353,6 +353,19 @@ namespace DealEngine.Services.Impl
                 await _customerInformationRepository.UpdateAsync(sheet);
             }
         }
+
+        public  async Task<ClientInformationSheet>  GetClone(ClientInformationSheet clientInformationSheet)
+        {
+            return  _mapper.Map<ClientInformationSheet>(clientInformationSheet);
+        }
+
+        //public async Task Update(ClientInformationSheet clientInformationSheet)
+        //{
+           
+        //        await _clientProgrammeRepository.AddAsync(clientProgramme);
+            
+        //}
+
     }
 }
 
