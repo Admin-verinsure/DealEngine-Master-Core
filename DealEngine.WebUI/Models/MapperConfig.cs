@@ -179,7 +179,8 @@ namespace DealEngine.WebUI.Models
             //clonesystem
             CreateMap<ClientInformationSheet, ClientInformationSheet>()
                 .ForMember(dest => dest.Id, map => map.Ignore())
-               .ForMember(dest => dest.Owner, map => map.Ignore());
+                .ForMember(dest => dest.Owner, map => map.Ignore())
+                .ForMember(dest => dest.Organisation, map => map.Ignore()); 
             CreateMap<ClientProgramme, ClientProgramme>()
                 .ForMember(dest => dest.Id, map => map.Ignore());
         }

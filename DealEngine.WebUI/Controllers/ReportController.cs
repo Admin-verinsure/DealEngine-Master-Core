@@ -1,61 +1,29 @@
 
 using System;
-using System.IO;
-using System.Data;
 using System.Threading.Tasks;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models.Report;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
-using FastReport;
-using FastReport.Data;
-using FastReport.Export.Html;
-using FastReport.Export.Image;
-using Npgsql;
-
-//using System.Diagnostics;
-//using System.Xml.Serialization;
-//using System.Text;
-//using System.Xml;
-//using System.Data.Common;
-//using DocumentFormat.OpenXml.Drawing.Charts;
-//using System.Security.AccessControl;
-//using System.Security.Cryptography.X509Certificates;
-//using System.Security.Cryptography;
-//using System.Drawing;
-//using System.Windows.Forms;
-//using System.Linq;
-//using System.Net;
-using DealEngine.Domain.Entities;
-using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using System.Collections.Generic;
-//using DealEngine.Infrastructure.FluentNHibernate;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.Extensions.Logging;
-//using FastReport.Dialog;
-//using FastReport.Barcode;
-//using FastReport.Table;
-//using FastReport.Utils ;
-//using FastReport.Export.PdfSimple;
-//using FastReport.Web;
-
 
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
-
     public class ReportController : BaseController
     {
         private readonly IWebHostEnvironment _hostingEnv;
         IUserService _userService;
+        ISerializerationService _serializerationService;
         IClientInformationService _clientService;
         IProgrammeService _programmeService;
         IOrganisationService _organisationService;
 
 
-        public ReportController(IUserService userService,  
+        public ReportController(
+            ISerializerationService serializerationService,
+            IUserService userService,  
             IWebHostEnvironment hostingEnv,
             IClientInformationService clientService,
             IOrganisationService organisationService,
@@ -63,12 +31,12 @@ namespace DealEngine.WebUI.Controllers
             )
             : base(userService)
         {
-
-        _hostingEnv = hostingEnv;
-        _userService = userService;
-        _clientService = clientService;
-        _programmeService = programmeService;
-        _organisationService = organisationService;
+            _serializerationService = serializerationService;
+            _hostingEnv = hostingEnv;
+            _userService = userService;
+            _clientService = clientService;
+            _programmeService = programmeService;
+            _organisationService = organisationService;
         }
 
 
@@ -88,7 +56,7 @@ namespace DealEngine.WebUI.Controllers
             var list = new List<object>();
             list.Add(sheet);
             list.Add(agreements);
-            string test = GetSerializedModel(list);
+            string test = await _serializerationService.GetSerializedObject(list);
             System.IO.File.WriteAllText(@"C:\Users\tcnathan\source\repos\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
 
             #region report writer code

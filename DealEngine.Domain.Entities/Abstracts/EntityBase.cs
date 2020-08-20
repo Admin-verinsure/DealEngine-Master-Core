@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System;
@@ -73,6 +74,8 @@ namespace DealEngine.Domain.Entities.Abstracts
             hash = (hash * 397) ^ Id.GetHashCode();
             return hash;
         }
+
+      
 
         public virtual void PopulateEntity(IFormCollection Collection)
         {
