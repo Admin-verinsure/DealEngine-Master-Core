@@ -73,22 +73,30 @@
                     }
                 }
                 if (Method == "Owner") {
-                    var TradingName = document.getElementById("NoTradingName");
-                    var ProgrammeName = document.getElementById("Programme_Name");
-                    if (TradingName != null) {
-                        document.getElementById("TradingName").hidden = false;
-                    }
                     debugger;
-                    if (ProgrammeName.value != "NZPI Programme") {
-                        document.getElementById("HideOrganisationType").hidden = true;
-                        document.getElementById("HideInsuranceAttribute").hidden = true;
-                        document.getElementById("Organisation.OrganisationType").disabled = true;
-                        document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    var ProgrammeName = document.getElementById("Programme_Name");
+                    if (ProgrammeName.value == "NZPI Programme") {
+                        NZPIOwnerOnLoad();
                     }
+                    if (ProgrammeName.value == "TripleA Programme") {
+                        TripleAOwnerOnLoad();
+                    }
+
+                    document.getElementById("HideOrganisationType").hidden = true;
+                    document.getElementById("HideInsuranceAttribute").hidden = true;
+                    document.getElementById("Organisation.OrganisationType").disabled = true;
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;                    
                     document.getElementById("Else").hidden = false;
                 }
             }
         } catch (ex) { debugger; }
+    }
+
+    function TripleAOwnerOnLoad() {
+        var TradingName = document.getElementById("NoTradingName");
+        if (TradingName != null) {
+            document.getElementById("TradingName").hidden = false;
+        }
     }
 
     function PopulateOrganisationalUnit(OutPut, UnitName) {
