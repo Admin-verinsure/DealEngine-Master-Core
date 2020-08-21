@@ -110,12 +110,10 @@ namespace DealEngine.WebUI.Models
             CreateMap<SubmitButtonItem, InformationItemViewModel>();
             CreateMap<SectionBreakItem, InformationItemViewModel>();
             CreateMap<MotorVehicleListItem, InformationItemViewModel>();
-
             CreateMap<Location, LocationViewModel>();
             CreateMap<Vehicle, VehicleViewModel>();
             CreateMap<OrganisationalUnit, OrganisationalUnitViewModel>();
             CreateMap<Organisation, OrganisationViewModel>();
-            CreateMap<User, UserDetailsVM>();
             CreateMap<BusinessActivity, BusinessActivityViewModel>();
 
             // Policy

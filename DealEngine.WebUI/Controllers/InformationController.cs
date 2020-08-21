@@ -463,18 +463,12 @@ namespace DealEngine.WebUI.Controllers
                 //model.AvailableOrganisations = availableorganisation;
                 //model.AllVehicles = vehicles;
 
-                var userDetails = _mapper.Map<UserDetailsVM>(user);
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
-                userDetails.FirstName = user.FirstName;
-                userDetails.Email = user.Email;
+                //var userDetails = _mapper.Map<UserDetailsVM>(user);
+                //userDetails.PostalAddress = user.Address;
+                //userDetails.StreetAddress = user.Address;
+                //userDetails.FirstName = user.FirstName;
+                //userDetails.Email = user.Email;
 
-                var organisationDetails = new OrganisationDetailsVM
-                {
-                    Name = sheet.Owner.Name,
-                    Phone = sheet.Owner.Phone,
-                    Website = sheet.Owner.Domain
-                };
 
                 //model.Locations = locations;
                 //model.Buildings = buildings;
@@ -484,8 +478,7 @@ namespace DealEngine.WebUI.Controllers
 
 
                 //model.ClaimProducts = availableProducts;
-                model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
+
                 model.Status = sheet.Status;
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
@@ -832,14 +825,8 @@ namespace DealEngine.WebUI.Controllers
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
                 }               
 
-                var userDetails = _mapper.Map<UserDetailsVM>(user);
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
-                userDetails.FirstName = user.FirstName;
-                userDetails.Email = user.Email;
                 model.Claims = claims;
                 model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
-                model.UserDetails = userDetails;
                 model.Status = sheet.Status;
 
                 return View("InformationWizard", model);
@@ -856,7 +843,6 @@ namespace DealEngine.WebUI.Controllers
             //build models from answers
             foreach (var answer in Model)
             {
-                var value = 0;
                 try
                 {
                     var modelName = "";
@@ -885,8 +871,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(int) == property.PropertyType)
                         {
-                            int.TryParse(answer.Value, out value);
-                            property.SetValue(reflectModel, value);
+                            int.TryParse(answer.Value, out int intvalue);
+                            property.SetValue(reflectModel, intvalue);
+                        }
+                        if (typeof(decimal) == property.PropertyType)
+                        {
+                            decimal.TryParse(answer.Value, out decimal decvalue);
+                            property.SetValue(reflectModel, decvalue);
                         }
                         if (typeof(IList<SelectListItem>) == property.PropertyType)
                         {
@@ -1305,9 +1296,10 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                user = await CurrentUser();
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser)
+                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
