@@ -110,12 +110,10 @@ namespace DealEngine.WebUI.Models
             CreateMap<SubmitButtonItem, InformationItemViewModel>();
             CreateMap<SectionBreakItem, InformationItemViewModel>();
             CreateMap<MotorVehicleListItem, InformationItemViewModel>();
-
             CreateMap<Location, LocationViewModel>();
             CreateMap<Vehicle, VehicleViewModel>();
             CreateMap<OrganisationalUnit, OrganisationalUnitViewModel>();
             CreateMap<Organisation, OrganisationViewModel>();
-            CreateMap<User, UserDetailsVM>();
             CreateMap<BusinessActivity, BusinessActivityViewModel>();
 
             // Policy
@@ -179,7 +177,8 @@ namespace DealEngine.WebUI.Models
             //clonesystem
             CreateMap<ClientInformationSheet, ClientInformationSheet>()
                 .ForMember(dest => dest.Id, map => map.Ignore())
-               .ForMember(dest => dest.Owner, map => map.Ignore());
+                .ForMember(dest => dest.Owner, map => map.Ignore())
+                .ForMember(dest => dest.Organisation, map => map.Ignore()); 
             CreateMap<ClientProgramme, ClientProgramme>()
                 .ForMember(dest => dest.Id, map => map.Ignore());
         }

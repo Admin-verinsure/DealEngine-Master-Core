@@ -8,7 +8,7 @@ namespace DealEngine.Domain.Entities
     {
         public virtual string Name { get; protected set; }
         public virtual string InsuranceAttributeName { get; protected set; }
-        //public virtual IList<Organisation> IAOrganisations { get; set; }
+        public virtual IList<Organisation> IAOrganisations { get; set; }
         public virtual IList<AuditHistory> AuditHistory { get; set; }
         protected InsuranceAttribute() : base(null) { }
 
@@ -17,7 +17,7 @@ namespace DealEngine.Domain.Entities
         {
             Name = name;
             InsuranceAttributeName = name;
-            //IAOrganisations = new List<Organisation>();
+            IAOrganisations = new List<Organisation>();
             AuditHistory = new List<AuditHistory>();
         }
 

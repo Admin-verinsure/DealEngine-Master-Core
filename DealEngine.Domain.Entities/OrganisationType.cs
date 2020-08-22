@@ -7,7 +7,7 @@ namespace DealEngine.Domain.Entities
 {
 	public class OrganisationType : EntityBase, IAggregateRoot
     {
-        public virtual string Name { get; protected set; }
+        public virtual string Name { get; set; }
 
         protected OrganisationType() : base (null) { }
 

@@ -33,7 +33,7 @@
 
                         @Html.HiddenFor(m => m.AnswerSheetId)
                         @Html.HiddenFor(m => m.Status)
-                        @*@Html.HiddenFor(m => m.AgreementStatus)*@
+                        @Html.HiddenFor(m => m.Programme.Name)
                         @Html.HiddenFor(m => m.Id)
 
                         <div role="content">
@@ -1153,7 +1153,7 @@
             }
 
             advisoryModal = document.getElementById('advisoryModal');
-            if ("@Model.ClientInformationSheet.Status" == "Not Started") {
+            if ("@Model.ClientInformationSheet.Status" == "Not Started" && "@string.IsNullOrWhiteSpace(Model.Advisory)" == "False") {
                 $("#advisoryModal").modal('show');
             }
 

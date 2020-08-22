@@ -14,29 +14,20 @@ namespace DealEngine.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
-        IMapperSession<Programme> _programmeRepository;
         IMapperSession<Reference> _referenceRepository;
-        IMapperSession<Boat> _boatRepository;
-        IMapperSession<Organisation> _organisationRepository;
         IMapperSession<User> _userRepository;
         IMapper _mapper;
-
         public ClientInformationService(
-            IMapperSession<Programme> programmeRepository,
             IMapperSession<Reference> referenceRepository,
             IMapperSession<User> userRepository,
-            IMapperSession<Organisation> organisationRepository,
-            IMapperSession<ClientInformationSheet> customerInformationRepository, 
-            IMapperSession<Boat> boatRepository,
+            IMapperSession<ClientInformationSheet> customerInformationRepository,
             IMapper mapper
             )
         {
+            _mapper = mapper;
             _referenceRepository = referenceRepository;
             _userRepository = userRepository;
-            _organisationRepository = organisationRepository;
-            _mapper = mapper;
             _customerInformationRepository = customerInformationRepository;
-            _boatRepository = boatRepository;
         }
 
         public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
@@ -353,6 +344,19 @@ namespace DealEngine.Services.Impl
                 await _customerInformationRepository.UpdateAsync(sheet);
             }
         }
+
+        public  async Task<ClientInformationSheet>  GetClone(ClientInformationSheet clientInformationSheet)
+        {
+            return  _mapper.Map<ClientInformationSheet>(clientInformationSheet);
+        }
+
+        //public async Task Update(ClientInformationSheet clientInformationSheet)
+        //{
+           
+        //        await _clientProgrammeRepository.AddAsync(clientProgramme);
+            
+        //}
+
     }
 }
 
