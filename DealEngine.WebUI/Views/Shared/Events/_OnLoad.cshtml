@@ -52,7 +52,11 @@
                             if (Element.type == "date") {
                                 //hardcord date string
                                 var date = Value.substring(0, 10);
-                                Element.value = date;
+                                if (date == "0001-01-01") {
+                                  element.value = null;
+                                } else {
+                                  element.value = date;
+                                }
                             }
                             else {
                                 Element.value = Value;
@@ -109,8 +113,14 @@
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string
+                            debugger;
                             var date = Value.substring(0, 10);
-                            element.value = date;
+                            if (date == "0001-01-01") {
+                                  element.value = null;
+                                } else {
+                                  element.value = date;
+                                }
+                            //element.value = date;
                         }
                         else {
                             element.value = Value;

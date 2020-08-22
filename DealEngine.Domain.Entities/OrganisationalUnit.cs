@@ -50,7 +50,6 @@ namespace DealEngine.Domain.Entities
         public AdvisorUnit(User User, string Name, string Type, IFormCollection Collection)
             : base(User, Name, Type, Collection)
         {
-
         }
 
         [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
