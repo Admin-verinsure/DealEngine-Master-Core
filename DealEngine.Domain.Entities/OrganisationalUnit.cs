@@ -50,7 +50,6 @@ namespace DealEngine.Domain.Entities
         public AdvisorUnit(User User, string Name, string Type, IFormCollection Collection)
             : base(User, Name, Type, Collection)
         {
-
         }
 
         [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
@@ -158,6 +157,31 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsOtherdirectorship { get; set; }
         [Display(Name = "Please list all Name of company(s)")]
         public virtual string TradingName { get; set; }
+    }
+
+    public class ContractorUnit : OrganisationalUnit
+    {
+        public ContractorUnit() { }
+        public ContractorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        [Display(Name = "Are you a member of NZPI")]
+        public virtual bool IsNZPIAMember { get; set; }
+
+        [Display(Name = "Qualifications")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateQualified { get; set; }
+        [Display(Name = "Years at firm?")]
+        public virtual int YearsAtFirm { get; set; }
+        [Display(Name = "Solely contracted to the Insured?")]
+        public virtual bool ContractedInsured { get; set; }
+        [Display(Name = "Years working for Insured?")]
+        public virtual int YearsAtInsured { get; set; }
+
     }
 }
 

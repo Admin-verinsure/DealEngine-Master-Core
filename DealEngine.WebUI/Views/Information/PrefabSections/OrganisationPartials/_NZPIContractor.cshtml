@@ -1,0 +1,45 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+
+    <div class="form-group col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.Qualifications, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.ContractorUnit.Qualifications, new { @class = "form-control", @id = "ContractorUnit.Qualifications", @required = "" })
+        </div>
+        @*<div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.DateQualified, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.ContractorUnit.DateQualified, new { @class = "form-control", @id = "ContractorUnit.DateQualified", @type = "date", @required = "", @onchange = "OnChange(this.id, this.name)" })
+        </div>*@
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.YearsAtFirm, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.ContractorUnit.YearsAtFirm, new { @class = "form-control", @id = "ContractorUnit.YearsAtFirm", @type = "number", @required = "", @onchange = "OnChange(this.id, this.name)" })
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.IsNZPIAMember, new { @class = "label required" })
+            <select id="ContractorUnit.IsNZPIAMember" name="OrganisationViewModel.ContractorUnit.IsNZPIAMember" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasNZPIAMemberOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group" id="IsContractorUnit">
+            @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.ContractedInsured, new { @class = "label required" })
+            <select id="ContractorUnit.ContractedInsured" name="OrganisationViewModel.ContractorUnit.ContractedInsured" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasContractedInsuredOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+            <div class="form-group">
+                @Html.LabelFor(m => m.OrganisationViewModel.ContractorUnit.YearsAtInsured, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.ContractorUnit.YearsAtInsured, new { @class = "form-control", @id = "ContractorUnit.YearsAtInsured", @type = "number", @required = "", @onchange = "OnChange(this.id, this.name)" })
+            </div>
+        </div>
+    </div>

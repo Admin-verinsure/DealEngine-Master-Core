@@ -22,6 +22,9 @@ namespace DealEngine.Services.Interfaces
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
         Task RemoveOrganisationFromSheets(Organisation organisation);
+        Task<ClientInformationSheet> GetClone(ClientInformationSheet clientInformationSheet);
+
+
     }
 }
 

@@ -16,6 +16,7 @@ namespace DealEngine.WebUI.Controllers
     [Authorize]
     public class OrganisationController : BaseController
     {
+        ISerializerationService _serialiserService;
         IOrganisationService _organisationService;
         IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;               
@@ -25,6 +26,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<OrganisationController> _logger;
 
         public OrganisationController(
+            ISerializerationService serialiserService,
             ILogger<OrganisationController> logger,
             IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
@@ -36,6 +38,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _serialiserService = serialiserService;
             _clientInformationService = clientInformationService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
@@ -81,7 +84,7 @@ namespace DealEngine.WebUI.Controllers
                 User orgUser = await _userService.GetUserPrimaryOrganisation(organisation);
                 JsonObjects.Add("Organisation", organisation);
                 JsonObjects.Add("User", orgUser);
-                var jsonObj = GetSerializedModel(JsonObjects);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
 
                 return Json(jsonObj);
             }
@@ -100,8 +103,8 @@ namespace DealEngine.WebUI.Controllers
             Guid.TryParse(collection["ClientInformationSheet.Id"], out Guid Id);
             ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
 
-            var jsonOrganisation = (Organisation)GetModelDeserializedModel(typeof(Organisation), collection);
-            var jsonUser = (User)GetModelDeserializedModel(typeof(User), collection);
+            var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), collection);
+            var jsonUser = (User)await _serialiserService.GetDeserializedObject(typeof(User), collection);
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
             Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
@@ -114,7 +117,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation = await _organisationService.CreateOrganisation(jsonUser.Email, TypeName, jsonOrganisation.Name, OrganisationTypeName, jsonUser.FirstName, jsonUser.LastName, currentUser, collection);
                 }
 
-                await _organisationService.PostOrganisation(collection,organisation);
+                await _organisationService.PostOrganisation(collection, organisation);
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

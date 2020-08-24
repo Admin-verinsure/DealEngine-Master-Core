@@ -1,26 +1,26 @@
 ﻿<script type="text/javascript">
 
     //intialize objects on load
-           var d = new Date();
-           var currMonth = d.getMonth();
-           var currYear = d.getFullYear();
-           var currDate = d.getDate();
+    var d = new Date();
+    var currMonth = d.getMonth();
+    var currYear = d.getFullYear();
+    var currDate = d.getDate();
 
-           if (currMonth < 8) {
-                 currMonth = 8;
-                 var startDate = new Date(currYear, currMonth, 1);
-           } else {
-                 var startDate = new Date(currYear, currMonth, currDate);
-            }
+    if (currMonth < 8) {
+        currMonth = 8;
+        var startDate = new Date(currYear, currMonth, 1);
+    } else {
+        var startDate = new Date(currYear, currMonth, currDate);
+    }
 
     $('#FAPCoverStartDate').datepicker({
-           dateFormat: "dd/mm/yy",
-            minDate: startDate
+        dateFormat: "dd/mm/yy",
+        minDate: startDate
     });
 
     function PopulateOrganisationView(Method, OutPut) {
         try {
-            var Form = document.getElementById("organisationViewModel"); 
+            var Form = document.getElementById("organisationViewModel");
             var TradingName = document.getElementById("NoTradingName");
             var Unit = document.getElementsByName("Unit");
             if (TradingName != null) {
@@ -52,7 +52,11 @@
                             if (Element.type == "date") {
                                 //hardcord date string
                                 var date = Value.substring(0, 10);
-                                Element.value = date;
+                                if (date == "0001-01-01") {
+                                  element.value = null;
+                                } else {
+                                  element.value = date;
+                                }
                             }
                             else {
                                 Element.value = Value;
@@ -73,18 +77,30 @@
                     }
                 }
                 if (Method == "Owner") {
-                    var TradingName = document.getElementById("NoTradingName");
-                    if (TradingName != null) {
-                        document.getElementById("TradingName").hidden = false;
+                    debugger;
+                    var ProgrammeName = document.getElementById("Programme_Name");
+                    if (ProgrammeName.value == "NZPI Programme") {
+                        NZPIOwnerOnLoad();
                     }
+                    if (ProgrammeName.value == "TripleA Programme") {
+                        TripleAOwnerOnLoad();
+                    }
+
                     document.getElementById("HideOrganisationType").hidden = true;
                     document.getElementById("HideInsuranceAttribute").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;
-                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;
+                    document.getElementById("Organisation.InsuranceAttribute").disabled = true;                    
                     document.getElementById("Else").hidden = false;
                 }
             }
         } catch (ex) { debugger; }
+    }
+
+    function TripleAOwnerOnLoad() {
+        var TradingName = document.getElementById("NoTradingName");
+        if (TradingName != null) {
+            document.getElementById("TradingName").hidden = false;
+        }
     }
 
     function PopulateOrganisationalUnit(OutPut, UnitName) {
@@ -97,8 +113,14 @@
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string
+                            debugger;
                             var date = Value.substring(0, 10);
-                            element.value = date;
+                            if (date == "0001-01-01") {
+                                  element.value = null;
+                                } else {
+                                  element.value = date;
+                                }
+                            //element.value = date;
                         }
                         else {
                             element.value = Value;
