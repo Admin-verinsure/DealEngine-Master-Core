@@ -82,8 +82,8 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
-                    if (ProgrammeName.value == "TripleA Programme") {
-                        TripleAOwnerOnLoad();
+                    if (ProgrammeName.value == "TripleA Programme" || ProgrammeName.value == "NZFSG Programme") {
+                        AdvisorOwnerOnLoad();
                     }
 
                     document.getElementById("HideOrganisationType").hidden = true;
@@ -96,7 +96,7 @@
         } catch (ex) { debugger; }
     }
 
-    function TripleAOwnerOnLoad() {
+    function AdvisorOwnerOnLoad() {
         var TradingName = document.getElementById("NoTradingName");
         if (TradingName != null) {
             document.getElementById("TradingName").hidden = false;

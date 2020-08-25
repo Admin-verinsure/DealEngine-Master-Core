@@ -34,7 +34,6 @@ namespace DealEngine.WebUI.Controllers
         ITerritoryService _territoryService;
         IFileService _fileService;
         IClientInformationService _clientInformationService;
-        IChangeProcessService _changeProcessService;
         IUnlockProcessService _unlockProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
@@ -72,7 +71,6 @@ namespace DealEngine.WebUI.Controllers
             IUserService userService,
             ITerritoryService territoryService,
             IInformationItemService informationItemService,
-            IChangeProcessService changeProcessService,
             IUnlockProcessService unlockProcessService,
             IFileService fileService,
             IEmailService emailService,
@@ -778,7 +776,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-
+                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
@@ -797,10 +795,6 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
-
-                model.AnswerSheetId = sheet.Id;
-                model.ClientInformationSheet = sheet;
-                model.ClientProgramme = clientProgramme;
                 
                 //testing dynamic wizard here
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
@@ -826,8 +820,7 @@ namespace DealEngine.WebUI.Controllers
                 }               
 
                 model.Claims = claims;
-                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
-                model.Status = sheet.Status;
+                
 
                 return View("InformationWizard", model);
             }
