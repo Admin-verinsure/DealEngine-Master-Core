@@ -42,6 +42,14 @@
                         }
                     }
 
+                    if (model.hasOwnProperty("OrganisationType")) {
+                        if (Field === "OrganisationType") {
+                            var Id = Type + ".OrganisationType";
+                            Value = OutPut[obj][Field]["Name"];
+                            Element = document.getElementById(Id);
+                        }
+                    }
+
                     if (Element == null) {
                         var Id = Type + "." + Field;
                         Element = document.getElementById(Id);
@@ -63,6 +71,7 @@
                             }
                         }
                         else if (Element.tagName == "SELECT") {
+                            debugger;
                             for (var o = 0; o < Element.options.length; o++) {
                                 if (Element.options[o].value == Value.toString()) {
                                     Element.options[o].selected = true;
@@ -77,7 +86,6 @@
                     }
                 }
                 if (Method == "Owner") {
-                    debugger;
                     document.getElementById("HideOrganisationType").hidden = true;
                     document.getElementById("HideInsuranceAttribute").hidden = true;
                     document.getElementById("Organisation.OrganisationType").disabled = true;

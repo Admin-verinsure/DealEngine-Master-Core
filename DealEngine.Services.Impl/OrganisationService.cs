@@ -111,23 +111,9 @@ namespace DealEngine.Services.Impl
             {
                 UpdateOrganisationUnit(organisation, collection);
                 UpdateInsuranceAttribute(organisation, collection);
-                UpdateOrganisationType(organisation, collection);
             }
 
             await Update(organisation);
-        }
-
-        private void UpdateOrganisationType(Organisation organisation, IFormCollection collection)
-        {
-            try
-            {
-                string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-                organisation.OrganisationType.Name = OrganisationTypeName;
-            }
-            catch(Exception ex)
-            {
-                new Exception("Organisation Type update failed " + ex.Message);
-            }
         }
 
         private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
