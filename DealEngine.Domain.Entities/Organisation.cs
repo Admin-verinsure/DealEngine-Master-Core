@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
@@ -129,7 +127,6 @@ namespace DealEngine.Domain.Entities
         public virtual string Email { get; set; }
         public virtual bool IsBroker { get; set; }
         public virtual bool IsInsurer { get; set; }
-        public virtual bool IsReinsurer { get; set; }
         public virtual bool IsTC { get; set; }
         public virtual bool IsApproved { get; set; }
         public virtual string Clientmembership { get; set; }
