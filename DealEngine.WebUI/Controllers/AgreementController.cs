@@ -2076,30 +2076,14 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAdvisor(ProgrammeInfoViewModel model)
+        public async Task<IActionResult> EditAdvisor(IFormCollection collection)
         {
             User user = null;
             try
             {
-                //user = await CurrentUser();
-                //Org Re write
-                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.AgreementId);
-                //if (model.Owner != null)
-                //{
-                //    using (var uow = _unitOfWork.BeginUnitOfWork())
-                //    {
-                //        foreach (Organisation org in model.Owner)
-                //        {
-                //            Organisation organisation = await _organisationService.GetOrganisation(org.Id);
-                //            organisation.PIRetroactivedate = org.PIRetroactivedate;
-                //            organisation.DORetroactivedate = org.DORetroactivedate;
-
-                //        }
-                //        await uow.Commit();
-                //    }
-                //}
-
-                return Redirect("/Agreement/ViewAcceptedAgreement/" + model.ProgId);
+                Guid.TryParse(collection["ProgId"].ToString(), out Guid Id);
+                await _organisationService.UpdateAdvisorDates(collection);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + Id);
             }
             catch (Exception ex)
             {

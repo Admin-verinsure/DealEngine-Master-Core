@@ -9,7 +9,7 @@ namespace DealEngine.WebUI.Models
     public class InformationViewModel : BaseViewModel
     {
         public InformationViewModel() { }
-        public InformationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser, User CurrentUser)
+        public InformationViewModel(ClientInformationSheet clientInformationSheet, User OrgUser, User CurrentUser)
         {
             ELViewModel = new ELViewModel(); //Employment Liability Insurance
             EPLViewModel = new EPLViewModel(); //Employers Practices Insurance
@@ -23,13 +23,17 @@ namespace DealEngine.WebUI.Models
             OTViewModel = new OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
             User = CurrentUser;
-            Programme = ClientInformationSheet.Programme.BaseProgramme;
-            RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
-            RoleDataViewModel = new RoleDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
-            LocationViewModel = new LocationViewModel(ClientInformationSheet);
-            ProjectViewModel = new ProjectViewModel(ClientInformationSheet);
-            ResearchHouseViewModel = new ResearchHouseViewModel(ClientInformationSheet);
-            OrganisationViewModel = new OrganisationViewModel(ClientInformationSheet, OrgUser);            
+            Programme = clientInformationSheet.Programme.BaseProgramme;
+            RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
+            RoleDataViewModel = new RoleDataViewModel(clientInformationSheet.Programme.BaseProgramme);
+            LocationViewModel = new LocationViewModel(clientInformationSheet);
+            ProjectViewModel = new ProjectViewModel(clientInformationSheet);
+            ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
+            OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
+            ClientInformationSheet = clientInformationSheet;
+            Status = clientInformationSheet.Status;
+            AnswerSheetId = clientInformationSheet.Id;
+            ClientProgramme = clientInformationSheet.Programme;
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
@@ -62,7 +66,7 @@ namespace DealEngine.WebUI.Models
         public ProjectViewModel ProjectViewModel { get;set;}
         public ResearchHouseViewModel ResearchHouseViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
-        public ClientInformationSheet ClientInformationSheet { get; internal set; }
+        public ClientInformationSheet ClientInformationSheet { get; set; }
         public ClientProgramme ClientProgramme { get; internal set; }
         public ClientAgreement ClientAgreement { get; internal set; }
         public OTViewModel OTViewModel { get; internal set; }
@@ -1040,16 +1044,16 @@ namespace DealEngine.WebUI.Models
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
-        public string totalValue { get; set; }
-        public string CashInvestments { get; set; }
-        public string Bonds { get; set; }
-        public string DirectInvestment { get; set; }
-        public string PropertyTrust { get; set; }
-        public string FinanceDebentures { get; set; }
-        public string ManagedFunds { get; set; }
-        public string Superannuation { get; set; }
-        public string Kiwisaver { get; set; }
-        public string OtherFunds { get; set; }
+        //public string totalValue { get; set; }
+        //public string CashInvestments { get; set; }
+        //public string Bonds { get; set; }
+        //public string DirectInvestment { get; set; }
+        //public string PropertyTrust { get; set; }
+        //public string FinanceDebentures { get; set; }
+        //public string ManagedFunds { get; set; }
+        //public string Superannuation { get; set; }
+        //public string Kiwisaver { get; set; }
+        //public string OtherFunds { get; set; }
 
     }
     public class ProjectViewModel
