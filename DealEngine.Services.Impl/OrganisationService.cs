@@ -191,14 +191,20 @@ namespace DealEngine.Services.Impl
 
         private async Task<Organisation> UpdateOrganisation(IFormCollection collection, Organisation organisation)
         {
-            var jsonOrganisation =  (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
-            if (organisation.OrganisationType.Name == "Person - Individual" &&
-                user != null)
+
+            if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
-                organisation.Name = user.FirstName + " " + user.LastName;
-            }
+                organisation.OrganisationType.Name = OrganisationType;
+                if (OrganisationType == "Person - Individual" && user != null)
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
+                }
+            }           
+
             return organisation;
         }
 

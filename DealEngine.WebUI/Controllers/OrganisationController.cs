@@ -18,8 +18,7 @@ namespace DealEngine.WebUI.Controllers
     {
         ISerializerationService _serialiserService;
         IOrganisationService _organisationService;
-        IOrganisationTypeService _organisationTypeService;
-        IInsuranceAttributeService _insuranceAttributeService;               
+        IOrganisationTypeService _organisationTypeService;              
         IUnitOfWork _unitOfWork;
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
@@ -32,8 +31,7 @@ namespace DealEngine.WebUI.Controllers
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
             IOrganisationTypeService organisationTypeService, 
-            IUnitOfWork unitOfWork, 
-            IInsuranceAttributeService insuranceAttributeService,            
+            IUnitOfWork unitOfWork,           
             IUserService userRepository
             )
             : base (userRepository)
@@ -44,9 +42,7 @@ namespace DealEngine.WebUI.Controllers
             _applicationLoggingService = applicationLoggingService;
             _organisationService = organisationService;            
             _organisationTypeService = organisationTypeService;
-            _insuranceAttributeService = insuranceAttributeService;
-            _unitOfWork = unitOfWork;
-            _insuranceAttributeService = insuranceAttributeService;            
+            _unitOfWork = unitOfWork;          
         }
 
         [HttpPost]
