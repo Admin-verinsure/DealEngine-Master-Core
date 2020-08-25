@@ -356,22 +356,10 @@ namespace DealEngine.Services.Impl
             var owners = sheets.Where(s => s.Owner.InsuranceAttributes.Count == 0).ToList();
             var parties = sheets.Where(s => s.Organisation.Any(o => o.InsuranceAttributes.Count == 0)).ToList();
             var units = parties.Where(s => s.Organisation.Any(o => o.OrganisationalUnits.Count == 2)).ToList();    
-            foreach (var unit in units)
+            foreach (var owner in owners)
             {
-                foreach(var org in unit.Organisation)
-                {
-                    var orgUnit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(o => o.Name != "Private");
-                    if(orgUnit == null)
-                    {
-                        org.InsuranceAttributes.Add(new InsuranceAttribute(null, org.OrganisationType.Name));
-                        await _customerInformationRepository.AddAsync(unit);
-                    }
-                    else
-                    {
-                        org.InsuranceAttributes.Add(new InsuranceAttribute(null, orgUnit.Name));
-                        await _customerInformationRepository.AddAsync(unit);
-                    }
-                }
+                owner.Owner.InsuranceAttributes.Add(new InsuranceAttribute(null, owner.Owner.OrganisationType.Name));
+                await _customerInformationRepository.AddAsync(owner);
             }
         }
     }
