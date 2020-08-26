@@ -200,9 +200,6 @@ namespace DealEngine.Domain.Entities
         }
 
 		public virtual Location OriginalLocation { get; protected set; }
-
-		public virtual ClientInformationSheet ClientInformationSheet { get; set; }
-
         public virtual string Street { get; set; }
         public virtual string Suburb { get; set; }
         public virtual string Postcode { get; set; }
@@ -228,9 +225,6 @@ namespace DealEngine.Domain.Entities
 
         public virtual Location CloneForNewSheet (ClientInformationSheet newSheet)
 		{
-			if (ClientInformationSheet == newSheet)
-				throw new Exception ("Cannot clone location for original information");
-
 			Location newLocation = new Location (newSheet.CreatedBy);
 			newLocation.Street = Street;
 			newLocation.Suburb = Suburb;

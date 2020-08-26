@@ -76,8 +76,8 @@ namespace DealEngine.Services.Impl
                 return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
-                    // MaxDepth = 2,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        MaxDepth = 2,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         DateParseHandling = DateParseHandling.DateTime
