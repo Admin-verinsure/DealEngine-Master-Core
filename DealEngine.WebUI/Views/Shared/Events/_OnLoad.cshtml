@@ -51,6 +51,7 @@
                     }
 
                     if (Element == null) {
+                        debugger;
                         var Id = Type + "." + Field;
                         Element = document.getElementById(Id);
                         Value = OutPut[obj][Field];
@@ -71,7 +72,6 @@
                             }
                         }
                         else if (Element.tagName == "SELECT") {
-                            debugger;
                             for (var o = 0; o < Element.options.length; o++) {
                                 if (Element.options[o].value == Value.toString()) {
                                     Element.options[o].selected = true;
