@@ -655,7 +655,6 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    //if (action == "EditClient")
                     return View("EditClient", model);
                 }
             }
@@ -950,15 +949,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-
-       [HttpPost]
-        public void ExportExcel(DataTable values)
-        {
-
-            //var json = json.
-        }
-
-
         [HttpPost]
         public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
         {
@@ -1019,72 +1009,21 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetClientDetails(String OwnerId, string actionName)
+        public async Task<IActionResult> EditClients(string ProgrammeId)
         {
-            User user = null;
-            Organisation ownerorg = null;
-            string email = null;
-            OrganisationViewModel orgmodel = new OrganisationViewModel();
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await CurrentUser();
-            //    ownerorg = await _organisationService.GetOrganisation(Guid.Parse(OwnerId));
-            //    orgmodel.OrganisationName = ownerorg.Name;
-            //    var userList = await _userService.GetAllUserByOrganisation(ownerorg);
-            //    orgmodel.ID = Guid.Parse(OwnerId);
-            //    orgmodel.Email = ownerorg.Email;
-            //    if(actionName == "ClientDetails")
-            //    {
-            //        return Json(orgmodel);
-            //    }
-            //    else
-            //    {
-            //        orgmodel.Users = userList;
-            //        var id = OwnerId;
-            //        List<User> userlist = userList;
-            //        return View("getClientDetails", orgmodel);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DisplayClientUser(Guid Id, List<User> UserList)
-        {
-            OrganisationViewModel orgmodel = new OrganisationViewModel();
-            return View("getClientDetails", orgmodel);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> GetUserDetails(Guid UserID)
-        {
-            User user = null;
-            Organisation ownerorg = null;
-            string email = null;
-            OrganisationViewModel orgmodel = new OrganisationViewModel();
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    user = await _userService.GetUserById(UserID);
-            //    orgmodel.ID = user.Id;
-            //    orgmodel.FirstName = user.FirstName;
-            //    orgmodel.LastName = user.LastName;
-            //    orgmodel.Email = user.Email;
-            //    orgmodel.Phone = user.Phone;
-            //    return Json(orgmodel);
-               
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
+            User user = null;            
+            try
+            {
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                EditClientsViewModel model = new EditClientsViewModel(programme);
+                return View(model);                
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]

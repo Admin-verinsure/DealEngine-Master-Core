@@ -28,20 +28,20 @@
             </li>
 
             <li class="nav-item">
-                <a onclick="location.href='@Url.Action("IssueUIS", "Home", new { ProgrammeId=@Model.ProgrammeId ,actionname="EditClient"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
+                <a onclick="location.href='@Url.Action("EditClients", "Home", new { ProgrammeId=@Model.ProgrammeId })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
             </li>
             <li class="nav-item">
-                @*<a class="btn btn-primary btn-sm" href="~/Home/GetBreakdown?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Breakdown</a>*@                
+                @*<a class="btn btn-primary btn-sm" href="~/Home/GetBreakdown?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Breakdown</a>*@
             </li>
-
+            <!--<li class="nav-item">
+                <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.ProgrammeId" class="btn btn-primary btn-sm" style="color:white">View Report </a>-->
+                @*<a onclick="location.href='@Url.Action("ReportView", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>*@
+            <!--</li>-->
         }
         @*<li class="nav-item">
             <a onclick="location.href='@Url.Action("getuserdetails", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>
         </li>*@
-        <li class="nav-item">
-            <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.ProgrammeId" class="btn btn-primary btn-sm" style="color:white">View Report </a>
-            @*<a onclick="location.href='@Url.Action("ReportView", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>*@
-        </li>
+
 
     </ul>
 

@@ -871,7 +871,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> AONOrganisationRefactor()
         {
-            await _organisationService.RefactorOrganisations();
+            await _clientInformationService.Testing();
             return Redirect("~/Home/Index");
         }
     }

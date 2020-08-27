@@ -4,16 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
-using DealEngine.Infrastructure.BaseLdap.Interfaces;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Ldap.Interfaces;
 using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using NHibernate.Mapping;
 using AutoMapper;
-using Newtonsoft.Json;
-using System.Diagnostics;
+
 
 namespace DealEngine.Services.Impl
 {
@@ -114,23 +111,9 @@ namespace DealEngine.Services.Impl
             {
                 UpdateOrganisationUnit(organisation, collection);
                 UpdateInsuranceAttribute(organisation, collection);
-                UpdateOrganisationType(organisation, collection);
             }
 
             await Update(organisation);
-        }
-
-        private void UpdateOrganisationType(Organisation organisation, IFormCollection collection)
-        {
-            try
-            {
-                string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-                organisation.OrganisationType.Name = OrganisationTypeName;
-            }
-            catch(Exception ex)
-            {
-                new Exception("Organisation Type update failed " + ex.Message);
-            }
         }
 
         private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
@@ -194,14 +177,20 @@ namespace DealEngine.Services.Impl
 
         private async Task<Organisation> UpdateOrganisation(IFormCollection collection, Organisation organisation)
         {
-            var jsonOrganisation =  (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
-            if (organisation.OrganisationType.Name == "Person - Individual" &&
-                user != null)
+
+            if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
-                organisation.Name = user.FirstName + " " + user.LastName;
-            }
+                organisation.OrganisationType.Name = OrganisationType;
+                if (OrganisationType == "Person - Individual" && user != null)
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
+                }
+            }           
+
             return organisation;
         }
 
@@ -230,7 +219,7 @@ namespace DealEngine.Services.Impl
             var organisations = new List<Organisation>();
             foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
             {
-                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Type == "Advisor" || u.Type == "Nominated Representative");
+                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
                 if (unit != null)
                 {
                     organisations.Add(organisation);
@@ -391,7 +380,7 @@ namespace DealEngine.Services.Impl
             //turn off IA Organisations
             //run once for Units
             //Run again to Create Attributes
-            await AdvisoryUnit();
+            //await AdvisoryUnit();
             //turn off IA Organisations
             //await PersonnelUnit();
             //await PMINZ();
@@ -559,6 +548,31 @@ namespace DealEngine.Services.Impl
             //}
 
             Console.WriteLine(value);
+        }
+
+        public async Task UpdateAdvisorDates(IFormCollection collection)
+        {
+            var guids = collection["OrganisationId"].ToString().Split(',');
+            var DODates = collection["DORetroactiveDate"].ToString().Split(',');
+            var PIDates = collection["PIRetroactiveDate"].ToString().Split(',');
+            for (int i = 0; i < guids.Count(); i++) 
+            {
+                Guid.TryParse(guids[i], out Guid OrganisationId);
+                if (OrganisationId != Guid.Empty)
+                {
+                    var organistion = await GetOrganisation(OrganisationId);
+                    if(organistion != null)
+                    {
+                        var unit = (AdvisorUnit)organistion.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                        if(unit != null)
+                        {
+                            unit.DORetroactivedate = DateTime.Parse(DODates[i]);
+                            unit.PIRetroactivedate = DateTime.Parse(PIDates[i]);
+                            await Update(organistion);
+                        }
+                    }
+                }
+            }
         }
 
         //      private async Task PersonnelUnit()

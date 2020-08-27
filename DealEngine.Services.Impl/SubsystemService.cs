@@ -45,7 +45,16 @@ namespace DealEngine.Services.Impl
 
         public async Task<bool> CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
-            var principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
+            List<Organisation> principalOrganisations = null;
+            if (sheet.Programme.BaseProgramme.Name == "TripleA Programme")
+            {
+                principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
+            }
+            else
+            {
+                principalOrganisations = await _organisationService.GetNZFSGSubsystemAdvisors(sheet);
+            }
+           
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
             try
             {
