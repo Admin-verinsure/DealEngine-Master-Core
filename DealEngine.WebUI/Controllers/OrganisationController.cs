@@ -61,10 +61,19 @@ namespace DealEngine.WebUI.Controllers
                 {
                     return Json(true);
                 }
-                if (organisation.Id != OrganisationId && organisation.Id != sheet.Owner.Id)
+                if(sheet.Owner.Id == OrganisationId)
                 {
-                    return Json(true);
+                    return Json(false);
                 }
+                if (sheet.Organisation.Contains(organisation))
+                {                    
+                    return Json(false);
+                }
+
+                //if (organisation.Id != OrganisationId && OrganisationId != sheet.Owner.Id)
+                //{
+                //    return Json(true);
+                //}
             }
             return Json(false);
         }

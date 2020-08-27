@@ -201,17 +201,13 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> GetOrganisationByEmail(string organisationEmail)
         {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
+            var list = await GetAllOrganisationsByEmail(organisationEmail);
+            return list.OrderByDescending(i => i.DateCreated).FirstOrDefault();
         }
 
         public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
         {
             return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
-        }
-
-        public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
-        {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed == true);
         }
 
         public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
