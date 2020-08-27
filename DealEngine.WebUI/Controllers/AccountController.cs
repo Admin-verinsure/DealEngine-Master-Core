@@ -340,11 +340,31 @@ namespace DealEngine.WebUI.Controllers
                         deUser = await _userManager.FindByNameAsync(userName);
                         
                     }
-                    await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    var result = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: true);
 
                     return LocalRedirect("~/Home/Index");
                 }
-                
+/*
+              else if (resultCode == 49) //	LDAP_INVALID_CREDENTIALS               
+                {
+                  deUser = await _userManager.FindByNameAsync(userName);
+                  var result = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: true);
+                  if (result.IsLockedOut == true)
+                  {
+                        // tell them they've been locked out
+                        ModelState.AddModelError(string.Empty, "You are locked out.");
+                        // Update record so that we know they're locked out for next time
+                        // Need to update
+                        // what else?
+                    }
+                    // AccessFailedCount < MaxFailedAccessAttempts
+                    return View(viewModel);
+                }
+               else
+                {
+                    var test = "test";
+                }
+*/
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);
 
