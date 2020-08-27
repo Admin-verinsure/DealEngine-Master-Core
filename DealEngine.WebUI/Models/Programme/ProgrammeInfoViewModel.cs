@@ -53,7 +53,7 @@ namespace DealEngine.WebUI.Models.Programme
         public bool EGlobalIsActiveOrNot { get; set; }
         public ClientProgramme ClientProgramme { get; set; }
         public IList<ProductInfoViewModel> Product { get; set; }
-        public IList<Organisation> Owner { get; set; }
+        public IList<Domain.Entities.Organisation> Owner { get; set; }
         public IList<EGlobalSubmission> EGlobalSubmissions { get; set; }
         public IList<EGlobalResponse> EGlobalResponses { get; set; }
         public User BrokerContactUser { get; set; }

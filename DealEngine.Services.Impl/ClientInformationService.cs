@@ -86,21 +86,6 @@ namespace DealEngine.Services.Impl
             return list;
         }
 
-        //public async Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId)
-        //{
-        //    var list = new List<ClientInformationSheet>();
-        //    var sheetList = await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
-        //    foreach (var sheet in sheetList)
-        //    {
-        //        var isBaseClass = await IsBaseClass(sheet);
-        //        if (isBaseClass)
-        //        {
-        //            list.Add(sheet);
-        //        }
-        //    }
-        //    return list;
-        //}
-
         public async Task<bool> IsBaseClass(ClientInformationSheet sheet)
         {
             var objectType = sheet.GetType();
@@ -392,6 +377,11 @@ namespace DealEngine.Services.Impl
                 }
                 await _customerInformationRepository.UpdateAsync(sheet);
             }
+        }
+
+        public async Task<List<ClientInformationSheet>> GetAllInformationSheets()
+        {
+            return await _customerInformationRepository.FindAll().Where(s=>s.DateDeleted == null).ToListAsync();
         }
     }
 

@@ -68,7 +68,6 @@ namespace DealEngine.Services.Impl
             return obj;
         }
 
-
         public async Task<string> GetSerializedObject(object model)
         {
             try

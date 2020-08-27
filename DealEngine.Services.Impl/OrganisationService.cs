@@ -346,12 +346,9 @@ namespace DealEngine.Services.Impl
             return Organisation;
         }
 
-        public async Task<Organisation> GetAnyRemovedAdvisor(string email)
+        public async Task<List<Organisation>> GetAllRemovedOrganisations()
         {
-            var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-            var organisations = await GetAllOrganisationsByEmail(email);
-            var organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
-            return organisation;
+            return await _organisationRepository.FindAll().Where(o=>o.Removed == true && o.DateDeleted == null).ToListAsync();
         }
 
         private void UpdateLDap(Organisation organisation)

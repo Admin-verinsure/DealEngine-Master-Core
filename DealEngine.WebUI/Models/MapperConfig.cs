@@ -53,7 +53,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Type, map => map.Ignore())
                 .ForMember(dest => dest.CreatedBy, map => map.Ignore());
 
-            CreateMap<Organisation, Organisation>()
+            CreateMap<Domain.Entities.Organisation, Domain.Entities.Organisation>()
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
                 .ForMember(dest => dest.Id, map => map.Ignore())
@@ -113,7 +113,7 @@ namespace DealEngine.WebUI.Models
             CreateMap<Location, LocationViewModel>();
             CreateMap<Vehicle, VehicleViewModel>();
             CreateMap<OrganisationalUnit, OrganisationalUnitViewModel>();
-            CreateMap<Organisation, OrganisationViewModel>();
+            CreateMap<Domain.Entities.Organisation, OrganisationViewModel>();
             CreateMap<BusinessActivity, BusinessActivityViewModel>();
 
             // Policy

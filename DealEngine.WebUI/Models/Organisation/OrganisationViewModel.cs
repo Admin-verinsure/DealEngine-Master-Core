@@ -14,7 +14,7 @@ namespace DealEngine.WebUI.Models
         public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser)
         {
             User = new User(null, Guid.NewGuid());
-            Organisations = new List<Organisation>();            
+            Organisations = new List<Domain.Entities.Organisation>();            
             OrganisationTypes = GetOrganisationTypes();
             if (ClientInformationSheet != null)
             {
@@ -444,7 +444,7 @@ namespace DealEngine.WebUI.Models
         public Domain.Entities.Programme Programme { get; set; }
         public Guid ID { get; set; }
         public Guid ProgrammeId { get; set; }
-        public Organisation Organisation { get; set; }
+        public Domain.Entities.Organisation Organisation { get; set; }
         public User User { get; set; }
         [Display(Name ="Type")]
         [JsonIgnore]
@@ -457,7 +457,7 @@ namespace DealEngine.WebUI.Models
         [JsonIgnore]
         public IList<SelectListItem> HasRegisteredOptions { get; set; }
         [JsonIgnore]
-        public IList<Organisation> Organisations { get; set; }
+        public IList<Domain.Entities.Organisation> Organisations { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasPrincipalAdvisor { get; set; }
         [JsonIgnore]

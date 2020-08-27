@@ -22,10 +22,10 @@ namespace DealEngine.Services.Interfaces
         Task<List<Organisation>> GetTripleASubsystemAdvisors(ClientInformationSheet sheet);
         Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
         Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
-        Task<Organisation> GetAnyRemovedAdvisor(string email);
         Task Update(Organisation organisation);
         Task RefactorOrganisations();
         Task UpdateAdvisorDates(IFormCollection collection);
+        Task<List<Organisation>> GetAllRemovedOrganisations();
     }
 }
 
