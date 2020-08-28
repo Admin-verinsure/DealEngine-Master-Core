@@ -869,9 +869,9 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AONOrganisationRefactor()
+        public async Task<IActionResult> DeveloperTool()
         {
-            await _clientInformationService.Testing();
+            await _clientInformationService.DeveloperTool();
             return Redirect("~/Home/Index");
         }
     }
