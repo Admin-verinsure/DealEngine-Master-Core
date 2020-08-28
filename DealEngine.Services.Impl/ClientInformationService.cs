@@ -335,46 +335,12 @@ namespace DealEngine.Services.Impl
             return _mapper.Map<ClientInformationSheet>(clientInformationSheet);
         }
 
-        public async Task Testing()
+        public async Task DeveloperTool()
         {
-            var sheets = await _customerInformationRepository.FindAll().ToListAsync();
-            var owners = sheets.Where(s => s.Owner.InsuranceAttributes.Count == 0).ToList();
-            var parties = sheets.Where(s => s.Organisation.Any(o => o.InsuranceAttributes.Count == 0)).ToList();
-
-            foreach (var sheet in owners)
+            var clientSheets = await _customerInformationRepository.FindAll().Where(s => s.Programme.BaseProgramme.Name == "TripleA Programme").ToListAsync();
+            foreach(var sheet in clientSheets)
             {
-                if (sheet.Owner.InsuranceAttributes.Count == 0)
-                {
-                    if (sheet.Owner.OrganisationType != null)
-                    {
-                        sheet.Owner.InsuranceAttributes.Add(new InsuranceAttribute(null, sheet.Owner.OrganisationType.Name));
-                    }
-                }
-
-                await _customerInformationRepository.UpdateAsync(sheet);
-            }
-
-
-            foreach (var sheet in parties)
-            {
-                if(sheet.Owner.InsuranceAttributes.Count == 0)
-                {
-                    if (sheet.Owner.OrganisationType != null)
-                    {
-                        sheet.Owner.InsuranceAttributes.Add(new InsuranceAttribute(null, sheet.Owner.OrganisationType.Name));                        
-                    }
-                }
-
-                foreach(var org in sheet.Organisation)
-                {
-                    if (org.InsuranceAttributes.Count == 0)
-                    {
-                        if (org.OrganisationType != null)
-                        {
-                            org.InsuranceAttributes.Add(new InsuranceAttribute(null, org.OrganisationType.Name));
-                        }
-                    }
-                }
+                sheet.AddAnswer("DAOLIViewModel.HasDAOLIOptions", "1");
                 await _customerInformationRepository.UpdateAsync(sheet);
             }
         }
