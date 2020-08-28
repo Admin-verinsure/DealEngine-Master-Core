@@ -218,7 +218,10 @@ namespace DealEngine.Services.Impl
                 var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
                 if (unit != null)
                 {
-                    organisations.Add(organisation);
+                    if (!unit.IsPrincipalAdvisor)
+                    {
+                        organisations.Add(organisation);
+                    }
                 }
             }
             return organisations;
