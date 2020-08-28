@@ -24,6 +24,7 @@ namespace DealEngine.Services.Interfaces
         Task RemoveOrganisationFromSheets(Organisation organisation);
         Task<ClientInformationSheet> GetClone(ClientInformationSheet clientInformationSheet);
         Task Testing();
+        Task<List<ClientInformationSheet>> GetAllInformationSheets();
     }
 }
 

@@ -11,7 +11,7 @@ namespace DealEngine.WebUI.Models.Authorization
         public IList<Claim> ClaimList { get; set; }
         public IList<IdentityRole> RoleList { get; set; }
         public IList<User> UserList { get; set; }
-        public IList<Organisation> Organisations { get; set; }
+        public IList<Domain.Entities.Organisation> Organisations { get; set; }
     }
 }
 
