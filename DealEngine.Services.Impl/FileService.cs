@@ -10,6 +10,8 @@ using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using SystemDocument = DealEngine.Domain.Entities.Document;
+
 
 namespace DealEngine.Services.Impl
 {
@@ -811,7 +813,8 @@ namespace DealEngine.Services.Impl
 			return (T)doc;
 		}
 
-        private List<KeyValuePair<string, string>> GetMergeFields(ClientAgreement agreement, ClientInformationSheet clientInformationSheet)
+       
+            private List<KeyValuePair<string, string>> GetMergeFields(ClientAgreement agreement, ClientInformationSheet clientInformationSheet)
         {
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", agreement.InsuredName));
@@ -1119,6 +1122,30 @@ namespace DealEngine.Services.Impl
         {
             return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
         }
+
+
+
+        //public async Task<IActionResult> GetPDF(Guid id)
+        //{
+        //    User user = null;
+
+        //    SystemDocument doc = await _documentRepository.GetByIdAsync(id);
+        //    string extension = "";
+        //    var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+        //    // DOCX & HTML
+        //    string html = FromBytes(doc.Contents);
+
+
+        //    var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+        //    htmlToPdfConv.License.SetLicenseKey(
+        //       "PDF_Generator_Src_Examples_Pack_250473855326",
+        //       "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
+        //   );            // for Linux/OS-X: "wkhtmltopdf"
+
+        //    var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+
+        //    return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
+        //}
 
         #endregion
     }

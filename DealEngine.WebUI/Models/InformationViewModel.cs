@@ -39,6 +39,7 @@ namespace DealEngine.WebUI.Models
         public string Status { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
+        public string DeclarationMessage { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }

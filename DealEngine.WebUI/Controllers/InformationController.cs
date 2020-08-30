@@ -16,6 +16,7 @@ using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
 
+
 namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
@@ -56,6 +57,7 @@ namespace DealEngine.WebUI.Controllers
         IClientInformationAnswerService _clientInformationAnswer;
         IOrganisationTypeService _organisationTypeService;
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        //IGeneratePdf _generatePdf;
 
 
         public InformationController(
@@ -94,6 +96,7 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
+            //IGeneratePdf generatePdf,
 
             IMapper mapper
             )
@@ -134,6 +137,7 @@ namespace DealEngine.WebUI.Controllers
             _mapper = mapper;
             _emailService = emailService;
             _clientProgrammeRepository = clientProgrammeRepository;
+            //_generatePdf = generatePdf;
 
         }
 
@@ -243,6 +247,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+     
 
         [HttpGet]
         public async Task<IActionResult> PartialViewProgramme(Guid id, String name = "", List<string> viewlist = null)
@@ -478,6 +483,8 @@ namespace DealEngine.WebUI.Controllers
 
 
                 //model.ClaimProducts = availableProducts;
+                model.DeclarationMessage = sheet.Programme.BaseProgramme.Declaration;
+                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
 
                 model.Status = sheet.Status;
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
