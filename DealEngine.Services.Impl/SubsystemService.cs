@@ -106,7 +106,16 @@ namespace DealEngine.Services.Impl
                         clientProgramme.SubClientProgrammes.Add(subProg);
                     }
                 }
-            }catch(Exception ex)
+
+                //send out sub UIS invitation email
+                if (subClientSheet.Status == "Not Started")
+                {
+                    await _emailService.SendSystemEmailLogin(org.Email);
+                    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                }
+
+            }
+            catch(Exception ex)
             {
                 Exception subSystem = new Exception("Create Sub process Failed", ex);
                 throw subSystem;
