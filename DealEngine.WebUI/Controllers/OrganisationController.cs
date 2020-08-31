@@ -20,8 +20,6 @@ namespace DealEngine.WebUI.Controllers
     {
         ISerializerationService _serialiserService;
         IOrganisationService _organisationService;
-        IOrganisationTypeService _organisationTypeService;              
-        IUnitOfWork _unitOfWork;
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<OrganisationController> _logger;
@@ -34,8 +32,6 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
-            IOrganisationTypeService organisationTypeService, 
-            IUnitOfWork unitOfWork,           
             IUserService userRepository
             )
             : base (userRepository)
@@ -45,9 +41,7 @@ namespace DealEngine.WebUI.Controllers
             _clientInformationService = clientInformationService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
-            _organisationService = organisationService;            
-            _organisationTypeService = organisationTypeService;
-            _unitOfWork = unitOfWork;          
+            _organisationService = organisationService;                    
         }
 
         [HttpPost]

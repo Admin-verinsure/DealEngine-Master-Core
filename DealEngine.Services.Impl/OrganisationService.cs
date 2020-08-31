@@ -182,13 +182,13 @@ namespace DealEngine.Services.Impl
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
 
+            if (organisation.OrganisationType.Name == "Person - Individual" && user != null)
+            {
+                organisation.Name = user.FirstName + " " + user.LastName;
+            }
             if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
-                organisation.OrganisationType.Name = OrganisationType;
-                if (OrganisationType == "Person - Individual" && user != null)
-                {
-                    organisation.Name = user.FirstName + " " + user.LastName;
-                }
+                organisation.OrganisationType.Name = OrganisationType;                
             }           
 
             return organisation;
@@ -209,6 +209,8 @@ namespace DealEngine.Services.Impl
         {
             return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
         }
+
+
 
         public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
         {
