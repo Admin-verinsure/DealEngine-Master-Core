@@ -18,6 +18,9 @@ namespace DealEngine.Infrastructure.AppInitialize
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = false;
                 options.User.RequireUniqueEmail = true;
+                //options.Lockout.AllowedForNewUsers = true;
+                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.MaxValue;
+                //options.Lockout.MaxFailedAccessAttempts = 1;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+'";
             })
                 .AddSignInManager<SignInManager<IdentityUser>>()

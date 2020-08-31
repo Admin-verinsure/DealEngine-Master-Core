@@ -2303,28 +2303,14 @@ namespace DealEngine.WebUI.Controllers
                 {
                     boatUse = model.ToEntity(user);
                 }
-
                 model.UpdateEntity(boatUse);
-
-
-                //if (model.BoatUseBoat != Guid.Empty)
-                //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
-
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.BoatUses.Add(boatUse);
                     await uow.Commit().ConfigureAwait(false);
                 }
-                model.BoatUseId = boatUse.Id;
 
-
-                var boatUses = new List<BoatUseViewModel>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(bu));
-                }
-
-                return Json(model);
+                return Ok();
             }
             catch (Exception ex)
             {

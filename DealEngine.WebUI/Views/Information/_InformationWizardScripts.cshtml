@@ -1436,6 +1436,7 @@
     }
 
     function SetCurrentTab(tabPaneId) {
+        debugger;
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
 };
@@ -3518,7 +3519,7 @@ function showAccordionPanel(id, panelNo) {
         event.preventDefault();
         var boatUseCategory = $('#AddBoatUseCategory').val();
         var boatUseRaceCategory = $('#AddBoatUseRaceCategory').val();
-                var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
+        var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
 
         var result = true;
         if (boatUseCategory == "" ) {
@@ -3557,31 +3558,22 @@ function showAccordionPanel(id, panelNo) {
     function AddBoatUse(tabId, tableId) {
         var informationId = $('#AnswerSheetId').serialize();
         $('#getBoatUseModal').show();
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("AddBoatUse", "Services")',
-        type: "POST",
-        data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
-    })
-    .done(function (data) {
-        //$.smallBox({
-        //    title: "Boat Use has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
-        $(tableId).trigger( 'reloadGrid' );
-        $('#tblCeasedBoatUse').trigger( 'reloadGrid' );
-        $('#SelectedBoatUse').trigger('chosen:updated');
-        $(tabId + " :input").val("");
-                $('#getBoatUseModal').hide();
-
-    })
+        $.ajax({
+            url: '@Url.Action("AddBoatUse", "Services")',
+            type: "POST",
+            data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
+        })
+        .done(function (data) {
+            $(tableId).trigger( 'reloadGrid' );
+            $('#tblCeasedBoatUse').trigger( 'reloadGrid' );
+            $('#SelectedBoatUse').trigger('chosen:updated');
+            $(tabId + " :input").val("");
+            $('#getBoatUseModal').hide();
+        })
         .fail(function (jqXHR, textStatus, errorThrown) {
-                $('#getBoatUseModal').hide();
-
-        alert("There was an error while trying to save the Boat Use.");
-    });
+            $('#getBoatUseModal').hide();
+            alert("There was an error while trying to save the Boat Use.");
+        });
     };
 
     function validateIP() {
@@ -3732,9 +3724,7 @@ function showAccordionPanel(id, panelNo) {
         selectedBoatUseCategory = "";
         var informationId = $('#AnswerSheetId').serialize();
         if (live == true) {
-
-
-                $('#SelectedBoatUse').trigger('chosen:updated');
+            $('#SelectedBoatUse').trigger('chosen:updated');
             var boatUseEffectiveDate = $('#BoatUseLiveEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseLiveCeaseDateModal').serialize();
             var boatUseNotes = $('#BoatUseLiveNotesModal').serialize();
@@ -3781,8 +3771,6 @@ function showAccordionPanel(id, panelNo) {
         }
 
         if (race == true) {
-
-
             var boatUseEffectiveDate = $('#BoatUseRaceEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseRaceCeaseDateModal').serialize();
             var boatUseNotes = $('#BoatUseRaceNotesModal').serialize();
@@ -3805,8 +3793,6 @@ function showAccordionPanel(id, panelNo) {
                 //iconSmall: "fa fa-check bounce animated",
                 //timeout: 4000
                 //});
-
-
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
                 $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
@@ -3944,8 +3930,7 @@ function showAccordionPanel(id, panelNo) {
 async: true
     })
         .done(function (data) {
-            debugger;
-
+        debugger;
         $('#NamedPartyOrganisationId').val(data.id);
         $('#NPOrgName').val(data.organisationName);
         $('#NPOrgPhone').val(data.organisationPhone);
@@ -3958,63 +3943,57 @@ async: true
 
 
     function EditBoatUse(classId, boatUseId) {
-                            event.preventDefault();
-
+        debugger;
+        event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
         var postData = {
-		'boatUseId': boatUseId,
-		'answerSheetId': _sheetId
-	};
-    $.ajax({
-        // change back once mono decides to fix
+		    'boatUseId': boatUseId,
+		    'answerSheetId': _sheetId
+	    };
+        $.ajax({
         url: '@Url.Action("GetBoatUse", "Services")',
         type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatUseId: boatUseId, answerSheetId : _sheetId })
-        data: postData,
-        async: true
-    })
-        .done(function (data) {
-
-        $('#BoatUseId.' + classId).val(data.boatUseId);
-        $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
-        $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
-        $('#BoatUseRace.' + classId).val(data.boatUseRace);
-        $('#BoatUseRaceCategory.' + classId).val(data.boatUseRaceCategory);
-        $('#BoatUseRaceUseSpinnakers.' + classId).val(data.boatUseRaceUseSpinnakers);
-        $('#BoatUseRaceNotes.' + classId).val(data.boatUseRaceNotes);
-        $('#BoatUseLiveNotes.' + classId).val(data.boatUseLiveNotes);
-        $('#BoatUseEffectiveDate.' + classId).val(data.boatUseEffectiveDate);
-        $('#BoatUseCeaseDate.' + classId).val(data.boatUseCeaseDate);
+        data: postData
+        // data: JSON.stringify({ OUselect: oUselect}),
+        // contentType: "application/json; charset=utf-8"
+        }).done(function (data) {
+            debugger;
+            $('#BoatUseId.' + classId).val(data.boatUseId);
+            $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
+            $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
+            $('#BoatUseRace.' + classId).val(data.boatUseRace);
+            $('#BoatUseRaceCategory.' + classId).val(data.boatUseRaceCategory);
+            $('#BoatUseRaceUseSpinnakers.' + classId).val(data.boatUseRaceUseSpinnakers);
+            $('#BoatUseRaceNotes.' + classId).val(data.boatUseRaceNotes);
+            $('#BoatUseLiveNotes.' + classId).val(data.boatUseLiveNotes);
+            $('#BoatUseEffectiveDate.' + classId).val(data.boatUseEffectiveDate);
+            $('#BoatUseCeaseDate.' + classId).val(data.boatUseCeaseDate);
             $('#BoatUseCeaseReason.' + classId).val(data.boatUseCeaseReason);
-
             UpdateChosen();
             vesselUseCategory();
-                    $('#getDetailsModal').hide();
-
+            $('#getDetailsModal').hide();
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            $('#getDetailsModal').hide();
+            alert("Unable to get Vessel details.");
         });
-
-};
+    };                                          
 
     function EditRegisteredMotorVehicle(classId, vehicleId) {
-                            event.preventDefault();
-
+        event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         var postData = {
 		'vehicleId': vehicleId,
 		'answerSheetId': _sheetId
-	};
-               $('#getDetailsModal').show();
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("GetVehicle", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ vehicleId : vehicleId, answerSheetId : _sheetId })
-        data: postData,
-        async: true
-    })
+	    };
+        $('#getDetailsModal').show();
+        $.ajax({
+            url: '@Url.Action("GetVehicle", "Services")',
+            type: "Post",
+            data: postData,
+            async: true
+        })
         .done(function (data) {
 
         $('#getDetailsModal').hide();
@@ -6169,6 +6148,7 @@ async: true
     }
 
     function vesselUseCategory() {
+        debugger;
         var boatusecategory = document.getElementById("BoatUseCategory");
         var selectedBoatUseCategory = boatusecategory.options[boatusecategory.selectedIndex].value;
         var boatUseLiveNotesSection = document.getElementById("BoatUseLiveNotesSection");
@@ -6186,33 +6166,32 @@ async: true
             $(SpinnakersSection).show('2000');
             $(boatUseRaceNotesSection).show('2000');
             $(boatUseLiveNotesSection).hide();
-
         }
     }
 
-    function AddvesselUseCategory() {
+    function AddBoatUseCategory() {
         var boatusecategory = document.getElementById("AddBoatUseCategory");
         var selectedBoatUseCategory = boatusecategory.options[boatusecategory.selectedIndex].value;
         var boatUseLiveNotesSection = document.getElementById("AddBoatUseLiveNotesSection");
-        var SpinnakersSection = document.getElementById("AddspinnakersSection")
-        var raceCategorySection = document.getElementById("AddRaceCategorySection")
-        var boatUseRaceNotesSection = document.getElementById("AddBoatUseRaceNotesSection")
+        var SpinnakersSection = document.getElementById("AddspinnakersSection");
+        var raceCategorySection = document.getElementById("AddRaceCategorySection");
+        var boatUseRaceNotesSection = document.getElementById("AddBoatUseRaceNotesSection");
+        debugger;
         if (selectedBoatUseCategory == "LiveOnBoard") {
-
-            $(boatUseLiveNotesSection).show('2000');
+            $(boatUseLiveNotesSection).show();
             $(SpinnakersSection).hide();
             $(raceCategorySection).hide();
-            $(boatUseRaceNotesSection).hide();
-
-        } else if (selectedBoatUseCategory == "Race") {
-            $(raceCategorySection).show('2000');
+            $(boatUseRaceNotesSection).hide();                    
+        }
+        else if (selectedBoatUseCategory == "Race") {
+            $(raceCategorySection).show();
             $(boatUseLiveNotesSection).hide();
-            $(SpinnakersSection).show('2000');
-            $(boatUseRaceNotesSection).show('2000');
+            $(SpinnakersSection).show();
+            $(boatUseRaceNotesSection).show();
             $(boatUseLiveNotesSection).hide();
         }
+    }     
 
-    }
 
     function AdminUpdated() {
         var AdminUser = $('#AdminSection');

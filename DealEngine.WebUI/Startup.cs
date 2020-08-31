@@ -64,14 +64,6 @@ namespace DealEngine.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
             services.AddMvc();
-/*
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Lockout.AllowedForNewUsers = true;
-                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.MaxValue;
-                options.Lockout.MaxFailedAccessAttempts = 1;
-            });
-*/
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
