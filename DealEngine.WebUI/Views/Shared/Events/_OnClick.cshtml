@@ -27,7 +27,7 @@
     function RemoveOrganisation(organisationId, AccordionId) {
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
-            url: '@Url.Action("RemoveOrganisation", "Services")',
+            url: '@Url.Action("RemoveOrganisation", "Organisation")',
             type: "POST",
             data: { OrganisationId: organisationId },
             success: function (Data) {
@@ -45,7 +45,7 @@
     function RestoreOrganisation(organisationId, AccordionId) {
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
-            url: '@Url.Action("RestoreOrganisation", "Services")',
+            url: '@Url.Action("RestoreOrganisation", "Organisation")',
             type: "POST",
             data: { OrganisationId: organisationId },
             success: function (Data) {

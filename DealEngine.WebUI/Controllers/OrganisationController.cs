@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using DealEngine.Infrastructure.Tasking;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -24,8 +25,10 @@ namespace DealEngine.WebUI.Controllers
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<OrganisationController> _logger;
+        ITaskingService _taskingService;
 
         public OrganisationController(
+            ITaskingService taskingService,
             ISerializerationService serialiserService,
             ILogger<OrganisationController> logger,
             IClientInformationService clientInformationService,
@@ -37,6 +40,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _taskingService = taskingService;
             _serialiserService = serialiserService;
             _clientInformationService = clientInformationService;
             _logger = logger;
@@ -69,11 +73,6 @@ namespace DealEngine.WebUI.Controllers
                 {                    
                     return Json(false);
                 }
-
-                //if (organisation.Id != OrganisationId && OrganisationId != sheet.Owner.Id)
-                //{
-                //    return Json(true);
-                //}
             }
             return Json(false);
         }
@@ -176,80 +175,6 @@ namespace DealEngine.WebUI.Controllers
             return Ok();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateOrganisation()
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var orgUser = await _userService.GetUser("TCMarinaAdmin1");
-                var orgType = Request.Form["OrganisationType"];
-                var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');
-
-                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgType);
-                if (organisationType == null)
-                {
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, orgType);
-                }
-
-                var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-                //InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
-                //if (insuranceAttribute == null)
-                //{
-                //    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
-                //}
-
-                Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
-                if (organisation == null)
-                {
-                    //organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
-                    //organisation.Phone = Request.Form["OrganisationPhone"];
-                    //organisation.Email = Request.Form["OrganisationEmail"];
-                    //organisation.Domain = Request.Form["OrganisationWebsite"];
-                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    //organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
-
-                    //foreach (string MooredType in selectedMooredType)
-                    //{
-                    //    organisation.Marinaorgmooredtype.Add(MooredType);
-                    //}
-
-                    //organisation.InsuranceAttributes.Add(insuranceAttribute);
-                    //insuranceAttribute.IAOrganisations.Add(organisation);
-                    await _organisationService.CreateNewOrganisation(organisation);
-                }
-
-                Location location = new Location(user)
-                {
-                    CommonName = Request.Form["LocationCommonName"],
-                    Country = Request.Form["LocationCountry"],
-                    Suburb = Request.Form["LocationSuburb"],
-                    Street = Request.Form["LocationStreetAddress"],
-                    City = Request.Form["LocationCity"],
-                    Postcode = Request.Form["LocationPostCode"]
-                };
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    OrganisationalUnit ou = new OrganisationalUnit(user, "Main Entrance");
-                    organisation.OrganisationalUnits.Add(ou);
-                    location.OrganisationalUnits.Add(ou);
-                    ou.Locations.Add(location);
-                    await uow.Commit();
-                }
-                
-                return RedirectToAction("AddNewOrganisation", "Organisation");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
         public async Task<IActionResult> SetPrimary(Guid id)
         {
             User user = null;
@@ -272,7 +197,34 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-        }    
-        
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveOrganisation(IFormCollection collection)
+        {
+            User user = await CurrentUser();
+            Guid Id = Guid.Parse(collection["OrganisationId"]);
+            Organisation organisation = await _organisationService.GetOrganisation(Id);
+            organisation.Removed = true;
+            await _organisationService.Update(organisation);
+
+            if(user.UserName== "JDillon")
+            {
+                await _taskingService.JoinOrganisationTask(user, organisation);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreOrganisation(IFormCollection collection)
+        {
+            Guid Id = Guid.Parse(collection["OrganisationId"]);
+            Organisation organisation = await _organisationService.GetOrganisation(Id);
+            organisation.Removed = false;
+            await _organisationService.Update(organisation);
+            return Ok();
+        }
+
     }
 }

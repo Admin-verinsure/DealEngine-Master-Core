@@ -11,6 +11,7 @@ namespace DealEngine.Infrastructure.Tasking
         Task UpdateUserTask(UserTask userTask);
         Task<List<UserTask>> GetUserTasksByMilestone(Milestone milestone);
         Task CreateTask(UserTask task);
+        Task JoinOrganisationTask(User user, Organisation organisation);
     }
 }
 
