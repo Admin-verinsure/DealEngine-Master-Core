@@ -39,6 +39,13 @@ namespace DealEngine.Infrastructure.Tasking
         {
             await _taskRespository.AddAsync(task);
         }
+
+        public Task JoinOrganisationTask(User user, Organisation organisation)
+        {
+            UserTask task = new UserTask(user, organisation);
+            task.Description = "Id Like to join an org";
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitpremium", "pl2millimitpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitpremium", "pl1millimitexcess", "pl2millimitpremium", "pl2millimitexcess", "pl5millimitpremium", "pl5millimitexcess");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -84,36 +84,66 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string strProfessionalBusiness = "Planning / urban design, resource management, local government advice, transport planning, Environmental policy advice, heritage planning, planning commissioner, market research, land management investigations, disputes resolution, master planning, urban design workshops, training, university lecturing.";
+
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
+
             int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = rates["pl1millimitpremium"];
+            decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            int TermLimit2mil = 2000000;
-            decimal TermPremium2mil = rates["pl2millimitpremium"];
-            decimal TermBrokerage2mil = 0m;
+            decimal TermExcess1mil = 0;
+            TermPremium1mil = rates["pl1millimitpremium"];
+            TermExcess1mil = rates["pl1millimitexcess"];
 
-            int TermExcess = 0;
-            TermExcess = 250;
+            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage;
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage;
-
-            ClientAgreementTerm termpl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess);
+            ClientAgreementTerm termpl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess1mil);
             termpl1millimitoption.TermLimit = TermLimit1mil;
             termpl1millimitoption.Premium = TermPremium1mil;
-            termpl1millimitoption.Excess = TermExcess;
+            termpl1millimitoption.BasePremium = TermPremium1mil;
+            termpl1millimitoption.Excess = TermExcess1mil;
             termpl1millimitoption.BrokerageRate = agreement.Brokerage;
             termpl1millimitoption.Brokerage = TermBrokerage1mil;
             termpl1millimitoption.DateDeleted = null;
             termpl1millimitoption.DeletedBy = null;
 
-            ClientAgreementTerm termpl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess);
+            int TermLimit2mil = 2000000;
+            decimal TermPremium2mil = 0m;
+            decimal TermBrokerage2mil = 0m;
+            decimal TermExcess2mil = 0;
+            TermPremium2mil = rates["pl2millimitpremium"];
+            TermExcess2mil = rates["pl2millimitexcess"];
+
+            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
+
+            ClientAgreementTerm termpl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess2mil);
             termpl2millimitoption.TermLimit = TermLimit2mil;
             termpl2millimitoption.Premium = TermPremium2mil;
-            termpl2millimitoption.Excess = TermExcess;
+            termpl2millimitoption.BasePremium = TermPremium2mil;
+            termpl2millimitoption.Excess = TermExcess2mil;
             termpl2millimitoption.BrokerageRate = agreement.Brokerage;
             termpl2millimitoption.Brokerage = TermBrokerage2mil;
             termpl2millimitoption.DateDeleted = null;
             termpl2millimitoption.DeletedBy = null;
+
+            int TermLimit5mil = 5000000;
+            decimal TermPremium5mil = 0m;
+            decimal TermBrokerage5mil = 0m;
+            decimal TermExcess5mil = 0;
+            TermPremium5mil = rates["pl5millimitpremium"];
+            TermExcess5mil = rates["pl5millimitexcess"];
+
+            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
+
+            ClientAgreementTerm termpl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit5mil, TermExcess5mil);
+            termpl5millimitoption.TermLimit = TermLimit5mil;
+            termpl5millimitoption.Premium = TermPremium5mil;
+            termpl5millimitoption.BasePremium = TermPremium5mil;
+            termpl5millimitoption.Excess = TermExcess5mil;
+            termpl5millimitoption.BrokerageRate = agreement.Brokerage;
+            termpl5millimitoption.Brokerage = TermBrokerage5mil;
+            termpl5millimitoption.DateDeleted = null;
+            termpl5millimitoption.DeletedBy = null;
 
             //Referral points per agreement
 
@@ -128,9 +158,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Unlimited excluding known claims or circumstances";
-            agreement.TerritoryLimit = "Australia and New Zealand";
-            agreement.Jurisdiction = "Australia and New Zealand";
+            string retrodate = "Not Applicable";
+            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {
@@ -155,6 +185,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
+
+                //Inception date rule
+                if (DateTime.UtcNow > product.DefaultInceptionDate.AddMonths(1))
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

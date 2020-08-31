@@ -30,6 +30,7 @@ namespace DealEngine.WebUI.Controllers
     //[Authorize]
     public class ServicesController : BaseController
     {
+        IAuthenticationService _authenticationService;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
         IOrganisationalUnitService _organisationalUnitService;
@@ -58,6 +59,7 @@ namespace DealEngine.WebUI.Controllers
 
 
         public ServicesController(
+            IAuthenticationService authenticationService,
             IMapper mapper,
             ILogger<ServicesController> logger,
             IApplicationLoggingService applicationLoggingService,
@@ -82,13 +84,13 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationTypeService organisationTypeService,
             IEmailService emailService,
             IUnitOfWork unitOfWork,
-            IInsuranceAttributeService insuranceAttributeService,
             IReferenceService referenceService,
             IResearchHouseService researchHouseService
             )
 
             : base(userService)
         {
+            _authenticationService = authenticationService;
             _mapper = mapper;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
@@ -2338,26 +2340,6 @@ namespace DealEngine.WebUI.Controllers
         //    throw new Exception("Unfinihed core update");
         //}
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveOrganisation(IFormCollection collection)
-        {
-            Guid Id = Guid.Parse(collection["OrganisationId"]);
-            Organisation organisation = await _organisationService.GetOrganisation(Id);
-            organisation.Removed = true;
-            await _organisationService.Update(organisation);
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RestoreOrganisation(IFormCollection collection)
-        {
-            Guid Id = Guid.Parse(collection["OrganisationId"]);
-            Organisation organisation = await _organisationService.GetOrganisation(Id);
-            organisation.Removed = false;
-            await _organisationService.Update(organisation);
-            return Ok();
-        }
-
         //[HttpPost]
         //public async Task<IActionResult> AddOrganisation(IFormCollection collection)
         //{
@@ -3523,6 +3505,11 @@ namespace DealEngine.WebUI.Controllers
 
                             if (programme.ProgEnableEmail)
                             {
+                                //send password reset
+                                SingleUseToken token = await _authenticationService.GenerateSingleUseToken(email);
+                                string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                                await _emailService.SendPasswordResetEmail(email, token.Id, domain);
+
                                 //send out login email
                                 await _emailService.SendSystemEmailLogin(email);
                                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
@@ -3531,6 +3518,7 @@ namespace DealEngine.WebUI.Controllers
                                     await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
                                 }
                                 //send out information sheet issue notification email
+
                                 await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                             }
 
