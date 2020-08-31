@@ -808,7 +808,8 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 if (sheet.Status == "Not Started")
-                {                    
+                {
+                    model.Status = "Not Started";
                     sheet.Status = "Started";
                     await _clientInformationService.UpdateInformation(sheet);
                 }
