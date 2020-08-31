@@ -264,6 +264,10 @@
                                                 <td>Roles</td>
                                                 <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Product/CreateRole"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
+                                            <tr>
+                                                <td>Manage Organisations</td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
                                         }
                                         @if (User.HasClaim("ViewEmploymentPrincipals", "ViewEmploymentPrincipals"))
                                         {
@@ -304,7 +308,7 @@
                                                 <td>For selecting as Named Parties</td>
                                                 <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
-                                        }                                      
+                                        }
                                         <tr>
                                             <td>File Manager</td>
                                             <td>Manage Images and Upload Files</td>
@@ -409,10 +413,6 @@
                                         <tr>
                                             <td>Manage Admin function</td>
                                             <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Manage Organisations</td>
-                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Manage Permissions</td>

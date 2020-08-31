@@ -37,7 +37,7 @@ namespace DealEngine.WebUI.Models
         public string WaterLocationApproved { get; set; }
 
         public string WaterLocationMooringType { get; set; }
-        public IList<Organisation> LMarinalocation { get; set; }
+        public IList<Domain.Entities.Organisation> LMarinalocation { get; set; }
 
         public WaterLocation ToEntity(User creatingUser)
         {

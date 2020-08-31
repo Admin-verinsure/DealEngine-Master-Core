@@ -176,7 +176,17 @@ namespace DealEngine.WebUI.Controllers
                "PDF_Generator_Src_Examples_Pack_250473855326",
                "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
            );            // for Linux/OS-X: "wkhtmltopdf"
-          
+            htmlToPdfConv.PageFooterHtml = $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            htmlToPdfConv.PageFooterHtml = $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            //htmlToPdfConv.PageHeight = 215;
+            //htmlToPdfConv.PageWidth = 176;
+            //var margins = new PageMargins();
+            //margins.Bottom = 4;
+            //margins.Top = 4;
+            //margins.Left = 5;
+            //margins.Right = 5;
+           // htmlToPdfConv.Margins = margins;
+
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
            
             return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
@@ -548,7 +558,10 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                             
                                     }
-                                    agreement.Documents.Add(document);
+                                    if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
+                                    {
+                                        agreement.Documents.Add(document);
+                                    }
                             }  
                         }
                             await uow.Commit();

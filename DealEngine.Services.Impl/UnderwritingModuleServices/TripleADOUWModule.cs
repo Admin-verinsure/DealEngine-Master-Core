@@ -140,11 +140,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo1millimitoption.DeletedBy = null;
 
             //Referral points per agreement
-            //Asset Size
-            uwrfassetsize(underwritingUser, agreement, rates);
-            //D&O Issues
-            uwrdoissue(underwritingUser, agreement);
-
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "1")
+            {
+                //Asset Size
+                uwrfassetsize(underwritingUser, agreement, rates);
+                //D&O Issues
+                uwrdoissue(underwritingUser, agreement);
+            }
+            
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
             {

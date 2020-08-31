@@ -6,6 +6,7 @@ using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
+using DealEngine.WebUI.Models.Organisation;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
@@ -18,8 +19,7 @@ namespace DealEngine.WebUI.Controllers
     {
         ISerializerationService _serialiserService;
         IOrganisationService _organisationService;
-        IOrganisationTypeService _organisationTypeService;
-        IInsuranceAttributeService _insuranceAttributeService;               
+        IOrganisationTypeService _organisationTypeService;              
         IUnitOfWork _unitOfWork;
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
@@ -32,8 +32,7 @@ namespace DealEngine.WebUI.Controllers
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
             IOrganisationTypeService organisationTypeService, 
-            IUnitOfWork unitOfWork, 
-            IInsuranceAttributeService insuranceAttributeService,            
+            IUnitOfWork unitOfWork,           
             IUserService userRepository
             )
             : base (userRepository)
@@ -44,9 +43,7 @@ namespace DealEngine.WebUI.Controllers
             _applicationLoggingService = applicationLoggingService;
             _organisationService = organisationService;            
             _organisationTypeService = organisationTypeService;
-            _insuranceAttributeService = insuranceAttributeService;
-            _unitOfWork = unitOfWork;
-            _insuranceAttributeService = insuranceAttributeService;            
+            _unitOfWork = unitOfWork;          
         }
 
         [HttpPost]
@@ -64,10 +61,19 @@ namespace DealEngine.WebUI.Controllers
                 {
                     return Json(true);
                 }
-                if (organisation.Id != OrganisationId && organisation.Id != sheet.Owner.Id)
+                if(sheet.Owner.Id == OrganisationId)
                 {
-                    return Json(true);
+                    return Json(false);
                 }
+                if (sheet.Organisation.Contains(organisation))
+                {                    
+                    return Json(false);
+                }
+
+                //if (organisation.Id != OrganisationId && OrganisationId != sheet.Owner.Id)
+                //{
+                //    return Json(true);
+                //}
             }
             return Json(false);
         }
@@ -135,10 +141,19 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> ManageOrganisations()
-        {
+        {            
             return View("ManageOrganisations");
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> AttachOrganisation()
+        {
+            var Owners = await _clientInformationService.GetAllInformationSheets();
+            var RemovedOrganisations = await _organisationService.GetAllRemovedOrganisations();
+            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Owners, RemovedOrganisations);
+            return View(model);
+        }
 
         [HttpPost]
         public async Task<IActionResult> RemovePrincipalAdvisors(IFormCollection collection)

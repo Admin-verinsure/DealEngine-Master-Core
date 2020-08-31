@@ -63,7 +63,7 @@ namespace DealEngine.WebUI.Models
 
         public int BoatCeaseReason { get; set; }
 
-        public IList<Organisation> InterestedParties { get; set; }
+        public IList<Domain.Entities.Organisation> InterestedParties { get; set; }
         public IList<String> BoatpartyVal { get; set; }
         public IList<Guid> BoatpartyText { get; set; }
         //public Guid[] InterestedParties3

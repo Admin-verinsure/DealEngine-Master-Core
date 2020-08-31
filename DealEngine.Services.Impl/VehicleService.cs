@@ -38,6 +38,8 @@ namespace DealEngine.Services.Impl
 			Vehicle vehicle = null;
 
 			ServicePointManager.ServerCertificateValidationCallback += MyRemoteCertificateValidationCallback;
+			try
+			{
 
 			XmlServiceClient client = new XmlServiceClient (_apiEndpoint);
 			var http = client.Get ("car/?plate=" + plate + "&key=" + _apiKey + "&translate=1");
@@ -61,6 +63,11 @@ namespace DealEngine.Services.Impl
 			}
 			ServicePointManager.ServerCertificateValidationCallback -= MyRemoteCertificateValidationCallback;
 
+			}
+			catch (Exception ex)
+			{
+
+			}
 			return vehicle;
 		}
 

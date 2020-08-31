@@ -4,16 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
-using DealEngine.Infrastructure.BaseLdap.Interfaces;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Ldap.Interfaces;
 using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using NHibernate.Mapping;
 using AutoMapper;
-using Newtonsoft.Json;
-using System.Diagnostics;
+
 
 namespace DealEngine.Services.Impl
 {
@@ -114,23 +111,9 @@ namespace DealEngine.Services.Impl
             {
                 UpdateOrganisationUnit(organisation, collection);
                 UpdateInsuranceAttribute(organisation, collection);
-                UpdateOrganisationType(organisation, collection);
             }
 
             await Update(organisation);
-        }
-
-        private void UpdateOrganisationType(Organisation organisation, IFormCollection collection)
-        {
-            try
-            {
-                string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
-                organisation.OrganisationType.Name = OrganisationTypeName;
-            }
-            catch(Exception ex)
-            {
-                new Exception("Organisation Type update failed " + ex.Message);
-            }
         }
 
         private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
@@ -194,14 +177,20 @@ namespace DealEngine.Services.Impl
 
         private async Task<Organisation> UpdateOrganisation(IFormCollection collection, Organisation organisation)
         {
-            var jsonOrganisation =  (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
+            var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
-            if (organisation.OrganisationType.Name == "Person - Individual" &&
-                user != null)
+
+            if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
-                organisation.Name = user.FirstName + " " + user.LastName;
-            }
+                organisation.OrganisationType.Name = OrganisationType;
+                if (OrganisationType == "Person - Individual" && user != null)
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
+                }
+            }           
+
             return organisation;
         }
 
@@ -212,7 +201,8 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> GetOrganisationByEmail(string organisationEmail)
         {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
+            var list = await GetAllOrganisationsByEmail(organisationEmail);
+            return list.OrderByDescending(i => i.DateCreated).FirstOrDefault();
         }
 
         public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
@@ -220,20 +210,18 @@ namespace DealEngine.Services.Impl
             return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
         }
 
-        public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
-        {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed == true);
-        }
-
         public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
         {
             var organisations = new List<Organisation>();
             foreach (var organisation in sheet.Organisation.Where(o => o.Removed != true && o.InsuranceAttributes.Any(i => i.Name == "Advisor")))
             {
-                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Type == "Advisor" || u.Type == "Nominated Representative");
+                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
                 if (unit != null)
                 {
-                    organisations.Add(organisation);
+                    if (!unit.IsPrincipalAdvisor)
+                    {
+                        organisations.Add(organisation);
+                    }
                 }
             }
             return organisations;
@@ -357,12 +345,9 @@ namespace DealEngine.Services.Impl
             return Organisation;
         }
 
-        public async Task<Organisation> GetAnyRemovedAdvisor(string email)
+        public async Task<List<Organisation>> GetAllRemovedOrganisations()
         {
-            var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-            var organisations = await GetAllOrganisationsByEmail(email);
-            var organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
-            return organisation;
+            return await _organisationRepository.FindAll().Where(o=>o.Removed == true && o.DateDeleted == null).ToListAsync();
         }
 
         private void UpdateLDap(Organisation organisation)
@@ -391,7 +376,7 @@ namespace DealEngine.Services.Impl
             //turn off IA Organisations
             //run once for Units
             //Run again to Create Attributes
-            await AdvisoryUnit();
+            //await AdvisoryUnit();
             //turn off IA Organisations
             //await PersonnelUnit();
             //await PMINZ();
@@ -400,57 +385,6 @@ namespace DealEngine.Services.Impl
 
         private async Task AdvisoryUnit()
         {
-            //int value = 0;
-            //var insuranceattributes = await _insuranceAttributeService.GetInsuranceAttributes();
-            //var organisations = await _organisationRepository.FindAll().ToListAsync();
-            ////var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
-            //var AdvisoryOrg = organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList();
-            //int count = AdvisoryOrg.Count;
-            //string Message = "";
-            //string Id;
-            //try
-            //{
-            //    //foreach (var attr in insuranceattributes)
-            //    //{
-            //    foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Advisor")).ToList())
-            //    {
-
-            //        value++;
-            //        Id = organisation.Id.ToString();
-            //        //Message = "Start Id:" + Id;
-            //        organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
-            //        await _organisationRepository.UpdateAsync(organisation);
-            //    }
-            //    //Message = "Added Attribute";
-            //    foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Nominated Representative")).ToList())
-            //    {
-
-            //        value++;
-            //        Id = organisation.Id.ToString();
-            //        //Message = "Start Id:" + Id;
-            //        organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
-            //        await _organisationRepository.UpdateAsync(organisation);
-            //    }
-            //    foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList())
-            //    {
-
-            //        value++;
-            //        Id = organisation.Id.ToString();
-            //        //Message = "Start Id:" + Id;
-            //        organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Other Consulting Business"));
-            //        await _organisationRepository.UpdateAsync(organisation);
-            //    }             
-
-            //    Message = "Added Units";
-            //    Message = "Updated Organisation";
-            //    Console.WriteLine(Message);
-            //    Console.WriteLine(value);           
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-            
             int value = 0;
             var insuranceattributes = await _insuranceAttributeService.GetInsuranceAttributes();
             var organisations = await _organisationRepository.FindAll().ToListAsync();
@@ -459,6 +393,56 @@ namespace DealEngine.Services.Impl
             int count = AdvisoryOrg.Count;
             string Message = "";
             string Id;
+            try
+            {
+                //foreach (var attr in insuranceattributes)
+                //{
+                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Advisor")).ToList())
+                {
+                    value++;
+                    Id = organisation.Id.ToString();
+                    //Message = "Start Id:" + Id;                    
+                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
+                    await _organisationRepository.UpdateAsync(organisation);
+                }
+                //Message = "Added Attribute";
+                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Nominated Representative")).ToList())
+                {
+
+                    value++;
+                    Id = organisation.Id.ToString();
+                    //Message = "Start Id:" + Id;
+                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
+                    await _organisationRepository.UpdateAsync(organisation);
+                }
+                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList())
+                {
+
+                    value++;
+                    Id = organisation.Id.ToString();
+                    //Message = "Start Id:" + Id;
+                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Other Consulting Business"));
+                    await _organisationRepository.UpdateAsync(organisation);
+                }
+
+                Message = "Added Units";
+                Message = "Updated Organisation";
+                Console.WriteLine(Message);
+                Console.WriteLine(value);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            //int value = 0;
+            //var insuranceattributes = await _insuranceAttributeService.GetInsuranceAttributes();
+            //var organisations = await _organisationRepository.FindAll().ToListAsync();
+            ////var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
+            //var AdvisoryOrg = organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList();
+            //int count = AdvisoryOrg.Count;
+            //string Message = "";
+            //string Id;
             //try
             //{
             //    foreach (var attr in insuranceattributes)
@@ -560,6 +544,31 @@ namespace DealEngine.Services.Impl
             //}
 
             Console.WriteLine(value);
+        }
+
+        public async Task UpdateAdvisorDates(IFormCollection collection)
+        {
+            var guids = collection["OrganisationId"].ToString().Split(',');
+            var DODates = collection["DORetroactiveDate"].ToString().Split(',');
+            var PIDates = collection["PIRetroactiveDate"].ToString().Split(',');
+            for (int i = 0; i < guids.Count(); i++) 
+            {
+                Guid.TryParse(guids[i], out Guid OrganisationId);
+                if (OrganisationId != Guid.Empty)
+                {
+                    var organistion = await GetOrganisation(OrganisationId);
+                    if(organistion != null)
+                    {
+                        var unit = (AdvisorUnit)organistion.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                        if(unit != null)
+                        {
+                            unit.DORetroactivedate = DateTime.Parse(DODates[i]);
+                            unit.PIRetroactivedate = DateTime.Parse(PIDates[i]);
+                            await Update(organistion);
+                        }
+                    }
+                }
+            }
         }
 
         //      private async Task PersonnelUnit()

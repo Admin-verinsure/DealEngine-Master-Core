@@ -45,7 +45,16 @@ namespace DealEngine.Services.Impl
 
         public async Task<bool> CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
-            var principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
+            List<Organisation> principalOrganisations = null;
+            if (sheet.Programme.BaseProgramme.Name == "TripleA Programme")
+            {
+                principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
+            }
+            else
+            {
+                principalOrganisations = await _organisationService.GetNZFSGSubsystemAdvisors(sheet);
+            }
+           
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
             try
             {
@@ -97,7 +106,16 @@ namespace DealEngine.Services.Impl
                         clientProgramme.SubClientProgrammes.Add(subProg);
                     }
                 }
-            }catch(Exception ex)
+
+                //send out sub UIS invitation email
+                if (subClientSheet.Status == "Not Started")
+                {
+                    await _emailService.SendSystemEmailLogin(org.Email);
+                    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                }
+
+            }
+            catch(Exception ex)
             {
                 Exception subSystem = new Exception("Create Sub process Failed", ex);
                 throw subSystem;

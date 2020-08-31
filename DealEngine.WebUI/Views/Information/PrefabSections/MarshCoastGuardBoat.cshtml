@@ -1,14 +1,9 @@
-﻿@model DealEngine.WebUI.Models.InformationViewModel
+﻿@*@model DealEngine.WebUI.Models.InformationViewModel
 
 @using System.Linq
 
 <div class="padding-10">
     <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
-
-        @*@tabs.Tab("List All")
-            @tabs.Tab("Edit").Class("EditButton")
-            @tabs.Tab("Add").Class("AddButton")
-            @tabs.Tab("List Removed").Class("BoatRemoved")*@
         <div id="Boattabs">
 
             <ul id="tab" class="nav nav-tabs">
@@ -24,11 +19,8 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            @*<script src="~/jquery/jquery.js"></script>*@
-                            @*<script src="~/jquery/jquery.min.js"></script>*@
 
                             <script type="text/javascript">
-                                 //$("#Vessel").click(function () {
                                 $(window).on('load',function () {
                               $("#tblBoat").jqGrid({
                                 url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
@@ -37,7 +29,6 @@
                                 async: true,
                                 colNames: ["Edit Vessel", "Boat Name", "Year", "Sum Insured", "Delete Vessel"],
                                 colModel: [
-                                    //{ name: "edit", template: "actions", width: 60 },
 
                                     {
                                         name: "edit", template: "actions", width: 90, align: 'center', search: false, editable: true, formatter: function (cellvalue, options, rowobject) {
@@ -68,7 +59,6 @@
                                 onSelectRow: function (rowid) {
                                     var grid = $('#tblBoat');
                                     var myCellData = grid.jqGrid('getCell', rowid, 'column_name');
-                                    //EditBoat('b', myCellData);
                                     SetCurrentTab("boatTabs-2");
 
                                 }
@@ -78,16 +68,11 @@
                             $("#tblBoat").jqGrid('navGrid',
                                 '#pagerBoat',
                                 { edit: false, add: false, del: false },
-                                //options
                                 { height: 280, reloadAfterSubmit: false },
-                                // edit options
                                 { height: 280, reloadAfterSubmit: false },
-                                // add options
                                 { reloadAfterSubmit: false },
                                 {search: true},
-                                // del options
                                 { sopt: ['eq', 'bw', 'cn'] }
-                                // search options
                             );
                         });
                             </script>
@@ -103,12 +88,7 @@
                     <form data-toggle="validator" role="form" id="boatForm">
                         <input id="BoatId" class="b" name="BoatId" type="hidden">
                         <input id="openModal" class="b" name="openModal" type="hidden">
-                        <!-- 1st group -->
-
-
                         <div class="row ">
-                            @*<div class="form-group">
-                            *@
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Vessel Name</label>
@@ -120,11 +100,6 @@
                                 <p class="validationContainer" id="validateBoatName"></p>
 
                             </section>
-
-
-                            @*
-                                </div>*@
-
 
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -275,7 +250,6 @@
 
                         </div>
                         <hr class="boatAccordianHairline" />
-                        <!-- 2nd group -->
 
                         <div class="row">
 
@@ -469,7 +443,6 @@
                         </div>
 
                         <hr class="boatAccordianHairline" />
-                        <!-- 3rd group -->
 
                         <div class="row">
 
@@ -553,7 +526,6 @@
 
                         </div>
                         <hr class="boatAccordianHairline" />
-                        <!-- 4th group -->
 
                         <div class="row">
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailer">
@@ -585,10 +557,6 @@
 
                             </section>
                         </div>
-
-
-
-                        <!-- 5th group -->
 
                         <hr class="boatAccordianHairline" />
                         <div class="row">
@@ -673,14 +641,14 @@
 
                                             </select>
 
-                                            @*<select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
+                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
 
                                                     @foreach (var bwloc in Model.BoatUseslist)
                                                     {
                                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                                     }
 
-                                                </select>*@
+                                                </select>
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -748,7 +716,7 @@
 
                             </section>
 
-                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
                                 <label class="label">Interested Parties Effective Date</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -767,7 +735,7 @@
                                            data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>
-                            </section>*@
+                            </section>
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
@@ -779,7 +747,7 @@
                         </div>
 
 
-                        <!-- 6th group -->
+                         6th group 
                     </form>
 
                     <div class="row" id="update">
@@ -797,7 +765,7 @@
                     <form data-toggle="validator" role="form" id="boatForm">
                         <input id="AddBoatId" class="b" name="BoatId" type="hidden">
                         <input id="openModal" class="b" name="openModal" type="hidden">
-                        <!-- 1st group -->
+                         1st group 
 
                         <div class="row ">
 
@@ -958,7 +926,7 @@
 
                         </div>
                         <hr class="boatAccordianHairline" />
-                        <!-- 2nd group -->
+                         2nd group 
 
                         <div class="row">
 
@@ -1153,7 +1121,7 @@
                         </div>
 
                         <hr class="boatAccordianHairline" />
-                        <!-- 3rd group -->
+                         3rd group 
 
                         <div class="row">
 
@@ -1237,7 +1205,7 @@
 
                         </div>
                         <hr class="boatAccordianHairline" />
-                        <!-- 4th group -->
+                         4th group 
 
                         <div class="row">
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselTrailer">
@@ -1272,7 +1240,7 @@
 
 
 
-                        <!-- 5th group -->
+                         5th group 
 
                         <hr class="boatAccordianHairline" />
                         <div class="row">
@@ -1401,7 +1369,7 @@
 
 
 
-                            @*@if (Model.IsChange)
+                            @if (Model.IsChange)
                                 {
                                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
                                         <label class="label">Cease Date</label>
@@ -1423,7 +1391,7 @@
                                             </select>
                                         </label>
                                     </section>
-                                }*@
+                                }
 
                         </div>
                         <hr class="boatAccordianHairline" />
@@ -1453,7 +1421,7 @@
 
                             </section>
 
-                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
                                 <label class="label">Interested Parties Effective Date</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -1472,9 +1440,9 @@
                                            data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>
-                            </section>*@
+                            </section>
 
-                            @*@if (Model.IsChange)
+                            @if (Model.IsChange)
                                 {
                                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
                                         <label class="label">Cease Date</label>
@@ -1496,7 +1464,7 @@
                                             </select>
                                         </label>
                                     </section>
-                                }*@
+                                }
 
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
@@ -1509,7 +1477,7 @@
                         </div>
 
 
-                        <!-- 6th group -->
+                         6th group 
                     </form>
 
                     <div class="row" id="update">
@@ -1595,6 +1563,6 @@
     .selectuse option {
         background-color: white;
     }
-</style>
+</style>*@
 
 

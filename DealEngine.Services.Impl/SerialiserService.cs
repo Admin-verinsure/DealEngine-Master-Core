@@ -58,7 +58,7 @@ namespace DealEngine.Services.Impl
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
-                    }); ;
+                    });
             }
             catch (Exception ex)
             {
@@ -68,7 +68,6 @@ namespace DealEngine.Services.Impl
             return obj;
         }
 
-
         public async Task<string> GetSerializedObject(object model)
         {
             try
@@ -76,8 +75,8 @@ namespace DealEngine.Services.Impl
                 return JsonConvert.SerializeObject(model,
                     new JsonSerializerSettings()
                     {
-                    // MaxDepth = 2,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        MaxDepth = 2,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         DateParseHandling = DateParseHandling.DateTime

@@ -567,56 +567,60 @@ namespace DealEngine.Services.Impl
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var unit= (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
-                    if(unit != null)
+                    if (!uisorg.Removed)
                     {
-                        if (string.IsNullOrEmpty(stradvisorlist))
+                        var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                        if (unit != null)
                         {
-                            stradvisorlist = "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            if (string.IsNullOrEmpty(stradvisorlist))
+                            {
+                                stradvisorlist = "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            }
+                            else
+                            {
+                                stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            }
+                            if (string.IsNullOrEmpty(stradvisorlist1))
+                            {
+                                stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
+                            else
+                            {
+                                stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
                         }
-                        else
-                        {
-                            stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
-                        }
-                        if (string.IsNullOrEmpty(stradvisorlist1))
-                        {
-                            stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
-                        }
-                        else
-                        {
-                            stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
-                        }
-                    }
 
-                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
-                    if (unit != null)
-                    {
-                        if (string.IsNullOrEmpty(strnominatedrepresentative))
+                        unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
+                        if (unit != null)
                         {
-                            strnominatedrepresentative = "Nominated Representative:       " + uisorg.Name;
+                            if (string.IsNullOrEmpty(strnominatedrepresentative))
+                            {
+                                strnominatedrepresentative = "Nominated Representative:       " + uisorg.Name;
+                            }
+                            else
+                            {
+                                strnominatedrepresentative += ", " + uisorg.Name;
+                            }
                         }
-                        else
-                        {
-                            strnominatedrepresentative += ", " + uisorg.Name;
-                        }
-                    }
 
-                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
-                    if (unit != null)
-                    {
-                        if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                        unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
+                        if (unit != null)
                         {
-                            strotherconsultingbusiness = uisorg.Name;
-                        }
-                        else
-                        {
-                            strotherconsultingbusiness += ", " + uisorg.Name;
+                            if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                            {
+                                strotherconsultingbusiness = uisorg.Name;
+                            }
+                            else
+                            {
+                                strotherconsultingbusiness += ", " + uisorg.Name;
+                            }
                         }
                     }
+                    
                 }
 
                 if (!string.IsNullOrEmpty(strnominatedrepresentative))
