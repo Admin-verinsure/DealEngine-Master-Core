@@ -1,0 +1,17 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+    <form id="DAOLIViewModel" class="is-valid" data-accordianId="Directors and Officers Liability Insurance">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="HasDate" class="label required">
+                        Select Date
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextBoxFor(m => m.DateViewModel.DateSelected, new { @class = "form-control", @id = "dateselected", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </form>

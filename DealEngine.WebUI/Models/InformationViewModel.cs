@@ -22,6 +22,7 @@ namespace DealEngine.WebUI.Models
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             OTViewModel = new OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
+            DateViewModel = new DateViewModel();
             User = CurrentUser;
             Programme = clientInformationSheet.Programme.BaseProgramme;
             RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
@@ -43,6 +44,7 @@ namespace DealEngine.WebUI.Models
         public string Status { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
+        public string DeclarationMessage { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
@@ -71,6 +73,9 @@ namespace DealEngine.WebUI.Models
         public ClientAgreement ClientAgreement { get; internal set; }
         public OTViewModel OTViewModel { get; internal set; }
         public IPViewModel IPViewModel { get; internal set; }
+        public DateViewModel DateViewModel { get; internal set; }
+
+        
     }
 
 
@@ -1215,6 +1220,12 @@ namespace DealEngine.WebUI.Models
         public string Superannuation { get; set; }
         public string Kiwisaver { get; set; }
         public string OtherFunds { get; set; }
+
+    }
+
+    public class DateViewModel
+    {
+        public string DateSelected { get; set; }
 
     }
 }

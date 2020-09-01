@@ -18,6 +18,11 @@
         minDate: startDate
     });
 
+     $('#dateselected').datepicker({
+        dateFormat: "dd/mm/yy"
+     });
+
+    
     function PopulateOrganisationView(Method, OutPut) {
         try {
             var Form = document.getElementById("organisationViewModel");

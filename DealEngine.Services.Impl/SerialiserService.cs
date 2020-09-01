@@ -58,7 +58,7 @@ namespace DealEngine.Services.Impl
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
                         FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
-                    }); ;
+                    });
             }
             catch (Exception ex)
             {

@@ -422,16 +422,17 @@
 	    //    timeout: 4000
 	    //});
 	    // reload grid
+          $('#getLandLocModal').modal('hide');
 	    $(tableId).trigger('reloadGrid');
 
-        $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-        $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-            $('#getLandLocModal').modal('hide');
+     //   $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+     //   $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+     //       $('#getLandLocModal').modal('hide');
 
-	    $('#Building').val("");
-        $(tabId + " :input").val("");
-         $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-        $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
+	    //$('#Building').val("");
+     //   $(tabId + " :input").val("");
+     //    $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+     //   $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
 	})
         .fail(function (jqXHR, textStatus) {
             $('#getLandLocModal').modal('hide');
