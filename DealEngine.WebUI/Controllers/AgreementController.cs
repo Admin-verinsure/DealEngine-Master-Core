@@ -16,11 +16,8 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Net;
 using System.Net.Mime;
-using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
-using DealEngine.Infrastructure.Email;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 
@@ -1830,17 +1827,17 @@ namespace DealEngine.WebUI.Controllers
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
                 var advisoryDesc = "";
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                if (milestone != null)
-                {
-                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
-                    if (advisory != null)
-                    {
-                        advisoryDesc = advisory.Description;
-                    }
+                //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                //if (milestone != null)
+                //{
+                //    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                //    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
+                //    if (advisory != null)
+                //    {
+                //        advisoryDesc = advisory.Description;
+                //    }
 
-                }
+                //}
 
                 if(!isBaseSheet)
                 {

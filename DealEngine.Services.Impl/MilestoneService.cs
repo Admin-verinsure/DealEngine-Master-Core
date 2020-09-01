@@ -3,12 +3,9 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
-using DealEngine.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using NHibernate.Linq;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using Microsoft.AspNetCore.Http;
-using NHibernate.Engine.Query;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -32,6 +29,19 @@ namespace DealEngine.Services.Impl
             _taskingService = taskingService;
             _programmeService = programmeService;
             _milestoneRepository = milestoneRepository;
+        }
+
+        public async Task CreateMilestone(string Type)
+        {
+            if(Type == "Rejoin")
+            {
+                await CreateReJoinMilestone();
+            }
+        }
+
+        private Task CreateReJoinMilestone()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)
@@ -241,6 +251,13 @@ namespace DealEngine.Services.Impl
             {
                 return ex.Message;
             }
+
+        }
+
+        public Task DeveloperTool()
+        {
+            //var list = _taskingService.GetAllActiveTasks();
+            throw new NotImplementedException();
 
         }
     }

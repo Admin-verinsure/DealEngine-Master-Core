@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
-using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
 
@@ -1115,8 +1114,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
-                //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));                
                 var sheet = clientProgramme.InformationSheet;
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
 

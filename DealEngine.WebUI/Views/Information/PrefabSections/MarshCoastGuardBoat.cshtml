@@ -546,10 +546,10 @@
                                 <label class="input form-group">
                                     <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @*@foreach (var bv in Model.OrganisationViewModel.Organisation)
+                                        @*foreach (var bv in Model.OrganisationViewModel.Organisation)
                                         {
                                             <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                        }*@
+                                        }
                                         <option value="add">Add Trailer</option>
                                     </select>
                                 </label>
@@ -1226,10 +1226,10 @@
                                 <label class="input form-group">
                                     <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @*@foreach (var bv in Model.AllVehicles)
+                                        @foreach (var bv in Model.AllVehicles)
                                         {
                                             <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                        }*@
+                                        }
                                         <option value="add">Add Trailer</option>
                                     </select>
                                 </label>
