@@ -1153,9 +1153,8 @@
             }
 
             advisoryModal = document.getElementById('advisoryModal');
-            debugger;
-            if (@Model.Status == "Not Started") {
-                if ("@string.IsNullOrWhiteSpace(Model.Advisory)" == "False") {
+            if ("@Model.Status" === "Not Started") {
+                if ("@Model.Advisory" !== "") {
                     $("#advisoryModal").modal('show');
                 }
             }
