@@ -481,7 +481,6 @@ namespace DealEngine.WebUI.Controllers
 
 
                 //model.ClaimProducts = availableProducts;
-                model.DeclarationMessage = sheet.Programme.BaseProgramme.Declaration;
                 model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
 
                 model.Status = sheet.Status;

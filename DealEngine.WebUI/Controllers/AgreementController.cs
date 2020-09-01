@@ -1618,7 +1618,7 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && (sheet.Status == "Started" || sheet.Status == "Not Started"))
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
                 {
                    return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
