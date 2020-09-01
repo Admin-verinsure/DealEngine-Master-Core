@@ -44,11 +44,9 @@ namespace DealEngine.WebUI.Models
         public string Status { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
-        public string DeclarationMessage { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
-        public IEnumerable<VehicleViewModel> AllVehicles { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
@@ -419,7 +417,6 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
-
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }    
         public IList<SelectListItem> HasEPLOptions { get; set; }
         public IList<SelectListItem> HasEPLIOptions { get; set; }
@@ -969,17 +966,15 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
-        }
-       
-
+        }      
     }
+
     public class OTViewModel
     {
         public OTViewModel()
         {
             HasOutsideTrusteesOptions = GetSelectListOptions();
             HasClaimQuestionsOptions = GetSelectListOptions();
-
             FormDate = DateTime.Now;
         }
 
@@ -1049,16 +1044,6 @@ namespace DealEngine.WebUI.Models
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
-        //public string totalValue { get; set; }
-        //public string CashInvestments { get; set; }
-        //public string Bonds { get; set; }
-        //public string DirectInvestment { get; set; }
-        //public string PropertyTrust { get; set; }
-        //public string FinanceDebentures { get; set; }
-        //public string ManagedFunds { get; set; }
-        //public string Superannuation { get; set; }
-        //public string Kiwisaver { get; set; }
-        //public string OtherFunds { get; set; }
 
     }
     public class ProjectViewModel
