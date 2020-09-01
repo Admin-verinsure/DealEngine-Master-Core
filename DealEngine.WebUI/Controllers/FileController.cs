@@ -177,7 +177,6 @@ namespace DealEngine.WebUI.Controllers
                "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
            );            // for Linux/OS-X: "wkhtmltopdf"
             htmlToPdfConv.PageFooterHtml = $@"page <span class=""page""></span> of <span class=""topage""></span>";
-            htmlToPdfConv.PageFooterHtml = $@"page <span class=""page""></span> of <span class=""topage""></span>";
             //htmlToPdfConv.PageHeight = 215;
             //htmlToPdfConv.PageWidth = 176;
             //var margins = new PageMargins();

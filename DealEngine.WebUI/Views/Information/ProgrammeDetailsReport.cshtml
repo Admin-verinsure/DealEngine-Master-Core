@@ -151,7 +151,7 @@
                 var reportstr = divtitledetails + "<div style='border-style : groove' >" + commonyou + "</div>" + "<div style='border-style : groove' >"
                     + commonnamedparty + "</div>" + "<div style='border-style : groove' >" + "<h2>Fee Income Territories </h2>" + revenue1 + "</div>"
                     +"</br>"+ revenue2 +"</br>" + revenue3 + divContents + projectdetails
-                    + commonloc   /*+ commonclaim*/ + Declaration + Advisory;
+                    + commonloc   + commonclaim + Declaration + Advisory;
 
 
                 var postData = { Reportstr: reportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
@@ -166,6 +166,7 @@
                                 .fail(function (a, s, d) {
                                     //alert("Unable to save.");
                                 });
+
 
                 var printWindow = window.open('', '', 'height=10000,width=800');
                 printWindow.document.write('<html><head><title>DIV Contents</title>');
