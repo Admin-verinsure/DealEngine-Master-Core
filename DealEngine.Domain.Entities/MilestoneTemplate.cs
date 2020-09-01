@@ -67,7 +67,6 @@ namespace DealEngine.Domain.Entities
 
         public virtual string Name { get; set; }
         public virtual string Body { get; set; }
-        public virtual string Header { get; set; }
         public virtual string URL { get; set; }
         public virtual int Count { get; set; }
         public virtual DateTime DueDate { get; set; }
@@ -80,11 +79,6 @@ namespace DealEngine.Domain.Entities
             IsActive = true;
             DateTime today = DateTime.Now;
             DueDate = today.AddDays(7);
-        }
-
-        public UserTask(User createdBy, Organisation createdFor)
-            : base(createdBy)
-        {
         }
 
         public UserTask(User createdBy, string name, IFormCollection collection) : base(createdBy)

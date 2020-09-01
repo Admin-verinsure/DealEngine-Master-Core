@@ -82,7 +82,7 @@ namespace DealEngine.Services.Impl
                 }
                 if (activityName == "Agreement Status – Referred")
                 {
-                    Discription = await ReferredMilestone(activityName, user, milestone);
+                    Discription = await ReferredMilestone(activityName, user, milestone, sheet);
                 }
             }
             return Discription;
@@ -112,7 +112,7 @@ namespace DealEngine.Services.Impl
             return "";
         }
 
-        private async Task<string> ReferredMilestone(string activityName, User user, Milestone milestone)
+        private async Task<string> ReferredMilestone(string activityName, User user, Milestone milestone, ClientInformationSheet sheet)
         {
             var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
             if (ProgrammeProcesse != null)
@@ -120,11 +120,14 @@ namespace DealEngine.Services.Impl
                 //run task
                 var Advisory = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory;
                 var UserTask = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).UserTask;
-                if (UserTask.IsActive)
+                if (string.IsNullOrWhiteSpace(UserTask.URL))
                 {
-                    await _userService.AssignTaskToUser(user, UserTask);
+                    UserTask.URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
+                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";                    
                 }
-                
+                sheet.Programme.BaseProgramme.AgreementReferNotifyUsers
+                await _userService.AssignTaskToUser(user, UserTask);
+                                
                 //run email
                 return Advisory.Description;
             }
