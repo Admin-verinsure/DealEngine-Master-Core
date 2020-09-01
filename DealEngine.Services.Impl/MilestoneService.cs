@@ -76,9 +76,9 @@ namespace DealEngine.Services.Impl
                     Discription = await NotStartedMilestone(activityName, user, milestone);
                     await CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
                 }
-                if (activityName == "Agreement Status - Started")
+                if (activityName == "Agreement Status - Declined")
                 {
-                    //Discription = await StartedMilestone(activityName, user, sheet);
+                    Discription = await DeclinedMilestone(activityName, user, milestone);                    
                 }
                 if (activityName == "Agreement Status – Referred")
                 {
@@ -88,20 +88,17 @@ namespace DealEngine.Services.Impl
             return Discription;
         }
 
-        //private async Task<string> StartedMilestone(string activityName, User user, ClientInformationSheet sheet)
-        //{
-        //    var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
-        //    if (milestone != null)
-        //    {
-        //        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-        //        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == activityName && a.DateDeleted == null);
-        //        if (advisory != null)
-        //        {
-        //            return advisory.Description;
-        //        }
-        //    }
-        //    return "";
-        //}
+        private async Task<string> DeclinedMilestone(string activityName, User user, Milestone milestone)
+        {
+            var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
+            if (ProgrammeProcesse != null)
+            {
+                //run task
+                //run email
+                return ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory.Description;
+            }
+            return "";
+        }
 
         private async Task<string> NotStartedMilestone(string activityName, User user, Milestone milestone)
         {
