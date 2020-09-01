@@ -1814,19 +1814,6 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
-                var advisoryDesc = "";
-                //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                //if (milestone != null)
-                //{
-                //    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                //    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
-                //    if (advisory != null)
-                //    {
-                //        advisoryDesc = advisory.Description;
-                //    }
-
-                //}
-
                 if(!isBaseSheet)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel();
@@ -1845,7 +1832,7 @@ namespace DealEngine.WebUI.Controllers
                             Declaration = clientProgramme.BaseProgramme.Declaration
                         };
 
-                        model.Advisory = advisoryDesc;
+                        model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Declined", user, answerSheet);
                         model.Status = agreement.Status;
                         model.InformationSheetId = answerSheet.Id;
                         models.Add(model);
