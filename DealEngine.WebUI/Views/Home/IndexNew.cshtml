@@ -78,8 +78,7 @@
                                     <div class="list-group">
                                         @foreach (var task in Model.UserTasks)
                                         {
-
-                                            <a href="@task.Header" class="list-group-item list-group-item-action">
+                                            <a href="@task.URL" class="list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <h6 class="mb-1">@task.Body</h6>
                                                     <small>@task.DueDate.ToString("dd/MM/yyyy")</small>
