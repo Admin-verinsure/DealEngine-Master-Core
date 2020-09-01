@@ -182,13 +182,13 @@ namespace DealEngine.Services.Impl
             var user = await UpdateOrganisationUser(collection);
             organisation = _mapper.Map(jsonOrganisation, organisation);
 
+            if (organisation.OrganisationType.Name == "Person - Individual" && user != null)
+            {
+                organisation.Name = user.FirstName + " " + user.LastName;
+            }
             if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
-                organisation.OrganisationType.Name = OrganisationType;
-                if (OrganisationType == "Person - Individual" && user != null)
-                {
-                    organisation.Name = user.FirstName + " " + user.LastName;
-                }
+                organisation.OrganisationType.Name = OrganisationType;                
             }           
 
             return organisation;
@@ -201,7 +201,8 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> GetOrganisationByEmail(string organisationEmail)
         {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
+            var list = await GetAllOrganisationsByEmail(organisationEmail);
+            return list.OrderByDescending(i => i.DateCreated).FirstOrDefault();
         }
 
         public async Task<List<Organisation>> GetAllOrganisationsByEmail(string email)
@@ -209,10 +210,7 @@ namespace DealEngine.Services.Impl
             return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
         }
 
-        public async Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail)
-        {
-            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail && o.Removed == true);
-        }
+
 
         public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
         {
@@ -222,7 +220,10 @@ namespace DealEngine.Services.Impl
                 var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
                 if (unit != null)
                 {
-                    organisations.Add(organisation);
+                    if (!unit.IsPrincipalAdvisor)
+                    {
+                        organisations.Add(organisation);
+                    }
                 }
             }
             return organisations;
@@ -346,12 +347,9 @@ namespace DealEngine.Services.Impl
             return Organisation;
         }
 
-        public async Task<Organisation> GetAnyRemovedAdvisor(string email)
+        public async Task<List<Organisation>> GetAllRemovedOrganisations()
         {
-            var advisoryAttr = await _insuranceAttributeService.GetInsuranceAttributeByName("Advisor");
-            var organisations = await GetAllOrganisationsByEmail(email);
-            var organisation = organisations.FirstOrDefault(o => o.InsuranceAttributes.Contains(advisoryAttr) && o.Removed == true);
-            return organisation;
+            return await _organisationRepository.FindAll().Where(o=>o.Removed == true && o.DateDeleted == null).ToListAsync();
         }
 
         private void UpdateLDap(Organisation organisation)

@@ -1153,8 +1153,11 @@
             }
 
             advisoryModal = document.getElementById('advisoryModal');
-            if ("@Model.ClientInformationSheet.Status" == "Not Started" && "@string.IsNullOrWhiteSpace(Model.Advisory)" == "False") {
-                $("#advisoryModal").modal('show');
+            debugger;
+            if (@Model.Status == "Not Started") {
+                if ("@string.IsNullOrWhiteSpace(Model.Advisory)" == "False") {
+                    $("#advisoryModal").modal('show');
+                }
             }
 
             if ("@Model.Status" == "Submitted") {

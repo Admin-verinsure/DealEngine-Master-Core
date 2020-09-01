@@ -7,8 +7,6 @@ namespace DealEngine.WebUI.Models
     {
         public Guid Id { get; set; }
 
-        public Organisation For { get; set; }
-
         public string ClientName { get; set; }
 
         public string Details { get; set; }

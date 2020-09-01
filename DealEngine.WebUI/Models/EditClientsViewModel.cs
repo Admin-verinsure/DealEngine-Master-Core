@@ -8,7 +8,7 @@ namespace DealEngine.WebUI.Models
 {
     public class EditClientsViewModel : BaseViewModel
     {
-        public Organisation Organisation { get; set; }
+        public Domain.Entities.Organisation Organisation { get; set; }
         public EditClientsViewModel(Domain.Entities.Programme programme)
         {
             GenerateClientsOptions(programme);
@@ -17,7 +17,7 @@ namespace DealEngine.WebUI.Models
         private void GenerateClientsOptions(Domain.Entities.Programme programme)
         {
             Owners = new List<SelectListItem>();
-            Organisation org = null;
+            Domain.Entities.Organisation org = null;
             try
             {
                 foreach (var owner in programme.ClientProgrammes)
