@@ -42,13 +42,13 @@ namespace DealEngine.Services.Impl
             _taskingService = taskingService;
         }
 
+        [Obsolete]
         public async Task<Milestone> CreateMilestone(User createdBy, Guid programmeProcessId, Guid activityId, Programme programme)
         {
             var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
             var activity = await _activityService.GetActivityId(activityId);
 
             Milestone milestone = new Milestone(createdBy);
-            milestone.HasTriggered = false;
             milestone.Programme = programme;
             await _milestoneRepository.AddAsync(milestone);
 
@@ -59,6 +59,19 @@ namespace DealEngine.Services.Impl
             await _programmeProcessService.UpdateProgrammeProcess(programmeProcess);
 
             return milestone;
+        }
+
+        public async Task CreateMilestone(string Type)
+        {
+            if(Type == "Rejoin")
+            {
+                await CreateReJoinMilestone();
+            }
+        }
+
+        private Task CreateReJoinMilestone()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)

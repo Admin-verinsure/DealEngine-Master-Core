@@ -12,7 +12,6 @@ namespace DealEngine.Domain.Entities
             : base(createdBy) {
         }
 
-        public virtual bool HasTriggered { get; set; }
         public virtual Programme Programme { get; set; }       
     }
 

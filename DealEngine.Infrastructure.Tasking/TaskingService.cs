@@ -11,10 +11,14 @@ namespace DealEngine.Infrastructure.Tasking
 	public class TaskingService : ITaskingService
 	{
         IMapperSession<UserTask> _taskRespository;
+        Services.Interfaces.IMilestoneService _milestoneService;
 
-		public TaskingService (IMapperSession<UserTask> taskRespository)
+		public TaskingService (
+            IMapperSession<UserTask> taskRespository,
+            Services.Interfaces.IMilestoneService milestoneService)
 		{
-			_taskRespository = taskRespository;
+            _milestoneService = milestoneService;
+            _taskRespository = taskRespository;
 		}
 
         public async Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation)
@@ -40,10 +44,9 @@ namespace DealEngine.Infrastructure.Tasking
             await _taskRespository.AddAsync(task);
         }
 
-        public Task JoinOrganisationTask(User user, Organisation organisation)
+        public async Task JoinOrganisationTask(User user, Organisation organisation)
         {
-            UserTask task = new UserTask(user, organisation);
-            task.Description = "Id Like to join an org";
+            await _milestoneService.CreateMilestone("Rejoin");
             throw new NotImplementedException();
         }
     }

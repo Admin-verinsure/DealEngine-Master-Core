@@ -35,7 +35,7 @@ namespace DealEngine.WebUI.Controllers
             IAdvisoryService advisoryService,
             ISystemEmailService systemEmailService,
             IUserService userRepository,
-            IProgrammeService programmeService,            
+            IProgrammeService programmeService,
             ITaskingService taskingService,
             IMilestoneService milestoneService,
             IActivityService activityService,
@@ -48,7 +48,7 @@ namespace DealEngine.WebUI.Controllers
             _systemEmailService = systemEmailService;
             _advisoryService = advisoryService;
             _activityService = activityService;
-            _programmeService = programmeService;            
+            _programmeService = programmeService;
             _taskingService = taskingService;
             _milestoneService = milestoneService;
             _milestoneTemplateService = milestoneTemplateService;
