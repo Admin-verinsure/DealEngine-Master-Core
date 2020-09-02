@@ -170,6 +170,10 @@ namespace DealEngine.Services.Impl
                 Activity = new Activity(user, activity, collection);
                 ProgrammeProcess.Activities.Add(Activity);
             }
+            else
+            {
+                Activity.Advisory.PopulateEntity(collection);
+            }
 
             await Update(milestone);
         }
