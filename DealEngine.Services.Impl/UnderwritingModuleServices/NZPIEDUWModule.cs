@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class NZPIPLUWModule : IUnderwritingModule
+    public class NZPIEDUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public NZPIPLUWModule()
+        public NZPIEDUWModule()
         {
-            Name = "NZPI_PL";
+            Name = "NZPI_ED";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -33,15 +33,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "ED" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm plterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm edterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "ED" && ct.DateDeleted == null))
                 {
-                    plterm.Delete(underwritingUser);
+                    edterm.Delete(underwritingUser);
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitpremium", "pl1millimitexcess", "pl2millimitpremium", "pl2millimitexcess", "pl5millimitpremium", "pl5millimitexcess");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "edpremium1employee", "edpremium2employee", "edpremiumover2employee");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -60,6 +60,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -67,13 +70,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.EDRetro))
                         {
-                            strretrodate = preRenewOrRefData.GLRetro;
+                            strretrodate = preRenewOrRefData.EDRetro;
                         }
 
                     }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "GL")
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "ED")
                     {
                         if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
                         {
@@ -88,65 +91,40 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
-            int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = 0m;
-            decimal TermBrokerage1mil = 0m;
-            decimal TermExcess1mil = 0;
-            TermPremium1mil = rates["pl1millimitpremium"];
-            TermExcess1mil = rates["pl1millimitexcess"];
+            int TermLimit100k = 100000;
+            decimal TermPremium100k = 0m;
+            decimal TermBrokerage100k = 0m;
 
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
+            int TermExcess = 0;
+            TermExcess = 2500;
 
-            ClientAgreementTerm termpl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess1mil);
-            termpl1millimitoption.TermLimit = TermLimit1mil;
-            termpl1millimitoption.Premium = TermPremium1mil;
-            termpl1millimitoption.BasePremium = TermPremium1mil;
-            termpl1millimitoption.Excess = TermExcess1mil;
-            termpl1millimitoption.BrokerageRate = agreement.Brokerage;
-            termpl1millimitoption.Brokerage = TermBrokerage1mil;
-            termpl1millimitoption.DateDeleted = null;
-            termpl1millimitoption.DeletedBy = null;
+            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) == 1)
+            {
+                TermPremium100k = rates["edpremium1employee"];
+            } else if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) == 2)
+            {
+                TermPremium100k = rates["edpremium2employee"];
+            } else if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 2)
+            {
+                TermPremium100k = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) * rates["edpremiumover2employee"];
+            }
 
-            int TermLimit2mil = 2000000;
-            decimal TermPremium2mil = 0m;
-            decimal TermBrokerage2mil = 0m;
-            decimal TermExcess2mil = 0;
-            TermPremium2mil = rates["pl2millimitpremium"];
-            TermExcess2mil = rates["pl2millimitexcess"];
+            TermBrokerage100k = TermPremium100k * agreement.Brokerage / 100;
 
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
+            ClientAgreementTerm termed100klimitoption = GetAgreementTerm(underwritingUser, agreement, "ED", TermLimit100k, TermExcess);
+            termed100klimitoption.TermLimit = TermLimit100k;
+            termed100klimitoption.Premium = TermPremium100k;
+            termed100klimitoption.BasePremium = TermPremium100k;
+            termed100klimitoption.Excess = TermExcess;
+            termed100klimitoption.BrokerageRate = agreement.Brokerage;
+            termed100klimitoption.Brokerage = TermBrokerage100k;
+            termed100klimitoption.DateDeleted = null;
+            termed100klimitoption.DeletedBy = null;
 
-            ClientAgreementTerm termpl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess2mil);
-            termpl2millimitoption.TermLimit = TermLimit2mil;
-            termpl2millimitoption.Premium = TermPremium2mil;
-            termpl2millimitoption.BasePremium = TermPremium2mil;
-            termpl2millimitoption.Excess = TermExcess2mil;
-            termpl2millimitoption.BrokerageRate = agreement.Brokerage;
-            termpl2millimitoption.Brokerage = TermBrokerage2mil;
-            termpl2millimitoption.DateDeleted = null;
-            termpl2millimitoption.DeletedBy = null;
-
-            int TermLimit5mil = 5000000;
-            decimal TermPremium5mil = 0m;
-            decimal TermBrokerage5mil = 0m;
-            decimal TermExcess5mil = 0;
-            TermPremium5mil = rates["pl5millimitpremium"];
-            TermExcess5mil = rates["pl5millimitexcess"];
-
-            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
-
-            ClientAgreementTerm termpl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit5mil, TermExcess5mil);
-            termpl5millimitoption.TermLimit = TermLimit5mil;
-            termpl5millimitoption.Premium = TermPremium5mil;
-            termpl5millimitoption.BasePremium = TermPremium5mil;
-            termpl5millimitoption.Excess = TermExcess5mil;
-            termpl5millimitoption.BrokerageRate = agreement.Brokerage;
-            termpl5millimitoption.Brokerage = TermBrokerage5mil;
-            termpl5millimitoption.DateDeleted = null;
-            termpl5millimitoption.DeletedBy = null;
 
             //Referral points per agreement
-
+            //ED Issues
+            uwredissue(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -158,9 +136,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Not Applicable";
-            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
-            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
+            string retrodate = "Unlimited excluding known claims or circumstances";
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {
@@ -169,7 +147,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.InsuredName = informationSheet.Owner.Name;
 
-            string auditLogDetail = "NZPI PL UW created/modified";
+            string auditLogDetail = "NZPI ED UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -249,6 +227,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
+        void uwredissue(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.CoveredOptions").First().Value == "2" ||
+                            (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.CoveredOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.LegalAdvisorOptions").First().Value == "2") ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.IsInsuredClaimOptions").First().Value == "1")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
 
     }

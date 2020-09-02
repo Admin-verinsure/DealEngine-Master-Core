@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class TripleACLUWModule : IUnderwritingModule
+    public class NZPICLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public TripleACLUWModule()
+        public NZPICLUWModule()
         {
-            Name = "TripleA_CL";
+            Name = "NZPI_CL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -41,9 +41,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "clsocialengineeringextpremium", "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium",
-                "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium",
-                "cl2millimitincomeunder500k", "cl2millimitincome500kto2andhalfmilpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "clsocialengineeringextpremium", "cl250klimitincomeunder1milpremium", "cl250klimitincome1milto5milpremium",
+                "cl500klimitincomeunder1milpremium", "cl500klimitincome1milto5milpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -68,15 +67,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal feeincome = 0;
             decimal extpremium = 0m;
 
-            string strProfessionalBusiness = "Life and general advisers of any insurance or assurance company and/or intermediaries, agents or consultants in the sale or negotiation of any financial product or the provision of any financial advice including mortgage advice and financial services educational workshops.";
+            string strProfessionalBusiness = "Planning / urban design, resource management, local government advice, transport planning, Environmental policy advice, heritage planning, planning commissioner, market research, land management investigations, disputes resolution, master planning, urban design workshops, training, university lecturing.";
 
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
-                    feeincome = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                    feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }
             }
 
@@ -103,7 +102,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
                 }
             }
-                        
+
 
             ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
             ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
@@ -163,7 +162,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
-            TermPremium250k = (GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium) * agreementperiodindays / coverperiodindays;
+            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium;
 
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
@@ -180,7 +179,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
-            TermPremium500k = (GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium) * agreementperiodindays / coverperiodindays;
+            TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
 
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
@@ -194,39 +193,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl500klimitoption.DateDeleted = null;
             termcl500klimitoption.DeletedBy = null;
 
-            int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = 0m;
-            decimal TermBrokerage1mil = 0m;
-            TermPremium1mil = (GetPremiumFor(rates, feeincome, TermLimit1mil) + extpremium) * agreementperiodindays / coverperiodindays;
-
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
-
-            ClientAgreementTerm termcl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit1mil, TermExcess);
-            termcl1millimitoption.TermLimit = TermLimit1mil;
-            termcl1millimitoption.Premium = TermPremium1mil;
-            termcl1millimitoption.BasePremium = TermPremium1mil;
-            termcl1millimitoption.Excess = TermExcess;
-            termcl1millimitoption.BrokerageRate = agreement.Brokerage;
-            termcl1millimitoption.Brokerage = TermBrokerage1mil;
-            termcl1millimitoption.DateDeleted = null;
-            termcl1millimitoption.DeletedBy = null;
-
-            int TermLimit2mil = 2000000;
-            decimal TermPremium2mil = 0m;
-            decimal TermBrokerage2mil = 0m;
-            TermPremium2mil = (GetPremiumFor(rates, feeincome, TermLimit2mil) + extpremium) * agreementperiodindays / coverperiodindays;
-
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
-
-            ClientAgreementTerm termcl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit2mil, TermExcess);
-            termcl2millimitoption.TermLimit = TermLimit2mil;
-            termcl2millimitoption.Premium = TermPremium2mil;
-            termcl2millimitoption.BasePremium = TermPremium2mil;
-            termcl2millimitoption.Excess = TermExcess;
-            termcl2millimitoption.BrokerageRate = agreement.Brokerage;
-            termcl2millimitoption.Brokerage = TermBrokerage2mil;
-            termcl2millimitoption.DateDeleted = null;
-            termcl2millimitoption.DeletedBy = null;
 
             //Referral points per agreement
             //Not a renewal of an existing policy
@@ -256,7 +222,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.InsuredName = informationSheet.Owner.Name;
 
-            string auditLogDetail = "TripleA CL UW created/modified";
+            string auditLogDetail = "NZPI CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -274,7 +240,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
                 //Inception date rule
-                if (DateTime.UtcNow > product.DefaultInceptionDate.AddMonths(1))
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
                 {
                     inceptionDate = DateTime.UtcNow;
                 }
@@ -343,52 +309,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 case 250000:
                     {
-                        if (feeincome >= 0 && feeincome <= 500000)
+                        if (feeincome >= 0 && feeincome < 1000000)
                         {
-                            premiumoption = rates["cl250klimitincomeunder500k"];
+                            premiumoption = rates["cl250klimitincomeunder1milpremium"];
                         }
-                        else if (feeincome > 500000 && feeincome <= 2500000)
+                        else if (feeincome >= 1000000 && feeincome < 5000000)
                         {
-                            premiumoption = rates["cl250klimitincome500kto2andhalfmilpremium"];
+                            premiumoption = rates["cl250klimitincome1milto5milpremium"];
                         }
                         break;
                     }
                 case 500000:
                     {
-                        if (feeincome >= 0 && feeincome <= 500000)
+                        if (feeincome >= 0 && feeincome < 1000000)
                         {
-                            premiumoption = rates["cl500klimitincomeunder500k"];
+                            premiumoption = rates["cl500klimitincomeunder1milpremium"];
                         }
-                        else if (feeincome > 500000 && feeincome <= 2500000)
+                        else if (feeincome >= 1000000 && feeincome < 5000000)
                         {
-                            premiumoption = rates["cl500klimitincome500kto2andhalfmilpremium"];
-                        }
-                        break;
-                    }
-                case 1000000:
-                    {
-                        if (feeincome >= 0 && feeincome <= 500000)
-                        {
-                            premiumoption = rates["cl1millimitincomeunder500k"];
-                        }
-                        else if (feeincome > 500000 && feeincome <= 2500000)
-                        {
-                            premiumoption = rates["cl1millimitincome500kto2andhalfmilpremium"];
+                            premiumoption = rates["cl500klimitincome1milto5milpremium"];
                         }
                         break;
                     }
-                case 2000000:
-                    {
-                        if (feeincome >= 0 && feeincome <= 500000)
-                        {
-                            premiumoption = rates["cl2millimitincomeunder500k"];
-                        }
-                        else if (feeincome > 500000 && feeincome <= 2500000)
-                        {
-                            premiumoption = rates["cl2millimitincome500kto2andhalfmilpremium"];
-                        }
-                        break;
-                    }
+
                 default:
                     {
                         throw new Exception(string.Format("Can not calculate premium for CL"));
@@ -441,7 +384,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (feeincome > 2500000)
+                        if (feeincome > 5000000)
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
                         }
@@ -453,3 +396,4 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
     }
 }
+
