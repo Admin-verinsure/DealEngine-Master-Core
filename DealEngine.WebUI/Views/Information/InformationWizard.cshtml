@@ -34,6 +34,7 @@
                         @Html.HiddenFor(m => m.AnswerSheetId)
                         @Html.HiddenFor(m => m.Status)
                         @Html.HiddenFor(m => m.Programme.Name)
+                        @Html.HiddenFor(m => m.Programme.Id)
                         @Html.HiddenFor(m => m.Id)
 
                         <div role="content">
@@ -71,7 +72,7 @@
                                     <div class="sw-container tab-content">
                                         <div id="tab_1" class="tab-pane step-content" style="display: block;">
                                             <h3>
-                                                <strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information                                             
+                                                <strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information
                                                 <button type="button" class="btn btn-sm pull-right text-white" data-toggle="modal" data-target="#advisoryModal" style="background-color: #00A8C8">
                                                     <i class="bi bi-node-plus"></i>Advisory
                                                 </button>
@@ -137,13 +138,13 @@
                                                                                 <label class="label cgmodalLabel">Marina Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
-                                                    <option selected="selected" value="">-- Select --</option>
-                                                    @foreach (var bwloc in Model.MarinaLocations)
-                                                    {
-                                                        <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
-                                                    }
-                                                    <option value="add">Add Marina Location</option>
-                                                </select>*@
+                                                                        <option selected="selected" value="">-- Select --</option>
+                                                                        @foreach (var bwloc in Model.MarinaLocations)
+                                                                        {
+                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
+                                                                        }
+                                                                        <option value="add">Add Marina Location</option>
+                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -162,13 +163,13 @@
                                                                                 <label class="label cgmodalLabel">Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
-                                                    <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
-                                                    @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                    {
-                                                        <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                    }
-                                                    <option value="add">Add Location</option>
-                                                </select>*@
+                                                                        <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
+                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                                        {
+                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                        }
+                                                                        <option value="add">Add Location</option>
+                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
 
@@ -216,13 +217,13 @@
                                                                                 <label class="label cgmodalLabel required">Location</label>
                                                                                 <label class="input w100">
                                                                                     @*<select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
-                                                    <option selected="selected" value="">-- Select --</option>
-                                                    @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                    {
-                                                        <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                    }
-                                                    <option value="add">Add Location</option>
-                                                </select>*@
+                                                                        <option selected="selected" value="">-- Select --</option>
+                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                                        {
+                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                        }
+                                                                        <option value="add">Add Location</option>
+                                                                    </select>*@
                                                                                 </label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">

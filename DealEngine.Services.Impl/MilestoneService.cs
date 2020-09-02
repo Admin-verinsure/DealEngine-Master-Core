@@ -31,19 +31,6 @@ namespace DealEngine.Services.Impl
             _milestoneRepository = milestoneRepository;
         }
 
-        public async Task CreateMilestone(string Type)
-        {
-            if(Type == "Rejoin")
-            {
-                await CreateReJoinMilestone();
-            }
-        }
-
-        private Task CreateReJoinMilestone()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Milestone> GetMilestoneProgrammeId(Guid programmeId)
         {
             return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Programme.Id == programmeId);
@@ -167,7 +154,7 @@ namespace DealEngine.Services.Impl
             var Activity = ProgrammeProcess.Activities.FirstOrDefault(a => a.Name == activity);
             if (Activity == null)
             {
-                Activity = new Activity(user, activity, collection);
+                Activity = new Activity(user, activity, collection, null);
                 ProgrammeProcess.Activities.Add(Activity);
             }
             else
@@ -250,6 +237,18 @@ namespace DealEngine.Services.Impl
             //var list = _taskingService.GetAllActiveTasks();
             throw new NotImplementedException();
 
+        }
+
+        public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme)
+        {
+            UserTask userTask = new UserTask(user, "Rejoin", null)
+            {
+                URL = "/Organisation/RejoinProgramme/" + programme.Id.ToString(),
+                Body = "Notify Broker Org Task"
+            };
+            
+            organisationUser.UserTasks.Add(userTask);
+            await _userService.Update(organisationUser);           
         }
     }
 }

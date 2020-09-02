@@ -18,8 +18,9 @@ namespace DealEngine.Domain.Entities
 
     public class Activity : EntityBase, IAggregateRoot
     {
-        public Activity() : base(null) { }        
-        public Activity(User createdBy, string activity, IFormCollection collection)
+        public Activity() : base(null) { }
+
+        public Activity(User createdBy, string activity, IFormCollection collection, UserTask userTask)
             : base(createdBy)
         {
             Name = activity;
@@ -28,6 +29,10 @@ namespace DealEngine.Domain.Entities
                 Advisory = new Advisory(createdBy, collection);
                 UserTask = new UserTask(createdBy, Name, collection);
                 //email
+            }
+            if(userTask != null)
+            {
+                UserTask = userTask;
             }
         }
 
@@ -84,7 +89,10 @@ namespace DealEngine.Domain.Entities
         public UserTask(User createdBy, string name, IFormCollection collection) : base(createdBy)
         {
             Name = name;
-            PopulateEntity(collection);
+            if(collection != null)
+            {
+                PopulateEntity(collection);
+            }            
             DueDate = DateTime.Now.AddDays(7);
             Completed = false;
         }

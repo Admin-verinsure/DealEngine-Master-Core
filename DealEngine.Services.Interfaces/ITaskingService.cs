@@ -9,7 +9,6 @@ namespace DealEngine.Services.Interfaces
         Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation);
         Task Update(UserTask userTask);
         Task CreateTask(UserTask task);
-        Task JoinOrganisationTask(User user, Organisation organisation);
     }
 }
 

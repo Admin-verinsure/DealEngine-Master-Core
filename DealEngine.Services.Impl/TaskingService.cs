@@ -36,11 +36,6 @@ namespace DealEngine.Services.Impl
             await _taskRespository.AddAsync(task);
         }
 
-        public async Task JoinOrganisationTask(User user, Organisation organisation)
-        {
-           //await _milestoneService.CreateMilestone("Rejoin");
-            throw new NotImplementedException();
-        }
     }
 }
 
