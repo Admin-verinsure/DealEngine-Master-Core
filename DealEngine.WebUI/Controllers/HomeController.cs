@@ -96,13 +96,12 @@ namespace DealEngine.WebUI.Controllers
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
             model.DealItems = new List<ProductItem>();
-            model.UserTasks = new List<UserTask>();
 
             User user = null;
             try
             {
                 user = await CurrentUser();
-
+                model.UserTasks = user.UserTasks;
                 model.DisplayDeals = true;
                 model.DisplayProducts = false;
                 model.CurrentUserType = "Client";

@@ -44,22 +44,6 @@ namespace DealEngine.Services.Impl
             throw new NotImplementedException();
         }
 
-        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)
-        {
-            //var activity = await _activityService.GetActivityId(activityId);
-            //var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
-            //SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(activity.Name);
-            //if (systemEmailTemplate == null)
-            //{
-            //    systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
-            //    await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
-            //}
-
-            //systemEmailTemplate.Milestone = milestone;
-            //systemEmailTemplate.Activity = activity;
-            //await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
-        }
-
         public async Task<Milestone> GetMilestoneProgrammeId(Guid programmeId)
         {
             return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Programme.Id == programmeId);
@@ -120,14 +104,17 @@ namespace DealEngine.Services.Impl
                 //run task
                 var Advisory = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory;
                 var UserTask = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).UserTask;
-                if (string.IsNullOrWhiteSpace(UserTask.URL))
+                if (string.IsNullOrWhiteSpace(UserTask.URL)) //UserTask.IsActive
                 {
                     UserTask.URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
-                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";                    
+                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
+                    await _taskingService.Update(UserTask);
                 }
-                sheet.Programme.BaseProgramme.AgreementReferNotifyUsers
-                await _userService.AssignTaskToUser(user, UserTask);
-                                
+                
+                foreach(var NotifyUsers in sheet.Programme.BaseProgramme.AgreementReferNotifyUsers)
+                {
+                    await _userService.AssignTaskToUser(NotifyUsers, UserTask);
+                }                            
                 //run email
                 return Advisory.Description;
             }

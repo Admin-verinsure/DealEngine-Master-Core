@@ -85,6 +85,8 @@ namespace DealEngine.Domain.Entities
         {
             Name = name;
             PopulateEntity(collection);
+            DueDate = DateTime.Now.AddDays(7);
+            Completed = false;
         }
 
         public virtual void Complete(User completedBy)
