@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DealEngine.Services.Interfaces;
 using DealEngine.Domain.Entities;
-using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
@@ -11,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.Tasking;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -22,11 +20,13 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationService _organisationService;
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
-        ILogger<OrganisationController> _logger;
-        ITaskingService _taskingService;
+        ILogger<OrganisationController> _logger;        
+        IMilestoneService _milestoneService;
+        IProgrammeService _programmeService;
 
         public OrganisationController(
-            ITaskingService taskingService,
+            IProgrammeService programmeService,
+            IMilestoneService milestoneService,
             ISerializerationService serialiserService,
             ILogger<OrganisationController> logger,
             IClientInformationService clientInformationService,
@@ -36,7 +36,8 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
-            _taskingService = taskingService;
+            _programmeService = programmeService;
+            _milestoneService = milestoneService;
             _serialiserService = serialiserService;
             _clientInformationService = clientInformationService;
             _logger = logger;
@@ -199,13 +200,19 @@ namespace DealEngine.WebUI.Controllers
             User user = await CurrentUser();
             Guid Id = Guid.Parse(collection["OrganisationId"]);
             Organisation organisation = await _organisationService.GetOrganisation(Id);
+            var organisationUser = await _userService.GetUserPrimaryOrganisation(organisation);
             organisation.Removed = true;
             await _organisationService.Update(organisation);
 
-            if(user.UserName== "JDillon")
-            {
-                await _taskingService.JoinOrganisationTask(user, organisation);
-            }
+            //if(user.UserName== "JDillon")
+            //{
+            //    if(organisationUser != null)
+            //    {
+            //        Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
+            //        var Programme = await _programmeService.GetProgramme(ProgrammeId);
+            //        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+            //    }
+            //}
 
             return Ok();
         }

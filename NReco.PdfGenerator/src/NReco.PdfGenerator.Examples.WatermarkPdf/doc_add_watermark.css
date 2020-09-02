@@ -1,0 +1,12 @@
+﻿body {
+	background-image: url('Watermark.png'); /* image should match page height */
+	background-position: center top;
+	background-repeat:repeat-y;
+	
+	/* 
+		doesn't work with wkhtmltopdf 0.12.2.1:
+		
+		background-repeat:no-repeat;	
+		background-attachment:fixed;
+	*/
+}

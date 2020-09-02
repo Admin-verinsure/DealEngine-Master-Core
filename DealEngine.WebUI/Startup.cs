@@ -62,7 +62,9 @@ namespace DealEngine.WebUI
             });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
-            services.AddMvc();
+            // services.AddMvc();
+            services.AddMvc()
+               .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)

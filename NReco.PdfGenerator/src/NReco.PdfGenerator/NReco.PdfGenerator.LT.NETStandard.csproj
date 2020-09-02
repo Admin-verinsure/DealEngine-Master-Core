@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>HTML to PDF converter for .NET Framework / .NET Core (WkHtmlToPdf wrapper). Generates pretty-looking PDF by HTML template or web page URL. Supports page header/footer, page numbering, custom fonts, javascript execution.</Description>
+    <Title>HTML to PDF Generator</Title>
+	<Copyright>Vitalii Fedorchenko 2013-2018</Copyright>
+    <AssemblyTitle>NReco.PdfGenerator.LT</AssemblyTitle>
+    <VersionPrefix>1.1.17</VersionPrefix>
+    <Authors>Vitalii Fedorchenko</Authors>
+    <TargetFrameworks>netstandard1.5;netstandard2.0;net20</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>NReco.PdfGenerator.LT</AssemblyName>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>NReco.PdfGenerator.LT</PackageId>
+    <PackageTags>PDF;Html;WkHtmlToPdf;html-to-pdf;html2pdf;html-to-pdf-converter;pdf-generation;c#;wrapper;PdfGenerator;Converter;netstandard;netcore;net20;net40;mono</PackageTags>
+    <PackageReleaseNotes>PdfGenerator.LT build doesn't embed wkhtmltopdf binaries and can be used in non-windows environments (Linux, OS-X) from Mono or .NET Core projects. Appropriate wkhtmltopdf binaries should be installed/deployed with your application.
+How to use:
+
+var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+htmlToPdfConv.License.SetLicenseKey("your_id", "your_license_key");
+// for Linux/OS-X: "wkhtmltopdf"
+htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf.exe";
+// path where wkhtmltopdf binaries are installed/deployed
+htmlToPdfConv.PdfToolPath = "&lt;path_to_wkhtmltopdf_folder&gt;";
+htmlToPdfConv.GeneratePdfFromFile("http://www.google.com", null, "google.pdf");
+
+Please contact support@nrecosite.com if you want to get demo key for evaluation/testing purposes.</PackageReleaseNotes>
+    <PackageIconUrl>https://www.nrecosite.com/img/nreco-logo-200.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.nrecosite.com/pdf_generator_net.aspx</PackageProjectUrl>
+    <PackageLicenseUrl>https://www.nrecosite.com/pdf_generator_net.aspx</PackageLicenseUrl>
+    <!--NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion-->
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.3.0" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <DefineConstants>$(DefineConstants);LIGHT;NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);LIGHT;NET_STANDARD2</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net20' ">
+    <Reference Include="System" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net20'">
+    <DefineConstants>$(DefineConstants);LIGHT</DefineConstants>
+  </PropertyGroup>
+
+</Project>

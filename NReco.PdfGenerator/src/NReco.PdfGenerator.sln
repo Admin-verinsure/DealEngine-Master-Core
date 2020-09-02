@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator", "NReco.PdfGenerator\NReco.PdfGenerator.csproj", "{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.DemoWebForms", "NReco.PdfGenerator.Examples.DemoWebForms\NReco.PdfGenerator.Examples.DemoWebForms.csproj", "{075ECF83-8A22-44CE-ACB5-A0AB3FB3FF41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.DemoMvc", "NReco.PdfGenerator.Examples.DemoMvc\NReco.PdfGenerator.Examples.DemoMvc.csproj", "{35234475-F13A-4692-AD9E-52A89420D72D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.DataSetReport", "NReco.PdfGenerator.Examples.DataSetReport\NReco.PdfGenerator.Examples.DataSetReport.csproj", "{9BA54D77-9EE5-47A7-B9E5-87819813C9AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.PdfFromFiles", "NReco.PdfGenerator.Examples.PdfFromFiles\NReco.PdfGenerator.Examples.PdfFromFiles.csproj", "{90419B29-DCAF-4DF2-A108-01537C72DCAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.WatermarkPdf", "NReco.PdfGenerator.Examples.WatermarkPdf\NReco.PdfGenerator.Examples.WatermarkPdf.csproj", "{6E5431DA-2F07-42F8-9AD0-DFBFD40837C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.EncryptPdf", "NReco.PdfGenerator.Examples.EncryptPdf\NReco.PdfGenerator.Examples.EncryptPdf.csproj", "{7DE0A3A0-91BA-43F1-A51A-89C296932FAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.BatchMode", "NReco.PdfGenerator.Examples.BatchMode\NReco.PdfGenerator.Examples.BatchMode.csproj", "{E5EE8B67-A394-4520-8C1B-6D98BF851028}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.WordToPdf", "NReco.PdfGenerator.Examples.WordToPdf\NReco.PdfGenerator.Examples.WordToPdf.csproj", "{D04D37AB-AE7E-4962-9D0C-681022731C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.PdfGenerator.Examples.MergePdf", "NReco.PdfGenerator.Examples.MergePdf\NReco.PdfGenerator.Examples.MergePdf.csproj", "{99F421FB-198D-4E86-82EC-2D65D87B630A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075ECF83-8A22-44CE-ACB5-A0AB3FB3FF41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075ECF83-8A22-44CE-ACB5-A0AB3FB3FF41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075ECF83-8A22-44CE-ACB5-A0AB3FB3FF41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075ECF83-8A22-44CE-ACB5-A0AB3FB3FF41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35234475-F13A-4692-AD9E-52A89420D72D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35234475-F13A-4692-AD9E-52A89420D72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35234475-F13A-4692-AD9E-52A89420D72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35234475-F13A-4692-AD9E-52A89420D72D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BA54D77-9EE5-47A7-B9E5-87819813C9AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BA54D77-9EE5-47A7-B9E5-87819813C9AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BA54D77-9EE5-47A7-B9E5-87819813C9AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BA54D77-9EE5-47A7-B9E5-87819813C9AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90419B29-DCAF-4DF2-A108-01537C72DCAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90419B29-DCAF-4DF2-A108-01537C72DCAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90419B29-DCAF-4DF2-A108-01537C72DCAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90419B29-DCAF-4DF2-A108-01537C72DCAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E5431DA-2F07-42F8-9AD0-DFBFD40837C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E5431DA-2F07-42F8-9AD0-DFBFD40837C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E5431DA-2F07-42F8-9AD0-DFBFD40837C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E5431DA-2F07-42F8-9AD0-DFBFD40837C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DE0A3A0-91BA-43F1-A51A-89C296932FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DE0A3A0-91BA-43F1-A51A-89C296932FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DE0A3A0-91BA-43F1-A51A-89C296932FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DE0A3A0-91BA-43F1-A51A-89C296932FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5EE8B67-A394-4520-8C1B-6D98BF851028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5EE8B67-A394-4520-8C1B-6D98BF851028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5EE8B67-A394-4520-8C1B-6D98BF851028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5EE8B67-A394-4520-8C1B-6D98BF851028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D04D37AB-AE7E-4962-9D0C-681022731C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D04D37AB-AE7E-4962-9D0C-681022731C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D04D37AB-AE7E-4962-9D0C-681022731C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D04D37AB-AE7E-4962-9D0C-681022731C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99F421FB-198D-4E86-82EC-2D65D87B630A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99F421FB-198D-4E86-82EC-2D65D87B630A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99F421FB-198D-4E86-82EC-2D65D87B630A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99F421FB-198D-4E86-82EC-2D65D87B630A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

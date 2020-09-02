@@ -20,7 +20,8 @@ namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
     public class AdminController : BaseController
-	{		
+	{
+        IMilestoneService _milestoneService;
 		IPrivateServerService _privateServerService;
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
@@ -41,6 +42,7 @@ namespace DealEngine.WebUI.Controllers
         UserManager<IdentityUser> _userManager;
 
         public AdminController (
+            IMilestoneService milestoneService,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             IImportService importService,
@@ -62,6 +64,7 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _milestoneService = milestoneService;
             _userManager = userManager;
             _signInManager = signInManager;
             _importService = importService;
@@ -871,7 +874,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _clientInformationService.DeveloperTool();
+            await _milestoneService.DeveloperTool();
             return Redirect("~/Home/Index");
         }
     }

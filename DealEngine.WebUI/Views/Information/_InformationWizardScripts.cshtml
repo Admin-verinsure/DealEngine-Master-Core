@@ -4270,7 +4270,7 @@ async: true
 
 function GetRegisteredMVDetails(elementBaseName)
    {                    event.preventDefault();
-
+    debugger;
 
     var TrailerModal = false;
     if (elementBaseName == "#RegistrationModal") {
@@ -4287,10 +4287,10 @@ function GetRegisteredMVDetails(elementBaseName)
         type: "POST",
         //contentType: "application/json; charset=utf-8",
         //data: JSON.stringify({ registration: plate })
-        data: postData,
-async: true
+        data: postData
     })
         .done(function (data) {
+            debugger;
             if (TrailerModal==true) {
 
                 $('#ValidatedTrailer.b').val(data.validated);

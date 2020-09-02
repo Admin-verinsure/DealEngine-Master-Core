@@ -22,7 +22,8 @@ using ServiceStack;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Net;
-using FastReport.Export.PdfSimple.PdfObjects;
+//using FastReport.Export.PdfSimple.PdfObjects;
+using NReco.PdfGenerator;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -65,6 +66,132 @@ namespace DealEngine.WebUI.Controllers
             _productRepository = productRepository;
             _appSettingService = appSettingService;
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetPDF(Guid id, string format=null)
+        {
+            User user = null;
+
+            SystemDocument doc = await _documentRepository.GetByIdAsync(id);
+            string extension = "";
+            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+            // DOCX & HTML
+            string html = _fileService.FromBytes(doc.Contents);
+
+            if (doc.ContentType == MediaTypeNames.Text.Html)
+            {
+                extension = ".html";
+                string html2 = html;
+
+                // Bugfix for images added before Image Path fix
+                string badURL = "../../../images/";
+                var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+                html2 = html2.Replace(badURL, newURL);
+
+                // Image resize/positioning
+                string centerImage = "<figure class=\"image\"><img src=\"";
+                string centerResize = "<figure class=\"image image_resized\" style=";
+                string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
+                string leftResize = "<figure class=\"image image-style-align-left image_resized\" style=";
+                string leftResize2 = "<figure class=\"image image_resized image-style-align-left\" style=";
+                string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
+                string rightResize = "<figure class=\"image image-style-align-right image_resized\" style=";
+                string rightResize2 = "<figure class=\"image image_resized image-style-align-right\" style=";
+
+                // Border
+                string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+                // array of elements that need updated
+                string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
+
+                // Reason you check the Content Type and then the format is for when you want a docx from html
+                // HTML
+
+                if ((format == "pdf"))
+                {
+                    foreach (string ele in badHtml)
+                    {
+                        int x = CountStringOccurrences(html2, ele);
+                        var regex = new Regex(Regex.Escape(ele));
+
+                        for (int j = 0; j < x; j++)
+                        {
+                            if (ele.Contains("image_resized") == false)
+                            {
+                                // Image to HTML use cases
+                                if (ele.Equals(centerImage))
+                                {
+                                    html2 = regex.Replace(html2, "<img style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if (ele.Equals(leftImage))
+                                {
+                                    html2 = regex.Replace(html2, "<img style=\"display:block;margin-left:0;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if (ele.Equals(rightImage))
+                                {
+                                    html2 = regex.Replace(html2, "<img style=\"display:block;margin-left:auto;margin-right:0;\" src=\"", 1);
+                                }
+                            }
+                            else
+                            {
+                                int widthIndex = ele.Length;                                                            // length of figure tag up until style=
+                                string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);                 // the actual width value in % plus extra characters sometimes which we delete below                       
+                                width = width.Replace("%", "");
+                                width = width.Replace("\"", "");
+                                width = width.Replace(";", "");
+                                width = width.Replace(">", "");
+
+                                int srcEndIndex = html2.IndexOf(ele) + widthIndex;
+                                int end = 21 + width.Length;
+                                html2 = html2.Remove(srcEndIndex, end);                                                 // remove the extra src and style tags
+
+                                if (ele.Equals(centerResize) == true)
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:0;margin-right:auto;\" src=\"", 1);
+                                }
+                                else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
+                                {
+                                    html2 = regex.Replace(html2, "<img width=\"" + width + "%\"; style=\"display:block;margin-left:auto;margin-right:0;\" src=\"", 1);
+                                }
+                            }
+                        }
+                        html = html2;
+                    }
+
+                    #region old code
+
+                    #endregion
+                    docContents = _fileService.ToBytes(html);
+                }
+            }
+          
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(
+               "PDF_Generator_Src_Examples_Pack_250473855326",
+               "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
+           );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.PageFooterHtml = $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            //htmlToPdfConv.PageHeight = 215;
+            //htmlToPdfConv.PageWidth = 176;
+            //var margins = new PageMargins();
+            //margins.Bottom = 4;
+            //margins.Top = 4;
+            //margins.Left = 5;
+            //margins.Right = 5;
+           // htmlToPdfConv.Margins = margins;
+
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+           
+            return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
+
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetDocument(Guid id, string format)
@@ -354,6 +481,20 @@ namespace DealEngine.WebUI.Controllers
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
                     // RETURN PDF
+                    //var Renderer = new IronPdf.HtmlToPdf();
+                    //  string html = _fileService.FromBytes(doc.ContentType);
+                    //return  Renderer.RenderHtmlAsPdfAsync(doc.ContentType);
+
+                    var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+                    htmlToPdfConv.License.SetLicenseKey(
+                       "PDF_Generator_Src_Examples_Pack_250473855326",
+                       "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
+                   );            // for Linux/OS-X: "wkhtmltopdf"
+                    htmlToPdfConv.WkHtmlToPdfExeName = "C:\\inetpub\\wwwroot\\dealengine\\NReco.PdfGenerator\\src\\NReco.PdfGenerator.Examples.DemoMvc\\App_Data\\PdfGenerator\\wkhtmltopdf.exe";
+                    // path where wkhtmltopdf binaries are installed/deployed
+                    htmlToPdfConv.PdfToolPath = "<C:\\inetpub\\wwwroot\\dealengine\\NReco.PdfGenerator\\src\\NReco.PdfGenerator\\wkhtmltopdf>";
+                    var pdfBytes = htmlToPdfConv.GeneratePdf(_fileService.FromBytes(doc.Contents));
+
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
 
@@ -376,7 +517,75 @@ namespace DealEngine.WebUI.Controllers
             return View(productList);
         }
 
-		[HttpGet]
+
+        [HttpPost]
+        public async Task<IActionResult> SavePDFFile(String Reportstr , Guid ClientProgrammeId )
+        {
+            try
+            {
+
+                User user = null;
+                SystemDocument document = null;
+                Product product = null;
+                try
+                {
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+                        user = await CurrentUser();
+                    document = new SystemDocument(user, "FullProposalReport", MediaTypeNames.Text.Html, 99);
+                    document.Description = "FullProposal Report Pdf";
+                    document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(Reportstr));
+                    document.OwnerOrganisation = user.PrimaryOrganisation;
+                    //document.IsTemplate = true;
+                    await _documentRepository.AddAsync(document);
+
+                    using (var uow = _unitOfWork.BeginUnitOfWork()) {
+
+                   
+                      if (clientProgramme != null)
+                      {
+                        foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                        {
+
+                            if (agreement.Product.IsMasterProduct)
+                            {
+                                    foreach (var doc in agreement.Documents)
+                                    {
+                                        if (doc.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
+                                        {
+                                            agreement.Documents.Remove(doc);
+                                            break;
+                                        }
+                                            
+                                    }
+                                    if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
+                                    {
+                                        agreement.Documents.Add(document);
+                                    }
+                            }  
+                        }
+                            await uow.Commit();
+                      }
+                    }
+                    return View("");
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+                //return _generatePdf.GetPDF(html);
+
+                //return await _generatePdf.GetPdf("notAView", Document);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return View("ProgrammeDetailsReport");
+        }
+
+      
+        [HttpGet]
 		public async Task<IActionResult> CreateDocument (string id, string productId)
 		{
 			DocumentViewModel model = new DocumentViewModel ();

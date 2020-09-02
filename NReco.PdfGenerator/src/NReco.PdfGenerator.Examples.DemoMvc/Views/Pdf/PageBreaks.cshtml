@@ -1,0 +1,59 @@
+﻿@model System.Collections.IDictionary
+<html>
+	<head>
+
+		<style>
+			table, tr, td, th, tbody, thead, tfoot, td div {
+				page-break-inside: avoid !important;
+			}
+			div.noBreak {
+				display:block;
+				background-color:silver;
+				page-break-inside: avoid !important;
+			}
+		</style>
+	</head>
+<body>
+
+<h1>PDF Generator: Page breaks</h1>
+
+	<p>
+		Page break is controlled by CSS:
+<pre>
+	page-break-after:always
+</pre>
+		It's possible to use page break for insering blank page.
+	</p>
+
+<div style="page-break-after:always"></div>
+&nbsp;
+<div style="page-break-after:always"></div>
+(after blank page content)
+
+
+
+<table>
+	<thead>
+		<tr>
+			<th>Table Header Column 1</th>
+			<th>Table Header Column 2</th>
+		</tr>
+	</thead>
+		@for (int i = 0; i < 50; i++) {
+
+			<tr>
+				<td>
+					<div class="noBreak">
+						Table row @(i + 1)<br />line content 1<br />line content 2
+					</div>
+				</td>
+				<td>	
+					<div class="noBreak">Table Row @(i + 1)</div>
+				</td>
+			</tr>
+		}
+</table>
+
+</body>
+</html>
+
