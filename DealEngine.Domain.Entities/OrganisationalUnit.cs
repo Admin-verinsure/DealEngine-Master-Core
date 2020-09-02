@@ -183,6 +183,24 @@ namespace DealEngine.Domain.Entities
         public virtual int YearsAtInsured { get; set; }
 
     }
+
+    public class SkipperUnit : OrganisationalUnit
+    {
+        public SkipperUnit() { }
+        public SkipperUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+        [Display(Name = "Skipper First Name")]
+        public virtual string FirstName { get; set; }
+        [Display(Name = "Skipper Last Name")]
+        public virtual string LastName { get; set; }
+        [Display(Name = "Skipper Email Address")]
+        public virtual string Email { get; set; }
+    }
+
 }
 
-    
+
+

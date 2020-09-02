@@ -335,16 +335,16 @@ input::-webkit-inner-spin-button {
     display: block;
 }
 
-.boatAccordianHairline {
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border-color: lightgrey;
-    border-width: 1px;
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-}
 
+.boatAccordianHairline {
+    margin-top: 25px !important;
+    margin-bottom: 25px !important;
+    border-color: lightgrey !important;
+    border-width: 1px !important;
+    width: 80% !important;
+    margin-left: 10% !important;
+    margin-right: 10% !important
+}
 .smart-form *,
 .smart-form *:after,
 .smart-form *:before {

@@ -2304,56 +2304,44 @@ function showAccordionPanel(id, panelNo) {
     }
 
 
-    function AddOperator(event,tabId, tableId) {
-                event.preventDefault();
-
-    var informationId = $('#AnswerSheetId').serialize();
-    var test = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
-    console.log(test);
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("AddOperator", "Services")',
-        type: "POST",
-        data: test
-    })
+    function AddOperator(event, tabId, tableId) {
+        debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+        var test = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+        console.log(test);
+        $.ajax({
+            url: '@Url.Action("AddOperator", "Services")',
+            type: "POST",
+            data: test
+        })
         .done(function (data) {
-
-        //$.smallBox({
-        //    title: "Operator has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
-        console.log(data);
-        // reload grid
-        $(tableId).trigger( 'reloadGrid' );
-        $(tabId + " :input").val("");
-    })
+            console.log(data);
+            // reload grid
+            $(tableId).trigger( 'reloadGrid' );
+            $(tabId + " :input").val("");
+        })
     .fail(function (jqXHR, textStatus, errorThrown) {
         alert("There was an error while trying to save the Operator.");
-    });
+        });
     };
 
     function validateOperatorModal(firstName, lastName, yearsXP, Email) {
-
-
+        debugger;
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
-
             AddOperatorModal(event,firstName, lastName, yearsXP, Email);
             $('#addOperatorModal').hide();
         }
     }
 
     function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
-
+        debugger;
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
         var operatorLastName = $(lastName).serialize();
         var yearsExperience = $(yearsXP).serialize();
         var Email = $(Email).serialize();
-
-
         var informationId = $('#AnswerSheetId').serialize();
         $('#setOperatorModal').show();
         var postdata = $.grep([operatorFirstName, operatorLastName, yearsExperience, Email, informationId], Boolean).join("&");
@@ -2363,35 +2351,27 @@ function showAccordionPanel(id, panelNo) {
             url: '@Url.Action("AddOperator", "Services")',
             type: "POST",
             data: postdata
-        }).done(function (data) {
-
-                        setTimeout("alert('Operator has been saved');", 4000);
-
-                //$.smallBox({
-                //    title: "Operator has been saved",
-                //    color: "#5F895F",
-                //    iconSmall: "fa fa-check bounce animated",
-                //    timeout: 4000
-                //});
-
-                $('#BoatOperator').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
-                $("#BoatOperator.b [value='add']").remove();
-                $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
-                $('#BoatOperator.b').trigger('chosen:updated');
-
-                $('#AddBoatOperator.b').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
-                $("#AddBoatOperator.b [value='add']").remove();
-                $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
-                $('#AddBoatOperator.b').trigger('chosen:updated');
-                $('#addOperatorModal' + " :input").val("");
-                UpdateChosen();
-                $('#setOperatorModal').hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-              $('#setOperatorModal').hide();
-
+        })
+        .done(function (data) {
+            debugger;
+            setTimeout("alert('Operator has been saved');", 4000);
+            $('#BoatOperator').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
+            $("#BoatOperator.b [value='add']").remove();
+            $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
+            $('#BoatOperator.b').trigger('chosen:updated');
+            $('#AddBoatOperator.b').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
+            $("#AddBoatOperator.b [value='add']").remove();
+            $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
+            $('#AddBoatOperator.b').trigger('chosen:updated');
+            $('#addOperatorModal' + " :input").val("");
+            UpdateChosen();
+            $('#setOperatorModal').hide();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            $('#setOperatorModal').hide();
             alert("There was an error while trying to save the Operator.");
-            });
+        });
     };
 
     function ValidateAddLandLocModal(storageType, storageDescription, location) {
@@ -5403,7 +5383,7 @@ async: true
     var adminUser = '#AdminUser';
 
     function vesselType1Selected() {
-
+        debugger;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         console.log(boatType1Selected);
         $('#excess').val('');
@@ -5935,7 +5915,7 @@ async: true
     }
 
      function AddaddNewWaterLoc() {
-
+        debugger;
         var AddSelectedWaterLoc = AddboatWaterLoc.options[AddboatWaterLoc.selectedIndex].value;;
          if (AddSelectedWaterLoc == "add") {
              $('#AddothermarinSection').removeClass('hidden');
@@ -6330,7 +6310,7 @@ async: true
             $('#addSection').addClass('hidden');
             $('#VesselTrailerSearch').show('2000');
             $('#trailerModalHairline3').show('2000');
-            $('#VesselTrailerMV').switchClass("col-sm-12 col-md-12 col-lg-12", "col-sm-6 col-md-6 col-lg-6");
+            //$('#VesselTrailerMV').switchClass("col-sm-12 col-md-12 col-lg-12", "col-sm-6 col-md-6 col-lg-6");
             if ($('#RegistrationModal').val() == "") {
                 clearAddRegTrailerModal();
             }
@@ -6359,7 +6339,7 @@ async: true
             $('#YearModal').attr("readonly", false);
             $('#MakeModal').attr("readonly", false);
             $('#ModelModal').attr("readonly", false);
-            $('#VesselTrailerMV').switchClass("col col-xs-12 col-sm-6 col-md-6 col-lg-6", "col col-xs-12 col-sm-12 col-md-12 col-lg-12");
+            //$('#VesselTrailerMV').switchClass("col col-xs-12 col-sm-6 col-md-6 col-lg-6", "col col-xs-12 col-sm-12 col-md-12 col-lg-12");
         }
         selectedTrailerChoice = "";
     }
