@@ -85,9 +85,9 @@
                     <label class="input form-group">
                         <select onchange="MarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocation" name="WaterLocationMarinaLocation" required>
                             <option selected="selected" value="">-- Select --</option>
-                            @foreach (var bwloc in Model.MarinaLocations)
+                            @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                             {
-                                <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
+                                <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
                             }
                             <option value="add">Add Marina Location</option>
                         </select>
@@ -177,9 +177,9 @@
                     <label class="input form-group">
                         <select onchange="AddMarinaLocSelected()" class="form-control b" id="AddWaterLocationMarinaLocation" name="WaterLocationMarinaLocation" required>
                             <option selected="selected" value="">-- Select --</option>
-                            @foreach (var bwloc in Model.MarinaLocations)
+                            @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                             {
-                                <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
+                                <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
                             }
                             <option value="add">Add Marina Location</option>
                         </select>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using DealEngine.Infrastructure.Tasking;
 using DealEngine.Services.Impl;
 using DealEngine.Services.Impl.UnderwritingModuleServices;
 using DealEngine.Services.Interfaces;
@@ -24,7 +23,6 @@ namespace DealEngine.Infrastructure.AppInitialize.Services
                 services.AddTransient(reg.Service, reg.Implementation);
             }
 
-            services.AddTransient<ITaskingService, TaskingService>();
             services.AddTransient<IUnderwritingModule, EmptyUWModule>();
             services.AddTransient<IUnderwritingModule, ICIBARCCOUWModule>();
             services.AddTransient<IUnderwritingModule, ICIBHIANZUWModule>();

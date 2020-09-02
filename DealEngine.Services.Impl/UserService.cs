@@ -263,11 +263,6 @@ namespace DealEngine.Services.Impl
 			var users = await _userRepository.FindAll().Where(u => u.PrimaryOrganisation.IsBroker == true).ToListAsync();
 			return users;			
 		}
-		public async Task<List<String>> GetUsers()
-		{
-			var users = await _userRepository.FindAll().Select(x => x.UserName).ToListAsync();
-			return users;
-		}
 		
 		public async Task<User> GetUserPrimaryOrganisation(Organisation org)
 		{
@@ -286,6 +281,12 @@ namespace DealEngine.Services.Impl
         private void UpdateLDap(User user)
         {
 			_ldapService.Update(user);
+		}
+
+        public async Task AssignTaskToUser(User user, UserTask userTask)
+        {
+			user.UserTasks.Add(userTask);
+			await Update(user);
 		}
     }
 }

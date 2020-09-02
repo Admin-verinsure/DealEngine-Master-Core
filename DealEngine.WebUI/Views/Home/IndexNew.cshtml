@@ -78,10 +78,9 @@
                                     <div class="list-group">
                                         @foreach (var task in Model.UserTasks)
                                         {
-
-                                            <a href="@task.Description" class="list-group-item list-group-item-action">
+                                            <a href="@task.URL" class="list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
-                                                    <h6 class="mb-1">@task.Details</h6>
+                                                    <h6 class="mb-1">@task.Body</h6>
                                                     <small>@task.DueDate.ToString("dd/MM/yyyy")</small>
                                                 </div>
                                                 <p class="mb-1"></p>
@@ -324,7 +323,7 @@
                                             <tr>
                                                 <td>Milestones</td>
                                                 <td>Milestones</td>
-                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Milestone/Index"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewMotor", "ViewMotor"))
