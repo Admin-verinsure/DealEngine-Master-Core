@@ -2785,6 +2785,9 @@ namespace DealEngine.WebUI.Controllers
         {
             User currentUser = null;
             throw new Exception("new organisation method");
+            // create advisor unit, 
+            // a
+
             //try
             //{
             //    AddOrganisation(model);
