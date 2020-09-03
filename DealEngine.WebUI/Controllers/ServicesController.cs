@@ -2753,64 +2753,7 @@ namespace DealEngine.WebUI.Controllers
 
         #region Operators
 
-        [HttpPost]
-        public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
-        {
-            User currentUser = null;
-            try
-            {
-                string FirstName = collection["FirstName"].ToString();
-                string Email = collection["Email"].ToString();
-                string LastName = collection["LastName"].ToString();
-                currentUser = await CurrentUser();
-                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
-                OrganisationType organisationType = new OrganisationType(currentUser, "Person - Individual");
-                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, "Skipper");
-                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, "Person - Individual");
-                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, "Skipper", "Person - Individual", null);
-                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
-                {
-                    OrganisationType = organisationType,
-                    Email = Email,
-                    Name = FirstName + " " + LastName
-                };
-
-                organisation.OrganisationalUnits.Add(organisationalUnit);
-                organisation.OrganisationalUnits.Add(interestedPartyUnit);
-                organisation.InsuranceAttributes.Add(insuranceAttribute);
-
-                Random random = new Random();
-                string UserName = FirstName.Replace(" ", string.Empty)
-                    + "_"
-                    + LastName.Replace(" ", string.Empty)
-                    + random.Next(1000);
-
-                User user = new User(currentUser, UserName)
-                {
-                    FirstName = collection["FirstName"].ToString(),
-                    LastName = collection["LastName"].ToString(),
-                    Email = collection["Email"].ToString(),
-                    FullName = FirstName + " " + LastName,
-                    Id = Guid.NewGuid()
-                };
-                user.SetPrimaryOrganisation(organisation);
-
-                if (!sheet.Organisation.Contains(organisation))
-                {
-                    sheet.Organisation.Add(organisation);
-                }
-
-                await _clientInformationService.UpdateInformation(sheet);
-
-                return Json(organisation);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        
 
 
         #endregion

@@ -2346,7 +2346,7 @@ function showAccordionPanel(id, panelNo) {
         //console.log(operatorFirstName, operatorLastName, yearsExperience);
         $.ajax({
             // change back once mono decides to fix
-            url: '@Url.Action("AddOrganisationSkipperAPI", "Services")',
+            url: '@Url.Action("AddOrganisationSkipperAPI", "Organisation")',
             type: "POST",
             data: postdata
         })
@@ -3600,23 +3600,18 @@ function showAccordionPanel(id, panelNo) {
         var z = $.grep([InterestedPartyName, InterestedPartyEmail, InterestedPartyPhone, OrganisationType,
             UserFName, UserLName, Email,insuranceAtrribute, Phone, IsAdmin, AnswerSheetId], Boolean).join("&");
         var z = z + "&IsAdmin=" + IsAdmin;
-            console.log(z);
+        console.log(z);
+        debugger;
             $.ajax({
-                url: '@Url.Action("AddInterestedParty", "Services")',
+                url: '@Url.Action("AddOrganisationInterestedPartyAPI", "Organisation")',
                 type: "POST",
                 data: z
             })
             .done(function (data) {
-                //$.smallBox({
-                //title: "Interested Party has been saved",
-                //color: "#5F895F",
-                //iconSmall: "fa fa-check bounce animated",
-                //timeout: 4000
-               // });
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
+                $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
 
                                 //$("#AddSelectedInterestedParty").multiSelect("select", data.iD);
