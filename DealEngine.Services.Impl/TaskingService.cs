@@ -1,23 +1,22 @@
-﻿using NHibernate.Linq;
+﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using DealEngine.Services.Interfaces;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 
-namespace DealEngine.Infrastructure.Tasking
+namespace DealEngine.Services.Impl
 {
 	public class TaskingService : ITaskingService
 	{
         IMapperSession<UserTask> _taskRespository;
-        //Services.Interfaces.IMilestoneService _milestoneService;
 
-        public TaskingService (IMapperSession<UserTask> taskRespository)
+		public TaskingService (
+            IMapperSession<UserTask> taskRespository)
 		{
-			_taskRespository = taskRespository;
-
-        }
+            _taskRespository = taskRespository;
+		}
 
         public async Task<List<UserTask>> GetAllActiveTasksFor(Organisation organisation)
         {
@@ -37,11 +36,6 @@ namespace DealEngine.Infrastructure.Tasking
             await _taskRespository.AddAsync(task);
         }
 
-        public async Task JoinOrganisationTask(User user, Organisation organisation)
-        {
-            //await _milestoneService.CreateMilestone("Rejoin");
-            throw new NotImplementedException();
-        }
     }
 }
 

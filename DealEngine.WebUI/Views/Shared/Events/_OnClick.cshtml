@@ -25,11 +25,13 @@
     }
 
     function RemoveOrganisation(organisationId, AccordionId) {
+        debugger;
+        var programmeId = document.getElementById("Programme_Id").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
             url: '@Url.Action("RemoveOrganisation", "Organisation")',
             type: "POST",
-            data: { OrganisationId: organisationId },
+            data: { OrganisationId: organisationId, ProgrammeId: programmeId },
             success: function (Data) {
                 try {
                     location.reload();

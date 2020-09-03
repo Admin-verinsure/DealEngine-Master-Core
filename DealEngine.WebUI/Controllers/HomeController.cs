@@ -3,7 +3,6 @@ using AutoMapper;
 using ClosedXML.Excel;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
-using DealEngine.Infrastructure.Tasking;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NHibernate.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -98,13 +96,12 @@ namespace DealEngine.WebUI.Controllers
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
             model.DealItems = new List<ProductItem>();
-            model.UserTasks = new List<UserTask>();
 
             User user = null;
             try
             {
                 user = await CurrentUser();
-
+                model.UserTasks = user.UserTasks;
                 model.DisplayDeals = true;
                 model.DisplayProducts = false;
                 model.CurrentUserType = "Client";
@@ -115,12 +112,10 @@ namespace DealEngine.WebUI.Controllers
                 if (user.PrimaryOrganisation.IsInsurer)
                 {
                     model.CurrentUserType = "Insurer";
-                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
                 if (user.PrimaryOrganisation.IsTC)
                 {
                     model.CurrentUserType = "TC";
-                    model.UserTasks = await _taskingService.GetAllActiveTasksFor(user.PrimaryOrganisation);
                 }
 
                 IList<string> languages = new List<string>();

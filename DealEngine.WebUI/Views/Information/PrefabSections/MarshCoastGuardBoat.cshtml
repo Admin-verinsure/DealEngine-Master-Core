@@ -546,7 +546,7 @@
                                 <label class="input form-group">
                                     <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var bv in Model.AllVehicles)
+                                        @*foreach (var bv in Model.OrganisationViewModel.Organisation)
                                         {
                                             <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
                                         }
@@ -634,9 +634,9 @@
 
                                             <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" " required>
 
-                                                @foreach (var bwloc in Model.BoatUseslist)
+                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                                                 {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
                                                 }
 
                                             </select>
@@ -1319,9 +1319,9 @@
 
                                             <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
 
-                                                @foreach (var bwloc in Model.BoatUseslist)
+                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                                                 {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
                                                 }
 
                                             </select>

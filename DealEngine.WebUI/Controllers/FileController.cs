@@ -79,6 +79,7 @@ namespace DealEngine.WebUI.Controllers
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            //var superUserString = _appSettingService.GetSuperUser;
             htmlToPdfConv.License.SetLicenseKey(
                "PDF_Generator_Src_Examples_Pack_250473855326",
                "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="

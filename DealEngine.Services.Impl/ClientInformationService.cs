@@ -337,12 +337,23 @@ namespace DealEngine.Services.Impl
 
         public async Task DeveloperTool()
         {
+            int count = 0;
             var clientSheets = await _customerInformationRepository.FindAll().Where(s => s.Programme.BaseProgramme.Name == "TripleA Programme").ToListAsync();
             foreach(var sheet in clientSheets)
             {
-                sheet.AddAnswer("DAOLIViewModel.HasDAOLIOptions", "1");
-                await _customerInformationRepository.UpdateAsync(sheet);
+                if (sheet.SubClientInformationSheets.Any())
+                {
+                    if (sheet.Status != "Not Started" || sheet.Status != "Sumbitted" || sheet.Status != "Started")
+                    {
+                        if(sheet.SubClientInformationSheets.Any(sc=>sc.DateDeleted == null && (sc.Status == "Not Started" || sc.Status == "Started")))
+                        {
+                            count++;
+                        }
+                    }
+                }
+                
             }
+            Console.WriteLine(count);
         }
 
         public async Task<List<ClientInformationSheet>> GetAllInformationSheets()

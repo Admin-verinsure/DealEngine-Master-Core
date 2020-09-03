@@ -16,11 +16,8 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Net;
 using System.Net.Mime;
-using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
-using DealEngine.Infrastructure.Email;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 
@@ -1618,7 +1615,8 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && (sheet.Status == "Started" || sheet.Status == "Not Started"))
+                //To do: check the other status later
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && clientProgramme.InformationSheet.Status != "Bound")
                 {
                    return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
@@ -1750,18 +1748,6 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
-                var advisoryDesc = "";
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                if (milestone != null)
-                {
-                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
-                    if (advisory != null)
-                    {
-                        advisoryDesc = advisory.Description;
-                    }
-
-                }
 
                 if (!isBaseSheet)
                 {
@@ -1781,7 +1767,7 @@ namespace DealEngine.WebUI.Controllers
                             Declaration = clientProgramme.BaseProgramme.Declaration
                         };
 
-                        model.Advisory = advisoryDesc;
+                        model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Declined", user, answerSheet);
                         model.Status = agreement.Status;
                         model.InformationSheetId = answerSheet.Id;
                         models.Add(model);
@@ -1829,19 +1815,6 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 models.BaseProgramme = clientProgramme.BaseProgramme;
-                var advisoryDesc = "";
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                if (milestone != null)
-                {
-                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
-                    if (advisory != null)
-                    {
-                        advisoryDesc = advisory.Description;
-                    }
-
-                }
-
                 if(!isBaseSheet)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel();
@@ -1860,7 +1833,7 @@ namespace DealEngine.WebUI.Controllers
                             Declaration = clientProgramme.BaseProgramme.Declaration
                         };
 
-                        model.Advisory = advisoryDesc;
+                        model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Declined", user, answerSheet);
                         model.Status = agreement.Status;
                         model.InformationSheetId = answerSheet.Id;
                         models.Add(model);
@@ -2572,41 +2545,43 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
-                            }
 
 
-                            if (programme.BaseProgramme.ProgEnableEmail)
-                            {
-                                if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
+                                if (programme.BaseProgramme.ProgEnableEmail)
                                 {
-                                    //send out policy document email
-                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                    if (emailTemplate != null)
+                                    if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
                                     {
-                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-
-                                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                                        //send out policy document email
+                                        EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                        if (emailTemplate != null)
                                         {
-                                            if (!agreement.IsPolicyDocSend)
+                                            await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+
+                                            using (var uow = _unitOfWork.BeginUnitOfWork())
                                             {
-                                                agreement.IsPolicyDocSend = true;
-                                                agreement.DocIssueDate = DateTime.Now;
-                                                await uow.Commit();
+                                                if (!agreement.IsPolicyDocSend)
+                                                {
+                                                    agreement.IsPolicyDocSend = true;
+                                                    agreement.DocIssueDate = DateTime.Now;
+                                                    await uow.Commit();
+                                                }
                                             }
                                         }
                                     }
+
+                                    //send out premium advice
+                                    if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
+                                        agreement.Product.ProductEnablePremiumAdvice)
+                                    {
+                                        await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
+                                    }
+
+                                    //send out agreement bound notification email
+                                    await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                                 }
 
-                                //send out premium advice
-                                if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
-                                    agreement.Product.ProductEnablePremiumAdvice)
-                                {
-                                    await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
-                                }
-
-                                //send out agreement bound notification email
-                                await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                             }
+                           
                         }
 
                     }
@@ -2679,7 +2654,6 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
                                 foreach (SystemDocument template in agreeTemplateList)
@@ -2797,12 +2771,11 @@ namespace DealEngine.WebUI.Controllers
                             //    }
                             //}
 
-
-                            if (programme.BaseProgramme.ProgEnableEmail)
-                            {
-                                //send out policy document email
-                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                if (emailTemplate != null)
+                                if (programme.BaseProgramme.ProgEnableEmail)
+                                {
+                                    //send out policy document email
+                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                    if (emailTemplate != null)
                                     {
                                         if (sendUser)
                                         {
@@ -2823,8 +2796,11 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                     }
                                 }
-                            }
-                        }
+
+                         }
+
+                    }
+                        
                 }
 
                 return NoContent();

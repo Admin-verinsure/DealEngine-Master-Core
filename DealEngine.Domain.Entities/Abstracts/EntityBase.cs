@@ -111,11 +111,11 @@ namespace DealEngine.Domain.Entities.Abstracts
                                 var boolValue = value.ToString();
                                 property.SetValue(this, bool.Parse(value));
                             }
-                            else if (property.PropertyType == typeof(DateTime))
-                            {
-                                var dateValue = value.ToString();
-                                property.SetValue(this, DateTime.Parse(dateValue));
-                            }
+                            //else if (property.PropertyType == typeof(DateTime))
+                            //{
+                            //    var dateValue = value.ToString();
+                            //    property.SetValue(this, DateTime.Parse(dateValue));
+                            //}
                             else if (property.PropertyType == typeof(Guid))
                             {
                                 //throw new Exception("Cant save Ids");

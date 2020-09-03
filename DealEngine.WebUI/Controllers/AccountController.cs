@@ -246,11 +246,18 @@ namespace DealEngine.WebUI.Controllers
                                 _authenticationService.UseSingleUseToken(st.Id);
                                 return RedirectToAction("PasswordChanged", "Account");
                             }
-                        } else
+                        }
+                        else
                         {
+                            //assume user hasnt logged in yet and wants to change password for first time
                             _authenticationService.UseSingleUseToken(st.Id);
                             return RedirectToAction("PasswordChanged", "Account");
                         }
+                        //} else
+                        //{
+                        //    _authenticationService.UseSingleUseToken(st.Id);
+                        //    return RedirectToAction("PasswordChanged", "Account");
+                        //}
 
                     }
                     else

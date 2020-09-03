@@ -65,6 +65,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Organisations, map => map.Ignore())
                 .ForMember(dest => dest.UserName, map => map.Ignore())
                 .ForMember(dest => dest.Branches, map => map.Ignore())
+                .ForMember(dest => dest.UserTasks, map => map.Ignore())
                 .ForMember(dest => dest.Departments, map => map.Ignore())
                 .ForMember(dest => dest.UISIssueNotifyProgrammes, map => map.Ignore())
                 .ForMember(dest => dest.UISSubmissionNotifyProgrammes, map => map.Ignore())

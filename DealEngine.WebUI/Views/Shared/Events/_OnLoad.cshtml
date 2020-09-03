@@ -18,6 +18,24 @@
         minDate: startDate
     });
 
+    function PopulateMilestoneView(Method, OutPut) {
+        try {
+            for (obj in OutPut) {
+                var model = OutPut[obj];
+                var Type = obj;
+                for (var Field in model) {
+                    var Element = null;
+                    var Id = Type + "." + Field;
+                    Element = document.getElementById(Id);
+                    if (Element != null) {
+                        Element.value = OutPut[obj][Field];
+                    }
+                }
+            }
+
+        } catch (ex) { debugger;}
+    }
+
      $('#dateselected').datepicker({
         dateFormat: "dd/mm/yy"
      });
