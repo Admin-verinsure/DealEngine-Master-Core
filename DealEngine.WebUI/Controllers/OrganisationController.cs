@@ -192,6 +192,51 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationInterestedPartyAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["OrganisationEmail"].ToString();
+                string Name = collection["OrganisationName"].ToString();
+                string InsuranceAttribute = collection["InsuranceAttribute"].ToString();
+                string OrganisationType = collection["OrganisationTypeName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, OrganisationType);
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, InsuranceAttribute);
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, OrganisationType);
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, InsuranceAttribute, OrganisationType, null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = Name
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> ManageOrganisations()
         {            

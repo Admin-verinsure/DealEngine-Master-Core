@@ -1123,14 +1123,13 @@
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                     <label class="label">Interested Parties</label>
                                     <div class="row">
-                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                        <section class="">
                                             <label class="input form-group">
-                                                <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
-                                                    <option selected="selected" value="">-- Select --</option>
-                                                    @*@foreach (var bwloc in Model.OrganisationViewModel.Organisations)
+                                                <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">                                                    
+                                                    @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                                         {
-                                                            <option value="@bwloc.Id"> @bwloc.Name</option>
-                                                        }*@
+                                                        <option value="@organisation.Id"> @organisation.Name</option>
+                                                        }
                                                 </select>
                                             </label>
                                         </section>
