@@ -2381,9 +2381,9 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function AddLandLocModal(event,storageType, storageDescription, location) {
-                event.preventDefault();
-
+    function AddLandLocModal(event, storageType, storageDescription, location) {
+        debugger;
+        event.preventDefault();
         var buildingCategory = $(storageType).serialize();
         var buildingName = $(storageDescription).serialize();
         var informationId = $('#AnswerSheetId').serialize();
@@ -2391,20 +2391,13 @@ function showAccordionPanel(id, panelNo) {
         $('#getLandLocModal').show();
         var postdata = $.grep([buildingCategory, buildingName, location_id, informationId], Boolean).join("&");
         $.ajax({
-            // change back once mono decides to fix
             url: '@Url.Action("AddBuilding", "Services")',
             type: "POST",
             data: postdata
-
         })
             .done(function (data) {
+                debugger;
                 console.log(data);
-            //$.smallBox({
-            //     title: "Storage has been saved",
-            //     color: "#5F895F",
-            //     iconSmall: "fa fa-check bounce animated",
-            //     timeout: 4000
-            //    });
                 $('#BoatLandLocation.b').append($('<option>', { value: data.buildingId, text: data.buildingCategory + ", " + data.locationStreet }));
                 $("#BoatLandLocation.b [value='add']").remove();
                 $('#BoatLandLocation.b').append($('<option>', { value: "add", text: "Add Land Storage" }));
@@ -2417,11 +2410,9 @@ function showAccordionPanel(id, panelNo) {
                 $('#tblBuilding').trigger('reload');
                 $('#getLandLocModal').hide();
             })
-
             .fail(function (jqXHR, textStatus, errorThrown) {
-               $('#getLandLocModal').hide();
-
-            alert("There was an error while trying to save the Storage.");
+                $('#getLandLocModal').hide();
+                alert("There was an error while trying to save the Storage.");
         });
     };
 

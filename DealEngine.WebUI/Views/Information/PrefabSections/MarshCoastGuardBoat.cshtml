@@ -458,10 +458,10 @@
                                 <label class="input form-group">
                                     <select onchange="addNewLandLoc()" class="form-control b" id="BoatLandLocation" name="BoatLandLocation" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                            @*@foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
+                                            @foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
                                             {
                                                 <option value="@blloc.Id">@string.Join(", ", blloc.Type, blloc.Name)</option>
-                                            }*@
+                                            }
                                         <option value="add">Add Land Storage</option>
                                     </select>
                                 </label>
