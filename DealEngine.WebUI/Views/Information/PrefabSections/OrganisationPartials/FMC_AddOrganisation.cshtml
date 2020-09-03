@@ -1,4 +1,4 @@
-﻿@*@model DealEngine.WebUI.Models.InformationViewModel
+﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 
 <div class="form-group">
@@ -16,7 +16,7 @@
                 @Html.TextBoxFor(m => m.OrganisationViewModel.User.LastName, new { @class = "form-control", @id = "User.LastName", @onchange = "OnChange(this.id, this.name)", @required = "" })
             </div>
         </div>
-        @await Html.PartialAsync("PrefabSections/OrganisationPartials/_CGSkipper", Model)
+        @await Html.PartialAsync("PrefabSections/OrganisationPartials/_FMCInterestedParty", Model)
     </div>
-</div>*@
+</div>
 

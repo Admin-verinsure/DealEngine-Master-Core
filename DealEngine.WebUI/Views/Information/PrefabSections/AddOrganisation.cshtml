@@ -136,6 +136,12 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.ContractorUnit.GetType().AssemblyQualifiedName, new { @id = "ContractorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZPI_AddOrganisation", Model)
                 }
+                else if (Model.OrganisationViewModel.Programme.Name == "First Mate Cover")
+                {
+
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
+                }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>
                     <button class="btn btn-danger" id="OrganisationClearButton" onclick="ResetOrganisation('organisationViewModel')"> Clear</button>

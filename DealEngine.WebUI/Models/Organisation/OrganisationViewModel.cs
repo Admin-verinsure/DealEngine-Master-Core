@@ -64,6 +64,13 @@ namespace DealEngine.WebUI.Models
                     HasNZPIAMemberOptions = GetBooleanSelectOptions();
                     HasContractedInsuredOptions = GetBooleanSelectOptions();
                 }
+                if(Programme.Name == "First Mate Cover")
+                {
+                    InterestedPartyUnit = new InterestedPartyUnit(null, null, null, null);
+                    InsuranceAttributes = GetMarshTypes();
+                    InterestedPartyOptions = GetInterestedPartyOptions();
+                    OwnershipOptions = GetOwnershipOptions();
+                }
 
                 Organisation = ClientInformationSheet.Owner;
                 //if (Organisations.Any(o => o.Id != (ClientInformationSheet.Owner.Id)))
@@ -79,6 +86,78 @@ namespace DealEngine.WebUI.Models
             {
                 User = OrgUser;
             }
+        }
+
+        private IList<SelectListItem> GetOwnershipOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Interested Party",
+                        Value = "Interested Party"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetInterestedPartyOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Interested Party",
+                        Value = "Interested Party"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetMarshTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Skipper",
+                        Value = "Skipper"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Co Owner",
+                        Value = "Co Owner"
+                    }
+                };
+            return _Types;
         }
         private IList<SelectListItem> GetContractorTypes()
         {
@@ -494,10 +573,13 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasNZPIAMemberOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasContractedInsuredOptions { get; set; }
+        public IList<SelectListItem> InterestedPartyOptions { get; set; }
+        public IList<SelectListItem> OwnershipOptions { get; set; }
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
         public ContractorUnit ContractorUnit { get; set; }
+        public InterestedPartyUnit InterestedPartyUnit { get; set; }
 
     }
 }

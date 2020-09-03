@@ -327,15 +327,18 @@
             Value == "Administration" ||
             Value == "Nominated Representative" ||
             Value == "Contractor" ||
-            Value == "Planner") {
+            Value == "Planner" ||
+            Value == "Skipper") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
                 AdministrationOnChange();                
             }
+
             if (Value == "Nominated Representative") {
                 AdministrationOnChange();
             }
+
             if (Value == "Contractor") {
                 ContractorOnChange();
             }
