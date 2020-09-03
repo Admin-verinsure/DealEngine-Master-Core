@@ -43,7 +43,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             IDictionary<string, decimal> rates = BuildRulesTable(agreement, "additionalpremium1employee", "additionalpremium2employee", "additionalpremiumover2employee", "1millimitpremium1employee",
                 "2millimitpremium1employee", "5millimitpremium1employee", "1millimitpremium2employee", "2millimitpremium2employee", "5millimitpremium2employee", "1millimitpremiumover2employee",
-                "2millimitpremiumover2employee", "5millimitpremiumover2employee", "maxfeeincome");
+                "2millimitpremiumover2employee", "5millimitpremiumover2employee", "maxfeeincome", "picostexclusiveexcessrate", "pibrokerfee");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -426,7 +426,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            premiumoption = premiumoptionperemployee * intnumberofadvisors + additionalpremium;
+            premiumoption = Math.Ceiling((premiumoptionperemployee * intnumberofadvisors + additionalpremium) * (1 + rates["picostexclusiveexcessrate"] / 100) + rates["pibrokerfee"]);
 
             return premiumoption;
         }
