@@ -2346,7 +2346,7 @@ function showAccordionPanel(id, panelNo) {
         //console.log(operatorFirstName, operatorLastName, yearsExperience);
         $.ajax({
             // change back once mono decides to fix
-            url: '@Url.Action("AddOrganisationSkipperAPI", "Services")',
+            url: '@Url.Action("AddOrganisationSkipperAPI", "Organisation")',
             type: "POST",
             data: postdata
         })
