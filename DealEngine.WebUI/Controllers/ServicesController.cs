@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.IO;
+using DealEngine.Services.Impl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -1842,39 +1843,6 @@ namespace DealEngine.WebUI.Controllers
         #region Boat
 
         [HttpPost]
-        public async Task<IActionResult> AddUsetoBoat(string[] Boatuse, Guid BoatId)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Boat boat = await _boatRepository.GetByIdAsync(BoatId);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUse = new List<BoatUse>();
-                    foreach (var useid in Boatuse)
-                    {
-                        //ListBoatUse.Add(useid);
-                        //ListBoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)));
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
-                    await uow.Commit();
-                }
-                return Json(boat);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-
-        }
-
-        [HttpPost]
         public async Task<IActionResult> AddBoat(BoatViewModel model)
         {
             User user = null;
@@ -1919,7 +1887,7 @@ namespace DealEngine.WebUI.Controllers
 
                     List<string> boatuselist = new List<string>();
 
-                    boat.BoatUse = new List<BoatUse>();
+                    boat.BoatUses = new List<BoatUse>();
 
                     //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
                     string[] BoatUse = model.SelectedBoatUse.Split(',');
@@ -1928,7 +1896,7 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (var useid in BoatUse)
                     {
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
+                        boat.BoatUses.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
                     }
                 }
 
@@ -2053,12 +2021,12 @@ namespace DealEngine.WebUI.Controllers
 
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
-                    if (boat.BoatUse != null)
+                    if (boat.BoatUses != null)
                         model.BoatselectedVal = new List<String>();
 
                     model.BoatselectedText = new List<Guid>();
 
-                    foreach (var boatuse in boat.BoatUse)
+                    foreach (var boatuse in boat.BoatUses)
                     {
                         model.BoatselectedVal.Add(boatuse.BoatUseCategory);
                         model.BoatselectedText.Add(boatuse.Id);
@@ -2288,7 +2256,6 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
-                // get existing boat (if any)
                 if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                 {
                     boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
@@ -2300,13 +2267,14 @@ namespace DealEngine.WebUI.Controllers
                     boatUse = model.ToEntity(user);
                 }
                 model.UpdateEntity(boatUse);
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+
+                foreach (var boat in sheet.Boats)
                 {
-                    sheet.BoatUses.Add(boatUse);
-                    await uow.Commit().ConfigureAwait(false);
+                    boat.BoatUses.Add(boatUse);
+                    await _boatRepository.UpdateAsync(boat);
                 }
 
-                return Ok();
+                return Json(boatUse);
             }
             catch (Exception ex)
             {
@@ -2486,15 +2454,26 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
 
+                var boats = new List<Boat>();
                 var boatUses = new List<BoatUse>();
 
                 if (ceased)
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
                 }
                 else
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                }
+
+                foreach (var boat in boats)
+                {
+                    foreach (var boatUse in boat.BoatUses)
+                    {
+                        boatUses.Add(boatUse);
+                    }
                 }
 
                 if (_search)
