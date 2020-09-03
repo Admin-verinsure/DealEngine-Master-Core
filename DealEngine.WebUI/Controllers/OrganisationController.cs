@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
-using DealEngine.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealEngine.WebUI.Controllers
 {

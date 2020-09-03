@@ -2754,87 +2754,62 @@ namespace DealEngine.WebUI.Controllers
         #region Operators
 
         [HttpPost]
-        public async Task<IActionResult> AddOperator(OrganisationViewModel model)
+        public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
         {
-            User currentUser = null;            
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["Email"].ToString();
+                string LastName = collection["LastName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, "Person - Individual");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, "Skipper");
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, "Person - Individual");
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, "Skipper", "Person - Individual", null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = FirstName + " " + LastName
+                };
 
-            throw new Exception("new organisation method");
-            // create advisor unit, 
-            // a
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
 
-            //try
-            //{
-            //    AddOrganisation(model);
-            //    if (model == null)
-            //        throw new ArgumentNullException(nameof(model));
+                Random random = new Random();
+                string UserName = FirstName.Replace(" ", string.Empty)
+                    + "_"
+                    + LastName.Replace(" ", string.Empty)
+                    + random.Next(1000);
 
-            //    currentUser = await CurrentUser();
-            //    ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-            //    if (sheet == null)
-            //        throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+                User user = new User(currentUser, UserName)
+                {
+                    FirstName = collection["FirstName"].ToString(),
+                    LastName = collection["LastName"].ToString(),
+                    Email = collection["Email"].ToString(),
+                    FullName = FirstName + " " + LastName,
+                    Id = Guid.NewGuid()
+                };
+                user.SetPrimaryOrganisation(organisation);
 
-            //    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
-            //    if (insuranceAttribute == null)
-            //    {
-            //        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Skipper");
-            //    }
-            //    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-            //    if (organisationType == null)
-            //    {
-            //        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
-            //    }
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
 
-            //    Organisation organisation = null;
-            //    User userdb = null;
-            //    try
-            //    {
-            //        userdb = await _userService.GetUserByEmail(model.Email);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-            //        userdb.FirstName = model.FirstName;
-            //        userdb.LastName = model.LastName;
-            //        userdb.FullName = model.FirstName + " " + model.LastName;
-            //        userdb.Email = model.Email;
-            //        userdb.Phone = model.Phone;
-            //        userdb.Password = "";
+                await _clientInformationService.UpdateInformation(sheet);
 
-            //        await _userService.Create(userdb);
-
-            //    }
-            //    finally
-            //    {
-            //        organisation = await _organisationService.GetOrganisationByEmail(model.Email);
-            //        if (organisation == null)
-            //        {
-            //            var organisationName = model.FirstName + " " + model.LastName;
-            //            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
-            //            organisation.InsuranceAttributes.Add(insuranceAttribute);
-            //            insuranceAttribute.IAOrganisations.Add(organisation);
-            //            await _organisationService.CreateNewOrganisation(organisation);
-            //            userdb.SetPrimaryOrganisation(organisation);
-
-            //        }
-
-            //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            //        {
-            //            userdb.SetPrimaryOrganisation(organisation);
-            //            currentUser.Organisations.Add(organisation);
-            //            userdb.Organisations.Add(organisation);
-            //            sheet.Organisation.Add(organisation);
-            //            model.ID = organisation.Id;
-            //            await uow.Commit();
-            //        }
-
-            //    }
-            //    return Json(model);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 

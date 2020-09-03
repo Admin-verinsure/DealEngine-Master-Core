@@ -2327,7 +2327,6 @@ function showAccordionPanel(id, panelNo) {
     };
 
     function validateOperatorModal(firstName, lastName, yearsXP, Email) {
-        debugger;
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
             AddOperatorModal(event,firstName, lastName, yearsXP, Email);
@@ -2336,7 +2335,6 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
-        debugger;
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
         var operatorLastName = $(lastName).serialize();
@@ -2348,18 +2346,18 @@ function showAccordionPanel(id, panelNo) {
         //console.log(operatorFirstName, operatorLastName, yearsExperience);
         $.ajax({
             // change back once mono decides to fix
-            url: '@Url.Action("AddOperator", "Services")',
+            url: '@Url.Action("AddOrganisationSkipperAPI", "Services")',
             type: "POST",
             data: postdata
         })
         .done(function (data) {
             debugger;
             setTimeout("alert('Operator has been saved');", 4000);
-            $('#BoatOperator').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
+            $('#BoatOperator').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
             $("#BoatOperator.b [value='add']").remove();
             $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
             $('#BoatOperator.b').trigger('chosen:updated');
-            $('#AddBoatOperator.b').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
+            $('#AddBoatOperator.b').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
             $("#AddBoatOperator.b [value='add']").remove();
             $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
             $('#AddBoatOperator.b').trigger('chosen:updated');
