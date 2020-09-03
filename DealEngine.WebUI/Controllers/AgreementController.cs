@@ -2783,18 +2783,19 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
+                            // Note:this LOC is needed if we need to send FullProposalReport PDF document with other documents in agreement
 
-                            foreach (SystemDocument doc in agreeDocList)
-                            {
-                                if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
-                                {
-                                    SystemDocument renderedDoc = await  GetPdfDocument(doc.Id);
-                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                    agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
-                                    await _fileService.UploadFile(renderedDoc);
-                                }
-                            }
+                            //foreach (SystemDocument doc in agreeDocList)
+                            //{
+                            //    if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            //    {
+                            //        SystemDocument renderedDoc = await  GetPdfDocument(doc.Id);
+                            //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            //        agreement.Documents.Add(renderedDoc);
+                            //        documents.Add(renderedDoc);
+                            //        await _fileService.UploadFile(renderedDoc);
+                            //    }
+                            //}
 
 
                             if (programme.BaseProgramme.ProgEnableEmail)
@@ -2824,6 +2825,77 @@ namespace DealEngine.WebUI.Controllers
                                 }
                             }
                         }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> SendFullProposalReport(Guid id, bool sendUser)
+        {
+            User user = null;
+            try
+            {
+                ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
+                user = await CurrentUser();
+                // TODO - rewrite to save templates on a per programme basis
+
+                ClientProgramme programme = sheet.Programme;
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
+                    {
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var documents = new List<SystemDocument>();
+                        var documentspremiumadvice = new List<SystemDocument>();
+                        var agreeTemplateList = agreement.Product.Documents;
+                        var agreeDocList = agreement.GetDocuments();
+
+                        foreach (SystemDocument doc in agreeDocList)
+                        {
+                            if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            {
+                                SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc);
+                                documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }
+                        }
+
+
+                        if (programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                //send out policy document email
+                                if (programme.BaseProgramme.EnableFullProposalReport)
+                                {
+                                    if (sendUser)
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,documents, agreement.ClientInformationSheet, agreement,null);
+                                    }
+                                    else
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.Owner.Email, documents, agreement.ClientInformationSheet, agreement, null);
+                                    }
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                            agreement.DocIssueDate = DateTime.Now;
+                                            await uow.Commit();
+                                        }
+                                    }
+                                }
+                        }
+                    }
                 }
 
                 return NoContent();

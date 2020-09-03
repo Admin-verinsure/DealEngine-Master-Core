@@ -444,43 +444,27 @@ namespace DealEngine.WebUI.Controllers
                         Text = product.Name
                     });
                 }
-                //var availableorganisation = new List<SelectListItem>();
-
-                //foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
-                //{
-                //    availableorganisation.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Value = "" + organisation.Id,
-                //        Text = organisation.Name
-                //    });
-                //}
-
-                //availableorganisation.Add(new SelectListItem
-                //{
-                //    Selected = false,
-                //    Value = "" + sheet.Owner.Id,
-                //    Text = sheet.Owner.Name
-                //});
-
-                //model.AvailableOrganisations = availableorganisation;
-                //model.AllVehicles = vehicles;
-
-                //var userDetails = _mapper.Map<UserDetailsVM>(user);
-                //userDetails.PostalAddress = user.Address;
-                //userDetails.StreetAddress = user.Address;
-                //userDetails.FirstName = user.FirstName;
-                //userDetails.Email = user.Email;
-
-
-                //model.Locations = locations;
-                //model.Buildings = buildings;
-                //model.Buildings.
-                //model.WaterLocations = waterLocations;
-                //model.InterestedParties = interestedParties;
-
-
-                //model.ClaimProducts = availableProducts;
+                var AgreementCount = clientProgramme.Agreements.Where(cp => cp.DateDeleted == null).Count();
+                String[][] OptionItems = new String[AgreementCount][];
+                String[] OptionItem;
+                var count = 0;
+                ///not deleted agreement deleteddate = null 
+                foreach (var agreement in clientProgramme.Agreements.Where(cp => cp.DateDeleted == null))
+                {
+                    foreach (var term in agreement.ClientAgreementTerms)
+                    {
+                        OptionItem = new String[3];
+                        if (term.Bound)
+                        {
+                            OptionItem[0] = agreement.Product.Name;
+                            OptionItem[1] = ""+ term.TermLimit;
+                            OptionItem[2] = "" + term.Excess;
+                            OptionItems[count] = OptionItem;
+                            count++;
+                        }
+                    }
+                }
+                model.LimitsSelected = OptionItems;
                 model.DeclarationMessage = sheet.Programme.BaseProgramme.Declaration;
                 model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
 
@@ -681,8 +665,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-
 
 
         [HttpPost]

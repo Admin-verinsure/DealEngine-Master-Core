@@ -45,6 +45,7 @@ namespace DealEngine.WebUI.Models
         public string Name { get; set; }
         public string SectionView { get; set; }
         public string DeclarationMessage { get; set; }
+        public String[][] LimitsSelected { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
