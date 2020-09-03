@@ -115,7 +115,7 @@
                             }
                             if (item.SubClientProgrammes.Count > 0)
                             {
-                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True" && (item.IsSubclientSubmitted))
+                                if ((Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True") && (item.IsSubclientSubmitted))
                                 {
                                     <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
                                 }
