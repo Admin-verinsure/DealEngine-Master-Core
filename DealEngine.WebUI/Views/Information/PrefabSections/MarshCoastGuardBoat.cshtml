@@ -430,10 +430,16 @@
                                 <label class="input form-group">
                                     <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @*@foreach (var bv in Model.AllVehicles)
+                                        @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                        {
+                                            foreach (var trailer in boat.BoatTrailers)
                                             {
-                                                <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                            }*@
+                                                if (trailer != null)
+                                                {
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
+                                                }
+                                            }
+                                        }
                                         <option value="add">Add Trailer</option>
                                     </select>
                                 </label>
@@ -452,7 +458,7 @@
                                 <label class="input form-group">
                                     <select onchange="addNewLandLoc()" class="form-control b" id="BoatLandLocation" name="BoatLandLocation" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @*@foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
+                                            @*@foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
                                             {
                                                 <option value="@blloc.Id">@string.Join(", ", blloc.Type, blloc.Name)</option>
                                             }*@
@@ -499,11 +505,16 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
                                             <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @*@foreach (var bwloc in Model.BoatUseslist)
+                                                    @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                                     {
-                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                    }*@
+                                                        foreach (var boatUse in boat.BoatUses)
+                                                        {
+                                                            if (boatUse != null)
+                                                            {
+                                                                <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
+                                                            }
+                                                        }
+                                                    }
                                             </select>
                                         </label>
                                     </section>
@@ -985,12 +996,12 @@
                                 <label class="label required">Land Storage Location</label>
                                 <label class="input form-group">
                                     <select onchange="AddaddNewLandLoc()" class="form-control b" id="AddBoatLandLocation" name="BoatLandLocation" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @*
+                                        @* LANDLOCATION IS SAVED IN BUILDING *@
+                                        <option selected="selected" value="">-- Select --</option>                                       
                                             @foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
                                             {
                                                 <option value="@blloc.Id">@string.Join(", ", blloc.Type, blloc.Name)</option>
-                                            }*@
+                                            }
                                         <option value="add">Add Land Storage</option>
                                     </select>
                                 </label>
@@ -1002,10 +1013,10 @@
                                     <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
                                         <option selected="selected" value="">-- Select --</option>
                                         @*
-                                            @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                            {
-                                                <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
-                                            }*@
+                                        @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
+                                        {
+                                            <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
+                                        }*@
                                         <option value="add">Other Marina</option>
                                     </select>
                                 </label>
@@ -1034,7 +1045,17 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
                                             <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
-                                                <option selected="selected" value="">-- Select --</option>
+                                                @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                                {
+                                                    foreach (var boatUse in boat.BoatUses)
+                                                    {
+                                                        if (boatUse != null)
+                                                        {
+                                                            <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
+                                                        }
+                                                    }
+                                                }
+                                                    
                                                 @*@foreach (var bwloc in Model.BoatUseslist)
                                                 {
                                                     <option value="@bwloc.Value"> @bwloc.Text</option>
