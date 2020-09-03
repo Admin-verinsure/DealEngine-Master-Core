@@ -14,6 +14,7 @@ namespace DealEngine.Domain.Entities
         public Boat(User createdBy)
             : base(createdBy)
         {
+            BoatTrailers = new List<Vehicle>();
         }
 
         public virtual Boat OriginalBoat
@@ -21,13 +22,6 @@ namespace DealEngine.Domain.Entities
             get;
             protected set;
         }
-
-        public virtual ClientInformationSheet ClientInformationSheet
-        {
-            get;
-            set;
-        }
-
 
         public virtual string BoatName
         {
@@ -226,7 +220,7 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        public virtual Vehicle BoatTrailer
+        public virtual IList<Vehicle> BoatTrailers
         {
             get;
             set;
@@ -279,8 +273,8 @@ namespace DealEngine.Domain.Entities
 
         public virtual Boat CloneForNewSheet(ClientInformationSheet newSheet)
         {
-            if (ClientInformationSheet == newSheet)
-                throw new Exception("Cannot clone boat for original information");
+            //if (ClientInformationSheet == newSheet)
+            //    throw new Exception("Cannot clone boat for original information");
 
             Boat newBoat = new Boat(newSheet.CreatedBy);
             newBoat.BoatName = BoatName;
@@ -313,7 +307,7 @@ namespace DealEngine.Domain.Entities
             //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
             newBoat.BoatWaterLocation = BoatWaterLocation;
             newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == BoatLandLocation.Id);
-            newBoat.BoatTrailer = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
+            //newBoat.BoatTrailer = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
             //newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
             newBoat.BoatOperator = BoatOperator;
             if (BoatEffectiveDate > DateTime.MinValue)

@@ -1,7 +1,5 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-@using System.Linq
-
 <div class="padding-10">
     <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
         <div id="Boattabs">
@@ -130,11 +128,10 @@
                                     <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
                                             <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @*@foreach (var boper in Model.OrganisationViewModel.Organisations)
-                                                    {
-                                                        <option value="@boper.Id">@boper.Name</option>
-                                                    }*@
+                                                @foreach(var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i=>i.Name == "Skipper")).ToList())
+                                                {
+                                                    <option value="@skipper.Id">@skipper.Name</option>
+                                                }
                                                 <option value="add">Add Skipper</option>
                                             </select>
                                         </label>
@@ -500,14 +497,14 @@
                                 <label class="label">Vessel Use</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">                                         
-                                                <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
-                                                    <option selected="selected" value="">-- Select --</option>                                                
-                                                    @*@foreach (var bwloc in Model.BoatUseslist)
+                                        <label class="input form-group">
+                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
+                                                <option selected="selected" value="">-- Select --</option>
+                                                @*@foreach (var bwloc in Model.BoatUseslist)
                                                     {
                                                         <option value="@bwloc.Value"> @bwloc.Text</option>
                                                     }*@
-                                                </select>
+                                            </select>
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -550,7 +547,7 @@
                                         <label class="input form-group">
                                             <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
                                                 <option selected="selected" value="">-- Select --</option>
-                                                    @*@foreach (var bwloc in Model.OrganisationViewModel.Organisations)
+                                                @*@foreach (var bwloc in Model.OrganisationViewModel.Organisations)
                                                     {
                                                         <option value="@bwloc.Id"> @bwloc.Name</option>
                                                     }*@
@@ -660,10 +657,10 @@
                                         <label class="input form-group">
                                             <select onchange="AddaddNewSkipper()" class="form-control b" id="AddBoatOperator" name="BoatOperator" required>
                                                 <option selected="selected" value="">-- Select --</option>
-                                                @*@foreach (var boper in Model.OrganisationViewModel.Organisations)
-                                                    {
-                                                        <option value="@boper.Id">@boper.Name</option>
-                                                    }*@
+                                                @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
+                                                {
+                                                    <option value="@skipper.Id">@skipper.Name</option>
+                                                }                                                
                                                 <option value="add">Add Skipper</option>
                                             </select>
                                         </label>
@@ -961,10 +958,16 @@
                                 <label class="input form-group">
                                     <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
                                         <option selected="selected" value="">-- Select --</option>
-                                        @*@foreach (var bv in Model.AllVehicles)
+                                        @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                        {
+                                            foreach (var trailer in boat.BoatTrailers)
                                             {
-                                                <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                            }*@
+                                                if (trailer != null)
+                                                {
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
+                                                }
+                                            }
+                                        }
                                         <option value="add">Add Trailer</option>
                                     </select>
                                 </label>
@@ -1032,11 +1035,11 @@
                                         <label class="input form-group">
                                             <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
                                                 <option selected="selected" value="">-- Select --</option>
-                                                
-                                                @foreach (var bwloc in Model.BoatUseslist)
+
+                                                @*@foreach (var bwloc in Model.BoatUseslist)
                                                 {
                                                     <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                }
+                                                }*@
                                             </select>
                                         </label>
                                     </section>
@@ -1105,9 +1108,9 @@
                                                 <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
                                                     <option selected="selected" value="">-- Select --</option>
                                                     @*@foreach (var bwloc in Model.OrganisationViewModel.Organisations)
-                                                    {
-                                                        <option value="@bwloc.Id"> @bwloc.Name</option>
-                                                    }*@
+                                                        {
+                                                            <option value="@bwloc.Id"> @bwloc.Name</option>
+                                                        }*@
                                                 </select>
                                             </label>
                                         </section>

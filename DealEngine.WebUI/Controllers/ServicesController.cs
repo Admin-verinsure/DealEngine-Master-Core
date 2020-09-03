@@ -181,19 +181,13 @@ namespace DealEngine.WebUI.Controllers
                 if (model.VehicleLocation != Guid.Empty)
                     vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
 
-                var allOrganisations = await _organisationService.GetAllOrganisations();
-                if (model.InterestedParties != null)
-                    vehicle.InterestedParties = allOrganisations.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                foreach(var boat in sheet.Boats)
                 {
-                    sheet.Vehicles.Add(vehicle);
-                    await uow.Commit();
+                    boat.BoatTrailers.Add(vehicle);
+                    await _boatRepository.UpdateAsync(boat);
                 }
 
                 model.VehicleId = vehicle.Id;
-
-
                 return Json(model);
             }
             catch (Exception ex)
@@ -1957,7 +1951,7 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 if (model.BoatTrailer != Guid.Empty)
-                    boat.BoatTrailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
+                    //boat.BoatTrailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2053,9 +2047,9 @@ namespace DealEngine.WebUI.Controllers
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
                         model.BoatWaterLocation = boat.BoatWaterLocation.Id;
-                    if (boat.BoatTrailer != null)
-                        if (boat.BoatTrailer != null)
-                            model.BoatTrailer = boat.BoatTrailer.Id;
+                    //if (boat.BoatTrailer != null)
+                    //    if (boat.BoatTrailer != null)
+                    //        model.BoatTrailer = boat.BoatTrailer.Id;
 
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
@@ -2175,10 +2169,10 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-                if (boat.BoatTrailer != null)
-                {
-                    hasTrailer = true;
-                }
+                //if (boat.BoatTrailer != null)
+                //{
+                //    hasTrailer = true;
+                //}
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2783,7 +2777,8 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOperator(OrganisationViewModel model)
         {
-            User currentUser = null;
+            User currentUser = null;            
+
             throw new Exception("new organisation method");
             // create advisor unit, 
             // a
