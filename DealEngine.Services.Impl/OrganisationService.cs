@@ -314,7 +314,7 @@ namespace DealEngine.Services.Impl
             else
             {
                 OrganisationTypeName = "Person - Individual";
-                if (Type == "Private")
+                if (Type == "Person - Individual")
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
                 }
@@ -323,17 +323,17 @@ namespace DealEngine.Services.Impl
                     Type == "Administration"
                     )
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Personnel")
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new PersonnelUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Principal")
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new PrincipalUnit(User, Type, OrganisationTypeName, collection));
                 }
             }
