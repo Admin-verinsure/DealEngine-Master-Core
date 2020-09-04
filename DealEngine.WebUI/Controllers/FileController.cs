@@ -84,6 +84,7 @@ namespace DealEngine.WebUI.Controllers
                "PDF_Generator_Src_Examples_Pack_250473855326",
                "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
            );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = "/home/ubuntu/projects/dealengine/publish/wkhtmltopdf";
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                 + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
