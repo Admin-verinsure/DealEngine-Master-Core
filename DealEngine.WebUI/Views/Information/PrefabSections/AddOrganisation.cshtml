@@ -1,5 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
+
 <div id="AddOrganisation">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" id="tab1">
@@ -52,9 +53,9 @@
                                 Owner
                             </td>
                             @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
-                                Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                                Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
-                        )
+                               Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+                               Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
+                       )
                             {
                                 <td>
                                 </td>
@@ -66,6 +67,23 @@
                     @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id != Model.ClientInformationSheet.Owner.Id && o.Removed != true).ToList())
                     {
                 <tr id="@organisation.Id">
+                    @{
+                        bool ValidBackEndEmail = false;
+                        try
+                        {
+                            var addr = new System.Net.Mail.MailAddress(organisation.Email);
+                            ValidBackEndEmail = addr.Address == organisation.Email;
+                        }
+                        catch
+                        {
+                            ValidBackEndEmail = false;
+                        }
+                        @if (!ValidBackEndEmail)
+                        {
+                            @Html.Hidden("ValidBackEndEmail", @organisation.Name)
+                        }
+
+                    }
                     <td>
                         <button class="btn btn-success btn-sm" onclick="OnClick('', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
                     </td>

@@ -3361,8 +3361,8 @@ namespace DealEngine.WebUI.Controllers
                                     HullConstruction = constructionType,
                                     HullConfiguration = hullConfiguration,
                                     BoatIsTrailered = trailered,
-                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue),
-                                    BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
+                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue)
+                                    //BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
                                 };
                                 sheet.Boats.Add(vessel);
                                 organisation.OrganisationalUnits.Add(ou);
