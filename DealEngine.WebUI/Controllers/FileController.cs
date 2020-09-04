@@ -84,13 +84,13 @@ namespace DealEngine.WebUI.Controllers
                "PDF_Generator_Src_Examples_Pack_250473855326",
                "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
            );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.PageHeaderHtml = "<div style='border-bottom: 1px solid #e5e5e5;text-align: left;'>"
-                + "</br>  <strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
+            htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
+                + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
                 + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
                 + " <strong> UIS No:" + clientInformationSheet.ReferenceId + "</strong></br>"
                 + " <strong> Sheet Submitted On:" + clientInformationSheet.SubmitDate + "</strong></br>"
                 + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
-                + "<h2> </br>  </h2> </div>"; 
+                + "<h2> </br>  </h2> </p>"; 
                 
             htmlToPdfConv.PageFooterHtml ="</br>"+ $@"page <span class=""page""></span> of <span class=""topage""></span>";
           
