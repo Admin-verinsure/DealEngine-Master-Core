@@ -54,64 +54,9 @@
                                 @Html.Partial("PrefabSections/" + item.CustomView, Model)
                             </div>
                             <br />
-                            @*if (item.CustomView == "CommonYou")
-                                {
-                                    <div id="ReportCommonyouView">
-                                        <h3>User Details</h3>
-                                        @await Html.PartialAsync("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-
-                                if (item.CustomView == "CommonClaim")
-                                {
-                                    <div class="CommonClaim">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }*@
-
-
-                            @*if (item.Name == "Your Major Projects")
-                                {
-                                    <div id="MajorProject">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-
-
-                                if (item.CustomView == "CommonLocation" || item.CustomView == "SharedRevenue" || item.CustomView == "PMINZ_Project" || item.CustomView == "Common_NamedParty")
-                                {
-                                    <div class="objectReportView">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }*@
-
                         }
                     </div>
-                    @*<div class="ReportView">
-
-                            @foreach (var item in Model.Sections)
-                            {
-
-
-                                if (item.CustomView != "CommonYou" && item.CustomView != "CommonLocation" && item.CustomView != "SharedRevenue" && item.CustomView != "PMINZ_Project" && item.CustomView != "Common_NamedParty" && item.CustomView != "CommonClaim" && item.Name != "Your Major Projects")
-                                {
-                                    <div style='border-style : groove'>
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-                            }
-                        </div>*@
-
-
+                 
 
                     <div id="AdvisorySection">
                         <div style='border-style : groove'>
