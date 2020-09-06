@@ -878,6 +878,7 @@ namespace DealEngine.Services.Impl
                     try
                     {
                         string type = "";
+                        string Name = "";
                         User user = new User(currentUser, Guid.NewGuid())
                         {
                             FirstName = parts[4],
@@ -889,10 +890,12 @@ namespace DealEngine.Services.Impl
                         if (parts[0] == "t")
                         {
                             type = "Corporation – Limited liability";
+                            Name = parts[1];
                         }
                         else
                         {
                             type = "Person - Individual";
+                            Name = user.FullName;
                         }
 
                         OrganisationType ownerType = new OrganisationType(type);
@@ -902,7 +905,7 @@ namespace DealEngine.Services.Impl
                         {
                             OrganisationType = ownerType,
                             Email = user.Email,
-                            Name = parts[1],
+                            Name = Name,
                             TradingName = parts[3]
                         };
 
@@ -921,13 +924,12 @@ namespace DealEngine.Services.Impl
                         {
                             OrganisationType = plannerType,
                             Email = user.Email,
-                            Name = parts[1],
-                            TradingName = parts[3]
+                            Name = user.FullName,                            
                         };
 
-                        Owner.OrganisationalUnits.Add(defaultUnit);
-                        Owner.OrganisationalUnits.Add(ContractorUnit);
-                        Owner.InsuranceAttributes.Add(plannerAttribute);
+                        planner.OrganisationalUnits.Add(defaultUnit);
+                        planner.OrganisationalUnits.Add(ContractorUnit);
+                        planner.InsuranceAttributes.Add(plannerAttribute);
 
                         user.Organisations.Add(planner);
                         user.Organisations.Add(Owner);
@@ -935,33 +937,17 @@ namespace DealEngine.Services.Impl
                         user.SetPrimaryOrganisation(Owner);
                         await _userService.ApplicationCreateUser(user);
 
-                        var MembershipNo = parts[7];
-
                         var programme = await _programmeService.GetProgramme(ProgrammeId);
                         var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, Owner);
 
                         var reference = await _referenceService.GetLatestReferenceId();
                         var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
                         await _referenceService.CreateClientInformationReference(sheet);
-
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
-                        {
-
-                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                            clientProgramme.ClientProgrammeMembershipNumber = parts[6];
-                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
-                            sheet.Organisation.Add(planner);
-                            try
-                            {
-                                await uow.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception(ex.Message);
-                            }
-                        }
-
-
+                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[7];
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        sheet.Organisation.Add(planner);
+                        await _programmeService.Update(clientProgramme);                       
                     }
                     catch (Exception ex)
                     {
@@ -1013,13 +999,13 @@ namespace DealEngine.Services.Impl
                         ContractorUnit ContractorUnit = new ContractorUnit(currentUser, "Planner", "Person - Individual", null)
                         {
                             IsNZPIAMember = true,
-                            Qualifications = parts[9]
+                            Qualifications = parts[2]
                         };
                         Organisation planner = new Organisation(currentUser, Guid.NewGuid())
                         {
                             OrganisationType = plannerType,
                             Email = user.Email,
-                            Name = parts[1],
+                            Name = user.FullName,
                             TradingName = parts[3]
                         };
 
@@ -1536,7 +1522,7 @@ namespace DealEngine.Services.Impl
                             Advisororganisation.OrganisationalUnits.Add(privateUnit);
                             Advisororganisation.OrganisationalUnits.Add(advisorUnit);
                             await _organisationService.CreateNewOrganisation(Advisororganisation);
-                            await _programmeService.AddOrganisationByMembership(Advisororganisation);
+                            await _programmeService.AddOrganisationByMembership(Advisororganisation, parts[0]);
 
                             //await _programmeService.AddOrganisationByMembership(organisation);
 
