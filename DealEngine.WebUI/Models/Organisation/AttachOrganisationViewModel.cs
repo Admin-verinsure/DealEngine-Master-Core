@@ -8,42 +8,28 @@ namespace DealEngine.WebUI.Models.Organisation
 {
     public class AttachOrganisationViewModel : BaseViewModel
     {
-        public AttachOrganisationViewModel(List<ClientInformationSheet> sheets, List<Domain.Entities.Organisation> removedOrganisations)
+        public AttachOrganisationViewModel(IList<ClientProgramme> clientProgrammes, Domain.Entities.Organisation removedOrganisation)
         {
-            PopulateOwnerList(sheets);
-            PopulateOrganisationRemovedList(removedOrganisations);
+            PopulateOwnerList(clientProgrammes);
+            RemovedOrganisation = removedOrganisation;
         }
-
-        private void PopulateOrganisationRemovedList(List<Domain.Entities.Organisation> removedOrganisations)
-        {
-            RemovedOrganisations = new List<SelectListItem>();
-            foreach (var org in removedOrganisations)
-            {
-                RemovedOrganisations.Add(new SelectListItem()
-                {
-                    Text = org.Name,
-                    Value = org.Id.ToString()
-                });
-            }
-        }
-
-        private void PopulateOwnerList(List<ClientInformationSheet> sheets)
+        private void PopulateOwnerList(IList<ClientProgramme> clientProgrammes)
         {
             Owners = new List<SelectListItem>();
-            foreach(var sheet in sheets)
+            foreach(var clientProgramme in clientProgrammes)
             {
                 Owners.Add(new SelectListItem()
                 {
-                    Text = sheet.Owner.Name,
-                    Value= sheet.Owner.Id.ToString()
+                    Text = clientProgramme.InformationSheet.Owner.Name,
+                    Value= clientProgramme.InformationSheet.Owner.Id.ToString()
                 });
             }            
         }
 
         [Display(Name = "List of Owners (Insured's)")]
         public IList<SelectListItem> Owners { get; set; }
-        [Display(Name = "List removed Parties")]
-        public IList<SelectListItem> RemovedOrganisations { get; set; }
+        [Display(Name = "Organisation Requesting to join")]
+        public Domain.Entities.Organisation RemovedOrganisation { get; set; }
     }
 }
 

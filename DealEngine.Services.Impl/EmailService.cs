@@ -214,6 +214,28 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
+        public async Task SendFullProposalReport(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
+        {
+            string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Full Proposal Report for " + clientInformationSheet.Owner.Name;
+            string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Full Proposal Report.</p>";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            if (!string.IsNullOrEmpty(recipentcc))
+            {
+                email.CC(recipentcc);
+            }
+            email.WithSubject(FullProposalEmailsubject);
+            email.WithBody(FullProposalEmailbody);
+            email.UseHtmlBody(true);
+            if (documents != null)
+            {
+                var documentsList = await ToAttachments(documents);
+                email.Attachments(documentsList.ToArray());
+            }
+            email.Send();
+        }
+
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {
             var user = await _userService.GetUserByEmail(recipent);

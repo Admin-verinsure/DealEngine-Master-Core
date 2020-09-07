@@ -165,7 +165,8 @@
                                         var dependendoptionsselected = $(dependoption).val();
                                         if (dependendoptionsselected == "None" && optionsselected != "None") {
 
-                                            alert("You cannot have " + ProdName + "Without " + value);
+                                            //alert("This is a packaged product , you cannot choose " + ProdName + " without " + value);
+                                            alert(value + " is a packaged product with "+ProdName+ " , you cannot choose " + ProdName + " without " + value);
                                             isvalid++;
                                             return false;
                                         }

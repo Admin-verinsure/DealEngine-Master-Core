@@ -1615,7 +1615,8 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
-                if (clientProgramme.BaseProgramme.HasSubsystemEnabled)
+                //To do: check the other status later
+                if (clientProgramme.BaseProgramme.HasSubsystemEnabled && clientProgramme.InformationSheet.Status != "Bound")
                 {
                    return await ViewAgreementSubsystem(clientProgramme, models, user);
                 }
@@ -2544,41 +2545,43 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
-                            }
 
 
-                            if (programme.BaseProgramme.ProgEnableEmail)
-                            {
-                                if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
+                                if (programme.BaseProgramme.ProgEnableEmail)
                                 {
-                                    //send out policy document email
-                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                    if (emailTemplate != null)
+                                    if (!programme.BaseProgramme.ProgStopPolicyDocAutoRelease)
                                     {
-                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-
-                                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                                        //send out policy document email
+                                        EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                        if (emailTemplate != null)
                                         {
-                                            if (!agreement.IsPolicyDocSend)
+                                            await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+
+                                            using (var uow = _unitOfWork.BeginUnitOfWork())
                                             {
-                                                agreement.IsPolicyDocSend = true;
-                                                agreement.DocIssueDate = DateTime.Now;
-                                                await uow.Commit();
+                                                if (!agreement.IsPolicyDocSend)
+                                                {
+                                                    agreement.IsPolicyDocSend = true;
+                                                    agreement.DocIssueDate = DateTime.Now;
+                                                    await uow.Commit();
+                                                }
                                             }
                                         }
                                     }
+
+                                    //send out premium advice
+                                    if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
+                                        agreement.Product.ProductEnablePremiumAdvice)
+                                    {
+                                        await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
+                                    }
+
+                                    //send out agreement bound notification email
+                                    await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                                 }
 
-                                //send out premium advice
-                                if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
-                                    agreement.Product.ProductEnablePremiumAdvice)
-                                {
-                                    await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
-                                }
-
-                                //send out agreement bound notification email
-                                await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                             }
+                           
                         }
 
                     }
@@ -2651,7 +2654,6 @@ namespace DealEngine.WebUI.Controllers
                         }
                         else
                         {
-
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
                                 foreach (SystemDocument template in agreeTemplateList)
@@ -2755,25 +2757,25 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
+                            // Note:this LOC is needed if we need to send FullProposalReport PDF document with other documents in agreement
 
-                            foreach (SystemDocument doc in agreeDocList)
-                            {
-                                if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            //foreach (SystemDocument doc in agreeDocList)
+                            //{
+                            //    if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            //    {
+                            //        SystemDocument renderedDoc = await  GetPdfDocument(doc.Id);
+                            //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            //        agreement.Documents.Add(renderedDoc);
+                            //        documents.Add(renderedDoc);
+                            //        await _fileService.UploadFile(renderedDoc);
+                            //    }
+                            //}
+
+                                if (programme.BaseProgramme.ProgEnableEmail)
                                 {
-                                    SystemDocument renderedDoc = await  GetPdfDocument(doc.Id);
-                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                    agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
-                                    await _fileService.UploadFile(renderedDoc);
-                                }
-                            }
-
-
-                            if (programme.BaseProgramme.ProgEnableEmail)
-                            {
-                                //send out policy document email
-                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                if (emailTemplate != null)
+                                    //send out policy document email
+                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                    if (emailTemplate != null)
                                     {
                                         if (sendUser)
                                         {
@@ -2794,8 +2796,82 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                     }
                                 }
+
+                         }
+
+                    }
+                        
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> SendFullProposalReport(Guid id, bool sendUser)
+        {
+            User user = null;
+            try
+            {
+                ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
+                user = await CurrentUser();
+                // TODO - rewrite to save templates on a per programme basis
+
+                ClientProgramme programme = sheet.Programme;
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
+                    {
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var documents = new List<SystemDocument>();
+                        var documentspremiumadvice = new List<SystemDocument>();
+                        var agreeTemplateList = agreement.Product.Documents;
+                        var agreeDocList = agreement.GetDocuments();
+
+                        foreach (SystemDocument doc in agreeDocList)
+                        {
+                            if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            {
+                                SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                //agreement.Documents.Add(renderedDoc);
+                                documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
                             }
                         }
+
+
+                        if (programme.BaseProgramme.ProgEnableEmail && agreement.MasterAgreement)
+                            {
+                                //send out policy document email
+                                if (programme.BaseProgramme.EnableFullProposalReport)
+                                {
+                                    if (sendUser)
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,documents, agreement.ClientInformationSheet, agreement,null);
+                                    }
+                                    else
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.Owner.Email, documents, agreement.ClientInformationSheet, agreement, null);
+                                    }
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                            agreement.DocIssueDate = DateTime.Now;
+                                            await uow.Commit();
+                                        }
+                                    }
+                                }
+                        }
+                    }
                 }
 
                 return NoContent();
@@ -3413,7 +3489,6 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreeDocList = agreement.GetDocuments();
 
-                        
                         foreach (Document doc in agreeDocList)
                         {
                             if (!doc.Name.EqualsIgnoreCase("FullProposalReport"))
@@ -3422,6 +3497,8 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
+                                ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
+
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
 
                             }
@@ -3432,6 +3509,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+               
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
                 if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)

@@ -414,7 +414,6 @@ namespace DealEngine.WebUI.Models.Agreement
         public string issuetobrokerto { get; set; }
         public string InsuredName { get; set; }
         public string BindNotes { get; set; }
-
     }
 
     public class InsuranceInclusion

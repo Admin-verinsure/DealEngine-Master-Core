@@ -245,11 +245,11 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> AttachOrganisation()
+        public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)
         {
-            var Owners = await _clientInformationService.GetAllInformationSheets();
-            var RemovedOrganisations = await _organisationService.GetAllRemovedOrganisations();
-            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Owners, RemovedOrganisations);
+            var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);            
+            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
             return View(model);
         }
 
@@ -308,9 +308,9 @@ namespace DealEngine.WebUI.Controllers
             organisation.Removed = true;
             await _organisationService.Update(organisation);
 
-            //if(user.UserName== "JDillon")
+            //if (user.UserName == "JDillon")
             //{
-            //    if(organisationUser != null)
+            //    if (organisationUser != null)
             //    {
             //        Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
             //        var Programme = await _programmeService.GetProgramme(ProgrammeId);
@@ -329,6 +329,15 @@ namespace DealEngine.WebUI.Controllers
             organisation.Removed = false;
             await _organisationService.Update(organisation);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RejoinProgramme(Guid ProgrammeId, Guid OrganisationId)
+        {
+            User user = await CurrentUser();
+            Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            await _milestoneService.JoinOrganisationTask(user, programme);
+            return RedirectToAction("Index", "Home");
         }
 
     }
