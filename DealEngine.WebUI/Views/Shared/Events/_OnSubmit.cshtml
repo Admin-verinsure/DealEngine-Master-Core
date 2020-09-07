@@ -159,15 +159,17 @@
             var Unit = document.getElementsByName("Unit");
             if (Unit != null) {
                 if (Unit.length > 0) {
-                    if (Unit[0].id == "AdvisorUnit") {
-                        AdvisorUnitValidationOnSubmit();
+                    if (Unit[0].id == "AdvisorUnit" ||
+                        Unit[0].id == "ContractorUnit"
+                    ) {
+                        UnitValidationOnSubmit();
                     }
                 }
             }
         }
     }
 
-    function AdvisorUnitValidationOnSubmit() {
+    function UnitValidationOnSubmit() {
         var pAdvisor = document.getElementById("IsPrincipalAdvisor");
         if (pAdvisor == null) {
             event.preventDefault();

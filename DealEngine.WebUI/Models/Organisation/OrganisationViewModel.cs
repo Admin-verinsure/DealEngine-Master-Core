@@ -28,7 +28,7 @@ namespace DealEngine.WebUI.Models
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
-                    HasPrincipalAdvisor = GetBooleanSelectOptions();
+                    HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
                 }
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
@@ -60,9 +60,10 @@ namespace DealEngine.WebUI.Models
                 if (Programme.Name == "NZPI Programme")
                 {
                     InsuranceAttributes = GetContractorTypes();
-                    ContractorUnit = new ContractorUnit(null, null, null, null);
+                    PlannerUnit = new PlannerUnit(null, null, null, null);
                     HasNZPIAMemberOptions = GetBooleanSelectOptions();
                     HasContractedInsuredOptions = GetBooleanSelectOptions();
+                    HasPrincipalOptions = GetBooleanSelectOptions();
                 }
 
                 Organisation = ClientInformationSheet.Owner;
@@ -459,7 +460,7 @@ namespace DealEngine.WebUI.Models
         [JsonIgnore]
         public IList<Domain.Entities.Organisation> Organisations { get; set; }
         [JsonIgnore]
-        public IList<SelectListItem> HasPrincipalAdvisor { get; set; }
+        public IList<SelectListItem> HasPrincipalOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasRegisteredLicensedOptions { get; set; }
         [JsonIgnore]
@@ -497,7 +498,7 @@ namespace DealEngine.WebUI.Models
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
-        public ContractorUnit ContractorUnit { get; set; }
+        public PlannerUnit PlannerUnit { get; set; }
 
     }
 }

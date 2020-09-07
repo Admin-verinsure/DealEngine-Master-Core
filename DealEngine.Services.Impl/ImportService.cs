@@ -915,7 +915,7 @@ namespace DealEngine.Services.Impl
                         OrganisationType plannerType = new OrganisationType("Person - Individual");
                         InsuranceAttribute plannerAttribute = new InsuranceAttribute(currentUser, "Planner");
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
-                        ContractorUnit ContractorUnit = new ContractorUnit(currentUser, "Planner", "Person - Individual", null)
+                        PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
                             IsNZPIAMember = true,
                             Qualifications = parts[9]
@@ -996,7 +996,7 @@ namespace DealEngine.Services.Impl
                         OrganisationType plannerType = new OrganisationType("Person - Individual");
                         InsuranceAttribute plannerAttribute = new InsuranceAttribute(currentUser, "Planner");
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
-                        ContractorUnit ContractorUnit = new ContractorUnit(currentUser, "Planner", "Person - Individual", null)
+                        PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
                             IsNZPIAMember = true,
                             Qualifications = parts[2]

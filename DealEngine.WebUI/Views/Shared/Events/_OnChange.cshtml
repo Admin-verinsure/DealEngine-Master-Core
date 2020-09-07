@@ -336,7 +336,7 @@
             if (Value == "Nominated Representative") {
                 AdministrationOnChange();
             }
-            if (Value == "Contractor") {
+            if (Value == "Planner") {
                 ContractorOnChange();
             }
 
@@ -356,7 +356,7 @@
     }
 
     function ContractorOnChange() {
-        var IsContractorUnit = document.getElementById("IsContractorUnit");
+        var IsContractorUnit = document.getElementById("HidePrincipal");
         if (IsContractorUnit != null) {
             IsContractorUnit.hidden = false;
         }
@@ -367,9 +367,9 @@
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
         }
-        var IsPrincipalAdvisor = document.getElementById("HidePrincipalAdvisor");
-        if (IsPrincipalAdvisor != null) {
-            IsPrincipalAdvisor.hidden = true;
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
         }
         document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
     }
@@ -377,9 +377,9 @@
     function ResetOrganisationUnitView() {
         document.getElementById("Private").hidden = true;
         document.getElementById("Else").hidden = true;   
-        var IsPrincipalAdvisor = document.getElementById("HidePrincipalAdvisor");
-        if (IsPrincipalAdvisor != null) {
-            IsPrincipalAdvisor.hidden = false;
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = false;
         }
         var IsTripleAApproval = document.getElementById("HideTripleAApproval");
         if (IsTripleAApproval != null) {
