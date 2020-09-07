@@ -462,6 +462,7 @@ namespace DealEngine.WebUI.Controllers
                                     if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
                                     {
                                         agreement.Documents.Add(document);
+                                        agreement.IsPDFgenerated = true;
                                     }
                             }  
                         }

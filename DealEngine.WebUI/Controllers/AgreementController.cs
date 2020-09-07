@@ -2840,14 +2840,14 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                agreement.Documents.Add(renderedDoc);
+                                //agreement.Documents.Add(renderedDoc);
                                 documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
                         }
 
 
-                        if (programme.BaseProgramme.ProgEnableEmail)
+                        if (programme.BaseProgramme.ProgEnableEmail && agreement.MasterAgreement)
                             {
                                 //send out policy document email
                                 if (programme.BaseProgramme.EnableFullProposalReport)
@@ -3489,7 +3489,6 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreeDocList = agreement.GetDocuments();
 
-                        
                         foreach (Document doc in agreeDocList)
                         {
                             if (!doc.Name.EqualsIgnoreCase("FullProposalReport"))
@@ -3498,6 +3497,8 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
+                                ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
+
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
 
                             }
@@ -3508,6 +3509,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+               
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
                 if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)

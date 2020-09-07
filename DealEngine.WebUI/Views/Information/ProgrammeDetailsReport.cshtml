@@ -1,163 +1,167 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="content">
+        <!-- Bread crumb is created dynamically -->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-        <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
-            > <span>
-                <a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
-                > View Client Information Sheet Section
-            </span>
-        </h1>
-    </div>
-
-
-
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-8">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-
-                    @Html.HiddenFor(m => m.AnswerSheetId)
-                    @Html.HiddenFor(m => m.ClientProgramme.Owner.Id)
-
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2>Client Information Sheet Section</h2>
-                    </header>
-                    <!-- widget div-->
-
-                    <input hidden id="docID" />
-                    @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
-                    {
-                        <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">View Full Proposal Report</a>
-                        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
-                            <i class="fa fa-edit"></i> Send Documents
-                        </a>
-                    }
-
-                    <div id="titledetails">
-                        <h3>Title:  @Model.ClientProgramme.BaseProgramme.Name </h3>
-                        <h3>Information Sheet for :  @Model.ClientProgramme.Owner.Name </h3>
-                        <h3>UIS No:  @Model.ClientInformationSheet.ReferenceId </h3>
-                    </div>
-                    <div id="reportdetails">
-                        @foreach (var item in Model.Sections.OrderBy(ob => ob.Position))
-                        {
-                            <div id=@item.Name>
-                                <h2>@item.Name</h2>
-                                @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                            </div>
-                            <br />
-                            @*if (item.CustomView == "CommonYou")
-                                {
-                                    <div id="ReportCommonyouView">
-                                        <h3>User Details</h3>
-                                        @await Html.PartialAsync("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-
-                                if (item.CustomView == "CommonClaim")
-                                {
-                                    <div class="CommonClaim">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }*@
-
-
-                            @*if (item.Name == "Your Major Projects")
-                                {
-                                    <div id="MajorProject">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-
-
-                                if (item.CustomView == "CommonLocation" || item.CustomView == "SharedRevenue" || item.CustomView == "PMINZ_Project" || item.CustomView == "Common_NamedParty")
-                                {
-                                    <div class="objectReportView">
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }*@
-
-                        }
-                    </div>
-                    @*<div class="ReportView">
-
-                            @foreach (var item in Model.Sections)
-                            {
-
-
-                                if (item.CustomView != "CommonYou" && item.CustomView != "CommonLocation" && item.CustomView != "SharedRevenue" && item.CustomView != "PMINZ_Project" && item.CustomView != "Common_NamedParty" && item.CustomView != "CommonClaim" && item.Name != "Your Major Projects")
-                                {
-                                    <div style='border-style : groove'>
-                                        <h2>@item.Name</h2>
-                                        @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                    </div>
-                                    <br />
-                                }
-                            }
-                        </div>*@
-
-
-
-                    <div id="AdvisorySection">
-                        <div style='border-style : groove'>
-                            <h2>Advisory</h2>
-                            @Html.Raw(Model.Advisory)
-                        </div>
-                    </div>
-
-                    <div id="DeclarationSection">
-                        <div style='border-style : groove'>
-                            <h2>Declaration</h2>
-                            @Html.Raw(Model.Programme.Declaration)
-                        </div>
-                    </div>
-
-
-                    <div id="LimitsSelected">
-                        <table class="table table-bordered table-responsive-md table-striped text-center">
-                            <tr>
-                                <th class="text-center" width="40%">Product Name</th>
-                                <th class="text-center" width="30%">Limit</th>
-                                <th class="text-center" width="30%">Excess</th>
-                            </tr>
-                            @foreach (var limits in Model.LimitsSelected)
-                            {
-                                @if (limits != null)
-                                {
-                                    <tr>
-                                        @foreach (var limit in limits)
-                                        {
-                                            <td>
-                                                @limit
-                                            </td>
-                                        }
-                                    </tr>
-                                }
-                            }
-                        </table>
-
-                    </div>
-
-                </div>
-            </article>
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
+                > <span>
+                    <a href="~/Information/ViewProgrammeDetails/@Model.ClientProgramme.Id"> View Client Information Sheet</a>
+                    > View Client Information Sheet Section
+                </span>
+            </h1>
         </div>
-    </section>
-</div>
+        @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
+        {
+            <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">View Full Proposal Report</a>
+            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
+                <i class="fa fa-edit"></i> Send Documents
+            </a>
+        }
+
+        <section id="widget-grid" class="">
+            <div class="row">
+                <article class="col-sm-12 col-md-12 col-lg-6">
+                    <!-- new widget -->
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                            <h2>Client Programme  </h2>
+                        </header>
+                        <!-- widget div-->
+                        @*<div>*@
+                        @*<div class="widget-body no-padding smart-form">*@
+                        <!-- content goes here -->
+
+
+                        <table class="table table-bordered table-striped table-hover table-condensed">
+
+                            <thead>
+                                <tr align="center">
+                                    <th align="center">Client Information Sheet</th>
+
+
+                                </tr>
+
+                            </thead>
+                            <tbody>
+
+                                @foreach (var Section in Model.Section.OrderBy(s => s.Position))
+                                {
+
+                                    if (!string.IsNullOrWhiteSpace(Section.CustomView))
+                                    {
+                                        <tr>
+                                            <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new {id = Model.ClientProgramme.Id , name = Section.CustomView })'" style="cursor:pointer" align="left">
+                                                @Section.Name
+                                            </td>
+
+                                        </tr>
+
+                                    }
+                                }
+
+
+                                <tr>
+
+                                    <td onclick="location.href='@Url.Action("ViewAgreementDeclaration", "Agreement",new {id = Model.ClientProgramme.Id })'" style="cursor:pointer" align="left">
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                </article>
+            </div>
+        </section>
+        <!-- widget grid -->
+        <section id="widget-grid" class="" hidden>
+            <div class="row">
+                <article class="col-sm-12 col-md-12 col-lg-8">
+                    <!-- new widget -->
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+
+                        @Html.HiddenFor(m => m.AnswerSheetId)
+                        @Html.HiddenFor(m => m.ClientProgramme.Owner.Id)
+
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                            <h2>Client Information Sheet Section</h2>
+                        </header>
+                        <!-- widget div-->
+
+                        <input hidden id="docID" />
+                        @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
+                        {
+                            <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">View Full Proposal Report</a>
+                            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
+                                <i class="fa fa-edit"></i> Send Documents
+                            </a>
+                        }
+
+                        <div id="titledetails">
+                            <h3>Title:  @Model.ClientProgramme.BaseProgramme.Name </h3>
+                            <h3>Information Sheet for :  @Model.ClientProgramme.Owner.Name </h3>
+                            <h3>UIS No:  @Model.ClientInformationSheet.ReferenceId </h3>
+                        </div>
+                        <div id="reportdetails">
+                            @foreach (var item in Model.Sections.OrderBy(ob => ob.Position))
+                            {
+                                <div id=@item.Name>
+                                    <h2>@item.Name</h2>
+                                    @Html.Partial("PrefabSections/" + item.CustomView, Model)
+                                </div>
+                                <br />
+                            }
+                        </div>
+
+
+                        <div id="AdvisorySection">
+                            <div style='border-style : groove'>
+                                <h2>Advisory</h2>
+                                @Html.Raw(Model.Advisory)
+                            </div>
+                        </div>
+
+                        <div id="DeclarationSection">
+                            <div style='border-style : groove'>
+                                <h2>Declaration</h2>
+                                @Html.Raw(Model.Programme.Declaration)
+                            </div>
+                        </div>
+
+
+                        <div id="LimitsSelected">
+                            <table class="table table-bordered table-responsive-md table-striped text-center">
+                                <tr>
+                                    <th class="text-center" width="40%">Product Name</th>
+                                    <th class="text-center" width="30%">Limit</th>
+                                    <th class="text-center" width="30%">Excess</th>
+                                </tr>
+                                @foreach (var limits in Model.LimitsSelected)
+                                {
+                                    @if (limits != null)
+                                    {
+                                        <tr>
+                                            @foreach (var limit in limits)
+                                            {
+                                                <td>
+                                                    @limit
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                        </div>
+
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
 
 
 @section pagespecific {
