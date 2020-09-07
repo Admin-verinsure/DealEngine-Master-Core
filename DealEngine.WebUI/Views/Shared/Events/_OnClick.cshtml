@@ -24,8 +24,7 @@
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 
-    function RemoveOrganisation(organisationId, AccordionId) {
-        debugger;
+    function RemoveOrganisation(organisationId, AccordionId) {        
         var programmeId = document.getElementById("Programme_Id").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({

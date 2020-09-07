@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "maximumassetsize");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "maximumassetsize", "do250klimitpremium1employee", "do250klimitpremium2employee", "do250klimitpremiumover2employee");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -59,6 +59,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
             agreement.QuoteDate = DateTime.UtcNow;
+
+            int intnumberofadvisors = 0;
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    var principleadvisorunit1 = (ContractorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Planner" || u.Name == "Contractor") && u.DateDeleted == null);
+
+                    if (principleadvisorunit1 != null)
+                    {
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
+                        {
+                            intnumberofadvisors += 1;
+                        }
+                    }
+                }
+            }
 
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
@@ -92,12 +109,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
 
+            if (intnumberofadvisors == 1)
+            {
+                TermPremium250k = rates["do250klimitpremium1employee"];
+            } else if (intnumberofadvisors == 2)
+            {
+                TermPremium250k = rates["do250klimitpremium2employee"];
+            } else if (intnumberofadvisors > 2)
+            {
+                TermPremium250k = rates["do250klimitpremiumover2employee"];
+            }
+
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             int TermExcess = 0;
             int intCompanyAge = 0;
             decimal decDOAssets = 0m;
             decimal decDOLiabs = 0m;
+
+            TermExcess = 1000;
 
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value != null)
             {
@@ -154,7 +184,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Unlimited excluding known claims or circumstances";
+            string retrodate = "1 October 2011";
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;

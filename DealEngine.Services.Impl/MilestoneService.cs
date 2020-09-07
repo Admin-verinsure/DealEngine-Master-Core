@@ -94,13 +94,13 @@ namespace DealEngine.Services.Impl
                 if (string.IsNullOrWhiteSpace(UserTask.URL)) //UserTask.IsActive
                 {
                     UserTask.URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
-                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
-                    await _taskingService.Update(UserTask);
+                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";                    
                 }
                 
                 foreach(var NotifyUsers in sheet.Programme.BaseProgramme.AgreementReferNotifyUsers)
                 {
-                    await _userService.AssignTaskToUser(NotifyUsers, UserTask);
+                    //NotifyUsers.UserTasks.Add(userTask);                    
+                    await _taskingService.Update(UserTask);
                 }                            
                 //run email
                 return Advisory.Description;
@@ -181,7 +181,7 @@ namespace DealEngine.Services.Impl
                 if(UserTask != null)
                 {
                     UserTask.Complete(user);
-                    _taskingService.Update(UserTask);
+                    await _taskingService.Update(UserTask);
                 }
                 //run email
             }
@@ -241,14 +241,40 @@ namespace DealEngine.Services.Impl
 
         public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme)
         {
-            UserTask userTask = new UserTask(user, "Rejoin", null)
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisationUser.PrimaryOrganisation.Id.ToString();
+            UserTask userTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            if (userTask == null)
             {
-                URL = "/Organisation/RejoinProgramme/" + programme.Id.ToString(),
-                Body = "Notify Broker Org Task"
-            };
-            
-            organisationUser.UserTasks.Add(userTask);
-            await _userService.Update(organisationUser);           
+                userTask = new UserTask(user, "Rejoin", null)
+                {
+                    URL = URL,
+                    Body = "Person Removed From Sheet",
+                    IsActive = true
+                };
+
+                //default me for now
+                user.UserTasks.Add(userTask);
+                //organisationUser.UserTasks.Add(userTask);                
+                await _taskingService.Update(userTask);
+            }                   
+        }
+
+        public async Task JoinOrganisationTask(User user, Programme programme)
+        {
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + user.PrimaryOrganisation.Id.ToString();
+            UserTask userTask = user.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            if (userTask != null)
+            {
+                userTask.Complete(user);
+                user.UserTasks.Remove(userTask);            
+                await _taskingService.Update(userTask);
+
+                //var brokerUser = programme.BrokerContactUser;
+                URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + user.PrimaryOrganisation.Id.ToString();
+                //default me for now
+                user.UserTasks.Add(userTask);
+                //organisationUser.UserTasks.Add(userTask);   
+            }
         }
     }
 }

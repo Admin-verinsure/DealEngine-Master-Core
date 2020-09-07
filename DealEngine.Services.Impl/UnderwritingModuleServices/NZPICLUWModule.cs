@@ -213,7 +213,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "Worldwide";
-            agreement.Jurisdiction = "Worldwide";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {
