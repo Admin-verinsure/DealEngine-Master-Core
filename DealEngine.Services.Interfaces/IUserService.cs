@@ -19,6 +19,5 @@ namespace DealEngine.Services.Interfaces
         Task<User> GetUserPrimaryOrganisation(Organisation org);
         Task<List<User>> GetAllUserByOrganisation(Organisation org);
         Task<List<User>> GetBrokerUsers();
-        Task AssignTaskToUser(User user, UserTask userTask);
     }
 }

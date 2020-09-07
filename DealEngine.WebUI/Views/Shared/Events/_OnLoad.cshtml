@@ -73,8 +73,7 @@
                         }
                     }
 
-                    if (Element == null) {
-                        debugger;
+                    if (Element == null) {                        
                         var Id = Type + "." + Field;
                         Element = document.getElementById(Id);
                         Value = OutPut[obj][Field];
@@ -148,8 +147,7 @@
                     var Value = OutPut["Organisation"]["OrganisationalUnits"][Unit][Item];
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
-                            //hardcord date string
-                            debugger;
+                            //hardcord date string                            
                             var date = Value.substring(0, 10);
                             if (date == "0001-01-01") {
                                   element.value = null;
