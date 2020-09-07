@@ -340,3 +340,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     box-sizing: border-box !important;
     -moz-box-sizing: border-box !important
 }
+
+.cgpopover {
+    text-align: center;
+    padding-top: 35px !important;
+}
