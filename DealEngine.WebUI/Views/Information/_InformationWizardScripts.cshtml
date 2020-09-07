@@ -2498,13 +2498,12 @@ function showAccordionPanel(id, panelNo) {
 
          if (!(document.getElementById("LocationTypeModal").validity.valueMissing) && !(document.getElementById("StreetModal").validity.valueMissing)
              && !(document.getElementById("SuburbModal").validity.valueMissing) && !(document.getElementById("CityModal").validity.valueMissing)) {
-
              var locationTypeValue = document.getElementById(loctype).value;
              var cmonValue = document.getElementById(cnameLoc).value;
              var streetVal = document.getElementById(streetLoc).value;
              var cityVal = document.getElementById(cityLoc).value;
              var countryVal = document.getElementById(countryLoc).value;
-             var suburbVal = document.getElementById(streetLoc).value;
+             var suburbVal = document.getElementById(suburbLoc).value;
              var postCodeVal = document.getElementById(postcodeLoc).value;
 
              document.getElementById("locationtypeoptions").value = locationTypeValue;
@@ -2514,6 +2513,7 @@ function showAccordionPanel(id, panelNo) {
              document.getElementById("countrydetails").value = countryVal;
              document.getElementById("suburbdetails").value = suburbVal;
              document.getElementById("postcodedetails").value = postCodeVal;
+            debugger;
 
              $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
@@ -2521,8 +2521,8 @@ function showAccordionPanel(id, panelNo) {
                 data: $("#tab_1 :input").serialize({ json: true })
             })
                  .done(function (data) {
-                     debugger
-                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, streetVal, cmonValue, locationTypeValue, data);
+                     debugger;
+                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, data);
                      closeLocModal();
                      document.getElementById("LocationViewModel").reset();
                 })
@@ -2534,53 +2534,52 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, locationId) {
-
+        debugger;
         //$('#getLandLocModal').show();
         var street = streetLoc;
         var suburb = suburbLoc;
         var postcode = postcodeLoc;
         var country = countryLoc;
         var loctype = loctype;
+        var city = cityLoc;
 
             $('#addLocModal' + " :input").val("");
 
                 if ($('#addLandLocModal').hasClass('in')) {
 
                     $('#addLocModal').hide();
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#BuildingLocationModal.b').val(data.LocationId);
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     //Want to use Location added in Trailer Modal use case
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
-
-
                 }
 
 
@@ -2588,85 +2587,82 @@ function showAccordionPanel(id, panelNo) {
 
                     $('#addLocModal').hide();
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#VehicleLocationModal.b').val(data.LocationId);
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
-                                  $('#getLandLocModal').hide();
-
-
+                    $('#getLandLocModal').hide();
                 }
                 else {
                     $('#addLocModal').hide();
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddMotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddMotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddMotorLocation.omv [value='add']").remove();
                     $('#AddMotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
@@ -6120,17 +6116,21 @@ async: true
             $(boatUseLiveNotesSection).show();
             $(SpinnakersSection).hide();
             $(raceCategorySection).hide();
-            $(boatUseRaceNotesSection).hide();                    
+            $(boatUseRaceNotesSection).hide();
         }
         else if (selectedBoatUseCategory == "Race") {
             $(raceCategorySection).show();
             $(boatUseLiveNotesSection).hide();
             $(SpinnakersSection).show();
             $(boatUseRaceNotesSection).show();
+        }
+        else if (selectedBoatUseCategory == "NoRacingNoLiveOnBoard") {
+            $(raceCategorySection).hide();
             $(boatUseLiveNotesSection).hide();
+            $(SpinnakersSection).hide();
+            $(boatUseRaceNotesSection).hide();
         }
     }     
-
 
     function AdminUpdated() {
         var AdminUser = $('#AdminSection');
