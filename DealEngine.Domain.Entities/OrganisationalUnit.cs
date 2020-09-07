@@ -70,8 +70,8 @@ namespace DealEngine.Domain.Entities
 
         public virtual DateTime? DateofDeceased { get; set; }        
         public virtual string MyCRMId { get; set; }
-        public virtual DateTime? PIRetroactivedate { get; set; }
-        public virtual DateTime? DORetroactivedate { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit

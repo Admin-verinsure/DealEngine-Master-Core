@@ -22,9 +22,8 @@ namespace DealEngine.Services.Interfaces
         Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
         Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
         Task Update(Organisation organisation);
-        Task RefactorOrganisations();
         Task UpdateAdvisorDates(IFormCollection collection);
-        Task<List<Organisation>> GetAllRemovedOrganisations();
+        Task DeveloperTool();
     }
 }
 

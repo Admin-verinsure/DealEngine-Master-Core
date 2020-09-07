@@ -222,8 +222,8 @@ namespace DealEngine.Domain.Entities
         //public virtual bool IsPrincipalAdvisor { get; set; }
         //public virtual string OfcPhoneno { get; set; }
         //public virtual string MyCRMId { get; set; }
-        //public virtual string PIRetroactivedate { get; set; }
-        //public virtual string DORetroactivedate { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
         //public virtual IList<AuditHistory> AuditHistory { get; set; }
 
         #endregion
