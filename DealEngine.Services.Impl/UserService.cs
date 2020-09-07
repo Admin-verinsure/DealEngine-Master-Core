@@ -282,11 +282,5 @@ namespace DealEngine.Services.Impl
         {
 			_ldapService.Update(user);
 		}
-
-        public async Task AssignTaskToUser(User user, UserTask userTask)
-        {
-			user.UserTasks.Add(userTask);
-			await Update(user);
-		}
     }
 }

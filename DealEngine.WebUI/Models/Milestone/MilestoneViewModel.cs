@@ -12,11 +12,35 @@ namespace DealEngine.WebUI.Models.Milestone
             Programmes = GetProgrammeList(programmes);
             ProgrammeProcesses = GetProgrammeProcesses();
             Activities = GetActivities();
+            StandardOptions = GetStandardOptions();
+        }
+
+        private IList<SelectListItem> GetStandardOptions()
+        {
+            var list = new List<SelectListItem>() {
+                new SelectListItem
+                {
+                    Text = "-- Select --",
+                    Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "true",
+                    Value = "true"
+                },
+                new SelectListItem
+                {
+                    Text = "false",
+                    Value = "false"
+                }
+            };
+            return list;
         }
 
         public Domain.Entities.Milestone Milestone { get; set; }
         public IList<SelectListItem> Activities { get; set; }
         public IList<SelectListItem> Programmes { get; set; }
+        public IList<SelectListItem> StandardOptions { get; set; }
         public IList<SelectListItem> ProgrammeProcesses { get; set; }
         private IList<SelectListItem> GetActivities()
         {

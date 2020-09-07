@@ -111,31 +111,13 @@ namespace DealEngine.WebUI.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> AONImportUsers()
+        public async Task<IActionResult> NZPIImportOwners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportAOEServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch(Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> CEASImportUsers()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportCEASServiceIndividuals(user);
+                await _importService.ImportNZPIImportOwners(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -147,84 +129,13 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CEASUpdateUsers()
+        public async Task<IActionResult> NZPIImportPlanners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportCEASServiceUpdateUsers(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> PMINZImportUsers()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportPMINZServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> AAAImportAdvisors()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AAAAdministrationAdvisors()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAAdministrationIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AAAImportPrincipals()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAServicePrincipals(user);
+                await _importService.ImportNZPIImportPlanners(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -874,7 +785,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _milestoneService.DeveloperTool();
+            await _organisationService.DeveloperTool();
             return Redirect("~/Home/Index");
         }
     }
