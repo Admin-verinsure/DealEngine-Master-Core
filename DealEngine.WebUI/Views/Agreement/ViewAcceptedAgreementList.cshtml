@@ -46,8 +46,11 @@
                             @if (item.CurrentUser.PrimaryOrganisation.IsBroker || item.CurrentUser.PrimaryOrganisation.IsTC)
                             {
                                 <li class="nav-item">
-                                    <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+                                    <a href='@Url.Action("PartialViewProgramme", "Information",new { id = @item.ClientProgrammeId, viewlist="ListView"})' class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+
+                                    @*<a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>*@
                                 </li>
+
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Agreement</a>
                                 </li>
@@ -65,7 +68,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                          (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -73,6 +76,8 @@
                                     }
 
                                 }
+
+
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
                                 </li>
@@ -144,6 +149,17 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
                                 }
+
+                                @if (ViewBag.IsPDFgenerated == "True")
+                                {
+                                    <li class="nav-item">
+                                        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@false">
+                                            <i class="fa fa-edit"></i> Send FullProposal Report
+                                        </a>
+                                    </li>
+
+                                }
+
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
                                 </li>

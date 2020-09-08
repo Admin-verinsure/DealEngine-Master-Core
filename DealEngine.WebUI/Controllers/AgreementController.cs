@@ -1741,6 +1741,7 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgrammebyId(id);
                 Organisation insured = clientProgramme.Owner;
                 ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
@@ -1770,6 +1771,7 @@ namespace DealEngine.WebUI.Controllers
                         model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Declined", user, answerSheet);
                         model.Status = agreement.Status;
                         model.InformationSheetId = answerSheet.Id;
+                        model.CurrentUser = user;
                         models.Add(model);
                     }
 
@@ -2840,14 +2842,13 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                agreement.Documents.Add(renderedDoc);
                                 documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
                         }
 
 
-                        if (programme.BaseProgramme.ProgEnableEmail)
+                        if (programme.BaseProgramme.ProgEnableEmail && agreement.MasterAgreement)
                             {
                                 //send out policy document email
                                 if (programme.BaseProgramme.EnableFullProposalReport)
@@ -2896,9 +2897,11 @@ namespace DealEngine.WebUI.Controllers
             //  docContents = ToBytes(html);
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
-               "PDF_Generator_Src_Examples_Pack_250473855326",
-               "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
-           );            // for Linux/OS-X: "wkhtmltopdf"
+              _appSettingService.NRecoUserName,
+              _appSettingService.NRecoLicense
+            );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
 
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
             Document document = new Document(user, "FullProposalReport", "application/pdf", 99);
@@ -3489,7 +3492,6 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreeDocList = agreement.GetDocuments();
 
-                        
                         foreach (Document doc in agreeDocList)
                         {
                             if (!doc.Name.EqualsIgnoreCase("FullProposalReport"))
@@ -3498,6 +3500,8 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
+                                ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
+
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
 
                             }
@@ -3508,6 +3512,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+               
                  ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
                 if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)
