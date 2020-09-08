@@ -334,6 +334,11 @@ namespace DealEngine.Services.Impl
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new PrincipalUnit(User, Type, OrganisationTypeName, collection));
                 }
+                if (Type == "Planner" || Type == "Contractor")
+                {
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new PlannerUnit(User, Type, OrganisationTypeName, collection));
+                }
             }
 
             return OrganisationalUnits;

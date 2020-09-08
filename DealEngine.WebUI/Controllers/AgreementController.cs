@@ -2114,7 +2114,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
                 ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
-                model.Owner = agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name =="Advisor")).ToList();
+                model.Owner = agreement.ClientInformationSheet.Organisation.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Advisor") && o.Removed != true && o.DateDeleted == null).ToList();
                 model.ProgId = answerSheet.Programme.Id;               
                 model.AgreementId = id;
                 //ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;

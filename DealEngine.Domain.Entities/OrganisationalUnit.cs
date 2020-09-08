@@ -159,10 +159,10 @@ namespace DealEngine.Domain.Entities
         public virtual string TradingName { get; set; }
     }
 
-    public class ContractorUnit : OrganisationalUnit
+    public class PlannerUnit : OrganisationalUnit
     {
-        public ContractorUnit() { }
-        public ContractorUnit(User User, string Name, string Type, IFormCollection Collection)
+        public PlannerUnit() { }
+        public PlannerUnit(User User, string Name, string Type, IFormCollection Collection)
             : base(User, Name, Type, Collection)
         {
 
@@ -181,6 +181,12 @@ namespace DealEngine.Domain.Entities
         public virtual bool ContractedInsured { get; set; }
         [Display(Name = "Years working for Insured?")]
         public virtual int YearsAtInsured { get; set; }
+        [Display(Name = "Principal Planner?")]
+        public virtual bool IsPrincipalPlanner { get; set; }
+        [Display(Name = "Enter fees received from the Insured in the last 12 months?")]
+        public virtual int FeesIn12Months { get; set; }
+
+
 
     }
 }
