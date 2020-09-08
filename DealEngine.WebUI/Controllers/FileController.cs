@@ -565,7 +565,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation).ToList();
+                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation && d.IsTemplate).ToList();
 
                 if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
                 {
@@ -623,6 +623,11 @@ namespace DealEngine.WebUI.Controllers
                             case 7:
                                 {
                                     documentType = "Premium Advice";
+                                    break;
+                                }
+                            case 99:
+                                {
+                                    documentType = "Full Proposal Report";
                                     break;
                                 }
                             default:
