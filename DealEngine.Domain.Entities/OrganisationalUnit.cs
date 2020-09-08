@@ -183,6 +183,10 @@ namespace DealEngine.Domain.Entities
         public virtual int YearsAtInsured { get; set; }
         [Display(Name = "Principal Planner?")]
         public virtual bool IsPrincipalPlanner { get; set; }
+        [Display(Name = "Enter fees received from the Insured in the last 12 months?")]
+        public virtual int FeesIn12Months { get; set; }
+
+
 
     }
 }

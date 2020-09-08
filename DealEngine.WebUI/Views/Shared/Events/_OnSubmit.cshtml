@@ -123,6 +123,7 @@
                         }
                         else {
                             //hardcoded to find the div visibility - need to find a better way
+                            debugger;
                             var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;//IsElementHidden(element);
                             if (isHidden == false) {
                                 OnChange(element.id, element.name);
@@ -160,7 +161,7 @@
             if (Unit != null) {
                 if (Unit.length > 0) {
                     if (Unit[0].id == "AdvisorUnit" ||
-                        Unit[0].id == "ContractorUnit"
+                        Unit[0].id == "PlannerUnit"
                     ) {
                         UnitValidationOnSubmit();
                     }
@@ -170,7 +171,7 @@
     }
 
     function UnitValidationOnSubmit() {
-        var pAdvisor = document.getElementById("IsPrincipalAdvisor");
+        var pAdvisor = document.getElementById("IsPrincipal");
         if (pAdvisor == null) {
             event.preventDefault();
             event.stopPropagation();

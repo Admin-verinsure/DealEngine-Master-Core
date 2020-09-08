@@ -336,7 +336,7 @@
             if (Value == "Nominated Representative") {
                 AdministrationOnChange();
             }
-            if (Value == "Planner") {
+            if (Value == "Contractor") {
                 ContractorOnChange();
             }
 
@@ -358,8 +358,9 @@
     function ContractorOnChange() {
         var IsContractorUnit = document.getElementById("HidePrincipal");
         if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = false;
+            IsContractorUnit.hidden = true;
         }
+        document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
     }
 
     function AdministrationOnChange() {

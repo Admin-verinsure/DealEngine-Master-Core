@@ -65,7 +65,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var principleadvisorunit1 = (ContractorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Planner" || u.Name == "Contractor") && u.DateDeleted == null);
+                    var principleadvisorunit1 = (PlannerUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Planner" || u.Name == "Contractor") && u.DateDeleted == null);
 
                     if (principleadvisorunit1 != null)
                     {
