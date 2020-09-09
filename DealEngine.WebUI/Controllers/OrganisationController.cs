@@ -58,30 +58,30 @@ namespace DealEngine.WebUI.Controllers
             
             try
             {
-                var addr = new System.Net.Mail.MailAddress(organisation.Email);
-                ValidBackEndEmail = addr.Address == organisation.Email;
+                var addr = new System.Net.Mail.MailAddress(email);
+                ValidBackEndEmail = addr.Address == email;
+
+                if (organisation != null)
+                {
+                    if (OrganisationId == Guid.Empty)
+                    {
+                        return Json(true);
+                    }
+                    if (sheet.Owner.Id == OrganisationId)
+                    {
+                        return Json(false);
+                    }
+                    if (sheet.Organisation.Contains(organisation))
+                    {
+                        return Json(false);
+                    }
+                }
+                return Json(false);
             }
             catch
             {
-                ValidBackEndEmail = false;
+                return Json(true);
             }
-
-            if (organisation != null && ValidBackEndEmail)
-            {
-                if (OrganisationId == Guid.Empty)
-                {
-                    return Json(true);
-                }
-                if(sheet.Owner.Id == OrganisationId)
-                {
-                    return Json(false);
-                }
-                if (sheet.Organisation.Contains(organisation))
-                {                    
-                    return Json(false);
-                }
-            }
-            return Json(false);
         }
 
         [HttpPost]

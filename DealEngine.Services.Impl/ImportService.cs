@@ -36,7 +36,7 @@ namespace DealEngine.Services.Impl
             IBusinessActivityService businessActivityService)
         {            
             WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Data\\Import\\";
+            //WorkingDirectory = "C:\\Data\\Import\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
