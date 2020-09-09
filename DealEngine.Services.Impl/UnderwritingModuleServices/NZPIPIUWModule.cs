@@ -78,8 +78,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    feeincometotallastandnextyr = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
-                } else if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
+                    feeincometotallastandnextyr += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                }
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
                     feeincometotallastandnextyr += agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }

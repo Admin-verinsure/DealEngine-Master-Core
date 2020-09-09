@@ -67,9 +67,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.EDRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.LPDRetro))
                         {
-                            strretrodate = preRenewOrRefData.EDRetro;
+                            strretrodate = preRenewOrRefData.LPDRetro;
                         }
 
                     }

@@ -295,14 +295,16 @@ namespace DealEngine.Services.Impl
             return Sheet;
         }
 
-        public async Task AddOrganisationByMembership(Organisation organisation, string membership)
+        public async Task<bool> AddOrganisationByMembership(Organisation organisation, string membership)
         {
             var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == membership);
             if (clientProgramme != null)
             {
                 clientProgramme.InformationSheet.Organisation.Add(organisation);
                 await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+                return true;
             }
+            return false;
         }
 
         public async Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation Owner)
