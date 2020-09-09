@@ -171,7 +171,6 @@
             $("#more").trigger("click");
             throw "Location Missing";
         }
-        debugger;
     }
 
     function UnitValidationOnSubmit() {
@@ -215,14 +214,23 @@
                     }
                 }
             }
-        }        
+        }    
+        var InvalidEmail = document.getElementById("ValidBackEndEmail");
+        if (InvalidEmail != null) {
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            $("[id='Insured Details / Named Parties']").trigger("click");
+            window.alert("Please update email for: " + InvalidEmail.value);
+            throw "InvalidEmail Named Parties";
+        }
     }
 
     function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
         var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
-         var ErrorMessage = "";
+        var ErrorMessage = "";
 
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
