@@ -528,7 +528,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input ">
                                             <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatEffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="BoatEffectiveDate" type="text" required>
+                                            <input name="BoatEffectiveDate" placeholder="Effective Date" class="form-control b" id="BoatEffectiveDate" type="text" required>
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -552,11 +552,10 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
                                             <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @*@foreach (var bwloc in Model.OrganisationViewModel.Organisations)
+                                                @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                                     {
-                                                        <option value="@bwloc.Id"> @bwloc.Name</option>
-                                                    }*@
+                                                    <option value="@organisation.Id"> @organisation.Name</option>
+                                                    }
                                             </select>
                                         </label>
                                     </section>
@@ -1062,7 +1061,7 @@
                                     <label class="label required">Effective Date for cover for this vessel</label>
                                     <label class="input ">
                                         <i class="icon-append fa fa-calendar"></i>
-                                        <input name="BoatEffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="AddBoatEffectiveDate" type="text">
+                                        <input name="BoatEffectiveDate" placeholder="Effective Date" class="form-control b" id="AddBoatEffectiveDate" type="text">
                                     </label>
                                 </section>
                                 <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">

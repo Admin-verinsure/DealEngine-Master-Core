@@ -397,6 +397,11 @@
             dateFormat: "dd/mm/yy",
             minDate: 0
         });
+        $('.CGEffectivedate').datepicker({
+            maxDate: "+30d",
+            dateFormat: "dd/mm/yy",
+            //minDate: 0
+        });
         $('.Birthdate').datepicker({
             dateFormat: "dd/mm/yy",
             maxDate: 0
@@ -499,17 +504,25 @@
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {
+                debugger;
                 $.ajax({
                     url: '@Url.Action("SaveInformation", "Information")',
                     type: "POST",
                     data: $("#tab_1 :input").serialize({ json: true })
                 })
                     .done(function (data) {
+                        debugger;
+
                         if (ui.oldHeader[0].id == "Investment Product") {
                             checkInvestmentVal();
                         }
+                        else if (ui.newHeader[0].id == "Vessel") { // if policy effective date hasn't been filled then open accordian again
+                            var policyEffectiveDate = $('#dateselected').val();
+                            if (policyEffectiveDate == "") {
+                                $("[id='Policy Effective Date']").trigger("click");
+                            }
+                        }
                         document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
-
                         $('.toast').toast('show');
                         $('#tblBuilding').trigger('reloadGrid');
                         $('#Principal,Partners or Directors').trigger('reloadGrid');

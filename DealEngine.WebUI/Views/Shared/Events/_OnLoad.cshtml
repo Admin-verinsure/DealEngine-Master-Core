@@ -35,12 +35,22 @@
 
         } catch (ex) { debugger;}
     }
-
-     $('#dateselected').datepicker({
-        dateFormat: "dd/mm/yy"
-     });
-
     
+
+    $('#dateselected').datepicker({
+        dateFormat: "dd/mm/yy",
+        onSelect: function (selectedDate) {
+            $('#AddBoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#BoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
+        }
+    });
+    $('#AddBoatEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#BoatEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+
     function PopulateOrganisationView(Method, OutPut) {
         try {
             var Form = document.getElementById("organisationViewModel");
