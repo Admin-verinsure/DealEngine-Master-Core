@@ -49,12 +49,24 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
+            bool ValidBackEndEmail;
             Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
             Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
 
-            if(organisation != null)
+            
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(organisation.Email);
+                ValidBackEndEmail = addr.Address == organisation.Email;
+            }
+            catch
+            {
+                ValidBackEndEmail = false;
+            }
+
+            if (organisation != null && ValidBackEndEmail)
             {
                 if (OrganisationId == Guid.Empty)
                 {
