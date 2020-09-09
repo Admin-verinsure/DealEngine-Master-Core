@@ -33,11 +33,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "ED" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm edterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm fidterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null))
                 {
-                    edterm.Delete(underwritingUser);
+                    fidterm.Delete(underwritingUser);
                 }
             }
 

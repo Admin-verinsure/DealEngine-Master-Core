@@ -35,9 +35,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm elterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm fidterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "FID" && ct.DateDeleted == null))
                 {
-                    elterm.Delete(underwritingUser);
+                    fidterm.Delete(underwritingUser);
                 }
             }
 
@@ -67,9 +67,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.ELRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.FIDRetro))
                         {
-                            strretrodate = preRenewOrRefData.ELRetro;
+                            strretrodate = preRenewOrRefData.FIDRetro;
                         }
 
                     }
