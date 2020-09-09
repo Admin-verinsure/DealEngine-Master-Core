@@ -356,9 +356,13 @@
     }
 
     function ContractorOnChange() {
-        var IsContractorUnit = document.getElementById("HidePrincipal");
+        var IsContractorUnit = document.getElementById("HideContractor");
         if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = true;
+            IsContractorUnit.hidden = false;
+        }
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
         }
         document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
     }
@@ -386,9 +390,9 @@
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = false;
         }
-        var IsContractorUnit = document.getElementById("IsContractorUnit");
-        if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = true;
+        var IsContractor = document.getElementById("HideContractor");
+        if (IsContractor != null) {
+            IsContractor.hidden = true;
         }
     }
 

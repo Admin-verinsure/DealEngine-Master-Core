@@ -39,13 +39,28 @@
                             <div class="form-group">
                                 <label>
                                     PI Retroactive Date
-                                    @Html.TextBox("PIRetroactiveDate", Unit.PIRetroactivedate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "text" })
+                                    @if (string.IsNullOrWhiteSpace(Unit.PIRetroactivedate))
+                                    {
+                                        @Html.TextBox("PIRetroactiveDate", " ", new { @class = "form-control", @type = "text" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("PIRetroactiveDate", Unit.PIRetroactivedate, new { @class = "form-control", @type = "text" })
+                                    }
+
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label>
                                     DO Retroactive Date
-                                    @Html.TextBox("DORetroactivedate", Unit.DORetroactivedate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "text" })
+                                    @if (string.IsNullOrWhiteSpace(Unit.DORetroactivedate))
+                                    {
+                                        @Html.TextBox("DORetroactivedate", " ", new { @class = "form-control", @type = "text" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("DORetroactivedate", Unit.DORetroactivedate, new { @class = "form-control", @type = "text" })
+                                    }
                                 </label>
                             </div>
                         }

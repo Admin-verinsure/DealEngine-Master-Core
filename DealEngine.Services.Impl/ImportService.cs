@@ -859,9 +859,9 @@ namespace DealEngine.Services.Impl
 
             bool readFirstLine = false;
             string line;
-            Guid.TryParse("5f4f9a19-c948-425a-b306-c7f5cba56d86", out Guid ProgrammeId);
+            Guid.TryParse("bcbd2a62-5144-4b1d-84e8-206601a5bc8d", out Guid ProgrammeId);
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "ExampleOwners.csv";
+            var fileName = WorkingDirectory + "NZPIMembers2019UpdatedDataClean.csv";
 
             using (reader = new StreamReader(fileName))
             {
@@ -881,11 +881,11 @@ namespace DealEngine.Services.Impl
                         string Name = "";
                         User user = new User(currentUser, Guid.NewGuid())
                         {
-                            FirstName = parts[4],
-                            LastName = parts[5],
-                            FullName = parts[4] + " " + parts[5],
-                            Email = parts[6],
-                            UserName = parts[8]
+                            FirstName = parts[3],
+                            LastName = parts[4],
+                            FullName = parts[3] + " " + parts[4],
+                            Email = parts[5],
+                            UserName = parts[6]
                         };
                         if (parts[0] == "t")
                         {
@@ -906,7 +906,7 @@ namespace DealEngine.Services.Impl
                             OrganisationType = ownerType,
                             Email = user.Email,
                             Name = Name,
-                            TradingName = parts[3]
+                            TradingName = parts[2]
                         };
 
                         Owner.OrganisationalUnits.Add(ownerUnit);
@@ -917,9 +917,18 @@ namespace DealEngine.Services.Impl
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
                         PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
-                            IsNZPIAMember = true,
-                            Qualifications = parts[9]
+                            Qualifications = parts[7]
                         };
+
+                        int.TryParse(parts[9], out int YearsAtFirm);
+                        bool isNPIMember = false;
+                        if(parts[10] == "1")
+                        {
+                            isNPIMember = true;
+                        }
+                        ContractorUnit.IsNZPIAMember = isNPIMember;
+                        ContractorUnit.YearsAtFirm = YearsAtFirm;
+
                         Organisation planner = new Organisation(currentUser, Guid.NewGuid())
                         {
                             OrganisationType = plannerType,
@@ -961,7 +970,7 @@ namespace DealEngine.Services.Impl
         {
             //addresses need to be on one line            
             //var fileName = "C:\\Users\\temp\\NZFSGDataUploadtest.csv";
-            var fileName = WorkingDirectory + "ExamplePlanners.csv";
+            var fileName = WorkingDirectory + "NZPIPlanners2019UpdatedDataClean.csv";
             var currentUser = CreatedUser;
             StreamReader reader;
             bool readFirstLine = false;
@@ -998,15 +1007,25 @@ namespace DealEngine.Services.Impl
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
                         PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
-                            IsNZPIAMember = true,
                             Qualifications = parts[2]
                         };
+
+
+                        int.TryParse(parts[4], out int YearsAtFirm);
+                        bool isNPIMember = false;
+                        if (parts[5] == "1")
+                        {
+                            isNPIMember = true;
+                        }
+                        ContractorUnit.IsNZPIAMember = isNPIMember;
+                        ContractorUnit.YearsAtFirm = YearsAtFirm;
+
+
                         Organisation planner = new Organisation(currentUser, Guid.NewGuid())
                         {
                             OrganisationType = plannerType,
                             Email = user.Email,
-                            Name = user.FullName,
-                            TradingName = parts[3]
+                            Name = user.FullName
                         };
 
                         planner.OrganisationalUnits.Add(defaultUnit);
@@ -1014,8 +1033,91 @@ namespace DealEngine.Services.Impl
                         planner.InsuranceAttributes.Add(plannerAttribute);
 
                         user.SetPrimaryOrganisation(planner);
-                        await _userService.ApplicationCreateUser(user);
-                        await _programmeService.AddOrganisationByMembership(planner, Membership);
+                        var result = await _programmeService.AddOrganisationByMembership(planner, Membership);
+                        if (result)
+                        {
+                            await _userService.ApplicationCreateUser(user);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+        public async Task ImportNZPIImportContractors(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            //var fileName = "C:\\Users\\temp\\NZFSGDataUploadtest.csv";
+            var fileName = WorkingDirectory + "NZPIContractors2019UpdatedDataClean.csv";
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            bool readFirstLine = false;
+            string line;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        Random rand = new Random();
+                        string Membership = parts[8];
+                        string username = parts[0].Trim() + "_" + parts[1] + rand.Next(100);
+                        string email = rand.Next(1000000000).ToString();
+                        User user = new User(currentUser, Guid.NewGuid())
+                        {
+                            FirstName = parts[0],
+                            LastName = parts[1],
+                            FullName = parts[0] + " " + parts[1],
+                            Email = email,
+                            UserName = username
+                        };
+
+                        OrganisationType plannerType = new OrganisationType("Person - Individual");
+                        InsuranceAttribute plannerAttribute = new InsuranceAttribute(currentUser, "Contractor");
+                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
+                        PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Contractor", "Person - Individual", null)
+                        {
+                            Qualifications = parts[2]
+                        };
+
+                        int.TryParse(parts[4], out int YearsAtInsured);
+                        bool isNPIMember = false;
+                        if (parts[5] == "1")
+                        {
+                            isNPIMember = true;
+                        }
+                        ContractorUnit.IsNZPIAMember = isNPIMember;
+                        ContractorUnit.YearsAtInsured = YearsAtInsured;
+
+
+                        Organisation planner = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = plannerType,
+                            Email = user.Email,
+                            Name = user.FullName
+                        };
+
+                        planner.OrganisationalUnits.Add(defaultUnit);
+                        planner.OrganisationalUnits.Add(ContractorUnit);
+                        planner.InsuranceAttributes.Add(plannerAttribute);
+
+                        user.SetPrimaryOrganisation(planner);
+                        var result = await _programmeService.AddOrganisationByMembership(planner, Membership);
+                        if (result)
+                        {
+                            await _userService.ApplicationCreateUser(user);
+                        }
 
                     }
                     catch (Exception ex)
