@@ -147,6 +147,24 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> NZPIImportContractors()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZPIImportContractors(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AAAImportPreRenewData()
         {
             User user = null;
@@ -154,6 +172,24 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 await _importService.ImportAAAServicePreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZPIImportPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZPIServicePreRenewData(user);
 
                 return RedirectToAction("Index", "Home");
             }

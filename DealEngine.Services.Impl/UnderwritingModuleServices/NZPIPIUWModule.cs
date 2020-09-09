@@ -78,8 +78,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    feeincometotallastandnextyr = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
-                } else if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
+                    feeincometotallastandnextyr += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                }
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
                     feeincometotallastandnextyr += agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }
@@ -112,7 +113,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var principleadvisorunit1 = (ContractorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Planner") && u.DateDeleted == null);
+                    var principleadvisorunit1 = (PlannerUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Planner") && u.DateDeleted == null);
 
                     if (principleadvisorunit1 != null)
                     {
@@ -127,7 +128,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         }
                     }
 
-                    var principleadvisorunit2 = (ContractorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Contractor") && u.DateDeleted == null);
+                    var principleadvisorunit2 = (PlannerUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Contractor") && u.DateDeleted == null);
 
                     if (principleadvisorunit2 != null)
                     {

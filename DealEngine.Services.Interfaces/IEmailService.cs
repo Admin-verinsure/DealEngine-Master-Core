@@ -38,7 +38,7 @@ namespace DealEngine.Services.Interfaces
         Task IssueToBrokerSendEmail(string recipent, string EmailContent, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender);
         Task SendSystemEmailAllSubUISComplete(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet);
         Task SendSystemEmailAllSubUISInstruction(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet);
-        Task SendFullProposalReport(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
+        Task SendFullProposalReport(string recipent, SystemDocument documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
 
 
     }

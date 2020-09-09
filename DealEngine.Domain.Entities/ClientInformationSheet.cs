@@ -184,6 +184,13 @@ namespace DealEngine.Domain.Entities
                 foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
                     newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
 
+                foreach (Organisation org in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                    newSheet.Organisation.Add(org);
+
+                // foreach (RoleData role in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                newSheet.RoleData = RoleData;
+                newSheet.RevenueData = RevenueData;
+
             }
             catch(Exception ex)
             {

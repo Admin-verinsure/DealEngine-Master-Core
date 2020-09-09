@@ -70,9 +70,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.OTRetro))
                         {
-                            strretrodate = preRenewOrRefData.GLRetro;
+                            strretrodate = preRenewOrRefData.OTRetro;
                         }
 
                     }

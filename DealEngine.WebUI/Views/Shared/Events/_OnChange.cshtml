@@ -358,10 +358,15 @@
     }
 
     function ContractorOnChange() {
-        var IsContractorUnit = document.getElementById("IsContractorUnit");
+        var IsContractorUnit = document.getElementById("HideContractor");
         if (IsContractorUnit != null) {
             IsContractorUnit.hidden = false;
         }
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
+        }
+        document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
     }
 
     function AdministrationOnChange() {
@@ -369,9 +374,9 @@
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
         }
-        var IsPrincipalAdvisor = document.getElementById("HidePrincipalAdvisor");
-        if (IsPrincipalAdvisor != null) {
-            IsPrincipalAdvisor.hidden = true;
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
         }
         document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
     }
@@ -379,17 +384,17 @@
     function ResetOrganisationUnitView() {
         document.getElementById("Private").hidden = true;
         document.getElementById("Else").hidden = true;   
-        var IsPrincipalAdvisor = document.getElementById("HidePrincipalAdvisor");
-        if (IsPrincipalAdvisor != null) {
-            IsPrincipalAdvisor.hidden = false;
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = false;
         }
         var IsTripleAApproval = document.getElementById("HideTripleAApproval");
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = false;
         }
-        var IsContractorUnit = document.getElementById("IsContractorUnit");
-        if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = true;
+        var IsContractor = document.getElementById("HideContractor");
+        if (IsContractor != null) {
+            IsContractor.hidden = true;
         }
     }
 

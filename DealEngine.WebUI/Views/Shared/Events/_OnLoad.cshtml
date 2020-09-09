@@ -36,12 +36,23 @@
         } catch (ex) { debugger;}
     }
     
-
+    // Limit effective dates to be only selectable on/after policy effective date
     $('#dateselected').datepicker({
         dateFormat: "dd/mm/yy",
         onSelect: function (selectedDate) {
+            // Boat
             $('#AddBoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
             $('#BoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
+
+            // Trailer
+            $('#AddEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#AddPlantEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#EffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#MotorEffectiveDate').datepicker('option', 'minDate', selectedDate);
+
+            // Trailer Modal
+            $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', selectedDate);
+
         }
     });
     $('#AddBoatEffectiveDate').datepicker({
@@ -50,6 +61,22 @@
     $('#BoatEffectiveDate').datepicker({
         dateFormat: "dd/mm/yy",
     });
+    $('#AddEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#AddPlantEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#EffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#MotorEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#TrailerEffectiveDateModal').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+
 
     function PopulateOrganisationView(Method, OutPut) {
         try {
@@ -127,9 +154,7 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
-                    if (ProgrammeName.value == "TripleA Programme" || ProgrammeName.value == "NZFSG Programme") {
-                        TradingNameOwnerOnLoad();
-                    }
+                    TradingNameOwnerOnLoad();
                 }
             }
         } catch (ex) { debugger; }
