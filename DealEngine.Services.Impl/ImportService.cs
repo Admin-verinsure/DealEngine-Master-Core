@@ -1917,7 +1917,7 @@ namespace DealEngine.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
             PreRenewOrRefData preRenewOrRefData;
-            bool readFirstLine = true;
+            bool readFirstLine = false;
             string line;
             var fileName = WorkingDirectory + "NZPIPolicyData2019.csv";
 
