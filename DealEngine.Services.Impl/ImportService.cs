@@ -911,13 +911,15 @@ namespace DealEngine.Services.Impl
 
                         Owner.OrganisationalUnits.Add(ownerUnit);
                         Owner.InsuranceAttributes.Add(ownerAttribute);
+                        user.Organisations.Add(Owner);
 
                         OrganisationType plannerType = new OrganisationType("Person - Individual");
                         InsuranceAttribute plannerAttribute = new InsuranceAttribute(currentUser, "Planner");
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
                         PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
-                            Qualifications = parts[7]
+                            Qualifications = parts[7],
+                            IsPrincipalPlanner = true
                         };
 
                         int.TryParse(parts[9], out int YearsAtFirm);
@@ -933,16 +935,14 @@ namespace DealEngine.Services.Impl
                         {
                             OrganisationType = plannerType,
                             Email = user.Email,
-                            Name = user.FullName,                            
+                            Name = user.FullName
                         };
 
                         planner.OrganisationalUnits.Add(defaultUnit);
                         planner.OrganisationalUnits.Add(ContractorUnit);
                         planner.InsuranceAttributes.Add(plannerAttribute);
 
-                        user.Organisations.Add(planner);
-                        user.Organisations.Add(Owner);
-
+                        user.Organisations.Add(planner);                        
                         user.SetPrimaryOrganisation(Owner);
                         await _userService.ApplicationCreateUser(user);
 
@@ -953,7 +953,7 @@ namespace DealEngine.Services.Impl
                         var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
                         await _referenceService.CreateClientInformationReference(sheet);
                         clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                        clientProgramme.ClientProgrammeMembershipNumber = parts[7];
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[11];
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         sheet.Organisation.Add(planner);
                         await _programmeService.Update(clientProgramme);                       
@@ -1911,6 +1911,66 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportNZPIServicePreRenewData(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            PreRenewOrRefData preRenewOrRefData;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "NZPIPolicyData2019.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            preRenewOrRefData.PIRetro = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            preRenewOrRefData.GLRetro = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            preRenewOrRefData.DORetro = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            preRenewOrRefData.ELRetro = parts[5];
+                        if (!string.IsNullOrEmpty(parts[6]))
+                            preRenewOrRefData.EDRetro = parts[6];
+                        if (!string.IsNullOrEmpty(parts[7]))
+                            preRenewOrRefData.SLRetro = parts[7];
+                        if (!string.IsNullOrEmpty(parts[8]))
+                            preRenewOrRefData.CLRetro = parts[8];
+                        if (!string.IsNullOrEmpty(parts[9]))
+                            preRenewOrRefData.LPDRetro = parts[9];
+                        if (!string.IsNullOrEmpty(parts[10]))
+                            preRenewOrRefData.FIDRetro = parts[10];
+                        if (!string.IsNullOrEmpty(parts[11]))
+                            preRenewOrRefData.EndorsementProduct = parts[11];
+                        if (!string.IsNullOrEmpty(parts[12]))
+                            preRenewOrRefData.EndorsementTitle = parts[12];
+                        if (!string.IsNullOrEmpty(parts[13]))
+                            preRenewOrRefData.EndorsementText = parts[13];
+
+                        await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
         public async Task ImportDANZServicePreRenewData(User CreatedUser)
         {
             var currentUser = CreatedUser;

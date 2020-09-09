@@ -214,7 +214,7 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
-        public async Task SendFullProposalReport(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
+        public async Task SendFullProposalReport(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
         {
             string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Full Proposal Report for " + clientInformationSheet.Owner.Name;
             string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Full Proposal Report.</p>";
@@ -228,10 +228,11 @@ namespace DealEngine.Services.Impl
             email.WithSubject(FullProposalEmailsubject);
             email.WithBody(FullProposalEmailbody);
             email.UseHtmlBody(true);
-            if (documents != null)
+            if (document != null)
             {
-                var documentsList = await ToAttachments(documents);
-                email.Attachments(documentsList.ToArray());
+               
+                //var documentsList = await ToAttachments(new Attachment(new MemoryStream(document.Contents),"FullProposalReport.pdf"));
+                email.Attachments(new Attachment(new MemoryStream(document.Contents), "FullProposalReport.pdf"));
             }
             email.Send();
         }

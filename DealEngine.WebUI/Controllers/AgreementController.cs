@@ -20,6 +20,7 @@ using System.Net.Mime;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
+using NReco.PdfGenerator;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -2831,7 +2832,7 @@ namespace DealEngine.WebUI.Controllers
                     if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
-                        var documents = new List<SystemDocument>();
+                        var document = new SystemDocument();
                         var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
@@ -2840,9 +2841,10 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
                             {
-                                SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
+                                SystemDocument renderedDoc = await GetPdfDocument(doc.Id, programme);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                documents.Add(renderedDoc);
+                                document = renderedDoc;
+                               // documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
                         }
@@ -2855,11 +2857,11 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     if (sendUser)
                                     {
-                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,documents, agreement.ClientInformationSheet, agreement,null);
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,document, agreement.ClientInformationSheet, agreement,null);
                                     }
                                     else
                                     {
-                                        await _emailService.SendFullProposalReport(programme.Owner.Email, documents, agreement.ClientInformationSheet, agreement, null);
+                                        await _emailService.SendFullProposalReport(programme.Owner.Email, document, agreement.ClientInformationSheet, agreement, null);
                                     }
                                     using (var uow = _unitOfWork.BeginUnitOfWork())
                                     {
@@ -2885,7 +2887,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<Document> GetPdfDocument (Guid id) 
+        public async Task<Document> GetPdfDocument(Guid id, ClientProgramme clientprogramme)
         {
             User user = null;
 
@@ -2900,9 +2902,24 @@ namespace DealEngine.WebUI.Controllers
               _appSettingService.NRecoUserName,
               _appSettingService.NRecoLicense
             );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+             htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
+               + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
+               + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
+               + " <strong> UIS No:" + clientprogramme.InformationSheet.ReferenceId + "</strong></br>"
+               + " <strong> Sheet Submitted On:" + clientprogramme.InformationSheet.SubmitDate + "</strong></br>"
+               + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
+               + "<h2> </br>  </h2> </p>";
 
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
+            var margins = new PageMargins();
+            margins.Bottom = 18;
+            margins.Top = 38;
+            margins.Left = 15;
+            margins.Right = 15;
+            htmlToPdfConv.Margins = margins;
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
             Document document = new Document(user, "FullProposalReport", "application/pdf", 99);
             document.Contents = pdfBytes;

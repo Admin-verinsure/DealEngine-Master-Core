@@ -31,5 +31,6 @@ namespace DealEngine.Services.Interfaces
         Task ImportNZPIImportPlanners(User user);
         Task ImportAAAServicePreRenewData(User user);
         Task ImportNZPIImportContractors(User user);
+        Task ImportNZPIServicePreRenewData(User user);
     }
 }
