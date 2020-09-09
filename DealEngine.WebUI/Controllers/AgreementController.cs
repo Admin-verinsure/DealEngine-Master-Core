@@ -2831,7 +2831,7 @@ namespace DealEngine.WebUI.Controllers
                     if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
                     {
                         var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
-                        var documents = new List<SystemDocument>();
+                        var document = new SystemDocument();
                         var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
@@ -2842,7 +2842,8 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                documents.Add(renderedDoc);
+                                document = renderedDoc;
+                               // documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
                         }
@@ -2855,11 +2856,11 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     if (sendUser)
                                     {
-                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,documents, agreement.ClientInformationSheet, agreement,null);
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent,document, agreement.ClientInformationSheet, agreement,null);
                                     }
                                     else
                                     {
-                                        await _emailService.SendFullProposalReport(programme.Owner.Email, documents, agreement.ClientInformationSheet, agreement, null);
+                                        await _emailService.SendFullProposalReport(programme.Owner.Email, document, agreement.ClientInformationSheet, agreement, null);
                                     }
                                     using (var uow = _unitOfWork.BeginUnitOfWork())
                                     {
@@ -2885,7 +2886,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<Document> GetPdfDocument (Guid id) 
+        public async Task<Document> GetPdfDocument(Guid id)
         {
             User user = null;
 
@@ -2900,8 +2901,8 @@ namespace DealEngine.WebUI.Controllers
               _appSettingService.NRecoUserName,
               _appSettingService.NRecoLicense
             );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
+                          // htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+                          //htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
 
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
             Document document = new Document(user, "FullProposalReport", "application/pdf", 99);
