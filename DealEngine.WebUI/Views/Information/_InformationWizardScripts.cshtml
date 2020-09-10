@@ -111,7 +111,6 @@
                        });
                //}
            } else if (stepNumber === 1) {
-               debugger;
                var status = $('#Status').val();
 
                if (status == "Started") {
@@ -499,15 +498,12 @@
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {
-                debugger;
                 $.ajax({
                     url: '@Url.Action("SaveInformation", "Information")',
                     type: "POST",
                     data: $("#tab_1 :input").serialize({ json: true })
                 })
                     .done(function (data) {
-                        debugger;
-
                         if (ui.oldHeader[0].id == "Investment Product") {
                             checkInvestmentVal();
                         }
@@ -1445,7 +1441,6 @@
     }
 
     function SetCurrentTab(tabPaneId) {
-        debugger;
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
 };
