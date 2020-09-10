@@ -66,24 +66,7 @@
                     }
                     @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id != Model.ClientInformationSheet.Owner.Id && o.Removed != true).ToList())
                     {
-                <tr id="@organisation.Id">
-                    @{
-                        bool ValidBackEndEmail = false;
-                        try
-                        {
-                            var addr = new System.Net.Mail.MailAddress(organisation.Email);
-                            ValidBackEndEmail = addr.Address == organisation.Email;
-                        }
-                        catch
-                        {
-                            ValidBackEndEmail = false;
-                        }
-                        @if (!ValidBackEndEmail)
-                        {
-                            @Html.Hidden("ValidBackEndEmail", @organisation.Name)
-                        }
-
-                    }
+                <tr id="@organisation.Id">                    
                     <td>
                         @{
                             bool ValidBackEndEmail = false;
