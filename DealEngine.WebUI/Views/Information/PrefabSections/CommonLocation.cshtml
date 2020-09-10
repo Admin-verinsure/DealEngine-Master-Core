@@ -1,82 +1,81 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 <div id="CommonLocation" class="container-fluid">
-    <form class="" id="LocationViewModel">
-        <input id="LocationId" name="LocationViewModel.LocationId" hidden form="LocationViewModel" />
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item" id="tab1">
-                <a class="nav-link active" href="#locationtab1" data-toggle="tab" onclick="ResetForm('LocationViewModel', 'locationtab3','locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> List All </a>
-            </li>
-            <li class="nav-item" id="tab2">
-                <a class="nav-link" href="#locationtab2" data-toggle="tab"> Edit </a>
-            </li>
-            <li class="nav-item" id="tab2">
-                <a class="nav-link" href="#locationtab3" data-toggle="tab" onclick="ResetForm('LocationViewModel', 'locationtab3','locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> Add </a>
-            </li>
-            <li class="nav-item" id="tab3">
-                <a class="nav-link" href="#locationtab4" data-toggle="tab"> List Removed </a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div id="locationtab1" class="tab-pane active" role="tabpanel">
-                <table id="tblLocation"
-                       class="table table-striped" width="100%"
-                       data-show-columns="true"
-                       data-pagination="true"
-                       data-search="true"
-                       data-show-jump-to="true">
-                    <thead>
-                        <tr>
-                            <th data-field="editButton" data-sortable="false"></th>
-                            <th data-field="locationType" data-sortable="true">Location Type</th>
-                            <th data-field="commonName" data-sortable="true">Common Name</th>
-                            <th data-field="street" data-sortable="true">Street</th>
-                            <th data-field="suburb" data-sortable="true">Suburb</th>
-                            <th data-field="postcode" data-sortable="true">Postcode</th>
-                            <th data-field="city" data-sortable="true">City</th>
-                            <th data-field="deleteButton" data-sortable="false"></th>
+    <input id="LocationId" name="LocationViewModel.LocationId" hidden form="LocationViewModel" />
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" id="tab1">
+            <a class="nav-link active" href="#locationtab1" data-toggle="tab" onclick="ResetForm('locationtab3', 'locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> List All </a>
+        </li>
+        <li class="nav-item" id="tab2">
+            <a class="nav-link" href="#locationtab2" data-toggle="tab"> Edit </a>
+        </li>
+        <li class="nav-item" id="tab2">
+            <a class="nav-link" href="#locationtab3" data-toggle="tab" onclick="ResetForm('locationtab3', 'locationtab2', 'Location', 'LocationAddButton', 'LocationCancelButton')"> Add </a>
+        </li>
+        <li class="nav-item" id="tab3">
+            <a class="nav-link" href="#locationtab4" data-toggle="tab"> List Removed </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="locationtab1" class="tab-pane active" role="tabpanel">
+            <table id="tblLocation"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="editButton" data-sortable="false"></th>
+                        <th data-field="locationType" data-sortable="true">Location Type</th>
+                        <th data-field="commonName" data-sortable="true">Common Name</th>
+                        <th data-field="street" data-sortable="true">Street</th>
+                        <th data-field="suburb" data-sortable="true">Suburb</th>
+                        <th data-field="postcode" data-sortable="true">Postcode</th>
+                        <th data-field="city" data-sortable="true">City</th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList())
+                    {
+                        <tr id="@location.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id','@location.LocationType','@location.CommonName','@location.Street','@location.City','@location.Country','@location.Suburb','@location.Postcode')"><i class="fa fa-edit"></i> Edit</button>
+                            </td>
+                            <td>
+                                @location.LocationType
+                            </td>
+                            <td>
+                                @location.CommonName
+                            </td>
+                            <td>
+                                @location.Street
+                            </td>
+                            <td>
+                                @location.Suburb
+                            </td>
+                            <td>
+                                @location.Postcode
+                            </td>
+                            <td>
+                                @location.City
+                            </td>
+                            <td>
+                                <button onclick="RemoveLocation('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == false).ToList())
-                        {
-                            <tr id="@location.Id">
-                                <td>
-                                    <button class="btn btn-success btn-sm" onclick="EditLocation('@location.Id','@location.LocationType','@location.CommonName','@location.Street','@location.City','@location.Country','@location.Suburb','@location.Postcode')"><i class="fa fa-edit"></i> Edit</button>
-                                </td>
-                                <td>
-                                    @location.LocationType
-                                </td>
-                                <td>
-                                    @location.CommonName
-                                </td>
-                                <td>
-                                    @location.Street
-                                </td>
-                                <td>
-                                    @location.Suburb
-                                </td>
-                                <td>
-                                    @location.Postcode
-                                </td>
-                                <td>
-                                    @location.City
-                                </td>
-                                <td>
-                                    <button onclick="RemoveLocation('@location.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="locationtab2" class="tab-pane" role="tabpanel">
+            <div class="form-group">
+                <label>Select a Location from the 'List All' Tab and Click Edit Button</label>
             </div>
-            <div id="locationtab2" class="tab-pane" role="tabpanel">
-                <div class="form-group">
-                    <label>Select a Location from the 'List All' Tab and Click Edit Button</label>
-                </div>
-            </div>
-            <div id="locationtab3" class="tab-pane" role="tabpanel">
-                <div class="row"><br /></div>
+        </div>
+        <div id="locationtab3" class="tab-pane" role="tabpanel">
+            <form class="" id="LocationViewModel">
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -166,56 +165,56 @@
                     <a class="btn btn-sm btn-success text-light" id="LocationAddButton" onclick="AddLocation()"> Add </a>
                     <a class="btn btn-sm btn-danger text-light" id="LocationCancelButton" onclick="Cancel('LocationViewModel','locationtab1')"> Clear and Cancel </a>
                 </div>
-            </div>
-            <div id="locationtab4" class="tab-pane" role="tabpanel">
-                <table id="tblRemovedLocation"
-                       class="table table-striped" width="100%"
-                       data-show-columns="true"
-                       data-pagination="true"
-                       data-search="true"
-                       data-show-jump-to="true">
-                    <thead>
-                        <tr>
-                            <th data-field="editButton" data-sortable="false"></th>
-                            <th data-field="locationType" data-sortable="true">Location Type</th>
-                            <th data-field="commonName" data-sortable="true">Common Name</th>
-                            <th data-field="street" data-sortable="true">Street</th>
-                            <th data-field="suburb" data-sortable="true">Suburb</th>
-                            <th data-field="postcode" data-sortable="true">Postcode</th>
-                            <th data-field="city" data-sortable="true">City</th>
-                            <th data-field="deleteButton" data-sortable="false"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == true).ToList())
-                        {
-                            <tr id="@location.Id">
-                                <td>
-                                    <button class="btn btn-success btn-sm" onclick="RestoreLocation('@location.Id')"><i class="fa fa-undo"></i></button>
-                                </td>
-                                <td>
-                                    @location.LocationType
-                                </td>
-                                <td>
-                                    @location.CommonName
-                                </td>
-                                <td>
-                                    @location.Street
-                                </td>
-                                <td>
-                                    @location.Suburb
-                                </td>
-                                <td>
-                                    @location.Postcode
-                                </td>
-                                <td>
-                                    @location.City
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            </form>
         </div>
-    </form>
+        <div id="locationtab4" class="tab-pane" role="tabpanel">
+            <table id="tblRemovedLocation"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="editButton" data-sortable="false"></th>
+                        <th data-field="locationType" data-sortable="true">Location Type</th>
+                        <th data-field="commonName" data-sortable="true">Common Name</th>
+                        <th data-field="street" data-sortable="true">Street</th>
+                        <th data-field="suburb" data-sortable="true">Suburb</th>
+                        <th data-field="postcode" data-sortable="true">Postcode</th>
+                        <th data-field="city" data-sortable="true">City</th>
+                        <th data-field="deleteButton" data-sortable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var location in Model.LocationViewModel.Locations.Where(l => l.Removed == true).ToList())
+                    {
+                        <tr id="@location.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="RestoreLocation('@location.Id')"><i class="fa fa-undo"></i></button>
+                            </td>
+                            <td>
+                                @location.LocationType
+                            </td>
+                            <td>
+                                @location.CommonName
+                            </td>
+                            <td>
+                                @location.Street
+                            </td>
+                            <td>
+                                @location.Suburb
+                            </td>
+                            <td>
+                                @location.Postcode
+                            </td>
+                            <td>
+                                @location.City
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

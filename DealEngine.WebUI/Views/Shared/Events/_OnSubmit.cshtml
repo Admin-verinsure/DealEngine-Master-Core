@@ -163,13 +163,15 @@
 
     function LocationValidationOnSubmit() {
         var location = document.getElementById("tblLocation");
-        if (location.rows[1].className == "no-records-found") {
-            event.preventDefault();
-            event.stopPropagation();
-            window.alert("Please complete Location section ");
-            $("[id='Location']").trigger("click");
-            $("#more").trigger("click");
-            throw "Location Missing";
+        if (location != null) {
+            if (location.rows[1].className == "no-records-found") {
+                event.preventDefault();
+                event.stopPropagation();
+                window.alert("Please complete Location section ");
+                $("[id='Location']").trigger("click");
+                $("#more").trigger("click");
+                throw "Location Missing";
+            }
         }
     }
 
