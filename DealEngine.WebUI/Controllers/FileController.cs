@@ -458,7 +458,7 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                             
                                     }
-                                    if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
+                                    if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf") && clientProgramme.BaseProgramme.EnableFullProposalReport)
                                     {
                                         agreement.Documents.Add(document);
                                         agreement.IsPDFgenerated = true;
