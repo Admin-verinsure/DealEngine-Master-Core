@@ -150,7 +150,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
                                 }
 
-                                @if (ViewBag.IsPDFgenerated == "True")
+                                @if (ViewBag.IsPDFgenerated == "True" && ViewBag.Ispdfenable == "True")
                                 {
                                     <li class="nav-item">
                                         <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">

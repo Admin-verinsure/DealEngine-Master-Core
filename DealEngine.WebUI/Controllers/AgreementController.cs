@@ -2839,7 +2839,7 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
-                            if (doc.Name.EqualsIgnoreCase("FullProposalReport"))
+                            if (doc.Name.EqualsIgnoreCase("FullProposalReport") && programme.BaseProgramme.EnableFullProposalReport)
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id, programme);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -3503,7 +3503,7 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ProgrammeName = programme.BaseProgramme.Name;
-
+                    ViewBag.Ispdfenable = ""+programme.BaseProgramme.EnableFullProposalReport;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
                     {
@@ -3517,6 +3517,8 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
+                               
+                               
                                 ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
 
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
