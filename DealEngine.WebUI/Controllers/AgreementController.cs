@@ -3671,41 +3671,52 @@ namespace DealEngine.WebUI.Controllers
                         doc.Delete(user);
                     }
 
-                    if (!agreement.Product.IsOptionalCombinedProduct)
+                    if (agreement.Product.Id == new Guid("bdbdda02-ee4e-44f5-84a8-dd18d17287c1") &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "2")
                     {
-                        foreach (Document template in agreement.Product.Documents)
+
+                    }
+                    else
+                    {
+
+                        if (!agreement.Product.IsOptionalCombinedProduct)
                         {
-                            if (template.DocumentType == 6)
+                            foreach (Document template in agreement.Product.Documents)
                             {
-                                foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
+                                if (template.DocumentType == 6)
                                 {
-                                    if (agreement.Product.IsOptionalProductBasedSub)
+                                    foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
                                     {
-                                        if (subsheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                        if (agreement.Product.IsOptionalProductBasedSub)
+                                        {
+                                            if (subsheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                            {
+                                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                        }
+                                        else
                                         {
                                             renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                             agreement.Documents.Add(renderedDoc);
                                             await _fileService.UploadFile(renderedDoc);
                                         }
-                                    } else
-                                    {
-                                        renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
-                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                        agreement.Documents.Add(renderedDoc);
-                                        await _fileService.UploadFile(renderedDoc);
                                     }
                                 }
-                            }
-                            else
-                            {
-                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                agreement.Documents.Add(renderedDoc);
-                                await _fileService.UploadFile(renderedDoc);
+                                else
+                                {
+                                    renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    agreement.Documents.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
                             }
                         }
                     }
+                    
                 }
 
                 return Redirect("/Agreement/ViewAcceptedAgreement/" + clientProgramme.Id);

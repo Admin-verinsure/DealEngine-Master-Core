@@ -49,27 +49,39 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
+            bool ValidBackEndEmail;
             Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
             Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
 
-            if(organisation != null)
+            
+            try
             {
-                if (OrganisationId == Guid.Empty)
+                var addr = new System.Net.Mail.MailAddress(email);
+                ValidBackEndEmail = addr.Address == email;
+
+                if (organisation != null)
                 {
-                    return Json(true);
+                    if (OrganisationId == Guid.Empty)
+                    {
+                        return Json(true);
+                    }
+                    if (sheet.Owner.Id == OrganisationId)
+                    {
+                        return Json(false);
+                    }
+                    if (sheet.Organisation.Contains(organisation))
+                    {
+                        return Json(false);
+                    }
                 }
-                if(sheet.Owner.Id == OrganisationId)
-                {
-                    return Json(false);
-                }
-                if (sheet.Organisation.Contains(organisation))
-                {                    
-                    return Json(false);
-                }
+                return Json(false);
             }
-            return Json(false);
+            catch
+            {
+                return Json(true);
+            }
         }
 
         [HttpPost]
