@@ -2071,8 +2071,6 @@ function showAccordionPanel(id, panelNo) {
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var result = true;
-        debugger;
-
 
         if (claimant == "") {
             $('#Addvalidateclaimant').html("<font color='red'>Field is required</font>")
@@ -4356,39 +4354,31 @@ function GetRegisteredMVDetails(elementBaseName)
     }
 
     function AddMotorVehicle(tabId, tableId) {
-
-    var registration = $('#Registration').serialize();
-    var informationId = $('#AnswerSheetId').serialize();
-     $('#AddTrailer').show();
+        debugger;
+        var registration = $('#Registration').serialize();
+        var informationId = $('#AnswerSheetId').serialize();
+         $('#AddTrailer').show();
     $.ajax({
-        // change back once mono decides to fix
         url: '@Url.Action("AddVehicle", "Services")',
         type: "POST",
         data: $.grep([$(tabId + " :input").serialize(), registration, informationId], Boolean).join("&")
     })
         .done(function (data) {
+            debugger;
             console.log(data);
             vdate = data.year;
             vmake = data.make;
             vmodel = data.vehicleModel;
-        var vid = "";
-        if (data.Validated===true) {
-            vid = data.registration;
-        } else {
-            vid = data.fleetNumber;
-        };
-
-        //$.smallBox({
-        //    title: "Vehicle (" + vdate + " " + vmake + " " + vmodel +") has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-       // });
-        // reload grid
-        $(tableId).trigger( 'reloadGrid' );
-        $('#tblCeasedRegisteredMV').trigger( 'reloadGrid' );
-            $('#tblTransferedRegisteredMV').trigger('reloadGrid');
-            $('#tblUnRegisteredMV').trigger('reloadGrid');
+            var vid = "";
+            if (data.Validated===true) {
+                vid = data.registration;
+            } else {
+                vid = data.fleetNumber;
+            };      
+            $(tableId).trigger( 'reloadGrid' );
+            $('#tblCeasedRegisteredMV').trigger( 'reloadGrid' );
+                $('#tblTransferedRegisteredMV').trigger('reloadGrid');
+                $('#tblUnRegisteredMV').trigger('reloadGrid');
 
 
         $('#Registration').val("");
@@ -4420,6 +4410,7 @@ function GetRegisteredMVDetails(elementBaseName)
 
     })
         .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
              $('#AddTrailer').hide();
         alert("There was an error while trying to save the Vehicle.");
     });

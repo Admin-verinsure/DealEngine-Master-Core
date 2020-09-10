@@ -179,6 +179,8 @@ namespace DealEngine.WebUI.Controllers
                     vehicle = model.ToEntity(user);
                 model.UpdateEntity(vehicle);
 
+                vehicle.ClientInformationSheet = sheet;
+
                 if (model.VehicleLocation != Guid.Empty)
                     vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
 
