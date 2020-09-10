@@ -18,7 +18,7 @@
                             <script type="text/javascript">
                                 $(window).on('load',function () {
                                     $("#tblBoatUse").jqGrid({
-                                        url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+                                        url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&removed=false",
 						                datatype: "xml",
                                         mtype: "GET",
                                         async: true,
@@ -196,7 +196,7 @@
                             <script type="text/javascript">
                                 $(".UseRemoved").click(function () {
                                 $("#tblRemovedBoatUse").jqGrid({
-                                    url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
+                                    url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&removed=true",
 						            datatype: "xml",
                                     mtype: "GET",
                                     async: true,

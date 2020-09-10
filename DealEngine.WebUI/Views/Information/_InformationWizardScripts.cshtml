@@ -3485,7 +3485,6 @@ function showAccordionPanel(id, panelNo) {
         }
 
     function ValidateAddBoatUse(event, tabId, tableId, currenttab) {
-        debugger;
         event.preventDefault();
         var boatUseCategory = $('#AddBoatUseCategory').val();
         var boatUseRaceCategory = $('#AddBoatUseRaceCategory').val();
@@ -3544,7 +3543,6 @@ function showAccordionPanel(id, panelNo) {
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
            debugger;
-
             $('#getBoatUseModal').hide();
             alert("There was an error while trying to save the Boat Use.");
         });

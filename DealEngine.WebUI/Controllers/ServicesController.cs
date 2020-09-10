@@ -2110,6 +2110,7 @@ namespace DealEngine.WebUI.Controllers
                     Boat boat = boats[i];
                     JqGridRow row = new JqGridRow(boat.Id);
                     //row.AddValue("");
+                    if (boat.Removed == true)
                     row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                     model.AddRow(row);
                 }
@@ -2456,6 +2457,8 @@ namespace DealEngine.WebUI.Controllers
                 var boats = new List<Boat>();
                 var boatUses = new List<BoatUse>();
 
+                /*
+                ceased doesn't look to be stored in table????
                 if (ceased)
                 {
                     boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue)).ToList();
@@ -2465,13 +2468,40 @@ namespace DealEngine.WebUI.Controllers
                 {
                     boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue)).ToList();
                     //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                }*/
+
+
+                // Get all the boat uses in the sheet that are removed or not removed THIS DOESNT WORK FAM as it just grabs the boat with them all anyways
+                if (removed)
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == true)).ToList();                  
+                }
+                else
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == false)).ToList();
                 }
 
+                // For each of the boats that have been removed or not removed
                 foreach (var boat in boats)
                 {
+                    // for the boat uses for that boat add to our boat uses list NO FILTERING 
                     foreach (var boatUse in boat.BoatUses)
                     {
-                        boatUses.Add(boatUse);
+                        if (removed)
+                        {
+                            // add only removed boats to the list
+                            if (boatUse.Removed == true)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
+                        else
+                        {
+                            if (boatUse.Removed == false)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
                     }
                 }
 
