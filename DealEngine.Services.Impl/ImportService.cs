@@ -36,7 +36,7 @@ namespace DealEngine.Services.Impl
             IBusinessActivityService businessActivityService)
         {            
             WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Data\\Import\\";
+            //WorkingDirectory = "C:\\Data\\Import\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -911,13 +911,15 @@ namespace DealEngine.Services.Impl
 
                         Owner.OrganisationalUnits.Add(ownerUnit);
                         Owner.InsuranceAttributes.Add(ownerAttribute);
+                        user.Organisations.Add(Owner);
 
                         OrganisationType plannerType = new OrganisationType("Person - Individual");
                         InsuranceAttribute plannerAttribute = new InsuranceAttribute(currentUser, "Planner");
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
                         PlannerUnit ContractorUnit = new PlannerUnit(currentUser, "Planner", "Person - Individual", null)
                         {
-                            Qualifications = parts[7]
+                            Qualifications = parts[7],
+                            IsPrincipalPlanner = true
                         };
 
                         int.TryParse(parts[9], out int YearsAtFirm);
@@ -933,16 +935,14 @@ namespace DealEngine.Services.Impl
                         {
                             OrganisationType = plannerType,
                             Email = user.Email,
-                            Name = user.FullName,                            
+                            Name = user.FullName
                         };
 
                         planner.OrganisationalUnits.Add(defaultUnit);
                         planner.OrganisationalUnits.Add(ContractorUnit);
                         planner.InsuranceAttributes.Add(plannerAttribute);
 
-                        user.Organisations.Add(planner);
-                        user.Organisations.Add(Owner);
-
+                        user.Organisations.Add(planner);                        
                         user.SetPrimaryOrganisation(Owner);
                         await _userService.ApplicationCreateUser(user);
 
@@ -953,7 +953,7 @@ namespace DealEngine.Services.Impl
                         var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
                         await _referenceService.CreateClientInformationReference(sheet);
                         clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                        clientProgramme.ClientProgrammeMembershipNumber = parts[7];
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[11];
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                         sheet.Organisation.Add(planner);
                         await _programmeService.Update(clientProgramme);                       
@@ -1917,7 +1917,7 @@ namespace DealEngine.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
             PreRenewOrRefData preRenewOrRefData;
-            bool readFirstLine = true;
+            bool readFirstLine = false;
             string line;
             var fileName = WorkingDirectory + "NZPIPolicyData2019.csv";
 

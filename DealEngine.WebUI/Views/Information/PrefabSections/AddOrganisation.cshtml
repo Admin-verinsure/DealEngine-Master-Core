@@ -67,6 +67,23 @@
                     {
                 <tr id="@organisation.Id">
                     <td>
+                        @{
+                            bool ValidBackEndEmail = false;
+                            try
+                            {
+                                var addr = new System.Net.Mail.MailAddress(organisation.Email);
+                                ValidBackEndEmail = addr.Address == organisation.Email;
+                            }
+                            catch
+                            {
+                                ValidBackEndEmail = false;
+                            }
+                            @if (!ValidBackEndEmail)
+                            {
+                                @Html.Hidden("ValidBackEndEmail", organisation.Name)
+                            }
+
+                        }
                         <button class="btn btn-success btn-sm" onclick="OnClick('', 'Organisation', '@organisation.Id', '@Model.ClientInformationSheet.Id')"><i class="fa fa-edit"></i> Edit</button>
                     </td>
                     <td>

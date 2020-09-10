@@ -59,7 +59,7 @@
                 debugger;
             }
         });
-    }
+    }    
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
         var editTabHTML = document.getElementById(EditTabId);
@@ -208,7 +208,7 @@
 
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
         event.preventDefault();
-        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
+        CloneForm("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
 
         document.getElementById("LocationId").value = Id;
         document.getElementById("locationtypeoptions").value = LocationType;
@@ -301,7 +301,7 @@
         ProjectTitle, ProjectType, ProjectCountry, ProjectMajorResponsibilities, ProjectResponsibilityData) {
 
         event.preventDefault();
-        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
+        CloneForm("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("projectdetails") != null) {
@@ -371,7 +371,7 @@
 
     function EditResearchHouse(Id, ResearchServices, ResearchName) {
         event.preventDefault();
-        CloneFormView("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
+        CloneForm("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("researchName") != null) {
