@@ -551,7 +551,7 @@
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
+                                            <select data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
                                                 @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                                     {
                                                     <option value="@organisation.Id"> @organisation.Name</option>
@@ -564,7 +564,7 @@
                                     </section>
                                 </div>
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
                                 <label class="label">Interested Parties Effective Date</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -583,7 +583,7 @@
                                            data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>
-                            </section>
+                            </section>*@
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
@@ -875,41 +875,46 @@
                             </section>
                             <section class="col col-sm-1 col-md-1 col-lg-1"></section>                          
                             <!--hr class="boatAccordianHairline" /-->
-                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddRiggingTypeSection">
-                                <label class="label required">Rigging Type</label>
-                                <label class="input form-group">
-                                    <select class="form-control b" id="AddRiggingType" name="RiggingType" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="StainlessSteelWire">Stainless Steel Wire</option>
-                                        <option value="Rod">Rod</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddRiggingType"></p>
-                            </section>
-                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>                          
-                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddMastTypeSection">
-                                <label class="label required">Mast Type</label>
-                                <label class="input form-group">
-                                    <select class="form-control b" id="AddMastType" name="MastType" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="Aluminium">Aluminium</option>
-                                        <option value="Steel">Steel</option>
-                                        <option value="Wooden">Wooden</option>
-                                        <option value="CarbonFibre">Carbon Fibre</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddMastType"></p>
-                            </section>
-                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                <i id="elem" href="#"
-                                    class="fa fa-question-circle cgpopover"
-                                    data-placement="bottom"
-                                    data-container="body"
-                                    data-toggle="popover"
-                                    data-content="please select the primary construction material of the mast of your vessel"></i>
-                            </section>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddRiggingTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Rigging Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="AddRiggingType" name="RiggingType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="StainlessSteelWire">Stainless Steel Wire</option>
+                                            <option value="Rod">Rod</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddRiggingType"></p>
+                                </section>                           
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>      
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddMastTypeSection">
+
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Mast Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="AddMastType" name="MastType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="Aluminium">Aluminium</option>
+                                            <option value="Steel">Steel</option>
+                                            <option value="Wooden">Wooden</option>
+                                            <option value="CarbonFibre">Carbon Fibre</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddMastType"></p>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                        class="fa fa-question-circle cgpopover"
+                                        data-placement="bottom"
+                                        data-container="body"
+                                        data-toggle="popover"
+                                        data-content="please select the primary construction material of the mast of your vessel"></i>
+                                </section>
+                            </div>
                             <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">$ Vessel Insured Value (Please exclude trailer value)</label>
                                 <label class="input form-group">
@@ -1105,7 +1110,7 @@
                                 <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label">Interested Parties</label>
                                     <label class="input form-group">
-                                        <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">                                                    
+                                        <select data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">                                                    
                                             @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                                 {
                                                 <option value="@organisation.Id"> @organisation.Name</option>

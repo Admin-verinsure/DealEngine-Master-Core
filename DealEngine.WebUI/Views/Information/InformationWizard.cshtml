@@ -279,15 +279,15 @@
                                                                         <h4 class="modal-title">Add Interested Party</h4>
                                                                         <button type="button" class="close" onclick="$('#addInterestedPartyModal').hide()">&times;</button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" style="padding:25px;">
                                                                         <input id="InterestedPartyId" class="b" name="InterestedPartyId" type="hidden">
                                                                         <!-- 1st row -->
                                                                         <div class="row">
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel">Interested Party</label>
                                                                                 <label class="input cgmodalInput" style="padding:10px 25px 0px 25px" id="IPList">
-                                                                                    <label class="radio-inline" style="width:25%;" id="Financial"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="Financial">Financial</label>                                                                                    
-                                                                                    <label class="radio-inline " style="width:22%;" id="CoOwner"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="CoOwner">Co Owner</label>
+                                                                                    <label class="radio-inline" style="width:25%;" id="Financial"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="Financial">    Financial</label>                                                                                    
+                                                                                    <label class="radio-inline " style="width:22%;" id="CoOwner"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="CoOwner">    Co Owner</label>
                                                                                 </label>
                                                                             </section>
                                                                         </div>
@@ -296,33 +296,27 @@
                                                                         <div id="FinancialSection" class="hidden">
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <label class="label " style="padding-top:5px;padding-bottom:15px;color:lightskyblue !important;font-size:115% !important;">Financial Interested Party</label>
+                                                                                    <label class="label cgmodalLabel ">Financial Interested Party</label>
                                                                                 </section>
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"></section>
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4 required pull-left">
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 required">
                                                                                         <label>Organisation Type</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                                                                        <label class="input w100">
-                                                                                            <select data-name="organisationType" id="OrganisationTypeName" name="OrganisationTypeName" value="" required>
-                                                                                                <option selected>--select---</option>
-                                                                                                <option>Person - Individual</option>
-                                                                                                <option>Corporation – Limited liability</option>
-                                                                                            </select>
-                                                                                        </label>
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <select class="form-control" data-name="organisationType" id="OrganisationTypeName" name="OrganisationTypeName" value="" required>
+                                                                                            <option selected>--Select---</option>
+                                                                                            <option>Person - Individual</option>
+                                                                                            <option>Corporation – Limited liability</option>
+                                                                                        </select>
                                                                                     </section>
                                                                                 </section>
 
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-                                                                                        <label class="required">Organisation Name</label>
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 required">
+                                                                                        <label>Organisation Name</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                                                                        <label class="input ">
-                                                                                            <input data-type="TEXTBOX" data-name="organisationName" id="organisationName" name="OrganisationName" placeholder="Organisation Name" value="" required>
-                                                                                        </label>
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <input data-type="TEXTBOX" data-name="organisationName" id="organisationName" name="OrganisationName" placeholder="Organisation Name" value="" required>
                                                                                     </section>
                                                                                 </section>
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">

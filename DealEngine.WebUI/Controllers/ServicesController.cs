@@ -1918,9 +1918,6 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if (model.BoatTrailer != Guid.Empty)
-                    //boat.BoatTrailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
-
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.Boats.Add(boat);
