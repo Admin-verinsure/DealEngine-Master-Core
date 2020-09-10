@@ -616,11 +616,12 @@
     });
 
     function checkInvestmentVal() {
+        debugger;
         if ($("#HasClientFunds").val() == "1") {
         var totalpercent = 0;
         $.each($(".Investment input[type=\"text\"]"), function (index, ele) {
             if (ele.value != "") {
-                var percent = parseInt(ele.value);
+                var percent = parseFloat(ele.value);
                 totalpercent += percent;
             }
         });
