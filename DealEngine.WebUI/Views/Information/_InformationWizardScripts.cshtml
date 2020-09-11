@@ -882,6 +882,7 @@
 
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
 
         event.preventDefault();
         var BoatName = $('#AddBoatName').val();
@@ -2727,15 +2728,8 @@ function showAccordionPanel(id, panelNo) {
     })
     .done(function (data) {
         if (data === true) {
-            // reload grids
             $(sourceTable).trigger( 'reloadGrid' );
             $(destTable).trigger( 'reloadGrid' );
-            //$.smallBox({
-            //    title: "Operator status has been updated",
-            //    color: "#5F895F",
-            //    iconSmall: "fa fa-check bounce animated",
-            //    timeout: 4000
-            //});
         }
     });
     };
@@ -2783,18 +2777,11 @@ function showAccordionPanel(id, panelNo) {
             debugger;
             console.log(data);
             $('#AddBoatModal').hide();
-
-        //$.smallBox({
-        //    title: "Boat has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
             $('#updaterequire').addClass('hidden');
             $(tableId).trigger('reloadGrid');
             $('#InterestedParties3').trigger('reloadGrid');
-        $('#tblCeasedBoat').trigger( 'reloadGrid' );
-        $('#tblTransferedBoat').trigger( 'reloadGrid' );
+            $('#tblCeasedBoat').trigger( 'reloadGrid' );
+            $('#tblTransferedBoat').trigger( 'reloadGrid' );
             $(tabId + " :input").val(""); //Clears form
 
     })
@@ -2806,32 +2793,24 @@ function showAccordionPanel(id, panelNo) {
 
 
     function EditBoat(classId, boatId) {
-
-                //event.preventDefault();
-
+        //event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
-
         var postData = {
 		'boatId': boatId,
 		'answerSheetId': _sheetId
-	};
-
+	    };
         $.ajax({
-
-        url: '@Url.Action("GetBoat", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+            url: '@Url.Action("GetBoat", "Services")',
+            type: "Post",
             data: postData
-    })
-            .done(function (data) {
-
-            console.log(data);
+        })
+        .done(function (data) {
+            debugger;
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
                 $('#SelectedBoatUse').val(data.boatselectedText).trigger('chosen:updated');
-                }
+            }
             $('#SelectedInterestedParty').val(data.boatpartyText).trigger('chosen:updated');
             $('#BoatId.' + classId).val(data.boatId);
             $('#BoatName.' + classId).val(data.boatName);
@@ -2859,57 +2838,44 @@ function showAccordionPanel(id, panelNo) {
             $('#BoatCeaseReason.' + classId).val(data.boatCeaseReason);
             $('#InterestedParties3.' + classId).val(data.interestedParties3);
             $('#BoatNotes.' + classId).val(data.boatNotes);
-                $('#VesselArea.' + classId).val(data.vesselArea);
-
-                if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
-
-                    if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
-
-                         if (!($('#MooredType option:selected'))) {
+            $('#VesselArea.' + classId).val(data.vesselArea);
+            if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
+                if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
+                        if (!($('#MooredType option:selected'))) {
                         $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                    }
-                    $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-                    $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-                    $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-                    $('#MooredType').trigger('chosen:updated');
-
-                    }
-                };
-
-                if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
-
-                    $('#BoatWaterLocation.b').val(data.boatWaterLocation);
-                    $('#othermarinSection').addClass("hidden");
-                    $('#BoatMooredTypeSection').addClass("hidden");
-                                        GetMooredType(data.boatWaterLocation);
-
-                } else {
-
-                    $('#BoatWaterLocation.' + classId).val("add");
-                    $('#othermarinSection').removeClass("hidden");
-                    $('#BoatMooredTypeSection').removeClass("hidden");
-                    $('#othermarina.b').val(data.otherMarinaName);
-                     //GetMooredType(data.BoatWaterLocation);
                 }
-
-                if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
-                      $('#othermarinSection').addClass("hidden");
-                    $('#BoatMooredTypeSection').addClass("hidden");
+                $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
+                $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
+                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+                $('#MooredType').trigger('chosen:updated');
                 }
-
-
+            };
+            if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
+                $('#BoatWaterLocation.b').val(data.boatWaterLocation);
+                $('#othermarinSection').addClass("hidden");
+                $('#BoatMooredTypeSection').addClass("hidden");
+                GetMooredType(data.boatWaterLocation);
+            }
+            else {
+                $('#BoatWaterLocation.' + classId).val("add");
+                $('#othermarinSection').removeClass("hidden");
+                $('#BoatMooredTypeSection').removeClass("hidden");
+                $('#othermarina.b').val(data.otherMarinaName);
+            }
+            if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
+                $('#othermarinSection').addClass("hidden");
+                $('#BoatMooredTypeSection').addClass("hidden");
+            }
             $('#MooredType.' + classId).val(data.waterLocationMooringType);
             vesselType1Selected();
-                $('#BoatType2.b').val(data.boatType2);
-
-                vesselType2Selected();
-                updateExcess();
+            $('#BoatType2.b').val(data.boatType2);
+            vesselType2Selected();
+            updateExcess();
             updateEditBoat(data);
-               // $('#MooredType.b').val(data.WaterLocationMooringType);
             UpdateChosen();
-                $('#getDetailsModal').hide();
-            });
-};
+            $('#getDetailsModal').hide();
+        });
+    };
 
     function updateEditBoat(data) {
 
@@ -3549,7 +3515,7 @@ function showAccordionPanel(id, panelNo) {
     };
 
     function validateIP() {
-
+        debugger;
         if (!(document.getElementById("OrganisationTypeName").validity.valueMissing) && !(document.getElementById("organisationName").validity.valueMissing)
             && !(document.getElementById("organisationPhone").validity.valueMissing)) {
             addInterestedParty(event);
@@ -3559,8 +3525,8 @@ function showAccordionPanel(id, panelNo) {
 
 
     function addInterestedParty(event) {
-                            event.preventDefault();
-
+        debugger;
+        event.preventDefault();
         $('#getPartyModal').show();
         selectedInterestedParty = $('input[name=InsuranceAttribute]:checked').val();
         var Financial = false;
@@ -3877,8 +3843,6 @@ async: true
 	});
     };
 
-
-
     function EditBoatUse(classId, boatUseId) {
         debugger;
         event.preventDefault();
@@ -3892,8 +3856,6 @@ async: true
         url: '@Url.Action("GetBoatUse", "Services")',
         type: "Post",
         data: postData
-        // data: JSON.stringify({ OUselect: oUselect}),
-        // contentType: "application/json; charset=utf-8"
         }).done(function (data) {
             debugger;
             $('#BoatUseId.' + classId).val(data.boatUseId);

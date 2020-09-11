@@ -2014,10 +2014,10 @@ namespace DealEngine.WebUI.Controllers
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
                         model.BoatWaterLocation = boat.BoatWaterLocation.Id;
-                    //if (boat.BoatTrailer != null)
-                    //    if (boat.BoatTrailer != null)
-                    //        model.BoatTrailer = boat.BoatTrailer.Id;
-
+                    // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
+                    if (boat.BoatTrailers != null)
+                        model.BoatTrailer = sheet.Vehicles.LastOrDefault().Id;
+                        // model.BoatTrailer = sheet.Vehicles.FirstOrDefault().Id;
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
                     if (boat.BoatUses != null)
@@ -2093,8 +2093,6 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                //boats = boats.OrderBy(sidx + " " + sord).ToList();
-
                 XDocument document = null;
                 JqGridViewModel model = new JqGridViewModel();
                 model.Page = page;
@@ -2109,13 +2107,10 @@ namespace DealEngine.WebUI.Controllers
 
                     Boat boat = boats[i];
                     JqGridRow row = new JqGridRow(boat.Id);
-                    //row.AddValue("");
-                    if (boat.Removed == true)
                     row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                     model.AddRow(row);
                 }
 
-                // convert model to XDocument for rendering.
                 document = model.ToXml();
                 return Xml(document);
             }
