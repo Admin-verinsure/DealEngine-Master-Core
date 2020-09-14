@@ -120,7 +120,6 @@ namespace DealEngine.WebUI.Controllers
 
                 IList<string> languages = new List<string>();
                 languages.Add("nz");
-                List<DealItem> deals = new List<DealItem>();
                 IList<Programme> programmeList = new List<Programme>();
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
@@ -138,13 +137,9 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (Programme programme in programmeList)
                 {
-                    model.ProgrammeItems.Add(new ProgrammeItem
+                    model.ProgrammeItems.Add(new ProgrammeItem(programme)
                     {
-                        Deals = deals,
-                        Name = programme.Name,
-                        Languages = languages,
-                        ProgrammeId = programme.Id.ToString(),
-                        ProgrammeClaim = programme.Claim
+                        Languages = languages
                     });
                 }
 
@@ -366,8 +361,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> ViewSubClientProgrammes(string clientProgrammeId)
-        {
-            ProgrammeItem model = new ProgrammeItem();
+        {            
             User user = null;
             var clientList = new List<ClientProgramme>();
             try
@@ -385,7 +379,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     clientList.Add(clientprogramme);
                 }
-
+                ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 model = await GetClientProgrammeListModel(user, clientList, true);
 
                 return View(model);
@@ -399,9 +393,8 @@ namespace DealEngine.WebUI.Controllers
 
         private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList, bool isClient = false)
         {
-            ProgrammeItem model = new ProgrammeItem();
-            List<DealItem> deals = new List<DealItem>();
             var clientProgramme = clientList.FirstOrDefault();
+            ProgrammeItem model = new ProgrammeItem(clientProgramme.BaseProgramme);
             if (clientProgramme != null)
             {
                 if (!isClient)
@@ -419,12 +412,10 @@ namespace DealEngine.WebUI.Controllers
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
-                    {
-                        model.ProgrammeId = client.BaseProgramme.Id.ToString();
+                    {                       
                         string status = client.InformationSheet.Status;
                         string referenceId = client.InformationSheet.ReferenceId;
                         bool nextInfoSheet = false;
-                        bool programmeAllowUsesChange = false;
                         string agreementSatus = "";
                         string DocSendDate = "";
                         foreach (ClientAgreement agreement in client.Agreements)
@@ -437,11 +428,6 @@ namespace DealEngine.WebUI.Controllers
                             if (agreement.IsPolicyDocSend)
                                 DocSendDate = ", Document Issued on: " + agreement.DocIssueDate;
                         }
-                        if (client.BaseProgramme.AllowUsesChange)
-                        {
-                            programmeAllowUsesChange = true;
-                        }
-
                         if (null != client.InformationSheet.NextInformationSheet)
                         {
                             nextInfoSheet = true;
@@ -464,12 +450,11 @@ namespace DealEngine.WebUI.Controllers
                                 Issubclientsubmitted = false;
 
                         }
-                        deals.Add(new DealItem
+                        model.Deals.Add(new DealItem
                         {
                             Id = client.Id.ToString(),
                             Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
                             NextInfoSheet = nextInfoSheet,
-                            ProgrammeAllowUsesChange = programmeAllowUsesChange,
                             LocalDateCreated = localDateCreated,
                             LocalDateSubmitted = localDateSubmitted,
                             Status = status,
@@ -488,7 +473,6 @@ namespace DealEngine.WebUI.Controllers
                 clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    model.ProgrammeId = client.BaseProgramme.Id.ToString();
                     string status = client.InformationSheet.Status;
                     string referenceId = client.InformationSheet.ReferenceId;
                     bool nextInfoSheet = false;
@@ -524,7 +508,7 @@ namespace DealEngine.WebUI.Controllers
                         localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
                     }
 
-                    deals.Add(new DealItem
+                    model.Deals.Add(new DealItem
                     {
                         Id = client.Id.ToString(),
                         Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
@@ -540,8 +524,6 @@ namespace DealEngine.WebUI.Controllers
                     }); ;
                 }
             }
-            model.Deals = deals;
-
             if (user.PrimaryOrganisation.IsBroker)
             {
                 model.CurrentUserIsBroker = "True";
@@ -573,7 +555,6 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewSubClientProgramme(Guid subClientProgrammeId)
         {
-            ProgrammeItem model = new ProgrammeItem();
             User user = null;
             var clientList = new List<ClientProgramme>();
             try
@@ -581,6 +562,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 SubClientProgramme subClientprogramme = await _programmeService.GetSubClientProgrammebyId(subClientProgrammeId);
                 clientList.Add(subClientprogramme);
+                ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 model = await GetClientProgrammeListModel(user, clientList);
 
                 return View(model);
@@ -595,7 +577,6 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewProgramme(Guid id)
         {
-            ProgrammeItem model = new ProgrammeItem();
             List<DealItem> deals = new List<DealItem>();
             User user = null;
             try
@@ -607,9 +588,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     clientList = await _programmeService.GetClientProgrammesForProgramme(id);
                 }
-
+                ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 model = await GetClientProgrammeListModel(user, clientList);
-                model.ProgrammeId = id.ToString();
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
 
                 return View(model);

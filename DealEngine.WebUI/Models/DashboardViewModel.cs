@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DealEngine.Domain.Entities;
 
 namespace DealEngine.WebUI.Models
@@ -112,14 +113,17 @@ namespace DealEngine.WebUI.Models
 	public class ProgrammeItem : BaseViewModel
 	{
 		[Obsolete]
-        public ProgrammeItem()
+        public ProgrammeItem(Domain.Entities.Programme baseProgramme)
         {
 			OrganisationViewModel = new OrganisationViewModel(null, null);
+			Programme = baseProgramme;
+			Deals = new List<DealItem>();
 		}
 
         public ProgrammeItem(List<ClientInformationSheet> sheets)
         {
 			OrganisationViewModel = new OrganisationViewModel(null, null);
+			Programme = sheets.FirstOrDefault().Programme.BaseProgramme;
 			BuildDeals(sheets);
         }
 
@@ -151,17 +155,15 @@ namespace DealEngine.WebUI.Models
 				});
 			}
 		}
-        public string Name { get; set; }
-		public string ProgrammeId { get; set; }
 		public IList<string> Languages { get; set; }
 		public IList<DealItem> Deals { get; set; }
 		public string CurrentUserIsBroker { get; set; }
 		public string CurrentUserIsInsurer { get; set; }
 		public string CurrentUserIsTC { get; set; }
-		public string ProgrammeClaim { get; set; }
 		public bool IsSubclientEnabled { get; set; }
 		public OrganisationViewModel OrganisationViewModel { get; set; }
-	}
+        public Domain.Entities.Programme Programme { get; internal set; }
+    }
 
 	public class TaskItem : BaseViewModel
 	{

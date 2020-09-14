@@ -177,10 +177,8 @@ namespace DealEngine.WebUI.Controllers
                 // no vehicle, so create new
                 if (vehicle == null)
                     vehicle = model.ToEntity(user);
-                model.UpdateEntity(vehicle);
-
-                vehicle.ClientInformationSheet = sheet;
-
+                model.UpdateEntity(vehicle);                
+                
                 if (model.VehicleLocation != Guid.Empty)
                     vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
 
@@ -2182,7 +2180,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             User user = null;
-
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             try
             {
                 user = await CurrentUser();
@@ -2190,11 +2188,11 @@ namespace DealEngine.WebUI.Controllers
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-
-                    boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
-
+                    
+                    //boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+                    boat.BoatCeaseDate = DateTime.Parse(ceaseDate.ToString(), System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
                     boat.BoatCeaseReason = ceaseReason;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 return new JsonResult(true);
@@ -2421,12 +2419,16 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                BoatUse boatUse = sheet.BoatUses.FirstOrDefault(bu => bu.Id == boatUseId);
-                if (boatUse != null)
+                foreach(var boat in sheet.Boats.Where(b => b.BoatUses.Any()))
                 {
-                    model = BoatUseViewModel.FromEntity(boatUse);
-                    model.AnswerSheetId = answerSheetId;
+                    foreach(var boatUse in boat.BoatUses)
+                    {
+                        model = BoatUseViewModel.FromEntity(boatUse);
+                        model.AnswerSheetId = answerSheetId;
+                    }
+                    
                 }
+
                 return Json(model);
             }
             catch (Exception ex)

@@ -24,7 +24,6 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Location> Locations { get; protected set; }
         public virtual IList<WaterLocation> WaterLocations { get; protected set; }
         public virtual IList<Boat> Boats { get; protected set; }
-        public virtual IList<BoatUse> BoatUses { get; protected set; }
         public virtual IList<Organisation> Organisation { get; set; }
 		public virtual RoleData RoleData { get; set; }        
         public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
@@ -67,7 +66,6 @@ namespace DealEngine.Domain.Entities
             WaterLocations = new List<WaterLocation>();
             Buildings = new List<Building>();
             Boats = new List<Boat>();
-            BoatUses = new List<BoatUse>();
             ClaimNotifications = new List<ClaimNotification>();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
             PreRenewOrRefDatas = new List<PreRenewOrRefData>();
@@ -147,10 +145,6 @@ namespace DealEngine.Domain.Entities
             Locations.Add(location);
         }
 
-        public virtual void AddBoatUse(BoatUse boatUse)
-        {
-            BoatUses.Add(boatUse);
-        }
 
 
         public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
@@ -171,9 +165,6 @@ namespace DealEngine.Domain.Entities
 
                 foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
                     newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
-
-                foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
-                    newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
 
                 foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
                     newSheet.AddVehicle(vehicle.CloneForNewSheet(newSheet));

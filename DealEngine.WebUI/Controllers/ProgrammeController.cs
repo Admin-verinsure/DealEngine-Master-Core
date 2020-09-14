@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using DealEngine.WebUI.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+//using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -598,13 +599,14 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                string Active = "Not Active";
                 user = await CurrentUser();
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
                 model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
                 model.BrokerContactUser = clientProgramme.BaseProgramme.BrokerContactUser;
                 model.EGlobalSubmissions = clientProgramme.ClientAgreementEGlobalSubmissions;
 
-                if (clientProgramme.ClientAgreementEGlobalSubmissions != null)
+                if (clientProgramme.ClientAgreementEGlobalSubmissions.Any())
                 {
                     foreach (EGlobalSubmission esubmission in clientProgramme.ClientAgreementEGlobalSubmissions)
                     {
@@ -635,8 +637,8 @@ namespace DealEngine.WebUI.Controllers
 
                     }
                 }
-                var active = await _httpClientService.GetEglobalStatus();
-                model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
+                //Active = await _httpClientService.GetEglobalStatus();
+                model.EGlobalIsActiveOrNot = (Active == "ACTIVE") ? true : false;
                 
                 return View(model);
             }

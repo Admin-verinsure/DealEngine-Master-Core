@@ -363,28 +363,28 @@ namespace DealEngine.WebUI.Controllers
 
                 //model.InterestedPartyList = linterestedparty;
 
-                var boatUses = new List<BoatUseViewModel>();
-                for (var i = 0; i < sheet.BoatUses.Count(); i++)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
+                //var boatUses = new List<BoatUseViewModel>();
+                //for (var i = 0; i < sheet.BoatUses.Count(); i++)
+                //{
+                //    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
 
-                }
+                //}
 
-                List<SelectListItem> list = new List<SelectListItem>();
+                //List<SelectListItem> list = new List<SelectListItem>();
 
-                for (var i = 0; i < boatUses.Count(); i++)
-                {
-                    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
-                    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
+                //for (var i = 0; i < boatUses.Count(); i++)
+                //{
+                //    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
+                //    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
 
-                    list.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = val,
-                        Text = text
-                    });
+                //    list.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Value = val,
+                //        Text = text
+                //    });
 
-                }
+                //}
 
                 //model.BoatUseslist = list;
                 // TODO - find a better way to pass these in
