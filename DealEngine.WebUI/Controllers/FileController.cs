@@ -101,7 +101,6 @@ namespace DealEngine.WebUI.Controllers
             margins.Left = 15;
             margins.Right = 15;
             htmlToPdfConv.Margins = margins;
-
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
            
             return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
