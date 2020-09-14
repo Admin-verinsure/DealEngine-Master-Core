@@ -185,6 +185,7 @@ namespace DealEngine.WebUI.Controllers
                 foreach(var boat in sheet.Boats)
                 {
                     boat.BoatTrailers.Add(vehicle);
+                    sheet.Vehicles.Add(vehicle);
                     await _boatRepository.UpdateAsync(boat);
                 }
 
@@ -2013,8 +2014,8 @@ namespace DealEngine.WebUI.Controllers
                     if (boat.BoatWaterLocation != null)
                         model.BoatWaterLocation = boat.BoatWaterLocation.Id;
                     // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
-                    if (boat.BoatTrailers != null)
-                        model.BoatTrailer = sheet.Vehicles.LastOrDefault().Id;
+                    if (boat.BoatTrailers.Any())
+                        model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
                         // model.BoatTrailer = sheet.Vehicles.FirstOrDefault().Id;
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
