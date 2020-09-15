@@ -64,7 +64,7 @@ namespace DealEngine.WebUI.Models
             CreateMap<Domain.Entities.Organisation, Domain.Entities.Organisation>()
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
-                //.ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.Condition(source => source.Name != string.Empty))
                 .ForMember(dest => dest.OrganisationType, map => map.Ignore());
 
