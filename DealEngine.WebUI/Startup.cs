@@ -42,16 +42,11 @@ namespace DealEngine.WebUI
             services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
+            services.AddConfig();
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 //https://stackoverflow.com/questions/41289737/get-the-current-culture-in-a-controller-asp-net-core
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
-            });
-
-            services.Configure<SecurityStampValidatorOptions>(options =>
-            {
-                //https://github.com/dotnet/aspnetcore/issues/12166
-                options.ValidationInterval = TimeSpan.FromHours(8);
             });
 
             services.AddAutoMapper(typeof(Startup).Assembly);
@@ -63,7 +58,6 @@ namespace DealEngine.WebUI
             });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
-            // services.AddMvc();
             services.AddMvc()
                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
@@ -72,7 +66,7 @@ namespace DealEngine.WebUI
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();                
+                app.UseDeveloperExceptionPage();              
             }
             else
             {

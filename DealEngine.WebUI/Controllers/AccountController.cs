@@ -347,7 +347,7 @@ namespace DealEngine.WebUI.Controllers
                         deUser = await _userManager.FindByNameAsync(userName);
                         
                     }
-                    var result = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: true);
+                    var result = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: true);
 
                     return LocalRedirect("~/Home/Index");
                 }

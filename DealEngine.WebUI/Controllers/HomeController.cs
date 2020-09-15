@@ -564,7 +564,6 @@ namespace DealEngine.WebUI.Controllers
                 clientList.Add(subClientprogramme);
                 ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 model = await GetClientProgrammeListModel(user, clientList);
-
                 return View(model);
             }
             catch (Exception ex)
