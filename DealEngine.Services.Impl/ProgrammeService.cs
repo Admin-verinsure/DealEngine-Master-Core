@@ -19,16 +19,16 @@ namespace DealEngine.Services.Impl
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IClientInformationService _clientInformationService;
         IReferenceService _referenceService;
-        IMapper _mapper;
+        ICloneService _cloneService;
 
         public ProgrammeService(IMapperSession<Programme> programmeRepository,
             IClientInformationService clientInformationService,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
-            IMapper mapper
+            ICloneService cloneService
             )
         {
-            _mapper = mapper;
+            _cloneService = cloneService;
             _clientInformationService = clientInformationService;
             _programmeRepository = programmeRepository;
             _clientProgrammeRepository = clientProgrammeRepository;
@@ -163,8 +163,14 @@ namespace DealEngine.Services.Impl
         }
         public async Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, _mapper);
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+            ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
+			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, cloneMapper);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 
             return newClientProgramme;
@@ -241,7 +247,13 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme)
         {
-            SubClientProgramme subClientProgramme = _mapper.Map<SubClientProgramme>(programme);
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+            SubClientProgramme subClientProgramme = cloneMapper.Map<SubClientProgramme>(programme);
             return subClientProgramme;
         }
 
@@ -410,6 +422,41 @@ namespace DealEngine.Services.Impl
                 }
             }
             return Sheets;
+        }
+
+        public async Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection)
+        {            
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+
+            ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
+            ClientProgramme PreClone = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
+            // = await CreateClientProgrammeFor(PreClone.BaseProgramme, createdBy, PreClone.Owner);
+
+            ClientInformationSheet clientInformationSheet = cloneMapper.Map<ClientInformationSheet>(PreClone.InformationSheet);
+            clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
+            clientInformationSheet.IsChange = true;
+            clientInformationSheet.Status = "Not Started";
+            clientInformationSheet.SubmitDate = DateTime.MinValue;
+            clientInformationSheet.SubmittedBy = null;
+
+            ClientProgramme PostClone = cloneMapper.Map<ClientProgramme>(PreClone);
+            PostClone.ChangeReason = changeReason;
+            PostClone.InformationSheet = clientInformationSheet;
+
+            await Update(PostClone);
+
+            return PostClone;
+
+        }
+
+        public Task DeveloperTool()
+        {
+            throw new NotImplementedException();
         }
     }
 }

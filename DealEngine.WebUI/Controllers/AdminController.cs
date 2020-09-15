@@ -821,7 +821,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _organisationService.DeveloperTool();
+            await _programmeService.DeveloperTool();
             return Redirect("~/Home/Index");
         }
     }

@@ -10,19 +10,20 @@ namespace DealEngine.WebUI.Models
 {
     public static class MapperConfig
     {
-        public static IMapper ConfigureMaps()
+        public static IMapper DefaultProfile()
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile());
+                cfg.AddProfile(new DefaultProfile());
             });
             return mapperConfiguration.CreateMapper();
         }
+
     }
 
-    public class MappingProfile : Profile
+    public class DefaultProfile : Profile
     {
-        public MappingProfile()
+        public DefaultProfile()
         {
             // place all automapper maps here
             CreateMap<OrganisationalUnit, OrganisationalUnit>()
@@ -63,7 +64,7 @@ namespace DealEngine.WebUI.Models
             CreateMap<Domain.Entities.Organisation, Domain.Entities.Organisation>()
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
-                .ForMember(dest => dest.Id, map => map.Ignore())
+                //.ForMember(dest => dest.Id, map => map.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.Condition(source => source.Name != string.Empty))
                 .ForMember(dest => dest.OrganisationType, map => map.Ignore());
 
@@ -184,15 +185,14 @@ namespace DealEngine.WebUI.Models
 
             //clonesystem
             CreateMap<ClientInformationSheet, ClientInformationSheet>()
-                .ForMember(dest => dest.Id, map => map.Ignore())
-                .ForMember(dest => dest.Owner, map => map.Ignore())
-                .ForMember(dest => dest.Organisation, map => map.Ignore()); 
+                .ForMember(dest => dest.Id, map => map.Ignore());
             CreateMap<ClientProgramme, ClientProgramme>()
                 .ForMember(dest => dest.Id, map => map.Ignore());
         }
 
 
     }
+    
     public static class MapperExtensions
     {
         public static T ResolveJson<T>(this JObject jobj, string target)

@@ -16,15 +16,12 @@ namespace DealEngine.Services.Impl
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
         IMapperSession<Reference> _referenceRepository;
         IMapperSession<User> _userRepository;
-        IMapper _mapper;
         public ClientInformationService(
             IMapperSession<Reference> referenceRepository,
             IMapperSession<User> userRepository,
-            IMapperSession<ClientInformationSheet> customerInformationRepository,
-            IMapper mapper
+            IMapperSession<ClientInformationSheet> customerInformationRepository
             )
         {
-            _mapper = mapper;
             _referenceRepository = referenceRepository;
             _userRepository = userRepository;
             _customerInformationRepository = customerInformationRepository;
@@ -328,11 +325,6 @@ namespace DealEngine.Services.Impl
                 sheet.Organisation.Remove(organisation);
                 await _customerInformationRepository.UpdateAsync(sheet);
             }
-        }
-
-        public async Task<ClientInformationSheet> GetClone(ClientInformationSheet clientInformationSheet)
-        {
-            return _mapper.Map<ClientInformationSheet>(clientInformationSheet);
         }
 
         public async Task DeveloperTool()

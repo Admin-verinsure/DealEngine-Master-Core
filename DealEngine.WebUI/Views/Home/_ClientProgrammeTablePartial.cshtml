@@ -216,7 +216,7 @@
                             <label for="ReasonDesc" class="required">Reason Description</label>
                         </td>
                         <td>
-                            <textarea class="form-control" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
+                            @Html.TextAreaFor(m => m.ChangeReason.Description, new { @class = "form-control", @required = "" })
                         </td>
                         <td>
                             <p class="validationContainer" id="validateDescription"></p>
@@ -227,7 +227,7 @@
                             <label for="EffectiveDate" class="required">Effective Date</label>
                         </td>
                         <td>
-                            <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
+                            @Html.TextBoxFor(m => m.ChangeReason.EffectiveDate, new { @class = "form-control", @type = "date", @required = "" })
                         </td>
                         <td>
                             <p class="validationContainer" id="validateEffectivedate"></p>

@@ -5,9 +5,6 @@ namespace DealEngine.Services.Interfaces
 {
 	public interface IChangeProcessService
     {
-
-        Task CreateChangeReason(User createdBy,ChangeReason changeReason);
-
     }
 }
 

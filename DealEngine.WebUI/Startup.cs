@@ -40,7 +40,7 @@ namespace DealEngine.WebUI
             services.AddRazorPages();
             services.AddNHibernate();
             services.AddIdentityExtentions();
-            services.AddSingleton(MapperConfig.ConfigureMaps());
+            services.AddSingleton(MapperConfig.DefaultProfile());
             services.AddLogging();
             services.AddConfig();
             services.Configure<RequestLocalizationOptions>(options =>

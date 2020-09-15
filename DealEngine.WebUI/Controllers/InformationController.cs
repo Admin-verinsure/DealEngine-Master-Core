@@ -1185,31 +1185,8 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 createdBy = await CurrentUser();
-                ChangeReason changeReason = new ChangeReason();
-               // changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(formCollection["BoatEffectiveDate"], "d"));
-                //ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
-                changeReason.DealId = Guid.Parse(formCollection["DealId"]);
-                changeReason.ChangeType = formCollection["ChangeType"];
-                changeReason.Reason = formCollection["Reason"];
-                changeReason.ReasonDesc = formCollection["ReasonDesc"];
-                changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(DateTime.Parse(formCollection["BoatEffectiveDate"]), "d"));
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(formCollection["DealId"]));
-                if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
-                ClientProgramme newClientProgramme = null;
-
-
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
-                    await _clientProgrammeRepository.UpdateAsync(newClientProgramme);
-                    await uow.Commit();
-                }
-                //await _programmeService.Update(newClientProgramme);
-                return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
-                //var url = "/Information/EditInformation/" + newClientProgramme.Id;
-                  //return Json(new { url });
-                //return Json(createdBy);
+                ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection);
+                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
             }
             catch (Exception ex)
             {

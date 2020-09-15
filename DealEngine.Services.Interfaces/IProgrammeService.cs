@@ -40,6 +40,8 @@ namespace DealEngine.Services.Interfaces
         Task<bool> AddOrganisationByMembership(Organisation organisation, string membership);
         Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
         Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
+        Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection);
+        Task DeveloperTool();
     }
 }
 
