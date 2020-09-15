@@ -2910,6 +2910,7 @@ namespace DealEngine.WebUI.Controllers
                + " <strong> UIS No:" + clientprogramme.InformationSheet.ReferenceId + "</strong></br>"
                + " <strong> Sheet Submitted On:" + clientprogramme.InformationSheet.SubmitDate + "</strong></br>"
                + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
+               + " <strong> Issued To:" + clientprogramme.InformationSheet.SubmittedBy.FullName + "</strong></br>"
                + "<h2> </br>  </h2> </p>";
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
