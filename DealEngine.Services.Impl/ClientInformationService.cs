@@ -127,7 +127,8 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("OTViewModel", StringComparison.CurrentCulture))); 
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GeneralViewModel", StringComparison.CurrentCulture)));
         }
 
         private void AnswerFromUserDetails(User user, IFormCollection collection, IEnumerable<string> enumerable)
@@ -202,7 +203,7 @@ namespace DealEngine.Services.Impl
         {
             foreach (var key in enumerable)
             {
-                sheet.AddAnswer(key, collection[key]);
+                sheet.AddAnswer(key, collection[key]);          
             }
         }
 

@@ -785,17 +785,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
-                
-                //testing dynamic wizard here
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
-                if (isSubsystem)
-                {
-                    model.Wizardsteps = LoadWizardsteps("Subsystem");
-                }
-                else
-                {
-                    model.Wizardsteps = LoadWizardsteps("Standard");
-                }
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GeneralViewModel", StringComparison.CurrentCulture)));               
 
                 if (sheet.Status == "Not Started")
                 {
@@ -875,13 +865,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if (date == defaultDate || date == null)
-                            {
-                                date = DateTime.Now;
-                            }
-                            property.SetValue(reflectModel, date);
+                            property.SetValue(reflectModel, date.ToString("dd/MM/yyyy"));
+                        }
+                        if (typeof(DateTime?) == property.PropertyType)
+                        {
+                            var date = DateTime.Parse(answer.Value);                         
+                            property.SetValue(reflectModel, date.ToString("dd/MM/yyyy"));
                         }
                     }
                 }
@@ -1257,6 +1247,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
                 Programme programme = clientProgramme.BaseProgramme;
                 InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
@@ -1264,7 +1255,7 @@ namespace DealEngine.WebUI.Controllers
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
                 };
-                model.Name = programme.Name;
+                model.Name = programme.Name;                
                 Product product = null;
                 if (programme.Products.Count > 1)
                 {
@@ -1276,14 +1267,15 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 InformationTemplate informationTemplate;
-                List<InformationSection> sections = new List<InformationSection>();
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                List<InformationSection> sections = new List<InformationSection>();                
                 if (!isSubsystem)
                 {
                     informationTemplate = product.SubInformationTemplate;
+                    model.Wizardsteps = LoadWizardsteps("Standard");
                 }
                 else
                 {
+                    model.Wizardsteps = LoadWizardsteps("Subsystem");
                     //remove after checking with ray
                     if (product.InformationTemplate == null)
                     {
