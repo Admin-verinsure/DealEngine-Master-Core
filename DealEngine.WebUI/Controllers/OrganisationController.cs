@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
-using DealEngine.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -137,6 +137,110 @@ namespace DealEngine.WebUI.Controllers
                 await _clientInformationService.UpdateInformation(Sheet);
                 //return Ok();
                 return Redirect("../Information/EditInformation?Id=" + Sheet.Programme.Id.ToString());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["Email"].ToString();
+                string LastName = collection["LastName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, "Person - Individual");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, "Skipper");
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, "Person - Individual");
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, "Skipper", "Person - Individual", null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = FirstName + " " + LastName
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                Random random = new Random();
+                string UserName = FirstName.Replace(" ", string.Empty)
+                    + "_"
+                    + LastName.Replace(" ", string.Empty)
+                    + random.Next(1000);
+
+                User user = new User(currentUser, UserName)
+                {
+                    FirstName = collection["FirstName"].ToString(),
+                    LastName = collection["LastName"].ToString(),
+                    Email = collection["Email"].ToString(),
+                    FullName = FirstName + " " + LastName,
+                    Id = Guid.NewGuid()
+                };
+                user.SetPrimaryOrganisation(organisation);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationInterestedPartyAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["OrganisationEmail"].ToString();
+                string Name = collection["OrganisationName"].ToString();
+                string InsuranceAttribute = collection["InsuranceAttribute"].ToString();
+                string OrganisationType = collection["OrganisationTypeName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, OrganisationType);
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, InsuranceAttribute);
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, OrganisationType);
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, InsuranceAttribute, OrganisationType, null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = Name
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
             }
             catch (Exception ex)
             {

@@ -26,17 +26,14 @@
                     </div>
                     <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
                          data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
-
                         <header style="background-color:#EF4E45; color:white">
                             <h2>Get Insurance</h2>
                         </header>
-
                         @Html.HiddenFor(m => m.AnswerSheetId)
                         @Html.HiddenFor(m => m.Status)
                         @Html.HiddenFor(m => m.Programme.Name)
                         @Html.HiddenFor(m => m.Programme.Id)
                         @Html.HiddenFor(m => m.Id)
-
                         <div role="content">
                             <!-- widget content -->
                             @if (Model.ClientInformationSheet.Status == "Submitted")
@@ -46,15 +43,12 @@
                                 </div>
                             }
                             <div class="widget-body">
-
                                 <form class="is-valid" id="RoleDataViewModel" data-accordianId="Roles"></form>
                                 <form id="LocationViewModel"></form>
                                 @*<form action="#" class="" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8">*@
-
                                 <!-- SmartWizard html -->
                                 <div id="smartwizard" class="sw-main sw-theme-circles">
                                     <ul class="nav nav-tabs step-anchor">
-
                                         @for (int i = 0; i < Model.Wizardsteps.Count; i++)
                                         {
                                             var index = i + 1;
@@ -68,7 +62,6 @@
                                             }
                                         }
                                     </ul>
-
                                     <div class="sw-container tab-content">
                                         <div id="tab_1" class="tab-pane step-content" style="display: block;">
                                             <h3>
@@ -81,14 +74,16 @@
                                                 <div class="form-group">
                                                     <div class="row">
                                                         @{ await Html.RenderPartialAsync("_ViewInformation"); }
+
+
                                                         <div class="modal" id="addOperatorModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" onclick="$('#addOperatorModal').hide();">&times;</button>
                                                                         <h4 class="modal-title">Add a Skipper</h4>
+                                                                        <button type="button" class="close" onclick="$('#addOperatorModal').hide();">&times;</button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" style="padding:25px;">
                                                                         <input id="OperatorId" name="OperatorId" type="hidden" />
                                                                         <div class="row">
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -117,7 +112,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="validateOperatorModal('#OperatorFirstNameModal', '#OperatorLastNameModal','locTabs1', '#OperatorYearsOfExpModal','#organisationEmail')" class="btn btn-success">Add</button>
+                                                                            <button onclick="validateOperatorModal('#OperatorFirstNameModal', '#OperatorLastNameModal','locTabs1', '#organisationEmail','#organisationEmail')" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
@@ -131,20 +126,19 @@
                                                                         <h4 class="modal-title">Add Water Location</h4>
                                                                     </div>
                                                                     <input id="WaterLocationId" name="WaterLocationId" type="hidden" />
-
                                                                     <div class="modal-body">
                                                                         <div class="row">
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel">Marina Location</label>
                                                                                 <label class="input w100">
-                                                                                    @*<select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
-                                                                        <option selected="selected" value="">-- Select --</option>
-                                                                        @foreach (var bwloc in Model.MarinaLocations)
-                                                                        {
-                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
-                                                                        }
-                                                                        <option value="add">Add Marina Location</option>
-                                                                    </select>*@
+                                                                                    <select onchange="ModalMarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocationModal" name="WaterLocationMarinaLocation" required>
+                                                                                        <option selected="selected" value="">-- Select --</option>
+                                                                                        @*@foreach (var bwloc in Model.MarinaLocations)
+                                                                                        {
+                                                                                            <option value="@bwloc.ID">@string.Join(", ", bwloc.Organisation.Name)</option>
+                                                                                        }*@
+                                                                                        <option value="add">Add Marina Location</option>
+                                                                                    </select>
                                                                                 </label>
                                                                             </section>
 
@@ -156,23 +150,20 @@
                                                                                     </select>
                                                                                 </label>
                                                                                 <p class="validationContainer" id="validateMarinaLocSec"></p>
-
                                                                             </section>
-
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom:.5px solid #e5e5e5; padding-bottom:18px; margin-bottom:20px;">
                                                                                 <label class="label cgmodalLabel">Location</label>
                                                                                 <label class="input w100">
-                                                                                    @*<select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
-                                                                        <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
-                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                                        {
-                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                                        }
-                                                                        <option value="add">Add Location</option>
-                                                                    </select>*@
+                                                                                    <select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
+                                                                                        <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
+                                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                                                        {
+                                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                        }
+                                                                                        <option value="add">Add Location</option>
+                                                                                    </select>
                                                                                 </label>
                                                                             </section>
-
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel">Your Short Name</label>
                                                                                 <label class="input w100">
@@ -196,7 +187,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="AddWaterLocModal('#WaterLocationNameModal','#WaterLocationLatitudeModal', '#WaterLocationLongitudeModal', '#WaterLocationLocationModal', '#WaterLocationMarinaLocationModal', '#MooredTypeModal','#OrgUnitModal'); $('#addWaterLocModal').modal('hide');" class="btn btn-success">Add</button>
+                                                                            <button onclick="AddWaterLocModal('#WaterLocationNameModal','#WaterLocationLatitudeModal', '#WaterLocationLongitudeModal', '#WaterLocationLocationModal', '#WaterLocationMarinaLocationModal', '#MooredTypeModal','#OrgUnitModal'); $('#addWaterLocModal').modal('hide');" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
@@ -206,24 +197,23 @@
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" onclick="$('#addLandLocModal').hide()">&times;</button>
                                                                         <h4 class="modal-title">Add Land Storage</h4>
+                                                                        <button type="button" class="close" onclick="$('#addLandLocModal').hide()">&times;</button>
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         <div class="row">
-
                                                                             <input id="BuildingId" name="BuildingId" type="hidden" />
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom:.5px solid #e5e5e5; padding-bottom:18px; margin-bottom:20px;">
                                                                                 <label class="label cgmodalLabel required">Location</label>
                                                                                 <label class="input w100">
-                                                                                    @*<select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
-                                                                        <option selected="selected" value="">-- Select --</option>
-                                                                        @foreach (var wloc in Model.LocationViewModel.Locations)
-                                                                        {
-                                                                            <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
-                                                                        }
-                                                                        <option value="add">Add Location</option>
-                                                                    </select>*@
+                                                                                    <select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
+                                                                                            <option selected="selected" value="">-- Select --</option>
+                                                                                            @foreach (var wloc in Model.LocationViewModel.Locations)
+                                                                                            {
+                                                                                                <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                            }
+                                                                                            <option value="add">Add Location</option>
+                                                                                    </select>
                                                                                 </label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -247,13 +237,12 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="ValidateAddLandLocModal('#BuildingCategoryModal','#BuildingNameModal', '#BuildingLocationModal');" class="btn btn-success">Add</button>
+                                                                            <button onclick="ValidateAddLandLocModal('#BuildingCategoryModal','#BuildingNameModal', '#BuildingLocationModal');" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <div class="modal" id="addMarinaModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
@@ -263,10 +252,8 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         <div class="row">
-
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
-
                                                                                     <label>Marina Name</label>
                                                                                 </section>
                                                                                 <section class="col col-xs-9 col-sm-9 col-md-9 col-lg-9">
@@ -275,119 +262,87 @@
                                                                                     </label>
                                                                                 </section>
                                                                             </section>
-
-
-
                                                                         </div>
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn btn-success">Add</button>
+                                                                            <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
                                                         <div class="modal" id="addInterestedPartyModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" onclick="$('#addInterestedPartyModal').hide()">&times;</button>
                                                                         <h4 class="modal-title">Add Interested Party</h4>
+                                                                        <button type="button" class="close" onclick="$('#addInterestedPartyModal').hide()">&times;</button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" style="padding:25px;">
                                                                         <input id="InterestedPartyId" class="b" name="InterestedPartyId" type="hidden">
                                                                         <!-- 1st row -->
                                                                         <div class="row">
-
-
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel">Interested Party</label>
                                                                                 <label class="input cgmodalInput" style="padding:10px 25px 0px 25px" id="IPList">
-                                                                                    <label class="radio-inline" style="width:25%;" id="Financial"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="Financial">Financial</label>
-                                                                                    <label class="radio-inline " style="width:22%;" id="Private"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="Private">Private</label>
-                                                                                    <label class="radio-inline " style="width:22%;" id="CoOwner"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="CoOwner">Co Owner</label>
+                                                                                    <label class="radio-inline" style="width:25%;" id="Financial"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="Financial">    Financial</label>                                                                                    
+                                                                                    <label class="radio-inline " style="width:22%;" id="CoOwner"><input onclick="InterestedPartyUpdated()" type="radio" name="InsuranceAttribute" value="CoOwner">    Co Owner</label>
                                                                                 </label>
                                                                             </section>
-
                                                                         </div>
                                                                         <hr id="boutUseCategoryHairline" style="display:none;" />
-
                                                                         <!-- 2nd row -->
-                                                                        <div id="FinancialSection" class="hidden">
+                                                                        <div id="FinancialSection">
                                                                             <div class="row">
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <label class="label " style="padding-top:5px;padding-bottom:15px;color:lightskyblue !important;font-size:115% !important;">Financial Interested Party</label>
-                                                                                </section>
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"></section>
-
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4 required">
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 required">
                                                                                         <label>Organisation Type</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                                                                        <label class="input w100">
-                                                                                            <select data-name="organisationType" id="OrganisationTypeName" name="OrganisationTypeName" value="" required>
-                                                                                                <option selected>--select---</option>
-                                                                                                <option>Person - Individual</option>
-                                                                                                <option>Corporation – Limited liability</option>
-                                                                                            </select>
-                                                                                        </label>
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <select class="form-control" data-name="organisationType" id="OrganisationTypeName" name="OrganisationTypeName" value="" required>
+                                                                                            <option selected>--Select---</option>
+                                                                                            <option>Person - Individual</option>
+                                                                                            <option>Corporation – Limited liability</option>
+                                                                                        </select>
                                                                                     </section>
                                                                                 </section>
-
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-                                                                                        <label class="required">Organisation Name</label>
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 required">
+                                                                                        <label>Organisation Name</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8 ">
-                                                                                        <label class="input ">
-                                                                                            <input data-type="TEXTBOX" data-name="organisationName" id="organisationName" name="OrganisationName" placeholder="Organisation Name" value="" required>
-                                                                                        </label>
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <input class="form-control" data-type="TEXTBOX" data-name="organisationName" id="organisationName" name="OrganisationName" placeholder="Organisation Name" value="" required>
                                                                                     </section>
                                                                                 </section>
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                         <label class="required">Organisation Email</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                         <label class="input ">
-                                                                                            <input data-type="TEXTBOX" data-name="organisationEmail" id="IPorganisationEmail" name="OrganisationEmail" placeholder="Organisation Email" value="" required>
+                                                                                            <input class="form-control" data-type="TEXTBOX" data-name="organisationEmail" id="IPorganisationEmail" name="OrganisationEmail" placeholder="Organisation Email" value="" required>
                                                                                         </label>
                                                                                     </section>
                                                                                 </section>
-                                                                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-                                                                                        <label class="required">Organisation Phone</label>
+                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 required">
+                                                                                        <label>Organisation Phone</label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                         <label class="input">
-                                                                                            <input data-type="TEXTBOX" data-name="organisationPhone" id="organisationPhone" name="OrganisationPhone" placeholder="Organisation Phone" value="" required>
+                                                                                            <input class="form-control" data-type="TEXTBOX" data-name="organisationPhone" id="organisationPhone" name="OrganisationPhone" placeholder="Organisation Phone" value="" required>
                                                                                         </label>
                                                                                     </section>
-
                                                                                 </section>
-
                                                                             </div>
-
                                                                         </div>
-
-
-
-                                                                        <div id="PrivateSection" class="hidden">
+                                                                        @*<div id="PrivateSection" class="hidden">
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                     <label class="label " style="padding-top:5px;padding-bottom:15px;color:lightskyblue !important;font-size:115% !important;">Private Interested Party</label>
                                                                                 </section>
-
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"></section>
-
-
                                                                                 <hr id="boutUseCategoryHairline" style="display:none;" />
                                                                                 <div id="AdminUser">
                                                                                     <div class="row">
@@ -399,11 +354,8 @@
                                                                                             </label>
                                                                                         </section>
                                                                                     </div>
-
                                                                                     <div id="AdminSection" class="hidden">
-
                                                                                         <div class="row">
-
                                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                                 <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
                                                                                                     <label>Email</label>
@@ -413,13 +365,10 @@
                                                                                                         <input data-type="TEXTBOX" data-name="Email" id="Email" name="Email" placeholder="Admin User Email">
                                                                                                     </label>
                                                                                                 </section>
-
                                                                                                 <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3" style="margin-top:25px;" id="UserSearchSec">
                                                                                                     <button onclick="GetUser('#Email')" class="btn-sm w100">Search</button>
                                                                                                 </section>
-
                                                                                             </section>
-
                                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" style="margin-top:5px;" id="firstnameSec">
                                                                                                 <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
                                                                                                     <label>FirstName</label>
@@ -440,7 +389,6 @@
                                                                                                     </label>
                                                                                                 </section>
                                                                                             </section>
-
                                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="PhoneSec">
                                                                                                 <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
                                                                                                     <label>Phone</label>
@@ -453,15 +401,11 @@
                                                                                             </section>
                                                                                         </div>
                                                                                     </div>
-
                                                                                 </div>
-
                                                                                 <hr />
                                                                             </div>
-
-                                                                        </div>
+                                                                        </div>*@
                                                                     </div>
-
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
                                                                             <button onclick="validateIP()" class="btn btn-success">Add</button>
@@ -470,15 +414,14 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <div class="modal" id="addBoatUseModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" onclick="$('#addBoatUseModal').hide()">&times;</button>
                                                                         <h4 class="modal-title">Add a Vessel Use</h4>
+                                                                        <button type="button" class="close" onclick="$('#addBoatUseModal').hide()">&times;</button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body" style="height:350px;overflow:auto;">
                                                                         <input id="BoatUseId" class="b" name="BoatUseId" type="hidden">
                                                                         <!-- 1st row -->
                                                                         <div class="row">
@@ -488,19 +431,17 @@
                                                                                     <label class="radio-inline" style="width:25%;"><input onclick="boutUseCategoryUpdated()" type="radio" id="LiveOnBoard" name="BoatUseCategory" value="LiveOnBoard" checked>Live on board</label>
                                                                                     <label class="radio-inline hidden" style="width:20%;" id="Race"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Race">Race</label>
                                                                                     <label class="radio-inline hidden" style="width:20%;" id="Both"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Both">Both</label>
-                                                                                    <label class="radio-inline hidden" style="width:24%;" id="Neither"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Neither">No Live / No Race</label>
+                                                                                    <label class="radio-inline hidden" style="width:24%;" id="Neither"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Neither">Neither</label>
                                                                                 </label>
                                                                             </section>
                                                                         </div>
                                                                         <hr id="boutUseCategoryHairline2" style="display:none;" />
-
                                                                         <!-- 2nd row -->
                                                                         <div id="livingUseSection" style="display:none;">
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                     <label class="label cgmodalLabel" style="padding-top:5px;padding-bottom:15px;color:lightskyblue !important;font-size:115% !important;">Live on Board Use</label>
                                                                                 </section>
-
                                                                             </div>
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
@@ -512,8 +453,6 @@
                                                                             </div>
                                                                             <hr />
                                                                         </div>
-
-
                                                                         <!-- 4th row -->
                                                                         <div id="racingUseSection" style="display:none;">
                                                                             <div class="row">
@@ -554,12 +493,9 @@
                                                                         </div>
                                                                         <!-- 6th row -->
                                                                     </div>
-
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="ValidateBoatUseModal()" class="btn btn-success">Add</button>
-
-
+                                                                            <button onclick="ValidateBoatUseModal()" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
@@ -569,17 +505,17 @@
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" onclick="$('#addTrailerModal').hide()">&times;</button>
                                                                         <h4 class="modal-title">Add a Trailer</h4>
+                                                                        <button type="button" class="close" onclick="$('#addTrailerModal').hide()">&times;</button>
                                                                     </div>
-                                                                    <div class="modal-body" style="overflow-y: scroll; overflow-x: hidden;position:relative; height:400px;  padding: 10px;">
+                                                                    <div class="modal-body" style="overflow-y: scroll; overflow-x: hidden;position:relative; height:400px;  padding: 25px;">
                                                                         <fieldset>
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                     <label class="label cgmodalLabel">Is your trailer registered?</label>
-                                                                                    <label class="input cgmodalInput" style="padding:10px 25px 0px 25px">
-                                                                                        <label class="radio-inline" style="width:49%;"><input onclick="trailerSelectionUpdate()" id="TrailerSelectionYes" name="TrailerSelection" type="radio" value="registered">Yes</label>
-                                                                                        <label class="radio-inline"><input onclick="trailerSelectionUpdate()" type="radio" id="TrailerSelectionNo" name="TrailerSelection" value="notregistered">No</label>
+                                                                                    <label class="input cgmodalInput" style="padding:10px 15% 0px 15%">
+                                                                                        <label class="radio-inline" style="width:49%;"><input onclick="trailerSelectionUpdate()" id="TrailerSelectionYes" name="TrailerSelection" type="radio" value="registered">  Yes</label>
+                                                                                        <label class="radio-inline"><input onclick="trailerSelectionUpdate()" type="radio" id="TrailerSelectionNo" name="TrailerSelection" value="notregistered">  No</label>
                                                                                     </label>
                                                                                 </section>
                                                                             </div>
@@ -589,22 +525,19 @@
                                                                             <input id="VehicleId" class="b" name="VehicleId" type="hidden">
                                                                             <!-- 1st row -->
                                                                             <div class="row">
-                                                                                <div id="VesselTrailerSearch" style="display:none;">
-                                                                                    <section class="col col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                                                                <div id="VesselTrailerSearch" style="display:none; width:100%;">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                         <label class="label cgmodalLabel">Enter plate number</label>
                                                                                         <label class="input cgmodalInput">
                                                                                             <input autocomplete="off" class="form-control" id="RegistrationModal" name="Registration" type="text" placeholder="Plate Number" value="">
                                                                                         </label>
                                                                                     </section>
-                                                                                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3" style="margin-top:25px;">
+                                                                                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:25px;">
                                                                                         <button onclick="GetRegisteredMVDetails('#RegistrationModal')" class="btn btn-success">Search</button>
-
-
                                                                                     </section>
                                                                                 </div>
                                                                             </div>
                                                                             <hr id="trailerModalHairline2" style="display:none;" />
-
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailerYear" style="display:none;">
                                                                                     <label class="label cgmodalLabel required">Year</label>
@@ -643,7 +576,6 @@
                                                                                 </section>
                                                                             </div>
                                                                             <hr id="trailerModalHairline" style="display:none;" />
-
                                                                             <!-- 2nd rows -->
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="VesselTrailerLoc" style="display:none;">
@@ -661,25 +593,23 @@
                                                                                 </section>
                                                                             </div>
                                                                             <hr id="trailerModalHairline4" style="display:none;" />
-
                                                                             <!-- 3rd rows -->
                                                                             <div class="row">
-                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailerMV" style="display:none;">
+                                                                                <section class="col col-xs-6 col-sm-6 col-md-6 col-lg-6" id="VesselTrailerMV" style="display:none;">
                                                                                     <label class="label cgmodalLabel required">$ Estimated Market Value</label>
                                                                                     <label class="input cgmodalInput">
                                                                                         <i></i>
                                                                                         <input class="form-control rmv" type="text" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="SumInsured" id="SumInsuredModal" name="SumInsured" placeholder="$ Estimated Market Value" value="" required>
                                                                                     </label>
                                                                                 </section>
-                                                                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 smart-form cgmodalDatePickerOverride" id="VesselTrailerEffective" style="display:none;">
+                                                                                <section class="col col-xs-6 col-sm-6 col-md-6 col-lg-6 smart-form cgmodalDatePickerOverride" id="VesselTrailerEffective" style="display:none;">
                                                                                     <label class="label cgmodalLabel required">Effective Date</label>
                                                                                     <label class="input cgmodalInput">
                                                                                         <i class="icon-append fa fa-calendar"></i>
-                                                                                        <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="TrailerEffectiveDateModal" type="text" required>
+                                                                                        <input name="EffectiveDate" placeholder="Effective Date" class="form-control b" id="TrailerEffectiveDateModal" type="text" required>
                                                                                     </label>
                                                                                 </section>
                                                                             </div>
-
                                                                             <!-- 4th row -->
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-md-12" id="VesselTrailerIP" style="display:none;">
@@ -689,7 +619,6 @@
                                                                                     </label>
                                                                                 </section>
                                                                             </div>
-
                                                                             <!-- 5th row -->
                                                                             <div class="row">
                                                                                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="VesselTrailerNotes" style="display:none;">
@@ -701,32 +630,24 @@
                                                                             </div>
                                                                         </fieldset>
                                                                     </div>
-
                                                                     <div class="modal-footer" id="addSection">
-
                                                                         <section class="col col-xs-12">
                                                                             <p id="trailerdemo" style="color:red"></p>
-                                                                            <button onclick="ValidateMotorVehicleModal(event)" class="btn btn-success">Add</button>
+                                                                            <button onclick="ValidateMotorVehicleModal(event)" class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <div id="VehicleRemoveModal" class="modal" role="dialog">
-
                                                             <!-- Modal content-->
-
                                                             <div class="modal-content">
-
                                                                 <div class="modal-header">
                                                                     <button type="button" class="close" onclick="$('#VehicleRemoveModal').hide()">&times;</button>
-
                                                                     <h4 class="modal-title" style="color:blue; font-size:22px">Cease Details</h4>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="row">
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden ">
                                                                             <input class="form-control b " type="text" data-type="TEXTBOX" id="vehicleId" name="vehicleId" value="" required>
                                                                         </section>
@@ -739,10 +660,8 @@
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden ">
                                                                             <input class="form-control b " type="text" data-type="TEXTBOX" id="vehicledestTable" name="destTable" value="" required>
                                                                         </section>
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
                                                                                 <label for="CeaseDate">Cease Date</label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -750,18 +669,13 @@
                                                                                     <input name="BoatEffectiveDate" placeholder="Cease Date" class=" Effectivedate form-control b" data-dateformat="dd/mm/yy" id="RemoveVehicleCeaseEffectiveDate" type="text">
                                                                                 </label>
                                                                                 <p class="validationContainer" id="validateVehicleCeasedate"></p>
-
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
                                                                                 <i class="icon-append fa fa-calendar"></i>
                                                                             </section>
-
                                                                         </section>
-
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
                                                                                 <label for="CeaseReason">Cease Reason</label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -776,34 +690,24 @@
                                                                                     </select>
                                                                                 </label>
                                                                                 <p class="validationContainer" id="validateVehicleDescription"></p>
-
-
                                                                             </section>
-
                                                                         </section>
                                                                     </div>
                                                                 </div>
-
                                                                 <div class="modal-footer">
-
                                                                     <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <div id="BoatRemoveModal" class="modal" role="dialog">
-
                                                             <!-- Modal content-->
-
                                                             <div class="modal-content">
-
                                                                 <div class="modal-header">
                                                                     <button type="button" class="close" onclick="$('#BoatRemoveModal').hide()">&times;</button>
                                                                     <h4 class="modal-title" style="color:blue; font-size:22px">Cease Details</h4>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="row">
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
                                                                             <input class="form-control b " type="text" data-type="TEXTBOX" id="boatID" name="boatID" value="" required>
                                                                         </section>
@@ -816,12 +720,8 @@
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
                                                                             <input class="form-control b " type="text" data-type="TEXTBOX" id="destTable" name="destTable" value="" required>
                                                                         </section>
-
-
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
                                                                                 <label for="CeaseDate" class="required">Cease Date</label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -829,18 +729,13 @@
                                                                                     <input name="BoatEffectiveDate" placeholder="Cease Date" class=" Effectivedate form-control b" data-dateformat="dd/mm/yy" id="RemoveCeaseEffectiveDate" type="text">
                                                                                 </label>
                                                                                 <p class="validationContainer" id="validateBoatCeasedate"></p>
-
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
                                                                                 <i class="icon-append fa fa-calendar"></i>
                                                                             </section>
-
                                                                         </section>
-
-
                                                                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
                                                                                 <label for="CeaseReason" class="required">Cease Reason</label>
                                                                             </section>
                                                                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -855,17 +750,11 @@
                                                                                     </select>
                                                                                 </label>
                                                                                 <p class="validationContainer" id="validateBoatDescription"></p>
-
-
                                                                             </section>
-
                                                                         </section>
                                                                     </div>
-
                                                                 </div>
-
                                                                 <div class="modal-footer">
-
                                                                     <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
                                                                 </div>
                                                             </div>
@@ -889,12 +778,11 @@
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button onclick="$('#addLocModal').hide()" type="button" class="close">&times;</button>
                                                                         <h4 class="modal-title">Add Location</h4>
+                                                                        <button onclick="$('#addLocModal').hide()" type="button" class="close">&times;</button>
                                                                     </div>
                                                                     <div class="modal-body" id="locationModelBody">
                                                                         <div class="row">
-
                                                                             <input id="LocationId" name="LocationId" type="hidden" />
                                                                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                                 <label class="label cgmodalLabel required">Location Type</label>
@@ -957,7 +845,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <section class="col col-xs-12">
-                                                                            <button onclick="validateLocModal('StreetModal','SuburbModal','PostcodeModal','CityModal','CountryModal','CommonNameModal','LocationTypeModal'); " class="btn btn-success">Add</button>
+                                                                            <button onclick="validateLocModal('StreetModal','SuburbModal','PostcodeModal','CityModal','CountryModal','CommonNameModal','LocationTypeModal'); " class="btn btn-success pull-right">Add</button>
                                                                         </section>
                                                                     </div>
                                                                 </div>
@@ -967,7 +855,6 @@
                                                     <div class="help-block with-errors"></div>
                                                 </div>
                                             </div>
-
                                         </div>
                                         <div id="tab_2" class="tab-pane step-content">
                                             <h3><strong> @Model.Wizardsteps.ElementAt(1) </strong></h3>
@@ -1001,14 +888,10 @@
                                                 </div>
                                             </div>
                                         }
-
                                     </div>
-
                                 </div>
-
                                 @*</form>*@
                             </div>
-
                             <div class="modal" id="getAgreementModal" tabindex="-1" role="dialog" data-backdrop="static">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -1134,14 +1017,12 @@
     </section>
 </div>
 
-
-
 @section pagespecific {
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
+
     @await Html.PartialAsync("_InformationWizardScripts")
     @await Html.PartialAsync("_DataTableScripts")
 <script>
-
         $(document).ready(function () {
             var accordianPanel = sessionStorage.getItem("accordianTrigger");
             if (accordianPanel != null) {
@@ -1172,7 +1053,6 @@
                 $('.btn-success').prop("disabled", false);
             }
         });
-
         function CloseAdvisory(clientInformationSheetId) {
             if (typeof clientInformationSheetId !== null) {
                 var postData = { ClientInformationSheetId: clientInformationSheetId };
@@ -1193,8 +1073,6 @@
                 $('#advisoryModal').modal('hide');
             }
         }
-
-
 </script>
 
 }

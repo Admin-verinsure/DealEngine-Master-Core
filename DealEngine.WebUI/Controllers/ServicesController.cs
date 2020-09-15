@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.IO;
+using DealEngine.Services.Impl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -176,24 +177,19 @@ namespace DealEngine.WebUI.Controllers
                 // no vehicle, so create new
                 if (vehicle == null)
                     vehicle = model.ToEntity(user);
-                model.UpdateEntity(vehicle);
-
+                model.UpdateEntity(vehicle);                
+                
                 if (model.VehicleLocation != Guid.Empty)
                     vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
 
-                var allOrganisations = await _organisationService.GetAllOrganisations();
-                if (model.InterestedParties != null)
-                    vehicle.InterestedParties = allOrganisations.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                foreach(var boat in sheet.Boats)
                 {
+                    boat.BoatTrailers.Add(vehicle);
                     sheet.Vehicles.Add(vehicle);
-                    await uow.Commit();
+                    await _boatRepository.UpdateAsync(boat);
                 }
 
                 model.VehicleId = vehicle.Id;
-
-
                 return Json(model);
             }
             catch (Exception ex)
@@ -1848,39 +1844,6 @@ namespace DealEngine.WebUI.Controllers
         #region Boat
 
         [HttpPost]
-        public async Task<IActionResult> AddUsetoBoat(string[] Boatuse, Guid BoatId)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Boat boat = await _boatRepository.GetByIdAsync(BoatId);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUse = new List<BoatUse>();
-                    foreach (var useid in Boatuse)
-                    {
-                        //ListBoatUse.Add(useid);
-                        //ListBoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)));
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
-                    await uow.Commit();
-                }
-                return Json(boat);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-
-        }
-
-        [HttpPost]
         public async Task<IActionResult> AddBoat(BoatViewModel model)
         {
             User user = null;
@@ -1925,7 +1888,7 @@ namespace DealEngine.WebUI.Controllers
 
                     List<string> boatuselist = new List<string>();
 
-                    boat.BoatUse = new List<BoatUse>();
+                    boat.BoatUses = new List<BoatUse>();
 
                     //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
                     string[] BoatUse = model.SelectedBoatUse.Split(',');
@@ -1934,7 +1897,7 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (var useid in BoatUse)
                     {
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
+                        boat.BoatUses.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
                     }
                 }
 
@@ -1955,9 +1918,6 @@ namespace DealEngine.WebUI.Controllers
                         boat.InterestedParties.Add(await _organisationService.GetOrganisation(Guid.Parse(useid)));
                     }
                 }
-
-                if (model.BoatTrailer != Guid.Empty)
-                    boat.BoatTrailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2053,18 +2013,18 @@ namespace DealEngine.WebUI.Controllers
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
                         model.BoatWaterLocation = boat.BoatWaterLocation.Id;
-                    if (boat.BoatTrailer != null)
-                        if (boat.BoatTrailer != null)
-                            model.BoatTrailer = boat.BoatTrailer.Id;
-
+                    // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
+                    if (boat.BoatTrailers.Any())
+                        model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
+                        // model.BoatTrailer = sheet.Vehicles.FirstOrDefault().Id;
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
-                    if (boat.BoatUse != null)
+                    if (boat.BoatUses != null)
                         model.BoatselectedVal = new List<String>();
 
                     model.BoatselectedText = new List<Guid>();
 
-                    foreach (var boatuse in boat.BoatUse)
+                    foreach (var boatuse in boat.BoatUses)
                     {
                         model.BoatselectedVal.Add(boatuse.BoatUseCategory);
                         model.BoatselectedText.Add(boatuse.Id);
@@ -2132,8 +2092,6 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                //boats = boats.OrderBy(sidx + " " + sord).ToList();
-
                 XDocument document = null;
                 JqGridViewModel model = new JqGridViewModel();
                 model.Page = page;
@@ -2148,12 +2106,10 @@ namespace DealEngine.WebUI.Controllers
 
                     Boat boat = boats[i];
                     JqGridRow row = new JqGridRow(boat.Id);
-                    //row.AddValue("");
                     row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                     model.AddRow(row);
                 }
 
-                // convert model to XDocument for rendering.
                 document = model.ToXml();
                 return Xml(document);
             }
@@ -2175,10 +2131,10 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-                if (boat.BoatTrailer != null)
-                {
-                    hasTrailer = true;
-                }
+                //if (boat.BoatTrailer != null)
+                //{
+                //    hasTrailer = true;
+                //}
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2225,7 +2181,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             User user = null;
-
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             try
             {
                 user = await CurrentUser();
@@ -2233,11 +2189,11 @@ namespace DealEngine.WebUI.Controllers
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-
-                    boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
-
+                    
+                    //boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+                    boat.BoatCeaseDate = DateTime.Parse(ceaseDate.ToString(), System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
                     boat.BoatCeaseReason = ceaseReason;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 return new JsonResult(true);
@@ -2294,7 +2250,6 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
-                // get existing boat (if any)
                 if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
                 {
                     boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
@@ -2305,28 +2260,15 @@ namespace DealEngine.WebUI.Controllers
                 {
                     boatUse = model.ToEntity(user);
                 }
-
                 model.UpdateEntity(boatUse);
 
-
-                //if (model.BoatUseBoat != Guid.Empty)
-                //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                foreach (var boat in sheet.Boats)
                 {
-                    sheet.BoatUses.Add(boatUse);
-                    await uow.Commit().ConfigureAwait(false);
-                }
-                model.BoatUseId = boatUse.Id;
-
-
-                var boatUses = new List<BoatUseViewModel>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(bu));
+                    boat.BoatUses.Add(boatUse);
+                    await _boatRepository.UpdateAsync(boat);
                 }
 
-                return Json(model);
+                return Json(boatUse);
             }
             catch (Exception ex)
             {
@@ -2478,12 +2420,16 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                BoatUse boatUse = sheet.BoatUses.FirstOrDefault(bu => bu.Id == boatUseId);
-                if (boatUse != null)
+                foreach(var boat in sheet.Boats.Where(b => b.BoatUses.Any()))
                 {
-                    model = BoatUseViewModel.FromEntity(boatUse);
-                    model.AnswerSheetId = answerSheetId;
+                    foreach(var boatUse in boat.BoatUses)
+                    {
+                        model = BoatUseViewModel.FromEntity(boatUse);
+                        model.AnswerSheetId = answerSheetId;
+                    }
+                    
                 }
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -2506,15 +2452,55 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
 
+                var boats = new List<Boat>();
                 var boatUses = new List<BoatUse>();
 
+                /*
+                ceased doesn't look to be stored in table????
                 if (ceased)
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
                 }
                 else
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                }*/
+
+
+                // Get all the boat uses in the sheet that are removed or not removed THIS DOESNT WORK FAM as it just grabs the boat with them all anyways
+                if (removed)
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == true)).ToList();                  
+                }
+                else
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == false)).ToList();
+                }
+
+                // For each of the boats that have been removed or not removed
+                foreach (var boat in boats)
+                {
+                    // for the boat uses for that boat add to our boat uses list NO FILTERING 
+                    foreach (var boatUse in boat.BoatUses)
+                    {
+                        if (removed)
+                        {
+                            // add only removed boats to the list
+                            if (boatUse.Removed == true)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
+                        else
+                        {
+                            if (boatUse.Removed == false)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
+                    }
                 }
 
                 if (_search)
@@ -2794,85 +2780,7 @@ namespace DealEngine.WebUI.Controllers
 
         #region Operators
 
-        [HttpPost]
-        public async Task<IActionResult> AddOperator(OrganisationViewModel model)
-        {
-            User currentUser = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    AddOrganisation(model);
-            //    if (model == null)
-            //        throw new ArgumentNullException(nameof(model));
-
-            //    currentUser = await CurrentUser();
-            //    ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-            //    if (sheet == null)
-            //        throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-            //    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
-            //    if (insuranceAttribute == null)
-            //    {
-            //        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Skipper");
-            //    }
-            //    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-            //    if (organisationType == null)
-            //    {
-            //        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
-            //    }
-
-            //    Organisation organisation = null;
-            //    User userdb = null;
-            //    try
-            //    {
-            //        userdb = await _userService.GetUserByEmail(model.Email);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-            //        userdb.FirstName = model.FirstName;
-            //        userdb.LastName = model.LastName;
-            //        userdb.FullName = model.FirstName + " " + model.LastName;
-            //        userdb.Email = model.Email;
-            //        userdb.Phone = model.Phone;
-            //        userdb.Password = "";
-
-            //        await _userService.Create(userdb);
-
-            //    }
-            //    finally
-            //    {
-            //        organisation = await _organisationService.GetOrganisationByEmail(model.Email);
-            //        if (organisation == null)
-            //        {
-            //            var organisationName = model.FirstName + " " + model.LastName;
-            //            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
-            //            organisation.InsuranceAttributes.Add(insuranceAttribute);
-            //            insuranceAttribute.IAOrganisations.Add(organisation);
-            //            await _organisationService.CreateNewOrganisation(organisation);
-            //            userdb.SetPrimaryOrganisation(organisation);
-
-            //        }
-
-            //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            //        {
-            //            userdb.SetPrimaryOrganisation(organisation);
-            //            currentUser.Organisations.Add(organisation);
-            //            userdb.Organisations.Add(organisation);
-            //            sheet.Organisation.Add(organisation);
-            //            model.ID = organisation.Id;
-            //            await uow.Commit();
-            //        }
-
-            //    }
-            //    return Json(model);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
-        }
+        
 
 
         #endregion
@@ -3483,8 +3391,8 @@ namespace DealEngine.WebUI.Controllers
                                     HullConstruction = constructionType,
                                     HullConfiguration = hullConfiguration,
                                     BoatIsTrailered = trailered,
-                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue),
-                                    BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
+                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue)
+                                    //BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
                                 };
                                 sheet.Boats.Add(vessel);
                                 organisation.OrganisationalUnits.Add(ou);

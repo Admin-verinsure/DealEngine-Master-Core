@@ -347,14 +347,37 @@ namespace DealEngine.WebUI.Controllers
                         deUser = await _userManager.FindByNameAsync(userName);
                         
                     }
-                    await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    var result = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: true);
 
                     return LocalRedirect("~/Home/Index");
                 }
-                
-                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
-                return View(viewModel);
-
+/*
+                else if (resultCode == 49) //	LDAP_INVALID_CREDENTIALS               
+                {
+                    deUser = await _userManager.FindByNameAsync(userName);
+                    var result = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: true);                    
+                    // AccessFailedCount = MaxFailedAccessAttempts                   
+                    if (result.IsLockedOut == true)
+                    {
+                        // tell them they've been locked out
+                        ModelState.AddModelError(string.Empty, "You are locked out. You can try again in 5 minutes (maybe).");
+                        // Update record so that we know they're locked out for next time? Should be automatic.
+                        // what else?
+                        return View(viewModel);
+                    }
+                    // AccessFailedCount < MaxFailedAccessAttempts
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Incorrect password. Please try entering your username or password again, or email support@techcertain.com.");
+                        return View(viewModel);
+                    }
+                }
+*/
+                else // ANY OTHER LDAP CODE https://ldapwiki.com/wiki/LDAP%20Result%20Codes 
+                {
+                    ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
+                    return View(viewModel);
+                }
             }
 			catch (UserImportException ex)
 			{

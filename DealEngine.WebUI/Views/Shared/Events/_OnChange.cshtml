@@ -288,8 +288,7 @@
                         debugger;
                     }
                 });
-            }      
-            
+            }        
         } catch (ex) {
             //these rules need to be re-run regardless of the catch            
             ////we expect this to fail for form elements with no change events but could use this later
@@ -327,15 +326,18 @@
             Value == "Administration" ||
             Value == "Nominated Representative" ||
             Value == "Contractor" ||
-            Value == "Planner") {
+            Value == "Planner" ||
+            Value == "Skipper") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
                 AdministrationOnChange();                
             }
+
             if (Value == "Nominated Representative") {
                 AdministrationOnChange();
             }
+
             if (Value == "Contractor") {
                 ContractorOnChange();
             }

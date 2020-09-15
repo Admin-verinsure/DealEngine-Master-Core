@@ -119,6 +119,14 @@ namespace DealEngine.Domain.Entities.Abstracts
                             {
                                 //throw new Exception("Cant save Ids");
                             }
+                            else if (property.PropertyType == typeof(DateTime))
+                            {
+                                bool valid = DateTime.TryParse(value.ToString(), out DateTime Date);
+                                if (valid)
+                                {
+                                    property.SetValue(this, Date);
+                                }                                
+                            }
                             else
                             {
                                 throw new Exception("add new type condition " + property.PropertyType.Name);

@@ -111,7 +111,6 @@
                        });
                //}
            } else if (stepNumber === 1) {
-               debugger;
                var status = $('#Status').val();
 
                if (status == "Started") {
@@ -508,8 +507,13 @@
                         if (ui.oldHeader[0].id == "Investment Product") {
                             checkInvestmentVal();
                         }
+                        else if (ui.newHeader[0].id == "Vessel") { // if policy effective date hasn't been filled then open accordian again
+                            var policyEffectiveDate = $('#dateselected').val();
+                            if (policyEffectiveDate == "") {
+                                $("[id='Policy Effective Date']").trigger("click");
+                            }
+                        }
                         document.getElementById("toastbody").innerHTML = ui.oldHeader[0].id + " section has saved";
-
                         $('.toast').toast('show');
                         $('#tblBuilding').trigger('reloadGrid');
                         $('#Principal,Partners or Directors').trigger('reloadGrid');
@@ -574,9 +578,10 @@
 		   var sourcetable = $('#sourceTable').val();
             var desttable = $('#destTable').val();
 
-            SetBoatCeasedStatus(boatId, status,sourcetable,desttable);
+            SetBoatCeasedStatus(boatId, status, sourcetable, desttable);
             debugger;
-                SetBoatRemovedStatus(boatId,status,sourcetable,desttable);
+            SetBoatRemovedStatus(boatId, status, sourcetable, desttable);
+            debugger;
         }
 
     });
@@ -878,6 +883,7 @@
 
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
 
         event.preventDefault();
         var BoatName = $('#AddBoatName').val();
@@ -2063,8 +2069,6 @@ function showAccordionPanel(id, panelNo) {
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var result = true;
-        debugger;
-
 
         if (claimant == "") {
             $('#Addvalidateclaimant').html("<font color='red'>Field is required</font>")
@@ -2305,94 +2309,72 @@ function showAccordionPanel(id, panelNo) {
     }
 
 
-    function AddOperator(event,tabId, tableId) {
-                event.preventDefault();
-
-    var informationId = $('#AnswerSheetId').serialize();
-    var test = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
-    console.log(test);
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("AddOperator", "Services")',
-        type: "POST",
-        data: test
-    })
+    function AddOperator(event, tabId, tableId) {
+        debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+        var test = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+        console.log(test);
+        $.ajax({
+            url: '@Url.Action("AddOperator", "Services")',
+            type: "POST",
+            data: test
+        })
         .done(function (data) {
-
-        //$.smallBox({
-        //    title: "Operator has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
-        console.log(data);
-        // reload grid
-        $(tableId).trigger( 'reloadGrid' );
-        $(tabId + " :input").val("");
-    })
+            console.log(data);
+            // reload grid
+            $(tableId).trigger( 'reloadGrid' );
+            $(tabId + " :input").val("");
+        })
     .fail(function (jqXHR, textStatus, errorThrown) {
         alert("There was an error while trying to save the Operator.");
-    });
+        });
     };
 
     function validateOperatorModal(firstName, lastName, yearsXP, Email) {
-
-
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
-
             AddOperatorModal(event,firstName, lastName, yearsXP, Email);
             $('#addOperatorModal').hide();
         }
     }
 
     function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
-
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
         var operatorLastName = $(lastName).serialize();
         var yearsExperience = $(yearsXP).serialize();
         var Email = $(Email).serialize();
-
-
         var informationId = $('#AnswerSheetId').serialize();
         $('#setOperatorModal').show();
         var postdata = $.grep([operatorFirstName, operatorLastName, yearsExperience, Email, informationId], Boolean).join("&");
         //console.log(operatorFirstName, operatorLastName, yearsExperience);
         $.ajax({
             // change back once mono decides to fix
-            url: '@Url.Action("AddOperator", "Services")',
+            url: '@Url.Action("AddOrganisationSkipperAPI", "Organisation")',
             type: "POST",
             data: postdata
-        }).done(function (data) {
-
-                        setTimeout("alert('Operator has been saved');", 4000);
-
-                //$.smallBox({
-                //    title: "Operator has been saved",
-                //    color: "#5F895F",
-                //    iconSmall: "fa fa-check bounce animated",
-                //    timeout: 4000
-                //});
-
-                $('#BoatOperator').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
-                $("#BoatOperator.b [value='add']").remove();
-                $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
-                $('#BoatOperator.b').trigger('chosen:updated');
-
-                $('#AddBoatOperator.b').append("<option selected value=\"" + data.ID + "\">" + data.firstName + " " + data.lastName + "</option>")
-                $("#AddBoatOperator.b [value='add']").remove();
-                $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
-                $('#AddBoatOperator.b').trigger('chosen:updated');
-                $('#addOperatorModal' + " :input").val("");
-                UpdateChosen();
-                $('#setOperatorModal').hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-              $('#setOperatorModal').hide();
-
+        })
+        .done(function (data) {
+            debugger;
+            setTimeout("alert('Operator has been saved');", 4000);
+            $('#BoatOperator').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+            $("#BoatOperator.b [value='add']").remove();
+            $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
+            $('#BoatOperator.b').trigger('chosen:updated');
+            $('#AddBoatOperator.b').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+            $("#AddBoatOperator.b [value='add']").remove();
+            $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
+            $('#AddBoatOperator.b').trigger('chosen:updated');
+            $('#addOperatorModal' + " :input").val("");
+            UpdateChosen();
+            $('#setOperatorModal').hide();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            $('#setOperatorModal').hide();
             alert("There was an error while trying to save the Operator.");
-            });
+        });
     };
 
     function ValidateAddLandLocModal(storageType, storageDescription, location) {
@@ -2404,9 +2386,9 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function AddLandLocModal(event,storageType, storageDescription, location) {
-                event.preventDefault();
-
+    function AddLandLocModal(event, storageType, storageDescription, location) {
+        debugger;
+        event.preventDefault();
         var buildingCategory = $(storageType).serialize();
         var buildingName = $(storageDescription).serialize();
         var informationId = $('#AnswerSheetId').serialize();
@@ -2414,20 +2396,13 @@ function showAccordionPanel(id, panelNo) {
         $('#getLandLocModal').show();
         var postdata = $.grep([buildingCategory, buildingName, location_id, informationId], Boolean).join("&");
         $.ajax({
-            // change back once mono decides to fix
             url: '@Url.Action("AddBuilding", "Services")',
             type: "POST",
             data: postdata
-
         })
             .done(function (data) {
+                debugger;
                 console.log(data);
-            //$.smallBox({
-            //     title: "Storage has been saved",
-            //     color: "#5F895F",
-            //     iconSmall: "fa fa-check bounce animated",
-            //     timeout: 4000
-            //    });
                 $('#BoatLandLocation.b').append($('<option>', { value: data.buildingId, text: data.buildingCategory + ", " + data.locationStreet }));
                 $("#BoatLandLocation.b [value='add']").remove();
                 $('#BoatLandLocation.b').append($('<option>', { value: "add", text: "Add Land Storage" }));
@@ -2440,11 +2415,9 @@ function showAccordionPanel(id, panelNo) {
                 $('#tblBuilding').trigger('reload');
                 $('#getLandLocModal').hide();
             })
-
             .fail(function (jqXHR, textStatus, errorThrown) {
-               $('#getLandLocModal').hide();
-
-            alert("There was an error while trying to save the Storage.");
+                $('#getLandLocModal').hide();
+                alert("There was an error while trying to save the Storage.");
         });
     };
 
@@ -2530,13 +2503,12 @@ function showAccordionPanel(id, panelNo) {
 
          if (!(document.getElementById("LocationTypeModal").validity.valueMissing) && !(document.getElementById("StreetModal").validity.valueMissing)
              && !(document.getElementById("SuburbModal").validity.valueMissing) && !(document.getElementById("CityModal").validity.valueMissing)) {
-
              var locationTypeValue = document.getElementById(loctype).value;
              var cmonValue = document.getElementById(cnameLoc).value;
              var streetVal = document.getElementById(streetLoc).value;
              var cityVal = document.getElementById(cityLoc).value;
              var countryVal = document.getElementById(countryLoc).value;
-             var suburbVal = document.getElementById(streetLoc).value;
+             var suburbVal = document.getElementById(suburbLoc).value;
              var postCodeVal = document.getElementById(postcodeLoc).value;
 
              document.getElementById("locationtypeoptions").value = locationTypeValue;
@@ -2546,6 +2518,7 @@ function showAccordionPanel(id, panelNo) {
              document.getElementById("countrydetails").value = countryVal;
              document.getElementById("suburbdetails").value = suburbVal;
              document.getElementById("postcodedetails").value = postCodeVal;
+            debugger;
 
              $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
@@ -2553,8 +2526,8 @@ function showAccordionPanel(id, panelNo) {
                 data: $("#tab_1 :input").serialize({ json: true })
             })
                  .done(function (data) {
-                     debugger
-                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, streetVal, cmonValue, locationTypeValue, data);
+                     debugger;
+                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, data);
                      closeLocModal();
                      document.getElementById("LocationViewModel").reset();
                 })
@@ -2566,53 +2539,52 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, locationId) {
-
+        debugger;
         //$('#getLandLocModal').show();
         var street = streetLoc;
         var suburb = suburbLoc;
         var postcode = postcodeLoc;
         var country = countryLoc;
         var loctype = loctype;
+        var city = cityLoc;
 
             $('#addLocModal' + " :input").val("");
 
                 if ($('#addLandLocModal').hasClass('in')) {
 
                     $('#addLocModal').hide();
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#BuildingLocationModal.b').val(data.LocationId);
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     //Want to use Location added in Trailer Modal use case
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
-
-
                 }
 
 
@@ -2620,85 +2592,82 @@ function showAccordionPanel(id, panelNo) {
 
                     $('#addLocModal').hide();
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#VehicleLocationModal.b').val(data.LocationId);
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
-                                  $('#getLandLocModal').hide();
-
-
+                    $('#getLandLocModal').hide();
                 }
                 else {
                     $('#addLocModal').hide();
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddMotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddMotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddMotorLocation.omv [value='add']").remove();
                     $('#AddMotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + postcode + ", " + country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: locationId, text: street + ", " + suburb + ", " + city}));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
@@ -2760,15 +2729,8 @@ function showAccordionPanel(id, panelNo) {
     })
     .done(function (data) {
         if (data === true) {
-            // reload grids
             $(sourceTable).trigger( 'reloadGrid' );
             $(destTable).trigger( 'reloadGrid' );
-            //$.smallBox({
-            //    title: "Operator status has been updated",
-            //    color: "#5F895F",
-            //    iconSmall: "fa fa-check bounce animated",
-            //    timeout: 4000
-            //});
         }
     });
     };
@@ -2788,7 +2750,7 @@ function showAccordionPanel(id, panelNo) {
     }
     function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
 
-
+        debugger;
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
@@ -2813,20 +2775,14 @@ function showAccordionPanel(id, panelNo) {
         data: data
     })
         .done(function (data) {
+            debugger;
             console.log(data);
             $('#AddBoatModal').hide();
-
-        //$.smallBox({
-        //    title: "Boat has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
             $('#updaterequire').addClass('hidden');
             $(tableId).trigger('reloadGrid');
             $('#InterestedParties3').trigger('reloadGrid');
-        $('#tblCeasedBoat').trigger( 'reloadGrid' );
-        $('#tblTransferedBoat').trigger( 'reloadGrid' );
+            $('#tblCeasedBoat').trigger( 'reloadGrid' );
+            $('#tblTransferedBoat').trigger( 'reloadGrid' );
             $(tabId + " :input").val(""); //Clears form
 
     })
@@ -2838,32 +2794,24 @@ function showAccordionPanel(id, panelNo) {
 
 
     function EditBoat(classId, boatId) {
-
-                //event.preventDefault();
-
+        //event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
-
         var postData = {
 		'boatId': boatId,
 		'answerSheetId': _sheetId
-	};
-
+	    };
         $.ajax({
-
-        url: '@Url.Action("GetBoat", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+            url: '@Url.Action("GetBoat", "Services")',
+            type: "Post",
             data: postData
-    })
-            .done(function (data) {
-
-            console.log(data);
+        })
+        .done(function (data) {
+            debugger;
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
                 $('#SelectedBoatUse').val(data.boatselectedText).trigger('chosen:updated');
-                }
+            }
             $('#SelectedInterestedParty').val(data.boatpartyText).trigger('chosen:updated');
             $('#BoatId.' + classId).val(data.boatId);
             $('#BoatName.' + classId).val(data.boatName);
@@ -2891,57 +2839,44 @@ function showAccordionPanel(id, panelNo) {
             $('#BoatCeaseReason.' + classId).val(data.boatCeaseReason);
             $('#InterestedParties3.' + classId).val(data.interestedParties3);
             $('#BoatNotes.' + classId).val(data.boatNotes);
-                $('#VesselArea.' + classId).val(data.vesselArea);
-
-                if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
-
-                    if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
-
-                         if (!($('#MooredType option:selected'))) {
+            $('#VesselArea.' + classId).val(data.vesselArea);
+            if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
+                if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
+                        if (!($('#MooredType option:selected'))) {
                         $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                    }
-                    $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-                    $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-                    $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-                    $('#MooredType').trigger('chosen:updated');
-
-                    }
-                };
-
-                if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
-
-                    $('#BoatWaterLocation.b').val(data.boatWaterLocation);
-                    $('#othermarinSection').addClass("hidden");
-                    $('#BoatMooredTypeSection').addClass("hidden");
-                                        GetMooredType(data.boatWaterLocation);
-
-                } else {
-
-                    $('#BoatWaterLocation.' + classId).val("add");
-                    $('#othermarinSection').removeClass("hidden");
-                    $('#BoatMooredTypeSection').removeClass("hidden");
-                    $('#othermarina.b').val(data.otherMarinaName);
-                     //GetMooredType(data.BoatWaterLocation);
                 }
-
-                if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
-                      $('#othermarinSection').addClass("hidden");
-                    $('#BoatMooredTypeSection').addClass("hidden");
+                $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
+                $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
+                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+                $('#MooredType').trigger('chosen:updated');
                 }
-
-
+            };
+            if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
+                $('#BoatWaterLocation.b').val(data.boatWaterLocation);
+                $('#othermarinSection').addClass("hidden");
+                $('#BoatMooredTypeSection').addClass("hidden");
+                GetMooredType(data.boatWaterLocation);
+            }
+            else {
+                $('#BoatWaterLocation.' + classId).val("add");
+                $('#othermarinSection').removeClass("hidden");
+                $('#BoatMooredTypeSection').removeClass("hidden");
+                $('#othermarina.b').val(data.otherMarinaName);
+            }
+            if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
+                $('#othermarinSection').addClass("hidden");
+                $('#BoatMooredTypeSection').addClass("hidden");
+            }
             $('#MooredType.' + classId).val(data.waterLocationMooringType);
             vesselType1Selected();
-                $('#BoatType2.b').val(data.boatType2);
-
-                vesselType2Selected();
-                updateExcess();
+            $('#BoatType2.b').val(data.boatType2);
+            vesselType2Selected();
+            updateExcess();
             updateEditBoat(data);
-               // $('#MooredType.b').val(data.WaterLocationMooringType);
             UpdateChosen();
-                $('#getDetailsModal').hide();
-            });
-};
+            $('#getDetailsModal').hide();
+        });
+    };
 
     function updateEditBoat(data) {
 
@@ -3520,7 +3455,7 @@ function showAccordionPanel(id, panelNo) {
         event.preventDefault();
         var boatUseCategory = $('#AddBoatUseCategory').val();
         var boatUseRaceCategory = $('#AddBoatUseRaceCategory').val();
-                var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
+        var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
 
         var result = true;
         if (boatUseCategory == "" ) {
@@ -3557,37 +3492,31 @@ function showAccordionPanel(id, panelNo) {
 
 
     function AddBoatUse(tabId, tableId) {
+        debugger;
         var informationId = $('#AnswerSheetId').serialize();
         $('#getBoatUseModal').show();
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("AddBoatUse", "Services")',
-        type: "POST",
-        data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
-    })
-    .done(function (data) {
-        //$.smallBox({
-        //    title: "Boat Use has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
-        $(tableId).trigger( 'reloadGrid' );
-        $('#tblCeasedBoatUse').trigger( 'reloadGrid' );
-        $('#SelectedBoatUse').trigger('chosen:updated');
-        $(tabId + " :input").val("");
-                $('#getBoatUseModal').hide();
-
-    })
+        $.ajax({
+            url: '@Url.Action("AddBoatUse", "Services")',
+            type: "POST",
+            data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
+        })
+        .done(function (data) {
+            debugger;
+            $(tableId).trigger( 'reloadGrid' );
+            $('#tblCeasedBoatUse').trigger( 'reloadGrid' );
+            $('#SelectedBoatUse').trigger('chosen:updated');
+            $(tabId + " :input").val("");
+            $('#getBoatUseModal').hide();
+        })
         .fail(function (jqXHR, textStatus, errorThrown) {
-                $('#getBoatUseModal').hide();
-
-        alert("There was an error while trying to save the Boat Use.");
-    });
+           debugger;
+            $('#getBoatUseModal').hide();
+            alert("There was an error while trying to save the Boat Use.");
+        });
     };
 
     function validateIP() {
-
+        debugger;
         if (!(document.getElementById("OrganisationTypeName").validity.valueMissing) && !(document.getElementById("organisationName").validity.valueMissing)
             && !(document.getElementById("organisationPhone").validity.valueMissing)) {
             addInterestedParty(event);
@@ -3597,8 +3526,8 @@ function showAccordionPanel(id, panelNo) {
 
 
     function addInterestedParty(event) {
-                            event.preventDefault();
-
+        debugger;
+        event.preventDefault();
         $('#getPartyModal').show();
         selectedInterestedParty = $('input[name=InsuranceAttribute]:checked').val();
         var Financial = false;
@@ -3636,23 +3565,18 @@ function showAccordionPanel(id, panelNo) {
         var z = $.grep([InterestedPartyName, InterestedPartyEmail, InterestedPartyPhone, OrganisationType,
             UserFName, UserLName, Email,insuranceAtrribute, Phone, IsAdmin, AnswerSheetId], Boolean).join("&");
         var z = z + "&IsAdmin=" + IsAdmin;
-            console.log(z);
+        console.log(z);
+        debugger;
             $.ajax({
-                url: '@Url.Action("AddInterestedParty", "Services")',
+                url: '@Url.Action("AddOrganisationInterestedPartyAPI", "Organisation")',
                 type: "POST",
                 data: z
             })
             .done(function (data) {
-                //$.smallBox({
-                //title: "Interested Party has been saved",
-                //color: "#5F895F",
-                //iconSmall: "fa fa-check bounce animated",
-                //timeout: 4000
-               // });
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
+                $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
 
                                 //$("#AddSelectedInterestedParty").multiSelect("select", data.iD);
@@ -3690,10 +3614,8 @@ function showAccordionPanel(id, panelNo) {
 
 
     function ValidateBoatUseModal() {
-
-
+        debugger;
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
-
         if (selectedBoatUseCategory == "Race" || selectedBoatUseCategory == "Both") {
 
             if (!(document.getElementById("BoatUseRaceCategoryModal").validity.valueMissing) && !(document.getElementById("BoatUseRaceUseSpinnakersModal").validity.valueMissing)) {
@@ -3707,9 +3629,9 @@ function showAccordionPanel(id, panelNo) {
         }
 
     };
-    function addBoatUseModal(event) {
-                                    event.preventDefault();
-
+    function addBoatUseModal(event) {   
+        debugger;
+        event.preventDefault();
          $('#getBoatUseModal').show();
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
         var race = false;
@@ -3734,9 +3656,7 @@ function showAccordionPanel(id, panelNo) {
         selectedBoatUseCategory = "";
         var informationId = $('#AnswerSheetId').serialize();
         if (live == true) {
-
-
-                $('#SelectedBoatUse').trigger('chosen:updated');
+            $('#SelectedBoatUse').trigger('chosen:updated');
             var boatUseEffectiveDate = $('#BoatUseLiveEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseLiveCeaseDateModal').serialize();
             var boatUseNotes = $('#BoatUseLiveNotesModal').serialize();
@@ -3753,14 +3673,7 @@ function showAccordionPanel(id, panelNo) {
                 data: z
             })
             .done(function (data) {
-                //$.smallBox({
-                //title: "Boat Use has been saved",
-                //color: "#5F895F",
-                //iconSmall: "fa fa-check bounce animated",
-                //timeout: 4000
-                //});
-
-
+                debugger;
                 console.log(data);
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
@@ -3769,22 +3682,16 @@ function showAccordionPanel(id, panelNo) {
                 $('#livingUseSection' + " :input").val("");
                 $('#racingUseSection' + " :input").val("");
                 $('#getBoatUseModal').hide();
-
-
             })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-
-
-                  $('#getBoatUseModal').hide();
-
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                debugger;
+                $('#getBoatUseModal').hide();
                 alert("There was an error while trying to save the Boat Use.");
 
             });
         }
 
         if (race == true) {
-
-
             var boatUseEffectiveDate = $('#BoatUseRaceEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseRaceCeaseDateModal').serialize();
             var boatUseNotes = $('#BoatUseRaceNotesModal').serialize();
@@ -3800,22 +3707,14 @@ function showAccordionPanel(id, panelNo) {
                 data: $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatuserace, boatuseliveonboard, boatusecategory, boatuseracecategory, boatUseAdditionalNotes, boatuseracespinnakers, informationId ], Boolean).join("&")
             })
                 .done(function (data) {
-
-                //$.smallBox({
-                //title: "Boat Use has been saved",
-                //color: "#5F895F",
-                //iconSmall: "fa fa-check bounce animated",
-                //timeout: 4000
-                //});
-
-
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
-                $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
-                $('#AddSelectedBoatUse').trigger('chosen:updated');
-                $('#livingUseSection' + " :input").val("");
-                $('#racingUseSection' + " :input").val("");
-                $('#getBoatUseModal').hide();
+                      debugger;
+                    $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                    $('#SelectedBoatUse').trigger('chosen:updated');
+                    $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                    $('#AddSelectedBoatUse').trigger('chosen:updated');
+                    $('#livingUseSection' + " :input").val("");
+                    $('#racingUseSection' + " :input").val("");
+                    $('#getBoatUseModal').hide();
 
 
             })
@@ -3830,13 +3729,11 @@ function showAccordionPanel(id, panelNo) {
         }
 
         if (live == false && race == false) {
-
-
+            debugger;
             $('#SelectedBoatUse').trigger('chosen:updated');
             var boatusecategory = "BoatUseCategory=NoRacingNoLiveOnBoard";
             var boatuseliveonboard = "BoatUseLiveOnBoard=False";
             var boatuserace = "BoatUseRace=False";
-
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
             console.log(boatUseEffectiveDate);
             var z = $.grep([boatuserace,boatuseliveonboard,boatusecategory, informationId], Boolean).join("&");
@@ -3847,27 +3744,18 @@ function showAccordionPanel(id, panelNo) {
                 data: z
             })
             .done(function (data) {
-                //$.smallBox({
-                //title: "Boat Use has been saved",
-                //color: "#5F895F",
-                //iconSmall: "fa fa-check bounce animated",
-                //timeout: 4000
-                //});
-
+                debugger;
                 console.log(data);
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
                 $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#getBoatUseModal').hide();
-
             })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-
-
-                $('#getBoatUseModal').hide();
-
-                alert("There was an error while trying to save the Boat Use.");
+                    debugger;
+                    $('#getBoatUseModal').hide();
+                    alert("There was an error while trying to save the Boat Use.");
             });
         }
             $('input[name=BoatUseCategory]').prop('checked', false);
@@ -3946,8 +3834,7 @@ function showAccordionPanel(id, panelNo) {
 async: true
     })
         .done(function (data) {
-            debugger;
-
+        debugger;
         $('#NamedPartyOrganisationId').val(data.id);
         $('#NPOrgName').val(data.organisationName);
         $('#NPOrgPhone').val(data.organisationPhone);
@@ -3957,66 +3844,56 @@ async: true
 	});
     };
 
-
-
     function EditBoatUse(classId, boatUseId) {
-                            event.preventDefault();
-
+        debugger;
+        event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
         var postData = {
-		'boatUseId': boatUseId,
-		'answerSheetId': _sheetId
-	};
-    $.ajax({
-        // change back once mono decides to fix
+		    'boatUseId': boatUseId,
+		    'answerSheetId': _sheetId
+	    };
+        $.ajax({
         url: '@Url.Action("GetBoatUse", "Services")',
         type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatUseId: boatUseId, answerSheetId : _sheetId })
-        data: postData,
-        async: true
-    })
-        .done(function (data) {
-
-        $('#BoatUseId.' + classId).val(data.boatUseId);
-        $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
-        $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
-        $('#BoatUseRace.' + classId).val(data.boatUseRace);
-        $('#BoatUseRaceCategory.' + classId).val(data.boatUseRaceCategory);
-        $('#BoatUseRaceUseSpinnakers.' + classId).val(data.boatUseRaceUseSpinnakers);
-        $('#BoatUseRaceNotes.' + classId).val(data.boatUseRaceNotes);
-        $('#BoatUseLiveNotes.' + classId).val(data.boatUseLiveNotes);
-        $('#BoatUseEffectiveDate.' + classId).val(data.boatUseEffectiveDate);
-        $('#BoatUseCeaseDate.' + classId).val(data.boatUseCeaseDate);
+        data: postData
+        }).done(function (data) {
+            debugger;
+            $('#BoatUseId.' + classId).val(data.boatUseId);
+            $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
+            $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
+            $('#BoatUseRace.' + classId).val(data.boatUseRace);
+            $('#BoatUseRaceCategory.' + classId).val(data.boatUseRaceCategory);
+            $('#BoatUseRaceUseSpinnakers.' + classId).val(data.boatUseRaceUseSpinnakers);
+            $('#BoatUseRaceNotes.' + classId).val(data.boatUseRaceNotes);
+            $('#BoatUseLiveNotes.' + classId).val(data.boatUseLiveNotes);
+            $('#BoatUseEffectiveDate.' + classId).val(data.boatUseEffectiveDate);
+            $('#BoatUseCeaseDate.' + classId).val(data.boatUseCeaseDate);
             $('#BoatUseCeaseReason.' + classId).val(data.boatUseCeaseReason);
-
             UpdateChosen();
             vesselUseCategory();
-                    $('#getDetailsModal').hide();
-
+            $('#getDetailsModal').hide();
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            $('#getDetailsModal').hide();
+            alert("Unable to get Vessel details.");
         });
-
-};
+    };                                          
 
     function EditRegisteredMotorVehicle(classId, vehicleId) {
-                            event.preventDefault();
-
+        event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         var postData = {
 		'vehicleId': vehicleId,
 		'answerSheetId': _sheetId
-	};
-               $('#getDetailsModal').show();
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("GetVehicle", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ vehicleId : vehicleId, answerSheetId : _sheetId })
-        data: postData,
-        async: true
-    })
+	    };
+        $('#getDetailsModal').show();
+        $.ajax({
+            url: '@Url.Action("GetVehicle", "Services")',
+            type: "Post",
+            data: postData,
+            async: true
+        })
         .done(function (data) {
 
         $('#getDetailsModal').hide();
@@ -4434,39 +4311,31 @@ function GetRegisteredMVDetails(elementBaseName)
     }
 
     function AddMotorVehicle(tabId, tableId) {
-
-    var registration = $('#Registration').serialize();
-    var informationId = $('#AnswerSheetId').serialize();
-     $('#AddTrailer').show();
+        debugger;
+        var registration = $('#Registration').serialize();
+        var informationId = $('#AnswerSheetId').serialize();
+         $('#AddTrailer').show();
     $.ajax({
-        // change back once mono decides to fix
         url: '@Url.Action("AddVehicle", "Services")',
         type: "POST",
         data: $.grep([$(tabId + " :input").serialize(), registration, informationId], Boolean).join("&")
     })
         .done(function (data) {
+            debugger;
             console.log(data);
             vdate = data.year;
             vmake = data.make;
             vmodel = data.vehicleModel;
-        var vid = "";
-        if (data.Validated===true) {
-            vid = data.registration;
-        } else {
-            vid = data.fleetNumber;
-        };
-
-        //$.smallBox({
-        //    title: "Vehicle (" + vdate + " " + vmake + " " + vmodel +") has been saved",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-       // });
-        // reload grid
-        $(tableId).trigger( 'reloadGrid' );
-        $('#tblCeasedRegisteredMV').trigger( 'reloadGrid' );
-            $('#tblTransferedRegisteredMV').trigger('reloadGrid');
-            $('#tblUnRegisteredMV').trigger('reloadGrid');
+            var vid = "";
+            if (data.Validated===true) {
+                vid = data.registration;
+            } else {
+                vid = data.fleetNumber;
+            };      
+            $(tableId).trigger( 'reloadGrid' );
+            $('#tblCeasedRegisteredMV').trigger( 'reloadGrid' );
+                $('#tblTransferedRegisteredMV').trigger('reloadGrid');
+                $('#tblUnRegisteredMV').trigger('reloadGrid');
 
 
         $('#Registration').val("");
@@ -4498,6 +4367,7 @@ function GetRegisteredMVDetails(elementBaseName)
 
     })
         .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
              $('#AddTrailer').hide();
         alert("There was an error while trying to save the Vehicle.");
     });
@@ -5125,10 +4995,10 @@ async: true
         }
     }
 
-    function onIPaddressSelect() {
-        $('#Addipeffectivedatesection').removeClass('hidden');
-        $('#ipeffectivedatesection').removeClass('hidden');
-    }
+    //function onIPaddressSelect() {
+    //    $('#Addipeffectivedatesection').removeClass('hidden');
+    //    $('#ipeffectivedatesection').removeClass('hidden');
+    //}
 
 
     function AddhideShowHullConstructionOther() {
@@ -5426,7 +5296,7 @@ async: true
     var adminUser = '#AdminUser';
 
     function vesselType1Selected() {
-
+        debugger;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         console.log(boatType1Selected);
         $('#excess').val('');
@@ -5436,7 +5306,7 @@ async: true
             $('#RiggingTypeSection').hide('2000');
             $('#MastTypeSection').hide('2000');
             constructionTypeCement.classList.add("hidden");
-                        //    $('#BoatLandLocationSection').hide('2000');
+            //    $('#BoatLandLocationSection').hide('2000');
             //$('#BoatWaterLocationSection').show('2000');
             $('#RegistrationSection').hide('2000');
             aucklandRego.classList.add("hidden");
@@ -5958,7 +5828,7 @@ async: true
     }
 
      function AddaddNewWaterLoc() {
-
+        debugger;
         var AddSelectedWaterLoc = AddboatWaterLoc.options[AddboatWaterLoc.selectedIndex].value;;
          if (AddSelectedWaterLoc == "add") {
              $('#AddothermarinSection').removeClass('hidden');
@@ -6171,6 +6041,7 @@ async: true
     }
 
     function vesselUseCategory() {
+        debugger;
         var boatusecategory = document.getElementById("BoatUseCategory");
         var selectedBoatUseCategory = boatusecategory.options[boatusecategory.selectedIndex].value;
         var boatUseLiveNotesSection = document.getElementById("BoatUseLiveNotesSection");
@@ -6188,33 +6059,36 @@ async: true
             $(SpinnakersSection).show('2000');
             $(boatUseRaceNotesSection).show('2000');
             $(boatUseLiveNotesSection).hide();
-
         }
     }
 
-    function AddvesselUseCategory() {
+    function AddBoatUseCategory() {
         var boatusecategory = document.getElementById("AddBoatUseCategory");
         var selectedBoatUseCategory = boatusecategory.options[boatusecategory.selectedIndex].value;
         var boatUseLiveNotesSection = document.getElementById("AddBoatUseLiveNotesSection");
-        var SpinnakersSection = document.getElementById("AddspinnakersSection")
-        var raceCategorySection = document.getElementById("AddRaceCategorySection")
-        var boatUseRaceNotesSection = document.getElementById("AddBoatUseRaceNotesSection")
+        var SpinnakersSection = document.getElementById("AddspinnakersSection");
+        var raceCategorySection = document.getElementById("AddRaceCategorySection");
+        var boatUseRaceNotesSection = document.getElementById("AddBoatUseRaceNotesSection");
+        debugger;
         if (selectedBoatUseCategory == "LiveOnBoard") {
-
-            $(boatUseLiveNotesSection).show('2000');
+            $(boatUseLiveNotesSection).show();
             $(SpinnakersSection).hide();
             $(raceCategorySection).hide();
             $(boatUseRaceNotesSection).hide();
-
-        } else if (selectedBoatUseCategory == "Race") {
-            $(raceCategorySection).show('2000');
-            $(boatUseLiveNotesSection).hide();
-            $(SpinnakersSection).show('2000');
-            $(boatUseRaceNotesSection).show('2000');
-            $(boatUseLiveNotesSection).hide();
         }
-
-    }
+        else if (selectedBoatUseCategory == "Race") {
+            $(raceCategorySection).show();
+            $(boatUseLiveNotesSection).hide();
+            $(SpinnakersSection).show();
+            $(boatUseRaceNotesSection).show();
+        }
+        else if (selectedBoatUseCategory == "NoRacingNoLiveOnBoard") {
+            $(raceCategorySection).hide();
+            $(boatUseLiveNotesSection).hide();
+            $(SpinnakersSection).hide();
+            $(boatUseRaceNotesSection).hide();
+        }
+    }     
 
     function AdminUpdated() {
         var AdminUser = $('#AdminSection');
@@ -6353,7 +6227,7 @@ async: true
             $('#addSection').addClass('hidden');
             $('#VesselTrailerSearch').show('2000');
             $('#trailerModalHairline3').show('2000');
-            $('#VesselTrailerMV').switchClass("col-sm-12 col-md-12 col-lg-12", "col-sm-6 col-md-6 col-lg-6");
+            //$('#VesselTrailerMV').switchClass("col-sm-12 col-md-12 col-lg-12", "col-sm-6 col-md-6 col-lg-6");
             if ($('#RegistrationModal').val() == "") {
                 clearAddRegTrailerModal();
             }
@@ -6382,7 +6256,7 @@ async: true
             $('#YearModal').attr("readonly", false);
             $('#MakeModal').attr("readonly", false);
             $('#ModelModal').attr("readonly", false);
-            $('#VesselTrailerMV').switchClass("col col-xs-12 col-sm-6 col-md-6 col-lg-6", "col col-xs-12 col-sm-12 col-md-12 col-lg-12");
+            //$('#VesselTrailerMV').switchClass("col col-xs-12 col-sm-6 col-md-6 col-lg-6", "col col-xs-12 col-sm-12 col-md-12 col-lg-12");
         }
         selectedTrailerChoice = "";
     }

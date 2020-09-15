@@ -189,6 +189,21 @@ namespace DealEngine.Domain.Entities
 
 
     }
+
+    public class InterestedPartyUnit : OrganisationalUnit
+    {
+        public InterestedPartyUnit() { }
+        public InterestedPartyUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        [Display(Name = "Type of Interested Party?")]
+        public virtual string PartyType { get; set; }
+    }
+
 }
 
-    
+
+

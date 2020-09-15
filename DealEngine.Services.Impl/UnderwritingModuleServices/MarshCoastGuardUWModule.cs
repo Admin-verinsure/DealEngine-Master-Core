@@ -183,13 +183,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
 
                 //Additional loading for BoatType1 (YachtsandCatamarans) + BoatUseRaceUseSpinnakers (Yes) + BoatUseRaceCategory (YachtClubSocialRacingupto50nm, Yachtracingupto200nm)
-                if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.BoatUseCategory == "Race" && ycbu.DateDeleted == null && !ycbu.Removed))
+                if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.BoatUseCategory == "Race" && ycbu.DateDeleted == null && !ycbu.Removed))
                 {
-                    if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "YachtClubSocialRacingupto50nm")) //BoatUseRaceCategory (YachtClubSocialRacingupto50nm)
+                    if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "YachtClubSocialRacingupto50nm")) //BoatUseRaceCategory (YachtClubSocialRacingupto50nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp50nm"]);
                     }
-                    else if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
+                    else if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp200nm"]);
                     }
@@ -1488,7 +1488,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status != "Pending")
                 {
                     if ((boat.BoatType1 == "CruisersandLaunches" || boat.BoatType1 == "YachtsandCatamarans")
-                        && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "LiveOnBoard" && ycbu.DateDeleted == null && !ycbu.Removed))
+                        && boat.BoatUses.Any(ycbu => ycbu.BoatUseCategory == "LiveOnBoard" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -1511,10 +1511,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseraceotheroption" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "Race" && ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.DateDeleted == null && !ycbu.Removed))
+                    if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUses.Any(ycbu => ycbu.BoatUseCategory == "Race" && ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
-                        if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") ||
-                            boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Category1Racing")) //BoatUseRaceCategory (Oceangoingracingover200nm, Category1Racing)
+                        if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") ||
+                            boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Category1Racing")) //BoatUseRaceCategory (Oceangoingracingover200nm, Category1Racing)
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseraceotheroption" && cref.DateDeleted == null).Status = "Pending";
                         }
