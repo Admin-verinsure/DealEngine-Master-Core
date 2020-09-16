@@ -31,7 +31,7 @@ namespace DealEngine.Domain.Entities
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
         public virtual string Status { get; set; }        
         public virtual string ReferenceId { get; set; }        
-        public virtual ClientInformationSheet PreviousInformationSheet { get; protected set; }        
+        public virtual ClientInformationSheet PreviousInformationSheet { get; set; }        
         public virtual ClientInformationSheet NextInformationSheet { get; protected set; }
 		public virtual bool IsRenewawl { get; set; }
         public virtual bool IsChange { get; set; }

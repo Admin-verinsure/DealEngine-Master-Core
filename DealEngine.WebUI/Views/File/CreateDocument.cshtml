@@ -1,119 +1,119 @@
 ﻿@model DealEngine.WebUI.Models.DocumentViewModel
 
-    <div id="content" class="container">
-        <div class="form-group">
-            <h1 class="page-title txt-color-blueDark">
-                <i class="fa-fw fa fa-home"></i>  <span>
-                    <a href="~/File/ManageDocuments?productId=@Model.ProductId"> My Documents</a>
-                    > Manage Documents
-                </span>
-            </h1>
-        </div>
-        <div class="form-group">
-            <span>
-                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("Index", "Home")'" id="backbutton"><i class="fa fa-home"></i> Back </a>
+<div id="content" class="container">
+    <div class="form-group">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/File/ManageDocuments?productId=@Model.ProductId"> My Documents</a>
+                > Manage Documents
             </span>
-        </div>
+        </h1>
+    </div>
+    <div class="form-group">
+        <span>
+            <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("Index", "Home")'" id="backbutton"><i class="fa fa-home"></i> Back </a>
+        </span>
+    </div>
 
-        <div class="form-group">
-            <div class="container">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Document</h2>
-                    </div>
-                    <div class="card-body">
-                        <form action="#" id="wizard-1" role="form" class="client-form container-fluid" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
-                            @Html.HiddenFor(m => m.ProductId)
-                            <div id="CreateDocsmartwizard" class="sw-main sw-theme-circles">
-                                <ul class="nav nav-tabs step-anchor">
-                                    <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Start</small></a></li>
-                                    <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Review</small></a></li>
-                                    <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Agree</small></a></li>
-                                </ul>
+    <div class="form-group">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Document</h2>
+                </div>
+                <div class="card-body">
+                    <form action="#" id="wizard-1" role="form" class="client-form container-fluid" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
+                        @Html.HiddenFor(m => m.ProductId)
+                        <div id="CreateDocsmartwizard" class="sw-main sw-theme-circles">
+                            <ul class="nav nav-tabs step-anchor">
+                                <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Start</small></a></li>
+                                <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Review</small></a></li>
+                                <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Agree</small></a></li>
+                            </ul>
 
-                                <div class="sw-container tab-content">
-                                    <div id="tab1" class="tab-pane step-content" style="display: block;">
-                                        <h3><strong>Details </strong> - Complete Information</h3>
-                                        @Html.HiddenFor(m => m.DocumentId)
-                                        <br />
-                                        <h3><strong>Setup </strong></h3>
+                            <div class="sw-container tab-content">
+                                <div id="tab1" class="tab-pane step-content" style="display: block;">
+                                    <h3><strong>Details </strong> - Complete Information</h3>
+                                    @Html.HiddenFor(m => m.DocumentId)
+                                    <br />
+                                    <h3><strong>Setup </strong></h3>
 
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.Name, new { style = "Width:100%", @placeholder = Model.Name + "Name", @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            @Html.TextAreaFor(m => m.Description, new { style = "Width:100%", @placeholder = Model.Description + "Description", @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    @if (Model.Name != "")
+                                    {
                                         <div class="form-group">
                                             <div class="input-group">
-                                                @Html.TextBoxFor(m => m.Name, new { style = "Width:100%", @placeholder = Model.Name + "Name", @class = "form-control" })
+                                                <select id="documentType" name="DocumentType" class="form-control input-lg">
+                                                    <option value="" selected="">-- Select --</option>
+                                                    <option value="0">Wording</option>
+                                                    <option value="1">Certificate</option>
+                                                    <option value="2">Schedule</option>
+                                                    <option value="3">Payment Confirmation</option>
+                                                    <option value="4">Invoice</option>
+                                                    <option value="5">Advisory</option>
+                                                    <option value="6">Sub-Certificate</option>
+                                                    <option value="7">Premium Advice</option>
+                                                </select>
                                             </div>
                                         </div>
-
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                @Html.TextAreaFor(m => m.Description, new { style = "Width:100%", @placeholder = Model.Description + "Description", @class = "form-control" })
-                                            </div>
-                                        </div>
-
-                                        @if (Model.Name != "")
-                                        {
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <select id="documentType" name="DocumentType" class="form-control input-lg">
-                                                        <option value="" selected="">-- Select --</option>
-                                                        <option value="0">Wording</option>
-                                                        <option value="1">Certificate</option>
-                                                        <option value="2">Schedule</option>
-                                                        <option value="3">Payment Confirmation</option>
-                                                        <option value="4">Invoice</option>
-                                                        <option value="5">Advisory</option>
-                                                        <option value="6">Sub-Certificate</option>
-                                                        <option value="7">Premium Advice</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div id="tab2" class="tab-pane step-content">
-                                        <h3><strong>Review </strong></h3>
-                                        @Html.TextAreaFor(m => m.Content, new { @class = "form-control" })
-                                    </div>
-                                    <div id="tab3" class="tab-pane step-content">
-                                        <div>
-                                            <div class="page-body">
-                                                <div class="head">
-                                                    <h3 style="align-content:center">Document Has Been Saved</h3>
-                                                    <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
-                                                </div>
+                                    }
+                                </div>
+                                <div id="tab2" class="tab-pane step-content">
+                                    <h3><strong>Review </strong></h3>
+                                    @Html.TextAreaFor(m => m.Content, new { @class = "form-control" })
+                                </div>
+                                <div id="tab3" class="tab-pane step-content">
+                                    <div>
+                                        <div class="page-body">
+                                            <div class="head">
+                                                <h3 style="align-content:center">Document Has Been Saved</h3>
+                                                <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="modal" id="ckmodal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Select an Image</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
-                    </div>
-                    <div class="modal-footer" style="display:flex;">
-                        <label for="selImg" style="float:left;">Selected Image: </label>
-                        <input type="text" id="selImg" name="selImg" value="" style="float:left; width:44%; margin-left:.5rem; margin-right:1rem;">
-                        <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <div class="modal" id="ckmodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Select an Image</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+                </div>
+                <div class="modal-footer" style="display:flex;">
+                    <label for="selImg" style="float:left;">Selected Image: </label>
+                    <input type="text" id="selImg" name="selImg" value="" style="float:left; width:44%; margin-left:.5rem; margin-right:1rem;">
+                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section pagespecific {
 
@@ -197,7 +197,7 @@
          });
     });
 
-    
+
 
     $(window).on("load", function () {
         debugger;

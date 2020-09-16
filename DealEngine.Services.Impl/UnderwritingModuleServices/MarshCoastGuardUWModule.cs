@@ -302,14 +302,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                                 }
                             }
 
-                            if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue && boat.BoatEffectiveDate > DateTime.MinValue)
-                            {
-                                if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue && boat.OriginalBoat.BoatEffectiveDate == boat.BoatEffectiveDate)
-                                {
-                                    preboatperiodindays = (boat.BoatExpireDate - boat.BoatEffectiveDate).Days;
-                                }
-                            }
-
                             boatFslPre = bvTermPre.FSL;
                             boatPremiumPre = bvTermPre.Premium;
                             boatExcessPre = bvTermPre.Excess;

@@ -15,7 +15,7 @@ namespace DealEngine.Domain.Entities.Abstracts
         public virtual Guid Id { get; set; }
 
         [DisplayName("Date Created")]
-		public virtual DateTime? DateCreated { get; protected set; }
+		public virtual DateTime? DateCreated { get; set; }
 
         [DisplayName("Date Deleted")]
 		public virtual DateTime? DateDeleted { get; set; }

@@ -411,20 +411,17 @@ namespace DealEngine.Services.Impl
 
             ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
             ClientProgramme PreClone = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
-            // = await CreateClientProgrammeFor(PreClone.BaseProgramme, createdBy, PreClone.Owner);
             ClientInformationSheet clientInformationSheet = new ClientInformationSheet(createdBy, PreClone.Owner, null);
             clientInformationSheet = cloneMapper.Map<ClientInformationSheet>(PreClone.InformationSheet);
             clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
             clientInformationSheet.IsChange = true;
             clientInformationSheet.Status = "Not Started";
-
-            ClientProgramme PostClone = cloneMapper.Map<ClientProgramme>(PreClone);
+            clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
+            PreClone.Agreements.Clear();
+            PreClone.DateCreated = DateTime.Now;
             PreClone.ChangeReason = changeReason;
             PreClone.InformationSheet = clientInformationSheet;
-            //PostClone.SubClientProgrammes = PreClone.SubClientProgrammes;
-            //PreClone.SubClientProgrammes.Clear();
             await Update(PreClone);
-            //await Update(PostClone);
 
             return PreClone;
 
