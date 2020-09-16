@@ -380,7 +380,7 @@ namespace DealEngine.WebUI.Controllers
                     clientList.Add(clientprogramme);
                 }
                 ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
-                model = await GetClientProgrammeListModel(user, clientList, true);
+                model = await GetClientProgrammeListModel(user, clientList, clientList.FirstOrDefault().BaseProgramme, true);
 
                 return View(model);
             }
@@ -391,10 +391,11 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList, bool isClient = false)
+        private async Task<ProgrammeItem> GetClientProgrammeListModel(User user, IList<ClientProgramme> clientList, Programme programme, bool isClient = false)
         {
             var clientProgramme = clientList.FirstOrDefault();
-            ProgrammeItem model = new ProgrammeItem(clientProgramme.BaseProgramme);
+            //ProgrammeItem model = new ProgrammeItem(clientProgramme.BaseProgramme);
+            ProgrammeItem model = new ProgrammeItem(programme);
             if (clientProgramme != null)
             {
                 if (!isClient)
@@ -563,7 +564,7 @@ namespace DealEngine.WebUI.Controllers
                 SubClientProgramme subClientprogramme = await _programmeService.GetSubClientProgrammebyId(subClientProgrammeId);
                 clientList.Add(subClientprogramme);
                 ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
-                model = await GetClientProgrammeListModel(user, clientList);
+                model = await GetClientProgrammeListModel(user, clientList, clientList.FirstOrDefault().BaseProgramme);
 
                 return View(model);
             }
@@ -588,8 +589,9 @@ namespace DealEngine.WebUI.Controllers
                 {
                     clientList = await _programmeService.GetClientProgrammesForProgramme(id);
                 }
-                ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
-                model = await GetClientProgrammeListModel(user, clientList);
+                //ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
+                ProgrammeItem model = new ProgrammeItem(programme);
+                model = await GetClientProgrammeListModel(user, clientList, programme);
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
 
                 return View(model);

@@ -2327,7 +2327,7 @@ function showAccordionPanel(id, panelNo) {
             $(tabId + " :input").val("");
         })
     .fail(function (jqXHR, textStatus, errorThrown) {
-        alert("There was an error while trying to save the Operator.");
+        alert("There was an error while trying to save the Skipper.");
         });
     };
 
@@ -2357,7 +2357,7 @@ function showAccordionPanel(id, panelNo) {
         })
         .done(function (data) {
             debugger;
-            setTimeout("alert('Operator has been saved');", 4000);
+            setTimeout("alert('Skipper has been saved');", 4000);
             $('#BoatOperator').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
             $("#BoatOperator.b [value='add']").remove();
             $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
@@ -2373,7 +2373,7 @@ function showAccordionPanel(id, panelNo) {
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
             $('#setOperatorModal').hide();
-            alert("There was an error while trying to save the Operator.");
+            alert("There was an error while trying to save the Skipper.");
         });
     };
 
