@@ -445,12 +445,24 @@ namespace DealEngine.WebUI.Controllers
                         {
                             Issubclientsubmitted = true;
                         }
-                        for (var index = 0; index < client.SubClientProgrammes.Count; index++)
+                        try
                         {
-                            if (client.SubClientProgrammes[index].InformationSheet.Status != "Submitted")
+                            if (client.SubClientProgrammes.Any(s => s.InformationSheet.Status != "Submitted"))
+                            {
                                 Issubclientsubmitted = false;
-
+                            }
                         }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                            
+                        //for (var index = 0; index < client.SubClientProgrammes.Count; index++)
+                        //{
+                        //    if (client.SubClientProgrammes[index].InformationSheet.Status != "Submitted")
+                        //        Issubclientsubmitted = false;
+
+                        //}
                         model.Deals.Add(new DealItem
                         {
                             Id = client.Id.ToString(),
@@ -565,7 +577,6 @@ namespace DealEngine.WebUI.Controllers
                 clientList.Add(subClientprogramme);
                 ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 model = await GetClientProgrammeListModel(user, clientList, clientList.FirstOrDefault().BaseProgramme);
-
                 return View(model);
             }
             catch (Exception ex)

@@ -31,7 +31,7 @@ namespace DealEngine.Domain.Entities
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
         public virtual string Status { get; set; }        
         public virtual string ReferenceId { get; set; }        
-        public virtual ClientInformationSheet PreviousInformationSheet { get; protected set; }        
+        public virtual ClientInformationSheet PreviousInformationSheet { get; set; }        
         public virtual ClientInformationSheet NextInformationSheet { get; protected set; }
 		public virtual bool IsRenewawl { get; set; }
         public virtual bool IsChange { get; set; }
@@ -147,40 +147,42 @@ namespace DealEngine.Domain.Entities
 
 
 
-        public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
+        public virtual ClientInformationSheet CloneForUpdate (User cloningUser, IMapper mapper)
 		{
 			ClientInformationSheet newSheet = new ClientInformationSheet (cloningUser, Owner, null);
-            try { 
-                
-            //newSheet = mapper.Map<ClientInformationSheet>(this);
-            newSheet.PreviousInformationSheet = this;
-			newSheet.Product = Product;
-			NextInformationSheet = newSheet;
+            try {
+                newSheet = mapper.Map<ClientInformationSheet>(this);
 
-                foreach (ClientInformationAnswer answer in Answers)
-                    newSheet.Answers.Add(answer.CloneForNewSheet(newSheet));
+                //newSheet = mapper.Map<ClientInformationSheet>(this);
+                newSheet.PreviousInformationSheet = this;
+                NextInformationSheet = newSheet;
+                //newSheet.Product = Product;
 
-                foreach (Location location in Locations)
-                    newSheet.AddLocation(location.CloneForNewSheet(newSheet));
 
-                foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
-                    newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
+                //foreach (ClientInformationAnswer answer in Answers)
+                //    newSheet.Answers.Add(answer.CloneForNewSheet(newSheet));
 
-                foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
-                    newSheet.AddVehicle(vehicle.CloneForNewSheet(newSheet));
+                //foreach (Location location in Locations)
+                //    newSheet.AddLocation(location.CloneForNewSheet(newSheet));
 
-                foreach (Boat boat in Boats.Where(b => !b.Removed && b.DateDeleted == null))
-                    newSheet.AddBoat(boat.CloneForNewSheet(newSheet));
+                //foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
+                //    newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
 
-                foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
-                    newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
+                //foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
+                //    newSheet.AddVehicle(vehicle.CloneForNewSheet(newSheet));
 
-                foreach (Organisation org in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
-                    newSheet.Organisation.Add(org);
+                //foreach (Boat boat in Boats.Where(b => !b.Removed && b.DateDeleted == null))
+                //    newSheet.AddBoat(boat.CloneForNewSheet(newSheet));
 
-                // foreach (RoleData role in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
-                newSheet.RoleData = RoleData;
-                newSheet.RevenueData = RevenueData;
+                //foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                //    newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
+
+                //foreach (Organisation org in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                //    newSheet.Organisation.Add(org);
+
+                //// foreach (RoleData role in Organisation.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                //newSheet.RoleData = RoleData;
+                //newSheet.RevenueData = RevenueData;
 
             }
             catch(Exception ex)
@@ -192,8 +194,8 @@ namespace DealEngine.Domain.Entities
 
 		public virtual ClientInformationSheet CloneForRenewal (User renewingUser, IMapper mapper)
 		{
-			ClientInformationSheet sheet = CloneForUpdate(renewingUser);
-			sheet.IsRenewawl = true;
+			ClientInformationSheet sheet = CloneForUpdate(renewingUser, mapper);
+			sheet.IsRenewawl = true;            
 			return sheet;
 		}
 

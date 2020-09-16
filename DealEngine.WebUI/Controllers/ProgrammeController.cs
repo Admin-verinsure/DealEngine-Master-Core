@@ -1,23 +1,22 @@
-﻿using ElmahCore;
+﻿using AutoMapper;
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.FluentNHibernate;
+using DealEngine.Infrastructure.Payment.EGlobalAPI;
+using DealEngine.Services.Interfaces;
+using DealEngine.WebUI.Helpers;
+using DealEngine.WebUI.Models;
+using DealEngine.WebUI.Models.ProductModels;
+using DealEngine.WebUI.Models.Programme;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DealEngine.Domain.Entities;
-using DealEngine.Infrastructure.FluentNHibernate;
-using AutoMapper;
-using DealEngine.Services.Interfaces;
-using SystemDocument = DealEngine.Domain.Entities.Document;
-using Microsoft.AspNetCore.Mvc;
-using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Models.Programme;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using DealEngine.WebUI.Models.ProductModels;
 using System.Threading.Tasks;
-using DealEngine.Infrastructure.Payment.EGlobalAPI;
-using Microsoft.Extensions.Logging;
-using DealEngine.WebUI.Helpers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
+using SystemDocument = DealEngine.Domain.Entities.Document;
 //using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace DealEngine.WebUI.Controllers
@@ -1150,6 +1149,45 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
+
+        [HttpPost]
+        public async Task<IActionResult> selectedParty(Guid selectedParty, Guid informationId)
+        {
+            List<PartyUserViewModel> userPartyList = new List<PartyUserViewModel>();
+            PartyUserViewModel model = new PartyUserViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(informationId);
+                Organisation organisation = await _organisationService.GetOrganisation(selectedParty);
+
+                if ("organisation" != null)
+                {
+                    var userList = await _userService.GetAllUserByOrganisation(organisation);
+                    foreach (var userOrg in userList)
+                    {
+                        userPartyList.Add(new PartyUserViewModel()
+                        {
+                            Name = userOrg.FullName,
+                            Id = userOrg.Id.ToString(),
+                            Email = userOrg.Email,
+                        });
+                    }
+                }
+
+                return Json(userPartyList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> AddselectedParty(IFormCollection collection)
         {            
@@ -1240,7 +1278,8 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }          
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> IssueNotification(Guid Id, String Title)
@@ -1253,22 +1292,27 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
+                model.Id = Id;
+                model.Name = Title;
+                model.Programme = programme;
                 model = new ProgrammeInfoViewModel(null, programme, null);
                 List<SelectListItem> usrlist = new List<SelectListItem>();
-                foreach(var org in programme.Parties)
-                {
-                    List<User> userList = await _userService.GetAllUserByOrganisation(org);
+                //foreach(var org in programme.ClientProgrammes)
+                //{
 
-                    foreach (var userOrg in userList)
-                    {
-                        usrlist.Add(new SelectListItem()
-                        {
-                            Selected = false,
-                            Text = userOrg.FullName,
-                            Value = userOrg.Email,
-                        });
-                    }
-                }
+                //    List<User> userList = await _userService.GetAllUserByOrganisation(org.Owner);
+
+                //    foreach (var userOrg in userList)
+                //    {
+                //        usrlist.Add(new SelectListItem()
+                //        {
+                //            Selected = false,
+                //            Text = userOrg.FullName,
+                //            Value = userOrg.Email,
+                //        });
+                //    }
+                //}
+                //model.OrgUser = usrlist;
 
                 ViewBag.Title = "Add/Edit Programme Email Template";
 

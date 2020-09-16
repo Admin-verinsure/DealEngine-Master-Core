@@ -163,6 +163,7 @@ namespace DealEngine.WebUI.Models
 		public bool IsSubclientEnabled { get; set; }
 		public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; internal set; }
+		public ChangeReason ChangeReason { get; set; }
     }
 
 	public class TaskItem : BaseViewModel

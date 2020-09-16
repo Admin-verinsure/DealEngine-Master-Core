@@ -21,7 +21,6 @@
                             @*<script src="~/jquery/jquery.min.js"></script>*@
                             <script type="text/javascript">
                                 $(window).on('load', function () {
-                                    debugger;
 						    $("#tblUnRegisteredMV").jqGrid({
 						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=false&removed=false&transfered=false",
 						        datatype: "xml",
