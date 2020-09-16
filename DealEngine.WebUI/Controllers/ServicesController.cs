@@ -954,6 +954,33 @@ namespace DealEngine.WebUI.Controllers
         #endregion
 
         #region Locations
+        [HttpPost]
+        public async Task<IActionResult> LocationTableRefreshAPI(IFormCollection collection)
+        {
+            User user = null;
+            
+            var dictionary = new Dictionary<string, string>();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+            foreach(var location in sheet.Locations)
+            {
+
+                //string editbutton = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('"+location.Id+"', '"+location.LocationType+"', '"+ location.CommonName+ "', '"+location.Street+"', '"+ location.City + "', '"+ location.Country + "', '"+ location.Suburb + "', '"+location.Postcode+"')\"><i class=\"fa fa-edit\"></i> Edit</button>";
+                
+                //string removebutton = 
+                
+                //dictionary.Add("editButton", editbutton);
+                //if (!dictionary.ContainsKey("deleteButton"))
+                //    dictionary.Add("deleteButton", removebutton);
+
+                //dictionary["deleteButton"].a(removebutton);
+                
+                //if (!dictionary.ContainsKey("editButton"))
+                //    dictionary.Add("editButton", removebutton);
+
+                //dictionary["editButton"].Add(removebutton);
+            }
+            return Json(sheet.Locations);
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddLocation(IFormCollection collection)

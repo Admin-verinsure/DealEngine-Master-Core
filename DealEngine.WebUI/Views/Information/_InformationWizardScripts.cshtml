@@ -2356,8 +2356,6 @@ function showAccordionPanel(id, panelNo) {
             data: postdata
         })
         .done(function (data) {
-            debugger;
-            setTimeout("alert('Skipper has been saved');", 4000);
             $('#BoatOperator').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
             $("#BoatOperator.b [value='add']").remove();
             $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
@@ -2369,6 +2367,7 @@ function showAccordionPanel(id, panelNo) {
             $('#addOperatorModal' + " :input").val("");
             UpdateChosen();
             $('#setOperatorModal').hide();
+            NamedPartyTableRefreshAPI(data, "Skipper");
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -2387,7 +2386,6 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function AddLandLocModal(event, storageType, storageDescription, location) {
-        debugger;
         event.preventDefault();
         var buildingCategory = $(storageType).serialize();
         var buildingName = $(storageDescription).serialize();
@@ -2401,7 +2399,6 @@ function showAccordionPanel(id, panelNo) {
             data: postdata
         })
             .done(function (data) {
-                debugger;
                 console.log(data);
                 $('#BoatLandLocation.b').append($('<option>', { value: data.buildingId, text: data.buildingCategory + ", " + data.locationStreet }));
                 $("#BoatLandLocation.b [value='add']").remove();
@@ -2518,18 +2515,17 @@ function showAccordionPanel(id, panelNo) {
              document.getElementById("countrydetails").value = countryVal;
              document.getElementById("suburbdetails").value = suburbVal;
              document.getElementById("postcodedetails").value = postCodeVal;
-            debugger;
+            
 
              $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
                 type: "POST",
                 data: $("#tab_1 :input").serialize({ json: true })
             })
-                 .done(function (data) {
-                     debugger;
-                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, data);
-                     closeLocModal();
-                     document.getElementById("LocationViewModel").reset();
+                 .done(function (locationId) {                     
+                     AddLocModal(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId);
+                     closeLocModal(); 
+                     LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId);
                 })
                 .fail(function (a, s, d) {
                     debugger;
@@ -2539,7 +2535,6 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, locationId) {
-        debugger;
         //$('#getLandLocModal').show();
         var street = streetLoc;
         var suburb = suburbLoc;
@@ -3572,44 +3567,37 @@ function showAccordionPanel(id, panelNo) {
                 type: "POST",
                 data: z
             })
-            .done(function (data) {
+                .done(function (data) {
+                    $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+                    $('#SelectedInterestedParty').trigger('chosen:updated');
+                    $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+                    $('#AddSelectedInterestedParty').trigger('chosen:updated');
+                    $('#AddSelectedInterestedParty').trigger('refresh');
+                    $('#FinancialSection').addClass('hidden');
+                    $('#FinancialSection').addClass('hidden');
+                    $('#PrivateSection').addClass('hidden');
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
-                $('#SelectedInterestedParty').trigger('chosen:updated');
-                $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
-                $('#AddSelectedInterestedParty').trigger('chosen:updated');
+                    var radList = document.getElementsByName('InsuranceAttribute');
+                    for (var i = 0; i < radList.length; i++) {
+                        (radList[i]).checked = false;
+                    }
 
-                                //$("#AddSelectedInterestedParty").multiSelect("select", data.iD);
-                $('#AddSelectedInterestedParty').trigger('refresh');
-
-                $('#FinancialSection').addClass('hidden');
-                $('#FinancialSection').addClass('hidden');
-                $('#PrivateSection').addClass('hidden');
-
-                var radList = document.getElementsByName('InsuranceAttribute');
-                   for (var i = 0; i < radList.length; i++) {
-                       (radList[i]).checked = false;
-                }
-
-                 var radList = document.getElementsByName('IsAdmin');
-                   for (var i = 0; i < radList.length; i++) {
-                       (radList[i]).checked = false;
-                }
-               $('#AdminSection' + " :input").val("");
-               $('#FinancialSection' + " :input").val("");
-                UpdateChosen();
-                $('#getPartyModal').hide();
-                $('#Addipeffectivedatesection').removeClass('hidden');
-                $('#ipeffectivedatesection').removeClass('hidden');
-
-
-            })
+                    var radList = document.getElementsByName('IsAdmin');
+                    for (var i = 0; i < radList.length; i++) {
+                        (radList[i]).checked = false;
+                    }
+                    $('#AdminSection' + " :input").val("");
+                    $('#FinancialSection' + " :input").val("");
+                    UpdateChosen();
+                    $('#getPartyModal').hide();
+                    $('#Addipeffectivedatesection').removeClass('hidden');
+                    $('#ipeffectivedatesection').removeClass('hidden');
+                    NamedPartyTableRefreshAPI(data, "Interested Party");
+                })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                $('#getPartyModal').hide();
-
-                alert("There was an error while trying to save the Boat Use.");
-            });
-
+                    $('#getPartyModal').hide();
+                    alert("There was an error while trying to save the Boat Use.");
+                });
     }
 
 
