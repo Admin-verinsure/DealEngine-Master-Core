@@ -477,6 +477,7 @@ namespace DealEngine.WebUI.Controllers
             return Json(document.Id);
         }
 
+
       
         [HttpGet]
 		public async Task<IActionResult> CreateDocument (string id, string productId)
