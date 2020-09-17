@@ -459,12 +459,12 @@ namespace DealEngine.Services.Impl
                     //drbv4["Year"] = bVTerm.YearOfManufacture;
                     //drbv4["Make"] = bVTerm.BoatMake;
                     //drbv4["Model"] = bVTerm.BoatModel;
-                    drbv4["Yacht Racing Risk"] = "Not Included";
+                    drbv4["Excess"] = "Not Included";
                     if (bVTerm.Boat.BoatType1 == "YachtsandCatamarans" && bVTerm.Boat.BoatUses.Where(ycbu => ycbu.BoatUseCategory == "Race" && !ycbu.Removed && ycbu.DateDeleted == null).Count() > 0)
                     {
                         foreach (BoatUse boatuse in bVTerm.Boat.BoatUses)
                         {
-                            drbv4["Yacht Racing Risk"] = "$2,500";
+                            drbv4["Excess"] = "$2,500";
                         }
                     }
                     dtbv4.Rows.Add(drbv4);
