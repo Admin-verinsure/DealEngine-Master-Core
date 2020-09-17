@@ -636,7 +636,7 @@ namespace DealEngine.WebUI.Controllers
 
                     }
                 }
-                //Active = await _httpClientService.GetEglobalStatus();
+                Active = await _httpClientService.GetEglobalStatus();
                 model.EGlobalIsActiveOrNot = (Active == "ACTIVE") ? true : false;
                 
                 return View(model);
