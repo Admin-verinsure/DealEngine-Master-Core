@@ -477,6 +477,7 @@ namespace DealEngine.WebUI.Controllers
             return Json(document.Id);
         }
 
+
       
         [HttpGet]
 		public async Task<IActionResult> CreateDocument (string id, string productId)
@@ -514,6 +515,7 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
 
 		[HttpPost]
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)

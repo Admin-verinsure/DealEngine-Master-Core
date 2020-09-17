@@ -248,8 +248,13 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "OTAlert") {
-                var OTAlert = "Please ensure that you provide details in the notification section";
-                Value = ShowAlert(Value, OTAlert);
+                debugger;
+                var sheetstatus = document.getElementById("ClientInformationSheet_Status").value;
+                if (sheetstatus == "Started") {
+                   var OTAlert = "Please ensure that you provide details in the notification section";
+                   Value = ShowAlert(Value, OTAlert);
+                }
+               
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);

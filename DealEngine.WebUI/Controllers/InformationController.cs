@@ -866,7 +866,7 @@ namespace DealEngine.WebUI.Controllers
                         if (typeof(DateTime) == property.PropertyType)
                         {
                             var date = DateTime.Parse(answer.Value);
-                            property.SetValue(reflectModel, date.ToString("dd/MM/yyyy"));
+                            property.SetValue(reflectModel, date);
                         }
                         if (typeof(DateTime?) == property.PropertyType)
                         {

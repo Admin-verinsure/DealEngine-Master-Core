@@ -202,7 +202,7 @@
                                           + "</div>" + "<div style='border-style : groove;' >"+ "<h2>Fee Income / Activities</h2>" + revenue1 +revenue2+revenue3
                                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 +role2 
                                             //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
-                                              + "</div>"+  "</br></br><hr><hr></br><h2>Projects </h2></br>" + projectdetails + "<div style='border-style : groove; page-break-before: always; page-break-after: always;' >" + professional
+                                              + "</div>"+  "</br></br><hr><hr></br><h2>Projects </h2></br>" + projectdetails + "<div style='border-style : groove; page-break-before: always;' >" + professional
                                                  + "</div>" + "<div style='border-style : groove;' >" + statutory
                                                  + "</div>" + "<div style='border-style : groove;' >" + employers
                                                  + "</div>" + "<div style='border-style : groove;' >" + employment
@@ -212,8 +212,13 @@
                                                  + "</div>" + "<div style='border-style : groove;' >" + claims
                                                  + "</div>" + "<div style='border-style : groove;' >"+ "<h2>Notifications </h2>" + notifications
                                                  + "</div>" + "<div style='border-style : groove;' >"+ "<h2>Limits Selected </h2>" + limitsselected
-                                                 + "</div>" + "<div style='border-style : groove;' >"+ "<h2>Declaration </h2>" + declaration;
+                    + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
 
+                reportstr = reportstr.replaceAll('“', "&quot");
+                reportstr = reportstr.replaceAll('”', "&quot");
+                reportstr = reportstr.replaceAll("’", "&#39 ");
+                reportstr = reportstr.replaceAll(" – ", "--");
+               
                 var postData = { Reportstr: reportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
 
                   $.ajax({

@@ -6,8 +6,9 @@
             <div class="col-9">
                 @Html.LabelFor(m => m.GeneralViewModel.PolicyDate)
             </div>
-            <div class="col-3">                
-                @Html.TextBoxFor(m => m.GeneralViewModel.PolicyDate, new { @class = "form-control", onblur = "(this.type='text')", onfocus = "(this.type='date')", onchange = "OnChange(this.id, this.name)", @required = "", @type = "text" })
+            <div class="col-3">           
+                
+                @Html.TextBoxFor(m => m.GeneralViewModel.PolicyDate, "{0:yyyy-MM-dd}", new { @class = "form-control", onblur = "(this.type='text')", onfocus = "(this.type='date')", onchange = "OnChange(this.id, this.name)", @required = "", @type = "text" })
             </div>
         </div>
     </div>
