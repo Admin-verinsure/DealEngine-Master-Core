@@ -409,7 +409,7 @@ namespace DealEngine.Services.Impl
                 //dtbv4.Columns.Add("Year");
                 //dtbv4.Columns.Add("Make");
                 //dtbv4.Columns.Add("Model");
-                dtbv4.Columns.Add("Yacht Racing Risk");
+                dtbv4.Columns.Add("Excess");
 
                 DataTable dtbv5 = new DataTable();
                 dtbv5.Columns.Add("Name");
@@ -460,11 +460,11 @@ namespace DealEngine.Services.Impl
                     //drbv4["Make"] = bVTerm.BoatMake;
                     //drbv4["Model"] = bVTerm.BoatModel;
                     drbv4["Yacht Racing Risk"] = "Not Included";
-                    if (bVTerm.Boat.BoatType1 == "YachtsandCatamarans" && bVTerm.Boat.BoatUse.Where(ycbu => ycbu.BoatUseCategory == "Race" && !ycbu.Removed && ycbu.DateDeleted == null).Count() > 0)
+                    if (bVTerm.Boat.BoatType1 == "YachtsandCatamarans" && bVTerm.Boat.BoatUses.Where(ycbu => ycbu.BoatUseCategory == "Race" && !ycbu.Removed && ycbu.DateDeleted == null).Count() > 0)
                     {
-                        foreach (BoatUse boatuse in bVTerm.Boat.BoatUse)
+                        foreach (BoatUse boatuse in bVTerm.Boat.BoatUses)
                         {
-                            drbv4["Yacht Racing Risk"] = "Included";
+                            drbv4["Yacht Racing Risk"] = "$2,500";
                         }
                     }
                     dtbv4.Rows.Add(drbv4);
@@ -921,7 +921,7 @@ namespace DealEngine.Services.Impl
                         //    TimeZoneInfo.ConvertTimeFromUtc(eGlobalResponse.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
-                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString().PadLeft(3, '0')));
                     }
                 }
             }

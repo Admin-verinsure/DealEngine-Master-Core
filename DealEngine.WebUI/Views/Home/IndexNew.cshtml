@@ -113,13 +113,13 @@
                                     <tbody>
                                         @foreach (var item in Model.ProgrammeItems)
                                         {
-                                            if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
+                                            if (!string.IsNullOrWhiteSpace(item.Programme.Claim))
                                             {
-                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
+                                                if (User.HasClaim(item.Programme.Claim, item.Programme.Claim) || User.IsInRole("TCUser"))
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @item.Name
+                                                            @item.Programme.Name
                                                         </td>
                                                         <td>
                                                             @foreach (var lang in item.Languages)
@@ -128,7 +128,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -137,7 +137,7 @@
                                             {
                                                 <tr>
                                                     <td>
-                                                        @item.Name
+                                                        @item.Programme.Name
                                                     </td>
                                                     <td>
                                                         @foreach (var lang in item.Languages)
@@ -146,7 +146,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -183,13 +183,13 @@
                                     <tbody>
                                         @foreach (var item in Model.ProgrammeItems)
                                         {
-                                            if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
+                                            if (!string.IsNullOrWhiteSpace(item.Programme.Claim))
                                             {
-                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
+                                                if (User.HasClaim(item.Programme.Claim, item.Programme.Claim) || User.IsInRole("TCUser"))
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @item.Name
+                                                            @item.Programme.Name
                                                         </td>
                                                         <td>
                                                             @foreach (var lang in item.Languages)
@@ -198,7 +198,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -207,7 +207,7 @@
                                             {
                                                 <tr>
                                                     <td>
-                                                        @item.Name
+                                                        @item.Programme.Name
                                                     </td>
                                                     <td>
                                                         @foreach (var lang in item.Languages)
@@ -216,7 +216,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }

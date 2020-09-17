@@ -1,5 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
+
 <div id="AddOrganisation">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" id="tab1">
@@ -52,9 +53,9 @@
                                 Owner
                             </td>
                             @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
-                                Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                                Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
-                        )
+                               Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+                               Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
+                       )
                             {
                                 <td>
                                 </td>
@@ -65,7 +66,7 @@
                     }
                     @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.Id != Model.ClientInformationSheet.Owner.Id && o.Removed != true).ToList())
                     {
-                <tr id="@organisation.Id">
+                <tr id="@organisation.Id">                    
                     <td>
                         @{
                             bool ValidBackEndEmail = false;
@@ -178,6 +179,12 @@
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.PlannerUnit.GetType().AssemblyQualifiedName, new { @id = "PlannerUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZPI_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "First Mate Cover")
+                {
+
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
                 }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>

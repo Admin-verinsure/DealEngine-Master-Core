@@ -270,7 +270,8 @@ namespace DealEngine.Services.Impl
                     }
                     else
                     {
-                        User = new User(Creator, Guid.NewGuid(), collection);
+                        if(!string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName))
+                            User = new User(Creator, Guid.NewGuid(), collection);
                     }
                 }
                 List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);

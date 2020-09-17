@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
@@ -22,7 +23,7 @@ namespace DealEngine.WebUI.Models
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             OTViewModel = new OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
-            DateViewModel = new DateViewModel();
+            GeneralViewModel = new GeneralViewModel();
             User = CurrentUser;
             Programme = clientInformationSheet.Programme.BaseProgramme;
             RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
@@ -49,6 +50,7 @@ namespace DealEngine.WebUI.Models
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
+        public List<BoatUse> BoatUsesList { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
@@ -72,7 +74,7 @@ namespace DealEngine.WebUI.Models
         public ClientAgreement ClientAgreement { get; internal set; }
         public OTViewModel OTViewModel { get; internal set; }
         public IPViewModel IPViewModel { get; internal set; }
-        public DateViewModel DateViewModel { get; internal set; }
+        public GeneralViewModel GeneralViewModel { get; internal set; }
 
         
     }
@@ -1209,9 +1211,17 @@ namespace DealEngine.WebUI.Models
 
     }
 
-    public class DateViewModel
+    public class GeneralViewModel
     {
-        public string DateSelected { get; set; }
+        public GeneralViewModel()
+        {
+            if(PolicyDate == DateTime.MinValue)
+            {
+                PolicyDate = DateTime.Now;
+            }
+        }
+        [Display(Name = "Policy Date")]
+        public DateTime PolicyDate { get; set; }
 
     }
 }

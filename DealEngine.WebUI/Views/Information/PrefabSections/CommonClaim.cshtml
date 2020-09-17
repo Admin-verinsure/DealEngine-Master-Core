@@ -1,5 +1,4 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-
     @*
         form conversion later
         <div id="AddClaimNotification">
@@ -303,22 +302,20 @@
                                     <input class="form-control cl" data-type="TEXTBOX" data-name="Claimant" id="Claimant" name="Claimant" placeholder="Name of Claimant" value="">
                                 </label>
                                 <p class="validationContainer" id="validateClaimant"></p>
-
                             </section>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Approx Date of Loss</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="ClaimDateOfLoss" type="text">
+                                    <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="Startdate form-control cl" data-dateformat="dd/mm/yy" id="ClaimDateOfLoss" type="text">
                                 </label>
                                 <p class="validationContainer" id="validateClaimDateOfLoss"></p>
-
                             </section>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Notification Date</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="ClaimNotifiedDate" placeholder="Notification Date" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="ClaimNotifiedDate" type="text">
+                                    <input name="ClaimNotifiedDate" placeholder="Notification Date" class="Startdate form-control cl" id="ClaimNotifiedDate" type="text">
                                 </label>
                                 <p class="validationContainer" id="validateClaimNotifiedDate"></p>
 
@@ -538,7 +535,7 @@
                                 <label class="label required">Approx Date of Loss</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="Startdate form-control cl" data-dateformat="dd/mm/yy" id="AddClaimDateOfLoss" type="text">
+                                    <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="Startdate form-control cl" id="AddClaimDateOfLoss" type="text">
                                 </label>
                                 <p class="validationContainer" id="AddvalidateClaimDateOfLoss"></p>
 
@@ -547,7 +544,7 @@
                                 <label class="label required">Notification Date</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="ClaimNotifiedDate" placeholder="Notification Date" class=" Startdate form-control cl" data-dateformat="dd/mm/yy" id="AddClaimNotifiedDate" type="text">
+                                    <input name="ClaimNotifiedDate" placeholder="Notification Date" class=" Startdate form-control cl" id="AddClaimNotifiedDate" type="text">
                                 </label>
                                 <p class="validationContainer" id="AddvalidateClaimNotifiedDate"></p>
 

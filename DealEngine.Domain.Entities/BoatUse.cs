@@ -16,22 +16,12 @@ namespace DealEngine.Domain.Entities
         {
             BoatUseCategory = boatUseCategory;
         }
-        public virtual IList<Boat> Boat
-        {
-            get;
-            set;
-        }
-        public virtual BoatUse OriginalBoatUse
-        {
-            get;
-            protected set;
-        }
 
-        public virtual ClientInformationSheet ClientInformationSheet
-        {
-            get;
-            set;
-        }
+        //public virtual BoatUse OriginalBoatUse
+        //{
+        //    get;
+        //    protected set;
+        //}
 
         public virtual string BoatUseCategory
         {
@@ -116,12 +106,9 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        
+
         public virtual BoatUse CloneForNewSheet(ClientInformationSheet newSheet)
         {
-            if (ClientInformationSheet == newSheet)
-                throw new Exception("Cannot clone boat use for original information");
-
             BoatUse newBoatUse = new BoatUse(newSheet.CreatedBy, BoatUseCategory);
             newBoatUse.BoatUseLiveOnBoard = BoatUseLiveOnBoard;
             newBoatUse.BoatUseRace = BoatUseRace;
@@ -138,7 +125,7 @@ namespace DealEngine.Domain.Entities
                 newBoatUse.BoatUseInceptionDate = BoatUseInceptionDate;
             if (BoatUseExpireDate > DateTime.MinValue)
                 newBoatUse.BoatUseExpireDate = BoatUseExpireDate;
-            newBoatUse.OriginalBoatUse = this;
+            //newBoatUse.OriginalBoatUse = this;
             return newBoatUse;
         }
     }

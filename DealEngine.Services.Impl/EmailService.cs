@@ -269,6 +269,7 @@ namespace DealEngine.Services.Impl
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
             email.ReplyTo(sender.Email);
+            email.CC(sender.Email);
             email.WithSubject(systememailsubject);
             email.WithBody(systememailbody);
             email.UseHtmlBody(true);          

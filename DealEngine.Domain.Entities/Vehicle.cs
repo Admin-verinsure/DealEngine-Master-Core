@@ -225,9 +225,7 @@ namespace DealEngine.Domain.Entities
 		#endregion
 
 		public virtual Vehicle CloneForNewSheet (ClientInformationSheet newSheet)
-		{
-			if (ClientInformationSheet == newSheet)
-				throw new Exception ("Cannot clone vehicle for original information");
+		{		
 
 			Vehicle newVehicle = new Vehicle (newSheet.CreatedBy, Registration, Make, Model);
 			newVehicle.Year = Year;

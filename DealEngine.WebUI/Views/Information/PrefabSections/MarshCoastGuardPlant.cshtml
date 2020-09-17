@@ -20,7 +20,7 @@
                         <section class="col col-xs-12">
                             @*<script src="~/jquery/jquery.min.js"></script>*@
                             <script type="text/javascript">
-                                $(window).on('load',function () {
+                                $(window).on('load', function () {
 						    $("#tblUnRegisteredMV").jqGrid({
 						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=false&removed=false&transfered=false",
 						        datatype: "xml",
@@ -140,7 +140,7 @@
                             <label class="label required">Effective Date</label>
                             <label class="input">
                                 <i class="icon-append fa fa-calendar"></i>
-                                <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control omv" data-dateformat="dd/mm/yy" id="MotorEffectiveDate" type="text" required>
+                                <input name="EffectiveDate" placeholder="Effective Date" class="form-control omv" id="MotorEffectiveDate" type="text" required>
                             </label>
                             <p class="validationContainer" id="validatePlantEffectiveDate"></p>
                         </section>
@@ -241,10 +241,10 @@
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label">Effective Date</label>
+                            <label class="label required">Effective Date</label>
                             <label class="input">
                                 <i class="icon-append fa fa-calendar"></i>
-                                <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control rmv" data-dateformat="dd/mm/yy" id="AddPlantEffectiveDate" type="text">
+                                <input name="EffectiveDate" placeholder="Effective Date" class="form-control rmv" id="AddPlantEffectiveDate" type="text" required>
                             </label>
                             <p class="validationContainer" id="validateAddPlantEffectiveDate"></p>
                         </section>

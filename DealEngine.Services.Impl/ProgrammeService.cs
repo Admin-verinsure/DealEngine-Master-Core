@@ -19,16 +19,16 @@ namespace DealEngine.Services.Impl
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IClientInformationService _clientInformationService;
         IReferenceService _referenceService;
-        IMapper _mapper;
+        ICloneService _cloneService;
 
         public ProgrammeService(IMapperSession<Programme> programmeRepository,
             IClientInformationService clientInformationService,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
-            IMapper mapper
+            ICloneService cloneService
             )
         {
-            _mapper = mapper;
+            _cloneService = cloneService;
             _clientInformationService = clientInformationService;
             _programmeRepository = programmeRepository;
             _clientProgrammeRepository = clientProgrammeRepository;
@@ -136,35 +136,17 @@ namespace DealEngine.Services.Impl
             }
 
         }
-
-        public async Task<ClientProgramme> CloneForUpdate(ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason)
-        {
-            ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-            newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate(cloningUser);
-            try
-            {
-                //newClientProgramme = _mapper.Map<ClientProgramme>(clientProgramme);
-                newClientProgramme.ChangeReason = changeReason;
-                newClientProgramme.InformationSheet.Programme = newClientProgramme;
-                newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
-                newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
-                newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
-                newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
-                var reference = await _referenceService.GetLatestReferenceId();
-                newClientProgramme.InformationSheet.ReferenceId = reference;
-                newClientProgramme.InformationSheet.IsChange = true;
-                await _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return newClientProgramme;
-        }
+        
         public async Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, _mapper);
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+            ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
+			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, cloneMapper);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 
             return newClientProgramme;
@@ -241,7 +223,13 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme)
         {
-            SubClientProgramme subClientProgramme = _mapper.Map<SubClientProgramme>(programme);
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+            SubClientProgramme subClientProgramme = cloneMapper.Map<SubClientProgramme>(programme);
             return subClientProgramme;
         }
 
@@ -410,6 +398,38 @@ namespace DealEngine.Services.Impl
                 }
             }
             return Sheets;
+        }
+
+        public async Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection)
+        {            
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+
+            ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
+            ClientProgramme PreClone = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
+            ClientInformationSheet clientInformationSheet = new ClientInformationSheet(createdBy, PreClone.Owner, null);
+            clientInformationSheet = cloneMapper.Map<ClientInformationSheet>(PreClone.InformationSheet);
+            clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
+            clientInformationSheet.IsChange = true;
+            clientInformationSheet.Status = "Not Started";
+            clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
+            PreClone.Agreements.Clear();
+            PreClone.DateCreated = DateTime.Now;
+            PreClone.ChangeReason = changeReason;
+            PreClone.InformationSheet = clientInformationSheet;
+            await Update(PreClone);
+
+            return PreClone;
+
+        }
+
+        public Task DeveloperTool()
+        {
+            throw new NotImplementedException();
         }
     }
 }

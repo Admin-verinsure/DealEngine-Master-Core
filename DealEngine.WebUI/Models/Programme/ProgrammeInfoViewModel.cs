@@ -58,7 +58,7 @@ namespace DealEngine.WebUI.Models.Programme
         public IList<EGlobalResponse> EGlobalResponses { get; set; }
         public User BrokerContactUser { get; set; }
         public string Name { get; set; }
-        public Domain.Entities.Programme Programme { get; }
+        public Domain.Entities.Programme Programme { get; set; }
         public string OwnerCompany { get; set; }
         public string DateCreated { get; set; }
         public IList<SelectListItem> Brokers { get; set; }
@@ -68,6 +68,7 @@ namespace DealEngine.WebUI.Models.Programme
         public Guid ProgId { get; set; }
         public IList<Rule> Rules { get; set; }
         public Guid ProductId { get; set; }
+
 
     }
 }

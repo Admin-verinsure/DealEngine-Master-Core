@@ -248,8 +248,13 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "OTAlert") {
-                var OTAlert = "Please ensure that you provide details in the notification section";
-                Value = ShowAlert(Value, OTAlert);
+                debugger;
+                var sheetstatus = document.getElementById("ClientInformationSheet_Status").value;
+                if (sheetstatus == "Started") {
+                   var OTAlert = "Please ensure that you provide details in the notification section";
+                   Value = ShowAlert(Value, OTAlert);
+                }
+               
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);
@@ -288,8 +293,7 @@
                         debugger;
                     }
                 });
-            }      
-            
+            }        
         } catch (ex) {
             //these rules need to be re-run regardless of the catch            
             ////we expect this to fail for form elements with no change events but could use this later
@@ -327,15 +331,18 @@
             Value == "Administration" ||
             Value == "Nominated Representative" ||
             Value == "Contractor" ||
-            Value == "Planner") {
+            Value == "Planner" ||
+            Value == "Skipper") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
                 AdministrationOnChange();                
             }
+
             if (Value == "Nominated Representative") {
                 AdministrationOnChange();
             }
+
             if (Value == "Contractor") {
                 ContractorOnChange();
             }

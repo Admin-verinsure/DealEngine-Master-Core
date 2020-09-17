@@ -2865,9 +2865,9 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                     using (var uow = _unitOfWork.BeginUnitOfWork())
                                     {
-                                        if (!agreement.IsPolicyDocSend)
+                                        if (!agreement.IsFullProposalDocSend)
                                         {
-                                            agreement.IsPolicyDocSend = true;
+                                            agreement.IsFullProposalDocSend = true;
                                             agreement.DocIssueDate = DateTime.Now;
                                             await uow.Commit();
                                         }
@@ -2877,7 +2877,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                return NoContent();
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + programme.Id);
             }
             catch (Exception ex)
             {
@@ -2902,7 +2902,7 @@ namespace DealEngine.WebUI.Controllers
               _appSettingService.NRecoUserName,
               _appSettingService.NRecoLicense
             );            // for Linux/OS-X: "wkhtmltopdf"
-             htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
@@ -2910,6 +2910,7 @@ namespace DealEngine.WebUI.Controllers
                + " <strong> UIS No:" + clientprogramme.InformationSheet.ReferenceId + "</strong></br>"
                + " <strong> Sheet Submitted On:" + clientprogramme.InformationSheet.SubmitDate + "</strong></br>"
                + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
+               + " <strong> Issued To:" + clientprogramme.InformationSheet.SubmittedBy.FullName + "</strong></br>"
                + "<h2> </br>  </h2> </p>";
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
@@ -3520,6 +3521,7 @@ namespace DealEngine.WebUI.Controllers
                                
                                
                                 ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
+                                ViewBag.IsReportSend = "" + agreement.IsFullProposalDocSend;
 
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
 

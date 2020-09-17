@@ -91,6 +91,7 @@ namespace DealEngine.WebUI.Controllers
                 + " <strong> UIS No:" + clientInformationSheet.ReferenceId + "</strong></br>"
                 + " <strong> Sheet Submitted On:" + clientInformationSheet.SubmitDate + "</strong></br>"
                 + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
+                + " <strong> Issued To:" + clientInformationSheet.SubmittedBy.FullName + "</strong></br>"
                 + "<h2> </br>  </h2> </p>"; 
                 
             htmlToPdfConv.PageFooterHtml ="</br>"+ $@"page <span class=""page""></span> of <span class=""topage""></span>";
@@ -101,7 +102,6 @@ namespace DealEngine.WebUI.Controllers
             margins.Left = 15;
             margins.Right = 15;
             htmlToPdfConv.Margins = margins;
-
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
            
             return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
@@ -477,6 +477,7 @@ namespace DealEngine.WebUI.Controllers
             return Json(document.Id);
         }
 
+
       
         [HttpGet]
 		public async Task<IActionResult> CreateDocument (string id, string productId)
@@ -514,6 +515,7 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
 
 		[HttpPost]
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
