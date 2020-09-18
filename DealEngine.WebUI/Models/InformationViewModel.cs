@@ -469,10 +469,10 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "Yes", Value = "1"
+                    Text = "True", Value = "1"
                 },
                 new SelectListItem
-                { Text = "No", Value = "2" }
+                { Text = "False", Value = "2" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
