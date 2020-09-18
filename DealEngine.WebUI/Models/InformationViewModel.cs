@@ -978,15 +978,23 @@ namespace DealEngine.WebUI.Models
         {
             HasOutsideTrusteesOptions = GetSelectListOptions();
             HasClaimQuestionsOptions = GetSelectListOptions();
+            HasInvolvedTrusteeOptions = GetSelectListOptions();
+            HasLessYearsOptions = GetSelectListOptions();
+            HasFinancialObligationsOptions = GetSelectListOptions();
             FormDate = DateTime.Now;
         }
 
         public IList<SelectListItem> HasOutsideTrusteesOptions { get; set; }
         public IList<SelectListItem> HasClaimQuestionsOptions { get; set; }
+        public IList<SelectListItem> HasInvolvedTrusteeOptions { get; set; }
+        public IList<SelectListItem> HasLessYearsOptions { get; set; }
+        public IList<SelectListItem> HasFinancialObligationsOptions { get; set; }
         public DateTime FormDate { get; set; }
         public string CompanyName { get; set; }
         public string OutsidePositions { get; set; }
         public string ClaimDetails { get; set; }
+        public string InvolvedTrusteeDetails { get; set; }
+        public string FinancialObligationsDetails { get; set; }
 
         private IList<SelectListItem> GetSelectListOptions()
         {
