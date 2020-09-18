@@ -3525,7 +3525,7 @@ namespace DealEngine.WebUI.Controllers
             string LastName = collection["OrganisationViewModel.User.FirstName"].ToString();
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
 
-            Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
+            Guid programmeId = Guid.Parse(collection["Programme.Id"]);
             Organisation organisation = null;
             string membershipNumber = collection["MemberShipNo"];
 
