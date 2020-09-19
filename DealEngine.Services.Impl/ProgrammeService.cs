@@ -431,6 +431,20 @@ namespace DealEngine.Services.Impl
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Programme> PostProgramme(User user, User broker, Programme Source, Programme Destination)
+        {
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+            var cloneMapper = mapperConfiguration.CreateMapper();
+            Destination = cloneMapper.Map(Source, Destination);
+            Destination.LastModified(user);
+            Destination.BrokerContactUser = broker;
+            await Update(Destination);
+            return Destination;
+        }
     }
 }
 

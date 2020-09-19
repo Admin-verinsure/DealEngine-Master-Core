@@ -994,13 +994,10 @@
                                     <label class="label required">Vessel Water Location</label>
                                     <label class="input form-group">
                                         <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
-                                            <option selected="selected" value="">-- Select --</option>
-                                            @*
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
+                                                @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                                 {
-                                                    <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
+                                                    <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
                                                 }
-                                            *@
                                             <option value="add">Other Marina</option>
                                         </select>
                                     </label>

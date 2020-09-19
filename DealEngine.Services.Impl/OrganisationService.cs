@@ -319,7 +319,8 @@ namespace DealEngine.Services.Impl
                 if (Type == "Advisor" ||
                     Type == "Nominated Representative" ||
                     Type == "Administration" ||
-                    Type == "Other Consulting Business"
+                    Type == "Other Consulting Business" ||
+                    Type == "Mentored Advisor"
                     )
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
@@ -396,21 +397,6 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
-
-        public async Task DeveloperTool()
-        {
-            var organisations = await _organisationRepository.FindAll().ToListAsync();
-            foreach(var organisation in organisations)
-            {
-                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                if (unit != null)
-                {
-                    unit.DORetroactivedate = organisation.DORetroactivedate;
-                    unit.PIRetroactivedate = organisation.PIRetroactivedate;
-                    await Update(organisation);
-                }
-            }
-        }       
     }
 
 }

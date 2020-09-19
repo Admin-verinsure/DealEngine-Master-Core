@@ -132,7 +132,6 @@
                     Value = "2";
                 }
             }
-
             if (Value == 'true' || Value == 'false') {
                 if (Value == 'true') {
                     Value = "1";
@@ -248,13 +247,11 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "OTAlert") {
-                debugger;
                 var sheetstatus = document.getElementById("ClientInformationSheet_Status").value;
                 if (sheetstatus == "Started") {
                    var OTAlert = "Please ensure that you provide details in the notification section";
                    Value = ShowAlert(Value, OTAlert);
-                }
-               
+                }               
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);
@@ -294,6 +291,11 @@
                     }
                 });
             }        
+            if (Rule === "DefaultEffectiveDate") {
+                document.getElementById("AddBoatEffectiveDate").value = Value;
+                document.getElementById("BoatEffectiveDate").value = Value;
+                document.getElementById("TrailerEffectiveDateModal").value = Value;
+            }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch            
             ////we expect this to fail for form elements with no change events but could use this later
@@ -332,20 +334,26 @@
             Value == "Nominated Representative" ||
             Value == "Contractor" ||
             Value == "Planner" ||
-            Value == "Skipper") {
+            Value == "Skipper" ||
+            Value == "Mentored Advisor") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
-                AdministrationOnChange();                
+                AdvisorOnChange();                
+            }
+
+            if (Value == "Mentored Advisor") {
+                AdvisorOnChange();
+
             }
 
             if (Value == "Nominated Representative") {
-                AdministrationOnChange();
+                AdvisorOnChange();
             }
 
             if (Value == "Contractor") {
                 ContractorOnChange();
-            }
+            } 
 
             for (var i = 0; i < List.options.length; i++) {
                 if (List.options[i].text == "Private") {
@@ -374,16 +382,21 @@
         document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
     }
 
-    function AdministrationOnChange() {
+    function AdvisorOnChange() {
         var IsTripleAApproval = document.getElementById("HideTripleAApproval");        
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
+            document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+        }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = false;
         }
         var IsPrincipal = document.getElementById("HidePrincipal");
         if (IsPrincipal != null) {
             IsPrincipal.hidden = true;
         }
-        document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+        
     }
 
     function ResetOrganisationUnitView() {
@@ -400,6 +413,10 @@
         var IsContractor = document.getElementById("HideContractor");
         if (IsContractor != null) {
             IsContractor.hidden = true;
+        }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = true;
         }
     }
 

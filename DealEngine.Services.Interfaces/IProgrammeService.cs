@@ -41,6 +41,7 @@ namespace DealEngine.Services.Interfaces
         Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
         Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection);
         Task DeveloperTool();
+        Task<Programme> PostProgramme(User user, User brokerUser, Programme jsonProgramme, Programme programme);
     }
 }
 
