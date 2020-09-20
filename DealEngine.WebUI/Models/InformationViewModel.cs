@@ -32,6 +32,7 @@ namespace DealEngine.WebUI.Models
             ProjectViewModel = new ProjectViewModel(clientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
             OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
+            BoatViewModel = new BoatViewModel();
             ClientInformationSheet = clientInformationSheet;
             Status = clientInformationSheet.Status;
             AnswerSheetId = clientInformationSheet.Id;
@@ -39,6 +40,7 @@ namespace DealEngine.WebUI.Models
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
+        public BoatViewModel BoatViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }

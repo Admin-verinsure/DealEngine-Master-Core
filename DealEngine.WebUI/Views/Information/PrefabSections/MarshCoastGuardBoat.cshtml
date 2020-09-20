@@ -488,9 +488,12 @@
                             <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="BoatMooredTypeSection">
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label required">Moored Type</label>
-                                    <label class="input form-group">
+                                    <label class="input form-group">                                        
                                         <select class="form-control b" id="MooredType" name="WaterLocationMooringType">
-                                            <option selected="selected" value="">-- Select --</option>
+                                        @foreach(var type in Model.BoatViewModel.MooredTypeOptions)
+                                        {
+                                            <option value="@type.Value">@type.Text</option>
+                                        }
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>
@@ -1021,7 +1024,10 @@
                                     <label class="label required">Moored Type</label>
                                     <label class="input form-group">
                                         <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooredType" name="WaterLocationMooringType">
-                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var type in Model.BoatViewModel.MooredTypeOptions)
+                                            {
+                                                <option value="@type.Value">@type.Text</option>
+                                            }
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>
