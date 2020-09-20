@@ -145,7 +145,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
             int TermExcess1mil = 0;
-
+            TermPremium1mil = rates["do1millimitpremium"];
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termdo1millimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit1mil, TermExcess1mil);
