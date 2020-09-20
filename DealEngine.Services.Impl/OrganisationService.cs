@@ -319,7 +319,8 @@ namespace DealEngine.Services.Impl
                 if (Type == "Advisor" ||
                     Type == "Nominated Representative" ||
                     Type == "Administration" ||
-                    Type == "Other Consulting Business"
+                    Type == "Other Consulting Business" ||
+                    Type == "Mentored Advisor"
                     )
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
@@ -397,20 +398,28 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task DeveloperTool()
+        public async  Task<List<Organisation>> GetPublicMarinas()
         {
-            var organisations = await _organisationRepository.FindAll().ToListAsync();
-            foreach(var organisation in organisations)
+            List<Organisation> organisations = new List<Organisation>();
+            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            foreach(var marina in marinas)
             {
-                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                if (unit != null)
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if(unit != null)
                 {
-                    unit.DORetroactivedate = organisation.DORetroactivedate;
-                    unit.PIRetroactivedate = organisation.PIRetroactivedate;
-                    await Update(organisation);
+                    if (unit.WaterLocation != null)
+                    {
+                        if (unit.WaterLocation.IsPublic)
+                        {
+                            organisations.Add(marina);
+                        }
+                    }
+
                 }
             }
-        }       
+
+            return organisations;
+        }
     }
 
 }

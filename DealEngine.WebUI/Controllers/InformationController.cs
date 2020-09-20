@@ -55,6 +55,7 @@ namespace DealEngine.WebUI.Controllers
         IClientInformationAnswerService _clientInformationAnswer;
         IOrganisationTypeService _organisationTypeService;
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IMapperSession<WaterLocation> _waterLocation;
         //IGeneratePdf _generatePdf;
 
 
@@ -93,12 +94,14 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
+            IMapperSession<WaterLocation> waterLocation,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
             )
             : base(userService)
         {
+            _waterLocation = waterLocation;
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
@@ -1249,12 +1252,22 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
+                List<Organisation> DefaultMarinas = await _organisationService.GetPublicMarinas();
                 Programme programme = clientProgramme.BaseProgramme;
                 InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
                 };
+                if (DefaultMarinas.Any())
+                {                    
+                    foreach(var marina in DefaultMarinas)
+                    {
+                        MarinaUnit unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.WaterLocations.Contains(unit.WaterLocation))
+                            model.ClientInformationSheet.WaterLocations.Add(unit.WaterLocation);
+                    }                    
+                }
                 model.Name = programme.Name;                
                 Product product = null;
                 if (programme.Products.Count > 1)

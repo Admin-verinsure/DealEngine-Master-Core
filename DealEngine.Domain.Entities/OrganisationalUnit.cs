@@ -15,14 +15,11 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             Name = name;
-            Locations = new List<Location>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public OrganisationalUnit(User createdBy, string name, string type, IFormCollection collection)
             : base(createdBy)
         {
-            Locations = new List<Location>();
             if (collection != null)
             {
                 PopulateEntity(collection);
@@ -32,15 +29,7 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual string Name { get; set; }
-        public virtual IList<Location> Locations { get; set; }
-
-
-        public virtual IList<string> Marinaorgmooredtype { get; set; }
-        public virtual string EserviceProducerCode { get; set; }
-        public virtual string EbixDepartmentCode { get; set; }
-        public virtual string HPFBranchCode { get; set; }
-        public virtual string OfcPhoneno { get; set; }         
+        public virtual string Name { get; set; }    
 
     }
 
@@ -54,6 +43,8 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
         public virtual string Qualifications { get; set; }
+        [Display(Name = "Insurance experience and positions held")]
+        public virtual string Experience { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
@@ -67,11 +58,14 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Date of Retirement(Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
         [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
-
-        public virtual DateTime? DateofDeceased { get; set; }        
+        public virtual DateTime? DateofDeceased { get; set; }
+        [Display(Name = "Date of Commencement")]
+        public virtual DateTime? DateofCommencement { get; set; }
         public virtual string MyCRMId { get; set; }
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
+        [Display(Name = "Please select the Professional Bodies or Associations that the company or individual is a member of:")]
+        public virtual IList<string> Associations { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit
@@ -201,6 +195,18 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Type of Interested Party?")]
         public virtual string PartyType { get; set; }
+    }
+
+    public class MarinaUnit : OrganisationalUnit
+    {
+        public MarinaUnit() { }
+        public MarinaUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        public virtual WaterLocation WaterLocation { get; set; }
     }
 
 }

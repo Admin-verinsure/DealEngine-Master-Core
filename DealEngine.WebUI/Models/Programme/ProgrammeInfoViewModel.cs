@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
 using DealEngine.WebUI.Models.ProductModels;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models.Programme
 {
@@ -25,14 +25,16 @@ namespace DealEngine.WebUI.Models.Programme
             {
                 Id = programme.Id;
                 Name = programme.Name;
-                this.Programme = programme;
+                Programme = programme;
+                Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;
             }
             if(clientProgramme != null)
             {
                 ClientProgramme = clientProgramme;
             }
+            BooleanOptions = GetBooleanOptions();
         }
-
+        public IList<SelectListItem> BooleanOptions { get; set; }
         private IList<SelectListItem> GetBrokerSelectList(List<User> brokers)
         {
             Brokers = new List<SelectListItem>();
@@ -68,7 +70,6 @@ namespace DealEngine.WebUI.Models.Programme
         public Guid ProgId { get; set; }
         public IList<Rule> Rules { get; set; }
         public Guid ProductId { get; set; }
-
 
     }
 }

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
-using DealEngine.WebUI.Controllers;
-using DealEngine.WebUI.Models.Programme;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
@@ -184,10 +182,10 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Id, map => map.Ignore());
 
             //clonesystem
-            CreateMap<ClientInformationSheet, ClientInformationSheet>()
-                .ForMember(dest => dest.Id, map => map.Ignore());
-            CreateMap<ClientProgramme, ClientProgramme>()
-                .ForMember(dest => dest.Id, map => map.Ignore());
+            //CreateMap<ClientInformationSheet, ClientInformationSheet>()
+            //    .ForMember(dest => dest.Id, map => map.Ignore());
+            //CreateMap<ClientProgramme, ClientProgramme>()
+            //    .ForMember(dest => dest.Id, map => map.Ignore());
         }
 
 

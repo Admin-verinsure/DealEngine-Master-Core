@@ -26,7 +26,7 @@ namespace DealEngine.WebUI.Controllers
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
-		IOrganisationService _organisationService;		
+		IDeveloperToolService _developerToolService;		
 		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
         IClientInformationService _clientInformationService;
@@ -51,7 +51,7 @@ namespace DealEngine.WebUI.Controllers
             IUserService userRepository, 
             IPrivateServerService privateServerService, 
             IFileService fileService,
-			IOrganisationService organisationService, 
+            IDeveloperToolService developerToolService, 
             IUnitOfWork unitOfWork, 
             IInformationTemplateService informationTemplateService,
             IClientInformationService clientInformationService, 
@@ -72,7 +72,6 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
 			_privateServerService = privateServerService;
 			_fileService = fileService;
-			_organisationService = organisationService;
 			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
@@ -83,6 +82,7 @@ namespace DealEngine.WebUI.Controllers
             _merchantService = merchantService;
             _systemEmailService = systemEmailService;
             _referenceService = referenceService;
+            _developerToolService = developerToolService;
         }
 
 		[HttpGet]
@@ -821,7 +821,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _programmeService.DeveloperTool();
+            await _developerToolService.CreateMarinas();
             return Redirect("~/Home/Index");
         }
     }

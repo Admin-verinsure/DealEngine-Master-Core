@@ -23,7 +23,7 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
         Task Update(Organisation organisation);
         Task UpdateAdvisorDates(IFormCollection collection);
-        Task DeveloperTool();
+        Task<List<Organisation>> GetPublicMarinas();
     }
 }
 

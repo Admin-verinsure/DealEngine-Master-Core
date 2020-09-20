@@ -62,13 +62,29 @@
     }    
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
         var addTabHTML = document.getElementById(AddTabId);
-        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        var editTabHTML = document.getElementById(EditTabId);
+        var form = document.getElementById(addTabHTML.firstElementChild.id);
+        editTabHTML.innerHTML = "";
+        var obj = $("#" + form.id).clone();
+        $("#" + EditTabId).append(obj);
+        form = document.getElementById(editTabHTML.firstElementChild.id);
         addTabHTML.innerHTML = "";
         document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";        
         SetCurrentTab(EditTabId);
+        var lists = form.getElementsByClassName("chosen-select");
+        if (lists != null) {            
+            var inputBoxes = form.getElementsByClassName("chosen-search-input default");
+            if (inputBoxes != null) {
+                for (b = 0; b < inputBoxes.length; b++) {
+                    inputBoxes[b].remove();                                        
+                } 
+            }
+            for (i = 0; i < lists.length; i++) {
+                $("#" + lists[i].id).chosen({ width: "95%" });
+            } 
+        }
     }
 
     function ImportValue(Element, Value) {
@@ -139,13 +155,28 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
         debugger;
+        var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
-            var addTabHTML = document.getElementById(AddTabId);
-            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            var form = document.getElementById(editTabHTML.firstElementChild.id);
+            var obj = $("#" + form.id).clone();
+            $("#" + AddTabId).append(obj);                       
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
+            var addTabHTML = document.getElementById(AddTabId);
+            form = document.getElementById(addTabHTML.firstElementChild.id);       
+            var lists = form.getElementsByClassName("chosen-select");
+            if (lists != null) {
+                var inputBoxes = form.getElementsByClassName("chosen-search-input default");
+                if (inputBoxes != null) {
+                    for (b = 0; b < inputBoxes.length; b++) {
+                        inputBoxes[b].remove();
+                    }
+                }
+                for (i = 0; i < lists.length; i++) {
+                    $("#" + lists[i].id).chosen({ width: "95%" });
+                }
+            }
         }
         document.getElementById(AddButtonId).innerText = "Add";
         document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
@@ -210,7 +241,6 @@
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
         event.preventDefault();
         CloneForm("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
-
         document.getElementById("LocationId").value = Id;
         document.getElementById("locationtypeoptions").value = LocationType;
         document.getElementById("commonnamedetails").value = CommonName;
@@ -219,7 +249,6 @@
         document.getElementById("countrydetails").value = Country;
         document.getElementById("suburbdetails").value = Suburb;
         document.getElementById("postcodedetails").value = Postcode;
-
         SetCurrentTab("locationtab2");
     }
 
@@ -279,7 +308,6 @@
                 debugger;
             });
     }
-
 
     function RestoreResearchHouse(Id) {
         sessionStorage.setItem('accordianTrigger', 'Independent Research');
