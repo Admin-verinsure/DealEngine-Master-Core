@@ -397,6 +397,29 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async  Task<List<Organisation>> GetPublicMarinas()
+        {
+            List<Organisation> organisations = new List<Organisation>();
+            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            foreach(var marina in marinas)
+            {
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if(unit != null)
+                {
+                    if (unit.WaterLocation != null)
+                    {
+                        if (unit.WaterLocation.IsPublic)
+                        {
+                            organisations.Add(marina);
+                        }
+                    }
+
+                }
+            }
+
+            return organisations;
+        }
     }
 
 }

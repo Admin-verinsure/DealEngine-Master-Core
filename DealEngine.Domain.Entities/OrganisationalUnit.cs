@@ -15,14 +15,11 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             Name = name;
-            Locations = new List<Location>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public OrganisationalUnit(User createdBy, string name, string type, IFormCollection collection)
             : base(createdBy)
         {
-            Locations = new List<Location>();
             if (collection != null)
             {
                 PopulateEntity(collection);
@@ -32,15 +29,7 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual string Name { get; set; }
-        public virtual IList<Location> Locations { get; set; }
-
-
-        public virtual IList<string> Marinaorgmooredtype { get; set; }
-        public virtual string EserviceProducerCode { get; set; }
-        public virtual string EbixDepartmentCode { get; set; }
-        public virtual string HPFBranchCode { get; set; }
-        public virtual string OfcPhoneno { get; set; }         
+        public virtual string Name { get; set; }    
 
     }
 
@@ -206,6 +195,18 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Type of Interested Party?")]
         public virtual string PartyType { get; set; }
+    }
+
+    public class MarinaUnit : OrganisationalUnit
+    {
+        public MarinaUnit() { }
+        public MarinaUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        public virtual WaterLocation WaterLocation { get; set; }
     }
 
 }

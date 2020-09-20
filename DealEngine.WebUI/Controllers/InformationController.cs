@@ -1252,7 +1252,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
-                List<WaterLocation> DefaultMarinas = _waterLocation.FindAll().Where(l => l.IsPublic == true).ToList();
+                List<Organisation> DefaultMarinas = await _organisationService.GetPublicMarinas();
                 Programme programme = clientProgramme.BaseProgramme;
                 InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
@@ -1263,8 +1263,9 @@ namespace DealEngine.WebUI.Controllers
                 {                    
                     foreach(var marina in DefaultMarinas)
                     {
-                        if (!model.ClientInformationSheet.WaterLocations.Contains(marina))
-                            model.ClientInformationSheet.WaterLocations.Add(marina);
+                        MarinaUnit unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.WaterLocations.Contains(unit.WaterLocation))
+                            model.ClientInformationSheet.WaterLocations.Add(unit.WaterLocation);
                     }                    
                 }
                 model.Name = programme.Name;                

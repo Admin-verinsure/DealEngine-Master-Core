@@ -2366,63 +2366,63 @@ namespace DealEngine.WebUI.Controllers
         //}
 
 
-        [HttpPost]
-        public async Task<IActionResult> GetMooredType(Guid OrgID)
-        {
-            Organisation organisation = null;
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> GetMooredType(Guid OrgID)
+        //{
+        //    Organisation organisation = null;
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                organisation = await _organisationService.GetOrganisation(OrgID);
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                List<SelectListItem> mooredtypes = new List<SelectListItem>();
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        organisation = await _organisationService.GetOrganisation(OrgID);
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
-                foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
-                {
-                    mooredtypes.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = mooredtype,
-                        Text = mooredtype
-                    });
-                }
+        //        foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
+        //        {
+        //            mooredtypes.Add(new SelectListItem
+        //            {
+        //                Selected = false,
+        //                Value = mooredtype,
+        //                Text = mooredtype
+        //            });
+        //        }
 
-                return Json(mooredtypes);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+        //        return Json(mooredtypes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-        }
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> OUSelected(Guid OUselect)
-        {
-            OrganisationalUnit orgunit = null;
-            var location = new LocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> OUSelected(Guid OUselect)
+        //{
+        //    OrganisationalUnit orgunit = null;
+        //    var location = new LocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
-                foreach (Location ou in orgunit.Locations)
-                {
-                    location.Locations.Add(ou);
-                }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
+        //        foreach (Location ou in orgunit.Locations)
+        //        {
+        //            location.Locations.Add(ou);
+        //        }
 
-                return Json(location);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        return Json(location);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
 
         [HttpPost]

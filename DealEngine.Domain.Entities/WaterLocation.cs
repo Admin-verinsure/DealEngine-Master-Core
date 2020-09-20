@@ -17,7 +17,7 @@ namespace DealEngine.Domain.Entities
 
         }
 
-        public virtual Location Location
+        public virtual IList<Location> Locations
         {
             get;
             set;

@@ -186,7 +186,7 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
                 }
-                else if (Model.OrganisationViewModel.Programme.Name == "Apollo")
+                else if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme")
                 {
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
