@@ -41,12 +41,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piindividualpremium", "1millimitfappremium2advisor", "2millimitfappremium2advisor", "5millimitfappremium2advisor",
-                "1millimitfappremium3advisor", "2millimitfappremium3advisor", "5millimitfappremium3advisor", "1millimitfappremium4advisor", "2millimitfappremium4advisor", "5millimitfappremium4advisor",
-                "1millimitfappremium5advisor", "2millimitfappremium5advisor", "5millimitfappremium5advisor", "1millimitfappremium6advisor", "2millimitfappremium6advisor", "5millimitfappremium6advisor",
-                "1millimitfappremium7advisor", "2millimitfappremium7advisor", "5millimitfappremium7advisor", "1millimitfappremium8advisor", "2millimitfappremium8advisor", "5millimitfappremium8advisor",
-                "1millimitfappremium9advisor", "2millimitfappremium9advisor", "5millimitfappremium9advisor", "1millimitfappremium10advisor", "2millimitfappremium10advisor", "5millimitfappremium10advisor",
-                "1millimitfappremium11advisor", "2millimitfappremium11advisor", "5millimitfappremium11advisor");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piindividualpremium", "1millimitfappremium2advisor", "2millimitfappremium2advisor", "5millimitfappremium2advisor",
+            //    "1millimitfappremium3advisor", "2millimitfappremium3advisor", "5millimitfappremium3advisor", "1millimitfappremium4advisor", "2millimitfappremium4advisor", "5millimitfappremium4advisor",
+            //    "1millimitfappremium5advisor", "2millimitfappremium5advisor", "5millimitfappremium5advisor", "1millimitfappremium6advisor", "2millimitfappremium6advisor", "5millimitfappremium6advisor",
+            //    "1millimitfappremium7advisor", "2millimitfappremium7advisor", "5millimitfappremium7advisor", "1millimitfappremium8advisor", "2millimitfappremium8advisor", "5millimitfappremium8advisor",
+            //    "1millimitfappremium9advisor", "2millimitfappremium9advisor", "5millimitfappremium9advisor", "1millimitfappremium10advisor", "2millimitfappremium10advisor", "5millimitfappremium10advisor",
+            //    "1millimitfappremium11advisor", "2millimitfappremium11advisor", "5millimitfappremium11advisor");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -189,7 +189,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermExcess = 1000;
 
             decimal TermPremiumAdvisors = 0M;
-            TermPremiumAdvisors = GetPremiumForAdvisors(rates, intnumberofadvisors, agreementperiodindays, coverperiodindays);
+            //TermPremiumAdvisors = GetPremiumForAdvisors(rates, intnumberofadvisors, agreementperiodindays, coverperiodindays);
 
             if (intnumberofadvisors > 1)
             {
@@ -198,7 +198,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermPremium1milFAP = 0M;
                 decimal TermBrokerage1mil = 0M;
 
-                TermPremium1milFAP = GetPremiumForFAP(rates, feeincome, TermLimit1mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                //TermPremium1milFAP = GetPremiumForFAP(rates, feeincome, TermLimit1mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
                 TermPremium1mil = TermPremiumAdvisors + TermPremium1milFAP;
                 TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -219,7 +219,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermPremium2milFAP = 0M;
                 decimal TermBrokerage2mil = 0M;
 
-                TermPremium2milFAP = GetPremiumForFAP(rates, feeincome, TermLimit2mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                //TermPremium2milFAP = GetPremiumForFAP(rates, feeincome, TermLimit2mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
                 TermPremium2mil = TermPremiumAdvisors + TermPremium2milFAP;
                 TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
@@ -240,7 +240,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5milFAP = 0M;
             decimal TermBrokerage5mil = 0M;
 
-            TermPremium5milFAP = GetPremiumForFAP(rates, feeincome, TermLimit5mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+            //TermPremium5milFAP = GetPremiumForFAP(rates, feeincome, TermLimit5mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
             TermPremium5mil = TermPremiumAdvisors + TermPremium5milFAP;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
@@ -256,21 +256,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DeletedBy = null;
 
 
-            //Referral points per agreement
-            //Claims / Insurance History
-            uwrfpriorinsurance(underwritingUser, agreement);
-            //F&G over 50%
-            uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
-            //Other Business Activities
-            uwrfotheractivities(underwritingUser, agreement, decOther);
-            //Other Investment Activities
-            uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
-            //Advisor Claims / Insurance History
-            uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
-            //Custom Endorsement renew
-            uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
-            //Advisor number over 11
-            uwrfadvisornumberover11(underwritingUser, agreement, intnumberofadvisors);
+            ////Referral points per agreement
+            ////Claims / Insurance History
+            //uwrfpriorinsurance(underwritingUser, agreement);
+            ////F&G over 50%
+            //uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
+            ////Other Business Activities
+            //uwrfotheractivities(underwritingUser, agreement, decOther);
+            ////Other Investment Activities
+            //uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
+            ////Advisor Claims / Insurance History
+            //uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
+            ////Custom Endorsement renew
+            //uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
+            ////Advisor number over 11
+            //uwrfadvisornumberover11(underwritingUser, agreement, intnumberofadvisors);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
