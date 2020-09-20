@@ -69,12 +69,14 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetPDF(Guid Id,Guid ClientProgrammeId, string format=null)
+        public async Task<IActionResult> GetPDF(Guid Id,Guid ClientProgrammeId)
         {
            ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
             ClientInformationSheet clientInformationSheet  = clientprogramme.InformationSheet;
            
             SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+               
+            
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
@@ -83,8 +85,8 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+          htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                 + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
                 + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
@@ -105,7 +107,7 @@ namespace DealEngine.WebUI.Controllers
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
            
             return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
-
+              
         }
 
 
@@ -478,11 +480,54 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-      
+        [HttpPost]
+        public async Task<IActionResult> SaveDocumentHtml(DocumentViewModel model)
+        {
+            User user = null;
+            SystemDocument document = null;
+            Product product = null;
+            try
+            {
+                user = await CurrentUser();
+                if (model.DocumentId != Guid.Empty)
+                {
+                    document = await _documentRepository.GetByIdAsync(model.DocumentId);
+                    if (document != null)
+                    {
+                        document.DateDeleted = DateTime.Now;
+                        await _documentRepository.AddAsync(document);
+                    }
+
+                }
+
+                document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
+                document.Description = model.Description;
+                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
+                document.Name = document.Name;
+                document.OwnerOrganisation = user.PrimaryOrganisation;
+                document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+                //if (model.ProductId != null)
+                //{
+                //    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+                //    product.Documents.Add(document);
+                //    await _productRepository.AddAsync(product);
+                //}
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
         [HttpGet]
-		public async Task<IActionResult> CreateDocument (string id, string productId)
-		{
-			DocumentViewModel model = new DocumentViewModel ();
+        public async Task<IActionResult> CreateDocument(string id, string productId)
+        {
+            DocumentViewModel model = new DocumentViewModel();
             User user = null;
             try
             {
@@ -517,7 +562,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-		[HttpPost]
+        [HttpPost]
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
             User user = null;

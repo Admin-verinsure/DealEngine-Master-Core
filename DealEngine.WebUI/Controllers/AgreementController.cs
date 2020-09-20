@@ -3504,9 +3504,9 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ProgrammeName = programme.BaseProgramme.Name;
-                    ViewBag.Ispdfenable = ""+programme.BaseProgramme.EnableFullProposalReport;
+                    ViewBag.Ispdfenable = "" + programme.BaseProgramme.EnableFullProposalReport;
                     model.ClientProgrammeId = id;
-                    foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
+                    foreach (ClientAgreement agreement in programme.Agreements.Where(a => a.DateDeleted == null))
                     {
                         agreeDocList = agreement.GetDocuments();
 
@@ -3518,12 +3518,12 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
-                               
-                               
-                                ViewBag.IsPDFgenerated = ""+agreement.IsPDFgenerated;
+
+
+                                ViewBag.IsPDFgenerated = "" + agreement.IsPDFgenerated;
                                 ViewBag.IsReportSend = "" + agreement.IsFullProposalDocSend;
 
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name , Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetPDF/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
 
                             }
                         }
@@ -3533,13 +3533,15 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
-               
-                 ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
+
+                ClientProgramme programme1 = await _programmeService.GetClientProgrammebyId(id);
                 ViewBag.Sheetstatus = programme1.InformationSheet.Status;
-                if(programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)
+                if (programme1.IsDocsApproved && programme1.BaseProgramme.ProgEnableHidedoctoClient)
                 {
                     ViewBag.showDocs = true;
-                } else {
+                }
+                else
+                {
                     ViewBag.showDocs = false;
                 }
                 return View("ViewAcceptedAgreementList", models);
