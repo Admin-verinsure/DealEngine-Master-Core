@@ -26,3 +26,4 @@ TechCertain.WebUI/wwwroot/images/
 .vscode
 /DealEngine.WebUI/appsettingsnathan.jsonDealEngine.WebUI/wwwroot/images/
 /.vs/DealEngine/DesignTimeBuild/.dtbcache.v2
+.vs/DealEngine/config/applicationhost.config

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
@@ -22,7 +23,7 @@ namespace DealEngine.WebUI.Models
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             OTViewModel = new OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
-            DateViewModel = new DateViewModel();
+            GeneralViewModel = new GeneralViewModel();
             User = CurrentUser;
             Programme = clientInformationSheet.Programme.BaseProgramme;
             RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
@@ -31,6 +32,7 @@ namespace DealEngine.WebUI.Models
             ProjectViewModel = new ProjectViewModel(clientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
             OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
+            BoatViewModel = new BoatViewModel();
             ClientInformationSheet = clientInformationSheet;
             Status = clientInformationSheet.Status;
             AnswerSheetId = clientInformationSheet.Id;
@@ -38,18 +40,19 @@ namespace DealEngine.WebUI.Models
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
-        public Domain.Entities.Programme Programme;
+        public BoatViewModel BoatViewModel { get; set; }
+        public Domain.Entities.Programme Programme { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
         public string Status { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
-        public string DeclarationMessage { get; set; }
+        public String[][] LimitsSelected { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
-        public IEnumerable<VehicleViewModel> AllVehicles { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
+        public List<BoatUse> BoatUsesList { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
@@ -73,7 +76,7 @@ namespace DealEngine.WebUI.Models
         public ClientAgreement ClientAgreement { get; internal set; }
         public OTViewModel OTViewModel { get; internal set; }
         public IPViewModel IPViewModel { get; internal set; }
-        public DateViewModel DateViewModel { get; internal set; }
+        public GeneralViewModel GeneralViewModel { get; internal set; }
 
         
     }
@@ -419,7 +422,6 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
-
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }    
         public IList<SelectListItem> HasEPLOptions { get; set; }
         public IList<SelectListItem> HasEPLIOptions { get; set; }
@@ -469,10 +471,10 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "Yes", Value = "1"
+                    Text = "True", Value = "1"
                 },
                 new SelectListItem
-                { Text = "No", Value = "2" }
+                { Text = "False", Value = "2" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
@@ -969,26 +971,32 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
-        }
-       
-
+        }      
     }
+
     public class OTViewModel
     {
         public OTViewModel()
         {
             HasOutsideTrusteesOptions = GetSelectListOptions();
             HasClaimQuestionsOptions = GetSelectListOptions();
-
+            HasInvolvedTrusteeOptions = GetSelectListOptions();
+            HasLessYearsOptions = GetSelectListOptions();
+            HasFinancialObligationsOptions = GetSelectListOptions();
             FormDate = DateTime.Now;
         }
 
         public IList<SelectListItem> HasOutsideTrusteesOptions { get; set; }
         public IList<SelectListItem> HasClaimQuestionsOptions { get; set; }
+        public IList<SelectListItem> HasInvolvedTrusteeOptions { get; set; }
+        public IList<SelectListItem> HasLessYearsOptions { get; set; }
+        public IList<SelectListItem> HasFinancialObligationsOptions { get; set; }
         public DateTime FormDate { get; set; }
         public string CompanyName { get; set; }
         public string OutsidePositions { get; set; }
         public string ClaimDetails { get; set; }
+        public string InvolvedTrusteeDetails { get; set; }
+        public string FinancialObligationsDetails { get; set; }
 
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -1049,16 +1057,6 @@ namespace DealEngine.WebUI.Models
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }
-        //public string totalValue { get; set; }
-        //public string CashInvestments { get; set; }
-        //public string Bonds { get; set; }
-        //public string DirectInvestment { get; set; }
-        //public string PropertyTrust { get; set; }
-        //public string FinanceDebentures { get; set; }
-        //public string ManagedFunds { get; set; }
-        //public string Superannuation { get; set; }
-        //public string Kiwisaver { get; set; }
-        //public string OtherFunds { get; set; }
 
     }
     public class ProjectViewModel
@@ -1223,9 +1221,17 @@ namespace DealEngine.WebUI.Models
 
     }
 
-    public class DateViewModel
+    public class GeneralViewModel
     {
-        public string DateSelected { get; set; }
+        public GeneralViewModel()
+        {
+            if(PolicyDate == DateTime.MinValue)
+            {
+                PolicyDate = DateTime.Now;
+            }
+        }
+        [Display(Name = "Policy Date")]
+        public DateTime PolicyDate { get; set; }
 
     }
 }

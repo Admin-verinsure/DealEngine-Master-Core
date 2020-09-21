@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-</span>
+        </span>
     </div>
 
     <!-- NEW WIDGET START -->
@@ -46,8 +46,11 @@
                             @if (item.CurrentUser.PrimaryOrganisation.IsBroker || item.CurrentUser.PrimaryOrganisation.IsTC)
                             {
                                 <li class="nav-item">
-                                    <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+                                    <a href='@Url.Action("PartialViewProgramme", "Information",new { id = @item.ClientProgrammeId, viewlist="ListView"})' class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+
+                                    @*<a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>*@
                                 </li>
+
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Agreement</a>
                                 </li>
@@ -65,7 +68,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                           (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -73,6 +76,8 @@
                                     }
 
                                 }
+
+
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
                                 </li>
@@ -144,6 +149,27 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
                                 }
+
+                                @if (ViewBag.IsPDFgenerated == "True" && ViewBag.Ispdfenable == "True")
+                                {
+                                    @if (ViewBag.IsReportSend == "True")
+                                    {
+                                        <li class="nav-item" id="SendReport">
+                                            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
+                                                <i class="fa fa-edit"></i> ReSend FullProposal Report
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item" id="ReSendReport">
+                                            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
+                                                <i class="fa fa-edit"></i> Send FullProposal Report
+                                            </a>
+                                        </li>
+                                    }
+                                }
+
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
                                 </li>
@@ -238,30 +264,30 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
 
-            <div class="form-group">
-                @foreach (var item in Model)
-                {
-
-                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                <div class="form-group">
+                    @foreach (var item in Model)
                     {
-                        <h3><strong>Documents </strong></h3>
 
-                        @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
-
-                        @if (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer)
+                        @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                         {
-                            <h3><strong>Options </strong></h3>
-                            <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                            @*<a class="btn btn-primary btn-sm" href="/Agreement/VerifyDocuments/@item.InformationSheetId">Verify Documents</a>*@
-                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
-                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
+                            <h3><strong>Documents </strong></h3>
+
+                            @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
+
+                            @if (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer)
+                            {
+                                <h3><strong>Options </strong></h3>
+                                <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
+                                @*<a class="btn btn-primary btn-sm" href="/Agreement/VerifyDocuments/@item.InformationSheetId">Verify Documents</a>*@
+                                <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
+                                <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
+                            }
                         }
+                        <!-- loop through process once only!! -->
+                        break;
                     }
-                    <!-- loop through process once only!! -->
-                    break;
-                }
-            </div>
+                </div>
 
                 @if (@multiCoverOptionsStatus && (@ViewBag.IsBroker || @ViewBag.IsTC || @ViewBag.IsInsurer))
                 {
@@ -360,7 +386,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                   $("#7").hide();
               }
 
-            
+
         });
 
     </script>

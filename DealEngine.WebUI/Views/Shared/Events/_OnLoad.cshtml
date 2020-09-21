@@ -18,11 +18,104 @@
         minDate: startDate
     });
 
-     $('#dateselected').datepicker({
-        dateFormat: "dd/mm/yy"
-     });
+    function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
+        var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
+        var deletebuttonstring = "<button onclick=\"RemoveLocation('" + locationId + "')\" type=\"button\" class=\" btn btn-danger btn - sm\" id=\"trash\"><span class=\"fa fa-trash\"></span></button>";
+        var table = document.getElementById("tblLocation");
+        var row = table.tBodies[0].insertRow(0);
+        var editButton = row.insertCell(0);
+        editButton.innerHTML = editbuttonstring;
+        var locationType = row.insertCell(1);
+        locationType.innerHTML = locationTypeValue;
+        var commonName = row.insertCell(2);
+        commonName.innerHTML = cmonValue;
+        var street = row.insertCell(3);
+        street.innerHTML = streetVal;
+        var suburb = row.insertCell(4);
+        suburb.innerHTML = suburbVal;
+        var postcode = row.insertCell(5);
+        postcode.innerHTML = postCodeVal;
+        var city = row.insertCell(6);
+        city.innerHTML = cityVal;
+        var deleteButton = row.insertCell(7);
+        deleteButton.innerHTML = deletebuttonstring;
+    }
 
-    
+    function NamedPartyTableRefreshAPI(data, type) {
+        var editbuttonstring = "<button class=\"btn btn-success btn-sm\" onclick=\"OnClick('', 'Organisation', '" + data.id + "', '" + data.id + "')\"><i class=\"fa fa- dit\"></i> Edit</button>";
+        var deletebuttonstring = "<button onclick=\"RemoveOrganisation('" + data.id + "', 'Insured Details / Named Parties')\" type=\"button\" class=\" btn btn-danger btn-sm\" id=\"trash\"><span class=\"fa fa-trash\"></span></button>";
+        var table = document.getElementById("tblOrganisation");
+        var row = table.tBodies[0].insertRow(0);
+        var editButton = row.insertCell(0);
+        editButton.innerHTML = editbuttonstring;
+        var Name = row.insertCell(1);
+        Name.innerHTML = data.name;
+        var type = row.insertCell(2);
+        type.innerHTML = type;        
+        var deleteButton = row.insertCell(3);
+        deleteButton.innerHTML = deletebuttonstring;
+    }
+
+    function PopulateMilestoneView(Method, OutPut) {
+        try {
+            for (obj in OutPut) {
+                var model = OutPut[obj];
+                var Type = obj;
+                for (var Field in model) {
+                    var Element = null;
+                    var Id = Type + "." + Field;
+                    Element = document.getElementById(Id);
+                    if (Element != null) {
+                        Element.value = OutPut[obj][Field];
+                    }
+                }
+            }
+
+        } catch (ex) { debugger;}
+    }
+
+    // Limit effective dates to be only selectable on/after policy effective date
+    $('#dateselected').datepicker({
+        dateFormat: "dd/mm/yy",
+        onSelect: function (selectedDate) {
+            // Boat
+            $('#AddBoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#BoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
+
+            // Trailer
+            $('#AddEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#AddPlantEffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#EffectiveDate').datepicker('option', 'minDate', selectedDate);
+            $('#MotorEffectiveDate').datepicker('option', 'minDate', selectedDate);
+
+            // Trailer Modal
+            $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', selectedDate);
+
+        }
+    });
+    $('#AddBoatEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#BoatEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#AddEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#AddPlantEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#EffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#MotorEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $('#TrailerEffectiveDateModal').datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+
+
     function PopulateOrganisationView(Method, OutPut) {
         try {
             var Form = document.getElementById("organisationViewModel");
@@ -56,7 +149,6 @@
                     }
 
                     if (Element == null) {
-                        debugger;
                         var Id = Type + "." + Field;
                         Element = document.getElementById(Id);
                         Value = OutPut[obj][Field];
@@ -100,9 +192,7 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
-                    if (ProgrammeName.value == "TripleA Programme" || ProgrammeName.value == "NZFSG Programme") {
-                        TradingNameOwnerOnLoad();
-                    }
+                    TradingNameOwnerOnLoad();
                 }
             }
         } catch (ex) { debugger; }
@@ -115,8 +205,7 @@
         }
     }
 
-    function NZPIOwnerOnLoad()
-    {
+    function NZPIOwnerOnLoad(){
         document.getElementById("HideOrganisationType").hidden = false;
         document.getElementById("Organisation.OrganisationType").disabled = false;
     }
@@ -131,7 +220,6 @@
                     if (element.tagName == "INPUT") {
                         if (element.type == "date") {
                             //hardcord date string
-                            debugger;
                             var date = Value.substring(0, 10);
                             if (date == "0001-01-01") {
                                   element.value = null;

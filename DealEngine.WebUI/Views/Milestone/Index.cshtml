@@ -1,0 +1,176 @@
+﻿@model DealEngine.WebUI.Models.Milestone.MilestoneViewModel
+<!-- MAIN CONTENT -->
+
+<article class="container">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h2>Create Milestone</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("PostMilestone", "Milestone", FormMethod.Post, new { @id = "MilestoneViewModel", @name = "MilestoneViewModel" }))
+                {
+                    <div id="smartwizard" class="sw-main sw-theme-circles">
+                        <ul class="nav nav-tabs step-anchor">
+                            <li class="nav-item active"><a href="#milestone1" class="nav-link">1<br><small>Programme</small></a></li>
+                            <li class="nav-item"><a href="#milestone2" class="nav-link">2<br><small>Process</small></a></li>
+                            <li class="nav-item"><a href="#milestone3" class="nav-link">3<br><small>Activity</small></a></li>
+                            <li class="nav-item"><a href="#milestone4" class="nav-link">4<br><small>Action</small></a></li>
+                        </ul>
+
+                        <div class="sw-container tab-content">
+
+                            <div id="milestone1" class="tab-pane step-content">
+                                @Html.LabelFor(m => m.Programmes, new { @class = "label required" })
+                                <select id="Milestone.Programme" name="MilestoneViewModel.Programme" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.Programmes)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div id="milestone2" class="tab-pane step-content">
+                                @Html.LabelFor(m => m.ProgrammeProcesses, new { @class = "label required" })
+                                <select id="Milestone.ProgrammeProcess" name="MilestoneViewModel.ProgrammeProcesses" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.ProgrammeProcesses)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div id="milestone3" class="tab-pane step-content">
+                                @Html.LabelFor(m => m.Activities, new { @class = "label required" })
+                                <select id="Milestone.Activity" name="MilestoneViewModel.Activity" class="custom-select" data-rule="GetMilestone" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.Activities)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div id="milestone4" class="tab-pane step-content">
+
+                                <div class="form-group">
+                                    @Html.Label("Tasks")
+                                    @Html.LabelFor(m => m.UserTask.IsActive, new { @class = "label required" })
+                                    <select id="Milestone.UserTask.IsActive" name="MilestoneViewModel.UserTask.IsActive" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                        @foreach (var option in Model.StandardOptions)
+                                        {
+                                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                        }
+                                    </select>
+                                    <a class="btn btn-primary btn-sm" href="#TaskModal" aria-hidden="true" style="color:white" data-toggle="modal"><i class="fa fa-pencil"></i> Create/View/Edit</a>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Email")
+                                    <a class="btn btn-primary btn-sm" href="#EmailModal" aria-hidden="true" style="color:white" data-toggle="modal"><i class="fa fa-pencil"></i> Create/View/Edit</a>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("Advisory")
+                                    <a class="btn btn-primary btn-sm" href="#AdvisoryModal" aria-hidden="true" style="color:white" data-toggle="modal"><i class="fa fa-pencil"></i> Create/View/Edit</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="AdvisoryModal" class="modal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" style="color:blue; font-size:22px">Advisory Details</h3>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.Advisory.Description, new { id = "Advisory.Description", name = "MilestoneViewModel.Advisory.Description", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory" })
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="next" type="submit" type="submit" class="btn btn-success btn-sm">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="TaskModal" class="modal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" style="color:blue; font-size:22px">Task Details</h3>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    @*<div class="form-group">
+                                        @Html.TextAreaFor(m => m.UserTask.URL, new { id = "UserTask.URL", name = "MilestoneViewModel.UserTask.URL", @class = "form-control" })
+                                    </div>*@
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.UserTask.Body, new { id = "UserTask.Body", name = "MilestoneViewModel.UserTask.Body", cols = "100", rows = "10", @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.UserTask.Count, new { id = "UserTask.Count", name = "MilestoneViewModel.UserTask.Count", @class = "form-control", @type="number" })
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="next" type="submit" type="submit" class="btn btn-success btn-sm">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+@section pagespecific {
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+    <script src="~/ckeditor/ckeditor5-build-no-plugin/ckeditor.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#smartwizard').smartWizard({
+                selected: 0,  // Initial selected step, 0 = first step
+                keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                autoAdjustHeight: false, // Automatically adjust content height
+                cycleSteps: false, // Allows to cycle the navigation of steps
+                backButtonSupport: true, // Enable the back button support
+                useURLhash: true, // Enable selection of the step based on url hash
+                lang: {  // Language variables
+                    next: 'Next',
+                    previous: 'Previous'
+                },
+                toolbarSettings: {
+                    toolbarPosition: 'top', // none, top, bottom, both
+                    toolbarButtonPosition: 'right', // left, right
+                    showNextButton: true, // show/hide a Next button
+                    showPreviousButton: true, // show/hide a Previous button
+
+                },
+                anchorSettings: {
+                    anchorClickable: true, // Enable/Disable anchor navigation
+                    enableAllAnchors: false, // Activates all anchors clickable all times
+                    markDoneStep: true, // add done css
+                    enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+                },
+                contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+                disabledSteps: [],    // Array Steps disabled
+                errorSteps: [],    // Highlight step with errors
+                theme: 'dots',
+                transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+                transitionSpeed: '400'
+            });
+
+            ClassicEditor
+                .create(document.querySelector('#MilestoneViewModel.Advisory.Description'))
+                .then(newAdvisory => {
+                    editorAdvisory = newAdvisory;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+        
+    </script>
+}

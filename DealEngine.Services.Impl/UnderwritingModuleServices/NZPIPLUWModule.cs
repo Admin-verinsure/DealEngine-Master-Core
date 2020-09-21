@@ -187,7 +187,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
                 //Inception date rule
-                if (DateTime.UtcNow > product.DefaultInceptionDate.AddMonths(1))
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
                 {
                     inceptionDate = DateTime.UtcNow;
                 }

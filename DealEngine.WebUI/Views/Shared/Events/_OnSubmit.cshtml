@@ -122,7 +122,7 @@
                             }
                         }
                         else {
-                            //hardcoded to find the div visibility - need to find a better way
+                            //hardcoded to find the div visibility - need to find a better way  
                             var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;//IsElementHidden(element);
                             if (isHidden == false) {
                                 OnChange(element.id, element.name);
@@ -156,49 +156,75 @@
                 form.classList.remove("needs-validation");
                 form.classList.add("was-validated");
             }
-            var Unit = document.getElementsByName("Unit");
-            if (Unit != null) {
-                if (Unit.length > 0) {
-                    if (Unit[0].id == "AdvisorUnit") {
-                        AdvisorUnitValidationOnSubmit();
-                    }
-                }
+            UnitValidationOnSubmit();         
+            LocationValidationOnSubmit();
+        }
+    }
+
+    function LocationValidationOnSubmit() {
+        var location = document.getElementById("tblLocation");
+        if (location != null) {
+            if (location.rows[1].className == "no-records-found") {
+                event.preventDefault();
+                event.stopPropagation();
+                window.alert("Please complete Location section ");
+                $("[id='Location']").trigger("click");
+                $("#more").trigger("click");
+                throw "Location Missing";
             }
         }
     }
 
-    function AdvisorUnitValidationOnSubmit() {
-        var pAdvisor = document.getElementById("IsPrincipalAdvisor");
-        if (pAdvisor == null) {
+    function UnitValidationOnSubmit() {
+        var Unit = document.getElementsByName("Unit");
+        if (Unit != null) {
+            if (Unit.length > 0) {
+                if (Unit[0].id == "AdvisorUnit" ||
+                    Unit[0].id == "PlannerUnit"
+                ) {
+                    var pAdvisor = document.getElementById("IsPrincipal");
+                    if (pAdvisor == null) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        $("#more").trigger("click");
+                        $("[id='Insured Details / Named Parties']").trigger("click");
+                        window.alert("Please Add Atleast One Principal with complete information to proceed for policy  ");
+                        throw "no principal selected";
+                    }
+                    else {
+                        var organisations = document.querySelectorAll('[data-IsPrincipal="True"]'); //getAttribute("");
+                        if (organisations.length != 1) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            $("#more").trigger("click");
+                            window.alert("Please Add Atleast One Principal with complete information to proceed for policy  ");
+                            $("[id='Insured Details / Named Parties']").trigger("click");
+                            element.scrollIntoView();
+                            throw "no principal selected";
+                        }
+                    }
+                    var TradingName = document.getElementById("NoTradingName");
+                    if (TradingName != null) {
+                        if (TradingName.value === "True") {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            $("#more").trigger("click");
+                            window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                            $("[id='Insured Details / Named Parties']").trigger("click");
+                            throw "no trading name";
+                        }
+                    }
+                }
+            }
+        }    
+        var InvalidEmail = document.getElementById("ValidBackEndEmail");
+        if (InvalidEmail != null) {
             event.preventDefault();
             event.stopPropagation();
             $("#more").trigger("click");
             $("[id='Insured Details / Named Parties']").trigger("click");
-            window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-            throw "no principal advisor";
-        }
-        else {
-            var organisations = document.querySelectorAll('[data-IsPrincipalAdvisor="True"]'); //getAttribute("");
-            if (organisations.length != 1) {
-                event.preventDefault();
-                event.stopPropagation();
-                $("#more").trigger("click");
-                window.alert("Please Add Atleast One Principal Advisor with complete information to proceed for policy  ");
-                $("[id='Insured Details / Named Parties']").trigger("click");
-                element.scrollIntoView();
-                throw "no principal advisor";
-            }
-        }
-        var TradingName = document.getElementById("NoTradingName");
-        if (TradingName != null) {
-            if (TradingName.value === "True") {
-                event.preventDefault();
-                event.stopPropagation();
-                $("#more").trigger("click");
-                window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
-                $("[id='Insured Details / Named Parties']").trigger("click");
-                throw "no trading name";
-            }
+            window.alert("Please update email for: " + InvalidEmail.value);
+            throw "InvalidEmail Named Parties";
         }
     }
 
@@ -206,7 +232,7 @@
         var PostAjax = true;
         var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
-         var ErrorMessage = "";
+        var ErrorMessage = "";
 
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {

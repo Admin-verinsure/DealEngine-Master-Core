@@ -15,24 +15,12 @@
       "destination": "wwwroot/jquery-validation-unobtrusive/"
     },
     {
-      "library": "bootstrap-multiselect@0.9.15",
-      "destination": "wwwroot/bootstrap-multiselect/"
-    },
-    {
       "library": "popper.js@1.15.0",
       "destination": "wwwroot/lib/popper.js/"
     },
     {
-      "library": "multiselect@2.2.9",
-      "destination": "wwwroot/lib/multiselect/"
-    },
-    {
       "library": "bootstrap-slider@10.6.2",
       "destination": "wwwroot/lib/bootstrap-slider/"
-    },
-    {
-      "library": "select2@4.0.10",
-      "destination": "wwwroot/lib/select2/"
     },
     {
       "provider": "unpkg",
@@ -42,6 +30,15 @@
     {
       "library": "bootstrap-table@1.16.0",
       "destination": "wwwroot/bootstrap-table/"
+    },
+    {
+      "library": "chosen@1.8.7",
+      "destination": "wwwroot/chosen/"
     }
-  ]
+  ,
+{
+  "library": "jqgrid@5.5.0",
+  "destination": "wwwroot/lib/jqgrid/"
+}
+]
 }

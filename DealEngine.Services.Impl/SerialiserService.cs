@@ -15,7 +15,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<object?> GetDeserializedObject(Type type, IFormCollection collection)
         {
-            Dictionary<object, string> model = new Dictionary<object, string>();
+            Dictionary<object, object> model = new Dictionary<object, object>();
             object obj = null;
             try
             {
@@ -42,6 +42,17 @@ namespace DealEngine.Services.Impl
                             else
                             {
                                 model.Add(value, collection[Key].ToString());
+                            }
+                        }
+                        else if(fieldType == typeof(IList<string>))
+                        {
+                            if (model.ContainsKey(value))
+                            {
+                                model[value] = collection[Key].ToString().Split(',').ToList();
+                            }
+                            else
+                            {
+                                model.Add(value, collection[Key].ToString().Split(',').ToList());
                             }
                         }
                     }

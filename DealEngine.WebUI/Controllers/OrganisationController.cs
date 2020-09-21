@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
-using DealEngine.Domain.Entities;
-using DealEngine.Infrastructure.FluentNHibernate;
-using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.Tasking;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -22,11 +20,13 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationService _organisationService;
         IClientInformationService _clientInformationService;
         IApplicationLoggingService _applicationLoggingService;
-        ILogger<OrganisationController> _logger;
-        ITaskingService _taskingService;
+        ILogger<OrganisationController> _logger;        
+        IMilestoneService _milestoneService;
+        IProgrammeService _programmeService;
 
         public OrganisationController(
-            ITaskingService taskingService,
+            IProgrammeService programmeService,
+            IMilestoneService milestoneService,
             ISerializerationService serialiserService,
             ILogger<OrganisationController> logger,
             IClientInformationService clientInformationService,
@@ -36,7 +36,8 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
-            _taskingService = taskingService;
+            _programmeService = programmeService;
+            _milestoneService = milestoneService;
             _serialiserService = serialiserService;
             _clientInformationService = clientInformationService;
             _logger = logger;
@@ -48,27 +49,39 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
+            bool ValidBackEndEmail;
             Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
             Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
 
-            if(organisation != null)
+            
+            try
             {
-                if (OrganisationId == Guid.Empty)
+                var addr = new System.Net.Mail.MailAddress(email);
+                ValidBackEndEmail = addr.Address == email;
+
+                if (organisation != null)
                 {
-                    return Json(true);
+                    if (OrganisationId == Guid.Empty)
+                    {
+                        return Json(true);
+                    }
+                    if (sheet.Owner.Id == OrganisationId)
+                    {
+                        return Json(false);
+                    }
+                    if (sheet.Organisation.Contains(organisation))
+                    {
+                        return Json(false);
+                    }
                 }
-                if(sheet.Owner.Id == OrganisationId)
-                {
-                    return Json(false);
-                }
-                if (sheet.Organisation.Contains(organisation))
-                {                    
-                    return Json(false);
-                }
+                return Json(false);
             }
-            return Json(false);
+            catch
+            {
+                return Json(true);
+            }
         }
 
         [HttpPost]
@@ -132,6 +145,110 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["Email"].ToString();
+                string LastName = collection["LastName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, "Person - Individual");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, "Skipper");
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, "Person - Individual");
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, "Skipper", "Person - Individual", null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = FirstName + " " + LastName
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                Random random = new Random();
+                string UserName = FirstName.Replace(" ", string.Empty)
+                    + "_"
+                    + LastName.Replace(" ", string.Empty)
+                    + random.Next(1000);
+
+                User user = new User(currentUser, UserName)
+                {
+                    FirstName = collection["FirstName"].ToString(),
+                    LastName = collection["LastName"].ToString(),
+                    Email = collection["Email"].ToString(),
+                    FullName = FirstName + " " + LastName,
+                    Id = Guid.NewGuid()
+                };
+                user.SetPrimaryOrganisation(organisation);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationInterestedPartyAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["OrganisationEmail"].ToString();
+                string Name = collection["OrganisationName"].ToString();
+                string InsuranceAttribute = collection["InsuranceAttribute"].ToString();
+                string OrganisationType = collection["OrganisationTypeName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, OrganisationType);
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, InsuranceAttribute);
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, OrganisationType);
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, InsuranceAttribute, OrganisationType, null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = Name
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> ManageOrganisations()
         {            
@@ -140,11 +257,11 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> AttachOrganisation()
+        public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)
         {
-            var Owners = await _clientInformationService.GetAllInformationSheets();
-            var RemovedOrganisations = await _organisationService.GetAllRemovedOrganisations();
-            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Owners, RemovedOrganisations);
+            var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);            
+            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
             return View(model);
         }
 
@@ -199,13 +316,19 @@ namespace DealEngine.WebUI.Controllers
             User user = await CurrentUser();
             Guid Id = Guid.Parse(collection["OrganisationId"]);
             Organisation organisation = await _organisationService.GetOrganisation(Id);
+            var organisationUser = await _userService.GetUserPrimaryOrganisation(organisation);
             organisation.Removed = true;
             await _organisationService.Update(organisation);
 
-            if(user.UserName== "JDillon")
-            {
-                await _taskingService.JoinOrganisationTask(user, organisation);
-            }
+            //if (user.UserName == "JDillon")
+            //{
+            //    if (organisationUser != null)
+            //    {
+            //        Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
+            //        var Programme = await _programmeService.GetProgramme(ProgrammeId);
+            //        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+            //    }
+            //}
 
             return Ok();
         }
@@ -218,6 +341,15 @@ namespace DealEngine.WebUI.Controllers
             organisation.Removed = false;
             await _organisationService.Update(organisation);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RejoinProgramme(Guid ProgrammeId, Guid OrganisationId)
+        {
+            User user = await CurrentUser();
+            Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            await _milestoneService.JoinOrganisationTask(user, programme);
+            return RedirectToAction("Index", "Home");
         }
 
     }

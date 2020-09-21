@@ -246,11 +246,18 @@ namespace DealEngine.WebUI.Controllers
                                 _authenticationService.UseSingleUseToken(st.Id);
                                 return RedirectToAction("PasswordChanged", "Account");
                             }
-                        } else
+                        }
+                        else
                         {
+                            //assume user hasnt logged in yet and wants to change password for first time
                             _authenticationService.UseSingleUseToken(st.Id);
                             return RedirectToAction("PasswordChanged", "Account");
                         }
+                        //} else
+                        //{
+                        //    _authenticationService.UseSingleUseToken(st.Id);
+                        //    return RedirectToAction("PasswordChanged", "Account");
+                        //}
 
                     }
                     else
@@ -340,7 +347,7 @@ namespace DealEngine.WebUI.Controllers
                         deUser = await _userManager.FindByNameAsync(userName);
                         
                     }
-                    var result = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: true);
+                    var result = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: true);
 
                     return LocalRedirect("~/Home/Index");
                 }

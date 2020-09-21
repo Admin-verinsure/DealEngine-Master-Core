@@ -21,7 +21,6 @@ namespace DealEngine.Services.Impl
         IOrganisationTypeService _organisationTypeService;
         ILdapService _ldapService;
         IUserService _userService;
-        IInsuranceAttributeService _insuranceAttributeService;
         ILogger<OrganisationService> _logger;
         IMapper _mapper;
 
@@ -31,7 +30,6 @@ namespace DealEngine.Services.Impl
             IUserService userService,
             IOrganisationTypeService organisationTypeService,
             ILdapService ldapService,
-            IInsuranceAttributeService insuranceAttributeService,
             ILogger<OrganisationService> logger
             )
         {
@@ -40,7 +38,6 @@ namespace DealEngine.Services.Impl
             _logger = logger;
             _userService = userService;
             _organisationTypeService = organisationTypeService;
-            _insuranceAttributeService = insuranceAttributeService;
             _organisationRepository = organisationRepository;
             _ldapService = ldapService;
         }
@@ -260,7 +257,7 @@ namespace DealEngine.Services.Impl
                     OrganisationTypeName = "Person - Individual";
 
                 }
-                if (!string.IsNullOrWhiteSpace(Email))
+                if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName))
                 {
                     User = await _userService.GetUserByEmail(Email);
                     if (User != null)
@@ -273,7 +270,8 @@ namespace DealEngine.Services.Impl
                     }
                     else
                     {
-                        User = new User(Creator, Guid.NewGuid(), collection);
+                        if(!string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName))
+                            User = new User(Creator, Guid.NewGuid(), collection);
                     }
                 }
                 List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
@@ -314,27 +312,34 @@ namespace DealEngine.Services.Impl
             else
             {
                 OrganisationTypeName = "Person - Individual";
-                if (Type == "Private")
+                if (Type == "Person - Individual")
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Advisor" ||
                     Type == "Nominated Representative" ||
-                    Type == "Administration"
+                    Type == "Administration" ||
+                    Type == "Other Consulting Business" ||
+                    Type == "Mentored Advisor"
                     )
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Personnel")
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new PersonnelUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Principal")
                 {
-                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Private", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new PrincipalUnit(User, Type, OrganisationTypeName, collection));
+                }
+                if (Type == "Planner" || Type == "Contractor")
+                {
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new PlannerUnit(User, Type, OrganisationTypeName, collection));
                 }
             }
 
@@ -345,11 +350,6 @@ namespace DealEngine.Services.Impl
         {
             var Organisation = new Organisation(Creator, Guid.NewGuid(), organisationName, organisationType, organisationalUnits, insuranceAttribute, email);
             return Organisation;
-        }
-
-        public async Task<List<Organisation>> GetAllRemovedOrganisations()
-        {
-            return await _organisationRepository.FindAll().Where(o=>o.Removed == true && o.DateDeleted == null).ToListAsync();
         }
 
         private void UpdateLDap(Organisation organisation)
@@ -373,181 +373,6 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task RefactorOrganisations()
-        {
-            //turn off IA Organisations
-            //run once for Units
-            //Run again to Create Attributes
-            //await AdvisoryUnit();
-            //turn off IA Organisations
-            //await PersonnelUnit();
-            //await PMINZ();
-            //await NZACS();
-        }
-
-        private async Task AdvisoryUnit()
-        {
-            int value = 0;
-            var insuranceattributes = await _insuranceAttributeService.GetInsuranceAttributes();
-            var organisations = await _organisationRepository.FindAll().ToListAsync();
-            //var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
-            var AdvisoryOrg = organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList();
-            int count = AdvisoryOrg.Count;
-            string Message = "";
-            string Id;
-            try
-            {
-                //foreach (var attr in insuranceattributes)
-                //{
-                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Advisor")).ToList())
-                {
-                    value++;
-                    Id = organisation.Id.ToString();
-                    //Message = "Start Id:" + Id;                    
-                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
-                    await _organisationRepository.UpdateAsync(organisation);
-                }
-                //Message = "Added Attribute";
-                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Any(u => u.Name == "Nominated Representative")).ToList())
-                {
-
-                    value++;
-                    Id = organisation.Id.ToString();
-                    //Message = "Start Id:" + Id;
-                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
-                    await _organisationRepository.UpdateAsync(organisation);
-                }
-                foreach (var organisation in organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList())
-                {
-
-                    value++;
-                    Id = organisation.Id.ToString();
-                    //Message = "Start Id:" + Id;
-                    organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Other Consulting Business"));
-                    await _organisationRepository.UpdateAsync(organisation);
-                }
-
-                Message = "Added Units";
-                Message = "Updated Organisation";
-                Console.WriteLine(Message);
-                Console.WriteLine(value);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            //int value = 0;
-            //var insuranceattributes = await _insuranceAttributeService.GetInsuranceAttributes();
-            //var organisations = await _organisationRepository.FindAll().ToListAsync();
-            ////var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));
-            //var AdvisoryOrg = organisations.Where(o => o.OrganisationalUnits.Count == 1).ToList();
-            //int count = AdvisoryOrg.Count;
-            //string Message = "";
-            //string Id;
-            //try
-            //{
-            //    foreach (var attr in insuranceattributes)
-            //    {
-            //        foreach (var organisation in attr.IAOrganisations)
-            //        {
-
-            //            value++;
-            //            Id = organisation.Id.ToString();
-            //            //Message = "Start Id:" + Id;
-            //            //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Other Consulting Business"));
-            //            //Message = "Added Attribute";
-
-
-            //            DateTime.TryParse(organisation.PIRetroactivedate, out DateTime _PIRetroactivedate);
-            //            DateTime.TryParse(organisation.DORetroactivedate, out DateTime _DORetroactivedate);
-
-            //            if (attr.InsuranceAttributeName == "Advisor")
-            //            {
-            //                //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Advisor"));
-            //                organisation.OrganisationalUnits.Add(
-            //                    new AdvisorUnit()
-            //                    {
-            //                        Name = "Advisor",
-            //                        Type = "Person - Individual",
-            //                        Qualifications = organisation.Qualifications,
-            //                        IsRetiredorDeceased = organisation.IsRetiredorDecieved,
-            //                        RegisteredStatus = organisation.RegisteredStatus,
-            //                        Duration = organisation.Duration,
-            //                        IsPrincipalAdvisor = organisation.IsPrincipalAdvisor,
-            //                        DateofRetirement = organisation.DateofRetirement,
-            //                        DateofDeceased = organisation.DateofDeceased,
-            //                        MyCRMId = organisation.MyCRMId,
-            //                        PIRetroactivedate = _PIRetroactivedate,
-            //                        DORetroactivedate = _DORetroactivedate
-            //                    });
-
-            //                organisation.OrganisationalUnits.Add(
-            //                    new OrganisationalUnit()
-            //                    {
-            //                        Name = "Private",
-            //                        Type = "Person - Individual",
-            //                    });
-
-            //            }
-            //            if (attr.InsuranceAttributeName == "NominatedRepresentative")
-            //            {
-            //                //organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Nominated Representative"));
-            //                organisation.OrganisationalUnits.Add(
-            //                        new AdvisorUnit()
-            //                        {
-            //                            Name = "Nominated Representative",
-            //                            Type = "Person - Individual",
-            //                            Qualifications = organisation.Qualifications,
-            //                            IsRetiredorDeceased = organisation.IsRetiredorDecieved,
-            //                            RegisteredStatus = organisation.RegisteredStatus,
-            //                            Duration = organisation.Duration,
-            //                            IsPrincipalAdvisor = organisation.IsPrincipalAdvisor,
-            //                            DateofRetirement = organisation.DateofRetirement,
-            //                            DateofDeceased = organisation.DateofDeceased,
-            //                            MyCRMId = organisation.MyCRMId,
-            //                            PIRetroactivedate = _PIRetroactivedate,
-            //                            DORetroactivedate = _DORetroactivedate
-            //                        });
-
-            //                organisation.OrganisationalUnits.Add(
-            //                    new OrganisationalUnit()
-            //                    {
-            //                        Name = "Private",
-            //                        Type = "Person - Individual",
-            //                    });
-
-
-            //            }
-            //            if (attr.InsuranceAttributeName == "OtherConsultingBusiness")
-            //            {
-            //                organisation.OrganisationalUnits.Add(
-            //                        new OrganisationalUnit()
-            //                        {
-            //                            Name = "Private",
-            //                            Type = "Person - Individual",
-            //                        });
-            //            }
-
-
-            //            Message = "Added Units";
-
-            //            await _organisationRepository.UpdateAsync(organisation);
-            //            Message = "Updated Organisation";
-            //            Console.WriteLine(Message);
-            //            Console.WriteLine(value);
-            //        }
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-
-            Console.WriteLine(value);
-        }
-
         public async Task UpdateAdvisorDates(IFormCollection collection)
         {
             var guids = collection["OrganisationId"].ToString().Split(',');
@@ -558,157 +383,43 @@ namespace DealEngine.Services.Impl
                 Guid.TryParse(guids[i], out Guid OrganisationId);
                 if (OrganisationId != Guid.Empty)
                 {
-                    var organistion = await GetOrganisation(OrganisationId);
-                    if(organistion != null)
+                    var organisation = await GetOrganisation(OrganisationId);
+                    if(organisation != null)
                     {
-                        var unit = (AdvisorUnit)organistion.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                        var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
                         if(unit != null)
                         {
-                            unit.DORetroactivedate = DateTime.Parse(DODates[i]);
-                            unit.PIRetroactivedate = DateTime.Parse(PIDates[i]);
-                            await Update(organistion);
+                            unit.DORetroactivedate = DODates[i];
+                            unit.PIRetroactivedate = PIDates[i];
+                            await Update(organisation);
                         }
                     }
                 }
             }
         }
 
-        //      private async Task PersonnelUnit()
-        //      {
-        //	int value = 0;
-        //	var organisations = await _organisationRepository.FindAll().ToListAsync();
-        //	var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Personnel"));			
-        //	//var PersonnelOrg = organisations.Where(o => o.InsuranceAttributes.Any(i => i.InsuranceAttributeName == "project management personnel")).ToList();
+        public async  Task<List<Organisation>> GetPublicMarinas()
+        {
+            List<Organisation> organisations = new List<Organisation>();
+            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            foreach(var marina in marinas)
+            {
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if(unit != null)
+                {
+                    if (unit.WaterLocation != null)
+                    {
+                        if (unit.WaterLocation.IsPublic)
+                        {
+                            organisations.Add(marina);
+                        }
+                    }
 
-        //	string Message = "";
-        //	string Id;
-        //	try
-        //	{
-        //		foreach (var organisation in attributeList)
-        //		{
-        //			value++;
-        //			Id = organisation.Id.ToString();
-        //			Message = "Start Id:" + Id;
-        //                  organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Personnel"));
-        //                  Message = "Added Attribute";
+                }
+            }
 
-        //                  //DateTime DateQualified = DateTime.MinValue;
-        //                  //DateTime.TryParse(organisation.DateQualified, out DateQualified);
-        //                  //bool IsCurrentMembershipPMINZ = false;
-        //                  //string CurrentMembershipNo = organisation.CurrentMembershipNo;
-        //                  //if (!string.IsNullOrWhiteSpace(organisation.CurrentMembershipNo))
-        //                  //{
-        //                  //    IsCurrentMembershipPMINZ = true;
-        //                  //    CurrentMembershipNo = organisation.CurrentMembershipNo;
-        //                  //}
-
-        //                  //organisation.OrganisationalUnits.Add(
-        //                  //                   new PersonnelUnit()
-        //                  //                   {
-        //                  //                       Name = "Personnel",
-        //                  //                       Type = "Person - Individual",
-        //                  //                       IsRegisteredLicensed = organisation.IsRegisteredLicensed,
-        //                  //                       InsuredEntityRelation = organisation.InsuredEntityRelation,
-        //                  //                       DateQualified = DateQualified,
-        //                  //                       DesignLicensed = organisation.DesignLicensed,
-        //                  //                       SiteLicensed = organisation.SiteLicensed,
-        //                  //                       IsCurrentMembership = organisation.IsCurrentMembership,
-        //                  //                       OtherCompanyName = organisation.OtherCompanyname,
-        //                  //                       YearOfPractice = organisation.YearofPractice,
-        //                  //                       Qualifications = organisation.Qualifications,
-        //                  //                       JobTitle = organisation.JobTitle,
-        //                  //                       ProfAffiliation = organisation.ProfAffiliation,
-        //                  //                       IsInsuredRequired = organisation.IsInsuredRequired,
-        //                  //                       IsContractorInsured = organisation.IsContractorInsured,
-        //                  //                       CertType = organisation.CertType,
-        //                  //                       MajorShareHolder = organisation.MajorShareHolder,
-        //                  //                       IsCurrentMembershipPMINZ = IsCurrentMembershipPMINZ,
-        //                  //                       CurrentMembershipNo = CurrentMembershipNo
-        //                  //                   });
-
-        //                  //organisation.OrganisationalUnits.Add(
-        //                  //    new OrganisationalUnit()
-        //                  //    {
-        //                  //        Name = "Private",
-        //                  //        Type = "Person - Individual",
-        //                  //    });
-
-        //                  Message = "Added Units";
-
-        //                  await _organisationRepository.UpdateAsync(organisation);
-        //			Message = "Updated Organisation";
-        //			Console.WriteLine(Message);
-        //			Console.WriteLine(value);
-        //		}
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		throw ex;
-        //	}
-
-        //	Console.WriteLine(value);
-        //}
-
-        //      private async Task PrincipalUnit()
-        //      {
-        //	int value = 0;
-        //	var organisations = await _organisationRepository.FindAll().ToListAsync();
-        //	var attributeList = organisations.Where(o => o.OrganisationalUnits.Any(T => T.Name == "Principal"));
-        //	//var PrincipalOrg = organisations.Where(o => o.InsuranceAttributes.Any(i=>i.InsuranceAttributeName =="Principal")).ToList();			
-        //	string Message = "";
-        //	string Id;
-        //	try
-        //	{
-        //              foreach (var organisation in attributeList)
-        //              {
-        //                  value++;
-        //                  Id = organisation.Id.ToString();
-        //                  Message = "Start Id:" + Id;
-        //                  organisation.InsuranceAttributes.Add(new InsuranceAttribute(null, "Principal"));
-        //                  Message = "Added Attribute";
-
-        //                  //organisation.OrganisationalUnits.Add(
-        //                  //    new PrincipalUnit()
-        //                  //    {
-        //                  //        Name = "Principal",
-        //                  //        Type = "Person - Individual",
-        //                  //        DateofRetirement = organisation.DateofRetirement,
-        //                  //        IsRetiredorDeceased = organisation.IsRetiredorDecieved,
-        //                  //        Qualifications = organisation.Qualifications,
-        //                  //        IsIPENZmember = organisation.IsIPENZmember,
-        //                  //        CPEngQualified = organisation.CPEngQualified,
-        //                  //        YearOfPracticeCEAS = organisation.YearofPractice,
-        //                  //        IsNZIAmember = organisation.IsNZIAmember,
-        //                  //        IsADNZmember = organisation.IsADNZmember,
-        //                  //        NZIAmembership = organisation.NZIAmembership,
-        //                  //        IsLPBCategory3 = organisation.IsLPBCategory3,
-        //                  //        IsOtherdirectorship = organisation.IsOtherdirectorship,
-        //                  //        TradingName = organisation.TradingName,
-        //                  //        YearOfPracticeNZACS = organisation.YearofPractice,
-        //                  //        PrevPracticeNZACS = organisation.PrevPractice
-        //                  //    });
-
-        //                  //organisation.OrganisationalUnits.Add(
-        //                  //    new OrganisationalUnit()
-        //                  //    {
-        //                  //        Name = "Private",
-        //                  //        Type = "Person - Individual",
-        //                  //    });
-
-        //                  await _organisationRepository.UpdateAsync(organisation);
-        //			Message = "Updated Organisation";
-        //			Console.WriteLine(Message);
-        //			Console.WriteLine(value);
-
-        //		}
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		throw ex;
-        //	}
-
-        //	Console.WriteLine(value);
-        //}
+            return organisations;
+        }
     }
 
 }

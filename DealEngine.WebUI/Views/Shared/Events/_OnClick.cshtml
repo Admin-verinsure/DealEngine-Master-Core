@@ -24,12 +24,13 @@
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 
-    function RemoveOrganisation(organisationId, AccordionId) {
+    function RemoveOrganisation(organisationId, AccordionId) {        
+        var programmeId = document.getElementById("Programme_Id").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
             url: '@Url.Action("RemoveOrganisation", "Organisation")',
             type: "POST",
-            data: { OrganisationId: organisationId },
+            data: { OrganisationId: organisationId, ProgrammeId: programmeId },
             success: function (Data) {
                 try {
                     location.reload();
@@ -58,16 +59,32 @@
                 debugger;
             }
         });
-    }
+    }    
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
         var addTabHTML = document.getElementById(AddTabId);
-        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        var editTabHTML = document.getElementById(EditTabId);
+        var form = document.getElementById(addTabHTML.firstElementChild.id);
+        editTabHTML.innerHTML = "";
+        var obj = $("#" + form.id).clone();
+        $("#" + EditTabId).append(obj);
+        form = document.getElementById(editTabHTML.firstElementChild.id);
         addTabHTML.innerHTML = "";
         document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";        
         SetCurrentTab(EditTabId);
+        var lists = form.getElementsByClassName("chosen-select");
+        if (lists != null) {            
+            var inputBoxes = form.getElementsByClassName("chosen-search-input default");
+            if (inputBoxes != null) {
+                for (b = 0; b < inputBoxes.length; b++) {
+                    inputBoxes[b].remove();                                        
+                } 
+            }
+            for (i = 0; i < lists.length; i++) {
+                $("#" + lists[i].id).chosen({ width: "95%" });
+            } 
+        }
     }
 
     function ImportValue(Element, Value) {
@@ -138,12 +155,28 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        debugger;
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
-            var addTabHTML = document.getElementById(AddTabId);
-            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            var form = document.getElementById(editTabHTML.firstElementChild.id);
+            var obj = $("#" + form.id).clone();
+            $("#" + AddTabId).append(obj);                       
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
+            var addTabHTML = document.getElementById(AddTabId);
+            form = document.getElementById(addTabHTML.firstElementChild.id);       
+            var lists = form.getElementsByClassName("chosen-select");
+            if (lists != null) {
+                var inputBoxes = form.getElementsByClassName("chosen-search-input default");
+                if (inputBoxes != null) {
+                    for (b = 0; b < inputBoxes.length; b++) {
+                        inputBoxes[b].remove();
+                    }
+                }
+                for (i = 0; i < lists.length; i++) {
+                    $("#" + lists[i].id).chosen({ width: "95%" });
+                }
+            }
         }
         document.getElementById(AddButtonId).innerText = "Add";
         document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
@@ -207,8 +240,7 @@
 
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
         event.preventDefault();
-        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
-
+        CloneForm("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
         document.getElementById("LocationId").value = Id;
         document.getElementById("locationtypeoptions").value = LocationType;
         document.getElementById("commonnamedetails").value = CommonName;
@@ -217,7 +249,6 @@
         document.getElementById("countrydetails").value = Country;
         document.getElementById("suburbdetails").value = Suburb;
         document.getElementById("postcodedetails").value = Postcode;
-
         SetCurrentTab("locationtab2");
     }
 
@@ -278,7 +309,6 @@
             });
     }
 
-
     function RestoreResearchHouse(Id) {
         sessionStorage.setItem('accordianTrigger', 'Independent Research');
         var postData = { ProjectId: Id };
@@ -300,7 +330,7 @@
         ProjectTitle, ProjectType, ProjectCountry, ProjectMajorResponsibilities, ProjectResponsibilityData) {
 
         event.preventDefault();
-        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
+        CloneForm("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("projectdetails") != null) {
@@ -370,7 +400,7 @@
 
     function EditResearchHouse(Id, ResearchServices, ResearchName) {
         event.preventDefault();
-        CloneFormView("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
+        CloneForm("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("researchName") != null) {

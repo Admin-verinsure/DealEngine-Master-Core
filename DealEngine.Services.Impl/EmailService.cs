@@ -206,10 +206,34 @@ namespace DealEngine.Services.Impl
             email.WithSubject(PremiumAdviceEmailsubject);
             email.WithBody(PremiumAdviceEmailbody);
             email.UseHtmlBody(true);
+            //email.ReplyTo();
             if (documents != null)
             {
                 var documentsList = await ToAttachments(documents);
                 email.Attachments(documentsList.ToArray());
+            }
+            email.Send();
+        }
+
+        public async Task SendFullProposalReport(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
+        {
+            string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Full Proposal Report for " + clientInformationSheet.Owner.Name;
+            string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Full Proposal Report.</p>";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            if (!string.IsNullOrEmpty(recipentcc))
+            {
+                email.CC(recipentcc);
+            }
+            email.WithSubject(FullProposalEmailsubject);
+            email.WithBody(FullProposalEmailbody);
+            email.UseHtmlBody(true);
+            if (document != null)
+            {
+               
+                //var documentsList = await ToAttachments(new Attachment(new MemoryStream(document.Contents),"FullProposalReport.pdf"));
+                email.Attachments(new Attachment(new MemoryStream(document.Contents), "FullProposalReport.pdf"));
             }
             email.Send();
         }
@@ -246,6 +270,7 @@ namespace DealEngine.Services.Impl
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
             email.ReplyTo(sender.Email);
+            email.CC(sender.Email);
             email.WithSubject(systememailsubject);
             email.WithBody(systememailbody);
             email.UseHtmlBody(true);          

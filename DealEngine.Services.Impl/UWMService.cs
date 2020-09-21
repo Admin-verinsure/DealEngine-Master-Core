@@ -194,6 +194,25 @@ namespace DealEngine.Services.Impl
                 new TripleACLUWModule(),
                 new TripleAOTUWModule(),
                 new TripleALPDUWModule(),
+                new NZPIPIUWModule(),
+                new NZPIPLUWModule(),
+                new NZPISLUWModule(),
+                new NZPIDOUWModule(),
+                new NZPIEDUWModule(),
+                new NZPIELUWModule(),
+                new NZPICLUWModule(),
+                new NZPIFIDUWModule(),
+                new NZPILPDUWModule(),
+
+                new ApolloPIUWModule(),
+                new ApolloPLUWModule(),
+                new ApolloSLUWModule(),
+                new ApolloDOUWModule(),
+                new ApolloEDUWModule(),
+                new ApolloELUWModule(),
+                new ApolloCLUWModule(),
+                new ApolloOTUWModule(),
+                new ApolloCQLUWModule(),
 
             };
             return modules;

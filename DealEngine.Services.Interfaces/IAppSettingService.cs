@@ -15,6 +15,9 @@ namespace DealEngine.Services.Interfaces
         string GetCompanyTitle { get; }
         string GetConnectionString { get; }
         string GetSuperUser { get; }
+        string NRecoUserName { get; }
+        string NRecoLicense { get; }
+        string NRecoPdfToolPath { get; }
     }
 }
 

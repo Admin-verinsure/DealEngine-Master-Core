@@ -245,7 +245,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            agreement.ProfessionalBusiness = "Building Design Practitioner, Architectural Design, Mechanical Design, Electrical Design, Structural Design, Civil Design, Draughting and associated ancillary activities";
             string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "Worldwide";
             agreement.Jurisdiction = "Worldwide";

@@ -403,39 +403,31 @@
 
     function AddBuilding(tabId, tableId) {
         debugger;
-    var informationId = $('#AnswerSheetId').serialize();
-    var loc = $('#SelectedLocation').serialize();
-    $('#getLandLocModal').show();
-    var x = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-    console.log(x);
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("AddBuilding", "Services")',
-        type: "POST",
-        data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
-    })
-	.done(function (data) {
-	    //$.smallBox({
-	    //    title: "Building named (" + data.BuildingName + ") has been saved",
-	    //    color: "#5F895F",
-	    //    iconSmall: "fa fa-check bounce animated",
-	    //    timeout: 4000
-	    //});
-	    // reload grid
-          $('#getLandLocModal').modal('hide');
-	    $(tableId).trigger('reloadGrid');
+        var informationId = $('#AnswerSheetId').serialize();
+        var loc = $('#SelectedLocation').serialize();
+        $('#getLandLocModal').show();
+        var x = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        console.log(x);
+        $.ajax({
+            url: '@Url.Action("AddBuilding", "Services")',
+            type: "POST",
+            data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+        })
+        .done(function (data) {
+            debugger;
+            $('#getLandLocModal').hide();
+            $(tableId).trigger('reloadGrid');
+             //   $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+             //   $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+             //       $('#getLandLocModal').modal('hide');
 
-     //   $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-     //   $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-     //       $('#getLandLocModal').modal('hide');
-
-	    //$('#Building').val("");
-     //   $(tabId + " :input").val("");
-     //    $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
-     //   $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
+	            //$('#Building').val("");
+             //   $(tabId + " :input").val("");
+             //    $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+             //   $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
 	})
         .fail(function (jqXHR, textStatus) {
-            $('#getLandLocModal').modal('hide');
+                $('#getLandLocModal').hide();
 
 	    alert("There was an error while trying to save the Building.");
     });

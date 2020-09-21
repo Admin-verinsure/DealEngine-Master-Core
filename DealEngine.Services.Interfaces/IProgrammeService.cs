@@ -18,7 +18,6 @@ namespace DealEngine.Services.Interfaces
         Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 		Task Update (params ClientProgramme[] clientProgrammes);
         Task Update(Programme programmes);
-        Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
         Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
         Task<List<Programme>> GetAllProgrammes();
@@ -37,9 +36,12 @@ namespace DealEngine.Services.Interfaces
         Task<List<ClientProgramme>> GetSubClientProgrammesForProgramme(Guid programmeId);
         Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
         Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation);
-        Task AddOrganisationByMembership(Organisation organisation);
+        Task<bool> AddOrganisationByMembership(Organisation organisation, string membership);
         Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
         Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
+        Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection);
+        Task DeveloperTool();
+        Task<Programme> PostProgramme(User user, User brokerUser, Programme jsonProgramme, Programme programme);
     }
 }
 

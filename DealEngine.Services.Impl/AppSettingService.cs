@@ -82,5 +82,31 @@ namespace DealEngine.Services.Impl
                 return _configuration.GetValue<string>("SuperUsers");
             }
         }
+
+       
+        public string NRecoUserName
+        {
+            get
+            {
+                return _configuration.GetValue<string>("NRecoUserName");
+            }
+        }
+
+        public string NRecoLicense
+        {
+            get
+            {
+                return _configuration.GetValue<string>("NRecoLicense");
+            }
+        }
+
+        public string NRecoPdfToolPath
+        {
+            get
+            {
+                return _configuration.GetValue<string>("NRecoPdfToolPath");
+            }
+        }
+        
     }
 }

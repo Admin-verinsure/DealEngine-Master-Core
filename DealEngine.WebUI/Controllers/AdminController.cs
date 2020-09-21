@@ -20,12 +20,13 @@ namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
     public class AdminController : BaseController
-	{		
+	{
+        IMilestoneService _milestoneService;
 		IPrivateServerService _privateServerService;
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
-		IOrganisationService _organisationService;		
+		IDeveloperToolService _developerToolService;		
 		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
         IClientInformationService _clientInformationService;
@@ -41,6 +42,7 @@ namespace DealEngine.WebUI.Controllers
         UserManager<IdentityUser> _userManager;
 
         public AdminController (
+            IMilestoneService milestoneService,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             IImportService importService,
@@ -49,7 +51,7 @@ namespace DealEngine.WebUI.Controllers
             IUserService userRepository, 
             IPrivateServerService privateServerService, 
             IFileService fileService,
-			IOrganisationService organisationService, 
+            IDeveloperToolService developerToolService, 
             IUnitOfWork unitOfWork, 
             IInformationTemplateService informationTemplateService,
             IClientInformationService clientInformationService, 
@@ -62,6 +64,7 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _milestoneService = milestoneService;
             _userManager = userManager;
             _signInManager = signInManager;
             _importService = importService;
@@ -69,7 +72,6 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
 			_privateServerService = privateServerService;
 			_fileService = fileService;
-			_organisationService = organisationService;
 			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
@@ -80,6 +82,7 @@ namespace DealEngine.WebUI.Controllers
             _merchantService = merchantService;
             _systemEmailService = systemEmailService;
             _referenceService = referenceService;
+            _developerToolService = developerToolService;
         }
 
 		[HttpGet]
@@ -108,31 +111,13 @@ namespace DealEngine.WebUI.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> AONImportUsers()
+        public async Task<IActionResult> NZPIImportOwners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportAOEServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch(Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> CEASImportUsers()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportCEASServiceIndividuals(user);
+                await _importService.ImportNZPIImportOwners(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -144,13 +129,13 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CEASUpdateUsers()
+        public async Task<IActionResult> NZPIImportPlanners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportCEASServiceUpdateUsers(user);
+                await _importService.ImportNZPIImportPlanners(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -162,66 +147,13 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PMINZImportUsers()
+        public async Task<IActionResult> NZPIImportContractors()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportPMINZServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> AAAImportAdvisors()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAServiceIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AAAAdministrationAdvisors()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAAdministrationIndividuals(user);
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AAAImportPrincipals()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _importService.ImportAAAServicePrincipals(user);
+                await _importService.ImportNZPIImportContractors(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -240,6 +172,24 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 await _importService.ImportAAAServicePreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZPIImportPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZPIServicePreRenewData(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -871,7 +821,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _clientInformationService.DeveloperTool();
+            await _developerToolService.CreateMarinas();
             return Redirect("~/Home/Index");
         }
     }

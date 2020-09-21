@@ -17,36 +17,13 @@ namespace DealEngine.Domain.Entities
 
         }
 
-        public virtual Location WaterLocationLocation
+        public virtual IList<Location> Locations
         {
             get;
             set;
         }
 
-        public virtual Organisation WaterLocationMarinaLocation
-        {
-            get;
-            set;
-        }
-        public virtual OrganisationalUnit OrganisationalUnit
-        {
-            get;
-            set;
-        }
-
-        public virtual string WaterLocationName
-        {
-            get;
-            set;
-        }
-
-        public virtual string MarinaLocationName
-        {
-            get;
-            set;
-        }
-
-        public virtual ClientInformationSheet ClientInformationSheet
+        public virtual string MarinaName
         {
             get;
             set;
@@ -58,57 +35,52 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        public virtual decimal WaterLocationLatitude
+        public virtual bool IsPublic
         {
             get;
             set;
         }
 
-        public virtual decimal WaterLocationLongitude
+        public virtual decimal Latitude
         {
             get;
             set;
         }
 
-        public virtual string WaterLocationApproved
+        public virtual decimal Longitude
         {
             get;
             set;
         }
 
-        public virtual string WaterLocationCategory
+        public virtual string Approved
         {
             get;
             set;
         }
 
-        public virtual string WaterLocationMooringType
+        public virtual string Category
         {
             get;
             set;
         }
 
-    public virtual WaterLocation OriginalWaterLocation
+        public virtual string MooringType
         {
             get;
-            protected set;
+            set;
         }
+
+
 
         public virtual WaterLocation CloneForNewSheet(ClientInformationSheet newSheet)
         {
-            if (ClientInformationSheet == newSheet)
-                throw new Exception("Cannot clone water location for original information");
-
             WaterLocation newWaterLocation = new WaterLocation(newSheet.CreatedBy);
-            newWaterLocation.WaterLocationName = WaterLocationName;
-            newWaterLocation.WaterLocationLatitude = WaterLocationLatitude;
-            newWaterLocation.WaterLocationLongitude = WaterLocationLongitude;
-            newWaterLocation.WaterLocationLocation = newSheet.Locations.FirstOrDefault(l => l.OriginalLocation.Id == Id);
-            newWaterLocation.WaterLocationMarinaLocation = WaterLocationMarinaLocation;
-            newWaterLocation.WaterLocationApproved = WaterLocationApproved;
-            newWaterLocation.WaterLocationCategory = WaterLocationCategory;
-            newWaterLocation.WaterLocationMooringType = WaterLocationMooringType;
-            newWaterLocation.OriginalWaterLocation = this;
+            newWaterLocation.Latitude = Latitude;
+            newWaterLocation.Longitude = Longitude;
+            newWaterLocation.Approved = Approved;
+            newWaterLocation.Category = Category;
+            newWaterLocation.MooringType = MooringType;
             return newWaterLocation;
         }
 

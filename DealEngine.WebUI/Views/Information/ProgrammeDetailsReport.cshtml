@@ -12,17 +12,78 @@
                 > View Client Information Sheet Section
             </span>
         </h1>
+
+        @Html.HiddenFor(m => m.ClientProgramme.BaseProgramme.Name)
+
     </div>
+    @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
+    {
+        <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">Generate and Save Proposal Report</a>
+        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@true" style="display:none">
+            <i class="fa fa-edit"></i> Send Documents
+        </a>
+    }
 
-
-
-    <!-- widget grid -->
     <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- new widget -->
+                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                        <h2>Client Programme  </h2>
+                    </header>
+                    <!-- widget div-->
+                    @*<div>*@
+                    @*<div class="widget-body no-padding smart-form">*@
+                    <!-- content goes here -->
+
+
+                    <table class="table table-bordered table-striped table-hover table-condensed">
+
+                        <thead>
+                            <tr align="center">
+                                <th align="center">Client Information Sheet</th>
+
+
+                            </tr>
+
+                        </thead>
+                        <tbody>
+
+                            @foreach (var Section in Model.Section.OrderBy(s => s.Position))
+                            {
+
+                                if (!string.IsNullOrWhiteSpace(Section.CustomView))
+                                {
+                                    <tr>
+                                        <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new {id = Model.ClientProgramme.Id , name = Section.CustomView })'" style="cursor:pointer" align="left">
+                                            @Section.Name
+                                        </td>
+
+                                    </tr>
+
+                                }
+                            }
+
+
+                            <tr>
+
+                                <td onclick="location.href='@Url.Action("ViewAgreementDeclaration", "Agreement",new {id = Model.ClientProgramme.Id })'" style="cursor:pointer" align="left">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+            </article>
+        </div>
+    </section>
+    <!-- widget grid -->
+    <section id="widget-grid" class="" hidden>
         <div class="row">
             <article class="col-sm-12 col-md-12 col-lg-8">
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    @*<form action="~/Information/SavePDFFile" method="POST" id="pdfforn" class="smart-form client-form">*@
 
                     @Html.HiddenFor(m => m.AnswerSheetId)
                     @Html.HiddenFor(m => m.ClientProgramme.Owner.Id)
@@ -33,68 +94,31 @@
                     </header>
                     <!-- widget div-->
 
+                    <input hidden id="docID" />
+                    @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
+                    {
+                        <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">View Full Proposal Report</a>
+                        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
+                            <i class="fa fa-edit"></i> Send Documents
+                        </a>
+                    }
+
                     <div id="titledetails">
                         <h3>Title:  @Model.ClientProgramme.BaseProgramme.Name </h3>
                         <h3>Information Sheet for :  @Model.ClientProgramme.Owner.Name </h3>
                         <h3>UIS No:  @Model.ClientInformationSheet.ReferenceId </h3>
+                        <h4>Issued To: @Model.ClientInformationSheet.SubmittedBy</h4>
                     </div>
-
-
-
-                    @foreach (var item in Model.Sections)
-                    {
-
-                        @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
-                        if (item.CustomView == "CommonYou")
+                    <div id="reportdetails">
+                        @foreach (var item in Model.Sections.OrderBy(ob => ob.Position))
                         {
-                            <div id="ReportCommonyouView">
-                                <h3>User Details</h3>
-                                @await Html.PartialAsync("PrefabSections/" + item.CustomView, Model)
-                            </div>
-                            <br />
-
-                        }
-
-                        if ( item.CustomView == "CommonClaim")
-                        {
-                            <div class="CommonClaim">
+                            <div id=@item.Name>
                                 <h2>@item.Name</h2>
                                 @Html.Partial("PrefabSections/" + item.CustomView, Model)
                             </div>
                             <br />
-
-                        }
-
-                        if (item.CustomView == "CommonLocation" || item.CustomView == "SharedRevenue" || item.CustomView == "PMINZ_Project" || item.CustomView == "Common_NamedParty")
-                        {
-                            <div class="objectReportView">
-                                <h2>@item.Name</h2>
-                                @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                            </div>
-                            <br />
-
-                        }
-
-                    }
-
-                    <div class="ReportView">
-
-                        @foreach (var item in Model.Sections)
-                        {
-
-
-                            if (item.CustomView != "CommonYou" && item.CustomView != "CommonLocation" && item.CustomView != "SharedRevenue" && item.CustomView != "PMINZ_Project" && item.CustomView != "Common_NamedParty" && item.CustomView != "CommonClaim")
-                            {
-                                <div style='border-style : groove'>
-                                    <h2>@item.Name</h2>
-                                    @Html.Partial("PrefabSections/" + item.CustomView, Model)
-                                </div>
-                                <br />
-                            }
-
                         }
                     </div>
-
 
 
                     <div id="AdvisorySection">
@@ -105,146 +129,173 @@
                     </div>
 
                     <div id="DeclarationSection">
-                        @*@Model.DeclarationMessage*@
-                        <div style='border-style : groove'>
-                            <h2>Declaration</h2>
-                            @Html.Raw(Model.DeclarationMessage)
-                        </div>
+                        @Html.Raw(Model.Programme.Declaration)
+                    </div>
+
+
+                    <div id="LimitsSelected">
+                        <table class="table table-bordered table-responsive-md table-striped text-center">
+                            <tr>
+                                <th class="text-center" width="40%">Product Name</th>
+                                <th class="text-center" width="30%">Limit</th>
+                                <th class="text-center" width="30%">Excess</th>
+                            </tr>
+                            @foreach (var limits in Model.LimitsSelected)
+                            {
+                                @if (limits != null)
+                                {
+                                    <tr>
+                                        @foreach (var limit in limits)
+                                        {
+                                            <td>
+                                                @limit
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </table>
+
                     </div>
 
                 </div>
-             </article>
+            </article>
         </div>
     </section>
 </div>
 
 
 @section pagespecific {
-   <script src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    @*<script src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>*@
     <script>
         $(window).on("load", function () {
             debugger;
-            window.setTimeout(viewreport, 3000);
-          
+            window.setTimeout(viewreport, 1000);
+
             function viewreport() {
                 debugger;
-                var commonyou = $("#ReportCommonyouView").html();
-                var divtitledetails = $("#titledetails").html();
-                var divContents = $(".ReportView").html();
-                var projectdetails = $("#projecttab1").html();
-                var commonloc = $("#locationtab1").html();
-                var commonclaim = $("#clTabs1").html();
-                var commonnamedparty = $(".listnamedpartyreport").html();
+                var commonyou = $("#You").html();
+                var insuredDetails = $("#AddOrganisation").html();
+                var locations = $("#locationtab1").html();
                 var revenue1 = $("#RevenueTab1").html();
                 var revenue2 = $("#RevenueTab2").html();
                 var revenue3 = $("#RevenueTab3").html();
-                var Declaration = $("#DeclarationSection").html();
-                var Advisory = $("#AdvisorySection").html();
+                var role1 = $("#RoleTab1").html();
+                var role2 = $("#RoleTab2").html();
+                var projectdetails = $("#gview_tblCEASproject").html();
+
+                var professional = $("#Professional").html();
+                var statutory = $("#Statutory").html();
+                var employers = $("#Employers").html();
+                var employment = $("#Employment").html();
+                var directors = $("#Directors").html();
+
+                var general = $("#General").html();
+                var cyber = $("#Cyber").html();
+                var claims = $("#Claims").html();
+                var notifications = $("#gview_tblClaim").html();
+                var advisory = $("#AdvisorySection").html();
+                var limitsselected = $("#LimitsSelected").html();
+                var declaration = $("#DeclarationSection").html();
+
+                ///AAA
+                var investmentproduct = $("#Investment").html();
+                var Outsidetrustee = $("#Outside").html();
+                var IndependentResearch = $("#Independent").html();
+
+                var commonreportstr = "";
+                var prog = document.getElementById("ClientProgramme_BaseProgramme_Name").value;
                 debugger;
-                ///done to remove empty pages in pdf
-                var claimindex = commonclaim.indexOf("<script type=\"text/javascript\">");
-                var subclaim1 = commonclaim.substring(0, claimindex - 1);
-                var subclaim = commonclaim.substring(claimindex);
-                var claimindex2 = subclaim.indexOf("<script type=\"text/javascript\">");
-                var subclaim2 = commonclaim.substring(claimindex2);
-                var claimContents = subclaim1 + subclaim2;
-                var reportstr = divtitledetails + "<div style='border-style : groove' >" + commonyou + "</div>" + "<div style='border-style : groove' >"
-                    + commonnamedparty + "</div>" + "<div style='border-style : groove' >" + "<h2>Fee Income Territories </h2>" + revenue1 + "</div>"
-                    +"</br>"+ revenue2 +"</br>" + revenue3 + divContents + projectdetails
-                    + commonloc   + commonclaim + Declaration + Advisory;
+                if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "CEAS Programme") {
+                    commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
+                        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
+                        + "</div>" + "</br></br><hr><hr></br><h2>Projects </h2></br>" + projectdetails
+                        + "<div style='border-style : groove; page-break-before: always; >" + professional
+                        + "</div>" + "<div style='border-style : groove;' >" + statutory
+                        + "</div>" + "<div style='border-style : groove;' >" + employers
+                        + "</div>" + "<div style='border-style : groove;' >" + employment
+                        + "</div>" + "<div style='border-style : groove;' >" + directors
+                        + "</div>" + "<div style='border-style : groove;' >" + general
+                        + "</div>" + "<div style='border-style : groove;' >" + cyber
+                        + "</div>" + "<div style='border-style : groove;' >" + claims
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
 
 
-                var postData = { Reportstr: reportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
+                } else {
+                    if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "TripleA Programme") {
+                        commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
+                            //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
+                            + "</div>" + "</br></br><hr><hr></br></br>" + investmentproduct
+                            + "</div>" + "</br></br><hr><hr></br></br>" + Outsidetrustee
+                            + "</div>" + "</br></br><hr><hr></br></br>" + IndependentResearch
+                            + "<div style='border-style : groove; page-break-before: always;' >" + professional
+                            + "</div>" + "<div style='border-style : groove;' >" + statutory
+                            + "</div>" + "<div style='border-style : groove;' >" + employers
+                            + "</div>" + "<div style='border-style : groove;' >" + employment
+                            + "</div>" + "<div style='border-style : groove;' >" + directors
+                            + "</div>" + "<div style='border-style : groove;' >" + general
+                            + "</div>" + "<div style='border-style : groove;' >" + cyber
+                            + "</div>" + "<div style='border-style : groove;' >" + claims
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
+                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
+                    }
+
+                }
+
+
+                commonreportstr = commonreportstr.replaceAll('“', "&quot");
+                commonreportstr = commonreportstr.replaceAll('”', "&quot");
+                commonreportstr = commonreportstr.replaceAll("’", "&#39 ");
+                commonreportstr = commonreportstr.replaceAll(" – ", "--");
+               
+                var postData = { Reportstr: commonreportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
 
                   $.ajax({
                                 url: '@Url.Action("SavePDFFile", "File")',
                                 type: "POST",
                                 data: postData
                   })
-                                .done(function (data) {
-                                })
+                      .done(function (data) {
+                          debugger;
+                                  $("#Pdfreport").attr("href", "/File/GetPDF?Id=" + data + "&ClientProgrammeId=" + "@Model.ClientProgramme.Id");
+                                  $(".fullreport").show();
+                              })
                                 .fail(function (a, s, d) {
-                                    //alert("Unable to save.");
                                 });
-
-
-                var printWindow = window.open('', '', 'height=10000,width=800');
-                printWindow.document.write('<html><head><title>DIV Contents</title>');
-                printWindow.document.write('</head><body >');
-
-                 printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(divtitledetails);
-                printWindow.document.write("<br/>");
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(commonyou);
-                printWindow.document.write("<br/>");
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(commonnamedparty);
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write("<h2>Fee Income Territories </h2>");
-                printWindow.document.write(revenue1);
-                 printWindow.document.write("</br>");
-               // printWindow.document.write("</div>");
-
-                //printWindow.document.write(divContents);
-
-               // printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(revenue2);
-                       printWindow.document.write("</br>");
-               // printWindow.document.write("</div>");
-
-                // printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(revenue3);
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(divContents);
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(projectdetails);
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(commonloc);
-                printWindow.document.write("</div>");
-
-                //printWindow.document.write("<div style='border-style : groove' >");
-                //printWindow.document.write(claimContents);
-                //printWindow.document.write("</div>");
-
-               
-
-                 printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(Declaration);
-                printWindow.document.write("</div>");
-
-                printWindow.document.write("<div style='border-style : groove' >");
-                printWindow.document.write(Advisory);
-                printWindow.document.write("</div>");
-
-              
-
-               
-                //printWindow.document.write(namedparty);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                printWindow.print();
 
             }
 
         });
-    </script>
 
-    @*@await Html.PartialAsync("_PrefabScripts")*@
+        function GetReport() {
+            var docId = $("#docID").val();
+
+             var postData = { Id: docId};
+
+                  $.ajax({
+                                url: '@Url.Action("GetPDF", "File")',
+                                type: "POST",
+                                data: postData
+                  })
+                              .done(function (data) {
+                              })
+                                .fail(function (a, s, d) {
+                                });
+
+
+        }
+    </script>
     @await Html.PartialAsync("_InformationWizardScripts")
 
 }
-
-

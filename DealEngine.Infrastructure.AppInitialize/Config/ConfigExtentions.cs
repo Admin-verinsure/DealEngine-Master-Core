@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DealEngine.Infrastructure.AppInitialize
 {
@@ -12,8 +13,17 @@ namespace DealEngine.Infrastructure.AppInitialize
             //    typeof(AppRolesGroupsConfigure) });
 
             //services.AddScoped<ILogger>();           
-            services.AddSingleton(typeof(ILogger));
+            //services.AddSingleton(typeof(ILogger));
 
+            services.Configure<PasswordHasherOptions>(options =>
+            {
+                options.IterationCount = 10000;
+            });
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                //https://github.com/dotnet/aspnetcore/issues/12166
+                options.ValidationInterval = TimeSpan.FromHours(8);
+            });
 
             return services;
         }
