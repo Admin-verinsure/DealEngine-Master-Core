@@ -491,6 +491,22 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Partnership",
                         Value = "Partnership"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Incorporated Society",
+                        Value = "Incorporated Society"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Government",
+                        Value = "Government"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial Institution",
+                        Value = "Financial Institution"
                     }
                 };
             return _Types;
