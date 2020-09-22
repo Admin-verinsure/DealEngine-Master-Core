@@ -120,9 +120,13 @@
         try {
             var Form = document.getElementById("organisationViewModel");
             var TradingName = document.getElementById("NoTradingName");
+            var DateofIncorporation = document.getElementById("NoDateofIncorportation");
             var Unit = document.getElementsByName("Unit");
             if (TradingName != null) {
                 TradingName.value = false;
+            }
+            if (DateofIncorporation != null) {
+                DateofIncorporation.value = false;
             }
             for (obj in OutPut) {
                 var model = OutPut[obj];
@@ -161,7 +165,8 @@
                                 if (date == "0001-01-01") {
                                   element.value = null;
                                 } else {
-                                  element.value = date;
+                                    element.value = date;
+                                    Element.type = "text";
                                 }
                             }
                             else {
@@ -192,6 +197,9 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
+                    if (ProgrammeName.value == "Apollo Programme") {
+                        ApolloOwnerOnLoad();
+                    }        
                     TradingNameOwnerOnLoad();
                 }
             }
@@ -205,9 +213,13 @@
         }
     }
 
-    function NZPIOwnerOnLoad(){
+    function NZPIOwnerOnLoad() {
         document.getElementById("HideOrganisationType").hidden = false;
         document.getElementById("Organisation.OrganisationType").disabled = false;
+    }
+
+    function ApolloOwnerOnLoad(){
+        document.getElementById("HideDateofIncorportation").hidden = false;
     }
 
     function PopulateOrganisationalUnit(OutPut, UnitName) {
@@ -233,16 +245,27 @@
                         }
                     }
                     else if (element.tagName == "SELECT") {
-                        if (Value == "1") {
-                            Value = "true"
-                        }
-                        else if (Value == "2") {
-                            Value = "false";
-                        }
-                        for (var o = 0; o < element.options.length; o++) {
-                            if (element.options[o].value == Value.toString()) {
-                                element.options[o].selected = true;
-                                break;
+                        if (element.multiple) {
+                            for (var i = 0; i < Value.length; i++) {
+                                for (var o = 0; o < element.options.length; o++) {
+                                    if (element.options[o].value == Value[i].toString()) {
+                                        element.options[o].selected = true;
+                                        $(".chosen-select").trigger('chosen:updated');
+                                    }
+                                }
+                            }
+                        } else {
+                            if (Value == "1") {
+                                Value = "true"
+                            }
+                            else if (Value == "2") {
+                                Value = "false";
+                            }
+                            for (var o = 0; o < element.options.length; o++) {
+                                if (element.options[o].value == Value.toString()) {
+                                    element.options[o].selected = true;
+                                    break;
+                                }
                             }
                         }
                     }
