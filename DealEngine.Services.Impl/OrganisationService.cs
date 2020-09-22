@@ -420,6 +420,29 @@ namespace DealEngine.Services.Impl
 
             return organisations;
         }
+
+        public async Task<List<Organisation>> GetPublicFinancialInstitutes()
+        {
+            List<Organisation> organisations = new List<Organisation>();
+            var FinancialList = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToListAsync();
+            foreach (var Financial in FinancialList)
+            {
+                var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.Location != null)
+                    {
+                        if (unit.Location.IsPublic)
+                        {
+                            organisations.Add(Financial);
+                        }
+                    }
+
+                }
+            }
+
+            return organisations;
+        }
     }
 
 }

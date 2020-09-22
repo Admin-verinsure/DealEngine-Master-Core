@@ -12,6 +12,25 @@ namespace DealEngine.WebUI.Models
         public EditClientsViewModel(Domain.Entities.Programme programme)
         {
             GenerateClientsOptions(programme);
+            ClientProgramme = new ClientProgramme(null, null, null);
+            GetTiers();
+        }
+
+        private void GetTiers()
+        {
+            Tiers = new List<SelectListItem>();
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "Prime",
+                    Value = "Prime"
+                });
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "text",
+                    Value = "text"
+                });
         }
 
         private void GenerateClientsOptions(Domain.Entities.Programme programme)
@@ -39,7 +58,8 @@ namespace DealEngine.WebUI.Models
                 Console.WriteLine(ex.Message);
             }
         }
-
+        public IList<SelectListItem> Tiers { get; set; }
         public IList<SelectListItem> Owners { get; set; }
+        public ClientProgramme ClientProgramme { get; set; }
     }
 }
