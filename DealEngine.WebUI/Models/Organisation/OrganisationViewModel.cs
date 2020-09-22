@@ -152,7 +152,6 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
-
         private IList<SelectListItem> GetOwnershipOptions()
         {
             var _Types = new List<SelectListItem>();
@@ -602,16 +601,6 @@ namespace DealEngine.WebUI.Models
                 {
                     Text = "Mentored Advisor",
                     Value = "Mentored Advisor"
-                },
-                new SelectListItem
-                {
-                    Text = "Administration",
-                    Value = "Administration"
-                },
-                new SelectListItem
-                {
-                    Text = "Nominated Representative",
-                    Value = "Nominated Representative"
                 },
                 new SelectListItem
                 {

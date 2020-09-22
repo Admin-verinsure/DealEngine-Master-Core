@@ -106,14 +106,14 @@ namespace DealEngine.Services.Impl
             organisation = await UpdateOrganisation(collection, organisation);
             if (!string.IsNullOrWhiteSpace(TypeName))
             {
-                UpdateOrganisationUnit(organisation, collection);
-                UpdateInsuranceAttribute(organisation, collection);
+                await UpdateOrganisationUnit(organisation, collection);
+                await UpdateInsuranceAttribute(organisation, collection);
             }
 
             await Update(organisation);
         }
 
-        private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
+        private async Task UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
         {
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
