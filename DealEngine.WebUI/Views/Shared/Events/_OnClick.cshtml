@@ -20,7 +20,7 @@
         }
     }
 
-    function EditOrganisation() {
+    function EditOrganisation() {        
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 
@@ -74,16 +74,13 @@
         document.getElementById(CancelButtonId).innerText = "Cancel Update";        
         SetCurrentTab(EditTabId);
         var lists = form.getElementsByClassName("chosen-select");
-        if (lists != null) {            
-            var inputBoxes = form.getElementsByClassName("chosen-search-input default");
-            if (inputBoxes != null) {
-                for (b = 0; b < inputBoxes.length; b++) {
-                    inputBoxes[b].remove();                                        
-                } 
-            }
+        if (lists != null) {     
             for (i = 0; i < lists.length; i++) {
-                $("#" + lists[i].id).chosen({ width: "95%" });
-            } 
+                var chosenList = document.getElementById(lists[i].id);
+                chosenList.nextElementSibling.remove();
+            }            
+            $(".chosen-select").chosen({ width: "95%" });
+
         }
     }
 
@@ -155,7 +152,6 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
-        debugger;
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
             var form = document.getElementById(editTabHTML.firstElementChild.id);
@@ -167,15 +163,11 @@
             form = document.getElementById(addTabHTML.firstElementChild.id);       
             var lists = form.getElementsByClassName("chosen-select");
             if (lists != null) {
-                var inputBoxes = form.getElementsByClassName("chosen-search-input default");
-                if (inputBoxes != null) {
-                    for (b = 0; b < inputBoxes.length; b++) {
-                        inputBoxes[b].remove();
-                    }
-                }
                 for (i = 0; i < lists.length; i++) {
-                    $("#" + lists[i].id).chosen({ width: "95%" });
-                }
+                    var chosenList = document.getElementById(lists[i].id);
+                    chosenList.nextElementSibling.remove();
+                } 
+                $(".chosen-select").chosen({ width: "95%" });
             }
         }
         document.getElementById(AddButtonId).innerText = "Add";

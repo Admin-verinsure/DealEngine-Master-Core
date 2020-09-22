@@ -214,6 +214,17 @@
                             throw "no trading name";
                         }
                     }
+                    var DateofIncorportation = document.getElementById("NoDateofIncorportation");
+                    if (DateofIncorportation != null) {
+                        if (DateofIncorportation.value === "True") {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            $("#more").trigger("click");
+                            window.alert("Please add 'Date of Incorportation' for 'Owner' in Named Parties");
+                            $("[id='Insured Details / Named Parties']").trigger("click");
+                            throw "no Date of Incorportation";
+                        }
+                    }
                 }
             }
         }    

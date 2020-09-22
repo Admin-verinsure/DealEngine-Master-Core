@@ -62,7 +62,7 @@ namespace DealEngine.Services.Impl
                 obj = JsonConvert.DeserializeObject(JsonString, type,
                     new JsonSerializerSettings()
                     {
-                        MaxDepth = 1,
+                        MaxDepth = 2,
                         ObjectCreationHandling = ObjectCreationHandling.Auto,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
