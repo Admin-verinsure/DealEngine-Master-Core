@@ -199,10 +199,10 @@ namespace DealEngine.Domain.Entities
 		protected Location () : base (null) { }
 
 		public Location (User createdBy) : base (createdBy) {
-            OrganisationalUnits = new List<OrganisationalUnit>();
         }
 
 		public virtual Location OriginalLocation { get; protected set; }
+        public virtual bool IsPublic { get; set; }
         public virtual string Street { get; set; }
         public virtual string Suburb { get; set; }
         public virtual string Postcode { get; set; }
@@ -221,10 +221,9 @@ namespace DealEngine.Domain.Entities
         public virtual string ValidationStatus { get; set; }
         public virtual bool Removed { get; set; }
         public virtual string RiskZone { get; set; }
-        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
         public virtual IList<Building> Buildings { get; set; }
-        public virtual IList<WaterLocation> WaterLocations { get; set; }
         public virtual string LocationType { get; set; }
+  
 
         public virtual Location CloneForNewSheet (ClientInformationSheet newSheet)
 		{
@@ -236,7 +235,6 @@ namespace DealEngine.Domain.Entities
 			newLocation.State = State;
 			newLocation.Country = Country;
 			newLocation.CommonName = CommonName;
-			newLocation.OrganisationalUnits = new List<OrganisationalUnit> (OrganisationalUnits);
             newLocation.LocationType = LocationType;
 
             newLocation.OriginalLocation = this;
