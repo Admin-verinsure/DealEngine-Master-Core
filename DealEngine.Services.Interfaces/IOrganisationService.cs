@@ -25,6 +25,7 @@ namespace DealEngine.Services.Interfaces
         Task UpdateAdvisorDates(IFormCollection collection);
         Task<List<Organisation>> GetPublicMarinas();
         Task<List<Organisation>> GetPublicFinancialInstitutes();
+        Task<Organisation> GetMarina(WaterLocation waterLocation);
     }
 }
 

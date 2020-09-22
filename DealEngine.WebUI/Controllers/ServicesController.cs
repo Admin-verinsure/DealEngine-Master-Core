@@ -1946,7 +1946,11 @@ namespace DealEngine.WebUI.Controllers
                 boat.BoatWaterLocation = null;
 
                 if (model.BoatWaterLocation != Guid.Empty)
-                    boat.BoatWaterLocation = await _organisationService.GetOrganisation(model.BoatWaterLocation);
+                {
+                    var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
+                    boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
+                }
+                    
 
                 if (model.OtherMarinaName != null)
                 {

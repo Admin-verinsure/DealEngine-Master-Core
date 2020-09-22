@@ -251,13 +251,9 @@
 
             @{ await Html.RenderPartialAsync("_ImpersonateUser", Model); }
         </div>
-        @if (User.Identity.Name == "JDillon")
-        {
-            <div class="form-group">
-                <a class="btn btn-primary btn-sm" href="~/Admin/DeveloperTool">Developer Tool</a>
-            </div>
-        }
-
+        <div class="form-group">
+            <a class="btn btn-primary btn-sm" href="~/Admin/DeveloperTool">Developer Tool</a>
+        </div>
     </div>
 
 
