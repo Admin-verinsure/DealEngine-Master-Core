@@ -75,44 +75,30 @@
     }
 
     // Limit effective dates to be only selectable on/after policy effective date
-    $('#dateselected').datepicker({
-        dateFormat: "dd/mm/yy",
-        onSelect: function (selectedDate) {
-            // Boat
-            $('#AddBoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
-            $('#BoatEffectiveDate').datepicker('option', 'minDate', selectedDate);
-
-            // Trailer
-            $('#AddEffectiveDate').datepicker('option', 'minDate', selectedDate);
-            $('#AddPlantEffectiveDate').datepicker('option', 'minDate', selectedDate);
-            $('#EffectiveDate').datepicker('option', 'minDate', selectedDate);
-            $('#MotorEffectiveDate').datepicker('option', 'minDate', selectedDate);
-
-            // Trailer Modal
-            $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', selectedDate);
-
-        }
-    });
+    //$('#dateselected').datepicker({
+    //    dateFormat: "dd/mm/yy",
+    //    
+    //});"2020-09-30"
     $('#AddBoatEffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#BoatEffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#AddEffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#AddPlantEffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#EffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#MotorEffectiveDate').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
     $('#TrailerEffectiveDateModal').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy-mm-dd",
     });
 
 

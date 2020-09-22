@@ -292,8 +292,25 @@
                 });
             }        
             if (Rule === "DefaultEffectiveDate") {
+                var datefix = Value.replaceAll('-', '');
+                var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var newDate = new Date(year, month - 1, day);
+                $('#AddBoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#BoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddPlantEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#EffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#MotorEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', newDate);
+               
                 document.getElementById("AddBoatEffectiveDate").value = Value;
                 document.getElementById("BoatEffectiveDate").value = Value;
+                document.getElementById("AddEffectiveDate").value = Value;
+                document.getElementById("AddPlantEffectiveDate").value = Value;
+                document.getElementById("EffectiveDate").value = Value;
+                document.getElementById("MotorEffectiveDate").value = Value;
                 document.getElementById("TrailerEffectiveDateModal").value = Value;
             }
         } catch (ex) {
