@@ -21,5 +21,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Update="Models\MarinaInterestedPartiesViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Organisation\AddMarinaInterestedParty.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+  </ItemGroup>
 </Project>

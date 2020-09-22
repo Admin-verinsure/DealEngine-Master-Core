@@ -443,6 +443,23 @@ namespace DealEngine.Services.Impl
 
             return organisations;
         }
+
+        public async Task<Organisation> GetMarina(WaterLocation waterLocation)
+        {
+            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            foreach (var marina in marinas)
+            {                
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.WaterLocation == waterLocation)
+                    {
+                        return marina;
+                    }
+                }
+            }
+            return null;
+        }
     }
 
 }

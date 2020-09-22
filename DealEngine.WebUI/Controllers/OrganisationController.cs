@@ -145,6 +145,15 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> AddMarinaInterestedParty()
+        {
+            //MarinaInterestedPartiesViewModel marinaInterestedPartiesViewModel = new MarinaInterestedPartiesViewModel();
+            //return View(marinaInterestedPartiesViewModel);
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
         {
