@@ -18,10 +18,12 @@ namespace DealEngine.WebUI.Models
 	public class BaseViewModel
 	{
 		public List<string> UserRoles { get; set; }
+		public IList<SelectListItem> BooleanOptions { get; }
 
 		public BaseViewModel ()
 		{
 			UserRoles = new List<string> ();
+			BooleanOptions = GetBooleanOptions();
 		}
 
 		public CultureInfo UserCulture

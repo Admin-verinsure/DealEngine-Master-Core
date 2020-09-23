@@ -251,7 +251,7 @@
                 if (sheetstatus == "Started") {
                    var OTAlert = "Please ensure that you provide details in the notification section";
                    Value = ShowAlert(Value, OTAlert);
-                }               
+                }
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);
@@ -290,14 +290,49 @@
                         debugger;
                     }
                 });
-            }        
+            }
             if (Rule === "DefaultEffectiveDate") {
+                var datefix = Value.replaceAll('-', '');
+                var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var newDate = new Date(year, month - 1, day);
+                $('#AddBoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#BoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddPlantEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#EffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#MotorEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', newDate);
+               
                 document.getElementById("AddBoatEffectiveDate").value = Value;
                 document.getElementById("BoatEffectiveDate").value = Value;
+                document.getElementById("AddEffectiveDate").value = Value;
+                document.getElementById("AddPlantEffectiveDate").value = Value;
+                document.getElementById("EffectiveDate").value = Value;
+                document.getElementById("MotorEffectiveDate").value = Value;
                 document.getElementById("TrailerEffectiveDateModal").value = Value;
             }
+            if (Rule === "OtherOptions") {
+                if (obj.multiple) {
+                    for (var i = 0; i < obj.selectedOptions.length; i++) {
+                        if (obj.selectedOptions[i].value != "Other") {
+                            DefaultRule("2", Name);
+                        } else {
+                            DefaultRule("1", Name);
+                            break;
+                        }                        
+                    }
+                }
+                else if (Value == "Other") {
+                    DefaultRule("1", Name);
+                }
+                else {
+                    DefaultRule("2", Name);
+                }
+            }
         } catch (ex) {
-            //these rules need to be re-run regardless of the catch            
+            //these rules need to be re-run regardless of the catch
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
@@ -322,8 +357,8 @@
     }
 
     function OrganisationTypeOnChange(Value) {
-        //reset views to default 
-        ResetOrganisationUnitView();     
+        //reset views to default
+        ResetOrganisationUnitView();
 
         var List = document.getElementById("Organisation.OrganisationType");
         List.disabled = false;
@@ -339,7 +374,7 @@
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
-                AdvisorOnChange();                
+                AdvisorOnChange();
             }
 
             if (Value == "Mentored Advisor") {
@@ -353,7 +388,7 @@
 
             if (Value == "Contractor") {
                 ContractorOnChange();
-            } 
+            }
 
             for (var i = 0; i < List.options.length; i++) {
                 if (List.options[i].text == "Private") {
@@ -362,9 +397,18 @@
                 }
             }
 
-            List.disabled = true;            
+            List.disabled = true;
         } else {
             document.getElementById("Else").hidden = false;
+            if (Value == "Other Consulting Business") {
+                var NoTradingName = document.getElementById("NoTradingName");
+                if (NoTradingName != null) {
+                    document.getElementById("TradingName").hidden = false;
+                    var TradingName = document.getElementById("Organisation.TradingName");
+                    TradingName.hidden = false;
+                    TradingName.removeAttribute("required");                    
+                }
+            }
         }
 
         DefaultRule("1", Value);
@@ -383,7 +427,7 @@
     }
 
     function AdvisorOnChange() {
-        var IsTripleAApproval = document.getElementById("HideTripleAApproval");        
+        var IsTripleAApproval = document.getElementById("HideTripleAApproval");
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
             document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
@@ -396,12 +440,12 @@
         if (IsPrincipal != null) {
             IsPrincipal.hidden = true;
         }
-        
+
     }
 
     function ResetOrganisationUnitView() {
         document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;   
+        document.getElementById("Else").hidden = true;
         var IsPrincipal = document.getElementById("HidePrincipal");
         if (IsPrincipal != null) {
             IsPrincipal.hidden = false;

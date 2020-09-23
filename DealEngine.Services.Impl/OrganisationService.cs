@@ -106,14 +106,14 @@ namespace DealEngine.Services.Impl
             organisation = await UpdateOrganisation(collection, organisation);
             if (!string.IsNullOrWhiteSpace(TypeName))
             {
-                UpdateOrganisationUnit(organisation, collection);
-                UpdateInsuranceAttribute(organisation, collection);
+                await UpdateOrganisationUnit(organisation, collection);
+                await UpdateInsuranceAttribute(organisation, collection);
             }
 
             await Update(organisation);
         }
 
-        private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
+        private async Task UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
         {
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
@@ -419,6 +419,56 @@ namespace DealEngine.Services.Impl
             }
 
             return organisations;
+        }
+
+        public async Task<List<Organisation>> GetPublicFinancialInstitutes()
+        {
+            List<Organisation> organisations = new List<Organisation>();
+            var FinancialList = await GetFinancialInstitutes();
+            foreach (var Financial in FinancialList)
+            {
+                var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.Location != null)
+                    {
+                        if (unit.Location.IsPublic)
+                        {
+                            organisations.Add(Financial);
+                        }
+                    }
+
+                }
+            }
+
+            return organisations;
+        }
+
+        public async Task<Organisation> GetMarina(WaterLocation waterLocation)
+        {
+            var marinas = await GetAllMarinas();
+            foreach (var marina in marinas)
+            {                
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.WaterLocation == waterLocation)
+                    {
+                        return marina;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public async Task<List<Organisation>> GetAllMarinas()
+        {
+            return  await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+        }
+
+        public async Task<List<Organisation>> GetFinancialInstitutes()
+        {
+            return await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToListAsync();
         }
     }
 

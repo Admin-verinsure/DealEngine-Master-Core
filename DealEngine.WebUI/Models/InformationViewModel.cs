@@ -460,6 +460,7 @@ namespace DealEngine.WebUI.Models
             HasApprovedVendorsOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             HasLocationOptions = GetSelectListOptions();
+            HasOptionalUltraOptions = GetSelectListOptions();
         }
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -491,7 +492,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasProceduresOptions { get; set; }
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
-        
+        public IList<SelectListItem> HasOptionalUltraOptions { get; set; }
+
         public IList<SelectListItem> HasLocationOptions { get; set; }
 
         public int CoverAmount { get; set; }

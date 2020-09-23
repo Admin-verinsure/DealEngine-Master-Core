@@ -103,6 +103,10 @@
                         else if (item.Status == "Started")
                         {
                             <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                            if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                            {
+                                <a class="btn btn-primary btn-sm" href="/Information/ResetStatus/@item.Id"><i class="fa fa-arrow-right"></i> Reset Status</a>
+                            }
                         }
                         else if (item.Status.StartsWith("Submitted"))
                         {

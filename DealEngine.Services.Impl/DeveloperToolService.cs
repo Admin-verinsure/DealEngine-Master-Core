@@ -92,6 +92,67 @@ namespace DealEngine.Services.Impl
             marina5.OrganisationalUnits.Add(marinaUnit5);
 
             await _OrganisationRepository.AddAsync(marina5);
+
+            Organisation instatute = new Organisation(null, Guid.NewGuid());
+            OrganisationType organisationType6 = new OrganisationType("Corporation – Limited liability");
+            InsuranceAttribute insuranceAttribute6 = new InsuranceAttribute(null, "Financial");
+            InterestedPartyUnit partyUnit = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+            partyUnit.Location = new Location(null);
+            partyUnit.Location.IsPublic = true;
+            instatute.Name = "ANZ Bank New Zealand Ltd";
+            instatute.OrganisationType = organisationType6;
+            instatute.InsuranceAttributes.Add(insuranceAttribute6);
+            instatute.OrganisationalUnits.Add(partyUnit);
+            await _OrganisationRepository.AddAsync(instatute);
+
+            Organisation instatute2 = new Organisation(null, Guid.NewGuid());
+            OrganisationType organisationType7 = new OrganisationType("Corporation – Limited liability");
+            InsuranceAttribute insuranceAttribute7 = new InsuranceAttribute(null, "Financial");
+            InterestedPartyUnit partyUnit2 = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+            partyUnit2.Location = new Location(null);
+            partyUnit2.Location.IsPublic = true;
+            instatute2.Name = "ASB Bank Limited";
+            instatute2.OrganisationType = organisationType7;
+            instatute2.InsuranceAttributes.Add(insuranceAttribute7);
+            instatute2.OrganisationalUnits.Add(partyUnit2);
+            await _OrganisationRepository.AddAsync(instatute2);
+
+            Organisation instatute3 = new Organisation(null, Guid.NewGuid());
+            OrganisationType organisationType8 = new OrganisationType("Corporation – Limited liability");
+            InsuranceAttribute insuranceAttribute8 = new InsuranceAttribute(null, "Financial");
+            InterestedPartyUnit partyUnit3 = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+            partyUnit3.Location = new Location(null);
+            partyUnit3.Location.IsPublic = true;
+            instatute3.Name = "Australia and New Zealand Banking Group Limited";
+            instatute3.OrganisationType = organisationType8;
+            instatute3.InsuranceAttributes.Add(insuranceAttribute8);
+            instatute3.OrganisationalUnits.Add(partyUnit3);
+            await _OrganisationRepository.AddAsync(instatute3);
+
+            Organisation instatute4 = new Organisation(null, Guid.NewGuid());
+            OrganisationType organisationType9 = new OrganisationType("Corporation – Limited liability");
+            InsuranceAttribute insuranceAttribute9 = new InsuranceAttribute(null, "Financial");
+            InterestedPartyUnit partyUnit4 = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+            partyUnit4.Location = new Location(null);
+            partyUnit4.Location.IsPublic = true;
+            instatute4.Name = "Australia and New Zealand Banking Group Limited";
+            instatute4.OrganisationType = organisationType9;
+            instatute4.InsuranceAttributes.Add(insuranceAttribute9);
+            instatute4.OrganisationalUnits.Add(partyUnit4);
+            await _OrganisationRepository.AddAsync(instatute4);
+
+
+            Organisation instatute5 = new Organisation(null, Guid.NewGuid());
+            OrganisationType organisationType10 = new OrganisationType("Corporation – Limited liability");
+            InsuranceAttribute insuranceAttribute10 = new InsuranceAttribute(null, "Financial");
+            InterestedPartyUnit partyUnit5 = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+            partyUnit5.Location = new Location(null);
+            partyUnit5.Location.IsPublic = true;
+            instatute5.Name = "Australia and New Zealand Banking Group Limited";
+            instatute5.OrganisationType = organisationType10;
+            instatute5.InsuranceAttributes.Add(insuranceAttribute10);
+            instatute5.OrganisationalUnits.Add(partyUnit5);
+            await _OrganisationRepository.AddAsync(instatute5);
         }
     }
 }

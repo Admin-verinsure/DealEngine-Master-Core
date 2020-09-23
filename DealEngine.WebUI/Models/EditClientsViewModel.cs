@@ -12,6 +12,31 @@ namespace DealEngine.WebUI.Models
         public EditClientsViewModel(Domain.Entities.Programme programme)
         {
             GenerateClientsOptions(programme);
+            ClientProgramme = new ClientProgramme(null, null, null);
+            GetTiers();
+        }
+
+        private void GetTiers()
+        {
+            Tiers = new List<SelectListItem>();
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "Apollo Prime",
+                    Value = "Apollo Prime"
+                });
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "Apollo Standard",
+                    Value = "Apollo Standard"
+                });
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "Mortgage Express",
+                    Value = "Mortgage Express"
+                });
         }
 
         private void GenerateClientsOptions(Domain.Entities.Programme programme)
@@ -39,7 +64,8 @@ namespace DealEngine.WebUI.Models
                 Console.WriteLine(ex.Message);
             }
         }
-
+        public IList<SelectListItem> Tiers { get; set; }
         public IList<SelectListItem> Owners { get; set; }
+        public ClientProgramme ClientProgramme { get; set; }
     }
 }
