@@ -150,7 +150,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ManageOrganisations(Guid Id)
         {
             Programme programme = await _programmeService.GetProgrammeById(Id);
-            OrganisationViewModel model = new OrganisationViewModel(programme.ClientProgrammes.FirstOrDefault(p=>p.DateDeleted==null).InformationSheet, null);
+            OrganisationViewModel model = new OrganisationViewModel(null, null);
             var marinas = await _organisationService.GetAllMarinas();
             foreach(var mar in marinas)
             {
@@ -164,6 +164,7 @@ namespace DealEngine.WebUI.Controllers
             }
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> GetMarina(IFormCollection model)
         {
@@ -173,10 +174,24 @@ namespace DealEngine.WebUI.Controllers
             {
                 var unit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
                 JsonObjects.Add("Organisation", organisation);
-                JsonObjects.Add("WaterLocation", organisation);
+                JsonObjects.Add("WaterLocation", unit.WaterLocation);
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
                 return Json(jsonObj);
             }
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostMarina(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+            MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+            //add fields
+
+            //add new organisation using devtools example
+
+
+            await _organisationService.Update(organisation);
             return NoContent();
         }
 

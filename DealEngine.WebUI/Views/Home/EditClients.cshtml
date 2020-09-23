@@ -14,11 +14,10 @@
                             {
                                 <option value="@client.Value">@client.Text</option>
                             }
-                        </select>                        
+                        </select>
                     </label>
                 </div>
-                <div class="form-group">
-                    @*<button class="btn-success btn btn-xs" type="button" onclick="GetOwner()" data-toggle="modal" data-target="#loadModal">Go</button>*@
+                <div class="form-group">                    
                     <button class="btn-success btn btn-xs" type="button" onclick="GetOwner()">Go</button>
                 </div>
             </div>
@@ -27,18 +26,28 @@
                     @Html.HiddenFor(Model => Model.Organisation.Id, new { @id = "Organisation.Id" })
                     @Html.HiddenFor(Model => Model.ClientProgramme.Id, new { @id = "ClientProgramme.Id" })
                     <div class="form-group col-md-6">
+
                         <div class="form-group">
+                            <label class="label">Name</label>
                             @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @required = "" })
                         </div>
+
                         <div class="form-group">
+                            <label class="label">Email</label>
                             @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email", @required = "" })
                         </div>
-                        <div class="form-group">
-                            @Html.TextBoxFor(m => m.ClientProgramme.EGlobalClientNumber, new { @class = "form-control", @id = "ClientProgramme.EGlobalClientNumber", @required = "" })
-                        </div>
-                        <div class="form-group">
-                            @Html.DropDownListFor(m => m.ClientProgramme.Tier, Model.Tiers, new { @class = "form-control b", @id = "ClientProgramme.Tier", @required = "", @size = 1 })
-                        </div>
+                        @if (Model.Programme.Name == "Apollo Programme")
+                        {
+                            <div class="form-group">
+                                <label class="label">EGlobal Number</label>
+                                @Html.TextBoxFor(m => m.ClientProgramme.EGlobalClientNumber, new { @class = "form-control", @id = "ClientProgramme.EGlobalClientNumber", @required = "" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label">Tier</label>
+                                @Html.DropDownListFor(m => m.ClientProgramme.Tier, Model.Tiers, new { @class = "form-control b", @id = "ClientProgramme.Tier", @required = "", @size = 1 })
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -48,7 +57,7 @@
         </div>
     </form>
 </div>
-<div class="modal" id="loadModal" tabindex="-1" role="dialog" data-backdrop="static">
+<div class="modal overlay" id="loadModal" tabindex="-1" role="dialog" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
@@ -62,20 +71,21 @@
         function GetOwner() {
             var organisationId = document.getElementById('OrganisationId');
             var id = organisationId.options[organisationId.selectedIndex].value;
+            $("#loadModal").show();
             $.ajax({
                 type: 'Post',
                 url: '@Url.Action("GetClient", "Services")',
                 data: { Id: id }
             })
-                .done(function (data) {
-                    var OutPut = JSON.parse(data);
-                    PopulateView(OutPut);
-                })
-                .fail(function (jqXhr, textStatus, errorThrown) {
-                    debugger;
-                    console.log(errorThrown);
-                });
-            //$("#loadModal").modal({ show: false })           
+            .done(function (data) {
+                var OutPut = JSON.parse(data);
+                PopulateView(OutPut);
+            })
+            .fail(function (jqXhr, textStatus, errorThrown) {
+                debugger;
+                console.log(errorThrown);
+            });
+            $("#loadModal").hide();         
         }
 
     </script>

@@ -7,7 +7,7 @@
         <div class="row">
             @if (doc.DisplayName.Contains(".pdf")){
                 <section class="col col-12 font-md">
-                    <a href="@(doc.Url + "?format=pdf")" id="@doc.DocType">@doc.DisplayName.Substring(0, doc.DisplayName.Length - 4)</a>
+                    <a href="@(doc.Url)" id="@doc.DocType">@doc.DisplayName.Substring(0, doc.DisplayName.Length - 4)</a>
                 </section>
             }
             else

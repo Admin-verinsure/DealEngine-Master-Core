@@ -691,6 +691,7 @@ namespace DealEngine.WebUI.Models
         public PrincipalUnit PrincipalUnit { get; set; }
         public InterestedPartyUnit InterestedPartyUnit { get; set; }
         public PlannerUnit PlannerUnit { get; set; }
+        public MarinaUnit MarinaUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
     }
 }
