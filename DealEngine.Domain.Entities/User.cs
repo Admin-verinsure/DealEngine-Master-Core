@@ -122,7 +122,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Programme> InvoiceConfigNotifyProgrammes { get; set; }
         [JsonIgnore]
         public virtual IList<UserTask> UserTasks { get; set; }
-
+        public virtual string EbixDepartmentCode { get; set; }
 
         public User(User createdBy, string strUsername)
 			: this (createdBy)

@@ -32,6 +32,7 @@ namespace DealEngine.WebUI.Models
             ProjectViewModel = new ProjectViewModel(clientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
             OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
+            BoatViewModel = new BoatViewModel();
             ClientInformationSheet = clientInformationSheet;
             Status = clientInformationSheet.Status;
             AnswerSheetId = clientInformationSheet.Id;
@@ -39,6 +40,7 @@ namespace DealEngine.WebUI.Models
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
+        public BoatViewModel BoatViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
@@ -469,10 +471,10 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "Yes", Value = "1"
+                    Text = "True", Value = "1"
                 },
                 new SelectListItem
-                { Text = "No", Value = "2" }
+                { Text = "False", Value = "2" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
@@ -503,10 +505,12 @@ namespace DealEngine.WebUI.Models
         {
             HasTraditionalLicenceOptions = GetSelectListOptions();
             HasAdvisersOptions = GetHasAdvisersOptions();
+            HasApolloAdvisersOptions = GetHasApolloAdvisersOptions();
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
         }
 
         public string TransitionalLicenseNum { get; set; }
+        public string TransitionalLicenseHolder { get; set; }
         public  string CoverStartDate { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
@@ -527,6 +531,28 @@ namespace DealEngine.WebUI.Models
             };
         }
 
+        private IList<SelectListItem> GetHasApolloAdvisersOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I do not have any other advisers working under my licence", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Apollo advisers only working under my licence", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Non-Apollo advisers working under my licence", Value = "3"
+                }
+            };
+        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -565,7 +591,8 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
-        public IList<SelectListItem> HasAdvisersOptions { get; set; }        
+        public IList<SelectListItem> HasAdvisersOptions { get; set; }
+        public IList<SelectListItem> HasApolloAdvisersOptions { get; set; }
         public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
         public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
 

@@ -8,7 +8,7 @@
             </div>
             <div class="col-3">           
                 
-                @Html.TextBoxFor(m => m.GeneralViewModel.PolicyDate, "{0:yyyy-MM-dd}", new { @class = "form-control", onblur = "(this.type='text')", onfocus = "(this.type='date')", onchange = "OnChange(this.id, this.name)", @required = "", @type = "text" })
+                @Html.TextBoxFor(m => m.GeneralViewModel.PolicyDate, "{0:yyyy-MM-dd}", new { @class = "form-control", onblur = "(this.type='text')", @data_rule="DefaultEffectiveDate", onfocus = "(this.type='date')", onchange = "OnChange(this.id, this.name)", @required = "", @type = "text" })
             </div>
         </div>
     </div>

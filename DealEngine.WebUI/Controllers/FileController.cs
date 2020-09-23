@@ -67,6 +67,38 @@ namespace DealEngine.WebUI.Controllers
             _appSettingService = appSettingService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetApolloInvoicePDF(Guid Id, Guid ClientProgrammeId)
+        {
+            ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+            ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
+
+            SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+
+
+            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+            // DOCX & HTML
+            string html = _fileService.FromBytes(doc.Contents);
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(
+               _appSettingService.NRecoUserName,
+               _appSettingService.NRecoLicense
+           );            // for Linux/OS-X: "wkhtmltopdf"
+             htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+          htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+            var margins = new PageMargins();
+            margins.Bottom = 10;
+            margins.Top = 10;
+            margins.Left = 30;
+            margins.Right = 10;
+            htmlToPdfConv.Margins = margins;
+
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+
+            return File(pdfBytes, "application/pdf", "ApolloInvoice.pdf");
+
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetPDF(Guid Id,Guid ClientProgrammeId)
@@ -86,7 +118,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-          htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                 + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
                 + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
@@ -110,6 +142,30 @@ namespace DealEngine.WebUI.Controllers
               
         }
 
+        [HttpGet]
+        public async void covertdoctohtml(string filename)
+        {
+            try
+            {
+                string htmlbody = string.Empty;
+                using (StreamReader reader = new StreamReader("./Template/apolloInvoice.html"))
+                {
+                    htmlbody = reader.ReadToEnd();
+                }
+                User user = await CurrentUser();
+                SystemDocument document = null;
+                Product product = null;
+                document = new SystemDocument(user, "ApolloInvoice", MediaTypeNames.Text.Html, 33);
+                document.Description = "ApolloInvoice";
+                document.Contents = _fileService.ToBytes(htmlbody);
+                document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetDocument(Guid id, string format)

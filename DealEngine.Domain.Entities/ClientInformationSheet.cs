@@ -22,7 +22,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }        
         public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
         public virtual IList<Location> Locations { get; protected set; }
-        public virtual IList<WaterLocation> WaterLocations { get; protected set; }
+        public virtual IList<WaterLocation> WaterLocations { get; set; }
         public virtual IList<Boat> Boats { get; protected set; }
         public virtual IList<Organisation> Organisation { get; set; }
 		public virtual RoleData RoleData { get; set; }        

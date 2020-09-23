@@ -351,11 +351,6 @@
         $('.ClearBoat').css({ "background-color": "red", "color": "White" });
         $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
         $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
-        $('.multiselect-container').css({ "width": "100%" });
-        $('.multiselect').multiselect({
-            includeSelectAllOption: true,
-            buttonWidth: '100%'
-        });
 
         $('.overlay').css({
             "position": "fixed",
@@ -5816,22 +5811,13 @@ async: true
     }
 
      function AddaddNewWaterLoc() {
-        debugger;
         var AddSelectedWaterLoc = AddboatWaterLoc.options[AddboatWaterLoc.selectedIndex].value;;
          if (AddSelectedWaterLoc == "add") {
              $('#AddothermarinSection').removeClass('hidden');
              $('#AddBoatMooredTypeSection').removeClass('hidden');
-             $("#AddMooredType").empty();
-             $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>")
-             $('#AddMooredType').trigger('chosen:updated');
-             $('#AddMooredType').append("<option  value=\"Berthed\"> Berthed </option>")
-             $('#AddMooredType').append("<option  value=\"Pile\"> Pile </option>")
-             $('#AddMooredType').append("<option  value=\"Swing\"> Swing </option>")
-
-        } else {
+         } else {
              GetMooredType(AddSelectedWaterLoc);
-                         $('#AddothermarinSection').addClass('hidden');
-
+             $('#AddothermarinSection').addClass('hidden');
         }
        // selectedWaterLoc = "";
     }

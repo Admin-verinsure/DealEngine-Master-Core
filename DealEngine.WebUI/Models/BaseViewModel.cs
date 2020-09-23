@@ -8,6 +8,7 @@ using System.Reflection;
 using DealEngine.WebUI.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DealEngine.WebUI.Models
 {
@@ -67,6 +68,24 @@ namespace DealEngine.WebUI.Models
             get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
         }
 
+		public static List<SelectListItem> GetBooleanOptions()
+        {
+			var options = new List<SelectListItem>();
+			options.Add(
+				new SelectListItem
+				{
+					Text = "True",
+					Value = "true"
+				});
+			options.Add(
+			new SelectListItem
+			{
+				Text = "False",
+				Value = "false"
+			});
+
+			return options;
+		}
     }
 
 	public class BaseListViewModel<ViewModel> : BaseViewModel, IList<ViewModel>

@@ -1276,30 +1276,30 @@ namespace DealEngine.WebUI.Controllers
 
         #region WaterLocations
 
-        [HttpPost]
-        public async Task<IActionResult> SearchWaterLocationName(Guid answerSheetId, string waterLocationName)
-        {
-            WaterLocationViewModel model = new WaterLocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> SearchWaterLocationName(Guid answerSheetId, string waterLocationName)
+        //{
+        //    WaterLocationViewModel model = new WaterLocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                model.WaterLocationName = waterLocationName;
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wl => wl.WaterLocationName == waterLocationName);
-                if (waterLocation != null)
-                {
-                    model = WaterLocationViewModel.FromEntity(waterLocation);
-                }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        model.WaterLocationName = waterLocationName;
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+        //        WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wl => wl.WaterLocationName == waterLocationName);
+        //        if (waterLocation != null)
+        //        {
+        //            model = WaterLocationViewModel.FromEntity(waterLocation);
+        //        }
+        //        return Json(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> AddWaterLocation(WaterLocationViewModel model)
@@ -1319,18 +1319,6 @@ namespace DealEngine.WebUI.Controllers
                     waterLocation = model.ToEntity(user);
                 model.UpdateEntity(waterLocation);
 
-                if (model.WaterLocationLocation != Guid.Empty)
-                    waterLocation.WaterLocationLocation = await _locationService.GetLocationById(model.WaterLocationLocation);
-                if (model.WaterLocationMarinaLocation != null)
-                {
-                    waterLocation.WaterLocationMarinaLocation = await _organisationService.GetOrganisation(model.WaterLocationMarinaLocation);
-
-                }
-                if (model.OrganisationalUnit != null)
-                {
-                    waterLocation.OrganisationalUnit = await _organisationalUnitService.GetOrganisationalUnit(model.OrganisationalUnit);
-
-                }
                 // waterLocation.OrganisationalUnit = OrganisationalUnit;
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1349,155 +1337,155 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetWaterLocation(Guid answerSheetId, Guid waterLocationId)
-        {
-            WaterLocationViewModel model = new WaterLocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> GetWaterLocation(Guid answerSheetId, Guid waterLocationId)
+        //{
+        //    WaterLocationViewModel model = new WaterLocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                WaterLocation waterLocation = sheet.WaterLocations.FirstOrDefault(wloc => wloc.Id == waterLocationId);
-                if (waterLocation != null)
-                {
-                    model = WaterLocationViewModel.FromEntity(waterLocation);
-                    model.AnswerSheetId = answerSheetId;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+        //        WaterLocation waterLocation = sheet.WaterLocations.FirstOrDefault(wloc => wloc.Id == waterLocationId);
+        //        if (waterLocation != null)
+        //        {
+        //            model = WaterLocationViewModel.FromEntity(waterLocation);
+        //            model.AnswerSheetId = answerSheetId;
 
-                    if (waterLocation.WaterLocationLocation != null)
-                        model.WaterLocationLocation = waterLocation.WaterLocationLocation.Id;
-                    if (waterLocation.WaterLocationMarinaLocation != null)
-                        model.WaterLocationMarinaLocation = waterLocation.WaterLocationMarinaLocation.Id;
-                    if (waterLocation.OrganisationalUnit != null)
-                        model.OrganisationalUnit = waterLocation.OrganisationalUnit.Id;
+        //            if (waterLocation.WaterLocationLocation != null)
+        //                model.WaterLocationLocation = waterLocation.WaterLocationLocation.Id;
+        //            if (waterLocation.WaterLocationMarinaLocation != null)
+        //                model.WaterLocationMarinaLocation = waterLocation.WaterLocationMarinaLocation.Id;
+        //            if (waterLocation.OrganisationalUnit != null)
+        //                model.OrganisationalUnit = waterLocation.OrganisationalUnit.Id;
 
 
-                }
+        //        }
 
-                Organisation organisation = null;
+        //        Organisation organisation = null;
 
-                organisation = await _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id);
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        organisation = await _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id);
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
 
-                foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
-                }
+        //        foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
+        //        {
+        //            organisationalUnits.Add(new OrganisationalUnitViewModel
+        //            {
+        //                OrganisationalUnitId = ou.Id,
+        //                Name = ou.Name
+        //            });
+        //        }
 
-                model.LOrganisationalUnits = organisationalUnits;
+        //        model.LOrganisationalUnits = organisationalUnits;
 
-                var Locations = new List<LocationViewModel>();
+        //        var Locations = new List<LocationViewModel>();
 
-                foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
-                {
-                    model.Locations.Add(loc);
-                }
+        //        foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
+        //        {
+        //            model.Locations.Add(loc);
+        //        }
 
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+        //        return Json(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-        }
+        //}
 
         //removing this through new bootstrap
-        [HttpGet]
-        public async Task<IActionResult> GetWaterLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
+        //[HttpGet]
+        //public async Task<IActionResult> GetWaterLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+        //                                  string searchField, string searchString, string searchOper, string filters)
+        //{
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+        //        if (sheet == null)
+        //            throw new Exception("No valid information for id " + informationId);
 
-                var waterLocations = new List<WaterLocation>();
+        //        var waterLocations = new List<WaterLocation>();
 
-                waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
+        //        waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
 
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
+        //        if (_search)
+        //        {
+        //            switch (searchOper)
+        //            {
+        //                case "eq":
+        //                    waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
+        //                    break;
+        //                case "bw":
+        //                    waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+        //                    break;
+        //                case "cn":
+        //                    waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+        //                    break;
+        //            }
+        //        }
+        //        //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
 
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = page;
-                model.TotalRecords = waterLocations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+        //        XDocument document = null;
+        //        JqGridViewModel model = new JqGridViewModel();
+        //        model.Page = page;
+        //        model.TotalRecords = waterLocations.Count;
+        //        model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
 
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
+        //        int offset = rows * (page - 1);
+        //        for (int i = offset; i < offset + rows; i++)
+        //        {
+        //            if (i == model.TotalRecords)
+        //                break;
 
-                    WaterLocation waterLocation = waterLocations[i];
-                    JqGridRow row = new JqGridRow(waterLocation.Id);
-                    if (waterLocation.WaterLocationMarinaLocation != null)
-                    {
-                        row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, waterLocation.WaterLocationMarinaLocation.Name, waterLocation.WaterLocationMooringType, waterLocation.Id);
-                    }
-                    else
-                    {
-                        row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, " ", waterLocation.WaterLocationMooringType, waterLocation.Id);
+        //            WaterLocation waterLocation = waterLocations[i];
+        //            JqGridRow row = new JqGridRow(waterLocation.Id);
+        //            if (waterLocation.WaterLocationMarinaLocation != null)
+        //            {
+        //                row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, waterLocation.WaterLocationMarinaLocation.Name, waterLocation.WaterLocationMooringType, waterLocation.Id);
+        //            }
+        //            else
+        //            {
+        //                row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, " ", waterLocation.WaterLocationMooringType, waterLocation.Id);
 
-                    }
-                    model.AddRow(row);
-                }
+        //            }
+        //            model.AddRow(row);
+        //        }
 
-                // convert model to XDocument for rendering.
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        // convert model to XDocument for rendering.
+        //        document = model.ToXml();
+        //        return Xml(document);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> GetWaterLocationName(string term)
-        {
-            User user = null;
+        //[HttpGet]
+        //public async Task<IActionResult> GetWaterLocationName(string term)
+        //{
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                var waterLocationNameList = _waterLocationRepository.FindAll().Select(wl => wl.WaterLocationName);
-                var results = waterLocationNameList.Where(n => n.ToLower().Contains(term.ToLower()));
-                return new JsonResult(results.ToArray());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        var waterLocationNameList = _waterLocationRepository.FindAll().Select(wl => wl.WaterLocationName);
+        //        var results = waterLocationNameList.Where(n => n.ToLower().Contains(term.ToLower()));
+        //        return new JsonResult(results.ToArray());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> GetWaterLocationList(Guid answerSheetId)
@@ -2378,63 +2366,63 @@ namespace DealEngine.WebUI.Controllers
         //}
 
 
-        [HttpPost]
-        public async Task<IActionResult> GetMooredType(Guid OrgID)
-        {
-            Organisation organisation = null;
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> GetMooredType(Guid OrgID)
+        //{
+        //    Organisation organisation = null;
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                organisation = await _organisationService.GetOrganisation(OrgID);
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                List<SelectListItem> mooredtypes = new List<SelectListItem>();
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        organisation = await _organisationService.GetOrganisation(OrgID);
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
-                foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
-                {
-                    mooredtypes.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = mooredtype,
-                        Text = mooredtype
-                    });
-                }
+        //        foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
+        //        {
+        //            mooredtypes.Add(new SelectListItem
+        //            {
+        //                Selected = false,
+        //                Value = mooredtype,
+        //                Text = mooredtype
+        //            });
+        //        }
 
-                return Json(mooredtypes);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+        //        return Json(mooredtypes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-        }
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> OUSelected(Guid OUselect)
-        {
-            OrganisationalUnit orgunit = null;
-            var location = new LocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> OUSelected(Guid OUselect)
+        //{
+        //    OrganisationalUnit orgunit = null;
+        //    var location = new LocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
-                foreach (Location ou in orgunit.Locations)
-                {
-                    location.Locations.Add(ou);
-                }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
+        //        foreach (Location ou in orgunit.Locations)
+        //        {
+        //            location.Locations.Add(ou);
+        //        }
 
-                return Json(location);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        return Json(location);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
 
         [HttpPost]
@@ -3532,7 +3520,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 currentUser = await CurrentUser();
-                organisation = await _organisationService.CreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
+                organisation = await _organisationService.CreateOrganisation(Email, OrganisationTypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
                 var user = await _userService.GetUserByEmail(Email);
                 var sheet = await _programmeService.CreateUIS(programmeId, user, organisation);
                 

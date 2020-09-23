@@ -463,10 +463,10 @@
                                     <label class="input form-group">
                                         <select onchange="addNewWaterLoc()" class="form-control b" id="BoatWaterLocation" name="BoatWaterLocation" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @*@foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                                {
-                                                    <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
-                                                }*@
+                                            @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
+                                            {
+                                                <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
+                                            }
                                             <option value="add">Other Marina</option>
                                         </select>
                                     </label>
@@ -488,9 +488,12 @@
                             <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="BoatMooredTypeSection">
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label required">Moored Type</label>
-                                    <label class="input form-group">
+                                    <label class="input form-group">                                        
                                         <select class="form-control b" id="MooredType" name="WaterLocationMooringType">
-                                            <option selected="selected" value="">-- Select --</option>
+                                        @foreach(var type in Model.BoatViewModel.MooredTypeOptions)
+                                        {
+                                            <option value="@type.Value">@type.Text</option>
+                                        }
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>
@@ -994,13 +997,10 @@
                                     <label class="label required">Vessel Water Location</label>
                                     <label class="input form-group">
                                         <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
-                                            <option selected="selected" value="">-- Select --</option>
-                                            @*
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
+                                                @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                                 {
-                                                    <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
+                                                    <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
                                                 }
-                                            *@
                                             <option value="add">Other Marina</option>
                                         </select>
                                     </label>
@@ -1024,7 +1024,10 @@
                                     <label class="label required">Moored Type</label>
                                     <label class="input form-group">
                                         <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooredType" name="WaterLocationMooringType">
-                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var type in Model.BoatViewModel.MooredTypeOptions)
+                                            {
+                                                <option value="@type.Value">@type.Text</option>
+                                            }
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>

@@ -30,8 +30,9 @@
                         <th data-field="OrganisationName" data-sortable="true">Organisation Name</th>
                         <th data-field="OrganisationType" data-sortable="true">Organisation Type</th>
                         @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
-                           Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                           Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
+                          Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+                          Model.OrganisationViewModel.Programme.Name == "NZPI Programme" ||
+                          Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
                            )
                         {
                             <th data-field="IsPrincipal" data-sortable="true">Is Principal</th>
@@ -54,7 +55,8 @@
                             </td>
                             @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
                                Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                               Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
+                               Model.OrganisationViewModel.Programme.Name == "NZPI Programme" ||
+                               Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
                        )
                             {
                                 <td>
@@ -96,7 +98,10 @@
                             @organisation.InsuranceAttributes.FirstOrDefault().Name
                         }
                     </td>
-                    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" || Model.OrganisationViewModel.Programme.Name == "TripleA Programme")
+                    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
+                      Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+                      Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
+                      )
                     {
                         <td>
                             @{
@@ -185,6 +190,12 @@
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
+                }
+                else if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme")
+                {
+
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/Apollo_AddOrganisation", Model)
                 }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>
