@@ -9,20 +9,6 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="trusteecompanyname" class="label">
-                            Trustee Company Name
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        @Html.TextBoxFor(m => m.OTViewModel.CompanyName, new { id = "companyname", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
                         <label for="outsidepositions" class="label">
                             Number of Outside Positions Held
                         </label>
@@ -87,7 +73,7 @@
             <div class="row">
             <div class="col-9">
                 <label for="hasLessYears" class="label required">
-                    Is any truest less that 3 years old?
+                    Is any trust less that 3 years old?
                 </label>
             </div>
             <div class="col-3">
@@ -109,7 +95,7 @@
             <div class="row">
                 <div class="col-9">
                     <label for="hasFinancialObligations" class="label required">
-                        Is there any reason why your Trust will not be in position to meet all financial obligations during the next twelve months?
+                        Is there any reason why any Trust will not be in position to meet all financial obligations during the next twelve months?
                     </label>
                 </div>
                 <div class="col-3">
