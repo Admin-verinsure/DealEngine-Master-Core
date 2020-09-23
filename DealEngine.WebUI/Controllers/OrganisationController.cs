@@ -189,7 +189,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostMarina(IFormCollection model)
         {
-            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Marina.Id"]));
             MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
             var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
             var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
@@ -223,7 +223,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostInstitute(IFormCollection model)
         {
-            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Institute.Id"]));
             InterestedPartyUnit unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
             var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
             var jsonLocation = (Location)await _serialiserService.GetDeserializedObject(typeof(Location), model);
