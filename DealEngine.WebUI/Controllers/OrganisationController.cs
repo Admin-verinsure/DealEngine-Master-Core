@@ -1,4 +1,5 @@
-﻿using DealEngine.Domain.Entities;
+﻿using AutoMapper;
+using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
@@ -23,6 +24,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<OrganisationController> _logger;        
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
+        IMapper _mapper;
 
         public OrganisationController(
             IProgrammeService programmeService,
@@ -32,10 +34,12 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
-            IUserService userRepository
+            IUserService userRepository,
+            IMapper mapper
             )
             : base (userRepository)
         {
+            _mapper = mapper;
             _programmeService = programmeService;
             _milestoneService = milestoneService;
             _serialiserService = serialiserService;
@@ -186,6 +190,10 @@ namespace DealEngine.WebUI.Controllers
         {
             Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
             MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+            var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
+            var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
+            organisation = _mapper.Map(jsonOrganisation, organisation);
+            marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
             //add fields
 
             //add new organisation using devtools example
