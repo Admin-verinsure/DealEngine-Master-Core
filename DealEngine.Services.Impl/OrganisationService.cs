@@ -424,7 +424,7 @@ namespace DealEngine.Services.Impl
         public async Task<List<Organisation>> GetPublicFinancialInstitutes()
         {
             List<Organisation> organisations = new List<Organisation>();
-            var FinancialList = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToListAsync();
+            var FinancialList = await GetFinancialInstitutes();
             foreach (var Financial in FinancialList)
             {
                 var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.FirstOrDefault();
@@ -437,7 +437,6 @@ namespace DealEngine.Services.Impl
                             organisations.Add(Financial);
                         }
                     }
-
                 }
             }
 
@@ -446,7 +445,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> GetMarina(WaterLocation waterLocation)
         {
-            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            var marinas = await GetAllMarinas();
             foreach (var marina in marinas)
             {                
                 var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
@@ -459,6 +458,16 @@ namespace DealEngine.Services.Impl
                 }
             }
             return null;
+        }
+
+        public async Task<List<Organisation>> GetAllMarinas()
+        {
+            return  await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+        }
+
+        public async Task<List<Organisation>> GetFinancialInstitutes()
+        {
+            return await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToListAsync();
         }
     }
 

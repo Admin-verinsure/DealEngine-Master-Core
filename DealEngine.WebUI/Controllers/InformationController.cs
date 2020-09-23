@@ -14,7 +14,7 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
-
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -649,7 +649,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
                         if (term == null)
-                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.AggregateLimit).FirstOrDefault();
+                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.TermLimit).FirstOrDefault();
 
                         OptionItem = new String[2];
 
@@ -1308,8 +1308,11 @@ namespace DealEngine.WebUI.Controllers
                     foreach (var Institute in DefaultInstitutes)
                     {
                         InterestedPartyUnit unit = (InterestedPartyUnit)Institute.OrganisationalUnits.FirstOrDefault();
-                        if (!model.OrganisationViewModel.Organisations.Contains(Institute))
-                            model.OrganisationViewModel.Organisations.Add(Institute);
+                        if (!model.ClientInformationSheet.Locations.Contains(unit.Location))
+                        {
+                            //model.ClientInformationSheet.Locations.Add(unit.Location);
+                            model.OrganisationViewModel.PublicOrganisations.Add(Institute);
+                        }
                     }
                 }
                 model.Name = programme.Name;                

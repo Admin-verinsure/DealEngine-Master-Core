@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl250klimitpremium", "sl250klimitexcess", "sl500klimitpremium", "sl500klimitexcess");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "slamlextensionpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -95,6 +95,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
             decimal TermExcess1mil = 0;
+
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasReportingEntityOptions").First().Value == "1" &&
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasTrainingOptions").First().Value == "1" &&
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasManageAMLOptions").First().Value == "1" &&
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
+            {
+                TermPremium1mil = rates["slamlextensionpremium"];
+            }
 
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
@@ -150,10 +158,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
                 //Inception date rule
-                if (DateTime.UtcNow > product.DefaultInceptionDate)
-                {
-                    inceptionDate = DateTime.UtcNow;
-                }
+                //if (DateTime.UtcNow > product.DefaultInceptionDate)
+                //{
+                //    inceptionDate = DateTime.UtcNow;
+                //}
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

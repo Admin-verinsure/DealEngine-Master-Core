@@ -93,15 +93,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decDOAssets = 0m;
             decimal decDOLiabs = 0m;
 
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").Any())
             {
                 intCompanyAge = DateTime.Now.Subtract(Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value)).Days;
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").Any())
             {
                 decDOAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").Any())
             {
                 decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
             }

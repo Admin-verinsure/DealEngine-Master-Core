@@ -26,6 +26,8 @@ namespace DealEngine.Services.Interfaces
         Task<List<Organisation>> GetPublicMarinas();
         Task<List<Organisation>> GetPublicFinancialInstitutes();
         Task<Organisation> GetMarina(WaterLocation waterLocation);
+        Task<List<Organisation>> GetAllMarinas();
+        Task<List<Organisation>> GetFinancialInstitutes();
     }
 }
 

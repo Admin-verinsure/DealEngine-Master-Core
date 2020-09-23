@@ -1,11 +1,114 @@
-﻿<div id="content" class="container">
-
-    <div class ="card">
-        @*<div class="card-header">
-            Attach Advisor
+﻿@model OrganisationViewModel
+<div id="content" class="container">
+    <div class="row">
+        <div class="col-sm-6" style="margin-top:30px;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update/Add Marina</h5>
+                    <p class="card-text" style="margin-top:30px;">Marina Name</p>
+                    <div class="form-group">
+                        <select class="form-control" Id="MarinaId" onchange="GetMarina(this.id)">
+                            @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToList())
+                            {
+                                <option value="@marina.Id">@marina.Name</option>
+                            }
+                        </select>
+                        <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
+                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })
+                            <label class="label">Name</label>
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.Organisation.Name)
+                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name" })
+                            </div>
+                            <label class="label">Email</label>
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.Organisation.Email)
+                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email" })
+                            </div>
+                            <label class="label">Marina Name</label>
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.MarinaName)
+                                @Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })
+                            </div>
+                            <label class="label">Is the Marina public?</label>
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.IsPublic)
+                                @Html.DropDownListFor(m => m.MarinaUnit.WaterLocation.IsPublic, Model.BooleanOptions, new { @class = "form-control", @id = "WaterLocation.IsPublic" })
+                            </div>
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Organisation/AttachOrganisation"><i class="fa fa-search"></i> Go</a>
-        </div>*@
+        <div class="col-sm-6" style="margin-top:30px;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update/Add Financial Institute</h5>
+                    <p class="card-text" style="margin-top:30px;">Financial Institutes</p>
+                    <div class="form-group">
+                        <select class="form-control" Id="FinancialId" onchange="GetFinancial(this.id)">
+                            @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
+                            {
+                                <option value="@marina.Id">@marina.Name</option>
+                            }
+                        </select>
+                        <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
+                            @*Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })*@
+                            <label class="label">Label</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Enter here">
+                                @*Html.DisplayFor(m => m.Organisation.Name)*@
+                                @*Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name" })*@
+                            </div>
+                            <label class="label">Label</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Enter here">
+                                @*Html.DisplayFor(m => m.Organisation.Email)*@
+                                @*Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email" })*@
+                            </div>
+                            <label class="label">Label</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Enter here">
+                                @*Html.DisplayFor(m => m.MarinaUnit.WaterLocation.MarinaName)*@
+                                @*Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })*@
+                            </div>
+                            <label class="label">Label</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Enter here">
+                                @*Html.DisplayFor(m => m.MarinaUnit.WaterLocation.IsPublic)*@
+                                @*Html.DropDownListFor(m => m.MarinaUnit.WaterLocation.IsPublic, Model.BooleanOptions, new { @class = "form-control", @id = "WaterLocation.IsPublic" })*@
+                            </div>
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+@section pagespecific {
+    <script type="text/javascript">
+
+        function GetMarina(Id) {
+            var organisationId = document.getElementById(Id);
+            var id = organisationId.options[organisationId.selectedIndex].value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetMarina", "Organisation")',
+                data: { Id: id }
+            })
+                .done(function (data) {
+                    var OutPut = JSON.parse(data);
+                    PopulateView(OutPut);
+
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
+        }
+    </script>
+
+}

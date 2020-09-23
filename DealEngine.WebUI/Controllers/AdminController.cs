@@ -38,10 +38,12 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AdminController> _logger;
         IApplicationLoggingService _applicationLoggingService;
         IImportService _importService;
+        ISerializerationService _serializerationService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
 
         public AdminController (
+            ISerializerationService serializerationService,
             IMilestoneService milestoneService,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -64,6 +66,7 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _serializerationService = serializerationService;
             _milestoneService = milestoneService;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -823,6 +826,47 @@ namespace DealEngine.WebUI.Controllers
         {
             await _developerToolService.CreateMarinas();
             return Redirect("~/Home/Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateUser()
+        {
+            UserViewModel userViewModel = new UserViewModel();
+            return View(userViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetCreateUser(IFormCollection form)
+        {
+            var user = await _userService.GetUserByEmail(form["UserEmail"]);
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (user != null)
+            {
+                JsonObjects.Add("User", user);
+                JsonObjects.Add("Organisation", user.PrimaryOrganisation);
+                var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);                
+            }
+            return NoContent();
+        }        
+
+        [HttpPost]
+        public async Task<IActionResult> PostCreateUser(IFormCollection form)
+        {
+            var jsonUser = (User)await _serializerationService.GetDeserializedObject(typeof(User), form);
+            var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), form);
+            var user = await _userService.GetUserByEmail(form["User.Email"]);
+            var PrimaryOrganisation = user.PrimaryOrganisation;
+            user = _mapper.Map(jsonUser, user);            
+            PrimaryOrganisation = _mapper.Map(jsonOrganisation, PrimaryOrganisation);
+            user.SetPrimaryOrganisation(PrimaryOrganisation);
+            await _userService.Update(user);
+            var deUser = new IdentityUser
+            {
+                UserName = user.UserName,
+                Email = user.Email
+            };
+            await _userManager.CreateAsync(deUser, "defaultPassword");
+            return NoContent();
         }
     }
 }

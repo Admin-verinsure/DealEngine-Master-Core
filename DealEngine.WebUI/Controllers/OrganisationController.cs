@@ -147,11 +147,52 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> AddMarinaInterestedParty()
+        public async Task<IActionResult> ManageOrganisations(Guid Id)
         {
-            //MarinaInterestedPartiesViewModel marinaInterestedPartiesViewModel = new MarinaInterestedPartiesViewModel();
-            //return View(marinaInterestedPartiesViewModel);
-            return Ok();
+            Programme programme = await _programmeService.GetProgrammeById(Id);
+            OrganisationViewModel model = new OrganisationViewModel(null, null);
+            var marinas = await _organisationService.GetAllMarinas();
+            foreach(var mar in marinas)
+            {
+                model.Organisations.Add(mar);
+            }
+            
+            var institutes = await _organisationService.GetFinancialInstitutes();
+            foreach (var inst in institutes)
+            {
+                model.Organisations.Add(inst);
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetMarina(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Id"]));
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (organisation != null)
+            {
+                var unit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                JsonObjects.Add("Organisation", organisation);
+                JsonObjects.Add("WaterLocation", unit.WaterLocation);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostMarina(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+            MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+            //add fields
+
+            //add new organisation using devtools example
+
+
+            await _organisationService.Update(organisation);
+            return NoContent();
         }
 
         [HttpPost]
@@ -257,13 +298,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> ManageOrganisations()
-        {            
-            return View("ManageOrganisations");
-        }
-
 
         [HttpGet]
         public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)

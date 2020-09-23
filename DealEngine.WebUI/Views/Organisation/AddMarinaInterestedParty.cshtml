@@ -1,4 +1,4 @@
-﻿@model MarinaInterestedPartiesViewModel
+﻿<!--
 
 <div class="container">
     <form method="POST" action="~/Home/EditClient" novalidate>
@@ -8,6 +8,7 @@
                     <div class=" form-group">
                         <label>
                             Select Water Location
+							
                             <select class="form-control b" Id="OrganisationId" onchange="GetOwner()">
                                 <option selected="selected" value="">-- Select --</option>
                                 @*@foreach (var client in Model.Owners)
@@ -16,8 +17,9 @@
                                     }*@
                                 
                             </select>
+
                         </label>
-                    </div>
+                    </div>-->
                     @*
                     <div class="card-body">
                         <div class="form-group">
@@ -32,29 +34,29 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    *@
+                    </div>                    
                     <div class="card-footer">
                         <button class="btn btn-primary btn-xs" type="submit">Update</button>
-                    </div>
-                    
-                </div>
+                    </div>   
+                    *@
+                <!--</div>
             </div>
+            
             <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="card-header">
                     <div class=" form-group">
                         <label>
                             Select Financial Interested Party
-                            <select class="form-control b" Id="OrganisationId" onchange="GetOwner()">
-                                <option selected="selected" value="">-- Select --</option>
-                                @*@foreach (var client in Model.Owners)
-                                    {
-                                        <option value="@client.Value">@client.Text</option>
-                                    }*@
+                            <select data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
+                                foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
+                                {
+                                    <option value="organisation.Id"> organisation.Name</option>
+                                }
                             </select>
                         </label>
-                    </div>         
-                    <div class="card-body"> @*
+                    </div>-->
+                    @*
+                    <div class="card-body"> 
                         <div class="form-group">
                             <a class="btn btn-primary btn-xs" href="javascript:;" onclick="this.href='/Home/GetClientDetails?OwnerId=' + document.getElementById('ClientOwnerId').value ">Edit Users </a>
                             @Html.HiddenFor(Model => Model.Organisation.Id)
@@ -67,15 +69,17 @@
                                 </div>
                             </div>
                         </div>
-                    </div>*@
+                    </div>                   
                     <div class="card-footer">
                         <button class="btn btn-primary btn-xs" type="submit">Update</button>
-                    </div>                
-                </div>
-            </div>
+                    </div>   
+                    *@
+                <!--</div>
+            </div>           
         </div>
     </form>
-</div>
+</div>-->
+@*
 @section pagespecific {
     <script type="text/javascript">
 
@@ -101,3 +105,4 @@
     </script>
 
 }
+*@
