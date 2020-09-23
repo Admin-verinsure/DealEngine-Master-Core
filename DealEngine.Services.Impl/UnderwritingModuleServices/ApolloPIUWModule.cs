@@ -41,12 +41,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piindividualpremium", "1millimitfappremium2advisor", "2millimitfappremium2advisor", "5millimitfappremium2advisor",
-            //    "1millimitfappremium3advisor", "2millimitfappremium3advisor", "5millimitfappremium3advisor", "1millimitfappremium4advisor", "2millimitfappremium4advisor", "5millimitfappremium4advisor",
-            //    "1millimitfappremium5advisor", "2millimitfappremium5advisor", "5millimitfappremium5advisor", "1millimitfappremium6advisor", "2millimitfappremium6advisor", "5millimitfappremium6advisor",
-            //    "1millimitfappremium7advisor", "2millimitfappremium7advisor", "5millimitfappremium7advisor", "1millimitfappremium8advisor", "2millimitfappremium8advisor", "5millimitfappremium8advisor",
-            //    "1millimitfappremium9advisor", "2millimitfappremium9advisor", "5millimitfappremium9advisor", "1millimitfappremium10advisor", "2millimitfappremium10advisor", "5millimitfappremium10advisor",
-            //    "1millimitfappremium11advisor", "2millimitfappremium11advisor", "5millimitfappremium11advisor");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "dishonestyoptionpremium", "1millimit1kexcesspremium", "1millimit5kexcesspremium", "2millimit1kexcesspremium", "2millimit5kexcesspremium",
+                "3millimit1kexcesspremium", "3millimit5kexcesspremium", "5millimit1kexcesspremium", "5millimit5kexcesspremium", "1millimit1kexcesspremiuminv", "1millimit5kexcesspremiuminv", 
+                "2millimit1kexcesspremiuminv", "2millimit5kexcesspremiuminv", "3millimit1kexcesspremiuminv", "3millimit5kexcesspremiuminv", "5millimit1kexcesspremiuminv", "5millimit5kexcesspremiuminv");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -68,14 +65,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
-            int fapagreementperiodindays = 0;
-            fapagreementperiodindays = (agreement.ExpiryDate - Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value)).Days;
-
-            decimal feeincome = 0;
+            decimal feeincomelastyear = 0M;
+            decimal FGCfeeincomelastyear = 0M;
+            decimal FGDfeeincomelastyear = 0M;
+            decimal FGfeeincomelastyear = 0M;
             decimal decFGD = 0M;
             decimal decFGC = 0M;
-            decimal decFG = 0M;
+            decimal decFP = 0M;
+            decimal decIP = 0M;
+            decimal decSB = 0M;
+            decimal decDPI = 0M;
             decimal decOther = 0M;
+            decimal decInv = 0M;
 
             string strProfessionalBusiness = "General Insurance Brokers, Life Agents, Investment Advisers, Financial Planning and Mortgage Broking, Consultants and Advisers in the sale of any financial product including referrals to other financial product providers.";
 
@@ -83,29 +84,48 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
-                    feeincome = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                    feeincomelastyear = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
                 {
-                    if (uISActivity.AnzsciCode == "CUS0030") //Domestic Fire & General
+                    if (uISActivity.AnzsciCode == "CUS0050") //Fire & General Domestic
                     {
                         decFGD = uISActivity.Percentage;
+                        FGDfeeincomelastyear = feeincomelastyear * uISActivity.Percentage / 100;
                     }
-                    else if (uISActivity.AnzsciCode == "CUS0031") //Commercial Fire & General
+                    else if (uISActivity.AnzsciCode == "CUS0051") //Fire & General Commercial
                     {
                         decFGC = uISActivity.Percentage;
+                        FGCfeeincomelastyear = feeincomelastyear * uISActivity.Percentage / 100;
                     }
-                    else if (uISActivity.AnzsciCode == "CUS0039") //Other 
+                    else if (uISActivity.AnzsciCode == "CUS0056") //Preparation of Financial Plans and/or monitoring of Financial Portfolios
+                    {
+                        decFP = uISActivity.Percentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0057") //Investment Products (eg Unit Trusts, Bonds)
+                    {
+                        decIP = uISActivity.Percentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0058") //Sharebroking 
+                    {
+                        decSB = uISActivity.Percentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0060") //Direct Property Investment 
+                    {
+                        decDPI = uISActivity.Percentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "CUS0061") //Other 
                     {
                         decOther = uISActivity.Percentage;
                     }
 
                 }
 
-                decFG = decFGD + decFGC;
+                decInv = decFP + decIP + decSB + decDPI;
+                FGfeeincomelastyear = FGDfeeincomelastyear + FGCfeeincomelastyear;
             }
 
             int intnumberofadvisors = 0;
@@ -113,16 +133,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    if (!uisorg.Removed)
-                    {
-                        var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor" || u.Name == "Nominated Representative") && u.DateDeleted == null);
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
 
-                        if (principleadvisorunit != null)
+                    if (principleadvisorunit != null)
+                    {
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
                         {
-                            if (uisorg.DateDeleted == null && !uisorg.Removed)
-                            {
-                                intnumberofadvisors += 1;
-                            }
+                            intnumberofadvisors += 1;
                         }
                     }
                 }
@@ -184,93 +201,180 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-
-            int TermExcess = 0;
-            TermExcess = 1000;
-
-            decimal TermPremiumAdvisors = 0M;
-            //TermPremiumAdvisors = GetPremiumForAdvisors(rates, intnumberofadvisors, agreementperiodindays, coverperiodindays);
-
-            if (intnumberofadvisors > 1)
+            decimal decDishonestyOptionPremium = 0m;
+            bool dishonestyoptionselected = false;
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasDishonestyOptions").First().Value == "1")
             {
-                int TermLimit1mil = 1000000;
-                decimal TermPremium1mil = 0M;
-                decimal TermPremium1milFAP = 0M;
-                decimal TermBrokerage1mil = 0M;
-
-                //TermPremium1milFAP = GetPremiumForFAP(rates, feeincome, TermLimit1mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-                TermPremium1mil = TermPremiumAdvisors + TermPremium1milFAP;
-                TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
-
-                ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
-                term1millimitpremiumoption.TermLimit = TermLimit1mil;
-                term1millimitpremiumoption.Premium = TermPremium1mil;
-                term1millimitpremiumoption.BasePremium = TermPremium1mil;
-                term1millimitpremiumoption.FAPPremium = TermPremium1milFAP;
-                term1millimitpremiumoption.Excess = TermExcess;
-                term1millimitpremiumoption.BrokerageRate = agreement.Brokerage;
-                term1millimitpremiumoption.Brokerage = TermBrokerage1mil;
-                term1millimitpremiumoption.DateDeleted = null;
-                term1millimitpremiumoption.DeletedBy = null;
-
-
-                int TermLimit2mil = 2000000;
-                decimal TermPremium2mil = 0M;
-                decimal TermPremium2milFAP = 0M;
-                decimal TermBrokerage2mil = 0M;
-
-                //TermPremium2milFAP = GetPremiumForFAP(rates, feeincome, TermLimit2mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-                TermPremium2mil = TermPremiumAdvisors + TermPremium2milFAP;
-                TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
-
-                ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
-                term2millimitpremiumoption.TermLimit = TermLimit2mil;
-                term2millimitpremiumoption.Premium = TermPremium2mil;
-                term2millimitpremiumoption.BasePremium = TermPremium2mil;
-                term2millimitpremiumoption.FAPPremium = TermPremium2milFAP;
-                term2millimitpremiumoption.Excess = TermExcess;
-                term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
-                term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
-                term2millimitpremiumoption.DateDeleted = null;
-                term2millimitpremiumoption.DeletedBy = null;
+                decDishonestyOptionPremium = rates["dishonestyoptionpremium"];
+                dishonestyoptionselected = true;
             }
 
-            int TermLimit5mil = 5000000;
-            decimal TermPremium5mil = 0M;
-            decimal TermPremium5milFAP = 0M;
-            decimal TermBrokerage5mil = 0M;
+            bool trustservices = false;
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "OTViewModel.HasInvolvedTrusteeOptions").First().Value == "1")
+            {
+                trustservices = true;
+            }
 
-            //TermPremium5milFAP = GetPremiumForFAP(rates, feeincome, TermLimit5mil, intnumberofadvisors, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermPremium5mil = TermPremiumAdvisors + TermPremium5milFAP;
-            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
+            bool lessthan10percentinvestmentadvice = false;
+            if (((decFP + decIP) < 10 && (decFP + decIP) > 0 && decSB == 0) || decDPI > 0)
+            {
+                lessthan10percentinvestmentadvice = true;
+            }
 
-            ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
-            term5millimitpremiumoption.TermLimit = TermLimit5mil;
-            term5millimitpremiumoption.Premium = TermPremium5mil;
-            term5millimitpremiumoption.BasePremium = TermPremium5mil;
-            term5millimitpremiumoption.FAPPremium = TermPremium5milFAP;
-            term5millimitpremiumoption.Excess = TermExcess;
-            term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
-            term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
-            term5millimitpremiumoption.DateDeleted = null;
-            term5millimitpremiumoption.DeletedBy = null;
+            int TermExcess1k = 1000;
+            int TermExcess5k = 5000;
+
+            int TermLimit1mil1kExcess = 1000000;
+            decimal TermPremium1mil1kExcess = 0M;
+            decimal TermBrokerage1mil1kExcess = 0M;
+            TermPremium1mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermBrokerage1mil1kExcess = TermPremium1mil1kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term1millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil1kExcess, TermExcess1k);
+            term1millimit1kexcesspremiumoption.TermLimit = TermLimit1mil1kExcess;
+            term1millimit1kexcesspremiumoption.Premium = TermPremium1mil1kExcess;
+            term1millimit1kexcesspremiumoption.BasePremium = TermPremium1mil1kExcess;
+            term1millimit1kexcesspremiumoption.Excess = TermExcess1k;
+            term1millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term1millimit1kexcesspremiumoption.Brokerage = TermBrokerage1mil1kExcess;
+            term1millimit1kexcesspremiumoption.DateDeleted = null;
+            term1millimit1kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit1mil5kExcess = 1000000;
+            decimal TermPremium1mil5kExcess = 0M;
+            decimal TermBrokerage1mil5kExcess = 0M;
+            TermPremium1mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermBrokerage1mil5kExcess = TermPremium1mil5kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term1millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil5kExcess, TermExcess5k);
+            term1millimit5kexcesspremiumoption.TermLimit = TermLimit1mil5kExcess;
+            term1millimit5kexcesspremiumoption.Premium = TermPremium1mil5kExcess;
+            term1millimit5kexcesspremiumoption.BasePremium = TermPremium1mil5kExcess;
+            term1millimit5kexcesspremiumoption.Excess = TermExcess5k;
+            term1millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term1millimit5kexcesspremiumoption.Brokerage = TermBrokerage1mil5kExcess;
+            term1millimit5kexcesspremiumoption.DateDeleted = null;
+            term1millimit5kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit2mil1kExcess = 2000000;
+            decimal TermPremium2mil1kExcess = 0M;
+            decimal TermBrokerage2mil1kExcess = 0M;
+            TermPremium2mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil1kExcess, TermExcess1k);
+            term2millimit1kexcesspremiumoption.TermLimit = TermLimit2mil1kExcess;
+            term2millimit1kexcesspremiumoption.Premium = TermPremium2mil1kExcess;
+            term2millimit1kexcesspremiumoption.BasePremium = TermPremium2mil1kExcess;
+            term2millimit1kexcesspremiumoption.Excess = TermExcess1k;
+            term2millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term2millimit1kexcesspremiumoption.Brokerage = TermBrokerage2mil1kExcess;
+            term2millimit1kexcesspremiumoption.DateDeleted = null;
+            term2millimit1kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit2mil5kExcess = 2000000;
+            decimal TermPremium2mil5kExcess = 0M;
+            decimal TermBrokerage2mil5kExcess = 0M;
+            TermPremium2mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermBrokerage2mil5kExcess = TermPremium2mil5kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term2millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil5kExcess, TermExcess5k);
+            term2millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
+            term2millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
+            term2millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
+            term2millimit5kexcesspremiumoption.Excess = TermExcess5k;
+            term2millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term2millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
+            term2millimit5kexcesspremiumoption.DateDeleted = null;
+            term2millimit5kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit3mil1kExcess = 3000000;
+            decimal TermPremium3mil1kExcess = 0M;
+            decimal TermBrokerage3mil1kExcess = 0M;
+            TermPremium3mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil1kExcess, TermExcess1k);
+            term3millimit1kexcesspremiumoption.TermLimit = TermLimit3mil1kExcess;
+            term3millimit1kexcesspremiumoption.Premium = TermPremium3mil1kExcess;
+            term3millimit1kexcesspremiumoption.BasePremium = TermPremium3mil1kExcess;
+            term3millimit1kexcesspremiumoption.Excess = TermExcess1k;
+            term3millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term3millimit1kexcesspremiumoption.Brokerage = TermBrokerage3mil1kExcess;
+            term3millimit1kexcesspremiumoption.DateDeleted = null;
+            term3millimit1kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit3mil5kExcess = 3000000;
+            decimal TermPremium3mil5kExcess = 0M;
+            decimal TermBrokerage3mil5kExcess = 0M;
+            TermPremium3mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermBrokerage3mil5kExcess = TermPremium3mil5kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term3millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil5kExcess, TermExcess5k);
+            term3millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
+            term3millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
+            term3millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
+            term3millimit5kexcesspremiumoption.Excess = TermExcess5k;
+            term3millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term3millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
+            term3millimit5kexcesspremiumoption.DateDeleted = null;
+            term3millimit5kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit5mil1kExcess = 5000000;
+            decimal TermPremium5mil1kExcess = 0M;
+            decimal TermBrokerage5mil1kExcess = 0M;
+            TermPremium5mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil1kExcess, TermExcess1k);
+            term5millimit1kexcesspremiumoption.TermLimit = TermLimit5mil1kExcess;
+            term5millimit1kexcesspremiumoption.Premium = TermPremium5mil1kExcess;
+            term5millimit1kexcesspremiumoption.BasePremium = TermPremium5mil1kExcess;
+            term5millimit1kexcesspremiumoption.Excess = TermExcess1k;
+            term5millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term5millimit1kexcesspremiumoption.Brokerage = TermBrokerage5mil1kExcess;
+            term5millimit1kexcesspremiumoption.DateDeleted = null;
+            term5millimit1kexcesspremiumoption.DeletedBy = null;
+
+            int TermLimit5mil5kExcess = 5000000;
+            decimal TermPremium5mil5kExcess = 0M;
+            decimal TermBrokerage5mil5kExcess = 0M;
+            TermPremium5mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermBrokerage5mil5kExcess = TermPremium5mil5kExcess * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term5millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil5kExcess, TermExcess5k);
+            term5millimit5kexcesspremiumoption.TermLimit = TermLimit5mil5kExcess;
+            term5millimit5kexcesspremiumoption.Premium = TermPremium5mil5kExcess;
+            term5millimit5kexcesspremiumoption.BasePremium = TermPremium5mil5kExcess;
+            term5millimit5kexcesspremiumoption.Excess = TermExcess5k;
+            term5millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term5millimit5kexcesspremiumoption.Brokerage = TermBrokerage5mil5kExcess;
+            term5millimit5kexcesspremiumoption.DateDeleted = null;
+            term5millimit5kexcesspremiumoption.DeletedBy = null;
 
 
-            ////Referral points per agreement
-            ////Claims / Insurance History
-            //uwrfpriorinsurance(underwritingUser, agreement);
-            ////F&G over 50%
-            //uwrffgactivitiesover50percent(underwritingUser, agreement, decFG);
-            ////Other Business Activities
-            //uwrfotheractivities(underwritingUser, agreement, decOther);
-            ////Other Investment Activities
-            //uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
-            ////Advisor Claims / Insurance History
-            //uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
-            ////Custom Endorsement renew
-            //uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
-            ////Advisor number over 11
-            //uwrfadvisornumberover11(underwritingUser, agreement, intnumberofadvisors);
+            //Referral points per agreement
+            //Claims / Insurance History
+            uwrfpriorinsurance(underwritingUser, agreement);
+            //Other Business Activities
+            uwrfotheractivities(underwritingUser, agreement, decOther);
+            //Sharebroking business activity over 10%
+            uwrfsbactivitiesover10percent(underwritingUser, agreement, decSB);
+            //Other Investment Activities
+            uwrfotherinvestmentactivity(underwritingUser, agreement, decOtherInvetmentPerc);
+            //Advisor Claims / Insurance History
+            uwrfadvisorpriorinsurance(underwritingUser, agreement, subuisreferred);
+            //F&G Commercial activity over 35%
+            uwrffgcactivitiesover35percent(underwritingUser, agreement, decFGC);
+            //F&G income over $30,000
+            uwrffgincomeover30k(underwritingUser, agreement, FGfeeincomelastyear);
+            //Dishonesty Cover selected
+            uwrfdishonestycoverselected(underwritingUser, agreement, dishonestyoptionselected);
+            //Trust Services
+            uwrftrustservices(underwritingUser, agreement, trustservices);
+            //Less than 10% Investment Advice
+            uwrflessthan10percentinvestmentadvice(underwritingUser, agreement, lessthan10percentinvestmentadvice);
+
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -310,10 +414,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                if (DateTime.UtcNow > product.DefaultInceptionDate.AddMonths(1))
-                {
-                    inceptionDate = DateTime.UtcNow;
-                }
+                //Inception date rule
+                //if (DateTime.UtcNow > product.DefaultInceptionDate)
+                //{
+                //    inceptionDate = DateTime.UtcNow;
+                //}
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {
@@ -372,282 +477,130 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremiumForAdvisors(IDictionary<string, decimal> rates, int intnumberofadvisors, int agreementperiodindays, int coverperiodindays)
-        {
-            decimal indadvisorpremium = 0M;
-            decimal advisorpremiumoption = 0M;
-
-            indadvisorpremium = rates["piindividualpremium"] * agreementperiodindays / coverperiodindays;
-
-            if (intnumberofadvisors > 1)
-            {
-                indadvisorpremium *= intnumberofadvisors;
-
-            }
-            advisorpremiumoption = indadvisorpremium;
-            return advisorpremiumoption;
-        }
-
-        decimal GetPremiumForFAP(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int intnumberofadvisors, int agreementperiodindays, int coverperiodindays, int fapagreementperiodindays)
+        decimal GetPremiumForAdvisors(IDictionary<string, decimal> rates, int intnumberofadvisors, int limitoption, int excessoption, decimal decInv, decimal decDishonestyOptionPremium)
         {
             decimal premiumoption = 0M;
+            decimal totalpremiumoption = 0M;
 
-            if (intnumberofadvisors > 1)
+            if (decInv > 0)
             {
-                if (intnumberofadvisors == 2)
+                switch (limitoption)
                 {
-                    switch (limitoption)
-                    {
-                        case 1000000:
+                    case 1000000:
+                        {
+                            if (excessoption == 1000)
                             {
-                                premiumoption = rates["1millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["1millimit1kexcesspremiuminv"];
                             }
-                        case 2000000:
+                            else if (excessoption == 5000)
                             {
-                                premiumoption = rates["2millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["1millimit5kexcesspremiuminv"];
                             }
-                        case 5000000:
+                            break;
+                        }
+                    case 2000000:
+                        {
+                            if (excessoption == 1000)
                             {
-                                premiumoption = rates["5millimitfappremium2advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["2millimit1kexcesspremiuminv"];
                             }
-                        default:
+                            else if (excessoption == 5000)
                             {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                                premiumoption = rates["2millimit5kexcesspremiuminv"];
                             }
-                    }
+                            break;
+                        }
+                    case 3000000:
+                        {
+                            if (excessoption == 1000)
+                            {
+                                premiumoption = rates["3millimit1kexcesspremiuminv"];
+                            }
+                            else if (excessoption == 5000)
+                            {
+                                premiumoption = rates["3millimit5kexcesspremiuminv"];
+                            }
+                            break;
+                        }
+                    case 5000000:
+                        {
+                            if (excessoption == 1000)
+                            {
+                                premiumoption = rates["5millimit1kexcesspremiuminv"];
+                            }
+                            else if (excessoption == 5000)
+                            {
+                                premiumoption = rates["5millimit5kexcesspremiuminv"];
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Can not calculate premium for PI"));
+                        }
                 }
-                if (intnumberofadvisors == 3)
+            } else
+            {
+                switch (limitoption)
                 {
-                    switch (limitoption)
-                    {
-                        case 1000000:
+                    case 1000000:
+                        {
+                            if (excessoption == 1000)
                             {
-                                premiumoption = rates["1millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["1millimit1kexcesspremium"];
                             }
-                        case 2000000:
+                            else if (excessoption == 5000)
                             {
-                                premiumoption = rates["2millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["1millimit5kexcesspremium"];
                             }
-                        case 5000000:
+                            break;
+                        }
+                    case 2000000:
+                        {
+                            if (excessoption == 1000)
                             {
-                                premiumoption = rates["5millimitfappremium3advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
+                                premiumoption = rates["2millimit1kexcesspremium"];
                             }
-                        default:
+                            else if (excessoption == 5000)
                             {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                                premiumoption = rates["2millimit5kexcesspremium"];
                             }
-                    }
+                            break;
+                        }
+                    case 3000000:
+                        {
+                            if (excessoption == 1000)
+                            {
+                                premiumoption = rates["3millimit1kexcesspremium"];
+                            }
+                            else if (excessoption == 5000)
+                            {
+                                premiumoption = rates["3millimit5kexcesspremium"];
+                            }
+                            break;
+                        }
+                    case 5000000:
+                        {
+                            if (excessoption == 1000)
+                            {
+                                premiumoption = rates["5millimit1kexcesspremium"];
+                            }
+                            else if (excessoption == 5000)
+                            {
+                                premiumoption = rates["5millimit5kexcesspremium"];
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Can not calculate premium for PI"));
+                        }
                 }
-                if (intnumberofadvisors == 4)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium4advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 5)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium5advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 6)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium6advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 7)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium7advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 8)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium8advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 9)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium9advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 10)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium10advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-                if (intnumberofadvisors == 11)
-                {
-                    switch (limitoption)
-                    {
-                        case 1000000:
-                            {
-                                premiumoption = rates["1millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 2000000:
-                            {
-                                premiumoption = rates["2millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        case 5000000:
-                            {
-                                premiumoption = rates["5millimitfappremium11advisor"] * fapagreementperiodindays / coverperiodindays;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not calculate premium for PI"));
-                            }
-                    }
-                }
-
             }
 
-            return premiumoption;
+            totalpremiumoption = (premiumoption + decDishonestyOptionPremium) * intnumberofadvisors;
+
+            return totalpremiumoption;
         }
 
 
@@ -681,29 +634,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        void uwrffgactivitiesover50percent(User underwritingUser, ClientAgreement agreement, decimal decFG)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivitiesover50percent" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivitiesover50percent") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivitiesover50percent").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivitiesover50percent").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivitiesover50percent").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivitiesover50percent").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivitiesover50percent" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (decFG > 50)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivitiesover50percent" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
         void uwrfotheractivities(User underwritingUser, ClientAgreement agreement, decimal decOther)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivities" && cref.DateDeleted == null) == null)
@@ -722,6 +652,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (decOther > 0)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivities" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrfsbactivitiesover10percent(User underwritingUser, ClientAgreement agreement, decimal decSB)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsbactivitiesover10percent" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsbactivitiesover10percent") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsbactivitiesover10percent").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsbactivitiesover10percent").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsbactivitiesover10percent").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsbactivitiesover10percent").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsbactivitiesover10percent" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (decSB > 10)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsbactivitiesover10percent" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
@@ -774,51 +727,123 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        void uwrfcustomendorsementrenew(User underwritingUser, ClientAgreement agreement, bool bolcustomendorsementrenew)
+        void uwrffgcactivitiesover35percent(User underwritingUser, ClientAgreement agreement, decimal decFGC)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgcactivitiesover35percent" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgcactivitiesover35percent") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgcactivitiesover35percent").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgcactivitiesover35percent").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgcactivitiesover35percent").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgcactivitiesover35percent").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgcactivitiesover35percent" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (bolcustomendorsementrenew) //Custom Endorsement Renew
+                    if (decFGC > 35)
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgcactivitiesover35percent" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
 
-        void uwrfadvisornumberover11(User underwritingUser, ClientAgreement agreement, int intnumberofadvisors)
+        void uwrffgincomeover30k(User underwritingUser, ClientAgreement agreement, decimal FGfeeincomelastyear)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgincomeover30k" && cref.DateDeleted == null) == null)
             {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Description,
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgincomeover30k") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgincomeover30k").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgincomeover30k").Description,
                         "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfadvisornumberover11").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgincomeover30k").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgincomeover30k").OrderNumber));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgincomeover30k" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (intnumberofadvisors > 11)
+                    if (FGfeeincomelastyear > 30000)
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfadvisornumberover11" && cref.DateDeleted == null).Status = "Pending";
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgincomeover30k" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
             }
         }
+
+        void uwrfdishonestycoverselected(User underwritingUser, ClientAgreement agreement, bool dishonestyoptionselected)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdishonestycoverselected" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdishonestycoverselected") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdishonestycoverselected").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdishonestycoverselected").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdishonestycoverselected").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdishonestycoverselected").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdishonestycoverselected" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (dishonestyoptionselected)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdishonestycoverselected" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrftrustservices(User underwritingUser, ClientAgreement agreement, bool trustservices)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrftrustservices" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrustservices") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrustservices").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrustservices").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrustservices").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrustservices").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrftrustservices" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (trustservices)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrftrustservices" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        void uwrflessthan10percentinvestmentadvice(User underwritingUser, ClientAgreement agreement, bool lessthan10percentinvestmentadvice)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrflessthan10percentinvestmentadvice" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrflessthan10percentinvestmentadvice") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrflessthan10percentinvestmentadvice").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrflessthan10percentinvestmentadvice").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrflessthan10percentinvestmentadvice").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrflessthan10percentinvestmentadvice").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrflessthan10percentinvestmentadvice" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (lessthan10percentinvestmentadvice)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrflessthan10percentinvestmentadvice" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
+        
+
 
 
     }
