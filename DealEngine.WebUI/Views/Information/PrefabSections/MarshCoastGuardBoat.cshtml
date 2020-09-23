@@ -124,6 +124,7 @@
                                 <label class="label required">Vessel Skipper</label>
                                 <label class="input form-group">
                                     <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
+                                        <option selected="selected" value="">-- Select --</option>
                                         @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
                                         {
                                             <option value="@skipper.Id">@skipper.Name</option>
@@ -552,6 +553,10 @@
                                             @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                             {
                                                 <option value="@organisation.Id"> @organisation.Name</option>
+                                            }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
                                             }
                                         </select>
                                     </label>
@@ -1111,6 +1116,10 @@
                                             @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                             {
                                                 <option value="@organisation.Id"> @organisation.Name</option>
+                                            }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
                                             }
                                         </select>
                                     </label>

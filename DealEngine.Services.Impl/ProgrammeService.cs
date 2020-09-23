@@ -56,7 +56,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<List<ClientProgramme>> GetClientProgrammesByOwner(Guid ownerOrganisationId)
         {
-            var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId && cp.InformationSheet != null).ToListAsync();
+            var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId && cp.InformationSheet != null && cp.DateDeleted == null).ToListAsync();
             return list;
         }
 

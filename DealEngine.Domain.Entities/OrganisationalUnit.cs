@@ -29,8 +29,7 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual string Name { get; set; }    
-
+        public virtual string Name { get; set; }      
     }
 
     public class AdvisorUnit : OrganisationalUnit
@@ -66,6 +65,8 @@ namespace DealEngine.Domain.Entities
         public virtual string DORetroactivedate { get; set; }
         [Display(Name = "Please select the Professional Bodies or Associations that the company or individual is a member of:")]
         public virtual IList<string> Associations { get; set; }
+        [Display(Name = "If Other is specified, please describe")]
+        public virtual string OtherInformation { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit
@@ -195,6 +196,8 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Type of Interested Party?")]
         public virtual string PartyType { get; set; }
+        [Display(Name = "Type of Interested Party?")]
+        public virtual Location Location { get; set; }
     }
 
     public class MarinaUnit : OrganisationalUnit

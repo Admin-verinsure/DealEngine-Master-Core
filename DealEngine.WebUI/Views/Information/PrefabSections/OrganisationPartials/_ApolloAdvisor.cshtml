@@ -62,8 +62,12 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Associations, new { @class = "label required" })
-        @Html.DropDownListFor(m => m.OrganisationViewModel.AdvisorUnit.Associations, Model.OrganisationViewModel.HasAssociationOptions, new { @class = "chosen-select", @multiple= "multiple", @data_rule= "OtherOptions" })
-    </div>    
+        @Html.DropDownListFor(m => m.OrganisationViewModel.AdvisorUnit.Associations, Model.OrganisationViewModel.HasAssociationOptions, new { @class = "chosen-select", @id = "AdvisorUnit.Associations", @multiple = "multiple", @data_rule = "OtherOptions", @onchange = "OnChange(this.id, this.name)" })
+    </div>
+    <div class="form-group" id="OrganisationViewModel.AdvisorUnit.Associations" hidden>
+        @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.OtherInformation, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.OtherInformation, new { @class = "form-control", @id = "AdvisorUnit.OtherInformation", @onchange = "OnChange(this.id, this.name)" })
+    </div>
 </div>
 
 

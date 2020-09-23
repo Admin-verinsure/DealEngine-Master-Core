@@ -323,45 +323,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption)
-        {
-            decimal premiumoption = 0M;
-
-            switch (limitoption)
-            {
-                case 250000:
-                    {
-                        if (feeincome >= 0 && feeincome < 1000000)
-                        {
-                            premiumoption = rates["cl250klimitincomeunder1milpremium"];
-                        }
-                        else if (feeincome >= 1000000 && feeincome < 5000000)
-                        {
-                            premiumoption = rates["cl250klimitincome1milto5milpremium"];
-                        }
-                        break;
-                    }
-                case 500000:
-                    {
-                        if (feeincome >= 0 && feeincome < 1000000)
-                        {
-                            premiumoption = rates["cl500klimitincomeunder1milpremium"];
-                        }
-                        else if (feeincome >= 1000000 && feeincome < 5000000)
-                        {
-                            premiumoption = rates["cl500klimitincome1milto5milpremium"];
-                        }
-                        break;
-                    }
-
-                default:
-                    {
-                        throw new Exception(string.Format("Can not calculate premium for CL"));
-                    }
-            }
-
-            return premiumoption;
-        }
 
         void uwrfnotrenewalcl(User underwritingUser, ClientAgreement agreement)
         {
