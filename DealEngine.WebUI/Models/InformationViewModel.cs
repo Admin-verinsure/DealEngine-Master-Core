@@ -507,10 +507,12 @@ namespace DealEngine.WebUI.Models
         {
             HasTraditionalLicenceOptions = GetSelectListOptions();
             HasAdvisersOptions = GetHasAdvisersOptions();
+            HasApolloAdvisersOptions = GetHasApolloAdvisersOptions();
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
         }
 
         public string TransitionalLicenseNum { get; set; }
+        public string TransitionalLicenseHolder { get; set; }
         public  string CoverStartDate { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
@@ -531,6 +533,28 @@ namespace DealEngine.WebUI.Models
             };
         }
 
+        private IList<SelectListItem> GetHasApolloAdvisersOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I do not have any other advisers working under my licence", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Apollo advisers only working under my licence", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Non-Apollo advisers working under my licence", Value = "3"
+                }
+            };
+        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -569,7 +593,8 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
-        public IList<SelectListItem> HasAdvisersOptions { get; set; }        
+        public IList<SelectListItem> HasAdvisersOptions { get; set; }
+        public IList<SelectListItem> HasApolloAdvisersOptions { get; set; }
         public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
         public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
 

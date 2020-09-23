@@ -145,6 +145,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string tier = "";
+
+
             bool subuisreferred = false;
             if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
             {

@@ -11,7 +11,11 @@ namespace DealEngine.WebUI.Models
         public Domain.Entities.Organisation Organisation { get; set; }
         public EditClientsViewModel(Domain.Entities.Programme programme)
         {
-            GenerateClientsOptions(programme);
+            if(programme != null)
+            {
+                GenerateClientsOptions(programme);
+                Programme = programme;
+            }            
             ClientProgramme = new ClientProgramme(null, null, null);
             GetTiers();
         }
@@ -22,14 +26,14 @@ namespace DealEngine.WebUI.Models
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "Apollo Prime",
-                    Value = "Apollo Prime"
+                    Text = "Apollo Standard",
+                    Value = "Apollo Standard"
                 });
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "Apollo Standard",
-                    Value = "Apollo Standard"
+                    Text = "Apollo Prime",
+                    Value = "Apollo Prime"
                 });
             Tiers.Add(
                 new SelectListItem()
@@ -67,5 +71,6 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> Tiers { get; set; }
         public IList<SelectListItem> Owners { get; set; }
         public ClientProgramme ClientProgramme { get; set; }
+        public Domain.Entities.Programme Programme { get; set; }
     }
 }

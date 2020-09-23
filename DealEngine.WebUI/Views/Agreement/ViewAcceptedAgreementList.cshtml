@@ -68,7 +68,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                   (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -141,14 +141,20 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     </li>
 
                                     @if (item.ProgrammeName == "NZFSG Programme")
-                                    {
+                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
                                         </li>
-                                    }
+                                     }
 
+                                    @*@if (item.ProgrammeName == "Apollo Programme")
+                                     {
+                                        <li class="nav-item">
+                                            <a href="~/File/covertdoctohtml" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Render Apollo Invoice</a>
+                                        </li>
+                                     }*@
 
-                                }
+                                 }
 
                                 @if (ViewBag.IsPDFgenerated == "True" && ViewBag.Ispdfenable == "True")
                                 {
@@ -283,6 +289,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
                                 <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
                             }
+
                         }
                         <!-- loop through process once only!! -->
                         break;

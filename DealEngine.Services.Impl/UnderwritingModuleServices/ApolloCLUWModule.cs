@@ -208,12 +208,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 TermBrokerage250kUltra = TermPremium250kUltra * agreement.Brokerage / 100;
 
                 ClientAgreementTerm termcl250klimitoptionultra = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250kUltra, TermExcess);
-                termcl250klimitoptionultra.TermLimit = TermLimit100kUltra;
-                termcl250klimitoptionultra.Premium = TermPremium100kUltra;
-                termcl250klimitoptionultra.BasePremium = TermPremium100kUltra;
+                termcl250klimitoptionultra.TermLimit = TermLimit250kUltra;
+                termcl250klimitoptionultra.Premium = TermPremium250kUltra;
+                termcl250klimitoptionultra.BasePremium = TermPremium250kUltra;
                 termcl250klimitoptionultra.Excess = TermExcess;
                 termcl250klimitoptionultra.BrokerageRate = agreement.Brokerage;
-                termcl250klimitoptionultra.Brokerage = TermBrokerage100kUltra;
+                termcl250klimitoptionultra.Brokerage = TermBrokerage250kUltra;
                 termcl250klimitoptionultra.DateDeleted = null;
                 termcl250klimitoptionultra.DeletedBy = null;
             }
