@@ -69,6 +69,7 @@
 @section pagespecific {
     <script type="text/javascript">
         function GetOwner() {
+            debugger;
             var organisationId = document.getElementById('OrganisationId');
             var id = organisationId.options[organisationId.selectedIndex].value;
             $("#loadModal").show();
@@ -80,12 +81,14 @@
             .done(function (data) {
                 var OutPut = JSON.parse(data);
                 PopulateView(OutPut);
+                $("#loadModal").hide();         
             })
             .fail(function (jqXhr, textStatus, errorThrown) {
                 debugger;
                 console.log(errorThrown);
+                $("#loadModal").hide();         
             });
-            $("#loadModal").hide();         
+
         }
 
     </script>
