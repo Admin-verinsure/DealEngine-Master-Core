@@ -15,26 +15,19 @@
                             }
                         </select>
                         <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
-                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })
-                            <label class="label">Name</label>
+                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })                            
                             <div class="form-group">
-                                @Html.DisplayFor(m => m.Organisation.Name)
-                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name" })
+                                <label class="label">Name</label>
+                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Marina.Name" })
                             </div>
-                            <label class="label">Email</label>
+                            
                             <div class="form-group">
-                                @Html.DisplayFor(m => m.Organisation.Email)
-                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email" })
-                            </div>
-                            <label class="label">Marina Name</label>
+                                <label class="label">Email</label>
+                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Marina.Email" })
+                            </div>                            
                             <div class="form-group">
-                                @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.MarinaName)
+                                <label class="label">Marina Name</label>
                                 @Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })
-                            </div>
-                            <label class="label">Is the Marina data public across programmes?</label>
-                            <div class="form-group">
-                                @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.IsPublic)
-                                @Html.DropDownListFor(m => m.MarinaUnit.WaterLocation.IsPublic, Model.BooleanOptions, new { @class = "form-control", @id = "WaterLocation.IsPublic" })
                             </div>
                             <button class="btn btn-primary btn-xs" type="submit">Update</button>
                         </form>
@@ -48,37 +41,37 @@
                     <h5 class="card-title">Update/Add Financial Institute</h5>
                     <p class="card-text" style="margin-top:30px;">Financial Institutes</p>
                     <div class="form-group">
-                        <select class="form-control" Id="FinancialId" onchange="GetFinancial(this.id)">
-                            @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
+                        <select class="form-control" Id="FinancialId" onchange="GetInstitute(this.id)">
+                            @foreach (var Financial in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
                             {
-                                <option value="@marina.Id">@marina.Name</option>
+                                <option value="@Financial.Id">@Financial.Name</option>
                             }
                         </select>
-                        <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
-                            @*Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })*@
-                            <label class="label">Label</label>
+                        <form method="POST" action="~/Organisation/PostInstitute" novalidate style="margin-top:30px;">
+                            @Html.HiddenFor(m => m.Organisation.Id, new { @id = "Organisation.Id" })
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Enter here">
-                                @*Html.DisplayFor(m => m.Organisation.Name)*@
-                                @*Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name" })*@
+                                <label class="label">Institute Name</label>
+                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Institute.Name" })
                             </div>
-                            <label class="label">Label</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Enter here">
-                                @*Html.DisplayFor(m => m.Organisation.Email)*@
-                                @*Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email" })*@
+                                <label class="label">Email</label>
+                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Institute.Email" })
                             </div>
-                            <label class="label">Label</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Enter here">
-                                @*Html.DisplayFor(m => m.MarinaUnit.WaterLocation.MarinaName)*@
-                                @*Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })*@
+                                <label class="label">Common Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.CommonName, new { @class = "form-control", @id = "Location.CommonName" })
                             </div>
-                            <label class="label">Label</label>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Enter here">
-                                @*Html.DisplayFor(m => m.MarinaUnit.WaterLocation.IsPublic)*@
-                                @*Html.DropDownListFor(m => m.MarinaUnit.WaterLocation.IsPublic, Model.BooleanOptions, new { @class = "form-control", @id = "WaterLocation.IsPublic" })*@
+                                <label class="label">Street Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Street, new { @class = "form-control", @id = "Location.Street" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Suburb Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Suburb, new { @class = "form-control", @id = "Location.Suburb" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">City Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.City, new { @class = "form-control", @id = "Location.City" })
                             </div>
                             <button class="btn btn-primary btn-xs" type="submit">Update</button>
                         </form>
@@ -109,6 +102,26 @@
                     debugger;
                     console.log(errorThrown);
                 });
+        }
+
+        function GetInstitute(Id) {
+            var organisationId = document.getElementById(Id);
+            var id = organisationId.options[organisationId.selectedIndex].value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetInstitute", "Organisation")',
+                data: { Id: id }
+            })
+                .done(function (data) {
+                    var OutPut = JSON.parse(data);
+                    PopulateView(OutPut);
+
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
         }
     </script>
 }
