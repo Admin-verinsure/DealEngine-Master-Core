@@ -15,7 +15,7 @@
                             }
                         </select>
                         <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
-                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })                            
+                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Marina.Id" })                            
                             <div class="form-group">
                                 <label class="label">Name</label>
                                 @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Marina.Name" })
@@ -48,7 +48,7 @@
                             }
                         </select>
                         <form method="POST" action="~/Organisation/PostInstitute" novalidate style="margin-top:30px;">
-                            @Html.HiddenFor(m => m.Organisation.Id, new { @id = "Organisation.Id" })
+                            @Html.HiddenFor(m => m.Organisation.Id, new { @id = "Institute.Id" })
                             <div class="form-group">
                                 <label class="label">Institute Name</label>
                                 @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Institute.Name" })

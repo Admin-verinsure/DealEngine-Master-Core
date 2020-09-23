@@ -189,6 +189,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostMarina(IFormCollection model)
         {
+<<<<<<< HEAD
             Organisation organisation = null;
             if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId)){
                 organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
@@ -215,6 +216,18 @@ namespace DealEngine.WebUI.Controllers
                 organisation.InsuranceAttributes.Add(insuranceAttribute);
                 organisation.OrganisationalUnits.Add(marinaUnit);
             }
+=======
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Marina.Id"]));
+            MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+            var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
+            var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
+            organisation = _mapper.Map(jsonOrganisation, organisation);
+            marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
+            //add fields
+
+            //add new organisation using devtools example
+
+>>>>>>> 070bbb9e5670a1476f3fd734598d9a599fd44e99
 
             await _organisationService.Update(organisation);
             return NoContent();
@@ -267,7 +280,6 @@ namespace DealEngine.WebUI.Controllers
                 organisation.InsuranceAttributes.Add(insuranceAttribute6);
                 organisation.OrganisationalUnits.Add(partyUnit);
             }
-
             await _organisationService.Update(organisation);
             return NoContent();
         }
