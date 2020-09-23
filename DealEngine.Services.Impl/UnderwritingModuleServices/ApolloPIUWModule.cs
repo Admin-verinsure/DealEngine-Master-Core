@@ -77,6 +77,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decDPI = 0M;
             decimal decOther = 0M;
             decimal decInv = 0M;
+            bool bolworkoutsidenz = false;
 
             string strProfessionalBusiness = "General Insurance Brokers, Life Agents, Investment Advisers, Financial Planning and Mortgage Broking, Consultants and Advisers in the sale of any financial product including referrals to other financial product providers.";
 
@@ -87,6 +88,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
                     feeincomelastyear = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                }
+
+                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
+                {
+                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Percentage > 0) //Work outside New Zealand Check
+                    {
+                        bolworkoutsidenz = true;
+                    }
                 }
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
@@ -145,8 +154,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            string tier = "";
+            string strtier = "Apollo Standard";
+            if (agreement.ClientInformationSheet.Programme.Tier == "Apollo Prime") 
+            {
+                strtier = "Apollo Prime";
+            } else if (agreement.ClientInformationSheet.Programme.Tier == "Mortgage Express")
+            {
+                strtier = "Mortgage Express";
+            }
 
+            ClientAgreementEndorsement cAEPIAP = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Apollo Prime");
+
+            if (cAEPIAP != null)
+            {
+                cAEPIAP.DateDeleted = DateTime.UtcNow;
+                cAEPIAP.DeletedBy = underwritingUser;
+            }
+
+            if (strtier == "Apollo Prime")
+            {
+                if (cAEPIAP != null)
+                {
+                    cAEPIAP.DateDeleted = null;
+                    cAEPIAP.DeletedBy = null;
+                }
+            }
 
             bool subuisreferred = false;
             if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
@@ -230,7 +262,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil1kExcess = 1000000;
             decimal TermPremium1mil1kExcess = 0M;
             decimal TermBrokerage1mil1kExcess = 0M;
-            TermPremium1mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermPremium1mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage1mil1kExcess = TermPremium1mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil1kExcess, TermExcess1k);
@@ -246,7 +278,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil5kExcess = 1000000;
             decimal TermPremium1mil5kExcess = 0M;
             decimal TermBrokerage1mil5kExcess = 0M;
-            TermPremium1mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermPremium1mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage1mil5kExcess = TermPremium1mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil5kExcess, TermExcess5k);
@@ -262,7 +294,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil1kExcess = 2000000;
             decimal TermPremium2mil1kExcess = 0M;
             decimal TermBrokerage2mil1kExcess = 0M;
-            TermPremium2mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermPremium2mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil1kExcess, TermExcess1k);
@@ -278,7 +310,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil5kExcess = 2000000;
             decimal TermPremium2mil5kExcess = 0M;
             decimal TermBrokerage2mil5kExcess = 0M;
-            TermPremium2mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermPremium2mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage2mil5kExcess = TermPremium2mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil5kExcess, TermExcess5k);
@@ -294,7 +326,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit3mil1kExcess = 3000000;
             decimal TermPremium3mil1kExcess = 0M;
             decimal TermBrokerage3mil1kExcess = 0M;
-            TermPremium3mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermPremium3mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil1kExcess, TermExcess1k);
@@ -310,23 +342,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit3mil5kExcess = 3000000;
             decimal TermPremium3mil5kExcess = 0M;
             decimal TermBrokerage3mil5kExcess = 0M;
-            TermPremium3mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermPremium3mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage3mil5kExcess = TermPremium3mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil5kExcess, TermExcess5k);
-            term3millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
-            term3millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
-            term3millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
+            term3millimit5kexcesspremiumoption.TermLimit = TermLimit3mil5kExcess;
+            term3millimit5kexcesspremiumoption.Premium = TermPremium3mil5kExcess;
+            term3millimit5kexcesspremiumoption.BasePremium = TermPremium3mil5kExcess;
             term3millimit5kexcesspremiumoption.Excess = TermExcess5k;
             term3millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term3millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
+            term3millimit5kexcesspremiumoption.Brokerage = TermBrokerage3mil5kExcess;
             term3millimit5kexcesspremiumoption.DateDeleted = null;
             term3millimit5kexcesspremiumoption.DeletedBy = null;
 
             int TermLimit5mil1kExcess = 5000000;
             decimal TermPremium5mil1kExcess = 0M;
             decimal TermBrokerage5mil1kExcess = 0M;
-            TermPremium5mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium);
+            TermPremium5mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil1kExcess, TermExcess1k);
@@ -342,7 +374,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit5mil5kExcess = 5000000;
             decimal TermPremium5mil5kExcess = 0M;
             decimal TermBrokerage5mil5kExcess = 0M;
-            TermPremium5mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium);
+            TermPremium5mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
             TermBrokerage5mil5kExcess = TermPremium5mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil5kExcess, TermExcess5k);
@@ -377,7 +409,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrftrustservices(underwritingUser, agreement, trustservices);
             //Less than 10% Investment Advice
             uwrflessthan10percentinvestmentadvice(underwritingUser, agreement, lessthan10percentinvestmentadvice);
-
+            //Operates Outside of NZ
+            uwrfoperatesoutsideofnz(underwritingUser, agreement, bolworkoutsidenz);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -480,10 +513,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremiumForAdvisors(IDictionary<string, decimal> rates, int intnumberofadvisors, int limitoption, int excessoption, decimal decInv, decimal decDishonestyOptionPremium)
+        decimal GetPremiumForAdvisors(IDictionary<string, decimal> rates, int intnumberofadvisors, int limitoption, int excessoption, decimal decInv, decimal decDishonestyOptionPremium, string strtier)
         {
             decimal premiumoption = 0M;
             decimal totalpremiumoption = 0M;
+            decimal tierpremium = 0M;
+
+            if (strtier == "Mortgage Express")
+            {
+                tierpremium = 100;
+            }
 
             if (decInv > 0)
             {
@@ -601,7 +640,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            totalpremiumoption = (premiumoption + decDishonestyOptionPremium) * intnumberofadvisors;
+            totalpremiumoption = (premiumoption + decDishonestyOptionPremium + tierpremium) * intnumberofadvisors;
 
             return totalpremiumoption;
         }
@@ -845,7 +884,28 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        
+        void uwrfoperatesoutsideofnz(User underwritingUser, ClientAgreement agreement, bool bolworkoutsidenz)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (bolworkoutsidenz) //Work outside New Zealand
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
 
 
 
