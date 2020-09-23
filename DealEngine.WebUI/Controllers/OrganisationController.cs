@@ -177,13 +177,14 @@ namespace DealEngine.WebUI.Controllers
             if (organisation != null)
             {
                 var unit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
-                JsonObjects.Add("Organisation", organisation);
+                JsonObjects.Add("Marina", organisation);
                 JsonObjects.Add("WaterLocation", unit.WaterLocation);
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
                 return Json(jsonObj);
             }
             return NoContent();
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> PostMarina(IFormCollection model)
@@ -194,6 +195,40 @@ namespace DealEngine.WebUI.Controllers
             var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
             organisation = _mapper.Map(jsonOrganisation, organisation);
             marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
+            //add fields
+
+            //add new organisation using devtools example
+
+
+            await _organisationService.Update(organisation);
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetInstitute(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Id"]));
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (organisation != null)
+            {
+                var unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                JsonObjects.Add("Institute", organisation);
+                JsonObjects.Add("Location", unit.Location);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostInstitute(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+            InterestedPartyUnit unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
+            var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
+            var jsonLocation = (Location)await _serialiserService.GetDeserializedObject(typeof(Location), model);
+            organisation = _mapper.Map(jsonOrganisation, organisation);
+            unit.Location = _mapper.Map(jsonLocation, unit.Location);
             //add fields
 
             //add new organisation using devtools example
