@@ -847,8 +847,7 @@ namespace DealEngine.WebUI.Controllers
                 return Json(jsonObj);                
             }
             return NoContent();
-        }
-        
+        }        
 
         [HttpPost]
         public async Task<IActionResult> PostCreateUser(IFormCollection form)
