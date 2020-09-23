@@ -1,4 +1,5 @@
-﻿using DealEngine.Domain.Entities;
+﻿using AutoMapper;
+using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
@@ -23,6 +24,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<OrganisationController> _logger;        
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
+        IMapper _mapper;
 
         public OrganisationController(
             IProgrammeService programmeService,
@@ -32,10 +34,12 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
-            IUserService userRepository
+            IUserService userRepository,
+            IMapper mapper
             )
             : base (userRepository)
         {
+            _mapper = mapper;
             _programmeService = programmeService;
             _milestoneService = milestoneService;
             _serialiserService = serialiserService;
@@ -184,12 +188,32 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostMarina(IFormCollection model)
         {
-            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
-            MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
-            //add fields
-
-            //add new organisation using devtools example
-
+            Organisation organisation = null;
+            if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId)){
+                organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+                MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
+                var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
+                organisation = _mapper.Map(jsonOrganisation, organisation);
+                marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
+            }
+            else
+            {
+                
+                organisation = new Organisation(null, Guid.NewGuid());               
+                organisation.Name = model["Organisation.Name"];
+                organisation.Email = model["Organisation.Email"];
+                OrganisationType organisationType = new OrganisationType("Corporation – Limited liability");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(null, "Marina");
+                MarinaUnit marinaUnit = new MarinaUnit(null, "Marina", "Corporation – Limited liability", null);
+                WaterLocation DefaultMar = new WaterLocation(null);
+                DefaultMar.MarinaName = model["WaterLocation.MarinaName"];
+                DefaultMar.IsPublic = true;                
+                marinaUnit.WaterLocation = DefaultMar;
+                organisation.OrganisationType = organisationType;
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+                organisation.OrganisationalUnits.Add(marinaUnit);
+            }
 
             await _organisationService.Update(organisation);
             return NoContent();
