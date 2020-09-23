@@ -1,7 +1,6 @@
 ﻿@model OrganisationViewModel
 <div id="content" class="container">
     <div class="card">
-
         <div class="card-body">
             <div class="form-group">
                 @Html.Label("Marinas")
@@ -11,6 +10,28 @@
                         <option value="@marina.Id">@marina.Name</option>
                     }
                 </select>
+                <form method="POST" action="~/Organisation/PostMarina" novalidate>
+                    @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Organisation.Id" })
+                    <div class="form-group">
+                        @Html.DisplayFor(m => m.Organisation.Name)
+                        @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name" })
+                    </div>
+                    <div class="form-group">
+                        @Html.DisplayFor(m => m.Organisation.Email)
+                        @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email" })
+                    </div>
+                    <div class="form-group">
+                        @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.MarinaName)
+                        @Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })
+                    </div>
+                    <div class="form-group">
+                        @Html.DisplayFor(m => m.MarinaUnit.WaterLocation.IsPublic)
+                        @Html.DropDownListFor(m => m.MarinaUnit.WaterLocation.IsPublic, Model.BooleanOptions, new { @class = "form-control", @id = "WaterLocation.IsPublic" })
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                    </div>
+                </form>
             </div>
             <div class="form-group">
                 @Html.Label("Financial Institutes")
@@ -29,15 +50,15 @@
 
         function GetMarina(Id) {
             var organisationId = document.getElementById(Id);
-            var Id = organisationId.options[organisationId.selectedIndex].value;
+            var id = organisationId.options[organisationId.selectedIndex].value;
             $.ajax({
                 type: 'Post',
                 url: '@Url.Action("GetMarina", "Organisation")',
-                data: { ID: Id }
+                data: { Id: id }
             })
                 .done(function (data) {
                     var OutPut = JSON.parse(data);
-                    PopulateOrganisationView("", OutPut);
+                    PopulateView(OutPut);
 
                 })
                 .fail(function (jqXhr, textStatus, errorThrown) {

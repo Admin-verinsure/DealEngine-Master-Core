@@ -101,8 +101,7 @@
         dateFormat: "yy-mm-dd",
     });
 
-    function PopulateView(Output) {
-        debugger;
+    function PopulateView(Output) {        
         for (obj in Output) {
             var modelObj = Output[obj];
             for (var Field in modelObj) {
@@ -110,7 +109,7 @@
                 var Element = document.getElementById(Id);
                 if (Element != null) {
                     Element.value = Output[obj][Field];
-                }
+                }                
             }
         }
     }

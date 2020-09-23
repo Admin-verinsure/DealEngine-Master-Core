@@ -67,8 +67,6 @@ namespace DealEngine.Services.Impl
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
                     });
             }
             catch (Exception ex)
@@ -87,9 +85,9 @@ namespace DealEngine.Services.Impl
                     new JsonSerializerSettings()
                     {
                         MaxDepth = 2,
+                        ObjectCreationHandling = ObjectCreationHandling.Auto,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         DateParseHandling = DateParseHandling.DateTime
                     });
             }
