@@ -1,11 +1,51 @@
-﻿<div id="content" class="container">
+﻿@model OrganisationViewModel
+<div id="content" class="container">
+    <div class="card">
 
-    <div class ="card">
-        @*<div class="card-header">
-            Attach Advisor
-        </div>
         <div class="card-body">
-            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Organisation/AttachOrganisation"><i class="fa fa-search"></i> Go</a>
-        </div>*@
+            <div class="form-group">
+                @Html.Label("Marinas")
+                <select class="form-control b" Id="MarinaId" onchange="GetMarina(this.id)">
+                    @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToList())
+                    {
+                        <option value="@marina.Id">@marina.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                @Html.Label("Financial Institutes")
+                <select class="form-control b" Id="FinancialId" onchange="GetFinancial(this.id)">
+                    @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
+                    {
+                        <option value="@marina.Id">@marina.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
     </div>
 </div>
+@section pagespecific {
+    <script type="text/javascript">
+
+        function GetMarina(Id) {
+            var organisationId = document.getElementById(Id);
+            var Id = organisationId.options[organisationId.selectedIndex].value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetMarina", "Organisation")',
+                data: { ID: Id }
+            })
+                .done(function (data) {
+                    var OutPut = JSON.parse(data);
+                    PopulateOrganisationView("", OutPut);
+
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
+        }
+    </script>
+
+}

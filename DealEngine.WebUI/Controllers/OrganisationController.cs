@@ -146,12 +146,39 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<IActionResult> AddMarinaInterestedParty()
-        //{
-        //    MarinaInterestedPartiesViewModel marinaInterestedPartiesViewModel = new MarinaInterestedPartiesViewModel();
-        //    return View(marinaInterestedPartiesViewModel);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> ManageOrganisations(Guid Id)
+        {
+            Programme programme = await _programmeService.GetProgrammeById(Id);
+            OrganisationViewModel model = new OrganisationViewModel(programme.ClientProgrammes.FirstOrDefault(p=>p.DateDeleted==null).InformationSheet, null);
+            var marinas = await _organisationService.GetAllMarinas();
+            foreach(var mar in marinas)
+            {
+                model.Organisations.Add(mar);
+            }
+            
+            var institutes = await _organisationService.GetFinancialInstitutes();
+            foreach (var inst in institutes)
+            {
+                model.Organisations.Add(inst);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetMarina(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Id"]));
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (organisation != null)
+            {
+                var unit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                JsonObjects.Add("Organisation", organisation);
+                JsonObjects.Add("WaterLocation", organisation);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            return NoContent();
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
@@ -256,13 +283,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> ManageOrganisations()
-        {            
-            return View("ManageOrganisations");
-        }
-
 
         [HttpGet]
         public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)

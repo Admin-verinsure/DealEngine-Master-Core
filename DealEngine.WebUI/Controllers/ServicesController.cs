@@ -160,22 +160,20 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
             try
             {
-                Guid.TryParse(Collection["Organisation.Id"], out Guid OrganisationId);
-                Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                //User primaryUser = await _userService.GetUserPrimaryOrganisation()
-                Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
-                if (organisation != null)
+                Guid.TryParse(Collection["ClientProgramme.Id"], out Guid ClientId);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientId);
+                if(clientProgramme != null)
                 {
-                    var ClientProgrammes = await _programmeService.GetClientProgrammesByOwner(organisation.Id);
-                    if (ClientProgrammes.Any())
-                    {
-                        JsonObjects.Add("Organisation", organisation);
-                        JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
-                        var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
-                        return Json(jsonObj);
-                    }
+                    clientProgramme.EGlobalClientNumber = Collection["ClientProgramme.EGlobalClientNumber"];
+                    clientProgramme.Tier = Collection["ClientProgramme.Tier"];
+                    await _programmeService.Update(clientProgramme);
+                    User OwnerUser = await _userService.GetUserPrimaryOrganisation(clientProgramme.Owner);
+                    OwnerUser.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Name = Collection["Organisation.Name"];
+                    await _userService.Update(OwnerUser);
                 }
-                return NoContent();
+                return Redirect("../Home/EditClients?ProgrammeId=" + clientProgramme.BaseProgramme.Id.ToString());
             }
             catch (Exception ex)
             {

@@ -22,14 +22,20 @@ namespace DealEngine.WebUI.Models
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "Prime",
-                    Value = "Prime"
+                    Text = "Apollo Prime",
+                    Value = "Apollo Prime"
                 });
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "text",
-                    Value = "text"
+                    Text = "Apollo Standard",
+                    Value = "Apollo Standard"
+                });
+            Tiers.Add(
+                new SelectListItem()
+                {
+                    Text = "Mortgage Express",
+                    Value = "Mortgage Express"
                 });
         }
 

@@ -1,4 +1,4 @@
-﻿<!--@model MarinaInterestedPartiesViewModel
+﻿<!--
 
 <div class="container">
     <form method="POST" action="~/Home/EditClient" novalidate>
@@ -46,9 +46,9 @@
                         <label>
                             Select Financial Interested Party
                             <select data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
-                                @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
+                                foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                 {
-                                    <option value="@organisation.Id"> @organisation.Name</option>
+                                    <option value="organisation.Id"> organisation.Name</option>
                                 }
                             </select>
                         </label>
