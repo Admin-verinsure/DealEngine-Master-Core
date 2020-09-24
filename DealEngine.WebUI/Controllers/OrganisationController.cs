@@ -214,6 +214,7 @@ namespace DealEngine.WebUI.Controllers
                 organisation.InsuranceAttributes.Add(insuranceAttribute);
                 organisation.OrganisationalUnits.Add(marinaUnit);
             }
+
             await _organisationService.Update(organisation);
             return NoContent();
         }

@@ -957,8 +957,15 @@ namespace DealEngine.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-				attachments.Add(await ToAttachment(document));
-			return attachments;
+                if (!document.Name.Contains("Invoice"))
+                {
+                    attachments.Add(await ToAttachment(document));
+                }
+                else
+                {
+                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name+".pdf"));
+                }
+            return attachments;
 		}
 
 

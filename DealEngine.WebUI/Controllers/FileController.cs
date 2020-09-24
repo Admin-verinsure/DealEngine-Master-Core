@@ -68,7 +68,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetApolloInvoicePDF(Guid Id, Guid ClientProgrammeId)
+        public async Task<IActionResult> GetInvoicePDF(Guid Id, Guid ClientProgrammeId,string invoicename)
         {
             ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
             ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
@@ -85,7 +85,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
              htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-          htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
             margins.Top = 10;
@@ -96,7 +96,7 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
 
-            return File(pdfBytes, "application/pdf", "ApolloInvoice.pdf");
+            return File(pdfBytes, "application/pdf", invoicename+".pdf");
 
         }
 
@@ -142,29 +142,26 @@ namespace DealEngine.WebUI.Controllers
               
         }
 
-        [HttpGet]
-        public async void covertdoctohtml(string filename)
+        [HttpPost]
+        public async Task<IActionResult>  covertdoctohtml(string TemplateName, string ActualFileName, string DocumentType)
         {
-            try
-            {
+            
                 string htmlbody = string.Empty;
-                using (StreamReader reader = new StreamReader("./Template/apolloInvoice.html"))
+                var path = "./Template/" + TemplateName + ".html";
+                using (StreamReader reader = new StreamReader("./Template/" + TemplateName + ".html"))
                 {
                     htmlbody = reader.ReadToEnd();
                 }
                 User user = await CurrentUser();
                 SystemDocument document = null;
                 Product product = null;
-                document = new SystemDocument(user, "ApolloInvoice", MediaTypeNames.Text.Html, 33);
-                document.Description = "ApolloInvoice";
+                document = new SystemDocument(user, ActualFileName, MediaTypeNames.Text.Html, int.Parse(DocumentType));
+                document.Description = TemplateName + ".pdf";
                 document.Contents = _fileService.ToBytes(htmlbody);
                 document.IsTemplate = true;
                 await _documentRepository.AddAsync(document);
-            }
-            catch (Exception ex)
-            {
 
-            }
+            return Json("OK");
         }
 
         [HttpGet]
@@ -747,6 +744,8 @@ namespace DealEngine.WebUI.Controllers
                             Owner = doc.OwnerOrganisation.Name,
                             Id = doc.Id,
                         });
+
+                        ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                     }
                 }
                 else
