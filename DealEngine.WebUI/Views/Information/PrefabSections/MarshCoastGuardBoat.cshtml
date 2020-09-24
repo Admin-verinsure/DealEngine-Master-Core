@@ -502,10 +502,11 @@
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
                             <div class="col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" style="display:none">
-                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
-                                    <label class="label required">Vessel Use</label>
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Select Vessel Use</label>
                                     <label class="input form-group">
-                                        <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
+                                        <select onchange="addNewBoatUse()" id="SelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
+                                            <option selected="selected" value="">-- Select --</option>
                                             @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                             {
                                                 foreach (var boatUse in boat.BoatUses)
@@ -516,12 +517,11 @@
                                                     }
                                                 }
                                             }
+                                            <option value="add">Add Boat Use</option>
                                         </select>
                                     </label>
-                                </section>
-                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                                    <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                </section>
+                                </section>           
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
                             <p class="validationContainer" id="validateboatuse"></p>
                             <!--hr class="boatAccordianHairline" /-->

@@ -5984,29 +5984,31 @@ async: true
     }
 
     function addNewBoatUse() {
+        debugger;
+
+        var BoatUse2 = document.getElementById("SelectedBoatUse");
+        var selectedBoatUse = BoatUse2.options[BoatUse2.selectedIndex].value;
+
+        if (selectedBoatUse == "add") {
             var AddboatType1Selected = AddboatType1.options[AddboatType1.selectedIndex].value;
             var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
-        if (AddboatType1Selected == "YachtsandCatamarans" || boatType1Selected == "YachtsandCatamarans") {
-
-            $('#addBoatUseModal').show();
-            $('#Race').removeClass("hidden");
-            $('#Both').removeClass("hidden");
-            $('#Neither').removeClass("hidden");
-            $('#racingUseSection').removeClass("hidden");
-
-        } else {
-            $('#addBoatUseModal').show();
-            $('#Race').addClass("hidden");
-            $('#Both').addClass("hidden");
-            $('#Neither').removeClass("hidden");
-             $('#racingUseSection').addClass("hidden");
-
-        }
+            if (AddboatType1Selected == "YachtsandCatamarans" || boatType1Selected == "YachtsandCatamarans") {
+                $('#addBoatUseModal').show();
+                $('#Race').removeClass("hidden");
+                $('#Both').removeClass("hidden");
+                $('#Neither').removeClass("hidden");
+                $('#racingUseSection').removeClass("hidden");
+            } else {
+                $('#addBoatUseModal').show();
+                $('#Race').addClass("hidden");
+                $('#Both').addClass("hidden");
+                $('#Neither').removeClass("hidden");
+                $('#racingUseSection').addClass("hidden");
+            }
             boutUseCategoryUpdated();
-        selectedBoatUse = "";
-    }
-
-
+            selectedBoatUse = "";
+        }
+    }       
 
     function addNewParty() {
         $('#addInterestedPartyModal').show();
