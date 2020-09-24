@@ -114,13 +114,13 @@ namespace DealEngine.WebUI.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> NZPIImportOwners()
+        public async Task<IActionResult> ApolloImportOwners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZPIImportOwners(user);
+                await _importService.ImportApolloImportOwners(user);
 
                 return RedirectToAction("Index", "Home");
             }
