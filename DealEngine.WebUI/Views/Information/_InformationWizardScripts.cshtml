@@ -3595,14 +3595,11 @@ function showAccordionPanel(id, panelNo) {
                 });
     }
 
-
     function ValidateBoatUseModal() {
         debugger;
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
         if (selectedBoatUseCategory == "Race" || selectedBoatUseCategory == "Both") {
-
             if (!(document.getElementById("BoatUseRaceCategoryModal").validity.valueMissing) && !(document.getElementById("BoatUseRaceUseSpinnakersModal").validity.valueMissing)) {
-
                 addBoatUseModal(event);
                 $('#addBoatUseModal').hide();
             }
@@ -3610,8 +3607,8 @@ function showAccordionPanel(id, panelNo) {
             addBoatUseModal(event);
             $('#addBoatUseModal').hide();
         }
-
     };
+
     function addBoatUseModal(event) {   
         debugger;
         event.preventDefault();
