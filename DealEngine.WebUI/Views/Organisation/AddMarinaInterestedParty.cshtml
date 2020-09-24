@@ -8,14 +8,16 @@
                     <div class=" form-group">
                         <label>
                             Select Water Location
-                            <select class="form-control b" Id="WaterLocationId">
-                                <option selected="selected" value="">-- Select --</option>-->
+							
+                            <select class="form-control b" Id="OrganisationId" onchange="GetOwner()">
+                                <option selected="selected" value="">-- Select --</option>
                                 @*@foreach (var client in Model.Owners)
                                     {
                                         <option value="@client.Value">@client.Text</option>
-                                    }
-                                *@                               
-                            <!--</select>
+                                    }*@
+                                
+                            </select>
+
                         </label>
                     </div>-->
                     @*
