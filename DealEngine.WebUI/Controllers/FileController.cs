@@ -85,7 +85,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
              htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-          htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
             margins.Top = 10;

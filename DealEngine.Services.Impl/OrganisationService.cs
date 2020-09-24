@@ -437,7 +437,6 @@ namespace DealEngine.Services.Impl
                             organisations.Add(Financial);
                         }
                     }
-
                 }
             }
 

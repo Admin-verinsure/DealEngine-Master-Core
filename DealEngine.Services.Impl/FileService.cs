@@ -212,6 +212,42 @@ namespace DealEngine.Services.Impl
                             PremiumTotal += term.Premium;
                         }
 
+                        //Endorsements
+                        if (agreementlist.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).Count() > 0)
+                        {
+                            DataTable dt9 = new DataTable();
+                            dt9.Columns.Add("Endorsement Name");
+                            dt9.Columns.Add("Product Name");
+                            dt9.Columns.Add("Endorsement Text");
+
+                            foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreementlist.ClientAgreementEndorsements)
+                            {
+                                if (ClientAgreementEndorsement.DateDeleted == null)
+                                {
+                                    DataRow dr9 = dt9.NewRow();
+
+                                    dr9["Endorsement Name"] = ClientAgreementEndorsement.Name;
+                                    if (agreementlist.Product != null)
+                                    {
+                                        dr9["Product Name"] = agreementlist.Product.Name;
+                                    }
+
+                                    dr9["Endorsement Text"] = ClientAgreementEndorsement.Value;
+
+                                    dt9.Rows.Add(dr9);
+                                }
+
+                            }
+
+                            dt9.TableName = "EndorsementTable";
+
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[EndorsementTable_{0}]]", term.SubTermType), ConvertDataTableToHTML(dt9)));
+                        }
+                        else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[EndorsementTable_{0}]]", term.SubTermType), ""));
+                        }
+
                         if (term.SubTermType == "CL")
                         {
                             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
@@ -239,8 +275,16 @@ namespace DealEngine.Services.Impl
             }
 
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
@@ -561,7 +605,8 @@ namespace DealEngine.Services.Impl
             string stradvisorlist1 = "";
             string strnominatedrepresentative = "";
             string strotherconsultingbusiness = "";
-            
+            string strmentoradvisorlist = "";
+
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
 
@@ -594,8 +639,8 @@ namespace DealEngine.Services.Impl
                             }
                         }
 
-                        unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
-                        if (unit != null)
+                        var unit1 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
+                        if (unit1 != null)
                         {
                             if (string.IsNullOrEmpty(strnominatedrepresentative))
                             {
@@ -607,8 +652,8 @@ namespace DealEngine.Services.Impl
                             }
                         }
 
-                        unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
-                        if (unit != null)
+                        var unit2 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
+                        if (unit2 != null)
                         {
                             if (string.IsNullOrEmpty(strotherconsultingbusiness))
                             {
@@ -617,6 +662,32 @@ namespace DealEngine.Services.Impl
                             else
                             {
                                 strotherconsultingbusiness += ", " + uisorg.Name;
+                            }
+                        }
+
+                        var unit3 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Mentored Advisor");
+                        if (unit3 != null)
+                        {
+                            string mentoredadvisorexpirydate = "";
+                            if (unit3.DateofCommencement.Value.AddMonths(6) > agreement.ExpiryDate)
+                            {
+                                mentoredadvisorexpirydate = 
+                                    TimeZoneInfo.ConvertTimeFromUtc(agreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                            } else
+                            {
+                                mentoredadvisorexpirydate =
+                                    TimeZoneInfo.ConvertTimeFromUtc(unit3.DateofCommencement.Value.AddMonths(6), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                            }
+
+                            if (string.IsNullOrEmpty(strmentoradvisorlist))
+                            {
+                                strmentoradvisorlist = "Mentored Advisor:                    " + uisorg.Name +
+                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
+                            }
+                            else
+                            {
+                                strmentoradvisorlist += "<br />" + "Mentored Advisor:                    " + uisorg.Name +
+                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
                             }
                         }
                     }
@@ -633,9 +704,15 @@ namespace DealEngine.Services.Impl
                     strotherconsultingbusiness = "No Additional Insureds.";
                 }
 
+                if (string.IsNullOrEmpty(strmentoradvisorlist))
+                {
+                    strmentoradvisorlist = "No Mentored Advisor insured under this policy.";
+                }
+
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
+                mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", strmentoradvisorlist));
 
             }
             else
@@ -643,6 +720,7 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", "No Mentored Advisor insured under this policy."));
             }
 
             //Advisor list with FAP Number
@@ -970,6 +1048,7 @@ namespace DealEngine.Services.Impl
 
                     if (term.SubTermType == "CL")
                     {
+                        //Extension Without Ultra Option
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
@@ -988,11 +1067,67 @@ namespace DealEngine.Services.Impl
                                 mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
                             }
                         }
+
+                        //Extension With Ultra Option
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").Count() == 0 || 
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension NOT Included"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1" && 
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension NOT Included"));
+                            }
+                        }
+
+                        //Ultra vs Base differences
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYB"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYB0316"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$50,000"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$50,000"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "$50,000"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYU"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYU0316"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$100,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$250,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "25% of the Limit of Indemnity"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYB"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYB0316"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$50,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$50,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "$50,000"));
+                            }
+                        }
                     }
                 }
             }
-            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
-            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+           
+            //Address needs re-work
             //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
             mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
                 TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));

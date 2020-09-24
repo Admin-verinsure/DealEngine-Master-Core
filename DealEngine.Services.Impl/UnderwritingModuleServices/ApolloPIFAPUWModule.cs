@@ -153,165 +153,182 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess1k = 1000;
             int TermExcess5k = 5000;
 
-            int TermLimit1mil1kExcess = 1000000;
-            decimal TermPremium1mil1kExcess = 0M;
-            decimal TermBrokerage1mil1kExcess = 0M;
-            TermPremium1mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage1mil1kExcess = TermPremium1mil1kExcess * agreement.Brokerage / 100;
+            if (intnumberofadvisors > 1)
+            {
+                int TermLimit1mil1kExcess = 1000000;
+                decimal TermPremium1mil1kExcess = 0M;
+                decimal TermBrokerage1mil1kExcess = 0M;
+                TermPremium1mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage1mil1kExcess = TermPremium1mil1kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term1millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit1mil1kExcess, TermExcess1k);
-            term1millimit1kexcesspremiumoption.TermLimit = TermLimit1mil1kExcess;
-            term1millimit1kexcesspremiumoption.Premium = TermPremium1mil1kExcess;
-            term1millimit1kexcesspremiumoption.BasePremium = TermPremium1mil1kExcess;
-            term1millimit1kexcesspremiumoption.Excess = TermExcess1k;
-            term1millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term1millimit1kexcesspremiumoption.Brokerage = TermBrokerage1mil1kExcess;
-            term1millimit1kexcesspremiumoption.DateDeleted = null;
-            term1millimit1kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term1millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit1mil1kExcess, TermExcess1k);
+                term1millimit1kexcesspremiumoption.TermLimit = TermLimit1mil1kExcess;
+                term1millimit1kexcesspremiumoption.Premium = TermPremium1mil1kExcess;
+                term1millimit1kexcesspremiumoption.BasePremium = TermPremium1mil1kExcess;
+                term1millimit1kexcesspremiumoption.Excess = TermExcess1k;
+                term1millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term1millimit1kexcesspremiumoption.Brokerage = TermBrokerage1mil1kExcess;
+                term1millimit1kexcesspremiumoption.DateDeleted = null;
+                term1millimit1kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit1mil5kExcess = 1000000;
-            decimal TermPremium1mil5kExcess = 0M;
-            decimal TermBrokerage1mil5kExcess = 0M;
-            TermPremium1mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage1mil5kExcess = TermPremium1mil5kExcess * agreement.Brokerage / 100;
+                int TermLimit1mil5kExcess = 1000000;
+                decimal TermPremium1mil5kExcess = 0M;
+                decimal TermBrokerage1mil5kExcess = 0M;
+                TermPremium1mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage1mil5kExcess = TermPremium1mil5kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term1millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit1mil5kExcess, TermExcess5k);
-            term1millimit5kexcesspremiumoption.TermLimit = TermLimit1mil5kExcess;
-            term1millimit5kexcesspremiumoption.Premium = TermPremium1mil5kExcess;
-            term1millimit5kexcesspremiumoption.BasePremium = TermPremium1mil5kExcess;
-            term1millimit5kexcesspremiumoption.Excess = TermExcess5k;
-            term1millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term1millimit5kexcesspremiumoption.Brokerage = TermBrokerage1mil5kExcess;
-            term1millimit5kexcesspremiumoption.DateDeleted = null;
-            term1millimit5kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term1millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit1mil5kExcess, TermExcess5k);
+                term1millimit5kexcesspremiumoption.TermLimit = TermLimit1mil5kExcess;
+                term1millimit5kexcesspremiumoption.Premium = TermPremium1mil5kExcess;
+                term1millimit5kexcesspremiumoption.BasePremium = TermPremium1mil5kExcess;
+                term1millimit5kexcesspremiumoption.Excess = TermExcess5k;
+                term1millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term1millimit5kexcesspremiumoption.Brokerage = TermBrokerage1mil5kExcess;
+                term1millimit5kexcesspremiumoption.DateDeleted = null;
+                term1millimit5kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit2mil1kExcess = 2000000;
-            decimal TermPremium2mil1kExcess = 0M;
-            decimal TermBrokerage2mil1kExcess = 0M;
-            TermPremium2mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
+                int TermLimit2mil1kExcess = 2000000;
+                decimal TermPremium2mil1kExcess = 0M;
+                decimal TermBrokerage2mil1kExcess = 0M;
+                TermPremium2mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit2mil1kExcess, TermExcess1k);
-            term2millimit1kexcesspremiumoption.TermLimit = TermLimit2mil1kExcess;
-            term2millimit1kexcesspremiumoption.Premium = TermPremium2mil1kExcess;
-            term2millimit1kexcesspremiumoption.BasePremium = TermPremium2mil1kExcess;
-            term2millimit1kexcesspremiumoption.Excess = TermExcess1k;
-            term2millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term2millimit1kexcesspremiumoption.Brokerage = TermBrokerage2mil1kExcess;
-            term2millimit1kexcesspremiumoption.DateDeleted = null;
-            term2millimit1kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit2mil1kExcess, TermExcess1k);
+                term2millimit1kexcesspremiumoption.TermLimit = TermLimit2mil1kExcess;
+                term2millimit1kexcesspremiumoption.Premium = TermPremium2mil1kExcess;
+                term2millimit1kexcesspremiumoption.BasePremium = TermPremium2mil1kExcess;
+                term2millimit1kexcesspremiumoption.Excess = TermExcess1k;
+                term2millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term2millimit1kexcesspremiumoption.Brokerage = TermBrokerage2mil1kExcess;
+                term2millimit1kexcesspremiumoption.DateDeleted = null;
+                term2millimit1kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit2mil5kExcess = 2000000;
-            decimal TermPremium2mil5kExcess = 0M;
-            decimal TermBrokerage2mil5kExcess = 0M;
-            TermPremium2mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage2mil5kExcess = TermPremium2mil5kExcess * agreement.Brokerage / 100;
+                int TermLimit2mil5kExcess = 2000000;
+                decimal TermPremium2mil5kExcess = 0M;
+                decimal TermBrokerage2mil5kExcess = 0M;
+                TermPremium2mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage2mil5kExcess = TermPremium2mil5kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term2millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit2mil5kExcess, TermExcess5k);
-            term2millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
-            term2millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
-            term2millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
-            term2millimit5kexcesspremiumoption.Excess = TermExcess5k;
-            term2millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term2millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
-            term2millimit5kexcesspremiumoption.DateDeleted = null;
-            term2millimit5kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term2millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit2mil5kExcess, TermExcess5k);
+                term2millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
+                term2millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
+                term2millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
+                term2millimit5kexcesspremiumoption.Excess = TermExcess5k;
+                term2millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term2millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
+                term2millimit5kexcesspremiumoption.DateDeleted = null;
+                term2millimit5kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit3mil1kExcess = 3000000;
-            decimal TermPremium3mil1kExcess = 0M;
-            decimal TermBrokerage3mil1kExcess = 0M;
-            TermPremium3mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
+                int TermLimit3mil1kExcess = 3000000;
+                decimal TermPremium3mil1kExcess = 0M;
+                decimal TermBrokerage3mil1kExcess = 0M;
+                TermPremium3mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit3mil1kExcess, TermExcess1k);
-            term3millimit1kexcesspremiumoption.TermLimit = TermLimit3mil1kExcess;
-            term3millimit1kexcesspremiumoption.Premium = TermPremium3mil1kExcess;
-            term3millimit1kexcesspremiumoption.BasePremium = TermPremium3mil1kExcess;
-            term3millimit1kexcesspremiumoption.Excess = TermExcess1k;
-            term3millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term3millimit1kexcesspremiumoption.Brokerage = TermBrokerage3mil1kExcess;
-            term3millimit1kexcesspremiumoption.DateDeleted = null;
-            term3millimit1kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit3mil1kExcess, TermExcess1k);
+                term3millimit1kexcesspremiumoption.TermLimit = TermLimit3mil1kExcess;
+                term3millimit1kexcesspremiumoption.Premium = TermPremium3mil1kExcess;
+                term3millimit1kexcesspremiumoption.BasePremium = TermPremium3mil1kExcess;
+                term3millimit1kexcesspremiumoption.Excess = TermExcess1k;
+                term3millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term3millimit1kexcesspremiumoption.Brokerage = TermBrokerage3mil1kExcess;
+                term3millimit1kexcesspremiumoption.DateDeleted = null;
+                term3millimit1kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit3mil5kExcess = 3000000;
-            decimal TermPremium3mil5kExcess = 0M;
-            decimal TermBrokerage3mil5kExcess = 0M;
-            TermPremium3mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage3mil5kExcess = TermPremium3mil5kExcess * agreement.Brokerage / 100;
+                int TermLimit3mil5kExcess = 3000000;
+                decimal TermPremium3mil5kExcess = 0M;
+                decimal TermBrokerage3mil5kExcess = 0M;
+                TermPremium3mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage3mil5kExcess = TermPremium3mil5kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term3millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit3mil5kExcess, TermExcess5k);
-            term3millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
-            term3millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
-            term3millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
-            term3millimit5kexcesspremiumoption.Excess = TermExcess5k;
-            term3millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term3millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
-            term3millimit5kexcesspremiumoption.DateDeleted = null;
-            term3millimit5kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term3millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit3mil5kExcess, TermExcess5k);
+                term3millimit5kexcesspremiumoption.TermLimit = TermLimit2mil5kExcess;
+                term3millimit5kexcesspremiumoption.Premium = TermPremium2mil5kExcess;
+                term3millimit5kexcesspremiumoption.BasePremium = TermPremium2mil5kExcess;
+                term3millimit5kexcesspremiumoption.Excess = TermExcess5k;
+                term3millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term3millimit5kexcesspremiumoption.Brokerage = TermBrokerage2mil5kExcess;
+                term3millimit5kexcesspremiumoption.DateDeleted = null;
+                term3millimit5kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit5mil1kExcess = 5000000;
-            decimal TermPremium5mil1kExcess = 0M;
-            decimal TermBrokerage5mil1kExcess = 0M;
-            TermPremium5mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
+                int TermLimit5mil1kExcess = 5000000;
+                decimal TermPremium5mil1kExcess = 0M;
+                decimal TermBrokerage5mil1kExcess = 0M;
+                TermPremium5mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit5mil1kExcess, TermExcess1k);
-            term5millimit1kexcesspremiumoption.TermLimit = TermLimit5mil1kExcess;
-            term5millimit1kexcesspremiumoption.Premium = TermPremium5mil1kExcess;
-            term5millimit1kexcesspremiumoption.BasePremium = TermPremium5mil1kExcess;
-            term5millimit1kexcesspremiumoption.Excess = TermExcess1k;
-            term5millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term5millimit1kexcesspremiumoption.Brokerage = TermBrokerage5mil1kExcess;
-            term5millimit1kexcesspremiumoption.DateDeleted = null;
-            term5millimit1kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit5mil1kExcess, TermExcess1k);
+                term5millimit1kexcesspremiumoption.TermLimit = TermLimit5mil1kExcess;
+                term5millimit1kexcesspremiumoption.Premium = TermPremium5mil1kExcess;
+                term5millimit1kexcesspremiumoption.BasePremium = TermPremium5mil1kExcess;
+                term5millimit1kexcesspremiumoption.Excess = TermExcess1k;
+                term5millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term5millimit1kexcesspremiumoption.Brokerage = TermBrokerage5mil1kExcess;
+                term5millimit1kexcesspremiumoption.DateDeleted = null;
+                term5millimit1kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit5mil5kExcess = 5000000;
-            decimal TermPremium5mil5kExcess = 0M;
-            decimal TermBrokerage5mil5kExcess = 0M;
-            TermPremium5mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage5mil5kExcess = TermPremium5mil5kExcess * agreement.Brokerage / 100;
+                int TermLimit5mil5kExcess = 5000000;
+                decimal TermPremium5mil5kExcess = 0M;
+                decimal TermBrokerage5mil5kExcess = 0M;
+                TermPremium5mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage5mil5kExcess = TermPremium5mil5kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term5millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit5mil5kExcess, TermExcess5k);
-            term5millimit5kexcesspremiumoption.TermLimit = TermLimit5mil5kExcess;
-            term5millimit5kexcesspremiumoption.Premium = TermPremium5mil5kExcess;
-            term5millimit5kexcesspremiumoption.BasePremium = TermPremium5mil5kExcess;
-            term5millimit5kexcesspremiumoption.Excess = TermExcess5k;
-            term5millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term5millimit5kexcesspremiumoption.Brokerage = TermBrokerage5mil5kExcess;
-            term5millimit5kexcesspremiumoption.DateDeleted = null;
-            term5millimit5kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term5millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit5mil5kExcess, TermExcess5k);
+                term5millimit5kexcesspremiumoption.TermLimit = TermLimit5mil5kExcess;
+                term5millimit5kexcesspremiumoption.Premium = TermPremium5mil5kExcess;
+                term5millimit5kexcesspremiumoption.BasePremium = TermPremium5mil5kExcess;
+                term5millimit5kexcesspremiumoption.Excess = TermExcess5k;
+                term5millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term5millimit5kexcesspremiumoption.Brokerage = TermBrokerage5mil5kExcess;
+                term5millimit5kexcesspremiumoption.DateDeleted = null;
+                term5millimit5kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit10mil1kExcess = 10000000;
-            decimal TermPremium10mil1kExcess = 0M;
-            decimal TermBrokerage10mil1kExcess = 0M;
-            TermPremium10mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit10mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage10mil1kExcess = TermPremium10mil1kExcess * agreement.Brokerage / 100;
+                int TermLimit10mil1kExcess = 10000000;
+                decimal TermPremium10mil1kExcess = 0M;
+                decimal TermBrokerage10mil1kExcess = 0M;
+                TermPremium10mil1kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit10mil1kExcess, TermExcess1k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage10mil1kExcess = TermPremium10mil1kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term10millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit10mil1kExcess, TermExcess1k);
-            term10millimit1kexcesspremiumoption.TermLimit = TermLimit10mil1kExcess;
-            term10millimit1kexcesspremiumoption.Premium = TermPremium10mil1kExcess;
-            term10millimit1kexcesspremiumoption.BasePremium = TermPremium10mil1kExcess;
-            term10millimit1kexcesspremiumoption.Excess = TermExcess1k;
-            term10millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term10millimit1kexcesspremiumoption.Brokerage = TermBrokerage10mil1kExcess;
-            term10millimit1kexcesspremiumoption.DateDeleted = null;
-            term10millimit1kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term10millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit10mil1kExcess, TermExcess1k);
+                term10millimit1kexcesspremiumoption.TermLimit = TermLimit10mil1kExcess;
+                term10millimit1kexcesspremiumoption.Premium = TermPremium10mil1kExcess;
+                term10millimit1kexcesspremiumoption.BasePremium = TermPremium10mil1kExcess;
+                term10millimit1kexcesspremiumoption.Excess = TermExcess1k;
+                term10millimit1kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term10millimit1kexcesspremiumoption.Brokerage = TermBrokerage10mil1kExcess;
+                term10millimit1kexcesspremiumoption.DateDeleted = null;
+                term10millimit1kexcesspremiumoption.DeletedBy = null;
 
-            int TermLimit10mil5kExcess = 10000000;
-            decimal TermPremium10mil5kExcess = 0M;
-            decimal TermBrokerage10mil5kExcess = 0M;
-            TermPremium10mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit10mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
-            TermBrokerage10mil5kExcess = TermPremium10mil5kExcess * agreement.Brokerage / 100;
+                int TermLimit10mil5kExcess = 10000000;
+                decimal TermPremium10mil5kExcess = 0M;
+                decimal TermBrokerage10mil5kExcess = 0M;
+                TermPremium10mil5kExcess = GetPremiumForFAP(rates, intnumberofadvisors, TermLimit10mil5kExcess, TermExcess5k, agreementperiodindays, coverperiodindays, fapagreementperiodindays);
+                TermBrokerage10mil5kExcess = TermPremium10mil5kExcess * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term10millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit10mil5kExcess, TermExcess5k);
-            term10millimit5kexcesspremiumoption.TermLimit = TermLimit10mil5kExcess;
-            term10millimit5kexcesspremiumoption.Premium = TermPremium10mil5kExcess;
-            term10millimit5kexcesspremiumoption.BasePremium = TermPremium10mil5kExcess;
-            term10millimit5kexcesspremiumoption.Excess = TermExcess5k;
-            term10millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term10millimit5kexcesspremiumoption.Brokerage = TermBrokerage10mil5kExcess;
-            term10millimit5kexcesspremiumoption.DateDeleted = null;
-            term10millimit5kexcesspremiumoption.DeletedBy = null;
+                ClientAgreementTerm term10millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", TermLimit10mil5kExcess, TermExcess5k);
+                term10millimit5kexcesspremiumoption.TermLimit = TermLimit10mil5kExcess;
+                term10millimit5kexcesspremiumoption.Premium = TermPremium10mil5kExcess;
+                term10millimit5kexcesspremiumoption.BasePremium = TermPremium10mil5kExcess;
+                term10millimit5kexcesspremiumoption.Excess = TermExcess5k;
+                term10millimit5kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term10millimit5kexcesspremiumoption.Brokerage = TermBrokerage10mil5kExcess;
+                term10millimit5kexcesspremiumoption.DateDeleted = null;
+                term10millimit5kexcesspremiumoption.DeletedBy = null;
+            } 
+            else
+            {
+                ClientAgreementTerm term0millimit0kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIFAP", 0, 0);
+                term0millimit0kexcesspremiumoption.TermLimit = 0;
+                term0millimit0kexcesspremiumoption.Premium = 0;
+                term0millimit0kexcesspremiumoption.BasePremium = 0;
+                term0millimit0kexcesspremiumoption.Excess = 0;
+                term0millimit0kexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+                term0millimit0kexcesspremiumoption.Brokerage = 0;
+                term0millimit0kexcesspremiumoption.DateDeleted = null;
+                term0millimit0kexcesspremiumoption.DeletedBy = null;
+            }
+
+            
 
 
             //Referral points per agreement

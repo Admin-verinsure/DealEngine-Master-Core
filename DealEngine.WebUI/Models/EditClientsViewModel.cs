@@ -3,6 +3,7 @@ using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models
 {
@@ -11,7 +12,11 @@ namespace DealEngine.WebUI.Models
         public Domain.Entities.Organisation Organisation { get; set; }
         public EditClientsViewModel(Domain.Entities.Programme programme)
         {
-            GenerateClientsOptions(programme);
+            if(programme != null)
+            {
+                GenerateClientsOptions(programme);
+                Programme = programme;
+            }            
             ClientProgramme = new ClientProgramme(null, null, null);
             GetTiers();
         }
@@ -22,14 +27,14 @@ namespace DealEngine.WebUI.Models
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "Apollo Prime",
-                    Value = "Apollo Prime"
+                    Text = "Apollo Standard",
+                    Value = "Apollo Standard"
                 });
             Tiers.Add(
                 new SelectListItem()
                 {
-                    Text = "Apollo Standard",
-                    Value = "Apollo Standard"
+                    Text = "Apollo Prime",
+                    Value = "Apollo Prime"
                 });
             Tiers.Add(
                 new SelectListItem()
@@ -45,18 +50,25 @@ namespace DealEngine.WebUI.Models
             Domain.Entities.Organisation org = null;
             try
             {
-                foreach (var owner in programme.ClientProgrammes)
+                foreach (var owner in programme.ClientProgrammes.Where(c=>c.DateDeleted==null).ToList())
                 {
-                    if (owner.Owner != null)
+                    var objectType = owner.GetType();
+                    if (!objectType.IsSubclassOf(typeof(ClientProgramme)))
                     {
-                        Owners.Add(
-                            new SelectListItem()
-                            {
-                                Text = owner.Owner.Name,
-                                Value = owner.Owner.Id.ToString()
-                            });
+                        if (owner.Owner != null)
+                        {
+                            Owners.Add(
+                                new SelectListItem()
+                                {
+                                    Text = owner.Owner.Name,
+                                    Value = owner.Owner.Id.ToString()
+                                });
+                        }
                     }
-
+                    else
+                    {
+                        continue;
+                    }
                 }
             }
             catch(Exception ex)
@@ -67,5 +79,6 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> Tiers { get; set; }
         public IList<SelectListItem> Owners { get; set; }
         public ClientProgramme ClientProgramme { get; set; }
+        public Domain.Entities.Programme Programme { get; set; }
     }
 }
