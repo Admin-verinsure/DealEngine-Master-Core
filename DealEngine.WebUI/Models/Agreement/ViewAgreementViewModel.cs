@@ -26,6 +26,7 @@ namespace DealEngine.WebUI.Models.Agreement
             }
             if (sheet != null)
             {
+                ClientInformationSheet = sheet;
                 GetVehicles(sheet);
                 GetBoats(agreement, sheet);
             }
@@ -43,8 +44,14 @@ namespace DealEngine.WebUI.Models.Agreement
             PaymentMethodOptions.Add(
                 new SelectListItem()
                 {
-                    Text = "....",
-                    Value = "...."
+                    Text = "Invoice",
+                    Value = "Invoice"
+                });
+            PaymentMethodOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "Hunter Premium Funding",
+                    Value = "Hunter Premium Funding"
                 });
         }
 
