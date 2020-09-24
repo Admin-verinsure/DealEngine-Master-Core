@@ -681,13 +681,13 @@ namespace DealEngine.Services.Impl
 
                             if (string.IsNullOrEmpty(strmentoradvisorlist))
                             {
-                                strmentoradvisorlist = "Mentored Advisor:                    " + uisorg.Name +
-                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
+                                strmentoradvisorlist = "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                             else
                             {
-                                strmentoradvisorlist += "<br />" + "Mentored Advisor:                    " + uisorg.Name +
-                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
+                                strmentoradvisorlist += "<br />" + "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                         }
                     }
