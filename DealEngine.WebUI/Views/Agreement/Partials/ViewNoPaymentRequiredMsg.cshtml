@@ -1,6 +1,10 @@
 ﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
 
 @Html.Raw(Model.NoPaymentRequiredMessage)
+@if(Model.ClientInformationSheet.Programme.BaseProgramme.Name == "Apollo Programme")
+{
+    @Html.DropDownListFor(m=>m.PaymentMethod, Model.PaymentMethodOptions, new { @required="", @onChange="OnChange(this.id, this.name)"})
+}
 
 
 <script type="text/javascript">

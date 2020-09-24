@@ -12,10 +12,12 @@ namespace DealEngine.WebUI.Models.Agreement
     {
         public ViewAgreementViewModel()
         {
+            GetPaymentMethodOptions();
         }
 
         public ViewAgreementViewModel(ClientAgreement agreement, ClientInformationSheet sheet, System.Globalization.CultureInfo userCulture)
         {
+            GetPaymentMethodOptions();
             if (agreement != null)
             {
                 GetInsuranceInclusionsExclusions(agreement, userCulture);
@@ -27,6 +29,23 @@ namespace DealEngine.WebUI.Models.Agreement
                 GetVehicles(sheet);
                 GetBoats(agreement, sheet);
             }
+        }
+
+        private void  GetPaymentMethodOptions()
+        {
+            PaymentMethodOptions = new List<SelectListItem>();
+            PaymentMethodOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "Credit Card",
+                    Value = "Credit Card"
+                });
+            PaymentMethodOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "....",
+                    Value = "...."
+                });
         }
 
         private void GetBoats(ClientAgreement agreement, ClientInformationSheet sheet)
@@ -363,6 +382,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string ProductName { get; set; }
         public string ProgrammeName { get; set; }
         public string Status { get; set; }
+        public string PaymentMethod { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? IssuedToCustomer { get; set; }
         public DateTime? AcceptedDate { get; set; }
@@ -435,6 +455,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string issuetobrokerto { get; set; }
         public string InsuredName { get; set; }
         public string BindNotes { get; set; }
+        public IList<SelectListItem> PaymentMethodOptions { get; set; }
     }
 
     public class InsuranceInclusion
