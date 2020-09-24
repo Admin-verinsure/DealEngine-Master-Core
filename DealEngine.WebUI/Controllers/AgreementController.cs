@@ -2762,6 +2762,34 @@ namespace DealEngine.WebUI.Controllers
                                         }
                                     }
                                 }
+
+
+                                if (programme.BaseProgramme.ProgEnableEmail)
+                                {
+                                    //send out policy document email
+                                    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                    if (emailTemplate != null)
+                                    {
+                                        if (sendUser)
+                                        {
+                                            await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                        }
+                                        else
+                                        {
+                                            await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                        }
+                                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                                        {
+                                            if (!agreement.IsPolicyDocSend)
+                                            {
+                                                agreement.IsPolicyDocSend = true;
+                                                agreement.DocIssueDate = DateTime.Now;
+                                                await uow.Commit();
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
 
                             // Note:this LOC is needed if we need to send FullProposalReport PDF document with other documents in agreement
@@ -2778,31 +2806,7 @@ namespace DealEngine.WebUI.Controllers
                             //    }
                             //}
 
-                            if (programme.BaseProgramme.ProgEnableEmail)
-                            {
-                                //send out policy document email
-                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-                                if (emailTemplate != null)
-                                {
-                                    if (sendUser)
-                                    {
-                                        await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-                                    }
-                                    else
-                                    {
-                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
-                                    }
-                                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                                    {
-                                        if (!agreement.IsPolicyDocSend)
-                                        {
-                                            agreement.IsPolicyDocSend = true;
-                                            agreement.DocIssueDate = DateTime.Now;
-                                            await uow.Commit();
-                                        }
-                                    }
-                                }
-                            }
+
 
                         }
 

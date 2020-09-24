@@ -999,7 +999,26 @@ namespace DealEngine.Services.Impl
             }
             if (clientAgreement != null)
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                if (clientAgreement.Product.Id == new Guid("e0216c0d-cc46-4680-a1c0-be1498c92b44")) //Apollo CL Base vs Ultra
+                {
+
+                    if (clientAgreement.Product.IsOptionalProduct &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == clientAgreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1")
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURLAlternative));
+                    }
+                    else
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                    }
+
+                } else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                }
                 mergeFields.Add(new KeyValuePair<string, string>("[[ProductName]]", clientAgreement.Product.Name));
             }
                         
