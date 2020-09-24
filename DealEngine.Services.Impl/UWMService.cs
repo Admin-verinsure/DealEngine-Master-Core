@@ -203,8 +203,8 @@ namespace DealEngine.Services.Impl
                 new NZPICLUWModule(),
                 new NZPIFIDUWModule(),
                 new NZPILPDUWModule(),
-
                 new ApolloPIUWModule(),
+                new ApolloPIFAPUWModule(),
                 new ApolloPLUWModule(),
                 new ApolloSLUWModule(),
                 new ApolloDOUWModule(),

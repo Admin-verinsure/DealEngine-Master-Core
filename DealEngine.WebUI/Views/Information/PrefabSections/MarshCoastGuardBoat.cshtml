@@ -554,6 +554,10 @@
                                             {
                                                 <option value="@organisation.Id"> @organisation.Name</option>
                                             }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
+                                            }
                                         </select>
                                     </label>
                                 </section>
@@ -1112,6 +1116,10 @@
                                             @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
                                             {
                                                 <option value="@organisation.Id"> @organisation.Name</option>
+                                            }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
                                             }
                                         </select>
                                     </label>

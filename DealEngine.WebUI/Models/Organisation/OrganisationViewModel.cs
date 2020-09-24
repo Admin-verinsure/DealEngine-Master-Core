@@ -14,7 +14,8 @@ namespace DealEngine.WebUI.Models
         public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser)
         {
             User = new User(null, Guid.NewGuid());
-            Organisations = new List<Domain.Entities.Organisation>();            
+            Organisations = new List<Domain.Entities.Organisation>();
+            PublicOrganisations = new List<Domain.Entities.Organisation>();
             OrganisationTypes = GetOrganisationTypes();
             if (ClientInformationSheet != null)
             {
@@ -491,6 +492,22 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Partnership",
                         Value = "Partnership"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Incorporated Society",
+                        Value = "Incorporated Society"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Government",
+                        Value = "Government"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial Institution",
+                        Value = "Financial Institution"
                     }
                 };
             return _Types;
@@ -674,7 +691,8 @@ namespace DealEngine.WebUI.Models
         public PrincipalUnit PrincipalUnit { get; set; }
         public InterestedPartyUnit InterestedPartyUnit { get; set; }
         public PlannerUnit PlannerUnit { get; set; }
-
+        public MarinaUnit MarinaUnit { get; set; }
+        public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
     }
 }
 

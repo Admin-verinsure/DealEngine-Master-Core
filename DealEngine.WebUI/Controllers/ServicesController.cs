@@ -46,6 +46,7 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<MaterialDamage> _materialDamageRepository;
         IClaimNotificationService _claimNotificationService;
         IProductService _productService;
+        ISerializerationService _serializerationService;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
         IUnitOfWork _unitOfWork;
@@ -63,6 +64,7 @@ namespace DealEngine.WebUI.Controllers
             IAuthenticationService authenticationService,
             IMapper mapper,
             ILogger<ServicesController> logger,
+            ISerializerationService serializerationService,
             IApplicationLoggingService applicationLoggingService,
             IBusinessContractService businessContractService,
             IUserService userService,
@@ -91,6 +93,7 @@ namespace DealEngine.WebUI.Controllers
 
             : base(userService)
         {
+            _serializerationService = serializerationService;
             _authenticationService = authenticationService;
             _mapper = mapper;
             _logger = logger;
@@ -121,6 +124,63 @@ namespace DealEngine.WebUI.Controllers
         }
 
         #region Vehicle
+
+        [HttpPost]
+        public async Task<IActionResult> GetClient(IFormCollection Collection)
+        {
+            User user = null;
+            try
+            {
+                Guid.TryParse(Collection["Id"], out Guid OrganisationId);
+                Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
+                Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+                if (organisation != null)
+                {
+                    var ClientProgrammes = await _programmeService.GetClientProgrammesByOwner(organisation.Id);
+                    if (ClientProgrammes.Any())
+                    {
+                        JsonObjects.Add("Organisation", organisation);
+                        JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
+                        var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
+                        return Json(jsonObj);
+                    }
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostClient(IFormCollection Collection)
+        {
+            User user = null;
+            try
+            {
+                Guid.TryParse(Collection["ClientProgramme.Id"], out Guid ClientId);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientId);
+                if(clientProgramme != null)
+                {
+                    clientProgramme.EGlobalClientNumber = Collection["ClientProgramme.EGlobalClientNumber"];
+                    clientProgramme.Tier = Collection["ClientProgramme.Tier"];
+                    await _programmeService.Update(clientProgramme);
+                    User OwnerUser = await _userService.GetUserPrimaryOrganisation(clientProgramme.Owner);
+                    OwnerUser.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Name = Collection["Organisation.Name"];
+                    await _userService.Update(OwnerUser);
+                }
+                return Redirect("../Home/EditClients?ProgrammeId=" + clientProgramme.BaseProgramme.Id.ToString());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> SearchVehicle(string registration)
@@ -1013,8 +1073,6 @@ namespace DealEngine.WebUI.Controllers
                         property.SetValue(location, collection[keyField].ToString());
                     }
                 }
-                var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
-                location.OrganisationalUnits.Add(OUList);
 
                 if (sheet.Locations.Contains(location))
                 {
@@ -1886,7 +1944,11 @@ namespace DealEngine.WebUI.Controllers
                 boat.BoatWaterLocation = null;
 
                 if (model.BoatWaterLocation != Guid.Empty)
-                    boat.BoatWaterLocation = await _organisationService.GetOrganisation(model.BoatWaterLocation);
+                {
+                    var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
+                    boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
+                }
+                    
 
                 if (model.OtherMarinaName != null)
                 {

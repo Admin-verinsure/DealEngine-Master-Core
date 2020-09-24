@@ -101,6 +101,19 @@
         dateFormat: "yy-mm-dd",
     });
 
+    function PopulateView(Output) {        
+        debugger;
+        for (obj in Output) {
+            var modelObj = Output[obj];
+            for (var Field in modelObj) {
+                var Id = obj + "." + Field;
+                var Element = document.getElementById(Id);
+                if (Element != null) {
+                    Element.value = Output[obj][Field];
+                }                
+            }
+        }
+    }
 
     function PopulateOrganisationView(Method, OutPut) {
         try {

@@ -196,6 +196,8 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Type of Interested Party?")]
         public virtual string PartyType { get; set; }
+        [Display(Name = "Type of Interested Party?")]
+        public virtual Location Location { get; set; }
     }
 
     public class MarinaUnit : OrganisationalUnit
