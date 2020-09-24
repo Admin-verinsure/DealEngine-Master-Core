@@ -38,6 +38,12 @@ namespace DealEngine.WebUI.Models.Agreement
             PaymentMethodOptions.Add(
                 new SelectListItem()
                 {
+                    Text = "-- Select --",
+                    Value = "Invalid"
+                });
+            PaymentMethodOptions.Add(
+                new SelectListItem()
+                {
                     Text = "Credit Card",
                     Value = "Credit Card"
                 });
