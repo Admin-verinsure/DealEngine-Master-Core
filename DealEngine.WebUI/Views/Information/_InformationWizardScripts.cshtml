@@ -912,18 +912,7 @@
         var selectedBoatUse = $("#AddSelectedBoatUse").val();
         var othermarinaName = $("Addothermarina").val();
         var Addeffectivedate = $("#AddBoatEffectiveDate").val();
-
         var validity = true;
-
-        //
-        // if (Addeffectivedate == "") {
-        //    $('#validateAddboateffectivedate').html("<font color='red'>Field is required</font>")
-        //    if (validity) {
-        //        validity = false;
-        //    }
-        //} else {
-        //    $('#validateAddboateffectivedate').html("<i></i>");
-        //}
 
         if (RiggingType == "" && BoatType1 == "YachtsandCatamarans") {
             $('#validateAddRiggingType').html("<font color='red'>Field is required</font>")
@@ -2743,8 +2732,7 @@ function showAccordionPanel(id, panelNo) {
         debugger;
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
-        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var data = proddata + "&SelectedBoatUse=" + boatusess;
+        var data = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
         data = data + "&SelectedInterestedParty=" + interestedParty;
         if (othermarinaName != null) {
             OtherMarina = false;
@@ -3449,7 +3437,7 @@ function showAccordionPanel(id, panelNo) {
 
         var result = true;
         if (boatUseCategory == "" ) {
-            $('#validateAddBoatUseCategory').html("<font color='red'>Field is required</font>")
+            $('#validateAddBoatUseCategory').html("<font color='red'>Field is required</font>");
             if (result) {
                 result = false;
             }
@@ -3457,7 +3445,7 @@ function showAccordionPanel(id, panelNo) {
             $('#validateAddBoatUseCategory').html("<font></font>");
         }
         if (boatUseRaceCategory == ""  && boatUseCategory == "Race") {
-            $('#validateAddBoatUseRaceCategory').html("<font color='red'>Field is required</font>")
+            $('#validateAddBoatUseRaceCategory').html("<font color='red'>Field is required</font>");
             if (result) {
                 result = false;
             }
@@ -3465,7 +3453,7 @@ function showAccordionPanel(id, panelNo) {
             $('#validateAddBoatUseRaceCategory').html("<font></font>");
         }
           if (boatUseRaceUseSpinnakers == "" && boatUseCategory == "Race") {
-            $('#validateAddBoatUseRaceUseSpinnakers').html("<font color='red'>Field is required</font>")
+              $('#validateAddBoatUseRaceUseSpinnakers').html("<font color='red'>Field is required</font>");
             if (result) {
                 result = false;
             }
@@ -3563,9 +3551,9 @@ function showAccordionPanel(id, panelNo) {
                 data: z
             })
                 .done(function (data) {
-                    $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+                    $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>");
                     $('#SelectedInterestedParty').trigger('chosen:updated');
-                    $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>")
+                    $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.name + "</option>");
                     $('#AddSelectedInterestedParty').trigger('chosen:updated');
                     $('#AddSelectedInterestedParty').trigger('refresh');
                     $('#FinancialSection').addClass('hidden');
@@ -3612,10 +3600,15 @@ function showAccordionPanel(id, panelNo) {
     function addBoatUseModal(event) {   
         debugger;
         event.preventDefault();
-         $('#getBoatUseModal').show();
+
+        $('#getBoatUseModal').show();
+
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
+
         var race = false;
         var live = false;
+        var both = false;
+
         if (selectedBoatUseCategory == "LiveOnBoard") {
             live = true;
             race = false;
@@ -3623,16 +3616,11 @@ function showAccordionPanel(id, panelNo) {
         else if (selectedBoatUseCategory == "Race") {
             race = true;
             live = false;
-
         }
         else if (selectedBoatUseCategory == "Both") {
-            race = true;
-            live = true;
+            both = true;
         }
-        else if (selectedBoatUseCategory == "Neither") {
-            race = false;
-            live = false;
-        }
+
         selectedBoatUseCategory = "";
         var informationId = $('#AnswerSheetId').serialize();
         if (live == true) {
@@ -3644,9 +3632,7 @@ function showAccordionPanel(id, panelNo) {
             var boatuseliveonboard = "BoatUseLiveOnBoard=True";
             var boatuserace = "BoatUseRace=False";
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
-            console.log(boatUseEffectiveDate);
             var z = $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatusecategory, boatuseliveonboard, boatuserace, boatUseAdditionalNotes, informationId], Boolean).join("&");
-            console.log(z);
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",
@@ -3654,10 +3640,13 @@ function showAccordionPanel(id, panelNo) {
             })
             .done(function (data) {
                 debugger;
-                console.log(data);
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
+                $("#SelectedBoatUse.b [value='add']").remove();
+                $('#SelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                 $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory+ "</option>")
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
+                $("#AddSelectedBoatUse.b [value='add']").remove();
+                $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#livingUseSection' + " :input").val("");
                 $('#racingUseSection' + " :input").val("");
@@ -3671,7 +3660,7 @@ function showAccordionPanel(id, panelNo) {
             });
         }
 
-        if (race == true) {
+        else if (race == true) {
             var boatUseEffectiveDate = $('#BoatUseRaceEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseRaceCeaseDateModal').serialize();
             var boatUseNotes = $('#BoatUseRaceNotesModal').serialize();
@@ -3688,63 +3677,89 @@ function showAccordionPanel(id, panelNo) {
             })
                 .done(function (data) {
                       debugger;
-                    $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                    $('#SelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
+                    $("#SelectedBoatUse.b [value='add']").remove();
+                    $('#SelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                     $('#SelectedBoatUse').trigger('chosen:updated');
-                    $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                    $('#AddSelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
+                    $("#AddSelectedBoatUse.b [value='add']").remove();
+                    $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                     $('#AddSelectedBoatUse').trigger('chosen:updated');
                     $('#livingUseSection' + " :input").val("");
                     $('#racingUseSection' + " :input").val("");
                     $('#getBoatUseModal').hide();
-
-
             })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-
-
-                                $('#getBoatUseModal').hide();
-
+                $('#getBoatUseModal').hide();
                 alert("There was an error while trying to save the Boat Use.");
-
             });
         }
 
-        if (live == false && race == false) {
-            debugger;
+        else if (both == true) {
             $('#SelectedBoatUse').trigger('chosen:updated');
-            var boatusecategory = "BoatUseCategory=NoRacingNoLiveOnBoard";
-            var boatuseliveonboard = "BoatUseLiveOnBoard=False";
-            var boatuserace = "BoatUseRace=False";
+            var boatusecategory = "BoatUseCategory=Both";
+            var boatuseliveonboard = "BoatUseLiveOnBoard=True";
+            var boatuserace = "BoatUseRace=True";
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
-            console.log(boatUseEffectiveDate);
             var z = $.grep([boatuserace,boatuseliveonboard,boatusecategory, informationId], Boolean).join("&");
-            console.log(z);
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",
                 data: z
             })
             .done(function (data) {
-                debugger;
-                console.log(data);
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
                 $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
+                $("#SelectedBoatUse.b [value='add']").remove();
+                $('#SelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>");
+                $("#AddSelectedBoatUse.b [value='add']").remove();
+                $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#getBoatUseModal').hide();
             })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-                    $('#getBoatUseModal').hide();
-                    alert("There was an error while trying to save the Boat Use.");
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                $('#getBoatUseModal').hide();
+                alert("There was an error while trying to save the Boat Use.");
             });
         }
-            $('input[name=BoatUseCategory]').prop('checked', false);
-            $(vesselUseSectionLive).hide();
-            $(vesselUseSectionRace).hide();
-            $(vesselUseHairline).hide();
-            $(vesselUseHairline2).hide();
-            $(vesselUseAdditionalNotes).hide();
-            $('#BoastUse.b').prop("selected", false);
+
+        else {
+            $('#SelectedBoatUse').trigger('chosen:updated');
+            var boatusecategory = "BoatUseCategory=NoRacingNoLiveOnBoard";
+            var boatuseliveonboard = "BoatUseLiveOnBoard=False";
+            var boatuserace = "BoatUseRace=False";
+            var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
+            var z = $.grep([boatuserace,boatuseliveonboard,boatusecategory, informationId], Boolean).join("&");
+            $.ajax({
+                url: '@Url.Action("AddBoatUse", "Services")',
+                type: "POST",
+                data: z
+            })
+            .done(function (data) {
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>")
+                $('#SelectedBoatUse').trigger('chosen:updated');
+                $("#SelectedBoatUse.b [value='add']").remove();
+                $('#SelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.id + "\">" + data.boatUseCategory + "</option>")
+                $("#AddSelectedBoatUse.b [value='add']").remove();
+                $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
+                $('#AddSelectedBoatUse').trigger('chosen:updated');
+                $('#getBoatUseModal').hide();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                $('#getBoatUseModal').hide();
+                alert("There was an error while trying to save the Boat Use.");
+            });
+        }
+
+        $('input[name=BoatUseCategory]').prop('checked', false);
+        $(vesselUseSectionLive).hide();
+        $(vesselUseSectionRace).hide();
+        $(vesselUseHairline).hide();
+        $(vesselUseHairline2).hide();
+        $(vesselUseAdditionalNotes).hide();
+        $('#BoastUse.b').prop("selected", false);
     }
 
     function done() {
@@ -5982,11 +5997,12 @@ async: true
 
     function addNewBoatUse() {
         debugger;
-
+        var BoatUse = document.getElementById("AddSelectedBoatUse");
         var BoatUse2 = document.getElementById("SelectedBoatUse");
-        var selectedBoatUse = BoatUse2.options[BoatUse2.selectedIndex].value;
+        var selectedBoatUse = BoatUse.options[BoatUse.selectedIndex].value;
+        var selectedBoatUse2 = BoatUse2.options[BoatUse2.selectedIndex].value;
 
-        if (selectedBoatUse == "add") {
+        if (selectedBoatUse == "add" || selectedBoatUse2 =="add") {
             var AddboatType1Selected = AddboatType1.options[AddboatType1.selectedIndex].value;
             var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
             if (AddboatType1Selected == "YachtsandCatamarans" || boatType1Selected == "YachtsandCatamarans") {
@@ -6018,9 +6034,9 @@ async: true
         var boatusecategory = document.getElementById("BoatUseCategory");
         var selectedBoatUseCategory = boatusecategory.options[boatusecategory.selectedIndex].value;
         var boatUseLiveNotesSection = document.getElementById("BoatUseLiveNotesSection");
-        var SpinnakersSection = document.getElementById("spinnakersSection")
-        var raceCategorySection = document.getElementById("RaceCategorySection")
-        var boatUseRaceNotesSection = document.getElementById("BoatUseRaceNotesSection")
+        var SpinnakersSection = document.getElementById("spinnakersSection");
+        var raceCategorySection = document.getElementById("RaceCategorySection");
+        var boatUseRaceNotesSection = document.getElementById("BoatUseRaceNotesSection");
         if (selectedBoatUseCategory == "LiveOnBoard") {
             $(boatUseLiveNotesSection).show('2000');
             $(SpinnakersSection).hide();
