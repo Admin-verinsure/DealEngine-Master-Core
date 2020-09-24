@@ -3,6 +3,7 @@ using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models
 {
@@ -49,18 +50,25 @@ namespace DealEngine.WebUI.Models
             Domain.Entities.Organisation org = null;
             try
             {
-                foreach (var owner in programme.ClientProgrammes)
+                foreach (var owner in programme.ClientProgrammes.Where(c=>c.DateDeleted==null).ToList())
                 {
-                    if (owner.Owner != null)
+                    var objectType = owner.GetType();
+                    if (!objectType.IsSubclassOf(typeof(ClientProgramme)))
                     {
-                        Owners.Add(
-                            new SelectListItem()
-                            {
-                                Text = owner.Owner.Name,
-                                Value = owner.Owner.Id.ToString()
-                            });
+                        if (owner.Owner != null)
+                        {
+                            Owners.Add(
+                                new SelectListItem()
+                                {
+                                    Text = owner.Owner.Name,
+                                    Value = owner.Owner.Id.ToString()
+                                });
+                        }
                     }
-
+                    else
+                    {
+                        continue;
+                    }
                 }
             }
             catch(Exception ex)

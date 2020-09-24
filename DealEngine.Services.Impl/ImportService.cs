@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {            
-            WorkingDirectory = "/tmp/";
-            //WorkingDirectory = "C:\\Data\\Import\\";
+            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "C:\\Data\\Import\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -849,6 +849,107 @@ namespace DealEngine.Services.Impl
                     {
                         Console.WriteLine(ex.Message);
                     }
+                }
+            }
+        }
+        public async Task ImportApolloImportOwners(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+
+            bool readFirstLine = false;
+            string line;
+            Guid.TryParse("633b32f7-93bd-4ed1-9f7e-088ae5312b98", out Guid ProgrammeId);
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "ApolloMember.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        string type = "";
+                        string Name = "";
+                        User user = new User(currentUser, Guid.NewGuid())
+                        {
+                            FirstName = parts[2],
+                            LastName = parts[3],
+                            FullName = parts[2] + " " + parts[3],
+                            Email = parts[4],
+                            UserName = parts[6]
+                        };
+                        if (parts[0] == "t")
+                        {
+                            type = "Corporation – Limited liability";
+                            Name = parts[1];
+                        }
+                        else
+                        {
+                            type = "Person - Individual";
+                            Name = user.FullName;
+                        }
+
+                        OrganisationType ownerType = new OrganisationType(type);
+                        InsuranceAttribute ownerAttribute = new InsuranceAttribute(currentUser, type);
+                        OrganisationalUnit ownerUnit = new OrganisationalUnit(currentUser, type, "Head Office", null);
+                        Organisation Owner = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = ownerType,
+                            Email = user.Email,
+                            Name = Name
+                        };
+
+                        Owner.OrganisationalUnits.Add(ownerUnit);
+                        Owner.InsuranceAttributes.Add(ownerAttribute);
+                        user.Organisations.Add(Owner);
+
+                        OrganisationType advisorType = new OrganisationType("Person - Individual");
+                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Planner");
+                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
+                        AdvisorUnit AdvisorUnit = new AdvisorUnit(currentUser, "Advisor", "Person - Individual", null)
+                        {
+                            IsPrincipalAdvisor = true
+                        };
+                        Organisation Advisor = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = advisorType,
+                            Email = user.Email,
+                            Name = user.FullName
+                        };
+
+                        Advisor.OrganisationalUnits.Add(defaultUnit);
+                        user.Organisations.Add(Advisor);
+                        user.SetPrimaryOrganisation(Owner);
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(ProgrammeId);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, Owner);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[5];
+                        clientProgramme.EGlobalClientNumber = parts[7];
+                        clientProgramme.Tier = parts[8];
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        sheet.Organisation.Add(Advisor);
+                        await _programmeService.Update(clientProgramme);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
                 }
             }
         }
