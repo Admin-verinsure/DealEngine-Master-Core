@@ -275,8 +275,16 @@ namespace DealEngine.Services.Impl
             }
 
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
@@ -673,13 +681,13 @@ namespace DealEngine.Services.Impl
 
                             if (string.IsNullOrEmpty(strmentoradvisorlist))
                             {
-                                strmentoradvisorlist = "Mentored Advisor:                    " + uisorg.Name +
-                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
+                                strmentoradvisorlist = "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                             else
                             {
-                                strmentoradvisorlist += "<br />" + "Mentored Advisor:                    " + uisorg.Name +
-                                    "<br />" + "Expiry Date:                         " + mentoredadvisorexpirydate;
+                                strmentoradvisorlist += "<br />" + "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                         }
                     }
@@ -840,15 +848,18 @@ namespace DealEngine.Services.Impl
                 {
                     foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).Any())
                         {
-                            if (string.IsNullOrEmpty(OTAdvisorList))
+                            if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                             {
-                                OTAdvisorList += prodsubuis.Owner.Name;
-                            }
-                            else
-                            {
-                                OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                if (string.IsNullOrEmpty(OTAdvisorList))
+                                {
+                                    OTAdvisorList += prodsubuis.Owner.Name;
+                                }
+                                else
+                                {
+                                    OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                }
                             }
                         }
                     }
@@ -1038,6 +1049,28 @@ namespace DealEngine.Services.Impl
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     }
 
+                    if (term.SubTermType == "PIFAP")
+                    {
+                        if (term.TermLimit == 0 && term.Excess == 0 && term.Premium == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                        }
+                        else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), (term.TermLimit * 4).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), (term.TermLimit * 5).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        }
+                    }
+
                     if (term.SubTermType == "CL")
                     {
                         //Extension Without Ultra Option
@@ -1118,8 +1151,8 @@ namespace DealEngine.Services.Impl
                     }
                 }
             }
-            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
-            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+           
+            //Address needs re-work
             //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
             mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
                 TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
