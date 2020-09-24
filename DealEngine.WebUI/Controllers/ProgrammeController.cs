@@ -1450,5 +1450,34 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> PostClientProgramme(IFormCollection model)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                if (Guid.TryParse(model["Id"], out Guid Id))
+                {
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
+                    clientProgramme.PaymentType = model["PaymentType"];
+                    await _programmeService.Update(clientProgramme);
+                    if (clientProgramme.PaymentType == "Hunter Premium Funding")
+                    {
+                        await _emailService.EmailHunterPremiumFunding(clientProgramme);
+                    }
+                }
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
     }
 }
