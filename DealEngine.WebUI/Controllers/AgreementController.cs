@@ -3516,20 +3516,16 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (Document doc in agreeDocList)
                         {
-                            if (!doc.Name.EqualsIgnoreCase("FullProposalReport") && !doc.Name.EqualsIgnoreCase("ApolloInvoice"))
+                            if ( (!doc.Name.EqualsIgnoreCase("FullProposalReport")  && !doc.Name.Contains("Invoice")))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
-                            else if (doc.Name.EqualsIgnoreCase("ApolloInvoice"))
+                            else if (doc.Name.Contains("Invoice"))
                             {
-                                //model.Documents.Add(new AgreementDocumentViewModel { DisplayName = "converttohtml", Url = "/File/covertdoctohtml", ClientAgreementId = agreement.Id, DocType = 22 });
-
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetApolloInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id+ "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
                             else
                             {
-
-
                                 ViewBag.IsPDFgenerated = "" + agreement.IsPDFgenerated;
                                 ViewBag.IsReportSend = "" + agreement.IsFullProposalDocSend;
 

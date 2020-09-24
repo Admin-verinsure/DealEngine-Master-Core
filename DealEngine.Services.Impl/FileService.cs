@@ -275,8 +275,16 @@ namespace DealEngine.Services.Impl
             }
 
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
@@ -840,15 +848,18 @@ namespace DealEngine.Services.Impl
                 {
                     foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).Any())
                         {
-                            if (string.IsNullOrEmpty(OTAdvisorList))
+                            if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                             {
-                                OTAdvisorList += prodsubuis.Owner.Name;
-                            }
-                            else
-                            {
-                                OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                if (string.IsNullOrEmpty(OTAdvisorList))
+                                {
+                                    OTAdvisorList += prodsubuis.Owner.Name;
+                                }
+                                else
+                                {
+                                    OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                }
                             }
                         }
                     }
@@ -1140,8 +1151,8 @@ namespace DealEngine.Services.Impl
                     }
                 }
             }
-            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
-            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+           
+            //Address needs re-work
             //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
             mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
                 TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
