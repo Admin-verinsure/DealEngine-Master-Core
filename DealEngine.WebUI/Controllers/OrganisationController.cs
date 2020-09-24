@@ -189,35 +189,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostMarina(IFormCollection model)
         {
-
-            Organisation organisation = null;
-            if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId)){
-                organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
-                MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
-                var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
-                var jsonWaterLocation = (WaterLocation)await _serialiserService.GetDeserializedObject(typeof(WaterLocation), model);
-                organisation = _mapper.Map(jsonOrganisation, organisation);
-                marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
-            }
-            else
-            {
-                
-                organisation = new Organisation(null, Guid.NewGuid());               
-                organisation.Name = model["Organisation.Name"];
-                organisation.Email = model["Organisation.Email"];
-                OrganisationType organisationType = new OrganisationType("Corporation – Limited liability");
-                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(null, "Marina");
-                MarinaUnit marinaUnit = new MarinaUnit(null, "Marina", "Corporation – Limited liability", null);
-                WaterLocation DefaultMar = new WaterLocation(null);
-                DefaultMar.MarinaName = model["WaterLocation.MarinaName"];
-                DefaultMar.IsPublic = true;                
-                marinaUnit.WaterLocation = DefaultMar;
-                organisation.OrganisationType = organisationType;
-                organisation.InsuranceAttributes.Add(insuranceAttribute);
-                organisation.OrganisationalUnits.Add(marinaUnit);
-            }
-
-            await _organisationService.Update(organisation);
+            await _organisationService.PostMarina(model);
             return NoContent();
         }
 
@@ -240,35 +212,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostInstitute(IFormCollection model)
         {
-            Organisation organisation = null;
-            if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId))
-            {
-                organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Organisation.Id"]));
-                InterestedPartyUnit unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
-                var jsonOrganisation = (Organisation)await _serialiserService.GetDeserializedObject(typeof(Organisation), model);
-                var jsonLocation = (Location)await _serialiserService.GetDeserializedObject(typeof(Location), model);
-                organisation = _mapper.Map(jsonOrganisation, organisation);
-                unit.Location = _mapper.Map(jsonLocation, unit.Location);
-            }
-            else
-            {
-                organisation = new Organisation(null, Guid.NewGuid());
-                OrganisationType organisationType6 = new OrganisationType("Corporation – Limited liability");
-                InsuranceAttribute insuranceAttribute6 = new InsuranceAttribute(null, "Financial");
-                InterestedPartyUnit partyUnit = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
-                partyUnit.Location = new Location(null);
-                partyUnit.Location.IsPublic = true;
-                partyUnit.Location.CommonName = model["Location.CommonName"];
-                partyUnit.Location.Street = model["Location.Street"];
-                partyUnit.Location.Suburb = model["Location.Suburb"];
-                partyUnit.Location.City = model["Location.City"];                
-                organisation.Name = model["Institute.Name"];
-                organisation.Email = model["Institute.Email"];
-                organisation.OrganisationType = organisationType6;
-                organisation.InsuranceAttributes.Add(insuranceAttribute6);
-                organisation.OrganisationalUnits.Add(partyUnit);
-            }
-            await _organisationService.Update(organisation);
+            await _organisationService.PostInstitute(model); 
             return NoContent();
         }
 

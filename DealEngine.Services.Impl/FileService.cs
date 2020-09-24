@@ -848,15 +848,18 @@ namespace DealEngine.Services.Impl
                 {
                     foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).Any())
                         {
-                            if (string.IsNullOrEmpty(OTAdvisorList))
+                            if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                             {
-                                OTAdvisorList += prodsubuis.Owner.Name;
-                            }
-                            else
-                            {
-                                OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                if (string.IsNullOrEmpty(OTAdvisorList))
+                                {
+                                    OTAdvisorList += prodsubuis.Owner.Name;
+                                }
+                                else
+                                {
+                                    OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                }
                             }
                         }
                     }
@@ -1053,6 +1056,28 @@ namespace DealEngine.Services.Impl
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    }
+
+                    if (term.SubTermType == "PIFAP")
+                    {
+                        if (term.TermLimit == 0 && term.Excess == 0 && term.Premium == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                        }
+                        else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), (term.TermLimit * 4).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), (term.TermLimit * 5).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        }
                     }
 
                     if (term.SubTermType == "CL")

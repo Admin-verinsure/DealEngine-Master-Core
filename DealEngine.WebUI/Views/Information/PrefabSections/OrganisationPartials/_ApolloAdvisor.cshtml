@@ -47,7 +47,8 @@
     </div>
     <div class="form-group" id="HideCommencement">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "form-control", @id = "AdvisorUnit.DateofCommencement", @type = "date", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Commencement" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "form-control", @id = "AdvisorUnit.DateofCommencement", @type = "date", @onchange = "OnChange(this.id, this.name)", @data_rule = "ValidateDateOfCommencement", @placeholder = "Date of Commencement", @required="" })
+        <div id="InvalidOrganisationEmail" class="invalid-feedback">Date is out of bounds</div>
     </div>
     <div class="form-group" id="HidePrincipal">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor, new { @class = "label required" })

@@ -304,7 +304,7 @@
                 $('#EffectiveDate').datepicker('option', 'minDate', newDate);
                 $('#MotorEffectiveDate').datepicker('option', 'minDate', newDate);
                 $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', newDate);
-               
+
                 document.getElementById("AddBoatEffectiveDate").value = Value;
                 document.getElementById("BoatEffectiveDate").value = Value;
                 document.getElementById("AddEffectiveDate").value = Value;
@@ -321,7 +321,7 @@
                         } else {
                             DefaultRule("1", Name);
                             break;
-                        }                        
+                        }
                     }
                 }
                 else if (Value == "Other") {
@@ -330,6 +330,27 @@
                 else {
                     DefaultRule("2", Name);
                 }
+            }
+            if (Rule == "ValidateDateOfCommencement") {
+                var id = document.getElementById("ClientProgramme_Id");
+                $.ajax({
+                    url: '@Url.Action("ValidateDateOfCommencement", "Services")',
+                    type: "POST",
+                    data: { Id: id.value, Date: Value},
+                    success: function (Data) {
+                        var element = document.getElementById("AdvisorUnit.DateofCommencement");
+                        if (Data == true) {
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-invalid");
+                        }
+                        else {
+                            element.classList.remove("is-invalid");
+                            element.classList.add("is-valid");
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
@@ -406,7 +427,7 @@
                     document.getElementById("TradingName").hidden = false;
                     var TradingName = document.getElementById("Organisation.TradingName");
                     TradingName.hidden = false;
-                    TradingName.removeAttribute("required");                    
+                    TradingName.removeAttribute("required");
                 }
             }
         }

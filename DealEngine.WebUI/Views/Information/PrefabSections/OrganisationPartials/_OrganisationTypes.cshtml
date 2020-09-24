@@ -37,7 +37,7 @@
         {
             <div class="form-group" id="HideDateofIncorportation" hidden>
                 @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "form-control", @id = "Organisation.DateofIncorportation", @type = "date", onfocus = "(this.type='date')", @onchange = "OnChange(this.id, this.name)", @required="" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, "{0:dd/MM/yyyy}", new { @class = "form-control", @id = "Organisation.DateofIncorportation", @type = "date", onfocus = "(this.type='date')", @onchange = "OnChange(this.id, this.name)", @required="" })
                 @if (Model.OrganisationViewModel.Organisation.DateofIncorportation == null)
                 {
                     @Html.Hidden("NoDateofIncorportation", true)
