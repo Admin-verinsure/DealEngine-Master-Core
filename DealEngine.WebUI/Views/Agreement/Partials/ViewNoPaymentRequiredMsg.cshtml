@@ -20,19 +20,24 @@
     function SavePaymentOption(id) {
         var option = document.getElementById(id);
         var paymentType = option.options[option.selectedIndex].value;
-        var ProgrammeId = document.getElementById("Programme.Id");
-        $.ajax({
-            type: 'Post',
-            url: '@Url.Action("PostClientProgramme", "Programme")',
-            data: { Id: ProgrammeId.value, PaymentType: paymentType }
-        })
-            .done(function (data) {
-                document.getElementById("NextNoPayment").hidden = false;
+        if (paymentType == "Invalid") {
+            document.getElementById("NextNoPayment").hidden = true;
+        } else {
+            var ProgrammeId = document.getElementById("Programme.Id");
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("PostClientProgramme", "Programme")',
+                data: { Id: ProgrammeId.value, PaymentType: paymentType }
             })
-            .fail(function (jqXhr, textStatus, errorThrown) {
-                document.getElementById("NextNoPayment").hidden = false;
-                debugger;
-                console.log(errorThrown);
+                .done(function (data) {
+                    document.getElementById("NextNoPayment").hidden = false;
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    document.getElementById("NextNoPayment").hidden = false;
+                    debugger;
+                    console.log(errorThrown);
             });
+        }
+
     }
 </script>

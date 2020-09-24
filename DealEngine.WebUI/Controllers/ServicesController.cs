@@ -3607,34 +3607,24 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CoastGuardSelfRegCall(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
-            string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
+        public async Task<IActionResult> ValidateDateOfCommencement(IFormCollection collection)
         {
             User user = null;
-
             try
             {
                 user = await CurrentUser();
-                var emailBody = "First Mate Cover Programme Quick Quote Please Call Request " + "<br/>" +
-                " Client Details : <br/>" +
-                " First Name : " + firstName + "<br/>" +
-                " Last Name : " + lastName + "<br/>" +
-                " Email : " + email + "<br/>" +
-                " Mobile phone : " + mobilePhone + "<br/>" +
-                " Home Phone : " + homePhone + "<br/>" +
-                " Craft type : " + craftType + "<br/>" +
-                " Membership Number : " + membershipNumber + "<br/>" +
-                " Boat type : " + boatType + "<br/>" +
-                " Construction type : " + constructionType + "<br/>" +
-                " Hull configuration : " + hullConfiguration + "<br/>" +
-                " Moored type : " + mooredType + "<br/>" +
-                " Trailered : " + trailered + "<br/>" +
-                " Boat insured value : " + boatInsuredValue + "<br/>" +
-                " Quick Quote premium : " + quickQuotePremium + "<br/>";
-                if (_appSettingService.GetMarineInsuranceSpecialistEmail != "")
-                    await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
+                if (Guid.TryParse(collection["Id"], out Guid Id))
+                {
+                    DateTime dateTime = DateTime.Parse(collection["Date"]);
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
+                    var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
+                    if(dateTime < product.DefaultInceptionDate || dateTime > product.DefaultExpiryDate)
+                    {
+                        return Json(false);
+                    }
+                }
 
-                return Ok();
+                return Json(true);
             }
             catch (Exception ex)
             {
