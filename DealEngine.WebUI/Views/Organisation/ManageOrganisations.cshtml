@@ -42,6 +42,7 @@
                     <p class="card-text" style="margin-top:30px;">Financial Institutes</p>
                     <div class="form-group">
                         <select class="form-control" Id="FinancialId" onchange="GetInstitute(this.id)">
+                            <option selected="selected" value="">Add New</option>
                             @foreach (var Financial in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
                             {
                                 <option value="@Financial.Id">@Financial.Name</option>
@@ -84,7 +85,6 @@
 @section pagespecific {
     <script type="text/javascript">
         function GetMarina(Id) {
-            debugger;
             var organisationId = document.getElementById(Id);
             var id = organisationId.options[organisationId.selectedIndex].value;
             $.ajax({

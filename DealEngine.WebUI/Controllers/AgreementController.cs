@@ -1895,7 +1895,8 @@ namespace DealEngine.WebUI.Controllers
                     {
                         EditEnabled = true,
                         ClientAgreementId = agreement.Id,
-                        ClientProgrammeId = clientProgramme.Id
+                        ClientProgrammeId = clientProgramme.Id,
+                        ClientInformationSheet = clientProgramme.InformationSheet
                     };
 
                     var riskPremiums = new List<RiskPremiumsViewModel>();

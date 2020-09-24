@@ -1,10 +1,36 @@
 ﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
 
 @Html.Raw(Model.NoPaymentRequiredMessage)
+@if(Model.ClientInformationSheet.Programme.BaseProgramme.Name == "Apollo Programme")
+{
+    <label class="required">Please select a payment Method</label>
+    @Html.HiddenFor(m=>m.ClientInformationSheet.Programme.Id, new { @id= "Programme.Id"})
+    @Html.DropDownListFor(m=>m.ClientInformationSheet.Programme.PaymentType, Model.PaymentMethodOptions, new { @required="", @class="form-control b", onchange="SavePaymentOption(this.id)" })
+}
 
 
 <script type="text/javascript">
-        var nextbutton1 = document.getElementsByClassName("sw-btn-next");
-                $(nextbutton1).addClass("hidden");
-                $(nextbutton1).hide();
+    var nextbutton1 = document.getElementsByClassName("sw-btn-next");
+    $(nextbutton1).addClass("hidden");
+    $(nextbutton1).hide();
+
+    function SavePaymentOption(id) {
+        var option = document.getElementById(id);
+        var paymentType = option.options[option.selectedIndex].value;
+        var ProgrammeId = document.getElementById("Programme.Id");
+        debugger;
+        $.ajax({
+            type: 'Post',
+            url: '@Url.Action("PostClientProgramme", "Programme")',
+            data: { Id: ProgrammeId.value, PaymentType: paymentType }
+            })
+                .done(function (data) {
+                    debugger;
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
+    }
 </script>
