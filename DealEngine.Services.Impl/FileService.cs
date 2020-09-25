@@ -603,6 +603,7 @@ namespace DealEngine.Services.Impl
 
             string stradvisorlist = "";
             string stradvisorlist1 = "";
+            string stradvisorlist2 = "";
             string strnominatedrepresentative = "";
             string strotherconsultingbusiness = "";
             string strmentoradvisorlist = "";
@@ -636,6 +637,14 @@ namespace DealEngine.Services.Impl
                             {
                                 stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
                                     "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
+                            if (string.IsNullOrEmpty(stradvisorlist2))
+                            {
+                                stradvisorlist2 = uisorg.Name;
+                            }
+                            else
+                            {
+                                stradvisorlist2 += ", " + uisorg.Name;
                             }
                         }
 
@@ -690,6 +699,8 @@ namespace DealEngine.Services.Impl
                                     "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                         }
+
+
                     }
                     
                 }
@@ -708,11 +719,16 @@ namespace DealEngine.Services.Impl
                 {
                     strmentoradvisorlist = "No Mentored Advisor insured under this policy.";
                 }
+                if (string.IsNullOrEmpty(stradvisorlist2))
+                {
+                    stradvisorlist2 = "No Advisor insured under this policy.";
+                }
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
                 mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", strmentoradvisorlist));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", stradvisorlist2));
 
             }
             else
@@ -721,6 +737,7 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", "No Mentored Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", "No Advisor insured under this policy."));
             }
 
             //Advisor list with FAP Number

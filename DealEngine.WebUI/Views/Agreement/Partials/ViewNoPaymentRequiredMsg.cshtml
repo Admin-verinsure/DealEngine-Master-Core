@@ -3,9 +3,19 @@
 @Html.Raw(Model.NoPaymentRequiredMessage)
 @if (Model.ClientInformationSheet.Programme.BaseProgramme.Name == "Apollo Programme")
 {
-    <script type="text/javascript">
-        document.getElementById("NextNoPayment").hidden = true;
-    </script>
+    @if (string.IsNullOrWhiteSpace(Model.ClientInformationSheet.Programme.PaymentType))
+    {
+        <script type="text/javascript">
+            document.getElementById("NextNoPayment").hidden = true;
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            document.getElementById("NextNoPayment").hidden = false;
+        </script>
+    }
+
     <label class="required">Please select a payment Method</label>
     @Html.HiddenFor(m => m.ClientInformationSheet.Programme.Id, new { @id = "Programme.Id" })
     @Html.DropDownListFor(m => m.ClientInformationSheet.Programme.PaymentType, Model.PaymentMethodOptions, new { @required = "", @class = "form-control b", onchange = "SavePaymentOption(this.id)" })
