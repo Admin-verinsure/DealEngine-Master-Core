@@ -913,7 +913,7 @@ namespace DealEngine.Services.Impl
                         user.Organisations.Add(Owner);
 
                         OrganisationType advisorType = new OrganisationType("Person - Individual");
-                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Planner");
+                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Advisor");
                         OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
                         AdvisorUnit AdvisorUnit = new AdvisorUnit(currentUser, "Advisor", "Person - Individual", null)
                         {
@@ -926,7 +926,9 @@ namespace DealEngine.Services.Impl
                             Name = user.FullName
                         };
 
+                        Advisor.InsuranceAttributes.Add(advisorAttribute);
                         Advisor.OrganisationalUnits.Add(defaultUnit);
+                        Advisor.OrganisationalUnits.Add(AdvisorUnit);
                         user.Organisations.Add(Advisor);
                         user.SetPrimaryOrganisation(Owner);
                         await _userService.ApplicationCreateUser(user);

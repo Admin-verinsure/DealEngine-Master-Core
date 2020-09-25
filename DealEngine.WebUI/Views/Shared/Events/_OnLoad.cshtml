@@ -18,6 +18,28 @@
         minDate: startDate
     });
 
+    $('#AddBoatEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#BoatEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#AddEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#AddPlantEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#EffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#MotorEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#TrailerEffectiveDateModal').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+
     function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
         var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
         var deletebuttonstring = "<button onclick=\"RemoveLocation('" + locationId + "')\" type=\"button\" class=\" btn btn-danger btn - sm\" id=\"trash\"><span class=\"fa fa-trash\"></span></button>";
@@ -74,35 +96,7 @@
         } catch (ex) { debugger;}
     }
 
-    // Limit effective dates to be only selectable on/after policy effective date
-    //$('#dateselected').datepicker({
-    //    dateFormat: "dd/mm/yy",
-    //    
-    //});"2020-09-30"
-    $('#AddBoatEffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#BoatEffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#AddEffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#AddPlantEffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#EffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#MotorEffectiveDate').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-    $('#TrailerEffectiveDateModal').datepicker({
-        dateFormat: "yy-mm-dd",
-    });
-
     function PopulateView(Output) {        
-        debugger;
         for (obj in Output) {
             var modelObj = Output[obj];
             for (var Field in modelObj) {

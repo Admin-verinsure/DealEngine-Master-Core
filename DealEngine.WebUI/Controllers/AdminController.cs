@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
-using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using Microsoft.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Controllers
@@ -852,6 +851,7 @@ namespace DealEngine.WebUI.Controllers
             UserViewModel userViewModel = new UserViewModel();
             return View(userViewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> GetCreateUser(IFormCollection form)
         {
