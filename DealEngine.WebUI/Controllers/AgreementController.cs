@@ -2773,11 +2773,6 @@ namespace DealEngine.WebUI.Controllers
                                     {
                                         if (sendUser)
                                         {
-                                            foreach(var doc in documents)
-                                            {
-                                                if(doc.Name.Contains("Invoice"))
-                                                await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent, doc, agreement.ClientInformationSheet, agreement, null);
-                                            }
                                             await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
                                         }
                                         else

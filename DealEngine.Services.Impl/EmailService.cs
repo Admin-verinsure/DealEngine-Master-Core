@@ -963,11 +963,11 @@ namespace DealEngine.Services.Impl
                 {
                     attachments.Add(await ToAttachment(document));
                 }
-                //else
-                //{
-                //    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
-                //}
-               
+                else
+                {
+                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
+                }
+
             return attachments;
 		}
 
