@@ -156,7 +156,7 @@
                 form.classList.remove("needs-validation");
                 form.classList.add("was-validated");
             }
-            UnitValidationOnSubmit();         
+            UnitValidationOnSubmit(Programme);         
             LocationValidationOnSubmit();
         }
     }
@@ -175,7 +175,7 @@
         }
     }
 
-    function UnitValidationOnSubmit() {
+    function UnitValidationOnSubmit(Programme) {
         var Unit = document.getElementsByName("Unit");
         if (Unit != null) {
             if (Unit.length > 0) {
@@ -203,17 +203,21 @@
                             throw "no principal selected";
                         }
                     }
-                    var TradingName = document.getElementById("NoTradingName");
-                    if (TradingName != null) {
-                        if (TradingName.value === "True") {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            $("#more").trigger("click");
-                            window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
-                            $("[id='Insured Details / Named Parties']").trigger("click");
-                            throw "no trading name";
+
+                    if (Programme != "Apollo Programme") {
+                        var TradingName = document.getElementById("NoTradingName");
+                        if (TradingName != null) {
+                            if (TradingName.value === "True") {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                $("#more").trigger("click");
+                                window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                                $("[id='Insured Details / Named Parties']").trigger("click");
+                                throw "no trading name";
+                            }
                         }
                     }
+                    
                     var DateofIncorportation = document.getElementById("NoDateofIncorportation");
                     if (DateofIncorportation != null) {
                         if (DateofIncorportation.value === "True") {
