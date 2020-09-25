@@ -57,58 +57,28 @@
                    var forms = document.getElementsByClassName('needs-validation');
                        //<--!Boostrap validation method
                    InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status', forms);
-
-                           //if ((Isboatexist == false || IsboatNamecount == 1)  && vesselExists != null) {
-
-                           //    window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
-                           //    $("#Vessel").trigger("click");
-                           //    return false;
-
-                           //} else if (IsboatNamecount == 1  || Isboatexist == false && vesselExists != null) {
-
-                           //    window.alert("Please complete Vessel Information");
-                           //    $("#Vessel").trigger("click");
-                           //    return false;
-
-                           //} else if (Isnamedpartycount == 0 && namedPartyExists != null && (Isnamedpartyexist != false || IsDANZnamedpartyexist != false)) {
-
-                           //    window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
-                           //    $("[id='Insured Details / Named Parties']").trigger("click");
-                           //    return false;
-                           //}
-                           //if ((IsTradingnameexist == true && IsTradingnameCount != 0)) {
-
-                           //    window.alert("Please Add Trading Name for Owner with complete information to proceed for policy  ");
-                           //    $("[id='Insured Details / Named Parties']").trigger("click");
-                           //    return false;
-
-                           //}
-
-
-                       if ($('#CompanyName').val() === "AON") {
-                           var nextbutton = document.getElementsByClassName("next");
-                           $(nextbutton).addClass("hidden");
-                           $(nextbutton).hide();
-                           var prevbutton = document.getElementsByClassName("previous");
-                           $(prevbutton).addClass("hidden");
-                           $(prevbutton).hide();
-                       }
-
+                   if ($('#CompanyName').val() === "AON") {
+                       var nextbutton = document.getElementsByClassName("next");
+                       $(nextbutton).addClass("hidden");
+                       $(nextbutton).hide();
+                       var prevbutton = document.getElementsByClassName("previous");
+                       $(prevbutton).addClass("hidden");
+                       $(prevbutton).hide();
                    }
-
-                   $.ajax({
-                       url: '@Url.Action("SubmitInformation", "Information")',
-                       type: "POST",
-                       data: $("#tab_1 :input").serialize({ json: true })
-                   })
-                       .done(function (url) {
-                           $("#agreementView").load(url, function () {
-                           });
-                       })
-                       .fail(function (a, s, d) {
-                           debugger;
-                           $('#getAgreementModal').hide();
+               }
+               $.ajax({
+                   url: '@Url.Action("SubmitInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab_1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+                       $("#agreementView").load(url, function () {
                        });
+                   })
+                   .fail(function (a, s, d) {
+                       debugger;
+                       $('#getAgreementModal').hide();
+                   });
                //}
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
