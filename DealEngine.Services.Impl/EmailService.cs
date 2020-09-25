@@ -931,6 +931,8 @@ namespace DealEngine.Services.Impl
 			}
             else if (document.ContentType == MediaTypeNames.Application.Pdf)
             {
+
+
                 var path = document.Path;
 
                 try
@@ -963,7 +965,7 @@ namespace DealEngine.Services.Impl
                 }
                 else
                 {
-                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name+".pdf"));
+                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name + ".pdf", MediaTypeNames.Application.Pdf ));//+ ".pdf"
                 }
             return attachments;
 		}
