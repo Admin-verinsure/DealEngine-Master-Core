@@ -965,7 +965,7 @@ namespace DealEngine.Services.Impl
                 }
                 else
                 {
-                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf ));//+ ".pdf"
+                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name + ".pdf", MediaTypeNames.Application.Pdf ));//+ ".pdf"
                 }
             return attachments;
 		}
