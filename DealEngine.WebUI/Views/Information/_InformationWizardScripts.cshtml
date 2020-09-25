@@ -2819,16 +2819,13 @@ function showAccordionPanel(id, panelNo) {
             $('#BoatNotes.' + classId).val(data.boatNotes);
             $('#VesselArea.' + classId).val(data.vesselArea);
             if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
-                if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
-                        if (!($('#MooredType option:selected'))) {
-                        $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                }
+                $("#MooredType").empty();
+                $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
                 $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
                 $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));                
                 $('#MooredType').trigger('chosen:updated');
-                }
-            };
+            }            
             if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
                 $('#BoatWaterLocation.b').val(data.boatWaterLocation);
                 $('#othermarinSection').addClass("hidden");
@@ -5799,6 +5796,7 @@ async: true
     }
 
     function addNewWaterLoc() {
+        debugger;
 
         var selectedWaterLoc = boatWaterLoc.options[boatWaterLoc.selectedIndex].value;
         if (selectedWaterLoc == "add") {
@@ -5836,51 +5834,22 @@ async: true
 
     function GetMooredType(othermarinaname) {
          var orgId = othermarinaname;
-
-        $('#getMooredModal').show();
-         var postData = { OrgID: orgId};
-
-        $.ajax({
-        // change back once mono decides to fix
-             url: '@Url.Action("GetMooredType", "Services")',
-             type: "POST",
-             data: postData,
-             //contentType: "application/json; charset=utf-8"
-      })
-            .done(function (data) {
-                $('#BoatMooredTypeSection').removeClass('hidden');
-                $('#AddBoatMooredTypeSection').removeClass('hidden');
-                $("#MooredType").find('option').not(':selected').remove();
-                $("#AddMooredType").empty();
-                $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
-                $('#AddMooredType').trigger('chosen:updated');
-                if (!($('#MooredType option:selected'))) {
-                    $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                }
-                $('#getMooredModal').hide();
-                $('#MooredType').trigger('chosen:updated');
-                $.each(data, function (i, item) {
-                    $('#getMooredModal').hide();
-                    $('#AddMooredType').append($('<option>', { value: item.value, text: item.text }));
-                    $('#MooredType').append($('<option>', { value: item.value, text: item.text }));
-                });
-            })
-            .fail(function (jqXHR, textStatus) {
-                $('#BoatMooredTypeSection').removeClass('hidden');
-                $('#AddBoatMooredTypeSection').removeClass('hidden');
-                $("#MooredType").find('option').not(':selected').remove();
-                $("#AddMooredType").empty();
-                $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
-                $('#AddMooredType').trigger('chosen:updated');
-                if (!($('#MooredType option:selected'))) {
-                    $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                }
-                $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-                $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-                $('#MooredType').trigger('chosen:updated');
-                $('#getMooredModal').hide();
-            });
+        $('#BoatMooredTypeSection').removeClass('hidden');
+        $('#AddBoatMooredTypeSection').removeClass('hidden');
+        //$("#MooredType").find('option').not(':selected').remove();
+        //$("#AddMooredType").find('option').not(':selected').remove();
+        $("#MooredType").empty();
+        $("#AddMooredType").empty();
+        $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
+        $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
+        $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
+        $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
+        $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+        $('#AddMooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
+        $('#AddMooredType').append($('<option>', { value: "Pile", text: "Pile" }));
+        $('#AddMooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+        $('#MooredType').trigger('chosen:updated');
+        $('#AddMooredType').trigger('chosen:updated');
     };
 
     function addNewLoc() {
