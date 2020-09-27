@@ -15,7 +15,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<object?> GetDeserializedObject(Type type, IFormCollection collection)
         {
-            Dictionary<object, string> model = new Dictionary<object, string>();
+            Dictionary<object, object> model = new Dictionary<object, object>();
             object obj = null;
             try
             {
@@ -44,6 +44,17 @@ namespace DealEngine.Services.Impl
                                 model.Add(value, collection[Key].ToString());
                             }
                         }
+                        else if(fieldType == typeof(IList<string>))
+                        {
+                            if (model.ContainsKey(value))
+                            {
+                                model[value] = collection[Key].ToString().Split(',').ToList();
+                            }
+                            else
+                            {
+                                model.Add(value, collection[Key].ToString().Split(',').ToList());
+                            }
+                        }
                     }
                 }
 
@@ -51,13 +62,11 @@ namespace DealEngine.Services.Impl
                 obj = JsonConvert.DeserializeObject(JsonString, type,
                     new JsonSerializerSettings()
                     {
-                        MaxDepth = 1,
+                        MaxDepth = 2,
                         ObjectCreationHandling = ObjectCreationHandling.Auto,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
                         DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
-                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
                     });
             }
             catch (Exception ex)
@@ -76,9 +85,9 @@ namespace DealEngine.Services.Impl
                     new JsonSerializerSettings()
                     {
                         MaxDepth = 2,
+                        ObjectCreationHandling = ObjectCreationHandling.Auto,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Ignore,
-                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
                         DateParseHandling = DateParseHandling.DateTime
                     });
             }

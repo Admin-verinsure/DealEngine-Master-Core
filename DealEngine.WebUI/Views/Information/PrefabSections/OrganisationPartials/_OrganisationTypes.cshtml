@@ -13,7 +13,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.User.Email, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.User.Email, new { @class = "form-control", @id = "User.Email", @data_rule = "OrganisationEmail", @onchange = "OnChange(this.id, this.name)", @required = "", @type="email" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.User.Email, new { @class = "form-control", @id = "User.Email", @data_rule = "OrganisationEmail", @onchange = "OnChange(this.id, this.name)", @required = "", @type = "email" })
             <div id="InvalidOrganisationEmail" class="invalid-feedback">Organisation email already exists - please enter a different email</div>
         </div>
     </div>
@@ -33,27 +33,49 @@
     <div class="form-group col-md-6">
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
-    </div>
-    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
-    Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-    Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
-    )
-    {
-    <div class="form-group col-md-6" id="TradingName" hidden>
-        @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+        @if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme")
         {
-            @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-            @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
-            {
-                @Html.Hidden("NoTradingName", true)
-            }
-            else
-            {
-                @Html.Hidden("NoTradingName", false)
-            }
-            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+            <div class="form-group" id="HideDateofIncorportation" hidden>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, "{0:dd/MM/yyyy}", new { @class = "form-control", @id = "Organisation.DateofIncorportation", @type = "date", onfocus = "(this.type='date')", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                @if (Model.OrganisationViewModel.Organisation.DateofIncorportation == null)
+                {
+                    @Html.Hidden("NoDateofIncorportation", true)
+                }
+                else
+                {
+                    @Html.Hidden("NoDateofIncorportation", false)
+                }
+            </div>
+            <div class="form-group" id="TradingName">
+                @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+                {
+                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })
+                }
+            </div>
         }
     </div>
+    @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
+Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+Model.OrganisationViewModel.Programme.Name == "NZPI Programme"
+)
+    {
+        <div class="form-group col-md-6" id="TradingName" hidden>
+            @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+            {
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
+                {
+                    @Html.Hidden("NoTradingName", true)
+                }
+                else
+                {
+                    @Html.Hidden("NoTradingName", false)
+                }
+            }
+        </div>
     }
 </div>
 

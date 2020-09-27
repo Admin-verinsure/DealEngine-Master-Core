@@ -241,9 +241,7 @@
 
         <div class="form-group">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-
                 @{ await Html.RenderPartialAsync("_DataUploadControl"); }
-
             </div>
         </div>
 
@@ -251,13 +249,10 @@
 
             @{ await Html.RenderPartialAsync("_ImpersonateUser", Model); }
         </div>
-        @if (User.Identity.Name == "JDillon")
-        {
-            <div class="form-group">
-                <a class="btn btn-primary btn-sm" href="~/Admin/DeveloperTool">Developer Tool</a>
-            </div>
-        }
-
+        <div class="form-group">
+            <a class="btn btn-primary btn-sm" href="~/Admin/DeveloperTool">Developer Tool</a>
+            <a class="btn btn-primary btn-sm" href="~/Admin/CreateUser">Create User</a>
+        </div>
     </div>
 
 

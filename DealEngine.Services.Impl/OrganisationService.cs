@@ -106,14 +106,14 @@ namespace DealEngine.Services.Impl
             organisation = await UpdateOrganisation(collection, organisation);
             if (!string.IsNullOrWhiteSpace(TypeName))
             {
-                UpdateOrganisationUnit(organisation, collection);
-                UpdateInsuranceAttribute(organisation, collection);
+                await UpdateOrganisationUnit(organisation, collection);
+                await UpdateInsuranceAttribute(organisation, collection);
             }
 
             await Update(organisation);
         }
 
-        private void UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
+        private async Task UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
         {
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             var IA = organisation.InsuranceAttributes.FirstOrDefault(i => i.Name == TypeName);
@@ -270,7 +270,8 @@ namespace DealEngine.Services.Impl
                     }
                     else
                     {
-                        User = new User(Creator, Guid.NewGuid(), collection);
+                        if(!string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName))
+                            User = new User(Creator, Guid.NewGuid(), collection);
                     }
                 }
                 List<OrganisationalUnit> OrganisationalUnits = GetOrganisationCreateUnits(Type, Creator, collection);
@@ -318,7 +319,8 @@ namespace DealEngine.Services.Impl
                 if (Type == "Advisor" ||
                     Type == "Nominated Representative" ||
                     Type == "Administration" ||
-                    Type == "Other Consulting Business"
+                    Type == "Other Consulting Business" ||
+                    Type == "Mentored Advisor"
                     )
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
@@ -396,20 +398,143 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task DeveloperTool()
+        public async  Task<List<Organisation>> GetPublicMarinas()
         {
-            var organisations = await _organisationRepository.FindAll().ToListAsync();
-            foreach(var organisation in organisations)
+            List<Organisation> organisations = new List<Organisation>();
+            var marinas = await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+            foreach(var marina in marinas)
             {
-                var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                if (unit != null)
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if(unit != null)
                 {
-                    unit.DORetroactivedate = organisation.DORetroactivedate;
-                    unit.PIRetroactivedate = organisation.PIRetroactivedate;
-                    await Update(organisation);
+                    if (unit.WaterLocation != null)
+                    {
+                        if (unit.WaterLocation.IsPublic)
+                        {
+                            organisations.Add(marina);
+                        }
+                    }
+
                 }
             }
-        }       
+
+            return organisations;
+        }
+
+        public async Task<List<Organisation>> GetPublicFinancialInstitutes()
+        {
+            List<Organisation> organisations = new List<Organisation>();
+            var FinancialList = await GetFinancialInstitutes();
+            foreach (var Financial in FinancialList)
+            {
+                var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.Location != null)
+                    {
+                        if (unit.Location.IsPublic)
+                        {
+                            organisations.Add(Financial);
+                        }
+                    }
+                }
+            }
+
+            return organisations;
+        }
+
+        public async Task<Organisation> GetMarina(WaterLocation waterLocation)
+        {
+            var marinas = await GetAllMarinas();
+            foreach (var marina in marinas)
+            {                
+                var unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                if (unit != null)
+                {
+                    if (unit.WaterLocation == waterLocation)
+                    {
+                        return marina;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public async Task<List<Organisation>> GetAllMarinas()
+        {
+            return  await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToListAsync();
+        }
+
+        public async Task<List<Organisation>> GetFinancialInstitutes()
+        {
+            return await _organisationRepository.FindAll().Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToListAsync();
+        }
+
+        public async Task PostMarina(IFormCollection model)
+        {
+            Organisation organisation = null;
+            if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId))
+            {
+                organisation = await GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+                MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), model);
+                var jsonWaterLocation = (WaterLocation)await _serializerationService.GetDeserializedObject(typeof(WaterLocation), model);
+                organisation = _mapper.Map(jsonOrganisation, organisation);
+                marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
+            }
+            else
+            {
+
+                organisation = new Organisation(null, Guid.NewGuid());
+                organisation.Name = model["Organisation.Name"];
+                organisation.Email = model["Organisation.Email"];
+                OrganisationType organisationType = new OrganisationType("Corporation – Limited liability");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(null, "Marina");
+                MarinaUnit marinaUnit = new MarinaUnit(null, "Marina", "Corporation – Limited liability", null);
+                WaterLocation DefaultMar = new WaterLocation(null);
+                DefaultMar.MarinaName = model["WaterLocation.MarinaName"];
+                DefaultMar.IsPublic = true;
+                marinaUnit.WaterLocation = DefaultMar;
+                organisation.OrganisationType = organisationType;
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+                organisation.OrganisationalUnits.Add(marinaUnit);
+            }
+
+            await Update(organisation);            
+        }
+
+        public async Task PostInstitute(IFormCollection model)
+        {
+            Organisation organisation = null;
+            if (Guid.TryParse(model["Organisation.Id"], out Guid OrganisationId))
+            {
+                organisation = await GetOrganisation(Guid.Parse(model["Organisation.Id"]));
+                InterestedPartyUnit unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), model);
+                var jsonLocation = (Location)await _serializerationService.GetDeserializedObject(typeof(Location), model);
+                organisation = _mapper.Map(jsonOrganisation, organisation);
+                unit.Location = _mapper.Map(jsonLocation, unit.Location);
+            }
+            else
+            {
+                organisation = new Organisation(null, Guid.NewGuid());
+                OrganisationType organisationType6 = new OrganisationType("Corporation – Limited liability");
+                InsuranceAttribute insuranceAttribute6 = new InsuranceAttribute(null, "Financial");
+                InterestedPartyUnit partyUnit = new InterestedPartyUnit(null, "Financial", "Corporation – Limited liability", null);
+                partyUnit.Location = new Location(null);
+                partyUnit.Location.IsPublic = true;
+                partyUnit.Location.CommonName = model["Location.CommonName"];
+                partyUnit.Location.Street = model["Location.Street"];
+                partyUnit.Location.Suburb = model["Location.Suburb"];
+                partyUnit.Location.City = model["Location.City"];
+                organisation.Name = model["Institute.Name"];
+                organisation.Email = model["Institute.Email"];
+                organisation.OrganisationType = organisationType6;
+                organisation.InsuranceAttributes.Add(insuranceAttribute6);
+                organisation.OrganisationalUnits.Add(partyUnit);
+            }
+            await Update(organisation);
+        }
     }
 
 }

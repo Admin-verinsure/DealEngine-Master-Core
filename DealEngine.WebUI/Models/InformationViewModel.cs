@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
@@ -22,7 +23,7 @@ namespace DealEngine.WebUI.Models
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
             OTViewModel = new OTViewModel();//OutsideTrustees
             IPViewModel = new IPViewModel();
-            DateViewModel = new DateViewModel();
+            GeneralViewModel = new GeneralViewModel();
             User = CurrentUser;
             Programme = clientInformationSheet.Programme.BaseProgramme;
             RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
@@ -31,6 +32,7 @@ namespace DealEngine.WebUI.Models
             ProjectViewModel = new ProjectViewModel(clientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
             OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
+            BoatViewModel = new BoatViewModel();
             ClientInformationSheet = clientInformationSheet;
             Status = clientInformationSheet.Status;
             AnswerSheetId = clientInformationSheet.Id;
@@ -38,6 +40,7 @@ namespace DealEngine.WebUI.Models
         }
         public User User { get; set; }
         public OrganisationViewModel OrganisationViewModel { get; set; }
+        public BoatViewModel BoatViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Guid Id { get; set; }
@@ -49,6 +52,7 @@ namespace DealEngine.WebUI.Models
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
+        public List<BoatUse> BoatUsesList { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
@@ -72,7 +76,7 @@ namespace DealEngine.WebUI.Models
         public ClientAgreement ClientAgreement { get; internal set; }
         public OTViewModel OTViewModel { get; internal set; }
         public IPViewModel IPViewModel { get; internal set; }
-        public DateViewModel DateViewModel { get; internal set; }
+        public GeneralViewModel GeneralViewModel { get; internal set; }
 
         
     }
@@ -456,6 +460,7 @@ namespace DealEngine.WebUI.Models
             HasApprovedVendorsOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             HasLocationOptions = GetSelectListOptions();
+            HasOptionalUltraOptions = GetSelectListOptions();
         }
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -467,10 +472,10 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = "Yes", Value = "1"
+                    Text = "True", Value = "1"
                 },
                 new SelectListItem
-                { Text = "No", Value = "2" }
+                { Text = "False", Value = "2" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
@@ -487,7 +492,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasProceduresOptions { get; set; }
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
-        
+        public IList<SelectListItem> HasOptionalUltraOptions { get; set; }
+
         public IList<SelectListItem> HasLocationOptions { get; set; }
 
         public int CoverAmount { get; set; }
@@ -501,10 +507,12 @@ namespace DealEngine.WebUI.Models
         {
             HasTraditionalLicenceOptions = GetSelectListOptions();
             HasAdvisersOptions = GetHasAdvisersOptions();
+            HasApolloAdvisersOptions = GetHasApolloAdvisersOptions();
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
         }
 
         public string TransitionalLicenseNum { get; set; }
+        public string TransitionalLicenseHolder { get; set; }
         public  string CoverStartDate { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
@@ -525,6 +533,28 @@ namespace DealEngine.WebUI.Models
             };
         }
 
+        private IList<SelectListItem> GetHasApolloAdvisersOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "I do not have any other advisers working under my licence", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Apollo advisers only working under my licence", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "I do have other Non-Apollo advisers working under my licence", Value = "3"
+                }
+            };
+        }
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -563,7 +593,8 @@ namespace DealEngine.WebUI.Models
                 }
             };
         }
-        public IList<SelectListItem> HasAdvisersOptions { get; set; }        
+        public IList<SelectListItem> HasAdvisersOptions { get; set; }
+        public IList<SelectListItem> HasApolloAdvisersOptions { get; set; }
         public IList<SelectListItem> HasTraditionalLicenceOptions { get; set; }
         public IList<SelectListItem> HasAdditionalTraditionalLicenceOptions { get; set; }
 
@@ -976,15 +1007,23 @@ namespace DealEngine.WebUI.Models
         {
             HasOutsideTrusteesOptions = GetSelectListOptions();
             HasClaimQuestionsOptions = GetSelectListOptions();
+            HasInvolvedTrusteeOptions = GetSelectListOptions();
+            HasLessYearsOptions = GetSelectListOptions();
+            HasFinancialObligationsOptions = GetSelectListOptions();
             FormDate = DateTime.Now;
         }
 
         public IList<SelectListItem> HasOutsideTrusteesOptions { get; set; }
         public IList<SelectListItem> HasClaimQuestionsOptions { get; set; }
+        public IList<SelectListItem> HasInvolvedTrusteeOptions { get; set; }
+        public IList<SelectListItem> HasLessYearsOptions { get; set; }
+        public IList<SelectListItem> HasFinancialObligationsOptions { get; set; }
         public DateTime FormDate { get; set; }
         public string CompanyName { get; set; }
         public string OutsidePositions { get; set; }
         public string ClaimDetails { get; set; }
+        public string InvolvedTrusteeDetails { get; set; }
+        public string FinancialObligationsDetails { get; set; }
 
         private IList<SelectListItem> GetSelectListOptions()
         {
@@ -1209,9 +1248,17 @@ namespace DealEngine.WebUI.Models
 
     }
 
-    public class DateViewModel
+    public class GeneralViewModel
     {
-        public string DateSelected { get; set; }
+        public GeneralViewModel()
+        {
+            if(PolicyDate == DateTime.MinValue)
+            {
+                PolicyDate = DateTime.Now;
+            }
+        }
+        [Display(Name = "Policy Date")]
+        public DateTime PolicyDate { get; set; }
 
     }
 }

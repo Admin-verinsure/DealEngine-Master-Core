@@ -15,7 +15,7 @@ namespace DealEngine.Domain.Entities.Abstracts
         public virtual Guid Id { get; set; }
 
         [DisplayName("Date Created")]
-		public virtual DateTime? DateCreated { get; protected set; }
+		public virtual DateTime? DateCreated { get; set; }
 
         [DisplayName("Date Deleted")]
 		public virtual DateTime? DateDeleted { get; set; }
@@ -118,6 +118,19 @@ namespace DealEngine.Domain.Entities.Abstracts
                             else if (property.PropertyType == typeof(Guid))
                             {
                                 //throw new Exception("Cant save Ids");
+                            }
+                            else if (property.PropertyType == typeof(DateTime))
+                            {
+                                bool valid = DateTime.TryParse(value.ToString(), out DateTime Date);
+                                if (valid)
+                                {
+                                    property.SetValue(this, Date);
+                                }                                
+                            }
+                            else if(typeof(IList<string>) == property.PropertyType)
+                            {
+                                var options = value.ToString().Split(',').ToList();
+                                property.SetValue(this, options);                              
                             }
                             else
                             {

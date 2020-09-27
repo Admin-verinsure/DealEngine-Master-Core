@@ -1,5 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 @using DealEngine.Domain.Entities
+@using System 
 @{
     IList<Territory> SelectedTerritories = Model.RevenueDataViewModel.Territories.Where(t => t.Selected == true).ToList();
     IList<BusinessActivity> SelectedActivities = Model.RevenueDataViewModel.Activities.Where(t => t.Selected == true).ToList();
@@ -53,7 +54,7 @@
                                                 @select.Location
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Location.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableterritories" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Location.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableterritories" value="@System.Decimal.Round(select.Percentage, 2)" />
                                             </td>
                                         </tr>
                                     }
@@ -74,7 +75,7 @@
                                         <label for="lastFinancialYear" class="label required">Actual commission / fees for Last completed financial year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, Decimal.Round(Model.RevenueDataViewModel.LastFinancialYearTotal, 2).ToString(), new { @class = "form-control", @id = "lastFinancialYear", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
                                     </div>
                                 </div>
                                 <div class="row">
@@ -82,7 +83,7 @@
                                         <label for="currentYear" class="label required">Estimated commission / fees for Current year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, Decimal.Round(Model.RevenueDataViewModel.CurrentYearTotal, 2).ToString(), new { @class = "form-control", @id = "currentYear", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
                                     </div>
                                 </div>
                                 <div class="row">
@@ -90,7 +91,7 @@
                                         <label for="nextFinancialYear">Estimated commission / fees for Next financial year</label>
                                     </div>
                                     <div class="col-3">
-                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                                        @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, Decimal.Round(Model.RevenueDataViewModel.NextFinancialYearTotal, 2).ToString(), new { @class = "form-control", @id = "nextFinancialYear", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +129,7 @@
                                                 @select.Description
                                             </td>
                                             <td>
-                                                <input class="form-control" type="text" id="@select.Description.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableactivities" value="@select.Percentage" />
+                                                <input class="form-control" type="text" id="@select.Description.Trim()" form="RevenueDataViewModel" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="ValidateSharedTable" data-item="validatetableactivities" value="@System.Decimal.Round(select.Percentage, 2)" />
                                             </td>
                                         </tr>
                                     }
@@ -351,7 +352,7 @@
                                                     Commercial
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -359,7 +360,7 @@
                                                     Dwellings
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionDwellingDetails, new { @id = "constructiondwellingdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionDwellingDetails, new { @id = "constructiondwellingdetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                             <tr>
@@ -383,7 +384,7 @@
                                                     School
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item = "validatecontruction" })
+                                                    @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control", @form = "RevenueDataViewModel", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @data_item = "validatecontruction" })
                                                 </td>
                                             </tr>
                                         </tbody>

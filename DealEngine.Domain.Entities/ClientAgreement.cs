@@ -114,6 +114,7 @@ namespace DealEngine.Domain.Entities
         public virtual DateTime BindEffectiveDate { get; set; }
         public virtual User BindByUserID { get; set; }
         public virtual bool IsPDFgenerated { get; set; }
+        public virtual bool IsFullProposalDocSend { get; set; }
 
         public virtual List<Document> GetDocuments()
         {

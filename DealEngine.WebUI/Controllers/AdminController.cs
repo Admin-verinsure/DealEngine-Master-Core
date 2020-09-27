@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
-using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using Microsoft.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Controllers
@@ -26,7 +25,7 @@ namespace DealEngine.WebUI.Controllers
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
-		IOrganisationService _organisationService;		
+		IDeveloperToolService _developerToolService;		
 		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
         IClientInformationService _clientInformationService;
@@ -38,10 +37,12 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AdminController> _logger;
         IApplicationLoggingService _applicationLoggingService;
         IImportService _importService;
+        ISerializerationService _serializerationService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
 
         public AdminController (
+            ISerializerationService serializerationService,
             IMilestoneService milestoneService,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -51,7 +52,7 @@ namespace DealEngine.WebUI.Controllers
             IUserService userRepository, 
             IPrivateServerService privateServerService, 
             IFileService fileService,
-			IOrganisationService organisationService, 
+            IDeveloperToolService developerToolService, 
             IUnitOfWork unitOfWork, 
             IInformationTemplateService informationTemplateService,
             IClientInformationService clientInformationService, 
@@ -64,6 +65,7 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _serializerationService = serializerationService;
             _milestoneService = milestoneService;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -72,7 +74,6 @@ namespace DealEngine.WebUI.Controllers
             _logger = logger;
 			_privateServerService = privateServerService;
 			_fileService = fileService;
-			_organisationService = organisationService;
 			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
@@ -83,6 +84,7 @@ namespace DealEngine.WebUI.Controllers
             _merchantService = merchantService;
             _systemEmailService = systemEmailService;
             _referenceService = referenceService;
+            _developerToolService = developerToolService;
         }
 
 		[HttpGet]
@@ -111,13 +113,13 @@ namespace DealEngine.WebUI.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> NZPIImportOwners()
+        public async Task<IActionResult> ApolloImportOwners()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZPIImportOwners(user);
+                await _importService.ImportApolloImportOwners(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -190,6 +192,24 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 await _importService.ImportNZPIServicePreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApolloImportPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportApolloServicePreRenewData(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -821,8 +841,50 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _organisationService.DeveloperTool();
+            await _developerToolService.CreateMarinas();
             return Redirect("~/Home/Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateUser()
+        {
+            UserViewModel userViewModel = new UserViewModel();
+            return View(userViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCreateUser(IFormCollection form)
+        {
+            var user = await _userService.GetUserByEmail(form["UserEmail"]);
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (user != null)
+            {
+                JsonObjects.Add("User", user);
+                JsonObjects.Add("Organisation", user.PrimaryOrganisation);
+                var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);                
+            }
+            return NoContent();
+        }        
+
+        [HttpPost]
+        public async Task<IActionResult> PostCreateUser(IFormCollection form)
+        {
+            var jsonUser = (User)await _serializerationService.GetDeserializedObject(typeof(User), form);
+            var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), form);
+            var user = await _userService.GetUserByEmail(form["User.Email"]);
+            var PrimaryOrganisation = user.PrimaryOrganisation;
+            user = _mapper.Map(jsonUser, user);            
+            PrimaryOrganisation = _mapper.Map(jsonOrganisation, PrimaryOrganisation);
+            user.SetPrimaryOrganisation(PrimaryOrganisation);
+            await _userService.Update(user);
+            var deUser = new IdentityUser
+            {
+                UserName = user.UserName,
+                Email = user.Email
+            };
+            await _userManager.CreateAsync(deUser, "defaultPassword");
+            return NoContent();
         }
     }
 }

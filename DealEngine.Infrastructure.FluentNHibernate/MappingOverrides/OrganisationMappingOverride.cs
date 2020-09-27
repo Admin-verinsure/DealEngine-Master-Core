@@ -24,4 +24,18 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         }
     }
 
+    public class MarinaMappingOverride : IAutoMappingOverride<MarinaUnit>
+    {
+        public void Override(AutoMapping<MarinaUnit> mapping)
+        {
+            mapping.References(p => p.WaterLocation).Not.LazyLoad();
+        }
+    }
+    public class InterestedPartyMappingOverride : IAutoMappingOverride<InterestedPartyUnit>
+    {
+        public void Override(AutoMapping<InterestedPartyUnit> mapping)
+        {
+            mapping.References(p => p.Location).Not.LazyLoad();
+        }
+    }
 }

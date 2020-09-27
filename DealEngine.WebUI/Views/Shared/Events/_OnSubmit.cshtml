@@ -156,25 +156,26 @@
                 form.classList.remove("needs-validation");
                 form.classList.add("was-validated");
             }
-            UnitValidationOnSubmit();         
+            UnitValidationOnSubmit(Programme);         
             LocationValidationOnSubmit();
         }
     }
 
     function LocationValidationOnSubmit() {
         var location = document.getElementById("tblLocation");
-        if (location.rows[1].className == "no-records-found") {
-            event.preventDefault();
-            event.stopPropagation();
-            window.alert("Please complete Location section ");
-            $("[id='Location']").trigger("click");
-            $("#more").trigger("click");
-            throw "Location Missing";
+        if (location != null) {
+            if (location.rows[1].className == "no-records-found") {
+                event.preventDefault();
+                event.stopPropagation();
+                window.alert("Please complete Location section ");
+                $("[id='Location']").trigger("click");
+                $("#more").trigger("click");
+                throw "Location Missing";
+            }
         }
-        debugger;
     }
 
-    function UnitValidationOnSubmit() {
+    function UnitValidationOnSubmit(Programme) {
         var Unit = document.getElementsByName("Unit");
         if (Unit != null) {
             if (Unit.length > 0) {
@@ -202,27 +203,51 @@
                             throw "no principal selected";
                         }
                     }
-                    var TradingName = document.getElementById("NoTradingName");
-                    if (TradingName != null) {
-                        if (TradingName.value === "True") {
+
+                    if (Programme != "Apollo Programme") {
+                        var TradingName = document.getElementById("NoTradingName");
+                        if (TradingName != null) {
+                            if (TradingName.value === "True") {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                $("#more").trigger("click");
+                                window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                                $("[id='Insured Details / Named Parties']").trigger("click");
+                                throw "no trading name";
+                            }
+                        }
+                    }
+                    
+                    var DateofIncorportation = document.getElementById("NoDateofIncorportation");
+                    if (DateofIncorportation != null) {
+                        if (DateofIncorportation.value === "True") {
                             event.preventDefault();
                             event.stopPropagation();
                             $("#more").trigger("click");
-                            window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                            window.alert("Please add 'Date of Incorportation' for 'Owner' in Named Parties");
                             $("[id='Insured Details / Named Parties']").trigger("click");
-                            throw "no trading name";
+                            throw "no Date of Incorportation";
                         }
                     }
                 }
             }
-        }        
+        }    
+        var InvalidEmail = document.getElementById("ValidBackEndEmail");
+        if (InvalidEmail != null) {
+            event.preventDefault();
+            event.stopPropagation();
+            $("#more").trigger("click");
+            $("[id='Insured Details / Named Parties']").trigger("click");
+            window.alert("Please update email for: " + InvalidEmail.value);
+            throw "InvalidEmail Named Parties";
+        }
     }
 
     function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
         var RemoveAdvisors = false;
         var form = document.getElementById(FormId);
-         var ErrorMessage = "";
+        var ErrorMessage = "";
 
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {

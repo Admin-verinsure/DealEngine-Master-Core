@@ -206,6 +206,7 @@ namespace DealEngine.Services.Impl
             email.WithSubject(PremiumAdviceEmailsubject);
             email.WithBody(PremiumAdviceEmailbody);
             email.UseHtmlBody(true);
+            //email.ReplyTo();
             if (documents != null)
             {
                 var documentsList = await ToAttachments(documents);
@@ -269,6 +270,7 @@ namespace DealEngine.Services.Impl
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
             email.ReplyTo(sender.Email);
+            email.CC(sender.Email);
             email.WithSubject(systememailsubject);
             email.WithBody(systememailbody);
             email.UseHtmlBody(true);          
@@ -929,6 +931,8 @@ namespace DealEngine.Services.Impl
 			}
             else if (document.ContentType == MediaTypeNames.Application.Pdf)
             {
+
+
                 var path = document.Path;
 
                 try
@@ -955,9 +959,37 @@ namespace DealEngine.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-				attachments.Add(await ToAttachment(document));
-			return attachments;
+                if (!document.Name.Contains("Invoice"))
+                {
+                    attachments.Add(await ToAttachment(document));
+                }
+                else
+                {
+                    attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
+                }
+
+            return attachments;
 		}
+
+
+        public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
+            string subject = "";
+            if (string.IsNullOrWhiteSpace(clientProgramme.EGlobalClientNumber))
+            {
+                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId;
+            }
+            else
+            {
+                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId + " (EGlobal No: " + clientProgramme.EGlobalClientNumber + ")";
+            }
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(clientProgramme.Owner.Name);
+            email.Send();
+        }
 
 
         #region Merge Field Library
@@ -990,7 +1022,26 @@ namespace DealEngine.Services.Impl
             }
             if (clientAgreement != null)
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                if (clientAgreement.Product.Id == new Guid("e0216c0d-cc46-4680-a1c0-be1498c92b44")) //Apollo CL Base vs Ultra
+                {
+
+                    if (clientAgreement.Product.IsOptionalProduct &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == clientAgreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                        clientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1")
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURLAlternative));
+                    }
+                    else
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                    }
+
+                } else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[WordingDownloadURL]]", clientAgreement.Product.WordingDownloadURL));
+                }
                 mergeFields.Add(new KeyValuePair<string, string>("[[ProductName]]", clientAgreement.Product.Name));
             }
                         

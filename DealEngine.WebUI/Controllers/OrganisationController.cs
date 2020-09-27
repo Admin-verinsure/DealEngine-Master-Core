@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DealEngine.Services.Interfaces;
+﻿using AutoMapper;
 using DealEngine.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
+using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -23,6 +24,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<OrganisationController> _logger;        
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
+        IMapper _mapper;
 
         public OrganisationController(
             IProgrammeService programmeService,
@@ -32,10 +34,12 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientInformationService,
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
-            IUserService userRepository
+            IUserService userRepository,
+            IMapper mapper
             )
             : base (userRepository)
         {
+            _mapper = mapper;
             _programmeService = programmeService;
             _milestoneService = milestoneService;
             _serialiserService = serialiserService;
@@ -49,27 +53,39 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ValidateOrganisationEmail(IFormCollection collection)
         {
             var email = collection["OrganisationViewModel.User.Email"].ToString();
+            bool ValidBackEndEmail;
             Guid.TryParse(collection["OrganisationViewModel.Organisation.Id"].ToString(), out Guid OrganisationId);
             Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
 
-            if(organisation != null)
+            
+            try
             {
-                if (OrganisationId == Guid.Empty)
+                var addr = new System.Net.Mail.MailAddress(email);
+                ValidBackEndEmail = addr.Address == email;
+
+                if (organisation != null)
                 {
-                    return Json(true);
+                    if (OrganisationId == Guid.Empty)
+                    {
+                        return Json(true);
+                    }
+                    if (sheet.Owner.Id == OrganisationId)
+                    {
+                        return Json(false);
+                    }
+                    if (sheet.Organisation.Contains(organisation))
+                    {
+                        return Json(false);
+                    }
                 }
-                if(sheet.Owner.Id == OrganisationId)
-                {
-                    return Json(false);
-                }
-                if (sheet.Organisation.Contains(organisation))
-                {                    
-                    return Json(false);
-                }
+                return Json(false);
             }
-            return Json(false);
+            catch
+            {
+                return Json(true);
+            }
         }
 
         [HttpPost]
@@ -133,12 +149,176 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> ManageOrganisations()
-        {            
-            return View("ManageOrganisations");
+        public async Task<IActionResult> ManageOrganisations(Guid Id)
+        {
+            Programme programme = await _programmeService.GetProgrammeById(Id);
+            OrganisationViewModel model = new OrganisationViewModel(null, null);
+            var marinas = await _organisationService.GetAllMarinas();
+            foreach(var mar in marinas)
+            {
+                model.Organisations.Add(mar);
+            }
+            
+            var institutes = await _organisationService.GetFinancialInstitutes();
+            foreach (var inst in institutes)
+            {
+                model.Organisations.Add(inst);
+            }
+            return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetMarina(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Id"]));
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (organisation != null)
+            {
+                var unit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                JsonObjects.Add("Marina", organisation);
+                JsonObjects.Add("WaterLocation", unit.WaterLocation);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            return NoContent();
+        }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> PostMarina(IFormCollection model)
+        {
+            await _organisationService.PostMarina(model);
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetInstitute(IFormCollection model)
+        {
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(model["Id"]));
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            if (organisation != null)
+            {
+                var unit = (InterestedPartyUnit)organisation.OrganisationalUnits.FirstOrDefault();
+                JsonObjects.Add("Institute", organisation);
+                JsonObjects.Add("Location", unit.Location);
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostInstitute(IFormCollection model)
+        {
+            await _organisationService.PostInstitute(model); 
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationSkipperAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["Email"].ToString();
+                string LastName = collection["LastName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, "Person - Individual");
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, "Skipper");
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, "Person - Individual");
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, "Skipper", "Person - Individual", null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = FirstName + " " + LastName
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                Random random = new Random();
+                string UserName = FirstName.Replace(" ", string.Empty)
+                    + "_"
+                    + LastName.Replace(" ", string.Empty)
+                    + random.Next(1000);
+
+                User user = new User(currentUser, UserName)
+                {
+                    FirstName = collection["FirstName"].ToString(),
+                    LastName = collection["LastName"].ToString(),
+                    Email = collection["Email"].ToString(),
+                    FullName = FirstName + " " + LastName,
+                    Id = Guid.NewGuid()
+                };
+                user.SetPrimaryOrganisation(organisation);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationInterestedPartyAPI(IFormCollection collection)
+        {
+            User currentUser = null;
+            try
+            {
+                string FirstName = collection["FirstName"].ToString();
+                string Email = collection["OrganisationEmail"].ToString();
+                string Name = collection["OrganisationName"].ToString();
+                string InsuranceAttribute = collection["InsuranceAttribute"].ToString();
+                string OrganisationType = collection["OrganisationTypeName"].ToString();
+                currentUser = await CurrentUser();
+                Guid.TryParse(collection["AnswerSheetId"], out Guid SheetId);
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
+                OrganisationType organisationType = new OrganisationType(currentUser, OrganisationType);
+                InsuranceAttribute insuranceAttribute = new InsuranceAttribute(currentUser, InsuranceAttribute);
+                OrganisationalUnit organisationalUnit = new OrganisationalUnit(currentUser, OrganisationType);
+                InterestedPartyUnit interestedPartyUnit = new InterestedPartyUnit(currentUser, InsuranceAttribute, OrganisationType, null);
+                Organisation organisation = new Organisation(currentUser, Guid.NewGuid())
+                {
+                    OrganisationType = organisationType,
+                    Email = Email,
+                    Name = Name
+                };
+
+                organisation.OrganisationalUnits.Add(organisationalUnit);
+                organisation.OrganisationalUnits.Add(interestedPartyUnit);
+                organisation.InsuranceAttributes.Add(insuranceAttribute);
+
+                if (!sheet.Organisation.Contains(organisation))
+                {
+                    sheet.Organisation.Add(organisation);
+                }
+
+                await _clientInformationService.UpdateInformation(sheet);
+
+                return Json(organisation);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)

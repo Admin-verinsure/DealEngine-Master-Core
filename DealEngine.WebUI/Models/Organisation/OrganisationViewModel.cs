@@ -14,22 +14,32 @@ namespace DealEngine.WebUI.Models
         public OrganisationViewModel(ClientInformationSheet ClientInformationSheet, User OrgUser)
         {
             User = new User(null, Guid.NewGuid());
-            Organisations = new List<Domain.Entities.Organisation>();            
+            Organisations = new List<Domain.Entities.Organisation>();
+            PublicOrganisations = new List<Domain.Entities.Organisation>();
             OrganisationTypes = GetOrganisationTypes();
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme")
+                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme")
                 {
-                    if (Programme.Name == "NZFSG Programme") { InsuranceAttributes = GetAdvisorTypes1(); } else { InsuranceAttributes = GetAdvisorTypes2(); }
-                    
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
-                    
+                    if (Programme.Name == "NZFSG Programme") 
+                    { 
+                        InsuranceAttributes = GetAdvisorTypes1(); 
+                    } 
+                    else if(Programme.Name == "TripleA Programme")
+                    {
+                        InsuranceAttributes = GetAdvisorTypes2(); 
+                    } 
+                    else { 
+                        InsuranceAttributes = GetAdvisorTypes3();
+                    }                    
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
+                    HasAssociationOptions = GetAssociationOptions();
                 }
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
                 {
@@ -65,6 +75,13 @@ namespace DealEngine.WebUI.Models
                     HasContractedInsuredOptions = GetBooleanSelectOptions();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                 }
+                if(Programme.Name == "First Mate Cover")
+                {
+                    InterestedPartyUnit = new InterestedPartyUnit(null, null, null, null);
+                    InsuranceAttributes = GetMarshTypes();
+                    InterestedPartyOptions = GetInterestedPartyOptions();
+                    OwnershipOptions = GetOwnershipOptions();
+                }
 
                 Organisation = ClientInformationSheet.Owner;
                 //if (Organisations.Any(o => o.Id != (ClientInformationSheet.Owner.Id)))
@@ -80,6 +97,130 @@ namespace DealEngine.WebUI.Models
             {
                 User = OrgUser;
             }
+        }
+
+        private IList<SelectListItem> GetAssociationOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "IFA",
+                        Value = "IFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "LBA/TNP",
+                        Value = "LBA/TNP"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "SIFA",
+                        Value = "SIFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "NZMBA",
+                        Value = "NZMBA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "IBANZ",
+                        Value = "IBANZ"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "CFA",
+                        Value = "CFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "BIG",
+                        Value = "BIG"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "None of the above - Apollo adviser only",
+                        Value = "None of the above - Apollo adviser only"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Other",
+                        Value = "Other"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetOwnershipOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Interested Party",
+                        Value = "Interested Party"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetInterestedPartyOptions()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Interested Party",
+                        Value = "Interested Party"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetMarshTypes()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Skipper",
+                        Value = "Skipper"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial",
+                        Value = "Financial"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Co Owner",
+                        Value = "Co Owner"
+                    }
+                };
+            return _Types;
         }
         private IList<SelectListItem> GetContractorTypes()
         {
@@ -349,6 +490,22 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Partnership",
                         Value = "Partnership"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Incorporated Society",
+                        Value = "Incorporated Society"
+                    }
+                    ,
+                    new SelectListItem
+                    {
+                        Text = "Government",
+                        Value = "Government"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Financial Institution",
+                        Value = "Financial Institution"
                     }
                 };
             return _Types;
@@ -441,6 +598,34 @@ namespace DealEngine.WebUI.Models
             return _Types;
 
         }
+        private IList<SelectListItem> GetAdvisorTypes3()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                new SelectListItem
+                {
+                    Text = "-- Select --",
+                    Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Advisor",
+                    Value = "Advisor"
+                },
+                new SelectListItem
+                {
+                    Text = "Mentored Advisor",
+                    Value = "Mentored Advisor"
+                },
+                new SelectListItem
+                {
+                    Text = "Other Consulting Business",
+                    Value = "Other Consulting Business"
+                }
+            };
+            return _Types;
+
+        }
         [JsonIgnore]
         public Domain.Entities.Programme Programme { get; set; }
         public Guid ID { get; set; }
@@ -461,6 +646,8 @@ namespace DealEngine.WebUI.Models
         public IList<Domain.Entities.Organisation> Organisations { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasPrincipalOptions { get; set; }
+        [JsonIgnore]
+        public IList<SelectListItem> HasAssociationOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasRegisteredLicensedOptions { get; set; }
         [JsonIgnore]
@@ -495,11 +682,15 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasNZPIAMemberOptions { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> HasContractedInsuredOptions { get; set; }
+        public IList<SelectListItem> InterestedPartyOptions { get; set; }
+        public IList<SelectListItem> OwnershipOptions { get; set; }
         public AdvisorUnit AdvisorUnit { get; set; }
         public PersonnelUnit PersonnelUnit { get; set; }
         public PrincipalUnit PrincipalUnit { get; set; }
+        public InterestedPartyUnit InterestedPartyUnit { get; set; }
         public PlannerUnit PlannerUnit { get; set; }
-
+        public MarinaUnit MarinaUnit { get; set; }
+        public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
     }
 }
 

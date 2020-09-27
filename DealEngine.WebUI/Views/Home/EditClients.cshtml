@@ -1,13 +1,14 @@
 ﻿@model EditClientsViewModel
 
 <div class="container">
-    <form method="POST" action="~/Home/EditClient" novalidate>
+    <form method="POST" action="~/Services/PostClient" novalidate>
         <div class="card">
             <div class="card-header">
                 <div class=" form-group">
                     <label>
                         Select Client
-                        <select class="form-control b" Id="OrganisationId" onchange="GetOwner()">
+
+                        <select class="form-control b" Id="OrganisationId">
                             <option selected="selected" value="">-- Select --</option>
                             @foreach (var client in Model.Owners)
                             {
@@ -16,18 +17,37 @@
                         </select>
                     </label>
                 </div>
+                <div class="form-group">                    
+                    <button class="btn-success btn btn-xs" type="button" onclick="GetOwner()">Go</button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <a class="btn btn-primary btn-xs" href="javascript:;" onclick="this.href='/Home/GetClientDetails?OwnerId=' + document.getElementById('ClientOwnerId').value ">Edit Users </a>
-                    @Html.HiddenFor(Model => Model.Organisation.Id)
+                    @Html.HiddenFor(Model => Model.Organisation.Id, new { @id = "Organisation.Id" })
+                    @Html.HiddenFor(Model => Model.ClientProgramme.Id, new { @id = "ClientProgramme.Id" })
                     <div class="form-group col-md-6">
+
                         <div class="form-group">
-                            @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id="Organisation.Name", @required="" })
+                            <label class="label">Name</label>
+                            @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @required = "" })
                         </div>
+
                         <div class="form-group">
-                            @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id="Organisation.Email", @required = "" })
+                            <label class="label">Email</label>
+                            @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Organisation.Email", @required = "" })
                         </div>
+                        @if (Model.Programme.Name == "Apollo Programme")
+                        {
+                            <div class="form-group">
+                                <label class="label">EGlobal Number</label>
+                                @Html.TextBoxFor(m => m.ClientProgramme.EGlobalClientNumber, new { @class = "form-control", @id = "ClientProgramme.EGlobalClientNumber", @required = "" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label">Tier</label>
+                                @Html.DropDownListFor(m => m.ClientProgramme.Tier, Model.Tiers, new { @class = "form-control b", @id = "ClientProgramme.Tier", @required = "", @size = 1 })
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -37,26 +57,37 @@
         </div>
     </form>
 </div>
+<div class="modal overlay" id="loadModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p><img src="/img/loading.gif" /> Loading. Please wait...</p>
+            </div>
+        </div>
+    </div>
+</div>
 @section pagespecific {
     <script type="text/javascript">
-
         function GetOwner() {
+            debugger;
             var organisationId = document.getElementById('OrganisationId');
-            var Id = organisationId.options[organisationId.selectedIndex].value;
+            var id = organisationId.options[organisationId.selectedIndex].value;
+            $("#loadModal").show();
             $.ajax({
                 type: 'Post',
-                url: '@Url.Action("GetOrganisation", "Organisation")',
-                data: { ID: Id }
+                url: '@Url.Action("GetClient", "Services")',
+                data: { Id: id }
             })
-                .done(function (data) {
-                    var OutPut = JSON.parse(data);
-                    PopulateOrganisationView("", OutPut);
-
-                })
-                .fail(function (jqXhr, textStatus, errorThrown) {
-                    debugger;
-                    console.log(errorThrown);
-                });
+            .done(function (data) {
+                var OutPut = JSON.parse(data);
+                PopulateView(OutPut);
+                $("#loadModal").hide();         
+            })
+            .fail(function (jqXhr, textStatus, errorThrown) {
+                debugger;
+                console.log(errorThrown);
+                $("#loadModal").hide();         
+            });
 
         }
 

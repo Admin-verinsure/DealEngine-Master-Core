@@ -68,7 +68,7 @@
                                     </li>
 
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                  (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
                                         <li class="nav-item">
                                             <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind Agreement</a>
@@ -91,8 +91,8 @@
                                     </li>
                                 }
                                 @*<li class="nav-item">
-                                        <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> EditAdvisor test</a>
-                                    </li>*@
+                <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> EditAdvisor test</a>
+            </li>*@
                                 @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">
@@ -147,18 +147,42 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                         </li>
                                     }
 
+                                    @*@if (item.ProgrammeName == "Apollo Programme")
+                {
+                   <li class="nav-item">
+                       <a href="~/File/covertdoctohtml" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Render Apollo Invoice</a>
+                   </li>
+                }*@
 
                                 }
 
-                                @if (ViewBag.IsPDFgenerated == "True")
+                                @if (ViewBag.IsPDFgenerated == "True" && ViewBag.Ispdfenable == "True")
                                 {
-                                    <li class="nav-item">
-                                        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
-                                            <i class="fa fa-edit"></i> Send FullProposal Report
-                                        </a>
-                                    </li>
-
+                                    @if (ViewBag.IsReportSend == "True")
+                                    {
+                                        <li class="nav-item" id="SendReport">
+                                            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
+                                                <i class="fa fa-edit"></i> ReSend FullProposal Report
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item" id="ReSendReport">
+                                            <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
+                                                <i class="fa fa-edit"></i> Send FullProposal Report
+                                            </a>
+                                        </li>
+                                    }
                                 }
+
+
+                                <li class="nav-item" id="SendReport">
+                                    <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendInvoice?id=@item.InformationSheetId&sendUser=@true">
+                                        <i class="fa fa-edit"></i> Send Apollo Invoice
+                                    </a>
+                                </li>
+
 
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
@@ -273,6 +297,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@false"><i class="fa fa-edit"></i> Send Documents To Insured</a>
                                 <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments?id=@item.InformationSheetId&sendUser=@true"><i class="fa fa-edit"></i> Send Documents To Me</a>
                             }
+
                         }
                         <!-- loop through process once only!! -->
                         break;

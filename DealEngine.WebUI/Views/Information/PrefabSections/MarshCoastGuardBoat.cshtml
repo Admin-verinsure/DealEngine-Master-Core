@@ -1,80 +1,66 @@
-﻿@*@model DealEngine.WebUI.Models.InformationViewModel
-
-@using System.Linq
+﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 <div class="padding-10">
     <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
         <div id="Boattabs">
-
             <ul id="tab" class="nav nav-tabs">
                 <li class="nav nav-tabs active"> <a href="#boatTabs1"> List All </a> </li>
                 <li class="nav nav-tabs EditButton"> <a href="#boatTabs2"> Edit </a> </li>
                 <li class="nav nav-tabs AddButton"> <a href="#boatTabs3"> Add </a> </li>
                 <li class="nav nav-tabs BoatRemoved"> <a href="#boatTabs4"> List Removed </a> </li>
-
             </ul>
-
             <div id="boatTabs1" class="tab-content">
-
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-
                             <script type="text/javascript">
                                 $(window).on('load',function () {
-                              $("#tblBoat").jqGrid({
-                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
-                                datatype: "xml",
-                                  mytpe: "GET",
-                                async: true,
-                                colNames: ["Edit Vessel", "Boat Name", "Year", "Sum Insured", "Delete Vessel"],
-                                colModel: [
-
-                                    {
-                                        name: "edit", template: "actions", width: 90, align: 'center', search: false, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> </i></button>')
+                                    $("#tblBoat").jqGrid({
+                                    url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
+                                    datatype: "xml",
+                                        mytpe: "GET",
+                                    async: true,
+                                    colNames: ["Edit Vessel", "Boat Name", "Year", "Sum Insured", "Delete Vessel"],
+                                    colModel: [
+                                        {
+                                            name: "edit", template: "actions", width: 90, align: 'center', search: false, editable: true, formatter: function (cellvalue, options, rowobject) {
+                                                return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> </i></button>')
+                                            }
+                                        },
+                                        { name: "BoatName", align: 'center', key: 'true', editable: true },
+                                        { name: "YearOfManufacture", align: 'center', editable: true },
+                                        { name: "MaxSumInsured", align: 'center', editable: true },
+                                        {
+                                            name: "update", align: 'center', search: false,width:90, editable: true, formatter: function (cellvalue, options, rowobject) {
+                                                return ('<button id="trash" onclick="RemoveBoat(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\',\'@Model.ClientInformationSheet.Status\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
+                                            }
                                         }
-                                    },
-
-                                    { name: "BoatName", align: 'center', key: 'true', editable: true },
-
-                                    { name: "YearOfManufacture", align: 'center', editable: true },
-                                    { name: "MaxSumInsured", align: 'center', editable: true },
-
-                                    {
-                                        name: "update", align: 'center', search: false,width:90, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button id="trash" onclick="RemoveBoat(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\',\'@Model.ClientInformationSheet.Status\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
-                                        }
+                                    ],
+                                    autowidth: true,
+                                    pager: "#pagerBoat",
+                                    rowNum: 10,
+                                    rowList: [10, 20, 30],
+                                    sortname: "BoatName",
+                                    sortorder: "desc",
+                                    viewrecords: true,
+                                    gridview: true,
+                                    autoencode: true,
+                                    onSelectRow: function (rowid) {
+                                        var grid = $('#tblBoat');
+                                        var myCellData = grid.jqGrid('getCell', rowid, 'column_name');
+                                        SetCurrentTab("boatTabs-2");
                                     }
-                                ],
-                                autowidth: true,
-                                pager: "#pagerBoat",
-                                rowNum: 10,
-                                rowList: [10, 20, 30],
-                                sortname: "BoatName",
-                                sortorder: "desc",
-                                viewrecords: true,
-                                gridview: true,
-                                autoencode: true,
-                                onSelectRow: function (rowid) {
-                                    var grid = $('#tblBoat');
-                                    var myCellData = grid.jqGrid('getCell', rowid, 'column_name');
-                                    SetCurrentTab("boatTabs-2");
-
-                                }
-
-
+                                });
+                                $("#tblBoat").jqGrid('navGrid',
+                                    '#pagerBoat',
+                                    { edit: false, add: false, del: false },
+                                    { height: 280, reloadAfterSubmit: false },
+                                    { height: 280, reloadAfterSubmit: false },
+                                    { reloadAfterSubmit: false },
+                                    {search: true},
+                                    { sopt: ['eq', 'bw', 'cn'] }
+                                );
                             });
-                            $("#tblBoat").jqGrid('navGrid',
-                                '#pagerBoat',
-                                { edit: false, add: false, del: false },
-                                { height: 280, reloadAfterSubmit: false },
-                                { height: 280, reloadAfterSubmit: false },
-                                { reloadAfterSubmit: false },
-                                {search: true},
-                                { sopt: ['eq', 'bw', 'cn'] }
-                            );
-                        });
                             </script>
                             <table id="tblBoat"><tr><td></td></tr></table>
                             <div id="pagerBoat"></div>
@@ -83,29 +69,22 @@
                 </fieldset>
             </div>
             <div id="boatTabs2" class="tab-content">
-
                 <fieldset id="fieldset">
                     <form data-toggle="validator" role="form" id="boatForm">
                         <input id="BoatId" class="b" name="BoatId" type="hidden">
                         <input id="openModal" class="b" name="openModal" type="hidden">
-                        <div class="row ">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <div class="row">
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Name</label>
-
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="BoatName" name="BoatName" placeholder="Vessel Name" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateBoatName"></p>
-
                             </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Type</label>
-
                                 <label class="input form-group">
                                     <select onchange="vesselType1Selected()" class="form-control b" id="BoatType1" name="BoatType1" title="" required>
                                         <option selected="selected" value="">-- Select here --</option>
@@ -116,259 +95,186 @@
                                         <option value="Jetboat">Jetboat</option>
                                         <option value="Other">Other Personal Watercraft</option>
                                     </select>
-
                                 </label>
                                 <p class="validationContainer" id="validateBoatType"></p>
-
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel status when not in use</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="vesselType2Selected()" class="form-control b" id="BoatType2" name="BoatType2" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Roadtrailer">Road Trailer</option>
-                                                <option value="Stored">Stored</option>
-                                                <option id="BoatType2Berthed" value="Berthed">Berthed</option>
-                                                <option id="BoatType2Moored" value="Moored">Moored</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateBoatType2"></p>
-
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
-                                    </section>
-
-                                </div>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Vessel Skipper</label>
-
-                                <div class="row">
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @foreach (var boper in Model.OrganisationViewModel.Organisations)
-                                                {
-                                                    <option value="@boper.Id">@boper.Name</option>
-                                                }
-                                                <option value="add">Add Skipper</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateBoatOperator"></p>
-
-                                    </div>
-
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Please enter the details for the primary skipper of the vessel"></i>
-                                    </section>
-                                </div>
-                            </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="RegistrationSection" style="display:none">
-
-                                <label class="label required">Personal Watercraft Registration Area</label>
-
                                 <label class="input form-group">
-                                    <select class="form-control b" id="VesselArea" name="VesselArea" title="" required>
-                                        <option selected="selected" value="">-- Select here --</option>
-                                        <option value="Auckland">Auckland</option>
-                                        <option value="Bay Of Plenty">Bay Of Plenty</option>
-                                        <option value="Gisborne">Gisborne</option>
-                                        <option id="Hawke's Bay">Hawke's Bay</option>
-                                        <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
-                                        <option value="NorthLand">Northland</option>
-                                        <option value="Taranaki">Taranaki</option>
-                                        <option value="Waikato">Waikato</option>
-                                        <option id="Wellington">Wellington</option>
-                                        <option value="Canterbury">Canterbury</option>
-                                        <option value="Central Otag">Central Otago</option>
-                                        <option value="Grey">Grey</option>
-                                        <option id="Marlborough">Marlborough</option>
-                                        <option value="Nelson">Nelson</option>
-                                        <option value="Otago">Otago</option>
-                                        <option value="Queenstown Lakes">Queenstown Lakes</option>
-                                        <option id="Southland">Southland</option>
-                                        <option value="Tasman">Tasman</option>
-                                        <option value="West Coast">West Coast</option>
+                                    <select onchange="vesselType2Selected()" class="form-control b" id="BoatType2" name="BoatType2" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="Roadtrailer">Road Trailer</option>
+                                        <option value="Stored">Stored</option>
+                                        <option id="BoatType2Berthed" value="Berthed">Berthed</option>
+                                        <option id="BoatType2Moored" value="Moored">Moored</option>
                                     </select>
-
                                 </label>
-                                <p class="validationContainer" id="validateVesselArea"></p>
-
+                                <p class="validationContainer" id="validateBoatType2"></p>
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="aucklandRegoSection">
-                                <label class="label ">Personal Watercraft (PWC) Registration</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-
-                                        <label class="input form-group">
-                                            <i></i>
-                                            <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
-                                        </label>
-                                        <p class="validationContainer" id="validateAucklandRegistration"></p>
-
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-html="true"
-                                           data-toggle="popover"
-                                           data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
-                                    </section>
-                                </div>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
                             </section>
-
-
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                <label class="label required">Vessel Skipper</label>
+                                <label class="input form-group">
+                                    <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
+                                        {
+                                            <option value="@skipper.Id">@skipper.Name</option>
+                                        }
+                                        <option value="add">Add Skipper</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="validateBoatOperator"></p>
+                            </section>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="Please enter the details for the primary skipper of the vessel"></i>
+                            </section>
+                            <div id="RegistrationSection" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="display:none;">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Personal Watercraft Registration Area</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="VesselArea" name="VesselArea" title="" required>
+                                            <option selected="selected" value="">-- Select here --</option>
+                                            <option value="Auckland">Auckland</option>
+                                            <option value="Bay Of Plenty">Bay Of Plenty</option>
+                                            <option value="Gisborne">Gisborne</option>
+                                            <option id="Hawke's Bay">Hawke's Bay</option>
+                                            <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
+                                            <option value="NorthLand">Northland</option>
+                                            <option value="Taranaki">Taranaki</option>
+                                            <option value="Waikato">Waikato</option>
+                                            <option id="Wellington">Wellington</option>
+                                            <option value="Canterbury">Canterbury</option>
+                                            <option value="Central Otag">Central Otago</option>
+                                            <option value="Grey">Grey</option>
+                                            <option id="Marlborough">Marlborough</option>
+                                            <option value="Nelson">Nelson</option>
+                                            <option value="Otago">Otago</option>
+                                            <option value="Queenstown Lakes">Queenstown Lakes</option>
+                                            <option id="Southland">Southland</option>
+                                            <option value="Tasman">Tasman</option>
+                                            <option value="West Coast">West Coast</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateVesselArea"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="aucklandRegoSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label ">Personal Watercraft (PWC) Registration</label>
+                                    <label class="input form-group">
+                                        <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
+                                    </label>
+                                    <p class="validationContainer" id="validateAucklandRegistration"></p>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                        class="fa fa-question-circle cgpopover"
+                                        data-placement="bottom"
+                                        data-container="body"
+                                        data-html="true"
+                                        data-toggle="popover"
+                                        data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
+                                </section>
+                            </div>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Is the vessel Professionally built?</label>
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select class="form-control b" id="BuiltProfessionally" name="BuiltProfessionally" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="True">Yes</option>
-                                                <option value="False">No</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateBuiltProfessionally"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
-                                    </section>
-
-                                </div>
+                                <label class="input form-group">
+                                    <select class="form-control b" id="BuiltProfessionally" name="BuiltProfessionally" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="True">Yes</option>
+                                        <option value="False">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="validateBuiltProfessionally"></p>
                             </section>
-
-
-
-                            <section class="col col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                    class="fa fa-question-circle cgpopover"
+                                    data-placement="bottom"
+                                    data-container="body"
+                                    data-toggle="popover"
+                                    data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
+                            </section>
+                            <section class="col col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Year of Manufacture</label>
-
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="YearOfManufacture" id="YearOfManufacture" name="YearOfManufacture" placeholder="Vessel Year of Manufacture" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateYearOfManufacture"></p>
-
                             </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Make</label>
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="BoatMake" id="BoatMake" name="BoatMake" placeholder="Vessel Make" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateBoatMake"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required form-group">Vessel Model</label>
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="BoatModel" id="BoatModel" name="BoatModel" placeholder="Vessel Model" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateBoatModel"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConstructSection">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="HullConstructSection">
                                 <label class="label required">Construction Type</label>
-
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="hideShowHullConstructionOther()" class="form-control b" id="HullConstruction" name="HullConstruction" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Aluminium">Aluminium</option>
-                                                <option value="Steel">Steel</option>
-                                                <option value="Fibreglass">Fibreglass</option>
-                                                <option value="Carbon">Carbon fibre</option>
-                                                <option id="HullConstructionRigidHi" value="RigidHI">Rigid Hull Inflatable</option>
-                                                <option id="HullConstructionWood" value="Wood">Wood/ timber</option>
-                                                <option id="HullConstructionCement" value="Cement">Ferro cement/ cement</option>
-                                                <option id="HullConstructionOther" value="Other">Other</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateHullConstruction"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <b id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="please select the primary construction material of the hull of your vessel"></b>
-                                    </section>
-                                </div>
-
-                            </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="HullConstructOtherSection">
-                                <label class="label required">Other Construction Type</label>
-                                <label class="input ">
-                                    <i></i>
-                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="otherhullconstruction" id="OtherConstructionType" name="otherhullconstruction" placeholder="Other Construction Type" required>
+                                <label class="input form-group">
+                                    <select onchange="hideShowHullConstructionOther()" class="form-control b" id="HullConstruction" name="HullConstruction" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="Aluminium">Aluminium</option>
+                                        <option value="Steel">Steel</option>
+                                        <option value="Fibreglass">Fibreglass</option>
+                                        <option value="Carbon">Carbon fibre</option>
+                                        <option id="HullConstructionRigidHi" value="RigidHI">Rigid Hull Inflatable</option>
+                                        <option id="HullConstructionWood" value="Wood">Wood/ timber</option>
+                                        <option id="HullConstructionCement" value="Cement">Ferro cement/ cement</option>
+                                        <option id="HullConstructionOther" value="Other">Other</option>
+                                    </select>
                                 </label>
-                                <p class="validationContainer" id="validateHullConstructOtherSection"></p>
-
                             </section>
-                        </div>
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
+                            <p class="validationContainer" id="validateHullConstruction"></p>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <b id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="please select the primary construction material of the hull of your vessel"></b>
+                            </section>
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="HullConstructOtherSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10 ">
+                                    <label class="label required">Other Construction Type</label>
+                                    <label class="input ">
+                                        <i></i>
+                                        <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="otherhullconstruction" id="OtherConstructionType" name="otherhullconstruction" placeholder="Other Construction Type" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateHullConstructOtherSection"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="HullConfigSection">
                                 <label class="label required">Hull Configuration</label>
                                 <label class="input form-group">
                                     <select onchange="hideShowHullConfigurationOther()" class="form-control b" id="HullConfiguration" name="HullConfiguration" required>
@@ -380,22 +286,19 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateHullConfiguration"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="HullConfigurationOtherSection">
-                                <label class="label required">Other Hull Configuration</label>
-                                <label class="input ">
-                                    <i></i>
-                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="OtherHullConfiguration" id="OtherHullConfiguration" name="OtherHullConfiguration" placeholder="Other Hull Configuration" value="" required>
-                                </label>
-                                <p class="validationContainer" id="validateOtherHullConfiguration"></p>
-
-                            </section>
-                        </div>
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="HullConfigurationOtherSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Other Hull Configuration</label>
+                                    <label class="input">
+                                        <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="OtherHullConfiguration" id="OtherHullConfiguration" name="OtherHullConfiguration" placeholder="Other Hull Configuration" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateOtherHullConfiguration"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Motor Type</label>
                                 <label class="input form-group">
                                     <select onchange="updateExcess()" class="form-control b" id="MotorType" name="MotorType" required>
@@ -409,10 +312,9 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateMotorType"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="ModifiedMotorSection">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="ModifiedMotorSection">
                                 <label class="label required">Has the motor been modified?</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="ModifiedMotor" name="ModifiedMotor" required>
@@ -422,10 +324,9 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateModifiedMotor"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">What is the maximum rated speed of the vessel?</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="MaxRatedSpeed" name="MaxRatedSpeed" required>
@@ -436,74 +337,57 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateMaxRatedSpeed"></p>
-
                             </section>
-
-
-                        </div>
-
-                        <hr class="boatAccordianHairline" />
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="RiggingTypeSection">
-                                <label class="label required">Rigging Type</label>
-                                <label class="input form-group">
-                                    <select class="form-control b" id="RiggingType" name="RiggingType" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="StainlessSteelWire">Stainless Steel Wire</option>
-                                        <option value="Rod">Rod</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateRiggingType"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="MastTypeSection">
-                                <label class="label required">Mast Type</label>
-
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select class="form-control b" id="MastType" name="MastType" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Aluminium">Aluminium</option>
-                                                <option value="Steel">Steel</option>
-                                                <option value="Wooden">Wooden</option>
-                                                <option value="CarbonFibre">Carbon Fibre</option>
-                                                <option value="Other">Other</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateMastType"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="please select the primary construction material of the mast of your vessel"></i>
-                                    </section>
-
-                                </div>
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="RiggingTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Rigging Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="RiggingType" name="RiggingType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="StainlessSteelWire">Stainless Steel Wire</option>
+                                            <option value="Rod">Rod</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateRiggingType"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="MastTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Mast Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="MastType" name="MastType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="Aluminium">Aluminium</option>
+                                            <option value="Steel">Steel</option>
+                                            <option value="Wooden">Wooden</option>
+                                            <option value="CarbonFibre">Carbon Fibre</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateMastType"></p>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                        class="fa fa-question-circle cgpopover"
+                                        data-placement="bottom"
+                                        data-container="body"
+                                        data-toggle="popover"
+                                        data-content="please select the primary construction material of the mast of your vessel"></i>
+                                </section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">$ Vessel Insured Value (Please exclude trailer value)</label>
                                 <label class="input form-group">
-                                    <i></i>
                                     <input onchange="updateExcess()" class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="MaxSumInsured" id="MaxSumInsured" name="MaxSumInsured" placeholder="$ Vessel Insured Value" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateMaxSumInsured"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">$ Excess</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="excess" name="BoatQuoteExcessOption" required>
@@ -515,20 +399,10 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateexcess"></p>
-
                             </section>
-                        </div>
-
-                        <div class="row">
-
-
-
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-
-                        <div class="row">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailer">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="VesselTrailer">
                                 <label class="label required">Does this Vessel have a Trailer?</label>
                                 <label class="input form-group">
                                     <select onchange="hasTrailer()" class="form-control b" id="BoatIsTrailered" name="BoatIsTrailered" required>
@@ -538,224 +412,192 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateBoatIsTrailered"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="SelectTrailerSection" style="display:none">
-                                <label class="label required">Vessel Trailer</label>
-                                <label class="input form-group">
-                                    <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @*foreach (var bv in Model.OrganisationViewModel.Organisation)
-                                        {
-                                            <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                        }
-                                        <option value="add">Add Trailer</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatTrailer"></p>
-
-                            </section>
-                        </div>
-
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label class="label">Where is the vessel kept?</label>
-
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="BoatLandLocationSection">
-                                <label class="label required">Land Storage Location</label>
-                                <label class="input form-group">
-                                    <select onchange="addNewLandLoc()" class="form-control b" id="BoatLandLocation" name="BoatLandLocation" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                        {
-                                            <option value="@blloc.Id">@string.Join(", ", blloc.Type, blloc.Name)</option>
-                                        }
-                                        <option value="add">Add Land Storage</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatLandLocation"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="BoatWaterLocationSection">
-                                <label class="label required">Vessel Water Location</label>
-                                <label class="input form-group">
-                                    <select onchange="addNewWaterLoc()" class="form-control b" id="BoatWaterLocation" name="BoatWaterLocation" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                        {
-                                            <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
-                                        }
-                                        <option value="add">Other Marina</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatWaterLocation"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="othermarinSection">
-                                <label class="label required">Other Marina Name</label>
-
-                                <label class="input form-group">
-                                    <i></i>
-                                    <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="othermarina" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
-                                </label>
-                                <p class="validationContainer" id="validateBoatName"></p>
-
-                            </section>
-
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="BoatMooredTypeSection">
-                                <label class="label required">Moored Type</label>
-
-
-                                <label class="input form-group">
-                                    <select class="form-control b" id="MooredType" name="WaterLocationMooringType">
-                                        <option selected="selected" value="">-- Select --</option>
-
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatWaterLocation"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" style="display:none">
-                                <label class="label">Vessel Use</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
-
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" " required>
-
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="SelectTrailerSection" style="display:none">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Vessel Trailer</label>
+                                    <label class="input form-group">
+                                        <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            {
+                                                foreach (var trailer in boat.BoatTrailers)
                                                 {
-                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
-                                                }
-
-                                            </select>
-
-                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
-
-                                                    @foreach (var bwloc in Model.BoatUseslist)
+                                                    if (trailer != null)
                                                     {
-                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
                                                     }
-
-                                                </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                    </section>
-                                </div>
-                                <p class="validationContainer" id="validateboatuse"></p>
-
-                            </section>
-
-
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Effective Date for cover for this vessel</label>
-                                <div class="row">
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input ">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatEffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="BoatEffectiveDate" type="text" required>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
-                                    </section>
-                                </div>
-                                <p class="validationContainer" id="validateboateffectivedate"></p>
-                            </section>
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label">Interested Parties</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
-
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
-
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
-                                                {
-                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
                                                 }
-
-                                            </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
-                                    </section>
-                                </div>
-
+                                            }
+                                            <option value="add">Add Trailer</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatTrailer"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <label class="label cgmodalLabel">Where is the vessel kept?</label>
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
-                                <label class="label">Interested Parties Effective Date</label>
-                                <div class="row">
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input ">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatIPEffectiveDate" placeholder="Effective Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="BoatIPEffectiveDate" type="text">
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
-                                    </section>
-                                </div>
-                            </section>
-
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="BoatLandLocationSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Land Storage Location</label>
+                                    <label class="input form-group">
+                                        <select onchange="addNewLandLoc()" class="form-control b" id="BoatLandLocation" name="BoatLandLocation" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var building in Model.ClientInformationSheet.Buildings)
+                                            {
+                                                <option value="@building.Id">@string.Join(", ", building.BuildingName, building.BuildingCategory)</option>
+                                            }
+                                            <option value="add">Add Land Storage</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatLandLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="BoatWaterLocationSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Vessel Water Location</label>
+                                    <label class="input form-group">
+                                        <select onchange="addNewWaterLoc()" class="form-control b" id="BoatWaterLocation" name="BoatWaterLocation" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
+                                            {
+                                                <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
+                                            }
+                                            <option value="add">Other Marina</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatWaterLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="othermarinSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Other Marina Name</label>
+                                    <label class="input form-group">
+                                        <i></i>
+                                        <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="othermarina" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatName"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="BoatMooredTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Moored Type</label>
+                                    <label class="input form-group">                                        
+                                        <select class="form-control b" id="MooredType" name="WaterLocationMooringType">
+                                        @foreach(var type in Model.BoatViewModel.MooredTypeOptions)
+                                        {
+                                            <option value="@type.Value">@type.Text</option>
+                                        }
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatWaterLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" style="display:none">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Select Vessel Use</label>
+                                    <label class="input form-group">
+                                        <select onchange="addNewBoatUse()" id="SelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            {
+                                                foreach (var boatUse in boat.BoatUses)
+                                                {
+                                                    if (boatUse != null)
+                                                    {
+                                                        <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
+                                                    }
+                                                }
+                                            }
+                                            <option value="add">Add Vessel Use</option>
+                                        </select>
+                                    </label>
+                                </section>           
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <p class="validationContainer" id="validateboatuse"></p>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Effective Date for cover for this vessel</label>
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="BoatEffectiveDate" placeholder="Effective Date" class="form-control b" id="BoatEffectiveDate" type="text" required>
+                                    </label>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle cgpopover"
+                                       data-placement="bottom"
+                                       data-html="true"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
+                                </section>
+                                <p class="validationContainer" id="validateboateffectivedate"></p>
+                            </div>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label">Interested Parties</label>
+                                    <label class="input form-group">
+                                        <select data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
+                                            @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
+                                            {
+                                                <option value="@organisation.Id"> @organisation.Name</option>
+                                            }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
+                                            }
+                                        </select>
+                                    </label>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="addBoatUse" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
+                                </section>
+                            </div>
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
+                                    <label class="label">Interested Parties Effective Date</label>
+                                    <div class="row">
+                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                            <label class="input ">
+                                                <i class="icon-append fa fa-calendar"></i>
+                                                <input name="BoatIPEffectiveDate" placeholder="Effective Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="BoatIPEffectiveDate" type="text">
+                                            </label>
+                                        </section>
+                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                            <i id="elem" href="#"
+                                               class="fa fa-question-circle cgpopover"
+                                               data-placement="bottom"
+                                               data-html="true"
+                                               data-container="body"
+                                               data-toggle="popover"
+                                               data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
+                                        </section>
+                                    </div>
+                                </section>*@
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
                                     <textarea class="form-control b" data-type="TEXTAREA" data-name="BoatNotes" id="BoatNotes" name="BoatNotes" placeholder="Notes" value=""></textarea>
                                 </label>
                             </section>
-
                         </div>
-
-
-                         6th group 
                     </form>
-
                     <div class="row" id="update">
                         <section class="col col-xs-12">
                             <button onclick="ValidateBoatForm(event,'#boatTabs2', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#boatTabs2','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
-
                         <label style="color:red" hidden id="updaterequired"> Field is Missing.</label>
                     </div>
                 </fieldset>
@@ -765,25 +607,19 @@
                     <form data-toggle="validator" role="form" id="boatForm">
                         <input id="AddBoatId" class="b" name="BoatId" type="hidden">
                         <input id="openModal" class="b" name="openModal" type="hidden">
-                         1st group 
-
-                        <div class="row ">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <div class="row">
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Name</label>
-
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="AddBoatName" name="BoatName" placeholder="Vessel Name" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateAddBoatName"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <section class="col col-sm-1 col-md-1 col-lg-1">
+                            </section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Type</label>
-
                                 <label class="input form-group">
                                     <select onchange="AddvesselType1Selected()" class="form-control b" id="AddBoatType1" name="BoatType1" title="" required>
                                         <option selected="selected" value="">-- Select here --</option>
@@ -794,259 +630,187 @@
                                         <option value="Jetboat">Jetboat</option>
                                         <option value="Other">Other Personal Watercraft</option>
                                     </select>
-
                                 </label>
                                 <p class="validationContainer" id="validateAddBoatType"></p>
-
                             </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel status when not in use</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="AddvesselType2Selected()" class="form-control b" id="AddBoatType2" name="BoatType2" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Roadtrailer">Road Trailer</option>
-                                                <option value="Stored">Stored</option>
-                                                <option id="AddBoatType2Berthed" value="Berthed">Berthed</option>
-                                                <option id="AddBoatType2Moored" value="Moored">Moored</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateAddBoatType2"></p>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
-                                    </section>
-                                </div>
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Vessel Skipper</label>
-
-                                <div class="row">
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="AddaddNewSkipper()" class="form-control b" id="AddBoatOperator" name="BoatOperator" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @foreach (var boper in Model.OrganisationViewModel.Organisations)
-                                                {
-                                                    <option value="@boper.Id">@boper.Name</option>
-                                                }
-                                                <option value="add">Add Skipper</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateAddBoatOperator"></p>
-
-                                    </div>
-
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Please enter the details for the primary skipper of the vessel"></i>
-                                    </section>
-
-                                </div>
-
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddRegistrationSection" style="display:none">
-
-                                <label class="label required">Personal Watercraft Registration Area</label>
-
                                 <label class="input form-group">
-                                    <select class="form-control b" id="AddVesselArea" name="VesselArea" title="" required>
-                                        <option selected="selected" value="">-- Select here --</option>
-                                        <option value="Auckland">Auckland</option>
-                                        <option value="Bay Of Plenty">Bay Of Plenty</option>
-                                        <option value="Gisborne">Gisborne</option>
-                                        <option id="Hawke's Bay">Hawke's Bay</option>
-                                        <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
-                                        <option value="NorthLand">Northland</option>
-                                        <option value="Taranaki">Taranaki</option>
-                                        <option value="Waikato">Waikato</option>
-                                        <option id="Wellington">Wellington</option>
-                                        <option value="Canterbury">Canterbury</option>
-                                        <option value="Central Otag">Central Otago</option>
-                                        <option value="Grey">Grey</option>
-                                        <option id="Marlborough">Marlborough</option>
-                                        <option value="Nelson">Nelson</option>
-                                        <option value="Otago">Otago</option>
-                                        <option value="Queenstown Lakes">Queenstown Lakes</option>
-                                        <option id="Southland">Southland</option>
-                                        <option value="Tasman">Tasman</option>
-                                        <option value="West Coast">West Coast</option>
+                                    <select onchange="AddvesselType2Selected()" class="form-control b" id="AddBoatType2" name="BoatType2" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="Roadtrailer">Road Trailer</option>
+                                        <option value="Stored">Stored</option>
+                                        <option id="AddBoatType2Berthed" value="Berthed">Berthed</option>
+                                        <option id="AddBoatType2Moored" value="Moored">Moored</option>
                                     </select>
-
                                 </label>
-                                <p class="validationContainer" id="validateAddVesselArea"></p>
-
+                                <p class="validationContainer" id="validateAddBoatType2"></p>
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddaucklandRegoSection">
-                                <label class="label ">Personal Watercraft (PWC) Registration</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <i></i>
-                                            <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AddAucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
-                                        </label>
-                                        <p class="validationContainer" id="validateAddAucklandRegistration"></p>
-
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-html="true"
-                                           data-toggle="popover"
-                                           data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
-                                    </section>
-                                </div>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
                             </section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                <label class="label required">Vessel Skipper</label>
+                                <label class="input form-group">
+                                    <select onchange="AddaddNewSkipper()" class="form-control b" id="AddBoatOperator" name="BoatOperator" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
+                                        {
+                                            <option value="@skipper.Id">@skipper.Name</option>
+                                        }
+                                        <option value="add">Add Skipper</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="validateAddBoatOperator"></p>
+                            </section>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="Please enter the details for the primary skipper of the vessel"></i>
+                            </section>
+                            <div id="AddRegistrationSection" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="display:none;">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Personal Watercraft Registration Area</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="AddVesselArea" name="VesselArea" title="" required>
+                                            <option selected="selected" value="">-- Select here --</option>
+                                            <option value="Auckland">Auckland</option>
+                                            <option value="Bay Of Plenty">Bay Of Plenty</option>
+                                            <option value="Gisborne">Gisborne</option>
+                                            <option id="Hawke's Bay">Hawke's Bay</option>
+                                            <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
+                                            <option value="NorthLand">Northland</option>
+                                            <option value="Taranaki">Taranaki</option>
+                                            <option value="Waikato">Waikato</option>
+                                            <option id="Wellington">Wellington</option>
+                                            <option value="Canterbury">Canterbury</option>
+                                            <option value="Central Otag">Central Otago</option>
+                                            <option value="Grey">Grey</option>
+                                            <option id="Marlborough">Marlborough</option>
+                                            <option value="Nelson">Nelson</option>
+                                            <option value="Otago">Otago</option>
+                                            <option value="Queenstown Lakes">Queenstown Lakes</option>
+                                            <option id="Southland">Southland</option>
+                                            <option value="Tasman">Tasman</option>
+                                            <option value="West Coast">West Coast</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddVesselArea"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
 
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                         2nd group 
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="AddaucklandRegoSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    @*id="AddaucklandRegoSection">*@
+                                    <label class="label ">Personal Watercraft (PWC) Registration</label>
+                                    <label class="input form-group">
+                                        <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AddAucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
+                                    </label>
+                                    <p class="validationContainer" id="validateAddAucklandRegistration"></p>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle cgpopover"
+                                       data-placement="bottom"
+                                       data-container="body"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
+                                </section>
+                            </div>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Is the vessel Professionally built?</label>
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select class="form-control b" id="AddBuiltProfessionally" name="BuiltProfessionally" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="True">Yes</option>
-                                                <option value="False">No</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateAddBuiltProfessionally"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
-                                    </section>
-                                </div>
+                                <label class="input form-group">
+                                    <select class="form-control b" id="AddBuiltProfessionally" name="BuiltProfessionally" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="True">Yes</option>
+                                        <option value="False">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="validateAddBuiltProfessionally"></p>
                             </section>
-
-
-
-                            <section class="col col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
+                            </section>
+                            <section class="col col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Year of Manufacture</label>
-
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="YearOfManufacture" id="AddYearOfManufacture" name="YearOfManufacture" placeholder="Vessel Year of Manufacture" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateAddYearOfManufacture"></p>
-
                             </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Vessel Make</label>
                                 <label class="input form-group">
-                                    <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="BoatMake" id="AddBoatMake" name="BoatMake" placeholder="Vessel Make" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateAddBoatMake"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required form-group">Vessel Model</label>
                                 <label class="input form-group">
                                     <i></i>
                                     <input class="form-control b" data-type="TEXTBOX" data-name="BoatModel" id="AddBoatModel" name="BoatModel" placeholder="Vessel Model" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateAddBoatModel"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddHullConstructSection">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddHullConstructSection">
                                 <label class="label required">Construction Type</label>
-
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select onchange="AddhideShowHullConstructionOther()" class="form-control b" id="AddHullConstruction" name="HullConstruction" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Aluminium">Aluminium</option>
-                                                <option value="Steel">Steel</option>
-                                                <option value="Fibreglass">Fibreglass</option>
-                                                <option value="Carbon">Carbon fibre</option>
-                                                <option id="AddHullConstructionRigidHi" value="RigidHI">Rigid Hull Inflatable</option>
-                                                <option id="AddHullConstructionWood" value="Wood">Wood/ timber</option>
-                                                <option id="AddHullConstructionCement" value="Cement">Ferro cement/ cement</option>
-                                                <option id="AddHullConstructionOther" value="Other">Other</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateAddHullConstruction"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <b id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="please select the primary construction material of the hull of your vessel"></b>
-                                    </section>
-
-
-                                </div>
-
-                            </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddHullConstructOtherSection">
-                                <label class="label required">Other Construction Type</label>
-                                <label class="input ">
-                                    <i></i>
-                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="otherhullconstruction" id="AddOtherConstructionType" name="otherhullconstruction" placeholder="Other Construction Type" required>
+                                <label class="input form-group">
+                                    <select onchange="AddhideShowHullConstructionOther()" class="form-control b" id="AddHullConstruction" name="HullConstruction" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="Aluminium">Aluminium</option>
+                                        <option value="Steel">Steel</option>
+                                        <option value="Fibreglass">Fibreglass</option>
+                                        <option value="Carbon">Carbon fibre</option>
+                                        <option id="AddHullConstructionRigidHi" value="RigidHI">Rigid Hull Inflatable</option>
+                                        <option id="AddHullConstructionWood" value="Wood">Wood/ timber</option>
+                                        <option id="AddHullConstructionCement" value="Cement">Ferro cement/ cement</option>
+                                        <option id="AddHullConstructionOther" value="Other">Other</option>
+                                    </select>
                                 </label>
-                                <p class="validationContainer" id="validateAddHullConstructOtherSection"></p>
-
+                                <p class="validationContainer" id="validateAddHullConstruction"></p>
                             </section>
-                        </div>
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddHullConfigSection">
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <b id="elem" href="#"
+                                   class="fa fa-question-circle cgpopover"
+                                   data-placement="bottom"
+                                   data-container="body"
+                                   data-toggle="popover"
+                                   data-content="please select the primary construction material of the hull of your vessel"></b>
+                            </section>
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="AddHullConstructOtherSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10 ">
+                                    <label class="label required">Other Construction Type</label>
+                                    <label class="input ">
+                                        <i></i>
+                                        <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="otherhullconstruction" id="AddOtherConstructionType" name="otherhullconstruction" placeholder="Other Construction Type" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddHullConstructOtherSection"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddHullConfigSection">
                                 <label class="label required">Hull Configuration</label>
                                 <label class="input form-group">
                                     <select onchange="AddhideShowHullConfigurationOther()" class="form-control b" id="AddHullConfiguration" name="HullConfiguration" required>
@@ -1058,22 +822,20 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddHullConfiguration"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddHullConfigurationOtherSection">
-                                <label class="label required">Other Hull Configuration</label>
-                                <label class="input ">
-                                    <i></i>
-                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="OtherHullConfiguration" id="AddOtherHullConfiguration" name="OtherHullConfiguration" placeholder="Other Hull Configuration" value="" required>
-                                </label>
-                                <p class="validationContainer" id="validateAddOtherHullConfiguration"></p>
-
-                            </section>
-                        </div>
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="AddHullConfigurationOtherSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Other Hull Configuration</label>
+                                    <label class="input ">
+                                        <i></i>
+                                        <input class="form-control b form-group" type="text" data-type="TEXTBOX" data-name="OtherHullConfiguration" id="AddOtherHullConfiguration" name="OtherHullConfiguration" placeholder="Other Hull Configuration" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddOtherHullConfiguration"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">Motor Type</label>
                                 <label class="input form-group">
                                     <select onchange="AddupdateExcess()" class="form-control b" id="AddMotorType" name="MotorType" required>
@@ -1087,10 +849,9 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddMotorType"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddModifiedMotorSection">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddModifiedMotorSection">
                                 <label class="label required">Has the motor been modified?</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="AddModifiedMotor" name="ModifiedMotor" required>
@@ -1100,10 +861,9 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddModifiedMotor"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">What is the maximum rated speed of the vessel?</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="AddMaxRatedSpeed" name="MaxRatedSpeed" required>
@@ -1114,75 +874,59 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddMaxRatedSpeed"></p>
-
                             </section>
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddRiggingTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Rigging Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="AddRiggingType" name="RiggingType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="StainlessSteelWire">Stainless Steel Wire</option>
+                                            <option value="Rod">Rod</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddRiggingType"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddMastTypeSection">
 
-
-                        </div>
-
-                        <hr class="boatAccordianHairline" />
-                         3rd group 
-
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddRiggingTypeSection">
-                                <label class="label required">Rigging Type</label>
-                                <label class="input form-group">
-                                    <select class="form-control b" id="AddRiggingType" name="RiggingType" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="StainlessSteelWire">Stainless Steel Wire</option>
-                                        <option value="Rod">Rod</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddRiggingType"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddMastTypeSection">
-                                <label class="label required">Mast Type</label>
-
-                                <div class="row">
-
-                                    <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                                        <label class="input form-group">
-                                            <select class="form-control b" id="AddMastType" name="MastType" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="Aluminium">Aluminium</option>
-                                                <option value="Steel">Steel</option>
-                                                <option value="Wooden">Wooden</option>
-                                                <option value="CarbonFibre">Carbon Fibre</option>
-                                                <option value="Other">Other</option>
-                                            </select>
-                                        </label>
-                                        <p class="validationContainer" id="validateAddMastType"></p>
-
-                                    </div>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="please select the primary construction material of the mast of your vessel"></i>
-                                    </section>
-
-                                </div>
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Mast Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" id="AddMastType" name="MastType" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="Aluminium">Aluminium</option>
+                                            <option value="Steel">Steel</option>
+                                            <option value="Wooden">Wooden</option>
+                                            <option value="CarbonFibre">Carbon Fibre</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddMastType"></p>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle cgpopover"
+                                       data-placement="bottom"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="please select the primary construction material of the mast of your vessel"></i>
+                                </section>
+                            </div>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">$ Vessel Insured Value (Please exclude trailer value)</label>
                                 <label class="input form-group">
                                     <i></i>
                                     <input onchange="AddupdateExcess()" class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="MaxSumInsured" id="AddMaxSumInsured" name="MaxSumInsured" placeholder="$ Vessel Insured Value" value="" required>
                                 </label>
                                 <p class="validationContainer" id="validateAddMaxSumInsured"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                 <label class="label required">$ Excess</label>
                                 <label class="input form-group">
                                     <select class="form-control b" id="Addexcess" name="BoatQuoteExcessOption" required>
@@ -1194,21 +938,10 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validatAddeexcess"></p>
-
                             </section>
-                        </div>
-
-                        <div class="row">
-
-
-
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                         4th group 
-
-                        <div class="row">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselTrailer">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddVesselTrailer">
                                 <label class="label required">Does this Vessel have a Trailer?</label>
                                 <label class="input form-group">
                                     <select onchange="AddhasTrailer()" class="form-control b" id="AddBoatIsTrailered" name="BoatIsTrailered" required>
@@ -1218,287 +951,248 @@
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddBoatIsTrailered"></p>
-
                             </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddSelectTrailerSection" style="display:none">
-                                <label class="label required">Vessel Trailer</label>
-                                <label class="input form-group">
-                                    <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var bv in Model.AllVehicles)
-                                        {
-                                            <option value="@bv.VehicleId">@string.Join(", ", bv.Year, bv.Make, bv.VehicleModel, bv.Registration == null ? "" : bv.Registration)</option>
-                                        }
-                                        <option value="add">Add Trailer</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddBoatTrailer"></p>
-
-                            </section>
-                        </div>
-
-
-
-                         5th group 
-
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
+                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddSelectTrailerSection" style="display:none">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Vessel Trailer</label>
+                                    <label class="input form-group">
+                                        <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            {
+                                                foreach (var trailer in boat.BoatTrailers)
+                                                {
+                                                    if (trailer != null)
+                                                    {
+                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
+                                                    }
+                                                }
+                                            }
+                                            <option value="add">Add Trailer</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddBoatTrailer"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <!--hr class="boatAccordianHairline" /-->
                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label class="label">Where is the vessel kept?</label>
-
+                                <label class="label cgmodalLabel">Where is the vessel kept?</label>
                             </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddBoatLandLocationSection">
-                                <label class="label required">Land Storage Location</label>
-                                <label class="input form-group">
-                                    <select onchange="AddaddNewLandLoc()" class="form-control b" id="AddBoatLandLocation" name="BoatLandLocation" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var blloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                        {
-                                            <option value="@blloc.Id">@string.Join(", ", blloc.Type, blloc.Name)</option>
-                                        }
-                                        <option value="add">Add Land Storage</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddBoatLandLocation"></p>
-
-                            </section>
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddBoatWaterLocationSection">
-                                <label class="label required">Vessel Water Location</label>
-                                <label class="input form-group">
-                                    <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var bwloc in Model.OrganisationViewModel.Organisation.OrganisationalUnits)
-                                        {
-                                            <option value="@bwloc.Id">@string.Join(", ", bwloc.Name)</option>
-                                        }
-                                        <option value="add">Other Marina</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatWaterLocation"></p>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddothermarinSection">
-                                <label class="label required">Other Marina Name</label>
-
-                                <label class="input form-group">
-                                    <i></i>
-                                    <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="Addothermarina" name="OtherMarinaName" placeholder="Vessel Name" value="" required>
-                                </label>
-                                <p class="validationContainer" id="validateBoatName"></p>
-
-                            </section>
-
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddBoatMooredTypeSection">
-                                <label class="label required">Moored Type</label>
-                                <label class="input form-group">
-                                    <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooredType" name="WaterLocationMooringType">
-                                        <option selected="selected" value="">-- Select --</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateBoatWaterLocation"></p>
-
-                            </section>
-
-
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselUseSection" style="display:none">
-                                <label class="label required">Vessel Use</label>
-                                <div class="row">
-
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
-
-                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
-
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddBoatLandLocationSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Land Storage Location</label>
+                                    <label class="input form-group">
+                                        <select onchange="AddaddNewLandLoc()" class="form-control b" id="AddBoatLandLocation" name="BoatLandLocation" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var building in Model.ClientInformationSheet.Buildings)
+                                            {
+                                                <option value="@building.Id">@string.Join(", ", building.BuildingName, building.BuildingCategory)</option>
+                                            }
+                                            <option value="add">Add Land Storage</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddBoatLandLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="AddBoatWaterLocationSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Vessel Water Location</label>
+                                    <label class="input form-group">
+                                        <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
+                                                @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                                 {
-                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
+                                                    <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
                                                 }
-
-                                            </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                    </section>
-                                </div>
-                                <p class="validationContainer" id="Addvalidateboatuse"></p>
-
-                            </section>
-
-
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Effective Date for cover for this vessel</label>
-                                <div class="row">
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input ">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatEffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="AddBoatEffectiveDate" type="text">
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
-                                    </section>
-
-
-                                </div>
+                                            <option value="add">Other Marina</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatWaterLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="AddothermarinSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Other Marina Name</label>
+                                    <label class="input form-group">
+                                        <i></i>
+                                        <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="Addothermarina" name="OtherMarinaName" placeholder="Vessel Name" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatName"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6 hidden" id="AddBoatMooredTypeSection">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Moored Type</label>
+                                    <label class="input form-group">
+                                        <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooredType" name="WaterLocationMooringType">
+                                            @foreach (var type in Model.BoatViewModel.MooredTypeOptions)
+                                            {
+                                                <option value="@type.Value">@type.Text</option>
+                                            }
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateBoatWaterLocation"></p>
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddVesselUseSection" style="display:none">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Select Vessel Use</label>
+                                    <label class="input form-group">
+                                        <select onchange="addNewBoatUse()" id="AddSelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            {
+                                                foreach (var boatUse in boat.BoatUses)
+                                                {
+                                                    if (boatUse != null)
+                                                    {
+                                                        <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
+                                                    }
+                                                }
+                                            }
+                                            <option value="add">Add Vessel Use</option>
+                                        </select>
+                                    </label>
+                                </section>           
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
+                            <p class="validationContainer" id="Addvalidateboatuse"></p>
+                            <!--hr class="boatAccordianHairline" /-->
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Effective Date for cover for this vessel</label>
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="BoatEffectiveDate" placeholder="Effective Date" class="form-control b" id="AddBoatEffectiveDate" type="text">
+                                    </label>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle cgpopover"
+                                       data-placement="bottom"
+                                       data-html="true"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
+                                </section>
                                 <p class="validationContainer" id="validateAddboateffectivedate"></p>
-
+                            </div>
+                            @if (Model.ClientInformationSheet.IsChange)
+                            {
+                                <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5 ">
+                                    <label class="label">Cease Date</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
+                                    </label>
+                                </section>
+                                <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                                <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                    <label class="label">Cease Reason</label>
+                                    <label class="input">
+                                        <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="1">Sold</option>
+                                            <option value="2">Decommision</option>
+                                            <option value="3">Writen off</option>
+                                            <option value="4">Transfered</option>
+                                            <option value="9">Other</option>
+                                        </select>
+                                    </label>
+                                </section>
+                                <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            }
+                            <!--hr class="boatAccordianHairline" /-->
+                            <section class="col-sm-6 col-md-6 col-lg-6">
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label">Interested Parties</label>
+                                    <label class="input form-group">
+                                        <select data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
+                                            @foreach (var organisation in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial" || i.Name == "Co Owner")).ToList())
+                                            {
+                                                <option value="@organisation.Id"> @organisation.Name</option>
+                                            }
+                                            @foreach (var publicLocation in Model.OrganisationViewModel.PublicOrganisations)
+                                            {
+                                                <option value="@publicLocation.Id"> @publicLocation.Name</option>
+                                            }
+                                        </select>
+                                    </label>
+                                </section>
+                                <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                    <i id="addBoatUse" class="fa fa-plus cgpopover" onclick="addNewParty()" style="color:blue"></i>
+                                </section>
                             </section>
-
-
-
-                            @if (Model.IsChange)
-                                {
-                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                        <label class="label">Cease Date</label>
-                                        <label class="input">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label class="label">Cease Reason</label>
-                                        <label class="input">
-                                            <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="1">Sold</option>
-                                                <option value="2">Decommision</option>
-                                                <option value="3">Writen off</option>
-                                                <option value="4">Transfered</option>
-                                                <option value="9">Other</option>
-                                            </select>
-                                        </label>
-                                    </section>
-                                }
-
-                        </div>
-                        <hr class="boatAccordianHairline" />
-                        <div class="row">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label">Interested Parties</label>
-                                <div class="row">
-
+                            @*<div class="col col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
-
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
-
-                                                @foreach (var bwloc in Model.OrganisationViewModel.Organisations)
-                                                {
-                                                    <option value="@bwloc.Id"> @bwloc.Name</option>
-                                                }
-
-                                            </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
-                                    </section>
-                                </div>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
-                                <label class="label">Interested Parties Effective Date</label>
-                                <div class="row">
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                        <label class="label">Interested Parties Effective Date</label>
                                         <label class="input ">
                                             <i class="icon-append fa fa-calendar"></i>
                                             <input name="BoatIPEffectiveDate" placeholder="Effective Date" class="datepicker form-control b" data-mindate="new Date();" data-dateformat="dd/mm/yy" id="AddBoatIPEffectiveDate" type="text">
                                         </label>
                                     </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                    <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                         <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
+                                            class="fa fa-question-circle cgpopover"
+                                            data-placement="bottom"
+                                            data-html="true"
+                                            data-container="body"
+                                            data-toggle="popover"
+                                            data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
-                                </div>
-                            </section>
-
-                            @if (Model.IsChange)
-                                {
-                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                        <label class="label">Cease Date</label>
-                                        <label class="input">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label class="label">Cease Reason</label>
-                                        <label class="input">
-                                            <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
-                                                <option selected="selected" value="">-- Select --</option>
-                                                <option value="1">Sold</option>
-                                                <option value="2">Decommision</option>
-                                                <option value="3">Writen off</option>
-                                                <option value="4">Transfered</option>
-                                                <option value="9">Other</option>
-                                            </select>
-                                        </label>
-                                    </section>
-                                }
-
-
+                                </div>*@
+                            @if (Model.ClientInformationSheet.IsChange)
+                            {
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                                    <label class="label">Cease Date</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
+                                    </label>
+                                </section>
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="label">Cease Reason</label>
+                                    <label class="input">
+                                        <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="1">Sold</option>
+                                            <option value="2">Decommision</option>
+                                            <option value="3">Writen off</option>
+                                            <option value="4">Transfered</option>
+                                            <option value="9">Other</option>
+                                        </select>
+                                    </label>
+                                </section>
+                            }
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
                                     <textarea class="form-control b" data-type="TEXTAREA" data-name="BoatNotes" id="AddBoatNotes" name="BoatNotes" placeholder="Notes" value=""></textarea>
                                 </label>
                             </section>
-
                         </div>
-
-
-                         6th group 
                     </form>
-
                     <div class="row" id="update">
                         <section class="col col-xs-12">
                             <button onclick="ValidateAddBoatForm('#boatTabs3', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                             <button onclick="ClearBoats(event,'#boatTabs3','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
                         </section>
-
                         <label style="color:red" hidden id="updaterequired"> Field is Missing.</label>
                     </div>
                 </fieldset>
             </div>
             <div id="boatTabs4" class="tab-content">
-
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-
                             <script type="text/javascript">
                                 $(".BoatRemoved").click(function () {
-                               $("#tblRemovedBoat").jqGrid({
+                                $("#tblRemovedBoat").jqGrid({
                                 url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
                                 datatype: "xml",
                                    mtype: "GET",
@@ -1563,6 +1257,6 @@
     .selectuse option {
         background-color: white;
     }
-</style>*@
+</style>
 
 

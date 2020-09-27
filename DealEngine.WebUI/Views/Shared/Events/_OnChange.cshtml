@@ -132,7 +132,6 @@
                     Value = "2";
                 }
             }
-
             if (Value == 'true' || Value == 'false') {
                 if (Value == 'true') {
                     Value = "1";
@@ -248,8 +247,11 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "OTAlert") {
-                var OTAlert = "Please ensure that you provide details in the notification section";
-                Value = ShowAlert(Value, OTAlert);
+                var sheetstatus = document.getElementById("ClientInformationSheet_Status").value;
+                if (sheetstatus == "Started") {
+                   var OTAlert = "Please ensure that you provide details in the notification section";
+                   Value = ShowAlert(Value, OTAlert);
+                }
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);
@@ -288,10 +290,70 @@
                         debugger;
                     }
                 });
-            }      
-            
+            }
+            if (Rule === "DefaultEffectiveDate") {
+                var datefix = Value.replaceAll('-', '');
+                var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var newDate = new Date(year, month - 1, day);
+                $('#AddBoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#BoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddPlantEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#EffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#MotorEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', newDate);
+
+                document.getElementById("AddBoatEffectiveDate").value = Value;
+                document.getElementById("BoatEffectiveDate").value = Value;
+                document.getElementById("AddEffectiveDate").value = Value;
+                document.getElementById("AddPlantEffectiveDate").value = Value;
+                document.getElementById("EffectiveDate").value = Value;
+                document.getElementById("MotorEffectiveDate").value = Value;
+                document.getElementById("TrailerEffectiveDateModal").value = Value;
+            }
+            if (Rule === "OtherOptions") {
+                if (obj.multiple) {
+                    for (var i = 0; i < obj.selectedOptions.length; i++) {
+                        if (obj.selectedOptions[i].value != "Other") {
+                            DefaultRule("2", Name);
+                        } else {
+                            DefaultRule("1", Name);
+                            break;
+                        }
+                    }
+                }
+                else if (Value == "Other") {
+                    DefaultRule("1", Name);
+                }
+                else {
+                    DefaultRule("2", Name);
+                }
+            }
+            if (Rule == "ValidateDateOfCommencement") {
+                var id = document.getElementById("ClientProgramme_Id");
+                $.ajax({
+                    url: '@Url.Action("ValidateDateOfCommencement", "Services")',
+                    type: "POST",
+                    data: { Id: id.value, Date: Value},
+                    success: function (Data) {
+                        var element = document.getElementById("AdvisorUnit.DateofCommencement");
+                        if (Data == true) {
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-invalid");
+                        }
+                        else {
+                            element.classList.remove("is-invalid");
+                            element.classList.add("is-valid");
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
         } catch (ex) {
-            //these rules need to be re-run regardless of the catch            
+            //these rules need to be re-run regardless of the catch
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
@@ -316,8 +378,8 @@
     }
 
     function OrganisationTypeOnChange(Value) {
-        //reset views to default 
-        ResetOrganisationUnitView();     
+        //reset views to default
+        ResetOrganisationUnitView();
 
         var List = document.getElementById("Organisation.OrganisationType");
         List.disabled = false;
@@ -327,15 +389,24 @@
             Value == "Administration" ||
             Value == "Nominated Representative" ||
             Value == "Contractor" ||
-            Value == "Planner") {
+            Value == "Planner" ||
+            Value == "Skipper" ||
+            Value == "Mentored Advisor") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
-                AdministrationOnChange();                
+                AdvisorOnChange();
             }
+
+            if (Value == "Mentored Advisor") {
+                AdvisorOnChange();
+
+            }
+
             if (Value == "Nominated Representative") {
-                AdministrationOnChange();
+                AdvisorOnChange();
             }
+
             if (Value == "Contractor") {
                 ContractorOnChange();
             }
@@ -347,9 +418,18 @@
                 }
             }
 
-            List.disabled = true;            
+            List.disabled = true;
         } else {
             document.getElementById("Else").hidden = false;
+            if (Value == "Other Consulting Business") {
+                var NoTradingName = document.getElementById("NoTradingName");
+                if (NoTradingName != null) {
+                    document.getElementById("TradingName").hidden = false;
+                    var TradingName = document.getElementById("Organisation.TradingName");
+                    TradingName.hidden = false;
+                    TradingName.removeAttribute("required");
+                }
+            }
         }
 
         DefaultRule("1", Value);
@@ -367,21 +447,26 @@
         document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
     }
 
-    function AdministrationOnChange() {
-        var IsTripleAApproval = document.getElementById("HideTripleAApproval");        
+    function AdvisorOnChange() {
+        var IsTripleAApproval = document.getElementById("HideTripleAApproval");
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
+            document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+        }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = false;
         }
         var IsPrincipal = document.getElementById("HidePrincipal");
         if (IsPrincipal != null) {
             IsPrincipal.hidden = true;
         }
-        document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+
     }
 
     function ResetOrganisationUnitView() {
         document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;   
+        document.getElementById("Else").hidden = true;
         var IsPrincipal = document.getElementById("HidePrincipal");
         if (IsPrincipal != null) {
             IsPrincipal.hidden = false;
@@ -394,6 +479,10 @@
         if (IsContractor != null) {
             IsContractor.hidden = true;
         }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = true;
+        }
     }
 
     function AdditionalActivityInformation(Id) {
@@ -402,7 +491,7 @@
         //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
-            if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039" || additionalactivityId == "CUS0044") {
+            if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039" || additionalactivityId == "CUS0044" || additionalactivityId == "CUS0061") {
                 additionalactivityId = "CUS0018";
             }
             if (activities.options[i].selected === true) {

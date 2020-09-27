@@ -14,7 +14,7 @@ using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
-
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -55,6 +55,7 @@ namespace DealEngine.WebUI.Controllers
         IClientInformationAnswerService _clientInformationAnswer;
         IOrganisationTypeService _organisationTypeService;
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IMapperSession<WaterLocation> _waterLocation;
         //IGeneratePdf _generatePdf;
 
 
@@ -93,12 +94,14 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
+            IMapperSession<WaterLocation> waterLocation,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
             )
             : base(userService)
         {
+            _waterLocation = waterLocation;
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
@@ -363,28 +366,28 @@ namespace DealEngine.WebUI.Controllers
 
                 //model.InterestedPartyList = linterestedparty;
 
-                var boatUses = new List<BoatUseViewModel>();
-                for (var i = 0; i < sheet.BoatUses.Count(); i++)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
+                //var boatUses = new List<BoatUseViewModel>();
+                //for (var i = 0; i < sheet.BoatUses.Count(); i++)
+                //{
+                //    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
 
-                }
+                //}
 
-                List<SelectListItem> list = new List<SelectListItem>();
+                //List<SelectListItem> list = new List<SelectListItem>();
 
-                for (var i = 0; i < boatUses.Count(); i++)
-                {
-                    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
-                    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
+                //for (var i = 0; i < boatUses.Count(); i++)
+                //{
+                //    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
+                //    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
 
-                    list.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = val,
-                        Text = text
-                    });
+                //    list.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Value = val,
+                //        Text = text
+                //    });
 
-                }
+                //}
 
                 //model.BoatUseslist = list;
                 // TODO - find a better way to pass these in
@@ -646,7 +649,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
                         if (term == null)
-                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.AggregateLimit).FirstOrDefault();
+                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.TermLimit).FirstOrDefault();
 
                         OptionItem = new String[2];
 
@@ -785,17 +788,7 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
-                
-                //testing dynamic wizard here
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
-                if (isSubsystem)
-                {
-                    model.Wizardsteps = LoadWizardsteps("Subsystem");
-                }
-                else
-                {
-                    model.Wizardsteps = LoadWizardsteps("Standard");
-                }
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GeneralViewModel", StringComparison.CurrentCulture)));               
 
                 if (sheet.Status == "Not Started")
                 {
@@ -875,13 +868,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if (date == defaultDate || date == null)
-                            {
-                                date = DateTime.Now;
-                            }
                             property.SetValue(reflectModel, date);
+                        }
+                        if (typeof(DateTime?) == property.PropertyType)
+                        {
+                            var date = DateTime.Parse(answer.Value);                         
+                            property.SetValue(reflectModel, date.ToString("dd/MM/yyyy"));
                         }
                     }
                 }
@@ -963,6 +956,39 @@ namespace DealEngine.WebUI.Controllers
 
                 var url = "/Information/EditInformation/" + UnlockReason.DealId;
                 return Json(new { url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetStatus(Guid id)
+        {
+            User user = null;
+            try
+            {
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+                ClientInformationSheet sheet = clientProgramme.InformationSheet;
+                user = await CurrentUser();
+                if (sheet != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (sheet.Status == "Started")
+                        {
+                            sheet.Status = "Not Started";
+                            sheet.LastModifiedOn = DateTime.UtcNow;
+                            sheet.LastModifiedBy = user;
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                var url = "/Home/ViewProgramme/" + clientProgramme.BaseProgramme.Id;
+                return Redirect(url);
             }
             catch (Exception ex)
             {
@@ -1185,31 +1211,8 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 createdBy = await CurrentUser();
-                ChangeReason changeReason = new ChangeReason();
-               // changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(formCollection["BoatEffectiveDate"], "d"));
-                //ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
-                changeReason.DealId = Guid.Parse(formCollection["DealId"]);
-                changeReason.ChangeType = formCollection["ChangeType"];
-                changeReason.Reason = formCollection["Reason"];
-                changeReason.ReasonDesc = formCollection["ReasonDesc"];
-                changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(DateTime.Parse(formCollection["BoatEffectiveDate"]), "d"));
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(formCollection["DealId"]));
-                if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
-                ClientProgramme newClientProgramme = null;
-
-
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
-                    await _clientProgrammeRepository.UpdateAsync(newClientProgramme);
-                    await uow.Commit();
-                }
-                //await _programmeService.Update(newClientProgramme);
-                return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
-                //var url = "/Information/EditInformation/" + newClientProgramme.Id;
-                  //return Json(new { url });
-                //return Json(createdBy);
+                ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection);
+                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
             }
             catch (Exception ex)
             {
@@ -1280,14 +1283,39 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
+                List<Organisation> DefaultMarinas = await _organisationService.GetPublicMarinas();
+                List<Organisation> DefaultInstitutes = await _organisationService.GetPublicFinancialInstitutes();
+                
                 Programme programme = clientProgramme.BaseProgramme;
                 InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
                 };
-                model.Name = programme.Name;
+                if (DefaultMarinas.Any())
+                {                    
+                    foreach(var marina in DefaultMarinas)
+                    {
+                        MarinaUnit unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.WaterLocations.Contains(unit.WaterLocation))
+                            model.ClientInformationSheet.WaterLocations.Add(unit.WaterLocation);
+                    }                    
+                }
+                if (DefaultInstitutes.Any())
+                {
+                    foreach (var Institute in DefaultInstitutes)
+                    {
+                        InterestedPartyUnit unit = (InterestedPartyUnit)Institute.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.Locations.Contains(unit.Location))
+                        {
+                            //model.ClientInformationSheet.Locations.Add(unit.Location);
+                            model.OrganisationViewModel.PublicOrganisations.Add(Institute);
+                        }
+                    }
+                }
+                model.Name = programme.Name;                
                 Product product = null;
                 if (programme.Products.Count > 1)
                 {
@@ -1299,14 +1327,15 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 InformationTemplate informationTemplate;
-                List<InformationSection> sections = new List<InformationSection>();
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                List<InformationSection> sections = new List<InformationSection>();                
                 if (!isSubsystem)
                 {
                     informationTemplate = product.SubInformationTemplate;
+                    model.Wizardsteps = LoadWizardsteps("Standard");
                 }
                 else
                 {
+                    model.Wizardsteps = LoadWizardsteps("Subsystem");
                     //remove after checking with ray
                     if (product.InformationTemplate == null)
                     {

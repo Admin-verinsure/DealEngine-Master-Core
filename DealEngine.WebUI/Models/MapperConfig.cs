@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
-using DealEngine.WebUI.Controllers;
-using DealEngine.WebUI.Models.Programme;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
@@ -10,19 +8,20 @@ namespace DealEngine.WebUI.Models
 {
     public static class MapperConfig
     {
-        public static IMapper ConfigureMaps()
+        public static IMapper DefaultProfile()
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile());
+                cfg.AddProfile(new DefaultProfile());
             });
             return mapperConfiguration.CreateMapper();
         }
+
     }
 
-    public class MappingProfile : Profile
+    public class DefaultProfile : Profile
     {
-        public MappingProfile()
+        public DefaultProfile()
         {
             // place all automapper maps here
             CreateMap<OrganisationalUnit, OrganisationalUnit>()
@@ -58,6 +57,23 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.DateCreated, map => map.Ignore())
                 .ForMember(dest => dest.Name, map => map.Ignore())
                 .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<MarinaUnit, MarinaUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<WaterLocation, WaterLocation>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<Location, Location>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
                 .ForMember(dest => dest.CreatedBy, map => map.Ignore());
 
             CreateMap<Domain.Entities.Organisation, Domain.Entities.Organisation>()
@@ -183,21 +199,13 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Id, map => map.Ignore());
 
             //clonesystem
-            CreateMap<ClientInformationSheet, ClientInformationSheet>()
-                .ForMember(dest => dest.Id, map => map.Ignore())
-                .ForMember(dest => dest.Owner, map => map.Ignore())
-                .ForMember(dest => dest.Organisation, map => map.Ignore()); 
-            CreateMap<ClientProgramme, ClientProgramme>()
-                .ForMember(dest => dest.Id, map => map.Ignore());
+            //CreateMap<ClientInformationSheet, ClientInformationSheet>()
+            //    .ForMember(dest => dest.Id, map => map.Ignore());
+            //CreateMap<ClientProgramme, ClientProgramme>()
+            //    .ForMember(dest => dest.Id, map => map.Ignore());
         }
 
 
     }
-    public static class MapperExtensions
-    {
-        public static T ResolveJson<T>(this JObject jobj, string target)
-        {
-            return JsonConvert.DeserializeObject<T>(jobj.SelectToken(target).ToString());
-        }
-    }
+    
 }

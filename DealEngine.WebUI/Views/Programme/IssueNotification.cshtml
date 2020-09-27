@@ -1,52 +1,60 @@
 ﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
 <!-- MAIN CONTENT -->
-    <div id="content" class="container">
-        <div class="row">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-file-o"></i>  <span>
-                    <a href="~/Programme/TermSheetConfirguration/@Model.Id">> Package Term Sheet</a>
+<div id="content" class="container">
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-file-o"></i>  <span>
+                <a href="~/Programme/TermSheetConfirguration/@Model.Id">> Package Term Sheet</a>
 
-                    <a href="~/Programme/ManageRules/@Model.Id">> Manage Rules</a>
-                    > @Model.Name
-                </span>
-            </h1>
-        </div>
-
-        <div class="row">
-            <span>
-                <a onclick="location.href='@Url.Action("ManageRules", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+                <a href="~/Programme/ManageRules/@Model.Id">> Manage Rules</a>
+                > @Model.Name
             </span>
-        </div>
-
-        <div class="container col-6">
-            <!-- new widget -->
-            <div class="card">
-                <form class="client-form" method="post" id="issueNotifyForm" action="../AddselectedParty">
-                    <div class="card-header">
-                        <h2>@Model.Name </h2>
-                    </div>
-                    <div class="card-body">
-
-                        @Html.HiddenFor(m => m.Id)
-                        @Html.HiddenFor(m => m.Name)
-
-                        
-                        <div id="div1"></div>
-
-                    </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-success btn-sm">save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
+        </h1>
     </div>
 
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ManageRules", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
 
+    <div class="container">
+        <!-- new widget -->
+        <div class="card">
+            <form class="client-form" method="post" id="issueNotifyForm" action="../AddselectedParty">
+                <div class="card-header">
+                    <h2>@Model.Name </h2>
+                </div>
+                <div class="card-body">
+
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.Name)
+
+                    <div class="form-group">
+                        <select onchange="selectorgUser()" class="form-control b" id="selectParty" name="selectedparty">
+                            <option selected="selected" value="">-- Select Party --</option>
+                            @foreach (var blloc in Model.Programme.ClientProgrammes)
+                            {
+                                <option value="@blloc.Owner.Id"> @blloc.Owner.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div id="OrgUserSection" class="form-group">
+                        <div id="div1"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 @section pagespecific {
+
     @await Html.PartialAsync("_ProgrammeScripts")
+
 }
