@@ -2896,6 +2896,75 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> SendInvoice(Guid id, bool sendUser)
+        {
+            User user = null;
+            try
+            {
+                ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
+                user = await CurrentUser();
+                // TODO - rewrite to save templates on a per programme basis
+
+                ClientProgramme programme = sheet.Programme;
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
+                    {
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var document = new SystemDocument();
+                        var documentspremiumadvice = new List<SystemDocument>();
+                        var agreeTemplateList = agreement.Product.Documents;
+                        var agreeDocList = agreement.GetDocuments();
+
+                        foreach (SystemDocument doc in agreeDocList)
+                        {
+                            if (doc.Name.EqualsIgnoreCase("ApolloInvoice"))
+                            {
+                                SystemDocument renderedDoc = await GetPdfDocument(doc.Id, programme);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                document = renderedDoc;
+                                // documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }
+                        }
+
+
+                        if (programme.BaseProgramme.ProgEnableEmail && document.Name == "FullProposalReport")
+                        {
+                            //send out policy document email
+                          
+                                if (sendUser)
+                                {
+                                    await _emailService.SendFullProposalReport("staff@techcertain.com", document, agreement.ClientInformationSheet, agreement, null);
+                                }
+                                else
+                                {
+                                    await _emailService.SendFullProposalReport(programme.Owner.Email, document, agreement.ClientInformationSheet, agreement, null);
+                                }
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    if (!agreement.IsFullProposalDocSend)
+                                    {
+                                        agreement.IsFullProposalDocSend = true;
+                                        agreement.DocIssueDate = DateTime.Now;
+                                        await uow.Commit();
+                                    }
+                                }
+                           
+                        }
+                    }
+                }
+
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + programme.Id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<Document> GetPdfDocument(Guid id, ClientProgramme clientprogramme)
         {
             User user = null;
