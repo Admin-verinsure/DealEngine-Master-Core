@@ -176,14 +176,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     }
                                 }
 
-
-                                <li class="nav-item" id="SendReport">
-                                    <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendInvoice?id=@item.InformationSheetId&sendUser=@true">
-                                        <i class="fa fa-edit"></i> Send Apollo Invoice
-                                    </a>
-                                </li>
-
-
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
                                 </li>

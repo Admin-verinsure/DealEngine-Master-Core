@@ -3033,8 +3033,8 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+            //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+           /// htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
             margins.Top = 10;
@@ -3044,7 +3044,7 @@ namespace DealEngine.WebUI.Controllers
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, "FullProposalReport", "application/pdf", 99);
+            Document document = new Document(user, invoicename, "application/pdf", 99);
             document.Contents = pdfBytes;
             return document;
         }
