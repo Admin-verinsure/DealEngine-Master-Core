@@ -237,6 +237,28 @@ namespace DealEngine.Services.Impl
             }
             email.Send();
         }
+        public async Task GetInvoicePDF(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
+        {
+            string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Invoice for " + clientInformationSheet.Owner.Name;
+            string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Invoice.</p>";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            if (!string.IsNullOrEmpty(recipentcc))
+            {
+                email.CC(recipentcc);
+            }
+            email.WithSubject(FullProposalEmailsubject);
+            email.WithBody(FullProposalEmailbody);
+            email.UseHtmlBody(true);
+            if (document != null)
+            {
+
+                //var documentsList = await ToAttachments(new Attachment(new MemoryStream(document.Contents),"FullProposalReport.pdf"));
+                email.Attachments(new Attachment(new MemoryStream(document.Contents), "FullProposalReport.pdf"));
+            }
+            email.Send();
+        }
 
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {
@@ -965,6 +987,7 @@ namespace DealEngine.Services.Impl
                 }
                 else
                 {
+
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
 
