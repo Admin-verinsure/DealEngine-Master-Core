@@ -3029,7 +3029,7 @@ namespace DealEngine.WebUI.Controllers
 
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
-            //string html = _fileService.FromBytes(doc.Contents);
+            string html = _fileService.FromBytes(renderedDoc.Contents);
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
@@ -3045,9 +3045,9 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.Margins = margins;
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
-            //var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
             Document document = new Document(user, invoicename, "application/pdf", 99);
-            document.Contents = renderedDoc.Contents;
+            document.Contents = pdfBytes;
             return document;
         }
         [HttpPost]
