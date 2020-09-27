@@ -2980,8 +2980,8 @@ namespace DealEngine.WebUI.Controllers
               _appSettingService.NRecoUserName,
               _appSettingService.NRecoLicense
             );            // for Linux/OS-X: "wkhtmltopdf"
-            //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
-            //htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
                + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
