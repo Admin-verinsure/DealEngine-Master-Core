@@ -2700,9 +2700,9 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else if (template.DocumentType == 8)
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
 
-                                                SystemDocument renderedDoc = await GetInvoicePDF( renderedDoc,template.Id, template.Name);
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 documents.Add(renderedDoc);
                                                 // documents.Add(renderedDoc);
