@@ -2700,7 +2700,9 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else if (template.DocumentType == 8)
                                             {
-                                                SystemDocument renderedDoc = await GetInvoicePDF(template.Id, template.Name);
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+
+                                                SystemDocument renderedDoc = await GetInvoicePDF( renderedDoc,template.Id, template.Name);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 documents.Add(renderedDoc);
                                                 // documents.Add(renderedDoc);
@@ -3018,16 +3020,16 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<Document> GetInvoicePDF(Guid Id,string invoicename)
+        public async Task<Document> GetInvoicePDF(SystemDocument renderedDoc,string invoicename)
         {
             User user = null;
 
-            SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+            //SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
 
 
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
-            string html = _fileService.FromBytes(doc.Contents);
+            //string html = _fileService.FromBytes(doc.Contents);
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
@@ -3043,9 +3045,9 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.Margins = margins;
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
-            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+            //var pdfBytes = htmlToPdfConv.GeneratePdf(html);
             Document document = new Document(user, invoicename, "application/pdf", 99);
-            document.Contents = pdfBytes;
+            document.Contents = renderedDoc.Contents;
             return document;
         }
         [HttpPost]
