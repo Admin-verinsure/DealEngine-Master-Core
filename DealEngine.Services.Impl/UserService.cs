@@ -19,7 +19,7 @@ namespace DealEngine.Services.Impl
 		IMapperSession<User> _userRepository;
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
-        IOrganisationService _organisationService;
+		IMapperSession<Organisation> _organisationRepository;
 		ILogger<UserService> _logger;
 		IMapper _mapper;
 
@@ -27,8 +27,8 @@ namespace DealEngine.Services.Impl
 			IMapper mapper,
 			IMapperSession<User> userRepository, 
 			ILdapService ldapService, 
-			ILegacyLdapService legacyLdapService, 
-			IOrganisationService organisationService,
+			ILegacyLdapService legacyLdapService,
+			IMapperSession<Organisation> organisationRepository,
 			ILogger<UserService> logger
 			)
         {
@@ -36,7 +36,7 @@ namespace DealEngine.Services.Impl
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
-            _organisationService = organisationService;
+			_organisationRepository = organisationRepository;
 			_logger = logger;
 
 		}
@@ -290,7 +290,7 @@ namespace DealEngine.Services.Impl
 				if (OrganisationId != Guid.Empty)
 				{
 					createUser = _mapper.Map(jsonUser, createUser);
-					var PrimaryOrganisation = await _organisationService.GetOrganisation(OrganisationId);
+					var PrimaryOrganisation = await _organisationRepository.GetByIdAsync(OrganisationId);
 					createUser.SetPrimaryOrganisation(PrimaryOrganisation);
 					await Update(createUser);
 				}
