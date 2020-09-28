@@ -479,6 +479,7 @@ namespace DealEngine.Services.Impl
                 MarinaUnit marinaUnit = (MarinaUnit)organisation.OrganisationalUnits.FirstOrDefault();
                 var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), model);
                 var jsonWaterLocation = (WaterLocation)await _serializerationService.GetDeserializedObject(typeof(WaterLocation), model);
+                jsonWaterLocation.IsPublic = true;
                 organisation = _mapper.Map(jsonOrganisation, organisation);
                 marinaUnit.WaterLocation = _mapper.Map(jsonWaterLocation, marinaUnit.WaterLocation);
             }

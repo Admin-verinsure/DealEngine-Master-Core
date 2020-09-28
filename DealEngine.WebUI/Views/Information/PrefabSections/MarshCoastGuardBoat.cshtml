@@ -24,7 +24,7 @@
                                     colModel: [
                                         {
                                             name: "edit", template: "actions", width: 90, align: 'center', search: false, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                                return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> </i></button>')
+                                                return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm">Edit <i class="fa fa-edit"> </i></button>')
                                             }
                                         },
                                         { name: "BoatName", align: 'center', key: 'true', editable: true },
@@ -125,9 +125,13 @@
                                 <label class="input form-group">
                                     <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
                                         <option selected="selected" value="">-- Select --</option>
+                                        <option value="@Model.ClientInformationSheet.Owner.Id">@Model.ClientInformationSheet.Owner.Name</option>
                                         @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
                                         {
-                                            <option value="@skipper.Id">@skipper.Name</option>
+                                            if (Model.ClientInformationSheet.Owner.Id != skipper.Id)
+                                            {
+                                                <option value="@skipper.Id">@skipper.Name</option>
+                                            }
                                         }
                                         <option value="add">Add Skipper</option>
                                     </select>
@@ -660,9 +664,13 @@
                                 <label class="input form-group">
                                     <select onchange="AddaddNewSkipper()" class="form-control b" id="AddBoatOperator" name="BoatOperator" required>
                                         <option selected="selected" value="">-- Select --</option>
+                                        <option value="@Model.ClientInformationSheet.Owner.Id">@Model.ClientInformationSheet.Owner.Name</option>
                                         @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
                                         {
-                                            <option value="@skipper.Id">@skipper.Name</option>
+                                            if (Model.ClientInformationSheet.Owner.Id != skipper.Id)
+                                            {
+                                                <option value="@skipper.Id">@skipper.Name</option>
+                                            }
                                         }
                                         <option value="add">Add Skipper</option>
                                     </select>
