@@ -288,4 +288,4 @@ deploy_insurerotary:
     url: https://$URLinsurerotary
   when: manual
   dependencies:
-    - build    
+    - build

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Services.Interfaces
 {
@@ -19,5 +20,6 @@ namespace DealEngine.Services.Interfaces
         Task<User> GetUserPrimaryOrganisation(Organisation org);
         Task<List<User>> GetAllUserByOrganisation(Organisation org);
         Task<List<User>> GetBrokerUsers();
+        Task<User> PostCreateUser(User jsonUser, User currentUser, IFormCollection form);
     }
 }
