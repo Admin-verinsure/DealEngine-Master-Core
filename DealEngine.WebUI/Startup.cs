@@ -14,10 +14,7 @@ using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using System;
 using Newtonsoft.Json;
-using FluentNHibernate.Conventions.Inspections;
 
 namespace DealEngine.WebUI
 {

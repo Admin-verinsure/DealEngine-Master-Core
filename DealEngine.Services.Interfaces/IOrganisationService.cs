@@ -28,6 +28,8 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetMarina(WaterLocation waterLocation);
         Task<List<Organisation>> GetAllMarinas();
         Task<List<Organisation>> GetFinancialInstitutes();
+        Task PostMarina(IFormCollection model);
+        Task PostInstitute(IFormCollection model);
     }
 }
 

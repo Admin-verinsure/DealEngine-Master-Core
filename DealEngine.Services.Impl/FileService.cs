@@ -274,17 +274,21 @@ namespace DealEngine.Services.Impl
                 }
             }
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            if (agreement.ClientInformationSheet.Locations.Any())
+            {
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
             agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
-            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+                agreement.ClientInformationSheet.Locations.FirstOrDefault().City));
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
-           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+               agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+            }
+            
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
@@ -603,6 +607,7 @@ namespace DealEngine.Services.Impl
 
             string stradvisorlist = "";
             string stradvisorlist1 = "";
+            string stradvisorlist2 = "";
             string strnominatedrepresentative = "";
             string strotherconsultingbusiness = "";
             string strmentoradvisorlist = "";
@@ -636,6 +641,14 @@ namespace DealEngine.Services.Impl
                             {
                                 stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
                                     "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
+                            if (string.IsNullOrEmpty(stradvisorlist2))
+                            {
+                                stradvisorlist2 = uisorg.Name;
+                            }
+                            else
+                            {
+                                stradvisorlist2 += ", " + uisorg.Name;
                             }
                         }
 
@@ -690,6 +703,8 @@ namespace DealEngine.Services.Impl
                                     "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
                             }
                         }
+
+
                     }
                     
                 }
@@ -708,11 +723,16 @@ namespace DealEngine.Services.Impl
                 {
                     strmentoradvisorlist = "No Mentored Advisor insured under this policy.";
                 }
+                if (string.IsNullOrEmpty(stradvisorlist2))
+                {
+                    stradvisorlist2 = "No Advisor insured under this policy.";
+                }
 
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
                 mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", strmentoradvisorlist));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", stradvisorlist2));
 
             }
             else
@@ -721,6 +741,7 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", "No Mentored Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", "No Advisor insured under this policy."));
             }
 
             //Advisor list with FAP Number
@@ -910,7 +931,16 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerPhone]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Phone));
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerEmail]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Email));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            if(agreement.ClientInformationSheet.Programme.BaseProgramme.Name == "Apollo Programme")
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null
+                                                                                    ?agreement.ClientInformationSheet.Programme.EGlobalClientNumber
+                                                                                    : agreement.ClientInformationSheet.ReferenceId));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            }
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
             //mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]",

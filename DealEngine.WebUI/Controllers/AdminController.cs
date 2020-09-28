@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
-using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using Microsoft.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Controllers
@@ -39,10 +38,12 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         IImportService _importService;
         ISerializerationService _serializerationService;
+        IOrganisationService _organisationService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
 
         public AdminController (
+            IOrganisationService organisationService,
             ISerializerationService serializerationService,
             IMilestoneService milestoneService,
             SignInManager<IdentityUser> signInManager,
@@ -66,6 +67,7 @@ namespace DealEngine.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _organisationService = organisationService;
             _serializerationService = serializerationService;
             _milestoneService = milestoneService;
             _userManager = userManager;
@@ -852,10 +854,12 @@ namespace DealEngine.WebUI.Controllers
             UserViewModel userViewModel = new UserViewModel();
             return View(userViewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> GetCreateUser(IFormCollection form)
         {
             var user = await _userService.GetUserByEmail(form["UserEmail"]);
+
             Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
             if (user != null)
             {
@@ -864,27 +868,26 @@ namespace DealEngine.WebUI.Controllers
                 var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
                 return Json(jsonObj);                
             }
-            return NoContent();
+            return Json(null);
         }        
 
         [HttpPost]
         public async Task<IActionResult> PostCreateUser(IFormCollection form)
         {
+            var currentUser = await CurrentUser();
             var jsonUser = (User)await _serializerationService.GetDeserializedObject(typeof(User), form);
-            var jsonOrganisation = (Organisation)await _serializerationService.GetDeserializedObject(typeof(Organisation), form);
-            var user = await _userService.GetUserByEmail(form["User.Email"]);
-            var PrimaryOrganisation = user.PrimaryOrganisation;
-            user = _mapper.Map(jsonUser, user);            
-            PrimaryOrganisation = _mapper.Map(jsonOrganisation, PrimaryOrganisation);
-            user.SetPrimaryOrganisation(PrimaryOrganisation);
-            await _userService.Update(user);
-            var deUser = new IdentityUser
+            var user = await _userService.PostCreateUser(jsonUser, currentUser, form);                                                          
+            var deUser = await _userManager.FindByEmailAsync(user.Email);
+            if(deUser == null)
             {
-                UserName = user.UserName,
-                Email = user.Email
-            };
-            await _userManager.CreateAsync(deUser, "defaultPassword");
-            return NoContent();
+                deUser = new IdentityUser
+                {
+                    UserName = user.UserName,
+                    Email = user.Email
+                };
+                await _userManager.CreateAsync(deUser, "defaultPassword");
+            }
+            return Redirect("~/Home/Index");
         }
     }
 }
