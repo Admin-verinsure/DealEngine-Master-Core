@@ -278,13 +278,17 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            if (agreement.ClientInformationSheet.Locations.Any())
+            {
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
             agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
-            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+                agreement.ClientInformationSheet.Locations.FirstOrDefault().City));
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
-           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+               agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+            }
+            
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
