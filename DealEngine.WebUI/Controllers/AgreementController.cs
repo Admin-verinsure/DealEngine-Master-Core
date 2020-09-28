@@ -2518,7 +2518,7 @@ namespace DealEngine.WebUI.Controllers
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                                agreement.Documents.Add(renderedDoc);
+                                                agreement.Documents.Add(renderedDoc1);
                                                 documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
