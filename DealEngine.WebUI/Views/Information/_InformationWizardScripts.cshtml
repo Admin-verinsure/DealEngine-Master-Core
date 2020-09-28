@@ -2788,9 +2788,6 @@ function showAccordionPanel(id, panelNo) {
             $('#InterestedParties3.' + classId).val(data.interestedParties3);
             $('#BoatNotes.' + classId).val(data.boatNotes);
             $('#VesselArea.' + classId).val(data.vesselArea);
-<<<<<<< HEAD
-            $('#MooredType.' + classId).val(data.waterLocationMooringType);
-=======
             if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
                 $("#MooredType").empty();
                 $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
@@ -2798,8 +2795,7 @@ function showAccordionPanel(id, panelNo) {
                 $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
                 $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));                
                 $('#MooredType').trigger('chosen:updated');
-            }            
->>>>>>> cc08563e49e91d7d69e37e12704e5f9d28ef6d8f
+            }
             if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
                 $('#BoatWaterLocation.b').val(data.boatWaterLocation);
                 $('#othermarinSection').addClass("hidden");
@@ -2816,6 +2812,7 @@ function showAccordionPanel(id, panelNo) {
                 $('#othermarinSection').addClass("hidden");
                 $('#BoatMooredTypeSection').addClass("hidden");
             }
+            $('#MooredType.' + classId).val(data.waterLocationMooringType);
             vesselType1Selected();
             $('#BoatType2.b').val(data.boatType2);
             vesselType2Selected();
