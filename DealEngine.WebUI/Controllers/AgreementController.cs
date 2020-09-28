@@ -2788,7 +2788,7 @@ namespace DealEngine.WebUI.Controllers
                                 if (programme.BaseProgramme.ProgEnableEmail)
                                 {
                                     //send out policy document email
-                                   
+
 
                                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                     if (emailTemplate != null)
@@ -2954,7 +2954,7 @@ namespace DealEngine.WebUI.Controllers
         //                if (programme.BaseProgramme.ProgEnableEmail && document.Name.Contains("Invoice"))
         //                {
         //                    //send out policy document email
-                          
+
         //                        if (sendUser)
         //                        {
         //                            await _emailService.GetInvoicePDF(user.Email, document, agreement.ClientInformationSheet, agreement, null);
@@ -2972,7 +2972,7 @@ namespace DealEngine.WebUI.Controllers
         //                                await uow.Commit();
         //                            }
         //                        }
-                           
+
         //                }
         //            }
         //        }
@@ -3030,7 +3030,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<Document> GetInvoicePDF(SystemDocument renderedDoc,string invoicename)
+        public async Task<Document> GetInvoicePDF(SystemDocument renderedDoc, string invoicename)
         {
             User user = null;
 
@@ -3642,13 +3642,13 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (Document doc in agreeDocList)
                         {
-                            if ( (!doc.Name.EqualsIgnoreCase("FullProposalReport")  && !doc.Name.Contains("Invoice")))
+                            if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && !doc.Name.Contains("Invoice")))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
                             else if (doc.Name.Contains("Invoice"))
                             {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id+ "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
                             else
                             {
