@@ -247,7 +247,8 @@ namespace DealEngine.Domain.Entities
         {
             return new Organisation(creatingUser, Guid.NewGuid(), "Default user organisation for " + owner.FullName, organisationType)
             {
-                Domain = "#"
+                Domain = "#",
+                Email = owner.Email
             };
         }
     }
