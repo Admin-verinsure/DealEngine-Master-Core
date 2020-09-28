@@ -2780,7 +2780,7 @@ function showAccordionPanel(id, panelNo) {
             $('#BoatIsTrailered.' + classId).val(data.boatIsTrailered);
             $('#BoatTrailer.' + classId).val(data.boatTrailer);
             $('#BoatLandLocation.' + classId).val(data.boatLandLocation);
-            $('#BoatOperator.' + classId).val(data.boatOperator);
+            $('#BoatOperator.' + classId).val(data.boatOperator);         
             $('#BoatEffectiveDate.' + classId).val(data.boatEffectiveDate);
             $('#BoatIPEffectiveDate.' + classId).val(data.boatIPEffectiveDate);
             $('#BoatCeaseDate.' + classId).val(data.boatCeaseDate);
@@ -2857,9 +2857,9 @@ function showAccordionPanel(id, panelNo) {
            //$('#MotorType.b').val(data.MotorType);
            // $('#HullConfiguration.b').val(data.HullConfiguration);
 
-        $('#BuiltProfessionally').val("True").trigger('chosen:updated');
-        $('#MotorType').val("Jet").trigger('chosen:updated');
-        $('#HullConfiguration').val("Mono").trigger('chosen:updated');
+            $('#BuiltProfessionally').val("True").trigger('chosen:updated');
+            $('#MotorType').val("Jet").trigger('chosen:updated');
+            $('#HullConfiguration').val("Mono").trigger('chosen:updated');
         }
 
         if (data.boatIsTrailered) {
@@ -4433,6 +4433,7 @@ async: true
     var AddmotorTypeInboardOther = document.getElementById("AddMotorTypeInboardOther");
     var AddmotorTypeOutboard = document.getElementById("AddMotorTypeOutboard");
     var AddmotorTypeNA = document.getElementById("AddMotorTypeNA");
+    var AddMotorTypeJetSkiJet = document.getElementById("AddMotorTypeJetskiJet");
     //Jetski Auckland Rego
     //var AddaucklandRego = document.getElementById("AddaucklandRegoSection");
     //Water Location Section
@@ -4485,6 +4486,7 @@ async: true
         AddmotorTypeInboardOther.classList.remove("hidden");
         AddmotorTypeOutboard.classList.remove("hidden");
         AddmotorTypeNA.classList.remove("hidden");
+        AddMotorTypeJetSkiJet.classList.add("hidden");
         //AddwaterLoc.classList.remove("hidden");
 
         AddriggingType.selectedIndex = 0;
@@ -4528,6 +4530,7 @@ async: true
         AddmotorTypeInboardOther.classList.remove("hidden");
         AddmotorTypeOutboard.classList.remove("hidden");
         AddmotorTypeNA.classList.remove("hidden");
+        AddMotorTypeJetSkiJet.classList.add("hidden");
         AddriggingType.selectedIndex = 0;
         AddmastType.selectedIndex = 0;
         AddconstructionType.selectedIndex = 0;
@@ -4565,6 +4568,7 @@ async: true
         AddmotorTypeInboardOther.classList.remove("hidden");
         AddmotorTypeOutboard.classList.remove("hidden");
         AddmotorTypeNA.classList.remove("hidden");
+        AddMotorTypeJetSkiJet.classList.add("hidden");
         AddconstructionTypeRigidHi.classList.remove("hidden");
         AddconstructionTypeWood.classList.remove("hidden");
         AddconstructionTypeOther.classList.remove("hidden");
@@ -4603,6 +4607,7 @@ async: true
         AddmotorTypeInboardOther.classList.add("hidden");
         AddmotorTypeOutboard.classList.add("hidden");
         AddmotorTypeNA.classList.add("hidden");
+        AddMotorTypeJetSkiJet.classList.remove("hidden");
         AddboatType2.selectedIndex = 0;
         AddconstructionType.selectedIndex = 0;
         AddhullConfiguration.selectedIndex = 0;
@@ -4612,8 +4617,8 @@ async: true
         AddboatWaterLoc.selectedIndex = 0;
         $('#BuiltProfessionally').val("True").trigger('chosen:updated');
         $('#AddBuiltProfessionally').val("True").trigger('chosen:updated');
-        $('#MotorType').val("Jet").trigger('chosen:updated');
-        $('#AddMotorType').val("Jet").trigger('chosen:updated');
+        $('#MotorType').val("Jetskijet").trigger('chosen:updated');
+        $('#AddMotorType').val("Jetskijet").trigger('chosen:updated');
         $('#HullConfiguration').val("Mono").trigger('chosen:updated');
         $('#AddHullConfiguration').val("Mono").trigger('chosen:updated');
         $('#BuiltProfessionally').prop("disabled", "disabled");
@@ -4635,6 +4640,7 @@ async: true
         AddmotorTypeInboardOther.classList.add("hidden");
         AddmotorTypeOutboard.classList.add("hidden");
         AddmotorTypeNA.classList.add("hidden");
+        AddMotorTypeJetSkiJet.classList.add("hidden");
         $('#AddRiggingTypeSection').hide('2000');
         $('#AddMastTypeSection').hide('2000');
        // $('#AddBoatWaterLocationSection').hide('2000');
@@ -4689,6 +4695,7 @@ async: true
         AddmotorTypeInboardOther.classList.remove("hidden");
         AddmotorTypeOutboard.classList.remove("hidden");
         AddmotorTypeNA.classList.remove("hidden");
+        AddMotorTypeJetSkiJet.classList.add("hidden");
         AddconstructionType.selectedIndex = 0;
         $('#BuiltProfessionally').prop("disabled", false);
         $('#AddBuiltProfessionally').prop("disabled", false);
@@ -5216,6 +5223,7 @@ async: true
     var motorTypeInboardOther = document.getElementById("MotorTypeInboardOther");
     var motorTypeOutboard = document.getElementById("MotorTypeOutboard");
     var motorTypeNA = document.getElementById("MotorTypeNA");
+    var motorTypeJetskiJet = document.getElementById("MotorTypeJetskiJet");
     //Water Location Section
     var waterLoc = document.getElementById("BoatWaterLocationSection");
     // Excess
@@ -5281,6 +5289,7 @@ async: true
             motorTypeInboardOther.classList.remove("hidden");
             motorTypeOutboard.classList.remove("hidden");
             motorTypeNA.classList.remove("hidden");
+            motorTypeJetskiJet.classList.add("hidden");
             //waterLoc.classList.remove("hidden");
 
             riggingType.selectedIndex = 0;
@@ -5327,6 +5336,7 @@ async: true
             motorTypeInboardOther.classList.remove("hidden");
             motorTypeOutboard.classList.remove("hidden");
             motorTypeNA.classList.remove("hidden");
+            motorTypeJetskiJet.classList.add("hidden");
 
             riggingType.selectedIndex = 0;
             mastType.selectedIndex = 0;
@@ -5371,6 +5381,7 @@ async: true
             constructionTypeRigidHi.classList.remove("hidden");
             constructionTypeWood.classList.remove("hidden");
             constructionTypeOther.classList.remove("hidden");
+            motorTypeJetskiJet.classList.add("hidden");
 
             $('#BuiltProfessionally').prop("disabled", false);
             $('#AddBuiltProfessionally').prop("disabled", false);
@@ -5412,6 +5423,7 @@ async: true
             motorTypeInboardOther.classList.add("hidden");
             motorTypeOutboard.classList.add("hidden");
             motorTypeNA.classList.add("hidden");
+            motorTypeJetskiJet.classList.remove("hidden");
 
             boatType2.selectedIndex = 0;
             constructionType.selectedIndex = 0;
@@ -5423,8 +5435,8 @@ async: true
 
             $('#BuiltProfessionally').val("True").trigger('chosen:updated');
             $('#AddBuiltProfessionally').val("True").trigger('chosen:updated');
-            $('#MotorType').val("Jet").trigger('chosen:updated');
-            $('#AddMotorType').val("Jet").trigger('chosen:updated');
+            $('#MotorType').val("Jetskijet").trigger('chosen:updated');
+            $('#AddMotorType').val("Jetskijet").trigger('chosen:updated');
             $('#HullConfiguration').val("Mono").trigger('chosen:updated');
             $('#AddHullConfiguration').val("Mono").trigger('chosen:updated');
 
@@ -5447,6 +5459,8 @@ async: true
             motorTypeInboardOther.classList.add("hidden");
             motorTypeOutboard.classList.add("hidden");
             motorTypeNA.classList.add("hidden");
+            motorTypeJetskiJet.classList.add("hidden");
+
             $('#RiggingTypeSection').hide('2000');
             $('#MastTypeSection').hide('2000');
            // $('#BoatWaterLocationSection').hide('2000');
@@ -5505,6 +5519,8 @@ async: true
             motorTypeInboardOther.classList.remove("hidden");
             motorTypeOutboard.classList.remove("hidden");
             motorTypeNA.classList.remove("hidden");
+            motorTypeJetskiJet.classList.add("hidden");
+
             constructionType.selectedIndex = 0;
             $('#BuiltProfessionally').prop("disabled", false);
             $('#AddBuiltProfessionally').prop("disabled", false);
@@ -5541,6 +5557,8 @@ async: true
             motorTypeInboardOther.classList.remove("hidden");
             motorTypeOutboard.classList.remove("hidden");
             motorTypeNA.classList.remove("hidden");
+            motorTypeJetskiJet.classList.remove("hidden");
+
             riggingType.selectedIndex = 0;
             mastType.selectedIndex = 0;
             constructionType.selectedIndex = 0;
@@ -5933,13 +5951,17 @@ async: true
     }
 
     function addNewBoatUse() {
-        debugger;
+
         var BoatUse = document.getElementById("AddSelectedBoatUse");
         var BoatUse2 = document.getElementById("SelectedBoatUse");
         var selectedBoatUse = BoatUse.options[BoatUse.selectedIndex].value;
         var selectedBoatUse2 = BoatUse2.options[BoatUse2.selectedIndex].value;
 
-        if (selectedBoatUse == "add" || selectedBoatUse2 =="add") {
+        if (selectedBoatUse == "add" || selectedBoatUse2 == "add") {
+            debugger;
+            BoatUse.selectedIndex = 0;
+            BoatUse2.selectedIndex = 0;
+
             var AddboatType1Selected = AddboatType1.options[AddboatType1.selectedIndex].value;
             var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
             if (AddboatType1Selected == "YachtsandCatamarans" || boatType1Selected == "YachtsandCatamarans") {
@@ -5956,7 +5978,6 @@ async: true
                 $('#racingUseSection').addClass("hidden");
             }
             boutUseCategoryUpdated();
-            selectedBoatUse = "";
         }
     }       
 
