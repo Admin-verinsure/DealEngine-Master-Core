@@ -2518,8 +2518,8 @@ namespace DealEngine.WebUI.Controllers
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
-                                                // documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
                                             else
@@ -2714,8 +2714,8 @@ namespace DealEngine.WebUI.Controllers
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
-                                                // documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
                                             else
