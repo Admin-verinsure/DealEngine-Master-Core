@@ -26,7 +26,10 @@ namespace DealEngine.WebUI.Models.Programme
                 Id = programme.Id;
                 Name = programme.Name;
                 Programme = programme;
-                Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;
+                if (Brokers != null)
+                {
+                    Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;
+                }                
             }
             if(clientProgramme != null)
             {

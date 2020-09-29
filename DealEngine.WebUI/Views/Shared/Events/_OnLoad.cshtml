@@ -72,10 +72,11 @@
         editButton.innerHTML = editbuttonstring;
         var Name = row.insertCell(1);
         Name.innerHTML = data.name;
-        var type = row.insertCell(2);
-        type.innerHTML = type;        
+        var OrganisationType = row.insertCell(2);
+        OrganisationType.innerHTML = type;        
         var deleteButton = row.insertCell(3);
         deleteButton.innerHTML = deletebuttonstring;
+        debugger;
     }
 
     function PopulateMilestoneView(Method, OutPut) {

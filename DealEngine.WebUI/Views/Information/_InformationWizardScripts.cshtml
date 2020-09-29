@@ -2795,7 +2795,7 @@ function showAccordionPanel(id, panelNo) {
                 $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
                 $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));                
                 $('#MooredType').trigger('chosen:updated');
-            }            
+            }
             if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
                 $('#BoatWaterLocation.b').val(data.boatWaterLocation);
                 $('#othermarinSection').addClass("hidden");
@@ -2849,7 +2849,7 @@ function showAccordionPanel(id, panelNo) {
         $('#MotorType.b').val(data.motorType);
 
         $('#BoatTrailer.b').val(data.boatTrailer);
-           $('#BoatIsTrailered.b').val(data.boatIsTrailered);
+        $('#BoatIsTrailered.b').val(data.boatIsTrailered);
         $('#BuiltProfessionally.b').val(data.builtProfessionally);
 
         if ($('#BoatType1.b').val() == "Jetski") {
@@ -4434,7 +4434,7 @@ async: true
     var AddmotorTypeOutboard = document.getElementById("AddMotorTypeOutboard");
     var AddmotorTypeNA = document.getElementById("AddMotorTypeNA");
     //Jetski Auckland Rego
-    var AddaucklandRego = document.getElementById("AddaucklandRegoSection");
+    //var AddaucklandRego = document.getElementById("AddaucklandRegoSection");
     //Water Location Section
     var AddwaterLoc = document.getElementById("AddBoatWaterLocationSection");
     // Excess
@@ -4471,12 +4471,12 @@ async: true
        // $('#AddBoatLandLocationSection').hide('2000');
        // $('#AddBoatWaterLocationSection').show('2000');
         $('#AddRegistrationSection').hide('2000');
-        AddaucklandRego.classList.add("hidden");
+        $('#AddaucklandRegoSection').hide('2000');
 
         AddconstructionTypeRigidHi.classList.remove("hidden");
         AddconstructionTypeWood.classList.remove("hidden");
         AddconstructionTypeOther.classList.remove("hidden");
-         AddboatType2Berthed.classList.remove("hidden");
+        AddboatType2Berthed.classList.remove("hidden");
         AddboatType2Moored.classList.remove("hidden");
         AddhullConfigurationCatamaran.classList.remove("hidden");
         AddhullConfigurationTrimaran.classList.remove("hidden");
@@ -4513,6 +4513,7 @@ async: true
         $('#AddRiggingTypeSection').hide('2000');
         $('#AddMastTypeSection').hide('2000');
         $('#AddRegistrationSection').hide('2000');
+        $('#AddaucklandRegoSection').hide('2000');
         AddconstructionTypeCement.classList.add("hidden");
        // $('#AddBoatWaterLocationSection').show('2000');
         AddconstructionTypeRigidHi.classList.remove("hidden");
@@ -4527,7 +4528,6 @@ async: true
         AddmotorTypeInboardOther.classList.remove("hidden");
         AddmotorTypeOutboard.classList.remove("hidden");
         AddmotorTypeNA.classList.remove("hidden");
-        AddaucklandRego.classList.add("hidden");
         AddriggingType.selectedIndex = 0;
         AddmastType.selectedIndex = 0;
         AddconstructionType.selectedIndex = 0;
@@ -4554,7 +4554,7 @@ async: true
         $('#AddMastTypeSection').show('2000');
 //$('#AddBoatWaterLocationSection').show('2000');
         $('#AddRegistrationSection').hide('2000');
-        AddaucklandRego.classList.add("hidden");
+        $('#AddaucklandRegoSection').hide('2000');
         AddconstructionTypeCement.classList.remove("hidden");
         AddboatType2Berthed.classList.remove("hidden");
         AddboatType2Moored.classList.remove("hidden");
@@ -4589,6 +4589,7 @@ async: true
         $('#AddMastTypeSection').hide('2000');
        // $('#AddBoatWaterLocationSection').hide('2000');
         $('#AddRegistrationSection').show('2000');
+        $('#AddaucklandRegoSection').show('2000');
         AddboatType2Berthed.classList.add("hidden");
         AddboatType2Moored.classList.add("hidden");
         AddconstructionTypeCement.classList.add("hidden");
@@ -4602,7 +4603,6 @@ async: true
         AddmotorTypeInboardOther.classList.add("hidden");
         AddmotorTypeOutboard.classList.add("hidden");
         AddmotorTypeNA.classList.add("hidden");
-        AddaucklandRego.classList.remove("hidden");
         AddboatType2.selectedIndex = 0;
         AddconstructionType.selectedIndex = 0;
         AddhullConfiguration.selectedIndex = 0;
@@ -4635,12 +4635,11 @@ async: true
         AddmotorTypeInboardOther.classList.add("hidden");
         AddmotorTypeOutboard.classList.add("hidden");
         AddmotorTypeNA.classList.add("hidden");
-        AddaucklandRego.classList.add("hidden");
         $('#AddRiggingTypeSection').hide('2000');
         $('#AddMastTypeSection').hide('2000');
        // $('#AddBoatWaterLocationSection').hide('2000');
         $('#AddRegistrationSection').hide('2000');
-
+        $('#AddaucklandRegoSection').hide('2000');
         AddboatType2Berthed.classList.add("hidden");
         AddboatType2Moored.classList.add("hidden");
         AddconstructionTypeRigidHi.classList.remove("hidden");
@@ -4677,7 +4676,7 @@ async: true
         $('#AddMastTypeSection').show('2000');
        //$('#AddBoatWaterLocationSection').show('2000');
         $('#AddRegistrationSection').hide('2000');
-        AddaucklandRego.classList.add("hidden");
+        $('#AddaucklandRegoSection').hide('2000');
         AddconstructionTypeRigidHi.classList.remove("hidden");
         AddconstructionTypeWood.classList.remove("hidden");
         AddconstructionTypeOther.classList.remove("hidden");
@@ -5217,8 +5216,6 @@ async: true
     var motorTypeInboardOther = document.getElementById("MotorTypeInboardOther");
     var motorTypeOutboard = document.getElementById("MotorTypeOutboard");
     var motorTypeNA = document.getElementById("MotorTypeNA");
-    //Jetski Auckland Rego
-    var aucklandRego = document.getElementById("aucklandRegoSection");
     //Water Location Section
     var waterLoc = document.getElementById("BoatWaterLocationSection");
     // Excess
@@ -5271,7 +5268,7 @@ async: true
             //    $('#BoatLandLocationSection').hide('2000');
             //$('#BoatWaterLocationSection').show('2000');
             $('#RegistrationSection').hide('2000');
-            aucklandRego.classList.add("hidden");
+            $('#aucklandRegoSection').hide('2000');
             constructionTypeRigidHi.classList.remove("hidden");
             constructionTypeWood.classList.remove("hidden");
             constructionTypeOther.classList.remove("hidden");
@@ -5314,6 +5311,8 @@ async: true
             $('#RiggingTypeSection').hide('2000');
             $('#MastTypeSection').hide('2000');
             $('#RegistrationSection').hide('2000');
+            $('#aucklandRegoSection').hide('2000');
+
             constructionTypeCement.classList.add("hidden");
            // $('#BoatWaterLocationSection').show('2000');
             constructionTypeRigidHi.classList.remove("hidden");
@@ -5328,7 +5327,6 @@ async: true
             motorTypeInboardOther.classList.remove("hidden");
             motorTypeOutboard.classList.remove("hidden");
             motorTypeNA.classList.remove("hidden");
-            aucklandRego.classList.add("hidden");
 
             riggingType.selectedIndex = 0;
             mastType.selectedIndex = 0;
@@ -5359,7 +5357,7 @@ async: true
             $('#MastTypeSection').show('2000');
            // $('#BoatWaterLocationSection').show('2000');
             $('#RegistrationSection').hide('2000');
-            aucklandRego.classList.add("hidden");
+            $('#aucklandRegoSection').hide('2000');
             constructionTypeCement.classList.remove("hidden");
             boatType2Berthed.classList.remove("hidden");
             boatType2Moored.classList.remove("hidden");
@@ -5399,6 +5397,8 @@ async: true
             $('#MastTypeSection').hide('2000');
            // $('#BoatWaterLocationSection').hide('2000');
             $('#RegistrationSection').show('2000');
+            $('#aucklandRegoSection').show('2000');
+
             boatType2Berthed.classList.add("hidden");
             boatType2Moored.classList.add("hidden");
             constructionTypeCement.classList.add("hidden");
@@ -5412,7 +5412,6 @@ async: true
             motorTypeInboardOther.classList.add("hidden");
             motorTypeOutboard.classList.add("hidden");
             motorTypeNA.classList.add("hidden");
-            aucklandRego.classList.remove("hidden");
 
             boatType2.selectedIndex = 0;
             constructionType.selectedIndex = 0;
@@ -5448,11 +5447,11 @@ async: true
             motorTypeInboardOther.classList.add("hidden");
             motorTypeOutboard.classList.add("hidden");
             motorTypeNA.classList.add("hidden");
-            aucklandRego.classList.add("hidden");
             $('#RiggingTypeSection').hide('2000');
             $('#MastTypeSection').hide('2000');
            // $('#BoatWaterLocationSection').hide('2000');
             $('#RegistrationSection').hide('2000');
+            $('#aucklandRegoSection').hide('2000');
 
             boatType2Berthed.classList.add("hidden");
             boatType2Moored.classList.add("hidden");
@@ -5493,7 +5492,7 @@ async: true
             $('#MastTypeSection').show('2000');
          //   $('#BoatWaterLocationSection').show('2000');
             $('#RegistrationSection').hide('2000');
-            aucklandRego.classList.add("hidden");
+            $('#aucklandRegoSection').hide('2000');
             constructionTypeRigidHi.classList.remove("hidden");
             constructionTypeWood.classList.remove("hidden");
             constructionTypeOther.classList.remove("hidden");
@@ -5798,27 +5797,26 @@ async: true
          } else {
              GetMooredType(AddSelectedWaterLoc);
              $('#AddothermarinSection').addClass('hidden');
-        }
+         }
        // selectedWaterLoc = "";
     }
 
     function GetMooredType(othermarinaname) {
-         var orgId = othermarinaname;
         $('#BoatMooredTypeSection').removeClass('hidden');
-        $('#AddBoatMooredTypeSection').removeClass('hidden');
-        //$("#MooredType").find('option').not(':selected').remove();
-        //$("#AddMooredType").find('option').not(':selected').remove();
         $("#MooredType").empty();
-        $("#AddMooredType").empty();
         $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-        $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
         $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
         $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
         $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
+        $('#MooredType').trigger('chosen:updated');
+
+        $('#AddBoatMooredTypeSection').removeClass('hidden');
+        $("#AddMooredType").empty();
+        $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
         $('#AddMooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
         $('#AddMooredType').append($('<option>', { value: "Pile", text: "Pile" }));
         $('#AddMooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-        $('#MooredType').trigger('chosen:updated');
+
         $('#AddMooredType').trigger('chosen:updated');
     };
 
