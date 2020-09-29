@@ -407,36 +407,6 @@ namespace DealEngine.WebUI.Controllers
 
                     }
 
-                    foreach (var terms in agreement.ClientAgreementTerms)
-                    {
-                        //foreach (var bvterm in terms.BoatTerms)
-                        //{ Org Changes
-
-                        //    if (bvterm.Boat.BoatWaterLocation != null)
-                        //    {
-                        //        var orgList = await _organisationService.GetAllOrganisations();
-                        //        InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
-                        //        if (insuranceAttribute != null)
-                        //        {
-
-                        //            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
-                        //            foreach (var org in orgList)
-                        //            {
-                        //                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
-                        //                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
-                        //                {
-
-                        //                    org.IsApproved = true;
-                        //                }
-                        //            }
-                        //            //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
-                        //        }
-
-                        //    }
-
-                        //}
-                    }
-
                     if (agreement.Status != "Quoted")
                     {
                         agreement.Status = "Quoted";
