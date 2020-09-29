@@ -596,15 +596,13 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
-            ProgrammeInfoViewModel model;
-            User user = null;
-
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
+            User user = await CurrentUser();
             try
             {
                 string Active = "Not Active";
-                user = await CurrentUser();
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
-                model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
+                
                 model.BrokerContactUser = clientProgramme.BaseProgramme.BrokerContactUser;
                 model.EGlobalSubmissions = clientProgramme.ClientAgreementEGlobalSubmissions;
 
@@ -647,7 +645,8 @@ namespace DealEngine.WebUI.Controllers
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
+                model.EGlobalIsActiveOrNot = false;
+                return View(model);
             }
         }
 
