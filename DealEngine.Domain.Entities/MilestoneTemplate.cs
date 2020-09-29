@@ -23,21 +23,15 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             Name = activity;
-            if(collection != null)
+            if (collection != null)
             {
-                Advisory = new Advisory(createdBy, collection);
-                UserTask = new UserTask(createdBy, Name, collection);
+                Advisory = new Advisory(createdBy, collection);                
                 //email
-            }
-            if(userTask != null)
-            {
-                UserTask = userTask;
-            }
+            }            
         }
 
         public virtual string Name { get; set; }
         public virtual Advisory Advisory { get; set; }
-        public virtual UserTask UserTask { get; set; }
     }
 
     public class ProgrammeProcess : EntityBase, IAggregateRoot
