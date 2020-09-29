@@ -57,6 +57,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AgreementController> _logger;
         IClientAgreementTermCanService _clientAgreementTermCanService;
         IClientAgreementBVTermCanService _clientAgreementBVTermCanService;
+        ISerializerationService _serializationService;
         //convert to service?
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<SystemDocument> _documentRepository;
@@ -86,6 +87,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IMapperSession<SystemDocument> documentRepository,
             IProgrammeService programmeService,
+            ISerializerationService serializerationService,
             IPaymentGatewayService paymentGatewayService,
             IInsuranceAttributeService insuranceAttributeService,
             IPaymentService paymentService,
@@ -129,6 +131,7 @@ namespace DealEngine.WebUI.Controllers
             _eGlobalSubmissionService = eGlobalSubmissionService;
             _clientAgreementTermCanService = clientAgreementTermCanService;
             _clientAgreementBVTermCanService = clientAgreementBVTermCanService;
+            _serializationService = serializerationService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -2429,7 +2432,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     status = "Bound and invoice pending";
                 }
-
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
                     if (Action == "BindAgreement")
@@ -2445,7 +2447,7 @@ namespace DealEngine.WebUI.Controllers
                         var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
-
+                        
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             if (agreement.Status != status)
@@ -2603,6 +2605,7 @@ namespace DealEngine.WebUI.Controllers
                         }
 
                     }
+                    
                     else
                     {
                         agreement.DateDeleted = DateTime.Now;
@@ -3545,6 +3548,9 @@ namespace DealEngine.WebUI.Controllers
                         //    }
                         //}
 
+
+                        // TODO ADD BACK IN 
+
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
@@ -3556,7 +3562,6 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
 
-
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (programme.InformationSheet.Status != status)
@@ -3565,6 +3570,15 @@ namespace DealEngine.WebUI.Controllers
                             await uow.Commit();
                         }
                     }
+
+                    var jsonObjectList = new List<object>();
+
+                    //jsonObjectList.Add(sheet);
+                    //jsonObjectList.Add(agreement);
+
+                    //string test = await _serializationService.GetSerializedObject(jsonObjectList);
+                    //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
+
                 }
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
             }
