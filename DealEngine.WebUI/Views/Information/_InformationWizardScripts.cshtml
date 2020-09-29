@@ -3590,6 +3590,7 @@ function showAccordionPanel(id, panelNo) {
 
         selectedBoatUseCategory = "";
         var informationId = $('#AnswerSheetId').serialize();
+        var BoatId = "BoatId="+document.getElementById('BoatId').value;
         if (live == true) {
             $('#SelectedBoatUse').trigger('chosen:updated');
             var boatUseEffectiveDate = $('#BoatUseLiveEffectiveDateModal').serialize();
@@ -3599,7 +3600,7 @@ function showAccordionPanel(id, panelNo) {
             var boatuseliveonboard = "BoatUseLiveOnBoard=True";
             var boatuserace = "BoatUseRace=False";
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
-            var z = $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatusecategory, boatuseliveonboard, boatuserace, boatUseAdditionalNotes, informationId], Boolean).join("&");
+            var z = $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatusecategory, boatuseliveonboard, boatuserace, boatUseAdditionalNotes, informationId, BoatId], Boolean).join("&");
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",
@@ -3640,7 +3641,7 @@ function showAccordionPanel(id, panelNo) {
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",
-                data: $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatuserace, boatuseliveonboard, boatusecategory, boatuseracecategory, boatUseAdditionalNotes, boatuseracespinnakers, informationId ], Boolean).join("&")
+                data: $.grep([boatUseEffectiveDate, boatUseCeaseDate, boatUseNotes, boatuserace, boatuseliveonboard, boatusecategory, boatuseracecategory, boatUseAdditionalNotes, boatuseracespinnakers, informationId, BoatId ], Boolean).join("&")
             })
                 .done(function (data) {
                       debugger;
@@ -3668,7 +3669,7 @@ function showAccordionPanel(id, panelNo) {
             var boatuseliveonboard = "BoatUseLiveOnBoard=True";
             var boatuserace = "BoatUseRace=True";
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
-            var z = $.grep([boatuserace,boatuseliveonboard,boatusecategory, informationId], Boolean).join("&");
+            var z = $.grep([boatuserace, boatuseliveonboard, boatusecategory, informationId, BoatId], Boolean).join("&");
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",
@@ -3697,7 +3698,7 @@ function showAccordionPanel(id, panelNo) {
             var boatuseliveonboard = "BoatUseLiveOnBoard=False";
             var boatuserace = "BoatUseRace=False";
             var boatUseAdditionalNotes = $('#BoatUseAdditionalNotesModal').serialize();
-            var z = $.grep([boatuserace,boatuseliveonboard,boatusecategory, informationId], Boolean).join("&");
+            var z = $.grep([boatuserace, boatuseliveonboard, boatusecategory, informationId, BoatId], Boolean).join("&");
             $.ajax({
                 url: '@Url.Action("AddBoatUse", "Services")',
                 type: "POST",

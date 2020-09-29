@@ -1943,6 +1943,14 @@ namespace DealEngine.WebUI.Controllers
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
 
+                if (model.SelectedBoatUse != Guid.Empty)
+                {
+                    var BoatUse = await _boatUseService.GetBoatUse(model.SelectedBoatUse);
+                    boat.BoatUses.Clear();
+                    boat.BoatUses.Add(BoatUse);                                        
+                }
+                boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
+
                 if (model.BoatWaterLocation != Guid.Empty)
                 {
                     var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
@@ -2313,36 +2321,27 @@ namespace DealEngine.WebUI.Controllers
             BoatUse boatUse = null;
             try
             {
-                //user = await CurrentUser();
-                //if (model == null)
-                //    throw new ArgumentNullException(nameof(model));
-                //user = await CurrentUser();
-                //ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                
-                //if (sheet == null)
-                //    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-               
-                //if (model.BoatUseId != Guid.Empty)
-                //{
-                //    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                //}
-                //else
-                //{
-                //    Guid boatUseId = Guid.NewGuid();
-                //    boatUse = new BoatUse(user, model.BoatUseCategory);
-                //    boatUse.UpdateEntity(model);
-                //    boatUse = model.ToEntity(user);
-                //    boatUse.Id = boatUseId;
-                //    //await _boatUseService.UpdateBoatUse(boatUse);
-                //}
-
-                //foreach (var boat in sheet.Boats)
-                //{
-                //    boat.BoatUses.Add(boatUse);
-                //    await _boatRepository.UpdateAsync(boat);
-                //}
-
-                //// model.BoatUseId = boatUse.Id;
+                user = await CurrentUser();
+                if(Guid.TryParse(collection["AnswerSheetId"], out Guid InformationId))
+                {
+                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(InformationId);
+                    if (collection.ContainsKey("BoatUseId"))
+                    {
+                        if (Guid.TryParse(collection["BoatUseId"], out Guid BoatUseId))
+                        {
+                            if (BoatUseId != Guid.Empty)
+                            {
+                                boatUse = await _boatUseService.GetBoatUse(BoatUseId);
+                            }                            
+                        }
+                    }
+                    else
+                    {
+                        boatUse = new BoatUse(user, "");
+                        boatUse.PopulateEntity(collection);
+                        await _boatUseService.UpdateBoatUse(boatUse);
+                    }                    
+                }
 
                 return Json(boatUse);
             }
