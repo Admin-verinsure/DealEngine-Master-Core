@@ -2335,7 +2335,10 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
+                    Guid boatUseId = Guid.NewGuid();
+                    //model.BoatUseId = boatUseId;
                     boatUse = model.ToEntity(user);
+                    boatUse.Id = boatUseId;
                 }
                 model.UpdateEntity(boatUse);
 
