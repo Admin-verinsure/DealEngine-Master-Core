@@ -1963,19 +1963,13 @@ namespace DealEngine.WebUI.Controllers
                 if (model.SelectedBoatUse != null)
                 {
 
-                    List<string> boatuselist = new List<string>();
-
                     boat.BoatUses = new List<BoatUse>();
 
                     //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    string[] BoatUse = model.SelectedBoatUse.Split(',');
+                    Guid BoatUse = model.SelectedBoatUse;
 
-                    model.BoatUse = new List<BoatUse>();
+                    boat.BoatUses.Add(await _boatUseService.GetBoatUse(BoatUse));
 
-                    foreach (var useid in BoatUse)
-                    {
-                        boat.BoatUses.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
                 }
 
                 if (model.SelectedInterestedParty != null)
@@ -2313,40 +2307,42 @@ namespace DealEngine.WebUI.Controllers
         #region BoatUse
 
         [HttpPost]
-        public async Task<IActionResult> AddBoatUse(BoatUseViewModel model)
+        public async Task<IActionResult> AddBoatUse(IFormCollection collection)
         {
             User user = null;
             BoatUse boatUse = null;
             try
             {
-                user = await CurrentUser();
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+                //user = await CurrentUser();
+                //if (model == null)
+                //    throw new ArgumentNullException(nameof(model));
+                //user = await CurrentUser();
+                //ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                
+                //if (sheet == null)
+                //    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+               
+                //if (model.BoatUseId != Guid.Empty)
+                //{
+                //    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
+                //}
+                //else
+                //{
+                //    Guid boatUseId = Guid.NewGuid();
+                //    boatUse = new BoatUse(user, model.BoatUseCategory);
+                //    boatUse.UpdateEntity(model);
+                //    boatUse = model.ToEntity(user);
+                //    boatUse.Id = boatUseId;
+                //    //await _boatUseService.UpdateBoatUse(boatUse);
+                //}
 
-                if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
-                {
-                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                    if (boatUse == null)
-                        boatUse = model.ToEntity(user);
-                }
-                else
-                {
-                    Guid boatUseId = Guid.NewGuid();
-                    //model.BoatUseId = boatUseId;
-                    boatUse = model.ToEntity(user);
-                    boatUse.Id = boatUseId;
-                }
-                model.UpdateEntity(boatUse);
+                //foreach (var boat in sheet.Boats)
+                //{
+                //    boat.BoatUses.Add(boatUse);
+                //    await _boatRepository.UpdateAsync(boat);
+                //}
 
-                foreach (var boat in sheet.Boats)
-                {
-                    boat.BoatUses.Add(boatUse);
-                    await _boatRepository.UpdateAsync(boat);
-                }
+                //// model.BoatUseId = boatUse.Id;
 
                 return Json(boatUse);
             }

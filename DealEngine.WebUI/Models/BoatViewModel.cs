@@ -58,7 +58,7 @@ namespace DealEngine.WebUI.Models
         public IList<BoatUse> BoatUse { get; set; }
         public IList<String> BoatselectedVal { get; set; }
         public IList<Guid> BoatselectedText { get; set; }
-        public string SelectedBoatUse{ get; set; }
+        public Guid SelectedBoatUse{ get; set; }
         public string SelectedInterestedParty { get; set; }
         public string BoatNotes { get; set; }
         public string WaterLocationMooringType { get; set; }
