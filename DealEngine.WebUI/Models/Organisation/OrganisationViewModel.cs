@@ -20,7 +20,7 @@ namespace DealEngine.WebUI.Models
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme")
+                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
                     if (Programme.Name == "NZFSG Programme") 
@@ -29,11 +29,13 @@ namespace DealEngine.WebUI.Models
                     } 
                     else if(Programme.Name == "TripleA Programme")
                     {
-                        InsuranceAttributes = GetAdvisorTypes2(); 
-                    } 
-                    else { 
+                        InsuranceAttributes = GetAdvisorTypes2();
+                    }
+                    else if (Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme")
+                    {
                         InsuranceAttributes = GetAdvisorTypes3();
-                    }                    
+                    }
+                    
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();

@@ -33,7 +33,7 @@
     <div class="form-group col-md-6">
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
-        @if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme")
+        @if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme" || Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme")
         {
             <div class="form-group" id="HideDateofIncorportation" hidden>
                 @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "label required" })
