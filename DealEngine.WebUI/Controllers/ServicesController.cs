@@ -3618,7 +3618,7 @@ namespace DealEngine.WebUI.Controllers
                     DateTime dateTime = DateTime.Parse(collection["Date"]);
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
-                    if(dateTime < product.DefaultInceptionDate || dateTime > product.DefaultExpiryDate)
+                    if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
                     {
                         return Json(false);
                     }
