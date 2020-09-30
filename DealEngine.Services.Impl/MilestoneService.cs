@@ -89,19 +89,19 @@ namespace DealEngine.Services.Impl
             if (ProgrammeProcesse != null)
             {
                 //run task
+                var NotifyUsers = sheet.Programme.BaseProgramme.BrokerContactUser;
                 var Advisory = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory;
-                var UserTask = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).UserTask;
-                if (string.IsNullOrWhiteSpace(UserTask.URL)) //UserTask.IsActive
+                if (!NotifyUsers.UserTasks.Any(t => t.Name.Contains(activityName + "_" + sheet.Id)))
                 {
-                    UserTask.URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
-                    UserTask.Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";                    
-                }
-                
-                foreach(var NotifyUsers in sheet.Programme.BaseProgramme.AgreementReferNotifyUsers)
-                {
-                    //NotifyUsers.UserTasks.Add(userTask);                    
-                    await _taskingService.Update(UserTask);
-                }                            
+                    UserTask ReferralTask = new UserTask(user, activityName + "_" + sheet.Id, null)
+                    {
+                        URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString(),
+                        Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")"
+                    };
+
+                    NotifyUsers.UserTasks.Add(ReferralTask);
+                    await _userService.Update(NotifyUsers);
+                }                           
                 //run email
                 return Advisory.Description;
             }
@@ -119,7 +119,7 @@ namespace DealEngine.Services.Impl
                 }
                 if (activityName == "Agreement Status – Referred")
                 {
-                    await ReferredComplete(activityName, user, milestone);
+                    await ReferredComplete(activityName, user, sheet);
                 }
             }
 
@@ -170,21 +170,17 @@ namespace DealEngine.Services.Impl
             await _milestoneRepository.AddAsync(milestone);
         }
 
-        private async Task ReferredComplete(string activityName, User user, Milestone milestone)
+        private async Task ReferredComplete(string activityName, User user, ClientInformationSheet sheet)
         {
             //close task
-            var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
-            if (ProgrammeProcesse != null)
+            var UserTask = sheet.Programme.BaseProgramme.BrokerContactUser.UserTasks.FirstOrDefault(t => t.Name == activityName + "_" + sheet.Id && t.Completed == false);
+            if (UserTask != null)
             {
-                //run task
-                var UserTask = user.UserTasks.FirstOrDefault(t => t.Name == activityName && t.Completed == false);                
-                if(UserTask != null)
-                {
-                    UserTask.Complete(user);
-                    await _taskingService.Update(UserTask);
-                }
-                //run email
+                UserTask.Complete(user);
+                await _taskingService.Update(UserTask);
             }
+            //run email
+            
         }
 
         public async Task<string> GetMilestone(IFormCollection collection)
@@ -203,7 +199,7 @@ namespace DealEngine.Services.Impl
                     if (Activity != null)
                     {
                         JsonObjects.Add("Advisory", Activity.Advisory);
-                        JsonObjects.Add("UserTask", Activity.UserTask);
+                        //JsonObjects.Add("UserTask", Activity.UserTask);
                         return GetSerializedModel(JsonObjects);
                     }
                 }

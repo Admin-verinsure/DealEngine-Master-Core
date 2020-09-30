@@ -312,6 +312,7 @@
                                         <option id="MotorTypeInboardOther" value="InboardOther">Inboard – Other</option>
                                         <option id="MotorTypeOutboard" value="Outboard">Outboard</option>
                                         <option value="Jet">Jet</option>
+                                        <option id="MotorTypeJetskiJet" value="Jetskijet">Jetski Jet</option>
                                         <option id="MotorTypeNA" value="NA">N/A</option>
                                     </select>
                                 </label>
@@ -511,7 +512,7 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="SelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                             {
                                                 foreach (var boatUse in boat.BoatUses)
                                                 {
@@ -520,7 +521,7 @@
                                                         <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
                                                     }
                                                 }
-                                            }
+                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>
@@ -854,6 +855,7 @@
                                         <option id="AddMotorTypeOutboard" value="Outboard">Outboard</option>
                                         <option value="Jet">Jet</option>
                                         <option id="AddMotorTypeNA" value="NA">N/A</option>
+                                        <option id="AddMotorTypeJetskiJet" value="Jetskijet">Jetski Jet</option>
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddMotorType"></p>
@@ -1055,7 +1057,7 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="AddSelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                             {
                                                 foreach (var boatUse in boat.BoatUses)
                                                 {
@@ -1064,7 +1066,7 @@
                                                         <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
                                                     }
                                                 }
-                                            }
+                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>
