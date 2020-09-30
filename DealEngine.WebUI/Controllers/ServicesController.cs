@@ -1957,7 +1957,6 @@ namespace DealEngine.WebUI.Controllers
                     boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
                 }
                     
-
                 if (model.OtherMarinaName != null)
                 {
                     boat.OtherMarinaName = model.OtherMarinaName;
@@ -1966,18 +1965,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     boat.OtherMarina = false;
-
-                }
-                if (model.SelectedBoatUse != null)
-                {
-
-                    boat.BoatUses = new List<BoatUse>();
-
-                    //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    Guid BoatUse = model.SelectedBoatUse;
-
-                    boat.BoatUses.Add(await _boatUseService.GetBoatUse(BoatUse));
-
                 }
 
                 if (model.SelectedInterestedParty != null)

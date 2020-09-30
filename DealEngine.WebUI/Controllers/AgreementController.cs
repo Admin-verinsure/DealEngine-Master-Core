@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 using NReco.PdfGenerator;
+using System.Security.AccessControl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -3353,7 +3354,17 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProcessRequestConfiguration(Guid Id)
         {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
             User user = null;
+
+            //try
+            //{
+            //    if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            //    {
+            //        sheet = await _customerInformationService.GetInformation(sheetId);
+            //    }
+            //}
             try
             {
                 string queryString = HttpContext.Request.Query["result"].ToString();
@@ -3543,8 +3554,25 @@ namespace DealEngine.WebUI.Controllers
 
                     var jsonObjectList = new List<object>();
 
-                    //jsonObjectList.Add(sheet);
-                    //jsonObjectList.Add(agreement);
+                    //var sheet = programme.Agreements.
+
+                    foreach (ClientAgreement agreement in programme.Agreements)
+                    {
+                        jsonObjectList.Add(agreement);
+                    }
+                        // objects to get
+                        // clientinformationsheet
+                        // clientagreement
+                        // organisation
+                        // boat
+                        // vehicle
+                        // boatuse
+                        // clientagreementbvterm
+                        // clientagreementmvterm
+                        // clientagreementterm
+                    jsonObjectList.Add(sheet); //works and is huge
+
+                    //jsonObjectList.Add(agreement); //works and also will be huge
 
                     //string test = await _serializationService.GetSerializedObject(jsonObjectList);
                     //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
