@@ -844,7 +844,15 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> DeveloperTool()
         {
-            await _developerToolService.CreateMarinas();
+            var Users =await _userService.GetAllUsers();
+            foreach(User user in Users)
+            {
+                if (user.UserTasks.Any())
+                {
+                    user.UserTasks.Clear();
+                    await _userService.Update(user);
+                }
+            }
             return Redirect("~/Home/Index");
         }
 
