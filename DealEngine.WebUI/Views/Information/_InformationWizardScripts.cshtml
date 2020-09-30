@@ -1624,17 +1624,9 @@ function UpdateChosen() {
                     $('#AddBoatTrailer.b').append($('<option>', { value: "add", text: "Add Trailer" }));
                     $('#AddBoatTrailer.b').val(data.vehicleId);
                 }
-                //$.smallBox({
-                //    title: "Vehicle (" + data.Year + " " + data.Make + " " + data.VehicleModel+") has been saved",
-                //    color: "#5F895F",
-                //    iconSmall: "fa fa-check bounce animated",
-                //    timeout: 4000
-                //});
-
-
                 $('#addTrailerModal' + " :input").val("");
 
-                 $("#trailerModalHairline, #trailerModalHairline2, #trailerModalHairline3, #trailerModalHairline4").hide();
+                $("#trailerModalHairline, #trailerModalHairline2, #trailerModalHairline3, #trailerModalHairline4").hide();
                 $(vesselTrailerChassis).hide();
                 $(vesselTrailerEffective).hide();
                 $(vesselTrailerCease).hide();
@@ -3664,6 +3656,7 @@ function showAccordionPanel(id, panelNo) {
         }
 
         else if (both == true) {
+            debugger;
             $('#SelectedBoatUse').trigger('chosen:updated');
             var boatusecategory = "BoatUseCategory=Both";
             var boatuseliveonboard = "BoatUseLiveOnBoard=True";
@@ -3684,6 +3677,8 @@ function showAccordionPanel(id, panelNo) {
                 $("#AddSelectedBoatUse.b [value='add']").remove();
                 $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
+                $('#livingUseSection' + " :input").val("");
+                $('#racingUseSection' + " :input").val("");
                 $('#getBoatUseModal').hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
@@ -3713,6 +3708,8 @@ function showAccordionPanel(id, panelNo) {
                 $("#AddSelectedBoatUse.b [value='add']").remove();
                 $('#AddSelectedBoatUse.b').append($('<option>', { value: "add", text: "Add Boat Use" }));
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
+                $('#livingUseSection' + " :input").val("");
+                $('#racingUseSection' + " :input").val("");
                 $('#getBoatUseModal').hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
