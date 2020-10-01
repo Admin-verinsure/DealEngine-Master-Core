@@ -4,9 +4,7 @@
 
 
 <script type="text/javascript">
-
     $(document).ready(function () {
-
         $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
             keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
@@ -39,231 +37,207 @@
             transitionSpeed: '400'
         });
 
-       $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-           var clientInformationSheet = '@Model.ClientInformationSheet.Id';
-
-           if (stepDirection == "backward") {
-               var stepNumber = stepNumber - 2;
-           };
-
-           if (stepNumber == -1) {
-               $('tab1').click();
-           }
-
-           if (stepNumber === 0) {
-               //if (informationsheetstatus != "Submitted") {
-               event.preventDefault();
-               if (stepDirection == "forward") {
-                   var forms = document.getElementsByClassName('needs-validation');
-                       //<--!Boostrap validation method
-                   InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status', forms);
-                   if ($('#CompanyName').val() === "AON") {
-                       var nextbutton = document.getElementsByClassName("next");
-                       $(nextbutton).addClass("hidden");
-                       $(nextbutton).hide();
-                       var prevbutton = document.getElementsByClassName("previous");
-                       $(prevbutton).addClass("hidden");
-                       $(prevbutton).hide();
-                   }
-               }
-               $.ajax({
-                   url: '@Url.Action("SubmitInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab_1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
-                       $("#agreementView").load(url, function () {
-                       });
-                   })
-                   .fail(function (a, s, d) {
-                       debugger;
-                       $('#getAgreementModal').hide();
-                   });
-               //}
-           } else if (stepNumber === 1) {
-               var status = $('#Status').val();
-
-               if (status == "Started") {
-               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
-                   }
-                   else {
-                   return false;
-                   }
-               }
-
-               $('.sw-btn-prev').hide();
-               //$('#getAgreementDecModal').show();
-                var isvalid = 0;
-               var ID = $('#Id').val();
-               var answerid= $('#AnswerSheetId').val();
-               var postdata = {
-                   id: ID
-               }
-               var validaterowdata = 0;
-                var rownum = 0;
-
-               var proddata = "";
-               $.ajax({
-                   url: '@Url.Action("GetProductName", "Information")',
-                   type: "POST",
-                    async: false,
-                   data: postdata
-               })
-                    .done(function (data) {
-                         proddata = data;
-
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        alert("There was an error getting ProductName.");
+        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+            var clientInformationSheet = '@Model.ClientInformationSheet.Id';
+            if (stepDirection == "backward") {
+                var stepNumber = stepNumber - 2;
+            };
+            if (stepNumber == -1) {
+                $('tab1').click();
+                }
+            if (stepNumber === 0) {
+                event.preventDefault();
+                if (stepDirection == "forward") {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status', forms);
+                    if ($('#CompanyName').val() === "AON") {
+                        var nextbutton = document.getElementsByClassName("next");
+                        $(nextbutton).addClass("hidden");
+                        $(nextbutton).hide();
+                        var prevbutton = document.getElementsByClassName("previous");
+                        $(prevbutton).addClass("hidden");
+                        $(prevbutton).hide();
+                    }
+                }
+                $.ajax({
+                    url: '@Url.Action("SubmitInformation", "Information")',
+                    type: "POST",
+                    data: $("#tab_1 :input").serialize({ json: true })
+                })
+                .done(function (url) {
+                    $("#agreementView").load(url, function () {
                     });
-
-                      var CoverOptions = new Array(proddata.length);
-                        for (var i = 0; i < proddata.length; i++) {
-                               var ProdName = proddata[i];
-                            var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
-                            var optionsselected = $(queryselector).val();
-                            var producttable = "[id='" + ProdName + "'] tr";
-                             rownum = 0;
-                            //var jhjk = '"[id='"+ProdName +"']' tr";
-                            if (optionsselected != null && typeof optionsselected !== "undefined") {
-                                $(producttable).each(function () {
-                                    var $tds = $(this).find('td'),
-                                        value = $tds.eq(5).text().trim();
-                                    rownum++;
-                                    if (value != "") {
-                                        var dependoption = "" + "input[name='" + value + "']:checked";
-                                        var dependendoptionsselected = $(dependoption).val();
-                                        if (dependendoptionsselected == "None" && optionsselected != "None") {
-
-                                            //alert("This is a packaged product , you cannot choose " + ProdName + " without " + value);
-                                            alert(value + " is a packaged product with "+ProdName+ " , you cannot choose " + ProdName + " without " + value);
-                                            isvalid++;
-                                            return false;
-                                        }
-                                        validaterowdata++;
-
-                                    }
-
-                                });
-
-                            } else {
-                                isvalid++;
-                                         alert("Please select cover options for all products");
-                                         return false;
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    $('#getAgreementModal').hide();
+                });
+            }
+            else if (stepNumber === 1) {
+                var status = $('#Status').val();
+                if (status == "Started") {
+                    if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                $('.sw-btn-prev').hide();
+                var isvalid = 0;
+                var ID = $('#Id').val();
+                var answerid= $('#AnswerSheetId').val();
+                var postdata = {
+                    id: ID
+                }
+                var validaterowdata = 0;
+                var rownum = 0;
+                var proddata = "";
+                $.ajax({
+                    url: '@Url.Action("GetProductName", "Information")',
+                    type: "POST",
+                    async: false,
+                    data: postdata
+                })
+                .done(function (data) {
+                    proddata = data;
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("There was an error getting ProductName.");
+                });
+                var CoverOptions = new Array(proddata.length);
+                for (var i = 0; i < proddata.length; i++) {
+                    var ProdName = proddata[i];
+                    var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
+                    var optionsselected = $(queryselector).val();
+                    var producttable = "[id='" + ProdName + "'] tr";
+                    rownum = 0;
+                    if (optionsselected != null && typeof optionsselected !== "undefined") {
+                        $(producttable).each(function () {
+                            var $tds = $(this).find('td'),
+                            value = $tds.eq(5).text().trim();
+                            rownum++;
+                            if (value != "") {
+                                var dependoption = "" + "input[name='" + value + "']:checked";
+                                var dependendoptionsselected = $(dependoption).val();
+                                if (dependendoptionsselected == "None" && optionsselected != "None") {
+                                    alert(value + " is a packaged product with "+ProdName+ " , you cannot choose " + ProdName + " without " + value);
+                                    isvalid++;
+                                    return false;
+                                }
+                                validaterowdata++;
                             }
+                        });
+                    }
+                    else {
+                        isvalid++;
+                        alert("Please select cover options for all products");
+                        return false;
+                    }
+                    if (isvalid != 0) {
+                        break;
+                    }
+                    CoverOptions[i] = optionsselected;
+                }
 
-                            if (isvalid != 0) {
-                                     break;
-                            }
-
-                            CoverOptions[i] = optionsselected;
-                        }
-
-
-                        if (isvalid == 0) {
-                            var progId = $('#ClientProgrammeId').val();
-                            var postData = { Answers: CoverOptions, ProgrammeId: progId };
-
-                            $.ajax({
-                                url: '@Url.Action("SaveCoverOptions", "Information")',
-                                type: "POST",
-                                data: postData
-                            })
-                                .done(function (data) {
-                                })
-                                .fail(function (a, s, d) {
-                                    alert("Unable to save.");
-                                });
-
-
-                            $.ajax({
-                                url: '@Url.Action("QuoteToAgree", "Information")',
-                                type: "GET",
-                                data: postdata
-                            })
-                                .done(function (url) {
-                                    $("#agreementDeclarationView").load(url, function () {
-                                        $('#getAgreementDecModal').hide();
-                                    });
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    debugger;
-                                    $('#getAgreementDecModal').hide();
-                                    alert("There was an error getting your agreement declaration.");
-                                });
-
-                        } else {
-                            return false;
-                        }
-
-               if (status == "Bound") {
-                   var nextbutton = document.getElementsByClassName("next");
-                   $(nextbutton).addClass("hidden");
-                   $(nextbutton).hide();
-                   var prevbutton = document.getElementsByClassName("previous");
-                   $(prevbutton).addClass("hidden");
-                   $(prevbutton).hide();
+                if (isvalid == 0) {
+                    var progId = $('#ClientProgrammeId').val();
+                    var postData = { Answers: CoverOptions, ProgrammeId: progId };
+                $.ajax({
+                    url: '@Url.Action("SaveCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                })
+                .done(function (data) { })
+                .fail(function (a, s, d) {
+                    alert("Unable to save.");
+                });
+                $.ajax({
+                    url: '@Url.Action("QuoteToAgree", "Information")',
+                    type: "GET",
+                    data: postdata
+                })
+                .done(function (url) {
+                    $("#agreementDeclarationView").load(url, function () {
+                        $('#getAgreementDecModal').hide();
+                    });
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                    $('#getAgreementDecModal').hide();
+                    alert("There was an error getting your agreement declaration.");
+                });
+            }
+            else {
+                return false;
+            }
+            if (status == "Bound") {
+                var nextbutton = document.getElementsByClassName("next");
+                $(nextbutton).addClass("hidden");
+                $(nextbutton).hide();
+                var prevbutton = document.getElementsByClassName("previous");
+                $(prevbutton).addClass("hidden");
+                $(prevbutton).hide();
                }
-
-
-           } else if (stepNumber === 2) {
-               if (!$('#agreementAccept').is(":checked")) {
-                   document.getElementById("advisoryModal").hidden = false;
-                   return false;
-               }
-
-               $('#getAgreementPaymentModal').show();
-               var nextbutton = document.getElementsByClassName("next");
-               $(nextbutton).addClass("hidden");
-               $(nextbutton).hide();
-               $.ajax({
-                   url: '@Url.Action("PaymentInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab_1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
-                       $("#pxpaymentView").load(url, function () {
-                           $('#getAgreementPaymentModal').hide();
-                           $('#getErrorModal').hide();
-                       });
-                   });
-
-           } else if (stepNumber === 3) {
-               var status = $('#Status').val();
-               if (status == "Bound") {
-                   var nextbutton = document.getElementsByClassName("next");
-                   $(nextbutton).addClass("hidden");
-                   $(nextbutton).hide();
-                   var prevbutton = document.getElementsByClassName("previous");
-                   $(prevbutton).addClass("hidden");
-                   $(prevbutton).hide();
-               }
-
-               var AnswerSheetId = $('#AnswerSheetId').val();
-               var array = $("#tab_2 :input").serializeArray();
-               var ids = [];
-               $.each(array, function (i, pair) {
-                   ids.push(pair.value);
-               });
-               $('#getDocumentsModal').show();
-               $.ajax({
-                   url: '@Url.Action("AcceptAgreement", "Agreement")',
-                   type: "POST",
-                   contentType: "application/json; charset=utf-8",
-                   data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status: status })
-               })
-                   .done(function (response) {
-                       $("#documentsSection").replaceWith(response);
-                       $('#getDocumentsModal').hide();
-                       var prevbutton = document.getElementsByClassName("previous");
-                       $(prevbutton).hide();
-                   })
-                   .fail(function () {
-                       $('#getDocumentsModal');
-                       alert("There was an error getting your documents.");
-                   });
-           } else if (stepNumber === 4) {
-           } else if (stepNumber === 5) {
-           }
+            }
+            else if (stepNumber === 2) {
+                if (!$('#agreementAccept').is(":checked")) {
+                    document.getElementById("advisoryModal").hidden = false;
+                    return false;
+                }
+                $('#getAgreementPaymentModal').show();
+                var nextbutton = document.getElementsByClassName("next");
+                $(nextbutton).addClass("hidden");
+                $(nextbutton).hide();
+                $.ajax({
+                    url: '@Url.Action("PaymentInformation", "Information")',
+                    type: "POST",
+                    data: $("#tab_1 :input").serialize({ json: true })
+                })
+                .done(function (url) {
+                    $("#pxpaymentView").load(url, function () {
+                        $('#getAgreementPaymentModal').hide();
+                        $('#getErrorModal').hide();
+                    });
+                });
+            }
+            else if (stepNumber === 3) {
+                var status = $('#Status').val();
+                if (status == "Bound") {
+                    var nextbutton = document.getElementsByClassName("next");
+                    $(nextbutton).addClass("hidden");
+                    $(nextbutton).hide();
+                    var prevbutton = document.getElementsByClassName("previous");
+                    $(prevbutton).addClass("hidden");
+                    $(prevbutton).hide();
+                }
+                var AnswerSheetId = $('#AnswerSheetId').val();
+                var array = $("#tab_2 :input").serializeArray();
+                var ids = [];
+                $.each(array, function (i, pair) {
+                    ids.push(pair.value);
+                });
+                $('#getDocumentsModal').show();
+                $.ajax({
+                    url: '@Url.Action("AcceptAgreement", "Agreement")',
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status: status })
+                })
+                .done(function (response) {
+                    $("#documentsSection").replaceWith(response);
+                    $('#getDocumentsModal').hide();
+                    var prevbutton = document.getElementsByClassName("previous");
+                    $(prevbutton).hide();
+                })
+                .fail(function () {
+                    $('#getDocumentsModal');
+                    alert("There was an error getting your documents.");
+                });
+            }
+            else if (stepNumber === 4) {
+            }
+            else if (stepNumber === 5) {
+            }
        });
    });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
