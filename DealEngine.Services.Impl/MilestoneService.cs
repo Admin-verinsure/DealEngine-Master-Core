@@ -248,10 +248,8 @@ namespace DealEngine.Services.Impl
                     IsActive = true
                 };
 
-                //default me for now
-                user.UserTasks.Add(userTask);
-                //organisationUser.UserTasks.Add(userTask);                
-                await _taskingService.Update(userTask);
+                user.UserTasks.Add(userTask);             
+                await _userService.Update(user);
             }                   
         }
 
