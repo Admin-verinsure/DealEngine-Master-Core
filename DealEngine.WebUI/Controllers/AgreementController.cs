@@ -235,6 +235,19 @@ namespace DealEngine.WebUI.Controllers
                 model.InformationSheetId = sheetId;
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+                model.ProductName = agreement.Product.Name;
+                //ClientAgreementTerm clientAgreementTerm = _clientAgreementTermService.GetAllClientAgreementTerm
+
+                foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                {
+                    if (term.Bound)
+                    {
+                        model.SelectedPremium = term.Premium;
+                        model.BasePremium = term.BasePremium;
+                    }
+                    
+                }
+
 
                 foreach (var terms in agreement.ClientAgreementReferrals)
                 {
@@ -245,7 +258,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ReferralAmount = agreement.ClientAgreementTerms.FirstOrDefault().ReferralLoadingAmount;
                 model.AuthorisationNotes = agreement.ClientAgreementTerms.FirstOrDefault().AuthorisationNotes;
 
-                ViewBag.Title = "Agreement Referals ";
+                ViewBag.Title = "Agreement Referrals ";
 
                 return View("AuthoriseReferrals", model);
             }
@@ -334,6 +347,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreement.IssuedToBroker = DateTime.UtcNow;
                         agreement.issuetobrokerby = user.FullName;
+                        agreement.Status = "Quoted";
                         agreement.SelectedBroker = await _userService.GetUserByEmail(model.issuetobrokerto);
                         agreement.issuetobrokercomment = model.Content;
                     }
@@ -352,6 +366,38 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CalculateAdjustment(decimal AdjustmentAmount,Guid AgreementId)
+        {
+            User user = null;
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(AgreementId);
+                var sheet = agreement.ClientInformationSheet;
+                user = await CurrentUser();
+                var premium = 0.0m;
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                    {
+                      term.Premium = term.Premium + AdjustmentAmount;
+                    }
+                    await uow.Commit();
+                }
+
+                //var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+                return Json("AdjustmentDone");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
@@ -368,6 +414,8 @@ namespace DealEngine.WebUI.Controllers
                     foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
                     {
                         terms.Status = "Cleared";
+                        terms.AuthorisedBy = user;
+                        terms.Authorised = DateTime.UtcNow;
                     }
 
                     foreach (var terms in agreement.ClientAgreementTerms)
@@ -393,13 +441,17 @@ namespace DealEngine.WebUI.Controllers
                         term.ReferralLoading = clientAgreementModel.RefferLodPrc;
                         term.ReferralLoadingAmount = clientAgreementModel.RefferLodAmt;
                         term.AuthorisationNotes = clientAgreementModel.AdditionalNotes;
-                        if (term.MotorTerms.Count() == 0 && term.MotorTerms.Count() == 0)
+                        if (term.MotorTerms.Count() == 0 && term.BoatTerms.Count() == 0)
                         {
                             term.Premium = term.Premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                            term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
                         else
                         {
                             term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                             term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
 
                     }
@@ -434,15 +486,16 @@ namespace DealEngine.WebUI.Controllers
                         //}
                     }
 
-                    if (agreement.Status != "Quoted")
+                    if (agreement.Status != "Quoted" || agreement.Status != "Authorised")
                     {
-                        agreement.Status = "Quoted";
+                        agreement.Status = "Authorised";
                         await _milestoneService.CompleteMilestoneFor("Agreement Status – Referred", user, sheet);
                     }
 
                     string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
+                    
 
                     await uow.Commit();
 

@@ -421,9 +421,16 @@ namespace DealEngine.WebUI.Controllers
                         string DocSendDate = "";
                         foreach (ClientAgreement agreement in client.Agreements)
                         {
-                            if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && agreement.Status == "Referred")
+                            if (agreement.ClientInformationSheet.Status != "Not Started" && agreement.ClientInformationSheet.Status != "Started" && agreement.DateDeleted == null && (agreement.Status == "Referred" || agreement.Status == "Authorised"))
                             {
-                                agreementSatus = "Referred";
+                                if (agreement.Status == "Referred") {
+                                    agreementSatus = "Referred";
+                                }
+                                else if(agreement.Status == "Authorised")
+                                {
+                                    agreementSatus = "Authorised";
+                                }
+                                
                                 break;
                             }
                             if (agreement.IsPolicyDocSend)
@@ -779,7 +786,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetReportView(IFormCollection formCollection)
+        public async Task<IActionResult> GetReportView(IFormCollection formCollection , string IsReport)
         {
             User user = null;
             try
@@ -801,7 +808,7 @@ namespace DealEngine.WebUI.Controllers
 
                         //if (queryselect == "PI Cover Limit")
                         //{
-                            ViewBag.Title = queryselect +"Cover Limit and Premium Selected";
+                            ViewBag.Title = queryselect +" Cover Limit and Premium Selected";
                             PIReport report = new PIReport();
                             report.ReferenceID = cp.InformationSheet.ReferenceId;
                             report.IndividualName = cp.Owner.Name;
@@ -883,7 +890,7 @@ namespace DealEngine.WebUI.Controllers
 
                
                 //return View(table);
-                if (formCollection["IsReport"] != "True")
+                if (IsReport != "True")
                 {
                     return View(table);
                 }
@@ -900,7 +907,7 @@ namespace DealEngine.WebUI.Controllers
                         string ContentType = "Application/msexcel";
 
                         //Define the file name.
-                        string fileName = "Output.xlsx";
+                        string fileName = queryselect+ "LimitandPremiumSelected.xlsx";
 
                         //Creating stream object.
                         MemoryStream stream = new MemoryStream();
@@ -910,13 +917,6 @@ namespace DealEngine.WebUI.Controllers
 
                         stream.Position = 0;
 
-                        //Closing the workbook.
-                       // workbook.Close();
-
-                        //Dispose the Excel engine
-                       // excelEngine.Dispose();
-
-                        //Creates a FileContentResult object by using the file contents, content type, and file name.
                         return File(stream, ContentType, fileName);
 
                     }
