@@ -468,7 +468,7 @@
                                     <label class="label required">Vessel Water Location</label>
                                     <label class="input form-group">
                                         <select onchange="addNewWaterLoc()" class="form-control b" id="BoatWaterLocation" name="BoatWaterLocation" required>
-                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="">-- Select --</option>
                                             @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                             {
                                                 <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
