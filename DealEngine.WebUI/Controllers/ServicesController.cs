@@ -1943,13 +1943,20 @@ namespace DealEngine.WebUI.Controllers
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
 
+                if (model.SelectedBoatUse != Guid.Empty)
+                {
+                    var BoatUse = await _boatUseService.GetBoatUse(model.SelectedBoatUse);
+                    boat.BoatUses.Clear();
+                    boat.BoatUses.Add(BoatUse);                                        
+                }
+                boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
+
                 if (model.BoatWaterLocation != Guid.Empty)
                 {
                     var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
                     boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
                 }
                     
-
                 if (model.OtherMarinaName != null)
                 {
                     boat.OtherMarinaName = model.OtherMarinaName;
@@ -1958,24 +1965,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     boat.OtherMarina = false;
-
-                }
-                if (model.SelectedBoatUse != null)
-                {
-
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUses = new List<BoatUse>();
-
-                    //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    string[] BoatUse = model.SelectedBoatUse.Split(',');
-
-                    model.BoatUse = new List<BoatUse>();
-
-                    foreach (var useid in BoatUse)
-                    {
-                        boat.BoatUses.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
                 }
 
                 if (model.SelectedInterestedParty != null)
@@ -2313,36 +2302,32 @@ namespace DealEngine.WebUI.Controllers
         #region BoatUse
 
         [HttpPost]
-        public async Task<IActionResult> AddBoatUse(BoatUseViewModel model)
+        public async Task<IActionResult> AddBoatUse(IFormCollection collection)
         {
             User user = null;
             BoatUse boatUse = null;
             try
             {
                 user = await CurrentUser();
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-                if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                if(Guid.TryParse(collection["AnswerSheetId"], out Guid InformationId))
                 {
-                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                    if (boatUse == null)
-                        boatUse = model.ToEntity(user);
-                }
-                else
-                {
-                    boatUse = model.ToEntity(user);
-                }
-                model.UpdateEntity(boatUse);
-
-                foreach (var boat in sheet.Boats)
-                {
-                    boat.BoatUses.Add(boatUse);
-                    await _boatRepository.UpdateAsync(boat);
+                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(InformationId);
+                    if (collection.ContainsKey("BoatUseId"))
+                    {
+                        if (Guid.TryParse(collection["BoatUseId"], out Guid BoatUseId))
+                        {
+                            if (BoatUseId != Guid.Empty)
+                            {
+                                boatUse = await _boatUseService.GetBoatUse(BoatUseId);
+                            }                            
+                        }
+                    }
+                    else
+                    {
+                        boatUse = new BoatUse(user, "");
+                        boatUse.PopulateEntity(collection);
+                        await _boatUseService.UpdateBoatUse(boatUse);
+                    }                    
                 }
 
                 return Json(boatUse);
@@ -3618,7 +3603,7 @@ namespace DealEngine.WebUI.Controllers
                     DateTime dateTime = DateTime.Parse(collection["Date"]);
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
-                    if(dateTime < product.DefaultInceptionDate || dateTime > product.DefaultExpiryDate)
+                    if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
                     {
                         return Json(false);
                     }

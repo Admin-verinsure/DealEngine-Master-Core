@@ -24,7 +24,7 @@
                                     colModel: [
                                         {
                                             name: "edit", template: "actions", width: 90, align: 'center', search: false, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                                return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> </i></button>')
+                                                return ('<button onclick="EditBoat(\'b\', \'' + cellvalue + '\'); SetCurrentTab(\'boatTabs2\');" type="button" class="btn btn-success btn-sm">Edit <i class="fa fa-edit"> </i></button>')
                                             }
                                         },
                                         { name: "BoatName", align: 'center', key: 'true', editable: true },
@@ -125,9 +125,13 @@
                                 <label class="input form-group">
                                     <select onchange="addNewSkipper()" class="form-control b" id="BoatOperator" name="BoatOperator" required>
                                         <option selected="selected" value="">-- Select --</option>
+                                        <option value="@Model.ClientInformationSheet.Owner.Id">@Model.ClientInformationSheet.Owner.Name</option>
                                         @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
                                         {
-                                            <option value="@skipper.Id">@skipper.Name</option>
+                                            if (Model.ClientInformationSheet.Owner.Id != skipper.Id)
+                                            {
+                                                <option value="@skipper.Id">@skipper.Name</option>
+                                            }
                                         }
                                         <option value="add">Add Skipper</option>
                                     </select>
@@ -173,7 +177,7 @@
                                 </section>
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
-                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="aucklandRegoSection">
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="aucklandRegoSection" style="display:none;">
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label ">Personal Watercraft (PWC) Registration</label>
                                     <label class="input form-group">
@@ -308,6 +312,7 @@
                                         <option id="MotorTypeInboardOther" value="InboardOther">Inboard – Other</option>
                                         <option id="MotorTypeOutboard" value="Outboard">Outboard</option>
                                         <option value="Jet">Jet</option>
+                                        <option id="MotorTypeJetskiJet" value="Jetskijet">Jetski Jet</option>
                                         <option id="MotorTypeNA" value="NA">N/A</option>
                                     </select>
                                 </label>
@@ -507,7 +512,7 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="SelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                             {
                                                 foreach (var boatUse in boat.BoatUses)
                                                 {
@@ -516,7 +521,7 @@
                                                         <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
                                                     }
                                                 }
-                                            }
+                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>
@@ -660,9 +665,13 @@
                                 <label class="input form-group">
                                     <select onchange="AddaddNewSkipper()" class="form-control b" id="AddBoatOperator" name="BoatOperator" required>
                                         <option selected="selected" value="">-- Select --</option>
+                                        <option value="@Model.ClientInformationSheet.Owner.Id">@Model.ClientInformationSheet.Owner.Name</option>
                                         @foreach (var skipper in Model.OrganisationViewModel.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Skipper")).ToList())
                                         {
-                                            <option value="@skipper.Id">@skipper.Name</option>
+                                            if (Model.ClientInformationSheet.Owner.Id != skipper.Id)
+                                            {
+                                                <option value="@skipper.Id">@skipper.Name</option>
+                                            }
                                         }
                                         <option value="add">Add Skipper</option>
                                     </select>
@@ -709,7 +718,7 @@
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
 
-                            <div class="hidden col-sm-6 col-md-6 col-lg-6" id="AddaucklandRegoSection">
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddaucklandRegoSection" style="display:none;">
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     @*id="AddaucklandRegoSection">*@
                                     <label class="label ">Personal Watercraft (PWC) Registration</label>
@@ -846,6 +855,7 @@
                                         <option id="AddMotorTypeOutboard" value="Outboard">Outboard</option>
                                         <option value="Jet">Jet</option>
                                         <option id="AddMotorTypeNA" value="NA">N/A</option>
+                                        <option id="AddMotorTypeJetskiJet" value="Jetskijet">Jetski Jet</option>
                                     </select>
                                 </label>
                                 <p class="validationContainer" id="validateAddMotorType"></p>
@@ -941,18 +951,20 @@
                             </section>
                             <section class="col col-sm-1 col-md-1 col-lg-1"></section>
                             <!--hr class="boatAccordianHairline" /-->
-                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="AddVesselTrailer">
-                                <label class="label required">Does this Vessel have a Trailer?</label>
-                                <label class="input form-group">
-                                    <select onchange="AddhasTrailer()" class="form-control b" id="AddBoatIsTrailered" name="BoatIsTrailered" required>
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="True">Yes</option>
-                                        <option value="False">No</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="validateAddBoatIsTrailered"></p>
-                            </section>
-                            <section class="col col-sm-1 col-md-1 col-lg-1"></section>
+                            <div class="col-sm-6 col-md-6 col-lg-6" id="AddVesselTrailer">
+                                <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="label required">Does this Vessel have a Trailer?</label>
+                                    <label class="input form-group">
+                                        <select onchange="AddhasTrailer()" class="form-control b" id="AddBoatIsTrailered" name="BoatIsTrailered" required>
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="True">Yes</option>
+                                            <option value="False">No</option>
+                                        </select>
+                                    </label>
+                                    <p class="validationContainer" id="validateAddBoatIsTrailered"></p>        
+                                </section>
+                                <section class="col col-sm-2 col-md-2 col-lg-2"></section>
+                            </div>
                             <div class="col-sm-6 col-md-6 col-lg-6" id="AddSelectTrailerSection" style="display:none">
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label required">Vessel Trailer</label>
@@ -1045,7 +1057,7 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="AddSelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
+                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
                                             {
                                                 foreach (var boatUse in boat.BoatUses)
                                                 {
@@ -1054,7 +1066,7 @@
                                                         <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
                                                     }
                                                 }
-                                            }
+                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>

@@ -20,6 +20,7 @@
 
     $('#AddBoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
+
     });
     $('#BoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
@@ -39,6 +40,28 @@
     $('#TrailerEffectiveDateModal').datepicker({
         dateFormat: "yy-mm-dd",
     });
+
+    DefaultDateRestore();
+
+    //if ($("#dateselected").val() != null) {
+    //    var ds = $("#dateselected").val();
+    //    //$("#AddBoatEffectiveDate").val(ds);
+    //    $("#BoatEffectiveDate").val(ds);
+    //    $("#AddEffectiveDate").val(ds);
+    //    $("#AddPlantEffectiveDate").val(ds);
+    //    $("#EffectiveDate").val(ds);
+    //    $("#MotorEffectiveDate").val(ds);
+    //    $("#TrailerEffectiveDateModal").val(ds);
+    //}
+    //else {
+    //    //$("#AddBoatEffectiveDate").datepicker("setDate", "0");
+    //    $("#BoatEffectiveDate").datepicker("setDate", "0");
+    //    $("#AddEffectiveDate").datepicker("setDate", "0");
+    //    $("#AddPlantEffectiveDate").datepicker("setDate", "0");
+    //    $("#EffectiveDate").datepicker("setDate", "0");
+    //    $("#MotorEffectiveDate").datepicker("setDate", "0");
+    //    $("#TrailerEffectiveDateModal").datepicker("setDate", "0");
+    //}
 
     function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
         var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
@@ -72,10 +95,11 @@
         editButton.innerHTML = editbuttonstring;
         var Name = row.insertCell(1);
         Name.innerHTML = data.name;
-        var type = row.insertCell(2);
-        type.innerHTML = type;        
+        var OrganisationType = row.insertCell(2);
+        OrganisationType.innerHTML = type;        
         var deleteButton = row.insertCell(3);
         deleteButton.innerHTML = deletebuttonstring;
+        debugger;
     }
 
     function PopulateMilestoneView(Method, OutPut) {
@@ -190,7 +214,7 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
-                    if (ProgrammeName.value == "Apollo Programme") {
+                    if (ProgrammeName.value == "Apollo Programme" || ProgrammeName.value == "Abbott Financial Advisor Liability Programme") {
                         ApolloOwnerOnLoad();
                     }        
                     TradingNameOwnerOnLoad();

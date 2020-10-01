@@ -32,7 +32,8 @@
                         @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
                           Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
                           Model.OrganisationViewModel.Programme.Name == "NZPI Programme" ||
-                          Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
+                          Model.OrganisationViewModel.Programme.Name == "Apollo Programme" ||
+                          Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme"
                            )
                         {
                             <th data-field="IsPrincipal" data-sortable="true">Is Principal</th>
@@ -54,10 +55,11 @@
                                 Owner
                             </td>
                             @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
-                             Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                             Model.OrganisationViewModel.Programme.Name == "NZPI Programme" ||
-                             Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
-                     )
+                            Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
+                            Model.OrganisationViewModel.Programme.Name == "NZPI Programme" ||
+                            Model.OrganisationViewModel.Programme.Name == "Apollo Programme" ||
+                            Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme"
+                    )
                             {
                                 <td>
                                 </td>
@@ -100,7 +102,8 @@
                             </td>
                             @if (Model.OrganisationViewModel.Programme.Name == "NZFSG Programme" ||
                             Model.OrganisationViewModel.Programme.Name == "TripleA Programme" ||
-                            Model.OrganisationViewModel.Programme.Name == "Apollo Programme"
+                            Model.OrganisationViewModel.Programme.Name == "Apollo Programme" ||
+                            Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme"
                             )
                             {
                                 <td>
@@ -191,7 +194,7 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
                 }
-                else if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme")
+                else if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme" || Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme")
                 {
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })

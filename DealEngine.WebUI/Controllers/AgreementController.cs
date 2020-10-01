@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 using NReco.PdfGenerator;
+using System.Security.AccessControl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -57,6 +58,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AgreementController> _logger;
         IClientAgreementTermCanService _clientAgreementTermCanService;
         IClientAgreementBVTermCanService _clientAgreementBVTermCanService;
+        ISerializerationService _serializationService;
         //convert to service?
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<SystemDocument> _documentRepository;
@@ -86,6 +88,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IMapperSession<SystemDocument> documentRepository,
             IProgrammeService programmeService,
+            ISerializerationService serializerationService,
             IPaymentGatewayService paymentGatewayService,
             IInsuranceAttributeService insuranceAttributeService,
             IPaymentService paymentService,
@@ -129,6 +132,7 @@ namespace DealEngine.WebUI.Controllers
             _eGlobalSubmissionService = eGlobalSubmissionService;
             _clientAgreementTermCanService = clientAgreementTermCanService;
             _clientAgreementBVTermCanService = clientAgreementBVTermCanService;
+            _serializationService = serializerationService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -2482,7 +2486,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     status = "Bound and invoice pending";
                 }
-
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
                     if (Action == "BindAgreement")
@@ -2498,7 +2501,7 @@ namespace DealEngine.WebUI.Controllers
                         var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
-
+                        
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             if (agreement.Status != status)
@@ -2656,6 +2659,7 @@ namespace DealEngine.WebUI.Controllers
                         }
 
                     }
+                    
                     else
                     {
                         agreement.DateDeleted = DateTime.Now;
@@ -3433,7 +3437,17 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProcessRequestConfiguration(Guid Id)
         {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
             User user = null;
+
+            //try
+            //{
+            //    if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            //    {
+            //        sheet = await _customerInformationService.GetInformation(sheetId);
+            //    }
+            //}
             try
             {
                 string queryString = HttpContext.Request.Query["result"].ToString();
@@ -3598,6 +3612,9 @@ namespace DealEngine.WebUI.Controllers
                         //    }
                         //}
 
+
+                        // TODO ADD BACK IN 
+
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
@@ -3609,7 +3626,6 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
 
-
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (programme.InformationSheet.Status != status)
@@ -3618,6 +3634,32 @@ namespace DealEngine.WebUI.Controllers
                             await uow.Commit();
                         }
                     }
+
+                    var jsonObjectList = new List<object>();
+
+                    //var sheet = programme.Agreements.
+
+                    foreach (ClientAgreement agreement in programme.Agreements)
+                    {
+                        jsonObjectList.Add(agreement);
+                    }
+                        // objects to get
+                        // clientinformationsheet
+                        // clientagreement
+                        // organisation
+                        // boat
+                        // vehicle
+                        // boatuse
+                        // clientagreementbvterm
+                        // clientagreementmvterm
+                        // clientagreementterm
+                    jsonObjectList.Add(sheet); //works and is huge
+
+                    //jsonObjectList.Add(agreement); //works and also will be huge
+
+                    //string test = await _serializationService.GetSerializedObject(jsonObjectList);
+                    //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
+
                 }
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
             }

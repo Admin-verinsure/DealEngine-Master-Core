@@ -15,6 +15,7 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             BoatTrailers = new List<Vehicle>();
+            BoatUses = new List<BoatUse>();
         }
 
         public virtual Boat OriginalBoat
