@@ -414,7 +414,7 @@ namespace DealEngine.WebUI.Controllers
             User user = await CurrentUser();
             Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
             Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-            await _milestoneService.JoinOrganisationTask(user, programme);
+            await _milestoneService.CreateAttachOrganisationTask(user, programme, organisation);
             return RedirectToAction("Index", "Home");
         }
 

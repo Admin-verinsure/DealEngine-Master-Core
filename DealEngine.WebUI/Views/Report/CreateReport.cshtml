@@ -1,99 +1,41 @@
-@*@model DealEngine.WebUI.Models.Report.ReportViewModel*@
-@{
-    ViewData["Title"] = "CreateReport";
-}
+@model DealEngine.WebUI.Models.Report.ReportViewModel
 
-<div id="content" class="container">
-    <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/Home/Index">Dashboard</a>
-                > Create Report
-            </span>
-        </h1>
-    </div>
-
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
-
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">           
-            <header>
-                <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                <h2> Report</h2>
-            </header>
-            <div class="container-fluid" name="controls">
-                <form enctype="multipart/form-data" asp-controller="Report" asp-action="Create" method="post" class="mt-3">              
-                    <!-- Image Upload Modal body -->
-                    <div class="modal-body col-sm-12">
-                        @*
-                        <div class="form-group row">
-                            
-                            <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-                            <div class="col-sm-10">
-                                <input asp-for="Name" class="form-control" placeholder="Name">
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-                            
-                        </div>
-                        *@
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer" style="display:flex;">
-                        <div class="btn-group float-right mt-1" role="group">
-                            <button id="" onclick="" type="submit" class="btn btn-primary">Create</button>
-                        </div>
-                    </div>
-                </form>
-
-            @*
-            <div class="container-fluid" name="controls">
-                <div class="form-group col-sm-9 float-right">
-                    <div class="btn-group float-right col-sm-12" role="group">
-                        <div class="col-sm-12 float-right" style="margin-top:.75rem;">
-                            <button id="create" onclick="" type="submit" class="btn btn-primary mr-2 float-right">Create</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            *@
-
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">CG Data</h5>
+        <p class="card-text" style="margin-top:30px;">Json</p>
+        <div class="form-group">
+            <select class="form-control" Id="ClientId" onchange="Serialise('5bc11b5d-6720-4c24-a62d-abc90183cf04')">
+                <option selected="selected" value="">Add New</option>
+                <option  value="">change</option>
+                @*@foreach (var client in Model.SelectedClients)
+                {
+                    <option value="@client.Value">@client.Text</option>
+                }*@
+            </select>            
         </div>
     </div>
 </div>
 
+
 @section pagespecific {
 
     <script type="text/javascript">
-        $(document).ready(function () {
 
-            $("#ckuploadbtn").click(function () {
-                $("#uploadmodal").modal({
-                    backdrop: true
+        function Serialise(exampleId) {
+            var clientId = document.getElementById('ClientId').value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("Create", "Report")',
+                data: { Id: exampleId }
+            })
+                .done(function (data) {
+                    debugger;
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
                 });
-            });
-            $("#create").click(function () {
-                $("#create").modal({
-                    backdrop: true
-                });
-            });
-
-            $("#fileUploaddoc").change(function () {
-                var fileName = $(this).val().split("\\").pop();
-                $(this).next('#custom-file-label').html(fileName);
-                $("#custom-file-label").html(fileName);
-            });
-
-            $("#fileUpload").change(function () {
-                var fileName = $(this).val().split("\\").pop();
-                $(this).next('#custom-file-label').html(fileName);
-                $("#custom-file-label").html(fileName);
-            });
-        });
+        }
     </script>
 }

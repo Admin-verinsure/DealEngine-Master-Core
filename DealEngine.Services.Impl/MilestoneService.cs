@@ -248,26 +248,33 @@ namespace DealEngine.Services.Impl
                     IsActive = true
                 };
 
-                user.UserTasks.Add(userTask);             
-                await _userService.Update(user);
+                //var programmeUser = programme.BrokerContactUser;
+                var programmeUser = user;
+                programmeUser.UserTasks.Add(userTask);             
+                await _userService.Update(programmeUser);
             }                   
         }
 
-        public async Task JoinOrganisationTask(User user, Programme programme)
-        {
-            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + user.PrimaryOrganisation.Id.ToString();
-            UserTask userTask = user.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+        public async Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation)
+        {            
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
+            //var ProgrammeUser = programme.BrokerContactUser;
+            var ProgrammeUser = user;
+            UserTask userTask = ProgrammeUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
             if (userTask != null)
             {
-                userTask.Complete(user);
-                user.UserTasks.Remove(userTask);            
-                await _taskingService.Update(userTask);
+                userTask.Complete(ProgrammeUser);
+                user.UserTasks.Remove(userTask);
 
-                //var brokerUser = programme.BrokerContactUser;
-                URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + user.PrimaryOrganisation.Id.ToString();
-                //default me for now
-                user.UserTasks.Add(userTask);
-                //organisationUser.UserTasks.Add(userTask);   
+                userTask = new UserTask(ProgrammeUser, "Attach", null)
+                {
+                    URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
+                    Body = "Person Attach to Sheet",
+                    IsActive = true
+                };
+
+                ProgrammeUser.UserTasks.Add(userTask);
+                await _userService.Update(ProgrammeUser);   
             }
         }
     }
