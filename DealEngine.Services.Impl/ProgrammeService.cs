@@ -417,13 +417,12 @@ namespace DealEngine.Services.Impl
             clientInformationSheet.IsChange = true;
             clientInformationSheet.Status = "Not Started";
             clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
-            PreClone.Agreements.Clear();
-            PreClone.DateCreated = DateTime.Now;
-            PreClone.ChangeReason = changeReason;
-            PreClone.InformationSheet = clientInformationSheet;
-            await Update(PreClone);
+            ClientProgramme clientProgramme = new ClientProgramme(createdBy, PreClone.Owner, PreClone.BaseProgramme);
+            clientProgramme.ChangeReason = changeReason;
+            clientProgramme.InformationSheet = clientInformationSheet;
+            await Update(clientProgramme);
 
-            return PreClone;
+            return clientProgramme;
 
         }
 

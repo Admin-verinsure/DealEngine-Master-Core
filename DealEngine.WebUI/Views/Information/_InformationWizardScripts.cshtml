@@ -2627,7 +2627,13 @@ function UpdateChosen() {
                 $('#MooredType').trigger('chosen:updated');
             }
             if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
-                $('#BoatWaterLocation.b').val(data.boatWaterLocation);
+                var marinas = document.getElementById('BoatWaterLocation');
+                for (var i = 0; i < marinas.options.length; i++) {
+                    if (marinas.options[i].value == data.boatWaterLocation) {
+                        marinas.options[i].selected = true;
+                    }
+                }
+
                 $('#othermarinSection').addClass("hidden");
                 $('#BoatMooredTypeSection').addClass("hidden");
                 GetMooredType(data.boatWaterLocation);

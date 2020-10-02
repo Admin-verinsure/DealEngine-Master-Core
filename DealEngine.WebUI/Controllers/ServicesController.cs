@@ -2078,7 +2078,11 @@ namespace DealEngine.WebUI.Controllers
                     if (boat.BoatLandLocation != null)
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
-                        model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                    {
+                        var unit = (MarinaUnit)boat.BoatWaterLocation.OrganisationalUnits.FirstOrDefault();
+                        model.BoatWaterLocation = unit.WaterLocation.Id;
+                    }
+
                     // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
                     if (boat.BoatTrailers.Any())
                         model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
