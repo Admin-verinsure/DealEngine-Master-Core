@@ -42,7 +42,6 @@
     });
 
     DefaultDateRestore();
-
     //if ($("#dateselected").val() != null) {
     //    var ds = $("#dateselected").val();
     //    //$("#AddBoatEffectiveDate").val(ds);
@@ -178,12 +177,13 @@
                         if (Element.tagName == "INPUT") {
                             if (Element.type == "date") {
                                 //hardcord date string
+                                debugger;
                                 var date = Value.substring(0, 10);
                                 if (date == "0001-01-01") {
-                                  element.value = null;
+                                    element.value = null;
                                 } else {
                                     element.value = date;
-                                    Element.type = "text";
+                                    //Element.type = "text";
                                 }
                             }
                             else {

@@ -5695,20 +5695,39 @@ function UpdateChosen() {
     }
 
     function DefaultDateRestore() {
-        var ds = $("#dateselected").val();
-        if (ds == null) {
-            var date = new Date();
-            var day = ("0" + date.getDate()).slice(-2);
-            var month = ("0" + (date.getMonth() + 1)).slice(-2);
-            var year = date.getFullYear();
-            ds = year + "-" + month + "-" + day;
+        if (document.getElementById("dateselected") != null) {
+            var ds = document.getElementById("dateselected").value;
+            if (ds == null) {
+                var date = new Date();
+                var day = ("0" + date.getDate()).slice(-2);
+                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                var year = date.getFullYear();
+                ds = year + "-" + month + "-" + day;
+            }
+            if (document.getElementById("AddBoatEffectiveDate") != null) {
+                document.getElementById("AddBoatEffectiveDate").value = ds;
+            }
+            if (document.getElementById("BoatEffectiveDate") != null) {
+                document.getElementById("BoatEffectiveDate").value = ds;
+            }
+            if (document.getElementById("AddBoatEffectiveDate") != null) {
+                document.getElementById("AddBoatEffectiveDate").value = ds;
+            }
+            if (document.getElementById("AddEffectiveDate") != null) {
+                document.getElementById("AddEffectiveDate").value = ds;
+            }
+            if (document.getElementById("AddPlantEffectiveDate") != null) {
+                document.getElementById("AddPlantEffectiveDate").value = ds;
+            }
+            if (document.getElementById("EffectiveDate") != null) {
+                document.getElementById("EffectiveDate").value = ds;
+            }
+            if (document.getElementById("MotorEffectiveDate") != null) {
+                document.getElementById("MotorEffectiveDate").value = ds;
+            }
+            if (document.getElementById("TrailerEffectiveDateModal") != null) {
+                document.getElementById("TrailerEffectiveDateModal").value = ds;
+            }
         }
-        document.getElementById("AddBoatEffectiveDate").value = ds;
-        document.getElementById("BoatEffectiveDate").value = ds;
-        document.getElementById("AddEffectiveDate").value = ds;
-        document.getElementById("AddPlantEffectiveDate").value = ds;
-        document.getElementById("EffectiveDate").value = ds;
-        document.getElementById("MotorEffectiveDate").value = ds;
-        document.getElementById("TrailerEffectiveDateModal").value = ds;
     }
 </script>

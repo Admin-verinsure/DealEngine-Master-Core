@@ -20,11 +20,6 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.IO;
-using DealEngine.Services.Impl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -3602,18 +3597,21 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(collection["Id"], out Guid Id))
+                if (Guid.TryParse(collection["Id"], out Guid Id) && !string.IsNullOrWhiteSpace(collection["Date"]))
                 {
-                    DateTime dateTime = DateTime.Parse(collection["Date"]);
+
+                    DateTime.TryParse(collection["Date"], UserCulture, DateTimeStyles.None, out DateTime dateTime);
+                    //DateTime dateTime = DateTime.Parse(().ToString(CultureInfo.GetCultureInfo("en-NZ").DateTimeFormat.ShortDatePattern));
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
                     if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
                     {
                         return Json(false);
                     }
+                    return Json(true);
                 }
 
-                return Json(true);
+                return Json(false);
             }
             catch (Exception ex)
             {

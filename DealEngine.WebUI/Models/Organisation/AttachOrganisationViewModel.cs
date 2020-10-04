@@ -22,7 +22,7 @@ namespace DealEngine.WebUI.Models.Organisation
                 Owners.Add(new SelectListItem()
                 {
                     Text = clientProgramme.InformationSheet.Owner.Name,
-                    Value= clientProgramme.InformationSheet.Owner.Id.ToString()
+                    Value= clientProgramme.Id.ToString()
                 });
             }            
         }
