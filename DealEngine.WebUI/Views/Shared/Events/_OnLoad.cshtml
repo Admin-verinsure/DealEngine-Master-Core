@@ -41,27 +41,6 @@
         dateFormat: "yy-mm-dd",
     });
 
-    DefaultDateRestore();
-    //if ($("#dateselected").val() != null) {
-    //    var ds = $("#dateselected").val();
-    //    //$("#AddBoatEffectiveDate").val(ds);
-    //    $("#BoatEffectiveDate").val(ds);
-    //    $("#AddEffectiveDate").val(ds);
-    //    $("#AddPlantEffectiveDate").val(ds);
-    //    $("#EffectiveDate").val(ds);
-    //    $("#MotorEffectiveDate").val(ds);
-    //    $("#TrailerEffectiveDateModal").val(ds);
-    //}
-    //else {
-    //    //$("#AddBoatEffectiveDate").datepicker("setDate", "0");
-    //    $("#BoatEffectiveDate").datepicker("setDate", "0");
-    //    $("#AddEffectiveDate").datepicker("setDate", "0");
-    //    $("#AddPlantEffectiveDate").datepicker("setDate", "0");
-    //    $("#EffectiveDate").datepicker("setDate", "0");
-    //    $("#MotorEffectiveDate").datepicker("setDate", "0");
-    //    $("#TrailerEffectiveDateModal").datepicker("setDate", "0");
-    //}
-
     function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
         var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
         var deletebuttonstring = "<button onclick=\"RemoveLocation('" + locationId + "')\" type=\"button\" class=\" btn btn-danger btn - sm\" id=\"trash\"><span class=\"fa fa-trash\"></span></button>";
