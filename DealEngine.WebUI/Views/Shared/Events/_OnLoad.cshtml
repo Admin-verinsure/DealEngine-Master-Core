@@ -177,12 +177,11 @@
                         if (Element.tagName == "INPUT") {
                             if (Element.type == "date") {
                                 //hardcord date string
-                                debugger;
                                 var date = Value.substring(0, 10);
                                 if (date == "0001-01-01") {
-                                    element.value = null;
+                                    Element.value = null;
                                 } else {
-                                    element.value = date;
+                                    Element.value = date;
                                     //Element.type = "text";
                                 }
                             }
