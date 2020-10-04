@@ -35,18 +35,18 @@
         @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
         @if (Model.OrganisationViewModel.Programme.Name == "Apollo Programme" || Model.OrganisationViewModel.Programme.Name == "Abbott Financial Advisor Liability Programme")
         {
-            <div class="form-group" id="HideDateofIncorportation" hidden>
-                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, "{0:dd/MM/yyyy}", new { @class = "form-control", @id = "Organisation.DateofIncorportation", @type = "date", onfocus = "(this.type='date')", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                @if (Model.OrganisationViewModel.Organisation.DateofIncorportation == null)
-                {
-                    @Html.Hidden("NoDateofIncorportation", true)
-                }
-                else
-                {
-                    @Html.Hidden("NoDateofIncorportation", false)
-                }
-            </div>
+        <div class="form-group" id="HideDateofIncorportation" hidden>
+            @Html.LabelFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.DateofIncorportation, "dd/MM/yyyy", new { @class = "form-control", @id = "Organisation.DateofIncorportation", @type = "date", @onchange = "OnChange(this.id, this.name)", @required = "" })            
+            @if (Model.OrganisationViewModel.Organisation.DateofIncorportation == null)
+            {
+                @Html.Hidden("NoDateofIncorportation", true)
+            }
+            else
+            {
+                @Html.Hidden("NoDateofIncorportation", false)
+            }
+        </div>
             <div class="form-group" id="TradingName">
                 @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
                 {

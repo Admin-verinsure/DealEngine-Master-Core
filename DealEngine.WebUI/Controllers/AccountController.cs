@@ -325,7 +325,8 @@ namespace DealEngine.WebUI.Controllers
             {                                                
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
-                int resultCode = -1;
+                //int resultCode = -1;
+                int resultCode = 0;
                 string resultMessage = "";
                 IdentityUser deUser;
 

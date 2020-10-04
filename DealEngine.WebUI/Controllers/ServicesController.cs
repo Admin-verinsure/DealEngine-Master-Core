@@ -20,11 +20,6 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.IO;
-using DealEngine.Services.Impl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -1957,7 +1952,6 @@ namespace DealEngine.WebUI.Controllers
                     boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
                 }
                     
-
                 if (model.OtherMarinaName != null)
                 {
                     boat.OtherMarinaName = model.OtherMarinaName;
@@ -1966,18 +1960,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     boat.OtherMarina = false;
-
-                }
-                if (model.SelectedBoatUse != null)
-                {
-
-                    boat.BoatUses = new List<BoatUse>();
-
-                    //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    Guid BoatUse = model.SelectedBoatUse;
-
-                    boat.BoatUses.Add(await _boatUseService.GetBoatUse(BoatUse));
-
                 }
 
                 if (model.SelectedInterestedParty != null)
@@ -2091,7 +2073,11 @@ namespace DealEngine.WebUI.Controllers
                     if (boat.BoatLandLocation != null)
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
-                        model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                    {
+                        var unit = (MarinaUnit)boat.BoatWaterLocation.OrganisationalUnits.FirstOrDefault();
+                        model.BoatWaterLocation = unit.WaterLocation.Id;
+                    }
+
                     // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
                     if (boat.BoatTrailers.Any())
                         model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
@@ -3611,18 +3597,21 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(collection["Id"], out Guid Id))
+                if (Guid.TryParse(collection["Id"], out Guid Id) && !string.IsNullOrWhiteSpace(collection["Date"]))
                 {
-                    DateTime dateTime = DateTime.Parse(collection["Date"]);
+
+                    DateTime.TryParse(collection["Date"], UserCulture, DateTimeStyles.None, out DateTime dateTime);
+                    //DateTime dateTime = DateTime.Parse(().ToString(CultureInfo.GetCultureInfo("en-NZ").DateTimeFormat.ShortDatePattern));
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
                     if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
                     {
                         return Json(false);
                     }
+                    return Json(true);
                 }
 
-                return Json(true);
+                return Json(false);
             }
             catch (Exception ex)
             {
