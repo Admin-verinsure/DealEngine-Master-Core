@@ -333,6 +333,7 @@
             }
             if (Rule == "ValidateDateOfCommencement") {
                 var id = document.getElementById("ClientProgramme_Id");
+                debugger;
                 $.ajax({
                     url: '@Url.Action("ValidateDateOfCommencement", "Services")',
                     type: "POST",
