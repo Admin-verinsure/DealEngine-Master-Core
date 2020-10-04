@@ -19,7 +19,7 @@ namespace DealEngine.Domain.Entities
         public BindDataCG(User user, ClientInformationSheet sheet)
             : base (user)
         {
-            if(sheet!= null)
+            if(sheet != null)
             {
                 var Boat = sheet.Boats.FirstOrDefault();
                 if(Boat != null)
@@ -32,16 +32,16 @@ namespace DealEngine.Domain.Entities
                     Location = Boat.BoatLandLocation.Location;
                     SumInsured = Boat.Sum.ToString();
                     Trailer = Boat.BoatTrailers.FirstOrDefault();
-                    Hull = "";
-                    TotalSumInsured = "To Be Calced";
+                    Hull = Boat.HullConfiguration;
+                    TotalSumInsured = "WIP";//sheet.ClientAgreement..;
                     Excess = Boat.BoatQuoteExcessOption.ToString();
-                    RacingRisk = Boat.BoatUses.FirstOrDefault().BoatUseRace;
-                    Premium = "To Be Calced";
-                    Coy = "To Be Calced";
-                    FENZ = "To Be Calced";
-                    GST = "To Be Calced";
-                    Total = "To Be Calced";
-                    Brokerage = "To Be Calced";
+                    RacingRisk = "WIP"; //Boat.BoatUses.FirstOrDefault().BoatUseRace;
+                    Premium = "WIP";
+                    Coy = "WIP";
+                    FENZ = "WIP";
+                    GST = "WIP";
+                    Total = "WIP";
+                    Brokerage = "WIP";
                 }
             }
         }

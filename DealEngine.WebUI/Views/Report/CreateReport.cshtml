@@ -5,7 +5,7 @@
         <h5 class="card-title">CG Data</h5>
         <p class="card-text" style="margin-top:30px;">Json</p>
         <div class="form-group">
-            <select class="form-control" Id="ClientId" onchange="Serialise('5bc11b5d-6720-4c24-a62d-abc90183cf04')">
+            <select class="form-control" Id="ProgrammeId" onchange="Serialise('29dfc24b-845d-4d4c-8d5c-ac46003d1e5a')">
                 <option selected="selected" value="">Add New</option>
                 <option  value="">change</option>
                 @*@foreach (var client in Model.SelectedClients)
@@ -23,7 +23,7 @@
     <script type="text/javascript">
 
         function Serialise(exampleId) {
-            var clientId = document.getElementById('ClientId').value;
+            var programmeId = document.getElementById('ProgrammeId').value;
             $.ajax({
                 type: 'Post',
                 url: '@Url.Action("Create", "Report")',

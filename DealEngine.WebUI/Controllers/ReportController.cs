@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -23,7 +24,7 @@ namespace DealEngine.WebUI.Controllers
         IProgrammeService _programmeService;
         IOrganisationService _organisationService;
         IDataService _dataService;
-
+        IMapperSession<BindDataCG> _dataRepository;
 
         public ReportController(
             ISerializerationService serializerationService,
@@ -32,7 +33,8 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientService,
             IOrganisationService organisationService,
             IDataService dataService,
-            IProgrammeService programmeService
+            IProgrammeService programmeService,
+            IMapperSession<BindDataCG> dataRepository
             )
             : base(userService)
         {
@@ -43,6 +45,7 @@ namespace DealEngine.WebUI.Controllers
             _programmeService = programmeService;
             _organisationService = organisationService;
             _dataService = dataService;
+            _dataRepository = dataRepository;
         }
 
 
@@ -65,13 +68,18 @@ namespace DealEngine.WebUI.Controllers
             Guid clientId = Guid.Parse(model["Id"]);
             var client = await _programmeService.GetClientProgrammebyId(clientId);
             var user = await CurrentUser();
-            var clientData = new BindDataCG(user, client.InformationSheet);
+            BindDataCG clientData = new BindDataCG(user, client.InformationSheet);
+
+
             //save to db
+
+            await _dataRepository.AddAsync(clientData);
+
 
             var list = new List<object>();
             list.Add(clientData);
             string test = await _serializerationService.GetSerializedObject(clientData);
-            System.IO.File.WriteAllText(@"C:\tmp\test2.json", test);
+            System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
 
             #region report writer code
             /*#
