@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 using NReco.PdfGenerator;
+using System.Security.AccessControl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -47,6 +48,7 @@ namespace DealEngine.WebUI.Controllers
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
         IFileService _fileService;
+        IDataService _dataService;
         IEmailService _emailService;
         IOrganisationService _organisationService;
         IProgrammeService _programmeService;
@@ -79,6 +81,7 @@ namespace DealEngine.WebUI.Controllers
             IAdvisoryService advisoryService,
             IClientAgreementEndorsementService clientAgreementEndorsementService,
             IFileService fileService,
+            IDataService dataService,
             IHttpClientService httpClientService,
             ITaskingService taskingService,
             IActivityService activityService,
@@ -117,6 +120,7 @@ namespace DealEngine.WebUI.Controllers
             _clientAgreementRuleService = clientAgreementRuleService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
             _fileService = fileService;
+            _dataService = dataService;
             _emailService = emailService;
             _unitOfWork = unitOfWork;
             _ruleRepository = ruleRepository;
@@ -238,6 +242,19 @@ namespace DealEngine.WebUI.Controllers
                 model.InformationSheetId = sheetId;
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+                model.ProductName = agreement.Product.Name;
+                //ClientAgreementTerm clientAgreementTerm = _clientAgreementTermService.GetAllClientAgreementTerm
+
+                foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                {
+                    if (term.Bound)
+                    {
+                        model.SelectedPremium = term.Premium;
+                        model.BasePremium = term.BasePremium;
+                    }
+                    
+                }
+
 
                 foreach (var terms in agreement.ClientAgreementReferrals)
                 {
@@ -248,7 +265,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ReferralAmount = agreement.ClientAgreementTerms.FirstOrDefault().ReferralLoadingAmount;
                 model.AuthorisationNotes = agreement.ClientAgreementTerms.FirstOrDefault().AuthorisationNotes;
 
-                ViewBag.Title = "Agreement Referals ";
+                ViewBag.Title = "Agreement Referrals ";
 
                 return View("AuthoriseReferrals", model);
             }
@@ -337,6 +354,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreement.IssuedToBroker = DateTime.UtcNow;
                         agreement.issuetobrokerby = user.FullName;
+                        agreement.Status = "Quoted";
                         agreement.SelectedBroker = await _userService.GetUserByEmail(model.issuetobrokerto);
                         agreement.issuetobrokercomment = model.Content;
                     }
@@ -355,6 +373,38 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CalculateAdjustment(decimal AdjustmentAmount,Guid AgreementId)
+        {
+            User user = null;
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(AgreementId);
+                var sheet = agreement.ClientInformationSheet;
+                user = await CurrentUser();
+                var premium = 0.0m;
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                    {
+                      term.Premium = term.Premium + AdjustmentAmount;
+                    }
+                    await uow.Commit();
+                }
+
+                //var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+                return Json("AdjustmentDone");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
@@ -371,6 +421,8 @@ namespace DealEngine.WebUI.Controllers
                     foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
                     {
                         terms.Status = "Cleared";
+                        terms.AuthorisedBy = user;
+                        terms.Authorised = DateTime.UtcNow;
                     }
 
                     foreach (var terms in agreement.ClientAgreementTerms)
@@ -396,26 +448,61 @@ namespace DealEngine.WebUI.Controllers
                         term.ReferralLoading = clientAgreementModel.RefferLodPrc;
                         term.ReferralLoadingAmount = clientAgreementModel.RefferLodAmt;
                         term.AuthorisationNotes = clientAgreementModel.AdditionalNotes;
-                        if (term.MotorTerms.Count() == 0 && term.MotorTerms.Count() == 0)
+                        if (term.MotorTerms.Count() == 0 && term.BoatTerms.Count() == 0)
                         {
                             term.Premium = term.Premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                            term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
                         else
                         {
                             term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                             term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
 
                     }
 
-                    if (agreement.Status != "Quoted")
+                    foreach (var terms in agreement.ClientAgreementTerms)
                     {
-                        agreement.Status = "Quoted";
+                        //foreach (var bvterm in terms.BoatTerms)
+                        //{ Org Changes
+
+                        //    if (bvterm.Boat.BoatWaterLocation != null)
+                        //    {
+                        //        var orgList = await _organisationService.GetAllOrganisations();
+                        //        InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
+                        //        if (insuranceAttribute != null)
+                        //        {
+
+                        //            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                        //            foreach (var org in orgList)
+                        //            {
+                        //                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
+                        //                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                        //                {
+
+                        //                    org.IsApproved = true;
+                        //                }
+                        //            }
+                        //            //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
+                        //        }
+
+                        //    }
+
+                        //}
+                    }
+
+                    if (agreement.Status != "Quoted" || agreement.Status != "Authorised")
+                    {
+                        agreement.Status = "Authorised";
                         await _milestoneService.CompleteMilestoneFor("Agreement Status – Referred", user, sheet);
                     }
 
                     string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
+                    
 
                     await uow.Commit();
 
@@ -3412,7 +3499,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //Payment successed
                     //await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-
                     //bool hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
                     status = "Bound and invoice pending";
                     bool hasEglobalNo = false;
@@ -3518,9 +3604,6 @@ namespace DealEngine.WebUI.Controllers
                         //    }
                         //}
 
-
-                        // TODO ADD BACK IN 
-
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
@@ -3531,6 +3614,7 @@ namespace DealEngine.WebUI.Controllers
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
+//                    string json = await _dataService.GetData(Id);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -3539,16 +3623,7 @@ namespace DealEngine.WebUI.Controllers
                             programme.InformationSheet.Status = status;
                             await uow.Commit();
                         }
-                    }
-
-                    var jsonObjectList = new List<object>();
-
-                    //jsonObjectList.Add(sheet);
-                    //jsonObjectList.Add(agreement);
-
-                    //string test = await _serializationService.GetSerializedObject(jsonObjectList);
-                    //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
-
+                    }                 
                 }
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
             }

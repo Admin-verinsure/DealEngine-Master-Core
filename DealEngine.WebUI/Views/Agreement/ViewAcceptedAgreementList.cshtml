@@ -98,7 +98,7 @@
                                 @*<li class="nav-item">
                 <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> EditAdvisor test</a>
             </li>*@
-                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">
                                         <a href="@Url.Action("IssuetoBroker", "Agreement", new { programmeId = @item.ClientProgrammeId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Issue to Broker</a>

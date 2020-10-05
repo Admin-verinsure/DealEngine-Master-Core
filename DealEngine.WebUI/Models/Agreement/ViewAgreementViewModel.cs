@@ -299,6 +299,7 @@ namespace DealEngine.WebUI.Models.Agreement
 
             }
         }
+        //limit
         private async Task GetInsuranceInclusionsExclusions(ClientAgreement agreement, System.Globalization.CultureInfo userCulture)
         {
             Inclusions = new List<InsuranceInclusion>();
@@ -468,6 +469,9 @@ namespace DealEngine.WebUI.Models.Agreement
         public string issuetobrokerto { get; set; }
         public string InsuredName { get; set; }
         public string BindNotes { get; set; }
+        public string AdjustmentAmount { get; set; }
+        public decimal SelectedPremium { get; set; }
+        public decimal BasePremium { get; set; }
         public IList<SelectListItem> PaymentMethodOptions { get; set; }
     }
 

@@ -330,6 +330,17 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AttachOrganisation(IFormCollection collection)
+        {
+            await _programmeService.AttachOrganisationToClientProgramme(collection);
+
+            //var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            //var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);
+            //AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemovePrincipalAdvisors(IFormCollection collection)
         {
             User currentUser = await CurrentUser();
@@ -384,15 +395,16 @@ namespace DealEngine.WebUI.Controllers
             organisation.Removed = true;
             await _organisationService.Update(organisation);
 
-            //if (user.UserName == "JDillon")
-            //{
-            //    if (organisationUser != null)
-            //    {
-            //        Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
-            //        var Programme = await _programmeService.GetProgramme(ProgrammeId);
-            //        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
-            //    }
-            //}
+            if (user.UserName == "JDillon")
+            {
+                if (organisationUser != null)
+                {
+                    Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
+                    var Programme = await _programmeService.GetProgramme(ProgrammeId);
+                    // after testing await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                    await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                }
+            }
 
             return Ok();
         }
@@ -412,7 +424,8 @@ namespace DealEngine.WebUI.Controllers
         {
             User user = await CurrentUser();
             Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
-            await _milestoneService.JoinOrganisationTask(user, programme);
+            Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
+            await _milestoneService.CreateAttachOrganisationTask(user, programme, organisation);
             return RedirectToAction("Index", "Home");
         }
 

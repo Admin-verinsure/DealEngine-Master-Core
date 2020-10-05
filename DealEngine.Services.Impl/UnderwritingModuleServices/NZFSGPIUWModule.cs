@@ -175,16 +175,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
                     var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                    if(unit!= null)
+                    if (unit != null)
                     {
                         intnumberofadvisors += 1;
-
                         if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
                         {
                             advisorhasnocrmid = true;
                         }
                     }
-                }
+                }                                    
             }
 
             bool subuisreferred = false;
@@ -294,6 +293,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
 
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var Agreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+
+                var Term = Agreement.ClientAgreementTerms.FirstOrDefault(i => i.SubTermType == "PI");
+                term2millimitpremiumoption.PremiumDiffer = (term2millimitpremiumoption.Premium - Term.Premium);
+            }
 
             //Referral points per agreement
             //Claims / Insurance History
