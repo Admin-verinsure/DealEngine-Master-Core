@@ -331,7 +331,7 @@ namespace DealEngine.WebUI.Controllers
                 IdentityUser deUser;
 
                 // Step 1 validate in  LDap 
-                _ldapService.Validate(userName, password, out resultCode, out resultMessage);
+                //_ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
                     var identityResult = await DealEngineIdentityUserLogin(user, password);

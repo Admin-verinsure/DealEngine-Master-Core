@@ -1708,9 +1708,18 @@ namespace DealEngine.WebUI.Controllers
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
-            {
+            {               
                 bool isComplete;
-                if (clientProgramme.SubClientProgrammes.Count != 0)
+                IList<SubClientProgramme> SubClientProgrammes;
+                if (clientProgramme.InformationSheet.IsChange)
+                {
+                    SubClientProgrammes = clientProgramme.InformationSheet.PreviousInformationSheet.Programme.SubClientProgrammes;
+                }
+                else
+                {
+                    SubClientProgrammes = clientProgramme.SubClientProgrammes;
+                }
+                if (SubClientProgrammes.Any())
                 {
                     await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet, user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);

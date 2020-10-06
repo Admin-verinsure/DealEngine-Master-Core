@@ -9,6 +9,5 @@ namespace DealEngine.Services.Interfaces
     {
         Task<bool> CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user);
         Task<bool> ValidateProgramme(ClientInformationSheet informationSheet,User user);
-        
     }
 }
