@@ -56,10 +56,11 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationTypeService _organisationTypeService;
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IMapperSession<WaterLocation> _waterLocation;
-        //IGeneratePdf _generatePdf;
+        ISubsystemService _subsystemService;
 
 
         public InformationController(
+            ISubsystemService subsystemService,
             IOrganisationTypeService organisationTypeService,
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
@@ -101,6 +102,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base(userService)
         {
+            _subsystemService = subsystemService;
             _waterLocation = waterLocation;
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;

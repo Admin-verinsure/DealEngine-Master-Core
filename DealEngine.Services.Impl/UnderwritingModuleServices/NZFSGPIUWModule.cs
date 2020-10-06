@@ -62,6 +62,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
+
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             decimal feeincome = 0;
@@ -296,9 +300,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
                 var Agreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
-
-                var Term = Agreement.ClientAgreementTerms.FirstOrDefault(i => i.SubTermType == "PI");
-                term2millimitpremiumoption.PremiumDiffer = (term2millimitpremiumoption.Premium - Term.Premium);
+                foreach(var term in Agreement.ClientAgreementTerms)
+                {
+                    if(term.TermLimit == TermLimit2mil)
+                    {
+                        term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - term.Premium) * coverperiodindays / agreementperiodindays;
+                    }
+                    else if(term.TermLimit == TermLimit3mil)
+                    {
+                        term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - term.Premium) *coverperiodindays / agreementperiodindays;
+                    }
+                    else if (term.TermLimit == TermLimit5mil)
+                    {
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - term.Premium) *coverperiodindays / agreementperiodindays;
+                    }
+                }
             }
 
             //Referral points per agreement
