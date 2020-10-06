@@ -144,7 +144,8 @@ namespace DealEngine.WebUI.Models.Agreement
             MultiCoverOptions = new List<MultiCoverOptions>();
             foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
             {
-                if (agreement.Product.Id == new Guid("094f0b97-f288-440d-a32a-3c2128e35e70") && term.TermLimit == 0 && term.Excess == 0 && term.Premium == 0) //Apollo PIFAP
+                if ((agreement.Product.Id == new Guid("094f0b97-f288-440d-a32a-3c2128e35e70") || agreement.Product.Id == new Guid("eda1fa59-19e3-48f6-aef9-3057582717b4")) 
+                    && term.TermLimit == 0 && term.Excess == 0 && term.Premium == 0) //Apollo PIFAP or Abbott PIFAP
                 {
                     MultiCoverOptions.Add(new MultiCoverOptions
                     {
@@ -152,9 +153,10 @@ namespace DealEngine.WebUI.Models.Agreement
                         isSelected = (term.Bound == true) ? "checked" : "",
                         ProductId = agreement.Product.Id,
                         RiskName = agreement.Product.Name,
-                        Inclusion = "Limit: Same as Professional Indemnity",
-                        Exclusion = "Excess: Same as Professional Indemnity",
+                        Inclusion = "Same as Professional Indemnity",
+                        Exclusion = "Same as Professional Indemnity",
                         TotalPremium = "Included",
+                        monthlypremium = "Included",
                         Dependableproduct = "NonDependable"
                     });
                 }
@@ -175,6 +177,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = "To be advised",
+                                    monthlypremium = "To be advised",
                                     Dependableproduct = agreement.Product.DependableProduct.Name
                                 });
                             }
@@ -189,6 +192,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = term.Premium.ToString("C", userCulture),
+                                    monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
                                     Dependableproduct = agreement.Product.DependableProduct.Name
                                 });
                             }
@@ -207,6 +211,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = "To be advised",
+                                    monthlypremium = "To be advised",
                                     Dependableproduct = agreement.Product.DependableProduct.Name
                                 });
                             }
@@ -221,6 +226,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = term.Premium.ToString("C", userCulture),
+                                    monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
                                     Dependableproduct = agreement.Product.DependableProduct.Name
                                 });
                             }
@@ -243,6 +249,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = "To be advised",
+                                    monthlypremium = "To be advised",
                                     Dependableproduct = "NonDependable"
                                 });
                             }
@@ -259,6 +266,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                         Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                         Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                         TotalPremium = term.PremiumDiffer.ToString("C", userCulture),
+										monthlypremium = (term.PremiumDiffer / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
                                         Dependableproduct = "NonDependable"
                                     });
                                 } else
@@ -272,10 +280,11 @@ namespace DealEngine.WebUI.Models.Agreement
                                         Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                         Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                         TotalPremium = term.Premium.ToString("C", userCulture),
+										monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
                                         Dependableproduct = "NonDependable"
                                     });
                                 }
-                                
+
                             }
 
                         }
@@ -292,6 +301,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = "To be advised",
+                                    monthlypremium = "To be advised",
                                     Dependableproduct = "NonDependable"
                                 });
                             }
@@ -306,6 +316,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = term.Premium.ToString("C", userCulture),
+                                    monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
                                     Dependableproduct = "NonDependable"
                                 });
                             }
@@ -512,6 +523,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string excess { get; set; }
         public string premium { get; set; }
         public string TotalPremium { get; set; }
+        public string monthlypremium { get; set; }
         public string Dependableproduct { get; set; }
     }
 
