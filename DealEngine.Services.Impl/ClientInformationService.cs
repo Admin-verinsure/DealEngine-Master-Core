@@ -310,7 +310,9 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal)
         {
-            return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);
+            var list = await _customerInformationRepository.FindAll().Where(s => s.Owner == principal && s.DateDeleted == null).ToListAsync();
+            var clientsheet = list.LastOrDefault();
+            return (SubClientInformationSheet)clientsheet;
         }
 
         public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)

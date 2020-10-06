@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -19,7 +23,8 @@ namespace DealEngine.WebUI.Controllers
         IClientInformationService _clientService;
         IProgrammeService _programmeService;
         IOrganisationService _organisationService;
-
+        IDataService _dataService;
+        IMapperSession<BindDataCG> _dataRepository;
 
         public ReportController(
             ISerializerationService serializerationService,
@@ -27,7 +32,9 @@ namespace DealEngine.WebUI.Controllers
             IWebHostEnvironment hostingEnv,
             IClientInformationService clientService,
             IOrganisationService organisationService,
-            IProgrammeService programmeService
+            IDataService dataService,
+            IProgrammeService programmeService,
+            IMapperSession<BindDataCG> dataRepository
             )
             : base(userService)
         {
@@ -37,27 +44,42 @@ namespace DealEngine.WebUI.Controllers
             _clientService = clientService;
             _programmeService = programmeService;
             _organisationService = organisationService;
+            _dataService = dataService;
+            _dataRepository = dataRepository;
         }
 
 
         [HttpGet]
         public async Task<ViewResult> CreateReport()
         {
-            return View("~/Views/Report/CreateReport.cshtml");
+            var Programmes = await _programmeService.GetAllProgrammes();
+            var clients = Programmes.FirstOrDefault().ClientProgrammes;
+            ReportViewModel model = new ReportViewModel(Programmes);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ReportViewModel model)
+        public async Task<IActionResult> Create(IFormCollection model)
         {
-            Guid clientId = Guid.Parse("82ed739d-0795-4602-a2c8-abab017abcb5");
-            var sheet = await _clientService.GetInformation(clientId);
+            //Guid clientId = Guid.Parse("82ed739d-0795-4602-a2c8-abab017abcb5");
+            //Guid programmeId = Guid.Parse("29dfc24b-845d-4d4c-8d5c-ac46003d1e5a");
+            //var test = await _dataService.GetData(programmeId);
 
-            var agreements = sheet.Programme.Agreements;
+            Guid clientId = Guid.Parse(model["Id"]);
+            var client = await _programmeService.GetClientProgrammebyId(clientId);
+            var user = await CurrentUser();
+            BindDataCG clientData = new BindDataCG(user, client.InformationSheet);
+
+
+            //save to db
+
+            await _dataRepository.AddAsync(clientData);
+
+
             var list = new List<object>();
-            list.Add(sheet);
-            list.Add(agreements);
-            string test = await _serializerationService.GetSerializedObject(list);
-            System.IO.File.WriteAllText(@"C:\Users\tcnathan\source\repos\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
+            list.Add(clientData);
+            string test = await _serializerationService.GetSerializedObject(clientData);
+            System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
 
             #region report writer code
             /*#

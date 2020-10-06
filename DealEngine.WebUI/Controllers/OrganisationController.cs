@@ -330,6 +330,17 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AttachOrganisation(IFormCollection collection)
+        {
+            await _programmeService.AttachOrganisationToClientProgramme(collection);
+
+            //var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            //var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);
+            //AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemovePrincipalAdvisors(IFormCollection collection)
         {
             User currentUser = await CurrentUser();
@@ -414,7 +425,7 @@ namespace DealEngine.WebUI.Controllers
             User user = await CurrentUser();
             Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
             Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-            await _milestoneService.JoinOrganisationTask(user, programme);
+            await _milestoneService.CreateAttachOrganisationTask(user, programme, organisation);
             return RedirectToAction("Index", "Home");
         }
 

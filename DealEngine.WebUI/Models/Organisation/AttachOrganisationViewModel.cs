@@ -3,6 +3,7 @@ using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models.Organisation
 {
@@ -16,12 +17,12 @@ namespace DealEngine.WebUI.Models.Organisation
         private void PopulateOwnerList(IList<ClientProgramme> clientProgrammes)
         {
             Owners = new List<SelectListItem>();
-            foreach(var clientProgramme in clientProgrammes)
+            foreach(var clientProgramme in clientProgrammes.Where(p=>p.DateDeleted == null).ToList())
             {
                 Owners.Add(new SelectListItem()
                 {
                     Text = clientProgramme.InformationSheet.Owner.Name,
-                    Value= clientProgramme.InformationSheet.Owner.Id.ToString()
+                    Value= clientProgramme.Id.ToString()
                 });
             }            
         }

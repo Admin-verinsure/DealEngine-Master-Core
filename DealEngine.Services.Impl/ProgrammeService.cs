@@ -20,14 +20,18 @@ namespace DealEngine.Services.Impl
         IClientInformationService _clientInformationService;
         IReferenceService _referenceService;
         ICloneService _cloneService;
+        IMapperSession<Organisation> _organisationRepository;
 
-        public ProgrammeService(IMapperSession<Programme> programmeRepository,
+        public ProgrammeService(
+            IMapperSession<Organisation> organisationRepository,
+            IMapperSession<Programme> programmeRepository,
             IClientInformationService clientInformationService,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
             ICloneService cloneService
             )
         {
+            _organisationRepository = organisationRepository;
             _cloneService = cloneService;
             _clientInformationService = clientInformationService;
             _programmeRepository = programmeRepository;
@@ -297,7 +301,9 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation Owner)
         {
-            return (SubClientProgramme)await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner == Owner);
+            var list = await _clientProgrammeRepository.FindAll().Where(c => c.Owner == Owner && c.DateDeleted == null).ToListAsync();
+            var clientprogramme = list.LastOrDefault();
+            return (SubClientProgramme)clientprogramme;
         }
 
         private async Task<List<Programme>> GetProgrammes(IFormCollection collection)
@@ -416,14 +422,17 @@ namespace DealEngine.Services.Impl
             clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
             clientInformationSheet.IsChange = true;
             clientInformationSheet.Status = "Not Started";
+            clientInformationSheet.DateCreated = DateTime.Now;
+            clientInformationSheet.UnlockDate = DateTime.MinValue;
             clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
+            
             ClientProgramme clientProgramme = new ClientProgramme(createdBy, PreClone.Owner, PreClone.BaseProgramme);
             clientProgramme.ChangeReason = changeReason;
             clientProgramme.InformationSheet = clientInformationSheet;
+            clientProgramme.InformationSheet.Programme = clientProgramme;
             await Update(clientProgramme);
 
             return clientProgramme;
-
         }
 
         public Task DeveloperTool()
@@ -443,6 +452,37 @@ namespace DealEngine.Services.Impl
             Destination.BrokerContactUser = broker;
             await Update(Destination);
             return Destination;
+        }
+
+        public async Task AttachOrganisationToClientProgramme(IFormCollection collection)
+        {
+            if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
+            {
+                if(AttachOrganisationId != Guid.Empty)
+                {
+                    var Organisation = await _organisationRepository.GetByIdAsync(AttachOrganisationId);
+                    Organisation.Removed = false;
+                    if (Organisation != null)
+                    {
+                        if (Guid.TryParse(collection["ClientProgrammeId"], out Guid ClientProgrammeId))
+                        {
+                            if (ClientProgrammeId != Guid.Empty)
+                            {
+                                var clientProgramme = await GetClientProgrammebyId(ClientProgrammeId);
+                                //assume the last client programme to check?
+                                if (clientProgramme != null)
+                                {
+                                    if (!clientProgramme.InformationSheet.Organisation.Contains(Organisation))
+                                    {
+                                        clientProgramme.InformationSheet.Organisation.Add(Organisation);
+                                        await Update(clientProgramme);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                
+            }
         }
     }
 }

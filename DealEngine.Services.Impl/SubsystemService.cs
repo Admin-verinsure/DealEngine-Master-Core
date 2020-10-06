@@ -17,11 +17,13 @@ namespace DealEngine.Services.Impl
         IInformationTemplateService _informationTemplateService;
         IInformationSectionService _informationSectionService;
         IReferenceService _referenceService;
-        IEmailService _emailService;
+        ICloneService _cloneService;
         IMapper _mapper;
+        IEmailService _emailService;
 
         public SubsystemService(
             IEmailService emailService,
+            ICloneService cloneService,
             IMapper mapper,
             IProductService productService,
             IInformationSectionService informationSectionService,
@@ -33,6 +35,7 @@ namespace DealEngine.Services.Impl
             )
         {
             _emailService = emailService;
+            _cloneService = cloneService;
             _referenceService = referenceService;
             _mapper = mapper;
             _productService = productService;
@@ -83,6 +86,7 @@ namespace DealEngine.Services.Impl
             SubClientInformationSheet subClientSheet;
             try
             {
+                // compare if subclient sheet is attached to previous.sheet
                 subClientSheet = await _clientInformationService.GetSubInformationSheetFor(org);
                 if (subClientSheet == null)
                 {
@@ -93,13 +97,30 @@ namespace DealEngine.Services.Impl
                     }
                     subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
                 }
+                else if (subClientSheet != null && !sheet.SubClientInformationSheets.Contains(subClientSheet))
+                {
+                    var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
+                    var createdSubSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
+                    foreach (var answer in subClientSheet.Answers)
+                    {
+                        createdSubSheet.AddAnswer(answer.ItemName, answer.Value);
+                    }
+                    foreach(var claim in subClientSheet.ClaimNotifications)
+                    {
+                        createdSubSheet.AddClaim(claim);
+                    }
+                    createdSubSheet.Status = subClientSheet.Status;
+                    createdSubSheet.SubmittedBy = subClientSheet.SubmittedBy;
+                    createdSubSheet.SubmitDate = DateTime.Now;
+                    subClientSheet = createdSubSheet;
+                }
                 else
                 {
                     if (subClientSheet.DateDeleted.HasValue || subClientSheet.DeletedBy != null)
                     {
                         SubClientProgramme subProg = (SubClientProgramme)subClientSheet.Programme;
                         subClientSheet.DateDeleted = null;
-                        subClientSheet.Programme.DateDeleted = null;
+                        subClientSheet.Programme.DateDeleted = DateTime.Now;
                         subClientSheet.DeletedBy = null;
                         subClientSheet.Programme.DeletedBy = null;
 
@@ -271,6 +292,7 @@ namespace DealEngine.Services.Impl
                 throw subSystem;
             }
         }
+
     }
 }
 

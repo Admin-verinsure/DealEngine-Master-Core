@@ -48,6 +48,7 @@ namespace DealEngine.WebUI.Controllers
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
         IFileService _fileService;
+        IDataService _dataService;
         IEmailService _emailService;
         IOrganisationService _organisationService;
         IProgrammeService _programmeService;
@@ -80,6 +81,7 @@ namespace DealEngine.WebUI.Controllers
             IAdvisoryService advisoryService,
             IClientAgreementEndorsementService clientAgreementEndorsementService,
             IFileService fileService,
+            IDataService dataService,
             IHttpClientService httpClientService,
             ITaskingService taskingService,
             IActivityService activityService,
@@ -118,6 +120,7 @@ namespace DealEngine.WebUI.Controllers
             _clientAgreementRuleService = clientAgreementRuleService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
             _fileService = fileService;
+            _dataService = dataService;
             _emailService = emailService;
             _unitOfWork = unitOfWork;
             _ruleRepository = ruleRepository;
@@ -1705,9 +1708,18 @@ namespace DealEngine.WebUI.Controllers
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
-            {
+            {               
                 bool isComplete;
-                if (clientProgramme.SubClientProgrammes.Count != 0)
+                IList<SubClientProgramme> SubClientProgrammes;
+                if (clientProgramme.InformationSheet.IsChange)
+                {
+                    SubClientProgrammes = clientProgramme.InformationSheet.PreviousInformationSheet.Programme.SubClientProgrammes;
+                }
+                else
+                {
+                    SubClientProgrammes = clientProgramme.SubClientProgrammes;
+                }
+                if (SubClientProgrammes.Any())
                 {
                     await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet, user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
@@ -3437,17 +3449,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProcessRequestConfiguration(Guid Id)
         {
-            Guid sheetId = Guid.Empty;
-            ClientInformationSheet sheet = null;
             User user = null;
-
-            //try
-            //{
-            //    if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
-            //    {
-            //        sheet = await _customerInformationService.GetInformation(sheetId);
-            //    }
-            //}
             try
             {
                 string queryString = HttpContext.Request.Query["result"].ToString();
@@ -3506,7 +3508,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //Payment successed
                     //await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-
                     //bool hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
                     status = "Bound and invoice pending";
                     bool hasEglobalNo = false;
@@ -3612,9 +3613,6 @@ namespace DealEngine.WebUI.Controllers
                         //    }
                         //}
 
-
-                        // TODO ADD BACK IN 
-
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
@@ -3625,6 +3623,7 @@ namespace DealEngine.WebUI.Controllers
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
+//                    string json = await _dataService.GetData(Id);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -3633,33 +3632,7 @@ namespace DealEngine.WebUI.Controllers
                             programme.InformationSheet.Status = status;
                             await uow.Commit();
                         }
-                    }
-
-                    var jsonObjectList = new List<object>();
-
-                    //var sheet = programme.Agreements.
-
-                    foreach (ClientAgreement agreement in programme.Agreements)
-                    {
-                        jsonObjectList.Add(agreement);
-                    }
-                        // objects to get
-                        // clientinformationsheet
-                        // clientagreement
-                        // organisation
-                        // boat
-                        // vehicle
-                        // boatuse
-                        // clientagreementbvterm
-                        // clientagreementmvterm
-                        // clientagreementterm
-                    jsonObjectList.Add(sheet); //works and is huge
-
-                    //jsonObjectList.Add(agreement); //works and also will be huge
-
-                    //string test = await _serializationService.GetSerializedObject(jsonObjectList);
-                    //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
-
+                    }                 
                 }
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
             }
