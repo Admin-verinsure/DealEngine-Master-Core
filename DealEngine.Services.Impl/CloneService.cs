@@ -68,7 +68,11 @@ public class CloneProfile : Profile
 
         //clonesystem
         CreateMap<ClientInformationSheet, ClientInformationSheet>()
-            .ForMember(dest => dest.Id, map => map.Ignore());
+            .ForMember(dest => dest.Id, map => map.Ignore())
+            .ForMember(dest => dest.SubmittedBy, map => map.Ignore())
+            .ForMember(dest => dest.SubClientInformationSheets, map => map.Ignore())
+            .ForMember(dest => dest.SubmitDate, map => map.Ignore());
+
         //CreateMap<Programme, Programme>()
         //    .ForMember(dest => dest.Id, map => map.Ignore());
 
