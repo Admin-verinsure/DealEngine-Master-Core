@@ -445,7 +445,7 @@ namespace DealEngine.WebUI.Models
     {
         public CLIViewModel()
         {
-            HasCLIOptions = GetSelectListOptions();
+            HasCLIOptions = GetSelectListOptions1();
             HasSecurityOptions = GetSelectListOptions();
             HasAccessControlOptions = GetSelectListOptions();
             HasProhibitAccessOptions = GetSelectListOptions();
@@ -476,6 +476,22 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 { Text = "False", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetSelectListOptions1()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }
@@ -1245,7 +1261,7 @@ namespace DealEngine.WebUI.Models
         public string Superannuation { get; set; }
         public string Kiwisaver { get; set; }
         public string OtherFunds { get; set; }
-
+        public string OtherFundsAdditional { get; set; }
     }
 
     public class GeneralViewModel
