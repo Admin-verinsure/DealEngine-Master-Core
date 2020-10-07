@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
@@ -140,7 +141,6 @@ namespace DealEngine.Domain.Entities
             get;
             protected set;
         }
-
         public virtual Vehicle Vehicle
         {
             get;
