@@ -142,6 +142,11 @@ namespace DealEngine.WebUI.Models.Agreement
         private async Task GetMultiCoverOptions(ClientAgreement agreement, System.Globalization.CultureInfo userCulture)
         {
             MultiCoverOptions = new List<MultiCoverOptions>();
+            int intMonthlyInstalmentNumber = 1;
+            if (agreement.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
+            {
+                intMonthlyInstalmentNumber = agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber;
+            }
             foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
             {
                 if ((agreement.Product.Id == new Guid("094f0b97-f288-440d-a32a-3c2128e35e70") || agreement.Product.Id == new Guid("eda1fa59-19e3-48f6-aef9-3057582717b4")) 
@@ -226,7 +231,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = term.Premium.ToString("C", userCulture),
-                                    monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
+                                    monthlypremium = (term.Premium / intMonthlyInstalmentNumber).ToString("C", userCulture),
                                     Dependableproduct = agreement.Product.DependableProduct.Name
                                 });
                             }
@@ -266,7 +271,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                         Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                         Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                         TotalPremium = term.PremiumDiffer.ToString("C", userCulture),
-										monthlypremium = (term.PremiumDiffer / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
+										monthlypremium = (term.PremiumDiffer / intMonthlyInstalmentNumber).ToString("C", userCulture),
                                         Dependableproduct = "NonDependable"
                                     });
                                 } else
@@ -280,7 +285,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                         Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                         Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                                         TotalPremium = term.Premium.ToString("C", userCulture),
-										monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
+										monthlypremium = (term.Premium / intMonthlyInstalmentNumber).ToString("C", userCulture),
                                         Dependableproduct = "NonDependable"
                                     });
                                 }
@@ -316,7 +321,7 @@ namespace DealEngine.WebUI.Models.Agreement
                                     Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                                     Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
                                     TotalPremium = term.Premium.ToString("C", userCulture),
-                                    monthlypremium = (term.Premium / agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber).ToString("C", userCulture),
+                                    monthlypremium = (term.Premium / intMonthlyInstalmentNumber).ToString("C", userCulture),
                                     Dependableproduct = "NonDependable"
                                 });
                             }
