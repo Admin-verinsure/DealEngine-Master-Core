@@ -1143,13 +1143,13 @@ namespace DealEngine.WebUI.Controllers
                     if (!isBaseSheet)
                     {
                         SubClientInformationSheet subSheet = (SubClientInformationSheet)sheet;
-                        var baseSheet = subSheet.BaseClientInformationSheet;
+                        sheet = subSheet.BaseClientInformationSheet;
 
-                        if (baseSheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
+                        if (sheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
-                            await GenerateUWM(user, baseSheet, baseSheet.ReferenceId);
-                            await _emailService.SendSystemEmailAllSubUISComplete(baseSheet.Owner, baseSheet.Programme.BaseProgramme, baseSheet);
-                            sheet = baseSheet;
+                            await GenerateUWM(user, sheet, sheet.ReferenceId);
+                            await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            //sheet = baseSheet;
                         }
                     }
 

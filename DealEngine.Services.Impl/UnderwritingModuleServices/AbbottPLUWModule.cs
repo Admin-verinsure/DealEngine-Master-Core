@@ -118,7 +118,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "";
+            string retrodate = "N/A";
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
