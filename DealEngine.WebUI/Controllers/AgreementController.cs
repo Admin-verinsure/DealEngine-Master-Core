@@ -3624,18 +3624,18 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
 
-                    // What do..? Send JSON emails now or what
-                    // Create an email
-                    if (programme.BaseProgramme.ProgEnableEmail)
-                    {
-                        //EmailTemplate
-                    }
+                    //// What do..? Send JSON emails now or what
+                    //// Create an email
+                    //if (programme.BaseProgramme.ProgEnableEmail)
+                    //{
+                    //    //EmailTemplate
+                    //}
 
-                        // Attach the JSON file
-                        // Send the email
-                        //string json = await _dataService.GetData(Id);
+                    //    // Attach the JSON file
+                    //    // Send the email
+                    //    //string json = await _dataService.GetData(Id);
 
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (programme.InformationSheet.Status != status)
                         {
