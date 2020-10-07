@@ -99,20 +99,33 @@ namespace DealEngine.Services.Impl
                 }
                 else if (subClientSheet != null && !sheet.SubClientInformationSheets.Contains(subClientSheet))
                 {
-                    var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
-                    var createdSubSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
-                    foreach (var answer in subClientSheet.Answers)
+                    if (subClientSheet.DateDeleted.HasValue || subClientSheet.DeletedBy != null)
                     {
-                        createdSubSheet.AddAnswer(answer.ItemName, answer.Value);
+                        SubClientProgramme subProg = (SubClientProgramme)subClientSheet.Programme;
+                        subClientSheet.DateDeleted = null;
+                        subClientSheet.Programme.DateDeleted = DateTime.Now;
+                        subClientSheet.DeletedBy = null;
+                        subClientSheet.Programme.DeletedBy = null;
+
+                        clientProgramme.SubClientProgrammes.Add(subProg);
                     }
-                    foreach(var claim in subClientSheet.ClaimNotifications)
+                    else
                     {
-                        createdSubSheet.AddClaim(claim);
+                        var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
+                        var createdSubSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
+                        foreach (var answer in subClientSheet.Answers)
+                        {
+                            createdSubSheet.AddAnswer(answer.ItemName, answer.Value);
+                        }
+                        foreach (var claim in subClientSheet.ClaimNotifications)
+                        {
+                            createdSubSheet.AddClaim(claim);
+                        }
+                        createdSubSheet.Status = subClientSheet.Status;
+                        createdSubSheet.SubmittedBy = subClientSheet.SubmittedBy;
+                        createdSubSheet.SubmitDate = DateTime.Now;
+                        subClientSheet = createdSubSheet;
                     }
-                    createdSubSheet.Status = subClientSheet.Status;
-                    createdSubSheet.SubmittedBy = subClientSheet.SubmittedBy;
-                    createdSubSheet.SubmitDate = DateTime.Now;
-                    subClientSheet = createdSubSheet;
                 }
                 else
                 {
@@ -131,8 +144,8 @@ namespace DealEngine.Services.Impl
                 //send out sub UIS invitation email
                 if (subClientSheet.Status == "Not Started")
                 {
-                    await _emailService.SendSystemEmailLogin(org.Email);
-                    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                    //await _emailService.SendSystemEmailLogin(org.Email);
+                    //await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
                 }
 
             }
