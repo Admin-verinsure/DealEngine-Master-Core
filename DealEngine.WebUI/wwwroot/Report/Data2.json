@@ -1,0 +1,217 @@
+{
+    "BindType":  "Need to pass this in",
+    "AgreementDate":  "2020-10-06T00:00:00+13:00",
+    "ClientName":  "DealEngine.Domain.Entities.Organisation",
+    "ClientAgreements":  [
+                             {
+                                 "ClientAgreementTerms":  [
+
+                                                          ],
+                                 "CustomInceptionDate":  false,
+                                 "InceptionDate":  "0001-01-01T00:00:00",
+                                 "ExpiryDate":  "0001-01-01T00:00:00",
+                                 "QuoteDate":  "0001-01-01T00:00:00",
+                                 "SentOnlineAcceptance":  false,
+                                 "Brokerage":  0.0,
+                                 "BrokerFee":  0.0,
+                                 "EnableRetroactiveDate":  false,
+                                 "Bound":  false,
+                                 "BoundDate":  "0001-01-01T00:00:00",
+                                 "FinalacceptanceDate":  "0001-01-01T00:00:00",
+                                 "ClientAgreementExpiredDate":  "0001-01-01T00:00:00",
+                                 "InsurerDeclined":  false,
+                                 "InsuredDeclined":  false,
+                                 "InsurerDeclinedDate":  "0001-01-01T00:00:00",
+                                 "UndeclinedDate":  "0001-01-01T00:00:00",
+                                 "Cancelled":  false,
+                                 "CancelledEffectiveDate":  "0001-01-01T00:00:00",
+                                 "ReferenceNumber":  0,
+                                 "ReferToTC":  false,
+                                 "CancelledDate":  "0001-01-01T00:00:00",
+                                 "MasterAgreement":  false,
+                                 "IssuedToBroker":  "0001-01-01T00:00:00",
+                                 "IsUnbind":  false,
+                                 "UnbindEffectiveDate":  "0001-01-01T00:00:00",
+                                 "IsPolicyDocSend":  false,
+                                 "DocIssueDate":  "0001-01-01T00:00:00",
+                                 "BindEffectiveDate":  "0001-01-01T00:00:00",
+                                 "IsPDFgenerated":  false,
+                                 "IsFullProposalDocSend":  false,
+                                 "Id":  "cfa6db7b-5c19-4a16-bab3-ac4c0008e3cf",
+                                 "DateCreated":  "2020-10-06T00:32:21.9684157Z"
+                             }
+                         ],
+    "Boats":  [
+                  {
+                      "BoatName":  "CaseFour",
+                      "BoatType1":  "Powerboats",
+                      "BoatType2":  "Stored",
+                      "HullConstruction":  "Aluminium",
+                      "HullConfiguration":  "Mono",
+                      "BoatLandLocation":  {
+                                               "Location":  {
+                                                                "IsPublic":  false,
+                                                                "Street":  "CaseFour",
+                                                                "Suburb":  "CaseFour",
+                                                                "Postcode":  "",
+                                                                "City":  "CaseFour",
+                                                                "Country":  "",
+                                                                "CommonName":  "",
+                                                                "GeocodeReliability":  0,
+                                                                "Latitude":  0.00000,
+                                                                "Longitude":  0.00000,
+                                                                "Removed":  false,
+                                                                "LocationType":  "Residential",
+                                                                "Id":  "ae0d106e-a209-48b7-b837-ac4b015e785b",
+                                                                "DateCreated":  "2020-10-05T21:16:01.360529"
+                                                            },
+                                               "BuildingName":  "CaseFour",
+                                               "ConstructionYear":  0,
+                                               "NumOfUnits":  0,
+                                               "NumberOfStoreys":  0,
+                                               "PercentOfInsuSandwichPanels":  0,
+                                               "BuildingLastValuationDate":  "0001-01-01T00:00:00",
+                                               "BuildingRVValue":  0,
+                                               "BuildingRIVValue":  0,
+                                               "BuildingDValue":  0,
+                                               "BuildingIVValue":  0,
+                                               "BuildingIIVValue":  0,
+                                               "ContentsRVValue":  0,
+                                               "ContentsIVValue":  0,
+                                               "StockRVValue":  0,
+                                               "StockIVValue":  0,
+                                               "InterestedParties":  [
+
+                                                                     ],
+                                               "ConstructionLimit":  0,
+                                               "CapitalAdditions":  0,
+                                               "CreditConstruction":  0,
+                                               "CreditCapAdds":  0,
+                                               "DomesticUnits":  0,
+                                               "BuildingFRVValue":  0,
+                                               "BuildingFRIVValue":  0,
+                                               "Removed":  false,
+                                               "BuildingLatitude":  0.00000,
+                                               "BuildingLongitude":  0.00000,
+                                               "BuildingCategory":  "Lockup",
+                                               "Id":  "c03adfda-fed1-4e75-a0b9-ac4b015f380e",
+                                               "DateCreated":  "2020-10-05T21:18:44.936001"
+                                           },
+                      "YearOfManufacture":  2008,
+                      "BoatMake":  "CaseFour",
+                      "BoatModel":  "CaseFour",
+                      "MaxSumInsured":  20000,
+                      "Sum":  0.00000,
+                      "BuiltProfessionally":  "True",
+                      "MotorType":  "Outboard",
+                      "ModifiedMotor":  "False",
+                      "MaxRatedSpeed":  "Upto20Knots",
+                      "InterestedParties":  [
+
+                                            ],
+                      "WaterLocationMooringType":  "Berthed",
+                      "Removed":  false,
+                      "BoatEffectiveDate":  "2020-10-05T21:17:42.069857",
+                      "BoatIPEffectiveDate":  "0001-01-01T00:00:00",
+                      "BoatCeaseDate":  "0001-01-01T00:00:00",
+                      "BoatCeaseReason":  0,
+                      "BoatInceptionDate":  "2020-10-05T21:17:42.069857",
+                      "BoatExpireDate":  "2021-10-05T21:17:42.069858",
+                      "BoatIsTrailered":  "True",
+                      "BoatTrailers":  [
+                                           {
+                                               "Make":  "CaseFour",
+                                               "Model":  "CaseFour",
+                                               "Year":  "2008",
+                                               "GroupSumInsured":  20000,
+                                               "GrossVehicleMass":  0,
+                                               "AreaOfOperation":  0,
+                                               "VehicleType":  0,
+                                               "UseType":  0,
+                                               "SubUseType":  0,
+                                               "InterestedParties":  [
+
+                                                                     ],
+                                               "Validated":  false,
+                                               "GarageLocation":  {
+                                                                      "IsPublic":  false,
+                                                                      "Street":  "CaseFour",
+                                                                      "Suburb":  "CaseFour",
+                                                                      "Postcode":  "",
+                                                                      "City":  "CaseFour",
+                                                                      "Country":  "",
+                                                                      "CommonName":  "",
+                                                                      "GeocodeReliability":  0,
+                                                                      "Latitude":  0.00000,
+                                                                      "Longitude":  0.00000,
+                                                                      "Removed":  false,
+                                                                      "LocationType":  "Residential",
+                                                                      "Id":  "ae0d106e-a209-48b7-b837-ac4b015e785b",
+                                                                      "DateCreated":  "2020-10-05T21:16:01.360529"
+                                                                  },
+                                               "Removed":  false,
+                                               "VehicleEffectiveDate":  "2020-10-05T21:17:42.069857",
+                                               "VehicleCeaseDate":  "0001-01-01T00:00:00",
+                                               "VehicleCeaseReason":  0,
+                                               "VehicleInceptionDate":  "2020-10-05T21:17:42.069857",
+                                               "VehicleExpireDate":  "2021-10-05T21:17:42.069858",
+                                               "DetailsUnknown":  false,
+                                               "NumberOfAxles":  0,
+                                               "LossOfUseRentalCosts":  false,
+                                               "Id":  "b07cb403-a932-475c-890a-ac4b015eb588",
+                                               "DateCreated":  "2020-10-05T21:16:53.536918"
+                                           }
+                                       ],
+                      "BoatOperator":  {
+                                           "Name":  "Case Four",
+                                           "OrganisationType":  {
+                                                                    "Name":  "Person - Individual",
+                                                                    "Id":  "2aee3907-5817-442e-9025-a9df00a14dd0",
+                                                                    "DateCreated":  "2019-01-23T20:47:16"
+                                                                },
+                                           "Removed":  false,
+                                           "Phone":  "021000004",
+                                           "Email":  "Case.Four@techcertain.com",
+                                           "IsBroker":  false,
+                                           "IsInsurer":  false,
+                                           "IsTC":  false,
+                                           "IsApproved":  false,
+                                           "InsuranceAttributes":  [
+
+                                                                   ],
+                                           "OrganisationalUnits":  [
+                                                                       {
+                                                                           "Name":  "Home",
+                                                                           "Id":  "63952f81-db42-4293-b11b-ac430180c067",
+                                                                           "DateCreated":  "2020-09-27T23:20:49.255891"
+                                                                       }
+                                                                   ],
+                                           "Id":  "18d16e95-b75b-4dd9-9e45-2833363074a7",
+                                           "DateCreated":  "2020-09-27T23:20:48.955281"
+                                       },
+                      "BoatUses":  [
+                                       {
+                                           "BoatUseCategory":  "LiveOnBoard",
+                                           "BoatUseLiveOnBoard":  "True",
+                                           "BoatUseRace":  "False",
+                                           "Removed":  false,
+                                           "BoatUseEffectiveDate":  "0001-01-01T00:00:00",
+                                           "BoatUseCeaseDate":  "0001-01-01T00:00:00",
+                                           "BoatUseCeaseReason":  0,
+                                           "BoatUseInceptionDate":  "0001-01-01T00:00:00",
+                                           "BoatUseExpireDate":  "0001-01-01T00:00:00",
+                                           "Id":  "c4ba37bb-1206-4e48-ad3b-ac4b015ecb76",
+                                           "DateCreated":  "2020-10-05T21:17:12.277508"
+                                       }
+                                   ],
+                      "BoatQuickQuotePremium":  0.00000,
+                      "BoatQuoteExcessOption":  250,
+                      "OtherMarinaName":  "CaseFour",
+                      "OtherMarina":  true,
+                      "Id":  "ff16cd52-650d-41df-b936-ac430180c067",
+                      "DateCreated":  "2020-09-27T23:20:49.255894"
+                  }
+              ],
+    "Id":  "1a857822-d565-46c9-98c9-ac4c0008e36a",
+    "DateCreated":  "2020-10-06T00:32:21.6754957Z"
+}

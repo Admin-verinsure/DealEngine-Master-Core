@@ -11,6 +11,7 @@ using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using DealEngine.Infrastructure.FluentNHibernate;
+using Microsoft.AspNetCore.Hosting;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -24,7 +25,8 @@ namespace DealEngine.WebUI.Controllers
         IProgrammeService _programmeService;
         IOrganisationService _organisationService;
         IDataService _dataService;
-        IMapperSession<BindDataCG> _dataRepository;
+        IMapperSession<Data> _dataRepository;
+        IEmailService _emailService;
 
         public ReportController(
             ISerializerationService serializerationService,
@@ -34,7 +36,8 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationService organisationService,
             IDataService dataService,
             IProgrammeService programmeService,
-            IMapperSession<BindDataCG> dataRepository
+            IEmailService emailService,
+            IMapperSession<Data> dataRepository
             )
             : base(userService)
         {
@@ -46,6 +49,7 @@ namespace DealEngine.WebUI.Controllers
             _organisationService = organisationService;
             _dataService = dataService;
             _dataRepository = dataRepository;
+            _emailService = emailService;
         }
 
 
@@ -61,25 +65,15 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormCollection model)
         {
-            //Guid clientId = Guid.Parse("82ed739d-0795-4602-a2c8-abab017abcb5");
-            //Guid programmeId = Guid.Parse("29dfc24b-845d-4d4c-8d5c-ac46003d1e5a");
-            //var test = await _dataService.GetData(programmeId);
+            User user = await CurrentUser();
+            Data data = await _dataService.Add(user);
+            data = await _dataService.Update(data, Guid.Parse("905807f4-843b-4c5b-acf0-ac43018340c8"), "test");
 
-            Guid clientId = Guid.Parse(model["Id"]);
-            var client = await _programmeService.GetClientProgrammebyId(clientId);
-            var user = await CurrentUser();
-            BindDataCG clientData = new BindDataCG(user, client.InformationSheet);
+            var dataTemplate = "";
 
+            await _dataService.ToJson(data, dataTemplate, Guid.Parse("905807f4-843b-4c5b-acf0-ac43018340c8"));
+            await _emailService.SendDataEmail("nathan@techcertain.com", data);
 
-            //save to db
-
-            await _dataRepository.AddAsync(clientData);
-
-
-            var list = new List<object>();
-            list.Add(clientData);
-            string test = await _serializerationService.GetSerializedObject(clientData);
-            System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\dealengine\DealEngine.WebUI\wwwroot\Report\test2.json", test);
 
             #region report writer code
             /*#

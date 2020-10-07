@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
-
     public class Product : EntityBase, IAggregateRoot
     {
         public virtual Guid OriginalProductId { get; set; }

@@ -1,0 +1,30 @@
+{
+    "BindType":  "test",
+    "AgreementDate":  "2020-10-07T00:00:00+13:00",
+    "ClientName":  "Case Twelve",
+    "FileName":  "905807f4-843b-4c5b-acf0-ac43018340c8test.json",
+    "TotalSumInsured":  "40000",
+    "Excess":  "0.00000",
+    "TotalPremium":  "397.65000",
+    "Coy":  "368.00000",
+    "FENZ":  "29.65000",
+    "GST":  "59.6475000000",
+    "Brokerage":  "79.12000",
+    "Boats":  [
+                  {
+                      "Year":  "2009",
+                      "Make":  "Case Twelve",
+                      "Model":  "Case Twelve",
+                      "Type":  "Stored",
+                      "Construction":  "Aluminium",
+                      "Location":  "Residential, Case Twelve, Case Twelve, Case Twelve",
+                      "SumInsured":  "0.00000",
+                      "Hull":  "Mono",
+                      "Trailer":  "2008, Case Twelve, Case Twelve, 20000, 6/10/2020 8:35:10 pm",
+                      "Id":  "414af91f-4bee-4d39-8503-ac4c017a3a6d",
+                      "DateCreated":  "2020-10-06T22:57:05.2049375Z"
+                  }
+              ],
+    "Id":  "d339a7be-16ff-4cfc-9d8d-ac4c017a36e5",
+    "DateCreated":  "2020-10-06T22:57:02.1878315Z"
+}

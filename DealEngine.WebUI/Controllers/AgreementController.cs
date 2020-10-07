@@ -3623,7 +3623,17 @@ namespace DealEngine.WebUI.Controllers
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
-//                    string json = await _dataService.GetData(Id);
+
+                    //// What do..? Send JSON emails now or what
+                    //// Create an email
+                    //if (programme.BaseProgramme.ProgEnableEmail)
+                    //{
+                    //    //EmailTemplate
+                    //}
+
+                    //    // Attach the JSON file
+                    //    // Send the email
+                    //    //string json = await _dataService.GetData(Id);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

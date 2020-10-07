@@ -42,8 +42,7 @@ namespace DealEngine.Domain.Entities
             ReferenceId = reference;
 
         }
-        [JsonIgnore]
-        public virtual IList<ClientAgreementTerm> ClientAgreementTerms { get; protected set; }
+        public virtual IList<ClientAgreementTerm> ClientAgreementTerms { get; set; }
         [JsonIgnore]
         public virtual IList<ClientAgreementRule> ClientAgreementRules { get; protected set; }
         [JsonIgnore]
