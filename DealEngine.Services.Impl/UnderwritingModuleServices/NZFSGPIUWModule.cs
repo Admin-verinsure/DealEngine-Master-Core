@@ -181,10 +181,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
                     if (unit != null)
                     {
-                        intnumberofadvisors += 1;
-                        if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
                         {
-                            advisorhasnocrmid = true;
+                            intnumberofadvisors += 1;
+                            if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                            {
+                                advisorhasnocrmid = true;
+                            }
                         }
                     }
                 }                                    
