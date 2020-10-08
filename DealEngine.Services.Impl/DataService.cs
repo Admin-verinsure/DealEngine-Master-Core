@@ -129,21 +129,21 @@ namespace DealEngine.Services.Impl
         {
             // If specific values aren't needed which exist in Data you can alter it using dataTemplate below before serialization
             ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
-            var path = _hostingEnv.WebRootPath + "\\Data\\" + clientProgramme.BaseProgramme.Id;
+            var path = _hostingEnv.WebRootPath + "/Data/" + clientProgramme.BaseProgramme.Id;
 
             // Create folder if it doesn't exist
             if (!(Directory.Exists(path)))
             {
                 Directory.CreateDirectory(path);
             }
-            string filepath = path + "\\" + data.FileName;
+            string filepath = path + "/" + data.FileName;
 
             data.FullPath = filepath;
             await _dataRepository.AddAsync(data);
 
             var json = await _serializerationService.GetSerializedObject(data);
-            
             System.IO.File.WriteAllText(filepath, json);
+
             return data;
         }
     }

@@ -270,9 +270,12 @@ namespace DealEngine.Services.Impl
             email.WithSubject("Data: " + data.ClientName + " " + data.BindType);  
             email.WithBody(body);
             email.UseHtmlBody(true);
-            Attachment dataAttachment = await DataToAttachment(data);
-            email.Attachments(dataAttachment);
-            email.Send();
+            using (var fileStream = new FileStream(data.FullPath, FileMode.Open))
+            {
+                Attachment dataAttachment = new Attachment(fileStream, data.FileName, MediaTypeNames.Application.Json);
+                email.Attachments(dataAttachment);
+                email.Send();
+            }
         }
 
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
@@ -1008,13 +1011,6 @@ namespace DealEngine.Services.Impl
 
             return attachments;
 		}
-
-        public async Task<Attachment> DataToAttachment(Data data)
-        {
-            var fileStream = new FileStream(data.FullPath, FileMode.Open);           
-            Attachment dataAttachment = new Attachment(fileStream, data.FullPath, MediaTypeNames.Application.Json);
-            return dataAttachment;
-        }
 
         public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
         {
