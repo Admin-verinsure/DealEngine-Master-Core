@@ -1,8 +1,9 @@
 {
     "BindType":  "test",
-    "AgreementDate":  "2020-10-07T00:00:00+13:00",
+    "AgreementDate":  "2020-10-08T00:00:00+13:00",
     "ClientName":  "Case Twelve",
     "FileName":  "905807f4-843b-4c5b-acf0-ac43018340c8test.json",
+    "FullPath":  "C:\\inetpub\\wwwroot\\dealengine\\DealEngine.WebUI\\wwwroot\\Data\\5f4f9a19-c948-425a-b306-c7f5cba56d86\\905807f4-843b-4c5b-acf0-ac43018340c8test.json",
     "TotalSumInsured":  "40000",
     "Excess":  "0.00000",
     "TotalPremium":  "397.65000",
@@ -21,10 +22,10 @@
                       "SumInsured":  "0.00000",
                       "Hull":  "Mono",
                       "Trailer":  "2008, Case Twelve, Case Twelve, 20000, 6/10/2020 8:35:10 pm",
-                      "Id":  "1bbc9a65-8b46-4c19-a4ef-ac4d0004ba09",
-                      "DateCreated":  "2020-10-07T00:17:12.5543956Z"
+                      "Id":  "8c255d33-1c76-438c-945d-ac4d016308e5",
+                      "DateCreated":  "2020-10-07T21:32:38.4834011Z"
                   }
               ],
-    "Id":  "4660d288-21bd-4c32-b536-ac4d0004b35d",
-    "DateCreated":  "2020-10-07T00:17:06.8612423Z"
+    "Id":  "1630d596-dbaf-4968-9b33-ac4d016308ca",
+    "DateCreated":  "2020-10-07T21:32:38.4255845Z"
 }

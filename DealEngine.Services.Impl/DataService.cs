@@ -142,8 +142,8 @@ namespace DealEngine.Services.Impl
             await _dataRepository.AddAsync(data);
 
             var json = await _serializerationService.GetSerializedObject(data);
-            
             System.IO.File.WriteAllText(filepath, json);
+
             return data;
         }
     }

@@ -3624,16 +3624,21 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
 
-                    //// What do..? Send JSON emails now or what
-                    //// Create an email
-                    //if (programme.BaseProgramme.ProgEnableEmail)
-                    //{
-                    //    //EmailTemplate
-                    //}
+                    string BindType = "";
 
-                    //    // Attach the JSON file
-                    //    // Send the email
-                    //    //string json = await _dataService.GetData(Id);
+                    if (programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.IsChange && programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.PreviousInformationSheet != null)
+                    {
+                        BindType = "CHANGE";
+                    }
+                    else
+                    {
+                        BindType = "NEW";
+                    }
+
+                    Data data = await _dataService.Add(user);
+                    data = await _dataService.Update(data, Id, BindType);
+                    await _dataService.ToJson(data, "Not yet implemented - just pass in empty string is fine.", Id);
+                    await _emailService.SendDataEmail("staff@techcertain.com", data);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
