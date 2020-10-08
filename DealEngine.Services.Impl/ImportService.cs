@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {            
-            WorkingDirectory = "/tmp/";
-            //WorkingDirectory = "C:\\Data\\Import\\";
+            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "C:\\Data\\Import\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -887,9 +887,9 @@ namespace DealEngine.Services.Impl
                             Email = parts[4],
                             UserName = parts[6]
                         };
-                        if (parts[0] == "t")
+                        if (parts[0] == "t" && !string.IsNullOrEmpty(parts[1]))
                         {
-                            type = "Corporation – Limited liability";
+                            type = "Corporation – Limited liability";                            
                             Name = parts[1];
                         }
                         else
