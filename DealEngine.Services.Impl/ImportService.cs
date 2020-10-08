@@ -2218,6 +2218,51 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task ImportAbbottServicePreRenewData(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            PreRenewOrRefData preRenewOrRefData;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "AbbottPolicyData2019.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            preRenewOrRefData.CLRetro = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            preRenewOrRefData.OTRetro = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            preRenewOrRefData.EndorsementProduct = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            preRenewOrRefData.EndorsementTitle = parts[5];
+                        if (!string.IsNullOrEmpty(parts[6]))
+                            preRenewOrRefData.EndorsementText = parts[6];
+
+                        await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
         public async Task ImportDANZServicePreRenewData(User CreatedUser)
         {
             var currentUser = CreatedUser;
