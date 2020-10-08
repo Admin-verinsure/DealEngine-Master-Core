@@ -56,7 +56,7 @@
                                 <label class="label"><strong>No Payment Required Message: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                                 <label class="label"><strong>Permission Claim: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextBoxFor(m => m.Programme.Claim, new { @class = "form-control", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.TextBoxFor(m => m.Programme.Claim, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                                 <label class="label"><strong>I want this programme to use EGlobal API: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.DropDownListFor(m => m.Programme.UsesEGlobal, Model.BooleanOptions, new { @class = "custom-select", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.DropDownListFor(m => m.Programme.UsesEGlobal, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                                 <label class="label"><strong>I want this programme to be publicly available. </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.DropDownListFor(m => m.Programme.IsPublic, Model.BooleanOptions, new { @class = "custom-select", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.DropDownListFor(m => m.Programme.IsPublic, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                                 <label class="label"><strong>I want this programme to suspend all agreements.</strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.DropDownListFor(m => m.Programme.StopAgreement, Model.BooleanOptions, new { @class = "custom-select", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.DropDownListFor(m => m.Programme.StopAgreement, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                                     </label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control", @onChange = "Onchange(this.id, this.name)" })
+                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>
@@ -137,7 +137,7 @@
                                 </label>
                             </div>
                             <div class="col-8">
-                                @Html.DropDownListFor(m => m.Programme.HasSubsystemEnabled, Model.BooleanOptions, new { @class = "custom-select", @onChange = "Onchange(this.id, this.name)" })
+                                @Html.DropDownListFor(m => m.Programme.HasSubsystemEnabled, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>                            
                         </div>
                     </div>
@@ -148,7 +148,7 @@
                                     <label class="label required"><strong>Subsystem Declaration: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control", @onChange = "Onchange(this.id, this.name)" })
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>
@@ -158,7 +158,7 @@
                                     <label class="label required"><strong>Subsystem Stop Agreement Message: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @onChange="Onchange(this.id, this.name)" })
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @onChange="OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>

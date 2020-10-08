@@ -122,8 +122,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Policy Inception";
-            agreement.TerritoryLimit = "Worldwide";
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+            agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
