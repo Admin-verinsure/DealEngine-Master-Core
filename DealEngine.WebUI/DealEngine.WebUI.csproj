@@ -8,13 +8,33 @@
 
   <ItemGroup>
     <Compile Remove="bin\**" />
+    <Compile Remove="wwwroot\Data\**" />
+    <Compile Remove="wwwroot\Documents\**" />
+    <Compile Remove="wwwroot\files\**" />
     <Compile Remove="wwwroot\images\**" />
+    <Compile Remove="wwwroot\Image\**" />
+    <Compile Remove="wwwroot\Report\**" />
     <Content Remove="bin\**" />
+    <Content Remove="wwwroot\Data\**" />
+    <Content Remove="wwwroot\Documents\**" />
+    <Content Remove="wwwroot\files\**" />
     <Content Remove="wwwroot\images\**" />
+    <Content Remove="wwwroot\Image\**" />
+    <Content Remove="wwwroot\Report\**" />
     <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="wwwroot\Data\**" />
+    <EmbeddedResource Remove="wwwroot\Documents\**" />
+    <EmbeddedResource Remove="wwwroot\files\**" />
     <EmbeddedResource Remove="wwwroot\images\**" />
+    <EmbeddedResource Remove="wwwroot\Image\**" />
+    <EmbeddedResource Remove="wwwroot\Report\**" />
     <None Remove="bin\**" />
+    <None Remove="wwwroot\Data\**" />
+    <None Remove="wwwroot\Documents\**" />
+    <None Remove="wwwroot\files\**" />
     <None Remove="wwwroot\images\**" />
+    <None Remove="wwwroot\Image\**" />
+    <None Remove="wwwroot\Report\**" />
   </ItemGroup>
 
    <ItemGroup>
