@@ -1012,6 +1012,25 @@ namespace DealEngine.Services.Impl
             return attachments;
 		}
 
+        public async Task EmailPaymentFrequency(ClientProgramme clientProgramme)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
+            string subject = "";
+            if (string.IsNullOrWhiteSpace(clientProgramme.EGlobalClientNumber))
+            {
+                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId;
+            }
+            else
+            {
+                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId + " (EGlobal No: " + clientProgramme.EGlobalClientNumber + ")";
+            }
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(clientProgramme.Owner.Name);
+            email.Send();
+        }
+
         public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
         {
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
