@@ -6,12 +6,10 @@ using FluentNHibernate.Automapping;
 
 namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
 {
-    //BindDataCG
     public class BuildingMappingOverride : IAutoMappingOverride<Building>
     {
         public void Override(AutoMapping<Building>mapping)
         {
-            //mapping.Not.LazyLoad();
             mapping.References(l => l.Location).Not.LazyLoad();
         }
     }

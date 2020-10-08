@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class InformationSection : EntityBase, IAggregateRoot
     {
 
@@ -15,7 +17,7 @@ namespace DealEngine.Domain.Entities
 		public virtual string CustomView { get; set; }
 
 		public virtual int Position { get; set; }
-
+        [JsonIgnore]
 		public virtual InformationTemplate InformationTemplate { get; set; }
 
 		public virtual IList<InformationItem> Items { get; set; }

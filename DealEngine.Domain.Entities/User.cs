@@ -193,7 +193,6 @@ namespace DealEngine.Domain.Entities
 			throw new Exception (string.Format ("User {0} doesn't have a personal organisation", UserName));
 		}
     }
-
     public class Location : EntityBase, IAggregateRoot
     {
 		protected Location () : base (null) { }
@@ -221,6 +220,7 @@ namespace DealEngine.Domain.Entities
         public virtual string ValidationStatus { get; set; }
         public virtual bool Removed { get; set; }
         public virtual string RiskZone { get; set; }
+        [JsonIgnore]
         public virtual IList<Building> Buildings { get; set; }
         public virtual string LocationType { get; set; }
   

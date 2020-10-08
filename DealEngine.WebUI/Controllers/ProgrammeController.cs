@@ -1101,7 +1101,7 @@ namespace DealEngine.WebUI.Controllers
                 programme = await _programmeService.PostProgramme(user, BrokerUser, jsonProgramme, programme);
                 if (string.IsNullOrEmpty(programme.Claim))
                 {
-                    if (string.IsNullOrEmpty(currentClaim))
+                    if (!string.IsNullOrEmpty(currentClaim))
                     {
                         await _claimService.RemoveClaim(currentClaim);
                     }

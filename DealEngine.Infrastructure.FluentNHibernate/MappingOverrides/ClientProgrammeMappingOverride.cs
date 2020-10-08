@@ -12,8 +12,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         public void Override(AutoMapping<ClientProgramme> mapping)
         {
             mapping.References(p => p.InformationSheet).Not.LazyLoad();
-            mapping.References(n => n.BaseProgramme).Not.LazyLoad();            
-            // mapping.References(m => m.Agreements).Not.LazyLoad();       
+            mapping.References(n => n.BaseProgramme).Not.LazyLoad();
         }
     }
 

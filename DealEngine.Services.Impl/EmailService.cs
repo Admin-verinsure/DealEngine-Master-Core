@@ -260,6 +260,24 @@ namespace DealEngine.Services.Impl
         //    email.Send();
         //}
 
+        public async Task SendDataEmail(string recipient, Data data)
+        {
+            string body = "<p>Hi There,</p>";
+
+            body += "<p>Please find attached Data for " + data.ClientName + " on " + data.BindType + ".</p>";
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
+            email.WithSubject("Data: " + data.ClientName + " " + data.BindType);  
+            email.WithBody(body);
+            email.UseHtmlBody(true);
+            using (var fileStream = new FileStream(data.FullPath, FileMode.Open))
+            {
+                Attachment dataAttachment = new Attachment(fileStream, data.FileName, MediaTypeNames.Application.Json);
+                email.Attachments(dataAttachment);
+                email.Send();
+            }
+        }
+
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {
             var user = await _userService.GetUserByEmail(recipent);
@@ -994,7 +1012,6 @@ namespace DealEngine.Services.Impl
             return attachments;
 		}
 
-
         public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
         {
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
@@ -1013,7 +1030,6 @@ namespace DealEngine.Services.Impl
             email.WithBody(clientProgramme.Owner.Name);
             email.Send();
         }
-
 
         #region Merge Field Library
         public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)

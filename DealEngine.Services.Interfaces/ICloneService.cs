@@ -8,5 +8,6 @@ namespace DealEngine.Services.Interfaces
     public interface ICloneService
     {
         Profile GetCloneProfile();
+        Profile GetSerialiseProfile();
     }
 }

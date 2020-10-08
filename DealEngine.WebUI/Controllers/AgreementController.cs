@@ -1708,9 +1708,18 @@ namespace DealEngine.WebUI.Controllers
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
-            {
+            {               
                 bool isComplete;
-                if (clientProgramme.SubClientProgrammes.Count != 0)
+                IList<SubClientProgramme> SubClientProgrammes;
+                if (clientProgramme.InformationSheet.IsChange)
+                {
+                    SubClientProgrammes = clientProgramme.InformationSheet.PreviousInformationSheet.Programme.SubClientProgrammes;
+                }
+                else
+                {
+                    SubClientProgrammes = clientProgramme.SubClientProgrammes;
+                }
+                if (SubClientProgrammes.Any())
                 {
                     await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet, user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
@@ -3614,7 +3623,22 @@ namespace DealEngine.WebUI.Controllers
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
-//                    string json = await _dataService.GetData(Id);
+
+                    string BindType = "";
+
+                    if (programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.IsChange && programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.PreviousInformationSheet != null)
+                    {
+                        BindType = "CHANGE";
+                    }
+                    else
+                    {
+                        BindType = "NEW";
+                    }
+
+                    Data data = await _dataService.Add(user);
+                    data = await _dataService.Update(data, Id, BindType);
+                    await _dataService.ToJson(data, "Not yet implemented - just pass in empty string is fine.", Id);
+                    await _emailService.SendDataEmail("staff@techcertain.com", data);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

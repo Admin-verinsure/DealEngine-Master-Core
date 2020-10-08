@@ -517,7 +517,6 @@
 
     function AdditionalRoleInformation(Id) {
         var roles = document.getElementById(Id);
-
         document.getElementById("noadditionalroleinfolabel").hidden = false;
         document.getElementById("RoleOther").hidden = true;
         //convert to use selectedOptions
@@ -525,7 +524,7 @@
             if (roles.options[i].selected === true) {
                 var strArray = roles.options[i].text.split('-');
                 var other = strArray[strArray.length - 1];
-                if (other === " Other") {
+                if (other.search("Other") != -1) {
                     document.getElementById("noadditionalroleinfolabel").hidden = true;
                     document.getElementById("RoleOther").hidden = false;
                 }

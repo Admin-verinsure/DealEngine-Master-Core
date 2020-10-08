@@ -23,6 +23,7 @@ namespace DealEngine.Services.Interfaces
         Task MarshRsaOneTimePassword(string sender, string subject);
         Task ContactSupport (string sender, string subject, string body);
         Task SendSystemEmailLogin(string recipent);
+        Task SendDataEmail(string recipient, Data data);
         Task SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);

@@ -301,7 +301,9 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation Owner)
         {
-            return (SubClientProgramme)await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner == Owner);
+            var list = await _clientProgrammeRepository.FindAll().Where(c => c.Owner == Owner && c.DateDeleted == null).ToListAsync();
+            var clientprogramme = list.LastOrDefault();
+            return (SubClientProgramme)clientprogramme;
         }
 
         private async Task<List<Programme>> GetProgrammes(IFormCollection collection)
@@ -420,14 +422,18 @@ namespace DealEngine.Services.Impl
             clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
             clientInformationSheet.IsChange = true;
             clientInformationSheet.Status = "Not Started";
+            clientInformationSheet.DateCreated = DateTime.Now;
+            clientInformationSheet.UnlockDate = DateTime.MinValue;
             clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
+            
             ClientProgramme clientProgramme = new ClientProgramme(createdBy, PreClone.Owner, PreClone.BaseProgramme);
+            clientProgramme.BrokerContactUser = PreClone.BaseProgramme.BrokerContactUser;
             clientProgramme.ChangeReason = changeReason;
             clientProgramme.InformationSheet = clientInformationSheet;
+            clientProgramme.InformationSheet.Programme = clientProgramme;
             await Update(clientProgramme);
 
             return clientProgramme;
-
         }
 
         public Task DeveloperTool()
@@ -439,10 +445,11 @@ namespace DealEngine.Services.Impl
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(_cloneService.GetCloneProfile());
+                cfg.AddProfile(_cloneService.GetSerialiseProfile());
             });
             var cloneMapper = mapperConfiguration.CreateMapper();
             Destination = cloneMapper.Map(Source, Destination);
+
             Destination.LastModified(user);
             Destination.BrokerContactUser = broker;
             await Update(Destination);
