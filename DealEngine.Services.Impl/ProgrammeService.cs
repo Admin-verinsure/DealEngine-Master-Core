@@ -427,6 +427,7 @@ namespace DealEngine.Services.Impl
             clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
             
             ClientProgramme clientProgramme = new ClientProgramme(createdBy, PreClone.Owner, PreClone.BaseProgramme);
+            clientProgramme.BrokerContactUser = PreClone.BaseProgramme.BrokerContactUser;
             clientProgramme.ChangeReason = changeReason;
             clientProgramme.InformationSheet = clientInformationSheet;
             clientProgramme.InformationSheet.Programme = clientProgramme;
@@ -444,10 +445,11 @@ namespace DealEngine.Services.Impl
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(_cloneService.GetCloneProfile());
+                cfg.AddProfile(_cloneService.GetSerialiseProfile());
             });
             var cloneMapper = mapperConfiguration.CreateMapper();
             Destination = cloneMapper.Map(Source, Destination);
+
             Destination.LastModified(user);
             Destination.BrokerContactUser = broker;
             await Update(Destination);
