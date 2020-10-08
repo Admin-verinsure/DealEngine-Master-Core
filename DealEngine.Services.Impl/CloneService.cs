@@ -97,6 +97,8 @@ public class SerialiseProfile : Profile
             .ForMember(dest => dest.AgreementIssueNotifyUsers, map => map.Ignore())
             .ForMember(dest => dest.AgreementReferNotifyUsers, map => map.Ignore())
             .ForMember(dest => dest.BusinessActivityTemplates, map => map.Ignore())
+            .ForMember(dest => dest.ClientProgrammes, map => map.Ignore())
+            .ForMember(dest => dest.Products, map => map.Ignore())
             .ForMember(dest => dest.SharedDataRoleTemplates, map => map.Ignore())
             .ForMember(dest => dest.EmailTemplates, map => map.Ignore())
             .ForMember(dest => dest.TerritoryTemplates, map => map.Ignore());
