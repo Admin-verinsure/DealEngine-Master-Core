@@ -81,7 +81,7 @@
             $.ajax({
                 type: 'Post',
                 url: '@Url.Action("PostPaymentFrequencyAPI", "Programme")',
-                data: { Id: ProgrammeId.value, PaymentFrquency: paymentFrequency }
+                data: { Id: ProgrammeId.value, PaymentFrequency: paymentFrequency }
             })
                 .done(function (data) {
                     document.getElementById("NextNoPayment").hidden = false;
