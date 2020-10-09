@@ -41,6 +41,7 @@ namespace DealEngine.Services.Interfaces
         Task SendSystemEmailAllSubUISInstruction(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet);
         Task SendFullProposalReport(string recipent, SystemDocument documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
         Task EmailHunterPremiumFunding(ClientProgramme clientProgramme);
+        Task EmailPaymentFrequency(ClientProgramme clientProgramme);
     }
 }
 

@@ -1490,12 +1490,9 @@ namespace DealEngine.WebUI.Controllers
                 if (Guid.TryParse(model["Id"], out Guid Id))
                 {
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
-                    clientProgramme.PaymentType = model["PaymentFrequency"];
+                    clientProgramme.PaymentFrequency = model["PaymentFrequency"];
                     await _programmeService.Update(clientProgramme);
-                    if (clientProgramme.PaymentType == "Hunter Premium Funding")
-                    {
-                        await _emailService.EmailHunterPremiumFunding(clientProgramme);
-                    }
+                    await _emailService.EmailPaymentFrequency(clientProgramme);
                 }
 
                 return Json(true);

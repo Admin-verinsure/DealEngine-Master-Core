@@ -1015,19 +1015,15 @@ namespace DealEngine.Services.Impl
         public async Task EmailPaymentFrequency(ClientProgramme clientProgramme)
         {
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
-            string subject = "";
-            if (string.IsNullOrWhiteSpace(clientProgramme.EGlobalClientNumber))
-            {
-                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId;
-            }
-            else
-            {
-                subject = clientProgramme.BaseProgramme.Name + " Hunter Premium Funding payment requested for " + clientProgramme.InformationSheet.ReferenceId + " (EGlobal No: " + clientProgramme.EGlobalClientNumber + ")";
-            }
+            string subject = "Payment Request for Abbott Financial Advisor Liability Programme";
+            string body = "Dear Rachael, As part of the Abbott Financial Advisor Liability Programme, " + clientProgramme.Owner.Name +
+                ", Ref#" + clientProgramme.InformationSheet.ReferenceId + " has required to pay " +
+                clientProgramme.PaymentFrequency;
+
             email.From(DefaultSender);
             email.WithSubject(subject);
             email.UseHtmlBody(true);
-            email.WithBody(clientProgramme.Owner.Name);
+            email.WithBody(body);
             email.Send();
         }
 
