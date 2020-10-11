@@ -2581,6 +2581,7 @@ function UpdateChosen() {
             data: postData
         })
         .done(function (data) {
+            debugger;
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
                 $('#SelectedBoatUse').val(data.boatselectedText).trigger('chosen:updated');
@@ -2606,7 +2607,7 @@ function UpdateChosen() {
             $('#BoatTrailer.' + classId).val(data.boatTrailer);
             $('#BoatLandLocation.' + classId).val(data.boatLandLocation);
             $('#BoatOperator.' + classId).val(data.boatOperator);
-            if (data.boatEffectiveDate != null) {
+            if (data.boatEffectiveDate != "" || data.boatEffectiveDate != null) {
                 $('#BoatEffectiveDate.' + classId).val(data.boatEffectiveDate);
             }
             else {
