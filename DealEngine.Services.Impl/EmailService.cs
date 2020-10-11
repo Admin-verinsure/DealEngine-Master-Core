@@ -1012,6 +1012,21 @@ namespace DealEngine.Services.Impl
             return attachments;
 		}
 
+        public async Task EmailPaymentFrequency(ClientProgramme clientProgramme)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
+            string subject = "Payment Request for Abbott Financial Advisor Liability Programme";
+            string body = "Dear Rachael, As part of the Abbott Financial Advisor Liability Programme, " + clientProgramme.Owner.Name +
+                ", Ref#" + clientProgramme.InformationSheet.ReferenceId + " has required to pay " +
+                clientProgramme.PaymentFrequency;
+
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
+            email.Send();
+        }
+
         public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
         {
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);

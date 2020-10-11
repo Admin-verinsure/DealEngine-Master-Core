@@ -18,7 +18,17 @@ namespace DealEngine.Services.Impl
         private Profile CloneProfile()
         {
             return new CloneProfile();
-        }        
+        }
+
+        public Profile GetSerialiseProfile()
+        {
+            return SerialiseProfile();
+        }
+
+        private Profile SerialiseProfile()
+        {
+            return new SerialiseProfile();
+        }
     }
 }
 
@@ -73,10 +83,24 @@ public class CloneProfile : Profile
             .ForMember(dest => dest.SubClientInformationSheets, map => map.Ignore())
             .ForMember(dest => dest.SubmitDate, map => map.Ignore());
 
-        //CreateMap<Programme, Programme>()
-        //    .ForMember(dest => dest.Id, map => map.Ignore());
+
 
     }
-
-
+}
+public class SerialiseProfile : Profile
+{
+    public SerialiseProfile()
+    {
+        CreateMap<Programme, Programme>()
+            .ForMember(dest => dest.Id, map => map.Ignore())
+            .ForMember(dest => dest.AgreementBoundNotifyUsers, map => map.Ignore())
+            .ForMember(dest => dest.AgreementIssueNotifyUsers, map => map.Ignore())
+            .ForMember(dest => dest.AgreementReferNotifyUsers, map => map.Ignore())
+            .ForMember(dest => dest.BusinessActivityTemplates, map => map.Ignore())
+            .ForMember(dest => dest.ClientProgrammes, map => map.Ignore())
+            .ForMember(dest => dest.Products, map => map.Ignore())
+            .ForMember(dest => dest.SharedDataRoleTemplates, map => map.Ignore())
+            .ForMember(dest => dest.EmailTemplates, map => map.Ignore())
+            .ForMember(dest => dest.TerritoryTemplates, map => map.Ignore());
+    }
 }

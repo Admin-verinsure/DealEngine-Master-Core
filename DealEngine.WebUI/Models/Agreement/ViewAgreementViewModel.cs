@@ -13,11 +13,13 @@ namespace DealEngine.WebUI.Models.Agreement
         public ViewAgreementViewModel()
         {
             GetPaymentMethodOptions();
+            GetPaymentFrequencyOptions();
         }
 
         public ViewAgreementViewModel(ClientAgreement agreement, ClientInformationSheet sheet, System.Globalization.CultureInfo userCulture)
         {
             GetPaymentMethodOptions();
+            GetPaymentFrequencyOptions();
             if (agreement != null)
             {
                 GetInsuranceInclusionsExclusions(agreement, userCulture);
@@ -58,6 +60,28 @@ namespace DealEngine.WebUI.Models.Agreement
                 {
                     Text = "Hunter Premium Funding",
                     Value = "Hunter Premium Funding"
+                });
+        }
+        private void GetPaymentFrequencyOptions()
+        {
+            PaymentFrequencyOptions = new List<SelectListItem>();
+            PaymentFrequencyOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "-- Select --",
+                    Value = "Invalid"
+                });
+            PaymentFrequencyOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "Monthly",
+                    Value = "Monthly"
+                });
+            PaymentFrequencyOptions.Add(
+                new SelectListItem()
+                {
+                    Text = "Annually",
+                    Value = "Annually"
                 });
         }
 
@@ -506,6 +530,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public decimal SelectedPremium { get; set; }
         public decimal BasePremium { get; set; }
         public IList<SelectListItem> PaymentMethodOptions { get; set; }
+        public IList<SelectListItem> PaymentFrequencyOptions { get; set; }
     }
 
     public class InsuranceInclusion

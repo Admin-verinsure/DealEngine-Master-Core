@@ -1101,7 +1101,7 @@ namespace DealEngine.WebUI.Controllers
                 programme = await _programmeService.PostProgramme(user, BrokerUser, jsonProgramme, programme);
                 if (string.IsNullOrEmpty(programme.Claim))
                 {
-                    if (string.IsNullOrEmpty(currentClaim))
+                    if (!string.IsNullOrEmpty(currentClaim))
                     {
                         await _claimService.RemoveClaim(currentClaim);
                     }
@@ -1451,7 +1451,7 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> PostClientProgramme(IFormCollection model)
+        public async Task<IActionResult> PostPaymentOptionAPI(IFormCollection model)
         {
             User user = null;
 
@@ -1467,6 +1467,32 @@ namespace DealEngine.WebUI.Controllers
                     {
                         await _emailService.EmailHunterPremiumFunding(clientProgramme);
                     }
+                }
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostPaymentFrequencyAPI(IFormCollection model)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                if (Guid.TryParse(model["Id"], out Guid Id))
+                {
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
+                    clientProgramme.PaymentFrequency = model["PaymentFrequency"];
+                    await _programmeService.Update(clientProgramme);
+                    await _emailService.EmailPaymentFrequency(clientProgramme);
                 }
 
                 return Json(true);

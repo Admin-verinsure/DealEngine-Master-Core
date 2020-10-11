@@ -126,6 +126,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Referral points per agreement
             //ED Issues
             uwredissue(underwritingUser, agreement);
+            //ED refer for renewal 2020
+            uwredreferral(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -137,7 +139,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Unlimited excluding known claims and circumstances";
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
             agreement.TerritoryLimit = "New Zealand";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
@@ -257,6 +259,32 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
+
+        void uwredreferral(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredreferral" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredreferral") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredreferral").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredreferral").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredreferral").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredreferral").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredreferral" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                    {
+                        if (!string.IsNullOrEmpty(agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber))
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredreferral" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

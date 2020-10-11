@@ -108,6 +108,16 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-4">
+                                <label class="label"><strong>I want to enable programme emails. </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.ProgEnableEmail, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
                                 <label class="label"><strong>I want this programme to suspend all agreements.</strong></label>
                             </div>
                             <div class="col-8">
@@ -138,7 +148,7 @@
                             </div>
                             <div class="col-8">
                                 @Html.DropDownListFor(m => m.Programme.HasSubsystemEnabled, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div id="Programme.HasSubsystemEnabled" hidden>
@@ -158,7 +168,7 @@
                                     <label class="label required"><strong>Subsystem Stop Agreement Message: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @onChange="OnChange(this.id, this.name)" })
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>
