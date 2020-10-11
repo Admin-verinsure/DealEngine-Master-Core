@@ -27,14 +27,14 @@ using NReco.PdfGenerator;
 
 namespace DealEngine.WebUI.Controllers
 {
-	[Authorize]
+    [Authorize]
     public class FileController : BaseController
-    {		
-		IUnitOfWork _unitOfWork;
-		IFileService _fileService;
+    {
+        IUnitOfWork _unitOfWork;
+        IFileService _fileService;
         IProgrammeService _programmeService;
-		IMapperSession<SystemDocument> _documentRepository;
-		IMapperSession<Image> _imageRepository;
+        IMapperSession<SystemDocument> _documentRepository;
+        IMapperSession<Image> _imageRepository;
         IMapperSession<Product> _productRepository;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
@@ -46,29 +46,29 @@ namespace DealEngine.WebUI.Controllers
             ILogger<FileController> logger,
             IProgrammeService programmeService,
             IApplicationLoggingService applicationLoggingService,
-            IUserService userRepository, 
-            IUnitOfWork unitOfWork, 
+            IUserService userRepository,
+            IUnitOfWork unitOfWork,
             IFileService fileService,
-            IMapperSession<SystemDocument> documentRepository, 
-            IMapperSession<Image> imageRepository, 
+            IMapperSession<SystemDocument> documentRepository,
+            IMapperSession<Image> imageRepository,
             IMapperSession<Product> productRepository,
             IAppSettingService appSettingService
             )
-			: base (userRepository)
-		{
+            : base(userRepository)
+        {
             _programmeService = programmeService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _unitOfWork = unitOfWork;
-			_fileService = fileService;
-			_documentRepository = documentRepository;
-			_imageRepository = imageRepository;
+            _fileService = fileService;
+            _documentRepository = documentRepository;
+            _imageRepository = imageRepository;
             _productRepository = productRepository;
             _appSettingService = appSettingService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInvoicePDF(Guid Id, Guid ClientProgrammeId,string invoicename)
+        public async Task<IActionResult> GetInvoicePDF(Guid Id, Guid ClientProgrammeId, string invoicename)
         {
             ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
             ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
@@ -84,7 +84,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
@@ -94,21 +94,27 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.Margins = margins;
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
+            // Legacy Image Path Fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
+
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
 
-            return File(pdfBytes, "application/pdf", invoicename+".pdf");
+            return File(pdfBytes, "application/pdf", invoicename + ".pdf");
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPDF(Guid Id,Guid ClientProgrammeId)
+        public async Task<IActionResult> GetPDF(Guid Id, Guid ClientProgrammeId)
         {
-           ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
-            ClientInformationSheet clientInformationSheet  = clientprogramme.InformationSheet;
-           
+            ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+            ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
+
             SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
-               
-            
+
+
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
@@ -117,7 +123,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
                 + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
@@ -126,40 +132,46 @@ namespace DealEngine.WebUI.Controllers
                 + " <strong> Sheet Submitted On:" + clientInformationSheet.SubmitDate + "</strong></br>"
                 + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
                 + " <strong> Issued To:" + clientInformationSheet.SubmittedBy.FullName + "</strong></br>"
-                + "<h2> </br>  </h2> </p>"; 
-                
-            htmlToPdfConv.PageFooterHtml ="</br>"+ $@"page <span class=""page""></span> of <span class=""topage""></span>";
-          
+                + "<h2> </br>  </h2> </p>";
+
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
             var margins = new PageMargins();
             margins.Bottom = 18;
             margins.Top = 38;
             margins.Left = 15;
             margins.Right = 15;
             htmlToPdfConv.Margins = margins;
+
+            // Legacy Image Path Fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
+
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-           
+
             return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
-              
+
         }
 
         [HttpPost]
-        public async Task<IActionResult>  covertdoctohtml(string TemplateName, string ActualFileName, string DocumentType)
+        public async Task<IActionResult> covertdoctohtml(string TemplateName, string ActualFileName, string DocumentType)
         {
-            
-                string htmlbody = string.Empty;
-                var path = "./Template/" + TemplateName + ".html";
-                using (StreamReader reader = new StreamReader("./Template/" + TemplateName + ".html"))
-                {
-                    htmlbody = reader.ReadToEnd();
-                }
-                User user = await CurrentUser();
-                SystemDocument document = null;
-                Product product = null;
-                document = new SystemDocument(user, ActualFileName, MediaTypeNames.Text.Html, int.Parse(DocumentType));
-                document.Description = TemplateName + ".pdf";
-                document.Contents = _fileService.ToBytes(htmlbody);
-                document.IsTemplate = true;
-                await _documentRepository.AddAsync(document);
+
+            string htmlbody = string.Empty;
+            var path = "./Template/" + TemplateName + ".html";
+            using (StreamReader reader = new StreamReader("./Template/" + TemplateName + ".html"))
+            {
+                htmlbody = reader.ReadToEnd();
+            }
+            User user = await CurrentUser();
+            SystemDocument document = null;
+            Product product = null;
+            document = new SystemDocument(user, ActualFileName, MediaTypeNames.Text.Html, int.Parse(DocumentType));
+            document.Description = TemplateName + ".pdf";
+            document.Contents = _fileService.ToBytes(htmlbody);
+            document.IsTemplate = true;
+            await _documentRepository.AddAsync(document);
 
             return Json("OK");
         }
@@ -451,7 +463,7 @@ namespace DealEngine.WebUI.Controllers
                 // PDF
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
-                   
+
 
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
@@ -477,58 +489,59 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SavePDFFile(String Reportstr , Guid ClientProgrammeId )
+        public async Task<IActionResult> SavePDFFile(String Reportstr, Guid ClientProgrammeId)
         {
             SystemDocument document = null;
-           
-                User user = null;
-                Product product = null;
-                try
+
+            User user = null;
+            Product product = null;
+            try
+            {
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+                user = await CurrentUser();
+                document = new SystemDocument(user, "FullProposalReport", MediaTypeNames.Text.Html, 99);
+                document.Description = "FullProposal Report Pdf";
+                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(Reportstr));
+                document.OwnerOrganisation = user.PrimaryOrganisation;
+                //document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
-                        user = await CurrentUser();
-                    document = new SystemDocument(user, "FullProposalReport", MediaTypeNames.Text.Html, 99);
-                    document.Description = "FullProposal Report Pdf";
-                    document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(Reportstr));
-                    document.OwnerOrganisation = user.PrimaryOrganisation;
-                    //document.IsTemplate = true;
-                    await _documentRepository.AddAsync(document);
 
-                    using (var uow = _unitOfWork.BeginUnitOfWork()) {
 
-                   
-                      if (clientProgramme != null)
-                      {
+                    if (clientProgramme != null)
+                    {
                         foreach (ClientAgreement agreement in clientProgramme.Agreements)
                         {
 
                             if (agreement.Product.IsMasterProduct)
                             {
-                                    foreach (var doc in agreement.Documents)
+                                foreach (var doc in agreement.Documents)
+                                {
+                                    if (doc.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
                                     {
-                                        if (doc.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
-                                        {
-                                            agreement.Documents.Remove(doc);
-                                            break;
-                                        }
-                                            
+                                        agreement.Documents.Remove(doc);
+                                        break;
                                     }
-                                    if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf") && clientProgramme.BaseProgramme.EnableFullProposalReport)
-                                    {
-                                        agreement.Documents.Add(document);
-                                        agreement.IsPDFgenerated = true;
-                                    }
-                            }  
+
+                                }
+                                if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf") && clientProgramme.BaseProgramme.EnableFullProposalReport)
+                                {
+                                    agreement.Documents.Add(document);
+                                    agreement.IsPDFgenerated = true;
+                                }
+                            }
                         }
-                            await uow.Commit();
-                      }
+                        await uow.Commit();
                     }
                 }
-                catch (Exception ex)
-                {
+            }
+            catch (Exception ex)
+            {
 
-                }
-           
+            }
+
             return Json(document.Id);
         }
 
@@ -616,13 +629,13 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
-		{
+        public async Task<IActionResult> CreateDocument(DocumentViewModel model)
+        {
             User user = null;
             SystemDocument document = null;
             Product product = null;
             try
-            {                
+            {
                 user = await CurrentUser();
                 if (model.DocumentId != Guid.Empty)
                 {
@@ -634,7 +647,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                
+
                 document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
                 document.Description = model.Description;
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
@@ -657,10 +670,10 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-		[HttpGet]
-		public async Task<IActionResult> ManageDocuments()
-		{
-			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
+        [HttpGet]
+        public async Task<IActionResult> ManageDocuments()
+        {
+            BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel>();
             User user = null;
             try
             {
@@ -678,7 +691,7 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                if(docs.Count != 0)
+                if (docs.Count != 0)
                 {
                     foreach (SystemDocument doc in docs)
                     {
@@ -750,8 +763,8 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("CreateDocument");                    
-                }                
+                    return RedirectToAction("CreateDocument");
+                }
 
                 return View(models);
             }
@@ -762,9 +775,9 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-		[HttpGet]
-		public async Task<IActionResult> Render (string id)
-		{
+        [HttpGet]
+        public async Task<IActionResult> Render(string id)
+        {
             throw new Exception("Method will need to be re-written");
             //string serverFile = Path.Combine(_appData, _uploadFolder, id);
             //string filepath = Server.MapPath(serverFile);
