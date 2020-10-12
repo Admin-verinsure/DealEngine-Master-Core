@@ -527,7 +527,11 @@ namespace DealEngine.WebUI.Controllers
                 {                    
                     return RedirectToAction("Index", "Home");
                 }
-                ViewBag.AccountLocked = "Your account has been locked - Marsh has been notified and will be in contact with you shortly";                
+                else
+                {
+                    ViewBag.AccountLocked = "Your Login has failed - Marsh has been notified and will be in contact with you shortly";
+                    await Logout();
+                }                
             }
 
             return View ();

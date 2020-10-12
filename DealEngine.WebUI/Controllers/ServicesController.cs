@@ -20,6 +20,7 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using DealEngine.Infrastructure.Ldap.Interfaces;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -53,9 +54,11 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
         IMapper _mapper;
+        Infrastructure.Ldap.Interfaces.ILdapService _ldapService;
 
 
         public ServicesController(
+            ILdapService ldapService,
             IAuthenticationService authenticationService,
             IMapper mapper,
             ILogger<ServicesController> logger,
@@ -88,6 +91,7 @@ namespace DealEngine.WebUI.Controllers
 
             : base(userService)
         {
+            _ldapService = ldapService;
             _serializerationService = serializerationService;
             _authenticationService = authenticationService;
             _mapper = mapper;
@@ -3436,6 +3440,7 @@ namespace DealEngine.WebUI.Controllers
 
                         try
                         {
+                            _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
                             var programme = await _programmeService.GetCoastGuardProgramme();
                             var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                             var reference = await _referenceService.GetLatestReferenceId();
@@ -3478,9 +3483,6 @@ namespace DealEngine.WebUI.Controllers
                                 SingleUseToken token = await _authenticationService.GenerateSingleUseToken(email);
                                 string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
                                 await _emailService.SendPasswordResetEmail(email, token.Id, domain);
-
-                                //send out login email
-                                await _emailService.SendSystemEmailLogin(email);
                                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                                 if (emailTemplate != null)
                                 {

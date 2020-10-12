@@ -239,10 +239,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
-                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                //Inception date rule apply to the renewal client only for grace period of 1 month
+                if (string.IsNullOrEmpty(informationSheet.Programme.ClientProgrammeMembershipNumber))
                 {
-                    inceptionDate = DateTime.UtcNow;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    {
+                        inceptionDate = DateTime.UtcNow;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(informationSheet.Programme.ClientProgrammeMembershipNumber))
+                {
+                    if (DateTime.UtcNow >= product.DefaultInceptionDate.AddMonths(1))
+                    {
+                        inceptionDate = DateTime.UtcNow;
+                    }
                 }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
