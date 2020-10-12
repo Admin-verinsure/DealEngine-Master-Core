@@ -302,21 +302,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
-                var Agreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
-                foreach(var term in Agreement.ClientAgreementTerms)
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
                 {
-                    if(term.TermLimit == TermLimit2mil)
+                    if (term.Bound)
                     {
-                        term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - term.Premium) * coverperiodindays / agreementperiodindays;
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
                     }
-                    else if(term.TermLimit == TermLimit3mil)
-                    {
-                        term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - term.Premium) *coverperiodindays / agreementperiodindays;
-                    }
-                    else if (term.TermLimit == TermLimit5mil)
-                    {
-                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - term.Premium) *coverperiodindays / agreementperiodindays;
-                    }
+
                 }
             }
 
