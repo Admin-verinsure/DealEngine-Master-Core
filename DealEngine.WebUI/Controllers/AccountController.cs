@@ -447,50 +447,34 @@ namespace DealEngine.WebUI.Controllers
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
-                    var result = await DealEngineIdentityUserLogin(user, password);
-                    if (!result.Succeeded)
-                    {
+                    MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
+                    MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
+                    rsaUser.DevicePrint = "version%3D3%2E5%2E1%5F4%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%2010%2E0%3B%20win64%3B%20x64%3B%20rv%3A68%2E0%29%20gecko%2F20100101%20firefox%2F68%2E0%7C5%2E0%20%28Windows%29%7CWin32%26pm%5Ffpsc%3D24%7C1920%7C1080%7C1050%26pm%5Ffpsw%3D%26pm%5Ffptz%3D12%26pm%5Ffpln%3Dlang%3Den%2DUS%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D0%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dnpswf64%5F32%5F0%5F0%5F223%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1920%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D68%26pm%5Fbr%3DFirefox%26pm%5Finpt%3D%26pm%5Fexpt%3D";//viewModel.DevicePrint;
+                    rsaUser.Email = user.Email;
+                    rsaUser.Username = user.UserName; //try as Marsh RSA team advised
+                    rsaUser.HttpReferer = "~Account/LoginMarsh";
+                    rsaUser.OrgName = "Marsh_Model";
+                    rsaUser.RsaStatus = RsaStatus.Deny;
+                    rsaUser = await rsaAuth.Analyze(rsaUser);
 
-                        var deUser = await _userManager.FindByNameAsync(userName);
-                        await _userManager.RemovePasswordAsync(deUser);
-                        await _userManager.AddPasswordAsync(deUser, password);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    if (rsaUser.RsaStatus == RsaStatus.Allow)
+                    {
+                        _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
+                        return RedirectToAction("Index", "Home");
                     }
-                    else
+                    if (rsaUser.RsaStatus == RsaStatus.RequiresOtp)
                     {
-                        var deUser = await _userManager.FindByNameAsync(userName);
-                        await _signInManager.SignOutAsync();
-                        deUser = await _userManager.FindByNameAsync(userName);
-                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
-
-
-                        MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
-                        MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
-                        rsaUser.DevicePrint = "version%3D3%2E5%2E1%5F4%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%2010%2E0%3B%20win64%3B%20x64%3B%20rv%3A68%2E0%29%20gecko%2F20100101%20firefox%2F68%2E0%7C5%2E0%20%28Windows%29%7CWin32%26pm%5Ffpsc%3D24%7C1920%7C1080%7C1050%26pm%5Ffpsw%3D%26pm%5Ffptz%3D12%26pm%5Ffpln%3Dlang%3Den%2DUS%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D0%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dnpswf64%5F32%5F0%5F0%5F223%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1920%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D68%26pm%5Fbr%3DFirefox%26pm%5Finpt%3D%26pm%5Fexpt%3D";//viewModel.DevicePrint;
-                        rsaUser.Email = user.Email;
-                        rsaUser.Username = user.UserName; //try as Marsh RSA team advised
-                        rsaUser.HttpReferer = "~Account/LoginMarsh";
-                        rsaUser.OrgName = "Marsh_Model";
-                        rsaUser.RsaStatus = RsaStatus.Deny;
-                        rsaUser = await rsaAuth.Analyze(rsaUser);
-
-                        if (rsaUser.RsaStatus == RsaStatus.Allow)
+                        return View("OneTimePasswordMarsh", new RsaOneTimePasswordModel
                         {
-                            _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
-                            return RedirectToAction("Index", "Home");
-                        }
-                        if (rsaUser.RsaStatus == RsaStatus.RequiresOtp)
-                        {
-                            return View("OneTimePasswordMarsh", new RsaOneTimePasswordModel
-                            {
-                                UserName = user.UserName,
-                                DeviceTokenCookie = rsaUser.DeviceTokenCookie,
-                                DevicePrint = rsaUser.DevicePrint,
-                                SessionId = rsaUser.CurrentSessionId,
-                                TransactionId = rsaUser.CurrentTransactionId
-                            });
-                        }
-                    }                
+                            UserName = user.UserName,
+                            DeviceTokenCookie = rsaUser.DeviceTokenCookie,
+                            DevicePrint = rsaUser.DevicePrint,
+                            SessionId = rsaUser.CurrentSessionId,
+                            TransactionId = rsaUser.CurrentTransactionId,
+                            Password = password
+                        });
+                    }
+
                 }
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);
@@ -521,10 +505,26 @@ namespace DealEngine.WebUI.Controllers
                 rsaUser.Otp = viewModel.OtpCode;
                 rsaUser.CurrentSessionId = viewModel.SessionId;
                 rsaUser.CurrentTransactionId = viewModel.TransactionId;
-                
+                var user = await _userService.GetUser(viewModel.UserName);
                 bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService);                
                 if (isAuthenticated)
-                {                    
+                {
+                    var result = await DealEngineIdentityUserLogin(user, viewModel.Password);
+                    if (!result.Succeeded)
+                    {
+
+                        var deUser = await _userManager.FindByNameAsync(username);
+                        await _userManager.RemovePasswordAsync(deUser);
+                        await _userManager.AddPasswordAsync(deUser, viewModel.Password);
+                        await _signInManager.PasswordSignInAsync(deUser, viewModel.Password, true, lockoutOnFailure: false);
+                    }
+                    else
+                    {
+                        var deUser = await _userManager.FindByNameAsync(username);
+                        await _signInManager.SignOutAsync();
+                        deUser = await _userManager.FindByNameAsync(username);
+                        await _signInManager.PasswordSignInAsync(deUser, viewModel.Password, true, lockoutOnFailure: false);                        
+                    }
                     return RedirectToAction("Index", "Home");
                 }
                 else

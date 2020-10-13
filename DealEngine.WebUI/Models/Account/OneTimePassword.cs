@@ -34,6 +34,7 @@ namespace DealEngine.WebUI.Models.Account
 		public string OtpCode { get; set; }
 
         public string DeviceTokenCookie { get; set; }
+        public string Password { get; set; }
     }
 }
 
