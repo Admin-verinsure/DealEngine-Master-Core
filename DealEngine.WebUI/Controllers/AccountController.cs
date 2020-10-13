@@ -325,13 +325,12 @@ namespace DealEngine.WebUI.Controllers
             {                                                
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
-                //int resultCode = -1;
-                int resultCode = 0;
+                int resultCode = -1;
                 string resultMessage = "";
                 IdentityUser deUser;
 
                 // Step 1 validate in  LDap 
-                //_ldapService.Validate(userName, password, out resultCode, out resultMessage);
+                _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
                     var identityResult = await DealEngineIdentityUserLogin(user, password);
