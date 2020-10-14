@@ -485,9 +485,9 @@
                                     <label class="label required">Other Marina Name</label>
                                     <label class="input form-group">
                                         <i></i>
-                                        <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="othermarina" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
+                                        <input class="form-control b " type="text" data-type="TEXTBOX" id="OtherBoatWaterLocation" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
                                     </label>
-                                    <p class="validationContainer" id="validateBoatName"></p>
+                                    <p class="validationContainer" id="validateOtherBoatWaterLocation"></p>
                                 </section>
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
@@ -496,10 +496,10 @@
                                     <label class="label required">Moored Type</label>
                                     <label class="input form-group">                                        
                                         <select class="form-control b" id="MooredType" name="WaterLocationMooringType">
-                                        @foreach(var type in Model.BoatViewModel.MooredTypeOptions)
-                                        {
-                                            <option value="@type.Value">@type.Text</option>
-                                        }
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option id="BerthedMooringType"value="Berthed">Berthed</option>
+                                            <option id="PileMooringType" value="Pile">Pile</option>
+                                            <option id="SwingMooringType" value="Swing">Swing</option>
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>
@@ -570,26 +570,6 @@
                                     <i id="addBoatUse" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
                                 </section>
                             </div>
-                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
-                                    <label class="label">Interested Parties Effective Date</label>
-                                    <div class="row">
-                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                            <label class="input ">
-                                                <i class="icon-append fa fa-calendar"></i>
-                                                <input name="BoatIPEffectiveDate" placeholder="Effective Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="BoatIPEffectiveDate" type="text">
-                                            </label>
-                                        </section>
-                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                            <i id="elem" href="#"
-                                               class="fa fa-question-circle cgpopover"
-                                               data-placement="bottom"
-                                               data-html="true"
-                                               data-container="body"
-                                               data-toggle="popover"
-                                               data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
-                                        </section>
-                                    </div>
-                                </section>*@
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
@@ -1021,7 +1001,7 @@
                                             <option value="add">Other Marina</option>
                                         </select>
                                     </label>
-                                    <p class="validationContainer" id="validateBoatWaterLocation"></p>
+                                    <p class="validationContainer" id="validateAddBoatWaterLocation"></p>
                                 </section>
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
@@ -1030,9 +1010,9 @@
                                     <label class="label required">Other Marina Name</label>
                                     <label class="input form-group">
                                         <i></i>
-                                        <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="Addothermarina" name="OtherMarinaName" placeholder="Vessel Name" value="" required>
+                                        <input class="form-control b " type="text" data-type="TEXTBOX" id="Addothermarina" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
                                     </label>
-                                    <p class="validationContainer" id="validateBoatName"></p>
+                                    <p class="validationContainer" id="validateAddOtherBoatWaterLocation"></p>
                                 </section>
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
@@ -1040,11 +1020,11 @@
                                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                                     <label class="label required">Moored Type</label>
                                     <label class="input form-group">
-                                        <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooredType" name="WaterLocationMooringType">
-                                            @foreach (var type in Model.BoatViewModel.MooredTypeOptions)
-                                            {
-                                                <option value="@type.Value">@type.Text</option>
-                                            }
+                                        <select class="form-control b" id="AddMooredType" name="WaterLocationMooringType">
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option id="AddBerthedMooringType"value="Berthed">Berthed</option>
+                                            <option id="AddPileMooringType" value="Pile">Pile</option>
+                                            <option id="AddSwingMooringType" value="Swing">Swing</option>
                                         </select>
                                     </label>
                                     <p class="validationContainer" id="validateBoatWaterLocation"></p>
@@ -1094,7 +1074,8 @@
                                 </section>
                                 <p class="validationContainer" id="validateAddboateffectivedate"></p>
                             </div>
-                            @if (Model.ClientInformationSheet.IsChange)
+                            @*  LEGACY CEASE DATE LOGIC - Leave commented encase cause for reuse later
+                                @if (Model.ClientInformationSheet.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5 ">
                                     <label class="label">Cease Date</label>
@@ -1118,7 +1099,7 @@
                                     </label>
                                 </section>
                                 <section class="col col-sm-1 col-md-1 col-lg-1"></section>
-                            }
+                            }*@
                             <!--hr class="boatAccordianHairline" /-->
                             <section class="col-sm-6 col-md-6 col-lg-6">
                                 <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -1158,6 +1139,7 @@
                                             data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>*@
+                            @* LEGACY CEASE DATE LOGIC - Leave commented encase cause for reuse later
                             @if (Model.ClientInformationSheet.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
@@ -1180,7 +1162,7 @@
                                         </select>
                                     </label>
                                 </section>
-                            }
+                            }*@
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">

@@ -10,19 +10,19 @@ namespace DealEngine.WebUI.Models
     {
         public BoatViewModel()
         {
-            MooredTypeOptions = GetMooredTypeOptions();
+            //MooredTypeOptions = GetMooredTypeOptions();
         }
 
-        private List<SelectListItem> GetMooredTypeOptions()
-        {
-            return new List<SelectListItem>()
-            {
-                new SelectListItem{ Text = "-- Select --", Value = "0" },
-                new SelectListItem{ Text = "Berthed", Value = "Berthed"},
-                new SelectListItem{ Text = "Pile", Value = "Pile" },
-                new SelectListItem{ Text = "Swing", Value = "Swing" }
-            };
-        }
+        //private List<SelectListItem> GetMooredTypeOptions()
+        //{
+        //    return new List<SelectListItem>()
+        //    {
+        //        new SelectListItem{ Text = "-- Select --", Value = "0" },
+        //        new SelectListItem{ Text = "Berthed", Value = "Berthed"},
+        //        new SelectListItem{ Text = "Pile", Value = "Pile" },
+        //        new SelectListItem{ Text = "Swing", Value = "Swing" }
+        //    };
+        //}
 
         public Guid AnswerSheetId { get; set; }
         public Guid BoatId { get; set; }
@@ -72,8 +72,6 @@ namespace DealEngine.WebUI.Models
         public int BoatQuoteExcessOption { get; set; }
         public string VesselArea { get; set; }
         public string OtherMarinaName { get; set; }
-
-
 
         public Boat ToEntity(User creatingUser)
         {
