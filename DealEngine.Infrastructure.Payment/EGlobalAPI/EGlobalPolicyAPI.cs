@@ -993,7 +993,7 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
 
             // Get Broker Info
             EbixUser = EGlobalPolicy.ClientProgramme.BrokerContactUser.SalesPersonUserName;
-            EbixDepartment = EGlobalPolicy.ClientProgramme.BrokerContactUser.EbixDepartmentCode;
+            EbixDepartment = EGlobalPolicy.ClientProgramme.BrokerContactUser.DefaultOU.EbixDepartmentCode;
 
             // Create the Queue
             EGlobalPolicy.Queue = new EBixQueue()
