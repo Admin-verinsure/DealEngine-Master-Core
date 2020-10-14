@@ -416,24 +416,47 @@ namespace DealEngine.Services.Impl
             var cloneMapper = mapperConfiguration.CreateMapper();
 
             ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
-            ClientProgramme PreClone = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
-            ClientInformationSheet clientInformationSheet = new ClientInformationSheet(createdBy, PreClone.Owner, null);
-            clientInformationSheet = cloneMapper.Map<ClientInformationSheet>(PreClone.InformationSheet);
-            clientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
-            clientInformationSheet.IsChange = true;
-            clientInformationSheet.Status = "Not Started";
-            clientInformationSheet.DateCreated = DateTime.Now;
-            clientInformationSheet.UnlockDate = DateTime.MinValue;
-            clientInformationSheet.PreviousInformationSheet = PreClone.InformationSheet;
+            ClientProgramme oldClientProgramme = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
             
-            ClientProgramme clientProgramme = new ClientProgramme(createdBy, PreClone.Owner, PreClone.BaseProgramme);
-            clientProgramme.BrokerContactUser = PreClone.BaseProgramme.BrokerContactUser;
-            clientProgramme.ChangeReason = changeReason;
-            clientProgramme.InformationSheet = clientInformationSheet;
-            clientProgramme.InformationSheet.Programme = clientProgramme;
-            await Update(clientProgramme);
+            ClientInformationSheet newClientInformationSheet = new ClientInformationSheet(createdBy, oldClientProgramme.Owner, null);
+            newClientInformationSheet = cloneMapper.Map<ClientInformationSheet>(oldClientProgramme.InformationSheet);
+            newClientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
+            newClientInformationSheet.IsChange = true;
+            newClientInformationSheet.Status = "Not Started";
+            newClientInformationSheet.DateCreated = DateTime.Now;
+            newClientInformationSheet.UnlockDate = DateTime.MinValue;
+            newClientInformationSheet.PreviousInformationSheet = oldClientProgramme.InformationSheet;
 
-            return clientProgramme;
+            if (oldClientProgramme.InformationSheet.Boats != null)
+            {
+                newClientInformationSheet.Boats.Clear();
+                foreach (Boat boat in oldClientProgramme.InformationSheet.Boats)
+                {
+                    Boat newBoat = oldClientProgramme.InformationSheet.Boats.FirstOrDefault().CloneForNewSheet(oldClientProgramme.InformationSheet);
+                    newBoat.Id = Guid.NewGuid();
+                    newClientInformationSheet.Boats.Add(newBoat);
+                }
+            }
+
+            if (oldClientProgramme.InformationSheet.Vehicles != null)
+            {
+                newClientInformationSheet.Vehicles.Clear();
+                foreach (Vehicle vehicle in oldClientProgramme.InformationSheet.Vehicles)
+                {
+                    Vehicle newVehicle = oldClientProgramme.InformationSheet.Vehicles.FirstOrDefault().CloneForNewSheet(oldClientProgramme.InformationSheet);
+                    newVehicle.Id = Guid.NewGuid();
+                    newClientInformationSheet.Vehicles.Add(newVehicle);
+                }
+            }
+
+            ClientProgramme newClientProgramme = new ClientProgramme(createdBy, oldClientProgramme.Owner, oldClientProgramme.BaseProgramme);
+            newClientProgramme.BrokerContactUser = oldClientProgramme.BaseProgramme.BrokerContactUser;
+            newClientProgramme.ChangeReason = changeReason;
+            newClientProgramme.InformationSheet = newClientInformationSheet;
+            newClientProgramme.InformationSheet.Programme = newClientProgramme;
+            await Update(newClientProgramme);
+
+            return newClientProgramme;
         }
 
         public Task DeveloperTool()
