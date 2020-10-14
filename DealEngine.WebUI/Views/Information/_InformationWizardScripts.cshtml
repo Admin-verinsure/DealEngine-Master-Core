@@ -801,6 +801,7 @@
     }
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
         event.preventDefault();
         var BoatName = $('#AddBoatName').val();
         var BoatType1 = $('#AddBoatType1').val();
@@ -827,11 +828,10 @@
         var BoatTrailer = $('#AddBoatTrailer').val();
         var BoatLandLocation = $('#AddBoatLandLocation').val();
         var BoatWaterLocation = $('#AddBoatWaterLocation').val();
+        var AddOtherBoatWaterLocation = $('#AddOtherBoatWaterLocation').val();
         var boatusess = $("#AddSelectedBoatUse").val();
         var interestedParty = $("#AddSelectedInterestedParty").val();
         var effectiveIpdate = $("#AddBoatIPEffectiveDate").val();
-        var selectedBoatUse = $("#AddSelectedBoatUse").val();
-        var othermarinaName = $("Addothermarina").val();
         var Addeffectivedate = $("#AddBoatEffectiveDate").val();
 
         var validity = true;
@@ -854,7 +854,7 @@
         else {
             $('#validateAddMastType').html("<i></i>");
         }
-        if (selectedBoatUse == null && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
+        if (boatusess == "" && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
             $('#Addvalidateboatuse').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -1078,7 +1078,7 @@
         else {
             $('#validateAddBoatWaterLocation').html("");
         }
-        if (othermarinaName == "" && (BoatWaterLocation == "add")) {
+        if (AddOtherBoatWaterLocation == "" && (BoatWaterLocation == "add")) {
             $('#validateAddOtherBoatWaterLocation').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -1087,10 +1087,9 @@
         else {
             $('#validateAddOtherBoatWaterLocation').html("");
         }
-
         if (validity) {
             $(".search-choice-close").click();
-            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration, othermarinaName)
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration, AddOtherBoatWaterLocation)
             SetCurrentTab(currentTab);
         }
         else {
@@ -1102,6 +1101,7 @@
     }
 
     function ValidateBoatForm(event, tabId, tableId, currentTab) {
+        debugger;
         event.preventDefault();
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
@@ -1131,8 +1131,7 @@
         var boatusess = $("#SelectedBoatUse").val();
         var interestedParty = $("#SelectedInterestedParty").val();
         var effectiveIpdate = $("#BoatIPEffectiveDate").val();
-        var selectedBoatUse = $("#SelectedBoatUse").val();
-        var OtherBoatWaterLocation = $("OtherBoatWaterLocation").val();
+        var OtherBoatWaterLocation = $("#OtherBoatWaterLocation").val();
         var Addeffectivedate = $("#BoatEffectiveDate").val();
         var validity = true;
         if (Addeffectivedate == "") {
@@ -1162,7 +1161,7 @@
         else {
             $('#validateMastType').html("<i></i>");
         }
-         if (selectedBoatUse == null && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
+        if (boatusess == "" && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
             $('#validateboatuse').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -2552,12 +2551,12 @@ function UpdateChosen() {
             return false;
         }
     }
-    function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
+    function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig, OtherBoatWaterLocation) {
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
         var data = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
         data = data + "&SelectedInterestedParty=" + interestedParty;
-        if (othermarinaName != null) {
+        if (OtherBoatWaterLocation != null) {
             OtherMarina = false;
         } else {
             OtherMarina = true;

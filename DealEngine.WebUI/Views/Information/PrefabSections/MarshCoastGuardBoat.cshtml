@@ -257,8 +257,8 @@
                                         <option id="HullConstructionOther" value="Other">Other</option>
                                     </select>
                                 </label>
+                                <p class="validationContainer" id="validateHullConstruction"></p>
                             </section>
-                            <p class="validationContainer" id="validateHullConstruction"></p>
                             <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
                                 <b id="elem" href="#"
                                    class="fa fa-question-circle cgpopover"
@@ -512,23 +512,13 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="SelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
-                                            {
-                                                foreach (var boatUse in boat.BoatUses)
-                                                {
-                                                    if (boatUse != null)
-                                                    {
-                                                        <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
-                                                    }
-                                                }
-                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>
+                                    <p class="validationContainer" id="validateboatuse"></p>
                                 </section>           
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
-                            <p class="validationContainer" id="validateboatuse"></p>
                             <!--hr class="boatAccordianHairline" /-->
                             <div class="col-sm-6 col-md-6 col-lg-6">
                                 <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -567,7 +557,7 @@
                                     </label>
                                 </section>
                                 <section class="col col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                                    <i id="addBoatUse" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
+                                    <i id="addBoatUse" class="fa fa-plus cgpopover" onclick="addNewParty()" style="color:blue"></i>
                                 </section>
                             </div>
                             <section class="col col-xs-12 col-md-12 col-lg-12">
@@ -1010,7 +1000,7 @@
                                     <label class="label required">Other Marina Name</label>
                                     <label class="input form-group">
                                         <i></i>
-                                        <input class="form-control b " type="text" data-type="TEXTBOX" id="Addothermarina" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
+                                        <input class="form-control b " type="text" data-type="TEXTBOX" id="AddOtherBoatWaterLocation" name="OtherMarinaName" placeholder="Other Marina Name" value="" required>
                                     </label>
                                     <p class="validationContainer" id="validateAddOtherBoatWaterLocation"></p>
                                 </section>
@@ -1037,23 +1027,13 @@
                                     <label class="input form-group">
                                         <select onchange="addNewBoatUse()" id="AddSelectedBoatUse" name="SelectedBoatUse" class="form-control b" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @*@foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatUses.Any()))
-                                            {
-                                                foreach (var boatUse in boat.BoatUses)
-                                                {
-                                                    if (boatUse != null)
-                                                    {
-                                                        <option value="@boatUse.Id"> @boatUse.BoatUseCategory</option>
-                                                    }
-                                                }
-                                            }*@
                                             <option value="add">Add Vessel Use</option>
                                         </select>
                                     </label>
+                                    <p class="validationContainer" id="Addvalidateboatuse"></p>
                                 </section>           
                                 <section class="col col-sm-2 col-md-2 col-lg-2"></section>
                             </div>
-                            <p class="validationContainer" id="Addvalidateboatuse"></p>
                             <!--hr class="boatAccordianHairline" /-->
                             <div class="col-sm-6 col-md-6 col-lg-6">
                                 <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
