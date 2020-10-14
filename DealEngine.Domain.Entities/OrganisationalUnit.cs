@@ -29,7 +29,10 @@ namespace DealEngine.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual string Name { get; set; }      
+        public virtual string Name { get; set; }
+        public virtual string EserviceProducerCode { get; set; }
+        public virtual string EbixDepartmentCode { get; set; }
+        public virtual string HPFBranchCode { get; set; }
     }
 
     public class AdvisorUnit : OrganisationalUnit
