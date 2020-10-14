@@ -154,7 +154,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async Task<User> UpdateOrganisationUser(IFormCollection collection)
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection, Organisation organisation)
         {
             var jsonUser = (User) await _serializerationService.GetDeserializedObject(typeof(User), collection);
 
@@ -164,9 +164,12 @@ namespace DealEngine.Services.Impl
                 User user = await _userService.GetUserById(UserId);
                 if (user != null)
                 {
-                    user = _mapper.Map(jsonUser, user);
-                    await _userService.Update(user);
-                    return user;
+                    if (user.Organisations.Contains(organisation))
+                    {
+                        user = _mapper.Map(jsonUser, user);
+                        await _userService.Update(user);
+                        return user;
+                    }                    
                 }
             }
             return null;
@@ -176,20 +179,21 @@ namespace DealEngine.Services.Impl
         {
             var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
             var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
-            var user = await UpdateOrganisationUser(collection);
+            var user = await UpdateOrganisationUser(collection, organisation);
             organisation = _mapper.Map(jsonOrganisation, organisation);
 
-            if (organisation.OrganisationType.Name == "Person - Individual" && user != null)
+            if (user != null)
             {
-                if(!string.IsNullOrWhiteSpace(jsonOrganisation.Name) && jsonOrganisation.Name != user.FirstName + " " + user.LastName)
+                if(organisation.Id != user.PrimaryOrganisation.Id && organisation.Email == user.Email)
                 {
-                    organisation.Name = jsonOrganisation.Name;
+                    organisation.Name = user.FirstName + " " + user.LastName;
                 }
                 else
                 {
-                    organisation.Name = user.FirstName + " " + user.LastName;
-                }                
+                    organisation.Name = jsonOrganisation.Name;
+                }
             }
+
             if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
                 organisation.OrganisationType.Name = OrganisationType;                
