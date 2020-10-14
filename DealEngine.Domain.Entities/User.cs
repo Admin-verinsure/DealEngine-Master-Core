@@ -123,6 +123,7 @@ namespace DealEngine.Domain.Entities
         [JsonIgnore]
         public virtual IList<UserTask> UserTasks { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
+        public virtual string DeviceTokenCookie { get; set; }
 
         public User(User createdBy, string strUsername)
 			: this (createdBy)

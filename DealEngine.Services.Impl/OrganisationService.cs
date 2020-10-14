@@ -181,7 +181,14 @@ namespace DealEngine.Services.Impl
 
             if (organisation.OrganisationType.Name == "Person - Individual" && user != null)
             {
-                organisation.Name = user.FirstName + " " + user.LastName;
+                if(!string.IsNullOrWhiteSpace(jsonOrganisation.Name) && jsonOrganisation.Name != user.FirstName + " " + user.LastName)
+                {
+                    organisation.Name = jsonOrganisation.Name;
+                }
+                else
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
+                }                
             }
             if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
@@ -247,7 +254,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
-            Organisation foundOrg = await GetOrganisationByEmail(Email);
+            Organisation foundOrg = null;//= await GetOrganisationByEmail(Email);
             User User = null;
             if (foundOrg == null)
             {
@@ -280,10 +287,14 @@ namespace DealEngine.Services.Impl
                 foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
                 if (User != null)
                 {
-                    if (!User.Organisations.Contains(foundOrg))
+                    if(!User.Organisations.Any(o=>o.InsuranceAttributes.Any(i=>i.Name == Type)))
                         User.Organisations.Add(foundOrg);
 
-                    User.SetPrimaryOrganisation(foundOrg);
+                    if(User.PrimaryOrganisation == null)
+                    {
+                        User.SetPrimaryOrganisation(foundOrg);
+                    }
+                    
                     await _userService.Create(User);
                 }
             }
