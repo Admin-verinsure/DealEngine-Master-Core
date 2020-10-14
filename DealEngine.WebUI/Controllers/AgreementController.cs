@@ -3725,11 +3725,11 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (Document doc in agreeDocList)
                         {
-                            if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && !doc.Name.Contains("Invoice")))
+                            if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && doc.DocumentType != 8))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
-                            else if (doc.Name.Contains("Invoice"))
+                            else if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
