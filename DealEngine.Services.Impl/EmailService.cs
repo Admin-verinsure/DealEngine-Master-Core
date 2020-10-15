@@ -999,7 +999,7 @@ namespace DealEngine.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-                if (document.DocumentType != 8)
+                if (document.DocumentType != 8 && document.DocumentType != 99)
                 {
                     attachments.Add(await ToAttachment(document));
                 }
