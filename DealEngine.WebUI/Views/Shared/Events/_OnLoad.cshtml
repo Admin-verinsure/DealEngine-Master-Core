@@ -18,9 +18,13 @@
         minDate: startDate
     });
 
+    // HTML5 datepicker way
+    //if (document.getElementById("FAPCoverStartDate") != null) {
+    //    document.getElementById("FAPCoverStartDate").setAttribute("min", startDate.toISOString().split('T')[0]);
+    //}
+
     $('#AddBoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
-
     });
     $('#BoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",

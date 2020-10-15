@@ -54,10 +54,10 @@ namespace DealEngine.WebUI.Models
                     HasSiteLicensedOptions = GetLicencedOptions();
                     HasCurrentMembershipOptions = GetBooleanSelectOptions();
                     InsuredEntityRelationOptions = GetInsuredEntityRelationOptions();
-                    HasContractorInsuredOptions = GetStandardSelectOptions();
+                    HasContractorInsuredOptions = GetBooleanSelectOptions();
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
                     CertTypes = GetCertTypes();
-                    HasMajorShareHolder = GetStandardSelectOptions();
+                    HasMajorShareHolder = GetBooleanSelectOptions();
                 }
                 if (Programme.Name == "CEAS Programme" || Programme.Name == "NZACS Programme")
                 {

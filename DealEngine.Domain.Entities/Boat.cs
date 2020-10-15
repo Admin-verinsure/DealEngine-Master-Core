@@ -21,7 +21,7 @@ namespace DealEngine.Domain.Entities
         public virtual Boat OriginalBoat
         {
             get;
-            protected set;
+            set;
         }
 
         public virtual string BoatName
@@ -271,13 +271,10 @@ namespace DealEngine.Domain.Entities
         // public virtual string SelectedBoatUse { get; set; }
         // public virtual string[] Boatselected { get; set; }
 
-
         public virtual Boat CloneForNewSheet(ClientInformationSheet newSheet)
         {
-            //if (ClientInformationSheet == newSheet)
-            //    throw new Exception("Cannot clone boat for original information");
-
             Boat newBoat = new Boat(newSheet.CreatedBy);
+            newBoat.OriginalBoat = this;
             newBoat.BoatName = BoatName;
             newBoat.BoatType1 = BoatType1;
             newBoat.BoatType2 = BoatType2;
@@ -297,20 +294,20 @@ namespace DealEngine.Domain.Entities
             newBoat.MastType = MastType;
             newBoat.AucklandRegistration = AucklandRegistration;
             newBoat.NationalRegistration = NationalRegistration;
-
-            newBoat.InterestedParties = new List<Organisation>(InterestedParties);
-            //newBoat.BoatUse = new List<BoatUse>(BoatUse);
-            //foreach (var bu in BoatUse)
-            //{
-                //newBoat.BoatUse.Add(newSheet.BoatUses.FirstOrDefault(obu => obu.OriginalBoatUse.Id == bu.Id));
-            //}
-            newBoat.BoatNotes = BoatNotes;
-            //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
+            newBoat.InterestedParties = InterestedParties;
+            newBoat.BoatUses = BoatUses;
+            newBoat.BoatNotes = BoatNotes;           
             newBoat.BoatWaterLocation = BoatWaterLocation;
-            newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == BoatLandLocation.Id);
-            //newBoat.BoatTrailer = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
-            //newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
+            newBoat.BoatLandLocation = BoatLandLocation;
             newBoat.BoatOperator = BoatOperator;
+            newBoat.BoatIsTrailered = BoatIsTrailered;
+            newBoat.BoatQuickQuotePremium = BoatQuickQuotePremium;
+            newBoat.BoatQuoteExcessOption = BoatQuoteExcessOption;
+            newBoat.OtherMarinaName = OtherMarinaName;
+            newBoat.OtherMarina = OtherMarina;
+            newBoat.VesselArea = VesselArea;
+            newBoat.WaterLocationMooringType = WaterLocationMooringType;
+            newBoat.BoatTrailers = BoatTrailers;
             if (BoatEffectiveDate > DateTime.MinValue)
                 newBoat.BoatEffectiveDate = BoatEffectiveDate;
             if (BoatCeaseDate > DateTime.MinValue)
@@ -320,15 +317,16 @@ namespace DealEngine.Domain.Entities
                 newBoat.BoatInceptionDate = BoatInceptionDate;
             if (BoatExpireDate > DateTime.MinValue)
                 newBoat.BoatExpireDate = BoatExpireDate;
-            newBoat.BoatIsTrailered = BoatIsTrailered;
-            newBoat.BoatQuickQuotePremium = BoatQuickQuotePremium;
-            newBoat.BoatQuoteExcessOption = BoatQuoteExcessOption;
-            newBoat.OtherMarinaName = OtherMarinaName;
-            newBoat.OtherMarina = OtherMarina;
-            newBoat.VesselArea = VesselArea;
-            newBoat.WaterLocationMooringType = WaterLocationMooringType;
-            newBoat.OriginalBoat = this;
             return newBoat;
+
+            //Old logic
+            //newBoat.BoatTrailers = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
+            //newBoat.InterestedParties = new List<Organisation>(InterestedParties);
+            //newBoat.BoatUses = new List<BoatUse>();
+            //newBoat.BoatUses.Add(BoatUses.FirstOrDefault());
+            //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
+            //newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
+            //newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == BoatLandLocation.Id);          
         }
     }
 }

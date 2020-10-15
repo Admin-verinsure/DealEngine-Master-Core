@@ -525,11 +525,12 @@ namespace DealEngine.WebUI.Models
             HasAdvisersOptions = GetHasAdvisersOptions();
             HasApolloAdvisersOptions = GetHasApolloAdvisersOptions();
             HasAdditionalTraditionalLicenceOptions = GetAdditionalTraditionalLicenceSelectListOptions();
+            CoverStartDate = "15/03/2021";
         }
 
         public string TransitionalLicenseNum { get; set; }
         public string TransitionalLicenseHolder { get; set; }
-        public  string CoverStartDate { get; set; }
+        public string CoverStartDate { get; set; }
         private IList<SelectListItem> GetHasAdvisersOptions()
         {
             return new List<SelectListItem>()

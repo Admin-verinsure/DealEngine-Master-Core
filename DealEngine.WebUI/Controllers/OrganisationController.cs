@@ -58,7 +58,6 @@ namespace DealEngine.WebUI.Controllers
             Guid.TryParse(collection["ClientInformationSheet.Id"].ToString(), out Guid SheetId);
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(SheetId);
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
-
             
             try
             {
@@ -69,7 +68,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     if (OrganisationId == Guid.Empty)
                     {
-                        return Json(true);
+                        //return Json(true);
                     }
                     if (sheet.Owner.Id == OrganisationId)
                     {

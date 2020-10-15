@@ -190,8 +190,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         {
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             CredentialAuthResultList credentialAuthResultList = new CredentialAuthResultList();
-            credentialAuthResultList.acspAuthenticationResponseData = new AcspAuthenticationResponseData();
+            credentialAuthResultList.acspAuthenticationResponseData = new AcspAuthenticationResponseData();            
             credentialAuthResultList.acspAuthenticationResponseData.callStatus = new CallStatus();
+            
 
             var authResults = xDoc.GetElementsByTagName("credentialAuthResultList", "http://ws.csd.rsa.com");
             var responseData = authResults[0];
@@ -265,7 +266,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();
-
+            var user = await _userService.GetUser(rsaUser.Username);
             authenticateRequest.request = GetAuthenticateRequest(rsaUser);
             var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
             var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
@@ -282,15 +283,16 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
             var userStatus = authenticateResponse.identificationData.userStatus;
             var statusCode = authenticateResponse.credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode;
-
+            user.DeviceTokenCookie = authenticateRequest.request.deviceRequest.deviceTokenCookie;
             if (userStatus == UserStatus.LOCKOUT || userStatus == UserStatus.DELETE)
-            {
-                var user = await _userService.GetUser(rsaUser.Username);
+            {                
                 user.Lock();
                 await _userService.Update(user);                
             }            
             else if (statusCode == "SUCCESS")
-            {                                
+            {
+                
+                await _userService.Update(user);
                 return true;
             }
             //invalid otp or user locked

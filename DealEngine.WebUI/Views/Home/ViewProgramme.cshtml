@@ -260,7 +260,7 @@
              });
         });
 
-        $('#myChangeModal').on('show.bs.modal', function (e) {
+        $('#myChangeModal').on('show.bs.modal', function (e) {            
             $('.modal').css({ "width": "50%", "margin-left": "25%" });
             var dealId = $(e.relatedTarget).data('dealitem-id');
             $(e.currentTarget).find('input[name="DealId"]').val(dealId);

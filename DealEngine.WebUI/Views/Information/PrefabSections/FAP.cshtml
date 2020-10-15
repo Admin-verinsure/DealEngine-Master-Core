@@ -13,13 +13,12 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            @Html.TextBoxFor(m => m.FAPViewModel.CoverStartDate, new { @class = "form-control", @id = "FAPCoverStartDate", @required = "", @onchange = "OnChange(this.id, this.name)" })
+                            @Html.TextBoxFor(m => m.FAPViewModel.CoverStartDate, new { @class = "form-control", @id = "FAPCoverStartDate", @required = "", @onchange = "OnChange(this.id, this.name)", @type="text"})
                         </div>
                     </div>
                 </div>
               };
            }
-
 
             <div class="form-group">
                 <div class="row">

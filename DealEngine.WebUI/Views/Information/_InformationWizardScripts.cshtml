@@ -707,7 +707,7 @@
             type: "Post",
             data: postData
         })
-        .done(function (data) {
+        .done(function (data) {            
             if (data.originalBoatId != "00000000-0000-0000-0000-000000000000") {
                 if (Modelstatus != "Submitted") {
                     $('#BoatRemoveModal').show();
@@ -801,6 +801,7 @@
     }
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
         event.preventDefault();
         var BoatName = $('#AddBoatName').val();
         var BoatType1 = $('#AddBoatType1').val();
@@ -827,12 +828,12 @@
         var BoatTrailer = $('#AddBoatTrailer').val();
         var BoatLandLocation = $('#AddBoatLandLocation').val();
         var BoatWaterLocation = $('#AddBoatWaterLocation').val();
+        var AddOtherBoatWaterLocation = $('#AddOtherBoatWaterLocation').val();
         var boatusess = $("#AddSelectedBoatUse").val();
         var interestedParty = $("#AddSelectedInterestedParty").val();
         var effectiveIpdate = $("#AddBoatIPEffectiveDate").val();
-        var selectedBoatUse = $("#AddSelectedBoatUse").val();
-        var othermarinaName = $("Addothermarina").val();
         var Addeffectivedate = $("#AddBoatEffectiveDate").val();
+
         var validity = true;
 
         if (RiggingType == "" && BoatType1 == "YachtsandCatamarans") {
@@ -853,7 +854,7 @@
         else {
             $('#validateAddMastType').html("<i></i>");
         }
-        if (selectedBoatUse == null && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
+        if (boatusess == "" && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
             $('#Addvalidateboatuse').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -1077,9 +1078,18 @@
         else {
             $('#validateAddBoatWaterLocation').html("");
         }
+        if (AddOtherBoatWaterLocation == "" && (BoatWaterLocation == "add")) {
+            $('#validateAddOtherBoatWaterLocation').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        }
+        else {
+            $('#validateAddOtherBoatWaterLocation').html("");
+        }
         if (validity) {
             $(".search-choice-close").click();
-            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration, AddOtherBoatWaterLocation)
             SetCurrentTab(currentTab);
         }
         else {
@@ -1091,6 +1101,7 @@
     }
 
     function ValidateBoatForm(event, tabId, tableId, currentTab) {
+        debugger;
         event.preventDefault();
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
@@ -1120,8 +1131,7 @@
         var boatusess = $("#SelectedBoatUse").val();
         var interestedParty = $("#SelectedInterestedParty").val();
         var effectiveIpdate = $("#BoatIPEffectiveDate").val();
-        var selectedBoatUse = $("#SelectedBoatUse").val();
-        var othermarinaName = $("othermarina").val();
+        var OtherBoatWaterLocation = $("#OtherBoatWaterLocation").val();
         var Addeffectivedate = $("#BoatEffectiveDate").val();
         var validity = true;
         if (Addeffectivedate == "") {
@@ -1151,7 +1161,7 @@
         else {
             $('#validateMastType').html("<i></i>");
         }
-         if (selectedBoatUse == null && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
+        if (boatusess == "" && (BoatType1 == "CruisersandLaunches" || BoatType1 == "YachtsandCatamarans")) {
             $('#validateboatuse').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -1375,9 +1385,18 @@
         else {
             $('#validateBoatWaterLocation').html("");
         }
+        if (OtherBoatWaterLocation == "" && (BoatWaterLocation == "add")) {
+            $('#validateOtherBoatWaterLocation').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        }
+        else {
+            $('#validateOtherBoatWaterLocation').html("");
+        }
         if (validity) {
             $(".search-choice-close").click();
-            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration, OtherBoatWaterLocation)
             SetCurrentTab(currentTab);
         }
         else {
@@ -2532,12 +2551,12 @@ function UpdateChosen() {
             return false;
         }
     }
-    function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
+    function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig, OtherBoatWaterLocation) {
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
         var data = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
         data = data + "&SelectedInterestedParty=" + interestedParty;
-        if (othermarinaName != null) {
+        if (OtherBoatWaterLocation != null) {
             OtherMarina = false;
         } else {
             OtherMarina = true;
@@ -2607,7 +2626,7 @@ function UpdateChosen() {
             $('#BoatTrailer.' + classId).val(data.boatTrailer);
             $('#BoatLandLocation.' + classId).val(data.boatLandLocation);
             $('#BoatOperator.' + classId).val(data.boatOperator);
-            if (data.boatEffectiveDate != "" || data.boatEffectiveDate != null) {
+            if (data.boatEffectiveDate !== "" && data.boatEffectiveDate != null) {
                 $('#BoatEffectiveDate.' + classId).val(data.boatEffectiveDate);
             }
             else {
@@ -2619,14 +2638,6 @@ function UpdateChosen() {
             $('#InterestedParties3.' + classId).val(data.interestedParties3);
             $('#BoatNotes.' + classId).val(data.boatNotes);
             $('#VesselArea.' + classId).val(data.vesselArea);
-            if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
-                $("#MooredType").empty();
-                $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-                $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-                $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-                $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-                $('#MooredType').trigger('chosen:updated');
-            }
             if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
                 var marinas = document.getElementById('BoatWaterLocation');
                 for (var i = 0; i < marinas.options.length; i++) {
@@ -2634,25 +2645,17 @@ function UpdateChosen() {
                         marinas.options[i].selected = true;
                     }
                 }
-
                 $('#othermarinSection').addClass("hidden");
-                $('#BoatMooredTypeSection').addClass("hidden");
-                GetMooredType(data.boatWaterLocation);
             }
             else {
                 $('#BoatWaterLocation.' + classId).val("add");
                 $('#othermarinSection').removeClass("hidden");
-                $('#BoatMooredTypeSection').removeClass("hidden");
-                $('#othermarina.b').val(data.otherMarinaName);
+                $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
             }
-            if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
-                $('#othermarinSection').addClass("hidden");
-                $('#BoatMooredTypeSection').addClass("hidden");
-            }
-            $('#MooredType.' + classId).val(data.waterLocationMooringType);
             vesselType1Selected();
             $('#BoatType2.b').val(data.boatType2);
             vesselType2Selected();
+            $('#MooredType.' + classId).val(data.waterLocationMooringType);
             updateExcess();
             updateEditBoat(data);
             UpdateChosen();
@@ -4426,7 +4429,7 @@ function UpdateChosen() {
             AddboatType1Jetski.classList.remove("hidden");
             $("#AddBoatIsTrailered").val("");
             $('#AddBoatWaterLocationSection').addClass("hidden");
-             $('#AddothermarinSection').addClass("hidden");
+            $('#AddothermarinSection').addClass("hidden");
             $('#AddBoatMooredTypeSection').addClass("hidden");
             $('#AddBoatLandLocationSection').removeClass("hidden");
             AddhasTrailer();
@@ -4438,6 +4441,10 @@ function UpdateChosen() {
             $('#AddBoatWaterLocationSection').removeClass("hidden");
             $('#AddBoatMooredTypeSection').removeClass("hidden");
             $('#AddBoatLandLocationSection').addClass("hidden");
+            $('#AddMooredType').val("Berthed");
+            $('#AddBerthedMooringType').removeClass("hidden");
+            $('#AddPileMooringType').addClass("hidden");
+            $('#AddSwingMooringType').addClass("hidden");
             AddhasTrailer();
 
         }
@@ -4448,6 +4455,10 @@ function UpdateChosen() {
             $('#AddBoatWaterLocationSection').removeClass("hidden");
             $('#AddBoatLandLocationSection').addClass("hidden");
             $('#AddBoatMooredTypeSection').removeClass("hidden");
+            $('#AddMooredType').val("");
+            $('#AddBerthedMooringType').addClass("hidden");
+            $('#AddPileMooringType').removeClass("hidden");
+            $('#AddSwingMooringType').removeClass("hidden");
             AddhasTrailer();
         }
         else {
@@ -5114,6 +5125,10 @@ function UpdateChosen() {
             $("#BoatIsTrailered").val("");
             $('#BoatWaterLocationSection').removeClass("hidden");
             $('#BoatMooredTypeSection').removeClass("hidden");
+            $('#BerthedMooringType').removeClass("hidden");
+            $('#MooredType').val("Berthed");
+            $('#PileMooringType').addClass("hidden");
+            $('#SwingMooringType').addClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
             hasTrailer();
         }
@@ -5123,6 +5138,10 @@ function UpdateChosen() {
             $("#BoatIsTrailered").val("");
             $('#BoatWaterLocationSection').removeClass("hidden");
             $('#BoatMooredTypeSection').removeClass("hidden");
+            $('#BerthedMooringType').addClass("hidden");
+            $('#MooredType').val("");
+            $('#PileMooringType').removeClass("hidden");
+            $('#SwingMooringType').removeClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
             hasTrailer();
         }
@@ -5273,17 +5292,8 @@ function UpdateChosen() {
         if (selectedWaterLoc == "add") {
             $('#othermarinSection').removeClass('hidden');
             $('#BoatMooredTypeSection').removeClass('hidden');
-            $("#MooredType").find('option').not(':selected').remove();
-            if (!($('#MooredType option:selected'))) {
-                $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-            }
-            $('#MooredType').trigger('chosen:updated');
-            $('#MooredType').append("<option  value=\"Berthed\"> Berthed </option>")
-            $('#MooredType').append("<option  value=\"Pile\"> Pile </option>")
-            $('#MooredType').append("<option  value=\"Swing\"> Swing </option>")
         }
         else {
-            GetMooredType(selectedWaterLoc);
             $('#othermarinSection').addClass('hidden');
         }
     }
@@ -5294,27 +5304,9 @@ function UpdateChosen() {
              $('#AddothermarinSection').removeClass('hidden');
              $('#AddBoatMooredTypeSection').removeClass('hidden');
          } else {
-             GetMooredType(AddSelectedWaterLoc);
              $('#AddothermarinSection').addClass('hidden');
          }
     }
-
-    function GetMooredType(othermarinaname) {
-        $('#BoatMooredTypeSection').removeClass('hidden');
-        $("#MooredType").empty();
-        $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
-        $('#MooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-        $('#MooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-        $('#MooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-        $('#MooredType').trigger('chosen:updated');
-        $('#AddBoatMooredTypeSection').removeClass('hidden');
-        $("#AddMooredType").empty();
-        $('#AddMooredType').append("<option selected value=\"\"> --Select-- </option>");
-        $('#AddMooredType').append($('<option>', { value: "Berthed", text: "Berthed" }));
-        $('#AddMooredType').append($('<option>', { value: "Pile", text: "Pile" }));
-        $('#AddMooredType').append($('<option>', { value: "Swing", text: "Swing" }));
-        $('#AddMooredType').trigger('chosen:updated');
-    };
 
     function addNewLoc() {
         var selectedLoc2 = boatLoc2.options[boatLoc2.selectedIndex].value;

@@ -999,7 +999,7 @@ namespace DealEngine.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-                if (!document.Name.Contains("Invoice"))
+                if (document.DocumentType != 8)
                 {
                     attachments.Add(await ToAttachment(document));
                 }
