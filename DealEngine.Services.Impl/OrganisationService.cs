@@ -154,7 +154,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async Task<User> UpdateOrganisationUser(IFormCollection collection)
+        private async Task<User> UpdateOrganisationUser(IFormCollection collection, Organisation organisation)
         {
             var jsonUser = (User) await _serializerationService.GetDeserializedObject(typeof(User), collection);
 
@@ -164,9 +164,12 @@ namespace DealEngine.Services.Impl
                 User user = await _userService.GetUserById(UserId);
                 if (user != null)
                 {
-                    user = _mapper.Map(jsonUser, user);
-                    await _userService.Update(user);
-                    return user;
+                    if (user.Organisations.Contains(organisation))
+                    {
+                        user = _mapper.Map(jsonUser, user);
+                        await _userService.Update(user);
+                        return user;
+                    }                    
                 }
             }
             return null;
@@ -176,13 +179,21 @@ namespace DealEngine.Services.Impl
         {
             var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
             var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
-            var user = await UpdateOrganisationUser(collection);
+            var user = await UpdateOrganisationUser(collection, organisation);
             organisation = _mapper.Map(jsonOrganisation, organisation);
 
-            if (organisation.OrganisationType.Name == "Person - Individual" && user != null)
+            if (user != null)
             {
-                organisation.Name = user.FirstName + " " + user.LastName;
+                if(organisation.Id != user.PrimaryOrganisation.Id && organisation.Email == user.Email)
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
+                }
+                else
+                {
+                    organisation.Name = jsonOrganisation.Name;
+                }
             }
+
             if (!string.IsNullOrWhiteSpace(OrganisationType))
             {
                 organisation.OrganisationType.Name = OrganisationType;                
@@ -247,7 +258,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection)
         {
-            Organisation foundOrg = await GetOrganisationByEmail(Email);
+            Organisation foundOrg = null;//= await GetOrganisationByEmail(Email);
             User User = null;
             if (foundOrg == null)
             {
@@ -280,10 +291,14 @@ namespace DealEngine.Services.Impl
                 foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
                 if (User != null)
                 {
-                    if (!User.Organisations.Contains(foundOrg))
+                    if(!User.Organisations.Any(o=>o.InsuranceAttributes.Any(i=>i.Name == Type)))
                         User.Organisations.Add(foundOrg);
 
-                    User.SetPrimaryOrganisation(foundOrg);
+                    if(User.PrimaryOrganisation == null)
+                    {
+                        User.SetPrimaryOrganisation(foundOrg);
+                    }
+                    
                     await _userService.Create(User);
                 }
             }
