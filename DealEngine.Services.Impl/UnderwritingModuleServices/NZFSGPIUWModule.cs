@@ -62,6 +62,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
+
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             decimal feeincome = 0;
@@ -175,16 +179,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
                     var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                    if(unit!= null)
+                    if (unit != null)
                     {
-                        intnumberofadvisors += 1;
-
-                        if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
                         {
-                            advisorhasnocrmid = true;
+                            intnumberofadvisors += 1;
+                            if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                            {
+                                advisorhasnocrmid = true;
+                            }
                         }
                     }
-                }
+                }                                    
             }
 
             bool subuisreferred = false;
@@ -294,6 +300,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
 
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Claims / Insurance History

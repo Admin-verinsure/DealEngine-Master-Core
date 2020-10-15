@@ -225,7 +225,7 @@ namespace DealEngine.Domain.Entities
         public virtual string PIRetroactivedate { get; set; }
         public virtual string DORetroactivedate { get; set; }
         //public virtual IList<AuditHistory> AuditHistory { get; set; }
-        [Display(Name = "Date of Company Incorportation")]
+        [Display(Name = "Date of Company Incorporation")]
         public virtual DateTime? DateofIncorportation { get; set; }
 
         #endregion
@@ -247,7 +247,8 @@ namespace DealEngine.Domain.Entities
         {
             return new Organisation(creatingUser, Guid.NewGuid(), "Default user organisation for " + owner.FullName, organisationType)
             {
-                Domain = "#"
+                Domain = "#",
+                Email = owner.Email
             };
         }
     }

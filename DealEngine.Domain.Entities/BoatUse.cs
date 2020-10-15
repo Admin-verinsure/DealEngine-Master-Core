@@ -16,6 +16,47 @@ namespace DealEngine.Domain.Entities
         {
             BoatUseCategory = boatUseCategory;
         }
+        //public virtual void PopulateEntity()
+        //{
+
+        //    // Populating the Entity
+        //    BoatUseCategory = boatUse.BoatUseCategory
+        //    BoatUseLiveOnBoard
+        //    BoatUseRace
+        //    BoatUseRaceCategory
+        //    BoatUseRaceUseSpinnakers
+        //    BoatUseLiveNotes
+        //    BoatUseRaceNotes
+        //    BoatUseAdditionalNotes
+
+        //    boatUse.BoatUseCategory = BoatUseCategory;
+        //    boatUse.BoatUseLiveOnBoard = ;
+        //    boatUse.BoatUseRace = BoatUseRace;
+        //    boatUse.BoatUseRaceCategory = BoatUseRaceCategory;
+        //    boatUse.BoatUseRaceUseSpinnakers = BoatUseRaceUseSpinnakers;
+        //    boatUse.BoatUseLiveNotes = BoatUseLiveNotes;
+        //    boatUse.BoatUseRaceNotes = BoatUseRaceNotes;
+
+        //    boatUse.BoatUseAdditionalNotes = BoatUseAdditionalNotes;
+        //    if (!string.IsNullOrEmpty(BoatUseEffectiveDate))
+        //    {
+        //        boatUse.BoatUseEffectiveDate = DateTime.Parse(BoatUseEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+        //    }
+        //    else
+        //    {
+        //        boatUse.BoatUseEffectiveDate = DateTime.MinValue;
+        //    }
+        //    if (!string.IsNullOrEmpty(BoatUseCeaseDate))
+        //    {
+        //        boatUse.BoatUseCeaseDate = DateTime.Parse(BoatUseCeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+        //    }
+        //    else
+        //    {
+        //        boatUse.BoatUseCeaseDate = DateTime.MinValue;
+        //    }
+        //    boatUse.BoatUseCeaseReason = BoatUseCeaseReason;
+
+        //}
 
         //public virtual BoatUse OriginalBoatUse
         //{

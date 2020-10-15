@@ -508,6 +508,37 @@
                });
     }
 
+     function CalculateAdjustment() {
+        debugger;
+         var adjustmentAmount = $('#AdjustmentAmount').val();
+          var selectedPremium = $('#SelectedPremium').val();
+
+         $("#AdjustmentVal").val(parseFloat(adjustmentAmount) + parseFloat(selectedPremium));
+         var agreementid = $('#ClientAgreementId').val();
+
+         var postData = {
+             AdjustmentAmount: adjustmentAmount,
+             AgreementId: agreementid
+         };
+
+          $.ajax({
+                url: '@Url.Action("CalculateAdjustment", "Agreement")',
+                type: "POST",
+              //  contentType: "application/json; charset=utf-8",
+              //data: JSON.stringify({ clientAgreementModel: prodData })
+                data: postData,
+                async: true
+            })
+           .done(function (data) {
+               alert("Premium Updated Successfully");
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+        alert("There was an error while trying to authorise referrals.");
+               });
+    }
+
+
     function Decline() {
         var sheetId = $('#InformationSheetId').val();
         var agreementid = $('#ClientAgreementId').val();

@@ -20,7 +20,7 @@ namespace DealEngine.WebUI.Models
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme")
+                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
                     if (Programme.Name == "NZFSG Programme") 
@@ -29,17 +29,20 @@ namespace DealEngine.WebUI.Models
                     } 
                     else if(Programme.Name == "TripleA Programme")
                     {
-                        InsuranceAttributes = GetAdvisorTypes2(); 
-                    } 
-                    else { 
+                        InsuranceAttributes = GetAdvisorTypes2();
+                    }
+                    else if (Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme")
+                    {
                         InsuranceAttributes = GetAdvisorTypes3();
-                    }                    
+                        if(Programme.Name == "Apollo Programme") { HasAssociationOptions = GetAssociationOptions1(); } else { HasAssociationOptions = GetAssociationOptions2(); }
+                    }
+                    
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
                     HasRegisteredOptions = GetHasRegisteredOptions();
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
-                    HasAssociationOptions = GetAssociationOptions();
+                    
                 }
                 if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
                 {
@@ -98,8 +101,59 @@ namespace DealEngine.WebUI.Models
                 User = OrgUser;
             }
         }
-
-        private IList<SelectListItem> GetAssociationOptions()
+        private IList<SelectListItem> GetAssociationOptions2()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "IFA",
+                        Value = "IFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "LBA/TNP",
+                        Value = "LBA/TNP"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "SIFA",
+                        Value = "SIFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "NZMBA",
+                        Value = "NZMBA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "IBANZ",
+                        Value = "IBANZ"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "CFA",
+                        Value = "CFA"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "BIG",
+                        Value = "BIG"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "None of the above - Abbott adviser only",
+                        Value = "None of the above - Abbott adviser only"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Other",
+                        Value = "Other"
+                    }
+                };
+            return _Types;
+        }
+        private IList<SelectListItem> GetAssociationOptions1()
         {
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {

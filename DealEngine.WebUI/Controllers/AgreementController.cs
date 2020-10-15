@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using ServiceStack;
 using DealEngine.WebUI.Models.Programme;
 using NReco.PdfGenerator;
+using System.Security.AccessControl;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -47,6 +48,7 @@ namespace DealEngine.WebUI.Controllers
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
         IFileService _fileService;
+        IDataService _dataService;
         IEmailService _emailService;
         IOrganisationService _organisationService;
         IProgrammeService _programmeService;
@@ -57,6 +59,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger<AgreementController> _logger;
         IClientAgreementTermCanService _clientAgreementTermCanService;
         IClientAgreementBVTermCanService _clientAgreementBVTermCanService;
+        ISerializerationService _serializationService;
         //convert to service?
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<SystemDocument> _documentRepository;
@@ -78,6 +81,7 @@ namespace DealEngine.WebUI.Controllers
             IAdvisoryService advisoryService,
             IClientAgreementEndorsementService clientAgreementEndorsementService,
             IFileService fileService,
+            IDataService dataService,
             IHttpClientService httpClientService,
             ITaskingService taskingService,
             IActivityService activityService,
@@ -86,6 +90,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IMapperSession<SystemDocument> documentRepository,
             IProgrammeService programmeService,
+            ISerializerationService serializerationService,
             IPaymentGatewayService paymentGatewayService,
             IInsuranceAttributeService insuranceAttributeService,
             IPaymentService paymentService,
@@ -115,6 +120,7 @@ namespace DealEngine.WebUI.Controllers
             _clientAgreementRuleService = clientAgreementRuleService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
             _fileService = fileService;
+            _dataService = dataService;
             _emailService = emailService;
             _unitOfWork = unitOfWork;
             _ruleRepository = ruleRepository;
@@ -129,6 +135,7 @@ namespace DealEngine.WebUI.Controllers
             _eGlobalSubmissionService = eGlobalSubmissionService;
             _clientAgreementTermCanService = clientAgreementTermCanService;
             _clientAgreementBVTermCanService = clientAgreementBVTermCanService;
+            _serializationService = serializerationService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -235,6 +242,19 @@ namespace DealEngine.WebUI.Controllers
                 model.InformationSheetId = sheetId;
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+                model.ProductName = agreement.Product.Name;
+                //ClientAgreementTerm clientAgreementTerm = _clientAgreementTermService.GetAllClientAgreementTerm
+
+                foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                {
+                    if (term.Bound)
+                    {
+                        model.SelectedPremium = term.Premium;
+                        model.BasePremium = term.BasePremium;
+                    }
+                    
+                }
+
 
                 foreach (var terms in agreement.ClientAgreementReferrals)
                 {
@@ -245,7 +265,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ReferralAmount = agreement.ClientAgreementTerms.FirstOrDefault().ReferralLoadingAmount;
                 model.AuthorisationNotes = agreement.ClientAgreementTerms.FirstOrDefault().AuthorisationNotes;
 
-                ViewBag.Title = "Agreement Referals ";
+                ViewBag.Title = "Agreement Referrals ";
 
                 return View("AuthoriseReferrals", model);
             }
@@ -334,6 +354,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         agreement.IssuedToBroker = DateTime.UtcNow;
                         agreement.issuetobrokerby = user.FullName;
+                        agreement.Status = "Quoted";
                         agreement.SelectedBroker = await _userService.GetUserByEmail(model.issuetobrokerto);
                         agreement.issuetobrokercomment = model.Content;
                     }
@@ -352,6 +373,38 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CalculateAdjustment(decimal AdjustmentAmount,Guid AgreementId)
+        {
+            User user = null;
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(AgreementId);
+                var sheet = agreement.ClientInformationSheet;
+                user = await CurrentUser();
+                var premium = 0.0m;
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    foreach (var term in await _clientAgreementTermService.GetListAgreementTermFor(agreement))
+                    {
+                      term.Premium = term.Premium + AdjustmentAmount;
+                    }
+                    await uow.Commit();
+                }
+
+                //var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+                return Json("AdjustmentDone");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
@@ -368,6 +421,8 @@ namespace DealEngine.WebUI.Controllers
                     foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
                     {
                         terms.Status = "Cleared";
+                        terms.AuthorisedBy = user;
+                        terms.Authorised = DateTime.UtcNow;
                     }
 
                     foreach (var terms in agreement.ClientAgreementTerms)
@@ -393,13 +448,17 @@ namespace DealEngine.WebUI.Controllers
                         term.ReferralLoading = clientAgreementModel.RefferLodPrc;
                         term.ReferralLoadingAmount = clientAgreementModel.RefferLodAmt;
                         term.AuthorisationNotes = clientAgreementModel.AdditionalNotes;
-                        if (term.MotorTerms.Count() == 0 && term.MotorTerms.Count() == 0)
+                        if (term.MotorTerms.Count() == 0 && term.BoatTerms.Count() == 0)
                         {
                             term.Premium = term.Premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                            term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
                         else
                         {
                             term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                             term.LastModifiedBy = user;
+                            term.LastModifiedOn = DateTime.Now;
                         }
 
                     }
@@ -434,15 +493,16 @@ namespace DealEngine.WebUI.Controllers
                         //}
                     }
 
-                    if (agreement.Status != "Quoted")
+                    if (agreement.Status != "Quoted" || agreement.Status != "Authorised")
                     {
-                        agreement.Status = "Quoted";
+                        agreement.Status = "Authorised";
                         await _milestoneService.CompleteMilestoneFor("Agreement Status – Referred", user, sheet);
                     }
 
                     string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
+                    
 
                     await uow.Commit();
 
@@ -1648,9 +1708,18 @@ namespace DealEngine.WebUI.Controllers
 
             var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
             if (isBaseClientProgramme)
-            {
+            {               
                 bool isComplete;
-                if (clientProgramme.SubClientProgrammes.Count != 0)
+                IList<SubClientProgramme> SubClientProgrammes;
+                if (clientProgramme.InformationSheet.IsChange)
+                {
+                    SubClientProgrammes = clientProgramme.InformationSheet.PreviousInformationSheet.Programme.SubClientProgrammes;
+                }
+                else
+                {
+                    SubClientProgrammes = clientProgramme.SubClientProgrammes;
+                }
+                if (SubClientProgrammes.Any())
                 {
                     await _subsystemService.ValidateProgramme(clientProgramme.InformationSheet, user);
                     isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
@@ -2429,7 +2498,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     status = "Bound and invoice pending";
                 }
-
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
                     if (Action == "BindAgreement")
@@ -2445,7 +2513,7 @@ namespace DealEngine.WebUI.Controllers
                         var documentspremiumadvice = new List<SystemDocument>();
                         var agreeTemplateList = agreement.Product.Documents;
                         var agreeDocList = agreement.GetDocuments();
-
+                        
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             if (agreement.Status != status)
@@ -2510,6 +2578,16 @@ namespace DealEngine.WebUI.Controllers
                                                 agreement.Documents.Add(renderedDoc);
                                                 //documents.Add(renderedDoc);
                                                 documentspremiumadvice.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                            else if (template.DocumentType == 8)
+                                            {
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
+
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc1);
+                                                documents.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
                                             else
@@ -2593,6 +2671,7 @@ namespace DealEngine.WebUI.Controllers
                         }
 
                     }
+                    
                     else
                     {
                         agreement.DateDeleted = DateTime.Now;
@@ -2698,6 +2777,16 @@ namespace DealEngine.WebUI.Controllers
                                                 documentspremiumadvice.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
+                                            else if (template.DocumentType == 8)
+                                            {
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
+
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
                                             else
                                             {
                                                 SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
@@ -2768,6 +2857,8 @@ namespace DealEngine.WebUI.Controllers
                                 if (programme.BaseProgramme.ProgEnableEmail)
                                 {
                                     //send out policy document email
+
+
                                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                     if (emailTemplate != null)
                                     {
@@ -2895,6 +2986,75 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> SendInvoice(Guid id, bool sendUser)
+        //{
+        //    User user = null;
+        //    try
+        //    {
+        //        ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
+        //        user = await CurrentUser();
+        //        // TODO - rewrite to save templates on a per programme basis
+
+        //        ClientProgramme programme = sheet.Programme;
+        //        foreach (ClientAgreement agreement in programme.Agreements)
+        //        {
+        //            if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null).Count() > 0)
+        //            {
+        //                var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+        //                var document = new SystemDocument();
+        //                var documentspremiumadvice = new List<SystemDocument>();
+        //                var agreeTemplateList = agreement.Product.Documents;
+        //                var agreeDocList = agreement.GetDocuments();
+
+        //                foreach (SystemDocument doc in agreeDocList)
+        //                {
+        //                    if (doc.Name.Contains("Invoice"))
+        //                    {
+        //                        SystemDocument renderedDoc = await GetInvoicePDF(doc.Id,  doc.Name);
+        //                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+        //                        document = renderedDoc;
+        //                        // documents.Add(renderedDoc);
+        //                        await _fileService.UploadFile(renderedDoc);
+        //                    }
+        //                }
+
+
+        //                if (programme.BaseProgramme.ProgEnableEmail && document.Name.Contains("Invoice"))
+        //                {
+        //                    //send out policy document email
+
+        //                        if (sendUser)
+        //                        {
+        //                            await _emailService.GetInvoicePDF(user.Email, document, agreement.ClientInformationSheet, agreement, null);
+        //                        }
+        //                        else
+        //                        {
+        //                            await _emailService.GetInvoicePDF(programme.Owner.Email, document, agreement.ClientInformationSheet, agreement, null);
+        //                        }
+        //                        using (var uow = _unitOfWork.BeginUnitOfWork())
+        //                        {
+        //                            if (!agreement.IsFullProposalDocSend)
+        //                            {
+        //                                agreement.IsFullProposalDocSend = true;
+        //                                agreement.DocIssueDate = DateTime.Now;
+        //                                await uow.Commit();
+        //                            }
+        //                        }
+
+        //                }
+        //            }
+        //        }
+
+        //        return Redirect("/Agreement/ViewAcceptedAgreement/" + programme.Id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
+
         [HttpGet]
         public async Task<Document> GetPdfDocument(Guid id, ClientProgramme clientprogramme)
         {
@@ -2938,7 +3098,37 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<Document> GetInvoicePDF(SystemDocument renderedDoc, string invoicename)
+        {
+            User user = null;
 
+            //SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+
+
+            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+            // DOCX & HTML
+            string html = _fileService.FromBytes(renderedDoc.Contents);
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(
+               _appSettingService.NRecoUserName,
+               _appSettingService.NRecoLicense
+           );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+            var margins = new PageMargins();
+            margins.Bottom = 10;
+            margins.Top = 10;
+            margins.Left = 30;
+            margins.Right = 10;
+            htmlToPdfConv.Margins = margins;
+
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+            Document document = new Document(user, invoicename, "application/pdf", 99);
+            document.Contents = pdfBytes;
+            return document;
+        }
         [HttpPost]
         public async Task<IActionResult> SendPolicyDocuments(EmailTemplateViewModel model)
         {
@@ -3318,7 +3508,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //Payment successed
                     //await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-
                     //bool hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
                     status = "Bound and invoice pending";
                     bool hasEglobalNo = false;
@@ -3429,12 +3618,27 @@ namespace DealEngine.WebUI.Controllers
                             EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                             if (emailTemplate != null)
                             {
-                                await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
                             }
                             await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                         }
                     }
 
+                    string BindType = "";
+
+                    if (programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.IsChange && programme.Agreements.Where(a => a.MasterAgreement).FirstOrDefault().ClientInformationSheet.PreviousInformationSheet != null)
+                    {
+                        BindType = "CHANGE";
+                    }
+                    else
+                    {
+                        BindType = "NEW";
+                    }
+
+                    Data data = await _dataService.Add(user);
+                    data = await _dataService.Update(data, Id, BindType);
+                    await _dataService.ToJson(data, "Not yet implemented - just pass in empty string is fine.", Id);
+                    await _emailService.SendDataEmail("staff@techcertain.com", data);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -3443,7 +3647,7 @@ namespace DealEngine.WebUI.Controllers
                             programme.InformationSheet.Status = status;
                             await uow.Commit();
                         }
-                    }
+                    }                 
                 }
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
             }
@@ -3521,13 +3725,13 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (Document doc in agreeDocList)
                         {
-                            if ( (!doc.Name.EqualsIgnoreCase("FullProposalReport")  && !doc.Name.Contains("Invoice")))
+                            if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && !doc.Name.Contains("Invoice")))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
                             else if (doc.Name.Contains("Invoice"))
                             {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id+ "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
                             else
                             {

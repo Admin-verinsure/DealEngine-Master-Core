@@ -34,5 +34,7 @@ namespace DealEngine.Services.Interfaces
         Task ImportNZPIServicePreRenewData(User user);
         Task ImportApolloImportOwners(User user);
         Task ImportApolloServicePreRenewData(User user);
+        Task ImportAbbottImportOwners(User user);
+        Task ImportAbbottServicePreRenewData(User user);
     }
 }

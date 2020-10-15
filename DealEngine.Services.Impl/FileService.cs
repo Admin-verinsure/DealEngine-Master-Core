@@ -163,6 +163,13 @@ namespace DealEngine.Services.Impl
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;
             Decimal PremiumTotal = 0.0m;
+
+            int intMonthlyInstalmentNumber = 1;
+            if (agreement.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
+            {
+                intMonthlyInstalmentNumber = agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber;
+            }
+
             // loop over terms and set merge feilds
             foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements)
             {
@@ -170,6 +177,8 @@ namespace DealEngine.Services.Impl
                 {
                     if (term.Bound)
                     {
+                        
+
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
@@ -193,6 +202,7 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             PremiumTotal += term.PremiumDiffer;
                         }
                         else
@@ -209,6 +219,7 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             PremiumTotal += term.Premium;
                         }
 
@@ -274,17 +285,23 @@ namespace DealEngine.Services.Impl
                 }
             }
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGstMonthly_Total]]", ""), (PremiumTotal * (decimal)1.15 / intMonthlyInstalmentNumber).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+
+            if (agreement.ClientInformationSheet.Locations.Any())
+            {
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
             agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
-            agreement.ClientInformationSheet.Locations.FirstOrDefault().City ));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+                agreement.ClientInformationSheet.Locations.FirstOrDefault().City));
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
-           agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+               agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+            }
+            
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;

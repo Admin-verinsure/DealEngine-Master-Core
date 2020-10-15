@@ -390,32 +390,41 @@ else
                         <th class="text-center" width="20%">Limit</th>
                         <th class="text-center" width="20%">Excess</th>
                         <th class="text-center" width="16%">Premium</th>
+                        @if (Model.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
+                        {
+                            <th class="text-center" width="16%">Monthly Premium</th>
+                        }
                         <th class="text-center" width="17%" hidden>Dependableproduct</th>
 
                     </tr>
                     @foreach (var item in Model.MultiCoverOptions)
                     {
-                        <tr class="clickable-row">
-                            <td>
-                                <input type="radio" dirname=""
-                                       id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
-                            </td>
-                            <td class="pt-3-half" width="12%" contenteditable="true">
-                                @item.RiskName
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Inclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Exclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.TotalPremium
-                            </td>
-                            <td class="pt-3-half" width="12%" contenteditable="true" value="@item.Dependableproduct" hidden>
-                                @item.Dependableproduct
-                            </td>
-                        </tr>
+                    <tr class="clickable-row">
+                        <td>
+                            <input type="radio" dirname=""
+                                   id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                        </td>
+                        <td class="pt-3-half" width="12%" contenteditable="true">
+                            @item.RiskName
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Inclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Exclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.TotalPremium
+                        </td>
+                        @if(Model.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay){
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.monthlypremium
+                        </td>
+                        }
+                        <td class="pt-3-half" width="12%" contenteditable="true" value="@item.Dependableproduct" hidden>
+                            @item.Dependableproduct
+                        </td>
+                    </tr>
                     }
                     @if (Model.IsOptionalProduct)
                     {

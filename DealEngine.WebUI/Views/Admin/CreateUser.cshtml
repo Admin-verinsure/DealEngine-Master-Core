@@ -1,6 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.UserViewModel
 <div class="container">
-    <form method="POST" action="~/Admin/PostCreateUser" novalidate>
+    <form method="POST" action="~/Admin/PostCreateUser" novalidate id="form">
+        @Html.HiddenFor(m=>m.Organisation.Id, new { @id="Organisation.Id"})
         <div class="card">
             <div class="card-header">
                 <div class="form-group">
@@ -24,14 +25,14 @@
                     @Html.LabelFor(m => m.User.LastName)
                     @Html.TextBoxFor(m => m.User.LastName, new { @class = "form-control ", @id = "User.LastName" })
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     @Html.LabelFor(m => m.Organisation.IsInsurer)
                     @Html.DropDownListFor(m => m.Organisation.IsInsurer, Model.BooleanOptions, new { @class = "form-control b", @id = "Organisation.IsInsurer" })
                     @Html.LabelFor(m => m.Organisation.IsTC)
                     @Html.DropDownListFor(m => m.User.PrimaryOrganisation.IsTC, Model.BooleanOptions, new { @class = "form-control b", @id = "Organisation.IsTC" })
                     @Html.LabelFor(m => m.Organisation.IsBroker)
                     @Html.DropDownListFor(m => m.Organisation.IsBroker, Model.BooleanOptions, new { @class = "form-control b", @id = "Organisation.IsBroker" })
-                </div>
+                </div>*@
             </div>
             <div class="card-footer">
                 <button class="btn btn-primary btn-xs" type="submit">Update</button>
@@ -49,8 +50,15 @@
                 data: { UserEmail: userEmail }
             })
                 .done(function (data) {
-                    var OutPut = JSON.parse(data);
-                    PopulateView(OutPut);
+                    if (data != null) {
+                        var OutPut = JSON.parse(data);
+                        PopulateView(OutPut);
+                    } else {
+                        document.getElementById("form").reset();
+                        document.getElementById("Organisation.Id").value = '@System.Guid.Empty';
+                        document.getElementById('User.Email').value = userEmail;
+                    }
+
                 })
                 .fail(function (jqXhr, textStatus, errorThrown) {
                     debugger;

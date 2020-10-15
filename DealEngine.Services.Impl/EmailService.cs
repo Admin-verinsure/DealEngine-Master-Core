@@ -237,6 +237,46 @@ namespace DealEngine.Services.Impl
             }
             email.Send();
         }
+        //public async Task GetInvoicePDF(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
+        //{
+        //    string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Invoice for " + clientInformationSheet.Owner.Name;
+        //    string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Invoice.</p>";
+
+        //    EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+        //    email.From(DefaultSender);
+        //    if (!string.IsNullOrEmpty(recipentcc))
+        //    {
+        //        email.CC(recipentcc);
+        //    }
+        //    email.WithSubject(FullProposalEmailsubject);
+        //    email.WithBody(FullProposalEmailbody);
+        //    email.UseHtmlBody(true);
+        //    if (document != null)
+        //    {
+
+        //        //var documentsList = await ToAttachments(new Attachment(new MemoryStream(document.Contents),"FullProposalReport.pdf"));
+        //        email.Attachments(new Attachment(new MemoryStream(document.Contents), "FullProposalReport.pdf"));
+        //    }
+        //    email.Send();
+        //}
+
+        public async Task SendDataEmail(string recipient, Data data)
+        {
+            string body = "<p>Hi There,</p>";
+
+            body += "<p>Please find attached Data for " + data.ClientName + " on " + data.BindType + ".</p>";
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
+            email.WithSubject("Data: " + data.ClientName + " " + data.BindType);  
+            email.WithBody(body);
+            email.UseHtmlBody(true);
+            using (var fileStream = new FileStream(data.FullPath, FileMode.Open))
+            {
+                Attachment dataAttachment = new Attachment(fileStream, data.FileName, MediaTypeNames.Application.Json);
+                email.Attachments(dataAttachment);
+                email.Send();
+            }
+        }
 
         public async Task IssueToBrokerSendEmail(string recipent, string EmailContent ,  ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender)
         {
@@ -965,12 +1005,27 @@ namespace DealEngine.Services.Impl
                 }
                 else
                 {
+
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
 
             return attachments;
 		}
 
+        public async Task EmailPaymentFrequency(ClientProgramme clientProgramme)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, clientProgramme.BrokerContactUser.Email);
+            string subject = "Payment Request for Abbott Financial Advisor Liability Programme";
+            string body = "Dear Rachael, As part of the Abbott Financial Advisor Liability Programme, " + clientProgramme.Owner.Name +
+                ", Ref#" + clientProgramme.InformationSheet.ReferenceId + " has required to pay " +
+                clientProgramme.PaymentFrequency;
+
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
+            email.Send();
+        }
 
         public async Task EmailHunterPremiumFunding(ClientProgramme clientProgramme)
         {
@@ -990,7 +1045,6 @@ namespace DealEngine.Services.Impl
             email.WithBody(clientProgramme.Owner.Name);
             email.Send();
         }
-
 
         #region Merge Field Library
         public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)

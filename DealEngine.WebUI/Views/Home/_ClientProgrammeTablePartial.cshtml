@@ -175,15 +175,21 @@
                                 <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
                                 <option Value="TC_newCoverable">Add New Coverable</option>
                                 <option Value="TC_amendExcess">Amend Excess</option>
+                                <option Value="TC_amendLiabilityLimit">Amend Liability Limit</option>
                                 <option Value="TC_amendLocation">Amend Location</option>
-                                <option Value="TC_amendSumInsured">Amend Sum Insured</option>
+                                <option Value="TC_amendAssetSumInsured">Amend Asset Sum Insured</option>
                                 <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
                                 <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
                                 <option Value="TC_amendAddInsured">Amend or Add Insured</option>
-                                <option Value="TC_amendAddCI">Amend or Add Co-insurance</option>
+                                <option Value="TC_deleteInsured">DeleteInsured</option>
+                                <option Value="TC_amendAddNamedParty">Amend or Add NamedParty</option>
+                                <option Value="TC_deleteNamedParty">deleteNamedParty</option>
+                                <option Value="TC_amendAddEmployees">Amend or Add Employees</option>
+                                <option Value="TC_amendAddCI">Amend or Add Co-insurer</option>
                                 <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
                                 <option Value="TC_changeOfBroker">Change of Broker</option>
                                 <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
+                                <option Value="TC_changeOfActivity">Change of Activity</option>
                                 <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
                                 <option Value="TC_other">Other Amendment</option>
                                 <option Value="TC_amendOneTimeEvents">One Time Event</option>
@@ -200,15 +206,16 @@
                         <td>
                             <select class="form-control" id="ChangeReason" name="Reason" title="" required>
                                 <option selected="selected" value="">-- Select here --</option>
-                                <option Value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
+                                <option Value="TC_cancelbusinessSoldOrClosed_lgi">Business Sold or Closed</option>
                                 <option Value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
                                 <option Value="TC_changeOfBroker_lgi">Change of Broker</option>
-                                <option Value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
-                                <option Value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
+                                <option Value="TC_canceldissatisfiedWithClaims_lgi">Cancel -Dissatisfied with claims</option>
+                                <option Value="TC_Cancel -dissatisfiedWithSvc_lgi">Cancel -Dissatisfied with service</option>
                                 <option Value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account</option>
-                                <option Value="TC_nonpayment">Non payment</option>
-                                <option Value="TC_policyReplaced_lgi">Policy replaced</option>
-                                <option Value="TC_tooDear_lgi">Too dear</option>
+                                <option Value="TC_lapsenonpayment">Laspe - Non payment</option>
+                                <option Value="TC_Cancel - policyReplaced_lgi">Policy replaced</option>
+                                <option Value="TC_Declined - premiumtoohigh_lgi">Declined Quote – Premium too high</option>
+                                <option Value="TC_Declined – cover not required_lgi">Declined Quote – Cover Not required</option>
                             </select>
                         </td>
                         <td>

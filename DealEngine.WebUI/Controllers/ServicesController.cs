@@ -20,11 +20,7 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.IO;
-using DealEngine.Services.Impl;
+using DealEngine.Infrastructure.Ldap.Interfaces;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -58,9 +54,11 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
         IMapper _mapper;
+        Infrastructure.Ldap.Interfaces.ILdapService _ldapService;
 
 
         public ServicesController(
+            ILdapService ldapService,
             IAuthenticationService authenticationService,
             IMapper mapper,
             ILogger<ServicesController> logger,
@@ -93,6 +91,7 @@ namespace DealEngine.WebUI.Controllers
 
             : base(userService)
         {
+            _ldapService = ldapService;
             _serializerationService = serializerationService;
             _authenticationService = authenticationService;
             _mapper = mapper;
@@ -1943,13 +1942,20 @@ namespace DealEngine.WebUI.Controllers
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
 
+                if (model.SelectedBoatUse != Guid.Empty)
+                {
+                    var BoatUse = await _boatUseService.GetBoatUse(model.SelectedBoatUse);
+                    boat.BoatUses.Clear();
+                    boat.BoatUses.Add(BoatUse);                                        
+                }
+                boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
+
                 if (model.BoatWaterLocation != Guid.Empty)
                 {
                     var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
                     boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
                 }
                     
-
                 if (model.OtherMarinaName != null)
                 {
                     boat.OtherMarinaName = model.OtherMarinaName;
@@ -1958,24 +1964,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     boat.OtherMarina = false;
-
-                }
-                if (model.SelectedBoatUse != null)
-                {
-
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUses = new List<BoatUse>();
-
-                    //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    string[] BoatUse = model.SelectedBoatUse.Split(',');
-
-                    model.BoatUse = new List<BoatUse>();
-
-                    foreach (var useid in BoatUse)
-                    {
-                        boat.BoatUses.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
                 }
 
                 if (model.SelectedInterestedParty != null)
@@ -2089,7 +2077,11 @@ namespace DealEngine.WebUI.Controllers
                     if (boat.BoatLandLocation != null)
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
-                        model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                    {
+                        var unit = (MarinaUnit)boat.BoatWaterLocation.OrganisationalUnits.FirstOrDefault();
+                        model.BoatWaterLocation = unit.WaterLocation.Id;
+                    }
+
                     // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
                     if (boat.BoatTrailers.Any())
                         model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
@@ -2313,36 +2305,32 @@ namespace DealEngine.WebUI.Controllers
         #region BoatUse
 
         [HttpPost]
-        public async Task<IActionResult> AddBoatUse(BoatUseViewModel model)
+        public async Task<IActionResult> AddBoatUse(IFormCollection collection)
         {
             User user = null;
             BoatUse boatUse = null;
             try
             {
                 user = await CurrentUser();
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-                if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                if(Guid.TryParse(collection["AnswerSheetId"], out Guid InformationId))
                 {
-                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                    if (boatUse == null)
-                        boatUse = model.ToEntity(user);
-                }
-                else
-                {
-                    boatUse = model.ToEntity(user);
-                }
-                model.UpdateEntity(boatUse);
-
-                foreach (var boat in sheet.Boats)
-                {
-                    boat.BoatUses.Add(boatUse);
-                    await _boatRepository.UpdateAsync(boat);
+                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(InformationId);
+                    if (collection.ContainsKey("BoatUseId"))
+                    {
+                        if (Guid.TryParse(collection["BoatUseId"], out Guid BoatUseId))
+                        {
+                            if (BoatUseId != Guid.Empty)
+                            {
+                                boatUse = await _boatUseService.GetBoatUse(BoatUseId);
+                            }                            
+                        }
+                    }
+                    else
+                    {
+                        boatUse = new BoatUse(user, "");
+                        boatUse.PopulateEntity(collection);
+                        await _boatUseService.UpdateBoatUse(boatUse);
+                    }                    
                 }
 
                 return Json(boatUse);
@@ -3452,6 +3440,7 @@ namespace DealEngine.WebUI.Controllers
 
                         try
                         {
+                            _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
                             var programme = await _programmeService.GetCoastGuardProgramme();
                             var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                             var reference = await _referenceService.GetLatestReferenceId();
@@ -3494,9 +3483,6 @@ namespace DealEngine.WebUI.Controllers
                                 SingleUseToken token = await _authenticationService.GenerateSingleUseToken(email);
                                 string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
                                 await _emailService.SendPasswordResetEmail(email, token.Id, domain);
-
-                                //send out login email
-                                await _emailService.SendSystemEmailLogin(email);
                                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                                 if (emailTemplate != null)
                                 {
@@ -3613,18 +3599,21 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(collection["Id"], out Guid Id))
+                if (Guid.TryParse(collection["Id"], out Guid Id) && !string.IsNullOrWhiteSpace(collection["Date"]))
                 {
-                    DateTime dateTime = DateTime.Parse(collection["Date"]);
+
+                    DateTime.TryParse(collection["Date"], UserCulture, DateTimeStyles.None, out DateTime dateTime);
+                    //DateTime dateTime = DateTime.Parse(().ToString(CultureInfo.GetCultureInfo("en-NZ").DateTimeFormat.ShortDatePattern));
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
-                    if(dateTime < product.DefaultInceptionDate || dateTime > product.DefaultExpiryDate)
+                    if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
                     {
                         return Json(false);
                     }
+                    return Json(true);
                 }
 
-                return Json(true);
+                return Json(false);
             }
             catch (Exception ex)
             {

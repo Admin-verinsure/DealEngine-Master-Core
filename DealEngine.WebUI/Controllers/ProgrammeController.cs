@@ -596,15 +596,13 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
-            ProgrammeInfoViewModel model;
-            User user = null;
-
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
+            User user = await CurrentUser();
             try
             {
                 string Active = "Not Active";
-                user = await CurrentUser();
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(programmeId);
-                model = new ProgrammeInfoViewModel(null, clientProgramme.BaseProgramme, clientProgramme);
+                
                 model.BrokerContactUser = clientProgramme.BaseProgramme.BrokerContactUser;
                 model.EGlobalSubmissions = clientProgramme.ClientAgreementEGlobalSubmissions;
 
@@ -647,7 +645,8 @@ namespace DealEngine.WebUI.Controllers
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
+                model.EGlobalIsActiveOrNot = false;
+                return View(model);
             }
         }
 
@@ -1102,7 +1101,7 @@ namespace DealEngine.WebUI.Controllers
                 programme = await _programmeService.PostProgramme(user, BrokerUser, jsonProgramme, programme);
                 if (string.IsNullOrEmpty(programme.Claim))
                 {
-                    if (string.IsNullOrEmpty(currentClaim))
+                    if (!string.IsNullOrEmpty(currentClaim))
                     {
                         await _claimService.RemoveClaim(currentClaim);
                     }
@@ -1452,7 +1451,7 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> PostClientProgramme(IFormCollection model)
+        public async Task<IActionResult> PostPaymentOptionAPI(IFormCollection model)
         {
             User user = null;
 
@@ -1468,6 +1467,32 @@ namespace DealEngine.WebUI.Controllers
                     {
                         await _emailService.EmailHunterPremiumFunding(clientProgramme);
                     }
+                }
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostPaymentFrequencyAPI(IFormCollection model)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                if (Guid.TryParse(model["Id"], out Guid Id))
+                {
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
+                    clientProgramme.PaymentFrequency = model["PaymentFrequency"];
+                    await _programmeService.Update(clientProgramme);
+                    await _emailService.EmailPaymentFrequency(clientProgramme);
                 }
 
                 return Json(true);

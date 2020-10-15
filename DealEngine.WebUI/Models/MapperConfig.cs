@@ -149,70 +149,21 @@ namespace DealEngine.WebUI.Models
 
             CreateMap<AdditionalRoleInformation, AdditionalRoleInformationViewModel>();
             CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
-                .IncludeAllDerived();
-                
-
-                //.ForMember(dest => dest.HasInspectionReportOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasIssuedCertificatesOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasObservationServicesOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasRecommendedCladdingOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasStateSchoolOptions, map => map.Ignore());
-
-            //subsystem            
-            CreateMap<InformationTemplate, SubInformationTemplate>()
-                .ForMember(dest => dest.BaseInformationTemplate, map => map.Ignore())
-                .ForMember(dest => dest.Sections, map => map.Ignore())
-                .ForMember(dest => dest.Name, map => map.MapFrom(t => t.Name + " Sub"))
-                .ForMember(dest => dest.Id, map => map.Ignore());
-            CreateMap<ClientInformationSheet, SubClientInformationSheet>()
-                .ForMember(dest => dest.BaseClientInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.Id, map => map.Ignore())
-                .ForMember(dest => dest.SubClientInformationSheets, map => map.Ignore())
-                .ForMember(dest => dest.Answers, map => map.Ignore())
-                .ForMember(dest => dest.RoleData, map => map.Ignore())
-                .ForMember(dest => dest.Programme, map => map.Ignore())
-                .ForMember(dest => dest.ClaimNotifications, map => map.Ignore())
-                .ForMember(dest => dest.ReferenceId, map => map.Ignore())
-                .ForMember(dest => dest.PreviousInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.CreatedBy, map => map.Ignore())
-                .ForMember(dest => dest.SubmittedBy, map => map.Ignore())
-                .ForMember(dest => dest.RevenueData, map => map.Ignore())
-                .ForMember(dest => dest.NextInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.BusinessContracts, map => map.Ignore())
-                .ForMember(dest => dest.Organisation, map => map.Ignore());
-            CreateMap<ClientProgramme, SubClientProgramme>()
-                .ForMember(dest => dest.BaseClientProgramme, map => map.Ignore())
-                .ForMember(dest => dest.BrokerContactUser, map => map.Ignore())
-                .ForMember(dest => dest.EGlobalClientStatus, map => map.Ignore())
-                .ForMember(dest => dest.SubClientProgrammes, map => map.Ignore())
-                .ForMember(dest => dest.ChangeReason, map => map.Ignore())
-                .ForMember(dest => dest.Products, map => map.Ignore())
-                .ForMember(dest => dest.ClientProgrammeMembershipNumber, map => map.Ignore())
-                .ForMember(dest => dest.CreatedBy, map => map.Ignore())
-                .ForMember(dest => dest.Payment, map => map.Ignore())
-                .ForMember(dest => dest.InformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())
-                .ForMember(dest => dest.ClientAgreementEGlobalSubmissions, map => map.Ignore())
-                .ForMember(dest => dest.Agreements, map => map.Ignore())
-                .ForMember(dest => dest.Id, map => map.Ignore());
-            CreateMap<InformationSection, InformationSection>()                
-                .ForMember(dest => dest.Id, map => map.Ignore());
+                .IncludeAllDerived();         
 
             //clonesystem
-            //CreateMap<ClientInformationSheet, ClientInformationSheet>()
-            //    .ForMember(dest => dest.Id, map => map.Ignore());
-            //CreateMap<ClientProgramme, ClientProgramme>()
+            //CreateMap<SubClientInformationSheet, SubClientInformationSheet>()
+            //    .ForMember(dest => dest.Programme, map => map.Ignore())
+            //    .ForMember(dest => dest.BaseClientInformationSheet, map => map.Ignore())
+            //    .ForMember(dest => dest.ReferenceId, map => map.Ignore())
+            //    .ForMember(dest => dest.Owner, map => map.Ignore())
+            //    .ForMember(dest => dest.UnlockedBy, map => map.Ignore())
+            //    .ForMember(dest => dest.SubmittedBy, map => map.Ignore())
+            //    .ForMember(dest => dest.CreatedBy, map => map.Ignore())
             //    .ForMember(dest => dest.Id, map => map.Ignore());
         }
 
 
     }
     
-    public static class MapperExtensions
-    {
-        public static T ResolveJson<T>(this JObject jobj, string target)
-        {
-            return JsonConvert.DeserializeObject<T>(jobj.SelectToken(target).ToString());
-        }
-    }
 }

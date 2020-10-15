@@ -45,7 +45,6 @@
                             }
                             <div class="widget-body">
                                 <form class="is-valid" id="RoleDataViewModel" data-accordianId="Roles"></form>
-                                <form id="LocationViewModel"></form>
                                 @*<form action="#" class="" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8">*@
                                 <!-- SmartWizard html -->
                                 <div id="smartwizard" class="sw-main sw-theme-circles">
@@ -63,7 +62,7 @@
                                             }
                                         }
                                     </ul>
-                                    <div class="sw-container tab-content">
+                                    <div>
                                         <div id="tab_1" class="tab-pane step-content" style="display: block;">
                                             <h3>
                                                 <strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information
@@ -432,7 +431,7 @@
                                                                                     <label class="radio-inline" style="width:25%;"><input onclick="boutUseCategoryUpdated()" type="radio" id="LiveOnBoard" name="BoatUseCategory" value="LiveOnBoard" checked>Live on board</label>
                                                                                     <label class="radio-inline hidden" style="width:20%;" id="Race"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Race">Race</label>
                                                                                     <label class="radio-inline hidden" style="width:20%;" id="Both"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Both">Both</label>
-                                                                                    <label class="radio-inline hidden" style="width:24%;" id="Neither"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Neither">Neither</label>
+                                                                                    <label class="radio-inline hidden" style="width:24%;" id="Neither"><input onclick="boutUseCategoryUpdated()" type="radio" name="BoatUseCategory" value="Neither">Not Applicable</label>
                                                                                 </label>
                                                                             </section>
                                                                         </div>

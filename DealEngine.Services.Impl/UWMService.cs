@@ -213,6 +213,17 @@ namespace DealEngine.Services.Impl
                 new ApolloCLUWModule(),
                 new ApolloOTUWModule(),
                 new ApolloCQLUWModule(),
+                new AbbottPIUWModule(),
+                new AbbottPIFAPUWModule(),
+                new AbbottPLUWModule(),
+                new AbbottSLUWModule(),
+                new AbbottDOUWModule(),
+                new AbbottEDUWModule(),
+                new AbbottELUWModule(),
+                new AbbottCLUWModule(),
+                new AbbottOTUWModule(),
+                new AbbottLPDUWModule(),
+                new AbbottFIDUWModule(),
 
             };
             return modules;

@@ -65,6 +65,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate
             try
             {
                 await _session.DeleteAsync(entity);
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
@@ -72,7 +73,6 @@ namespace DealEngine.Infrastructure.FluentNHibernate
                 await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
-
             transaction.Dispose();
         }
 

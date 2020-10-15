@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {            
-            WorkingDirectory = "/tmp/";
-            //WorkingDirectory = "C:\\Data\\Import\\";
+            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "C:\\Data\\Import\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -849,6 +849,107 @@ namespace DealEngine.Services.Impl
                     {
                         Console.WriteLine(ex.Message);
                     }
+                }
+            }
+        }
+        public async Task ImportAbbottImportOwners(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+
+            bool readFirstLine = false;
+            string line;
+            Guid.TryParse("44d385ee-1e64-403e-8470-a800d940e2f3", out Guid ProgrammeId);
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "AbbottMember.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        string type = "";
+                        string Name = "";
+                        User user = new User(currentUser, Guid.NewGuid())
+                        {
+                            FirstName = parts[2],
+                            LastName = parts[3],
+                            FullName = parts[2] + " " + parts[3],
+                            Email = parts[4],
+                            UserName = parts[6]
+                        };
+                        if (parts[0] == "t" && !string.IsNullOrEmpty(parts[1]))
+                        {
+                            type = "Corporation – Limited liability";                            
+                            Name = parts[1];
+                        }
+                        else
+                        {
+                            type = "Person - Individual";
+                            Name = user.FullName;
+                        }
+
+                        OrganisationType ownerType = new OrganisationType(type);
+                        InsuranceAttribute ownerAttribute = new InsuranceAttribute(currentUser, type);
+                        OrganisationalUnit ownerUnit = new OrganisationalUnit(currentUser, type, "Head Office", null);
+                        Organisation Owner = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = ownerType,
+                            Email = user.Email,
+                            Name = Name
+                        };
+
+                        Owner.OrganisationalUnits.Add(ownerUnit);
+                        Owner.InsuranceAttributes.Add(ownerAttribute);
+                        user.Organisations.Add(Owner);
+
+                        OrganisationType advisorType = new OrganisationType("Person - Individual");
+                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Advisor");
+                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
+                        AdvisorUnit AdvisorUnit = new AdvisorUnit(currentUser, "Advisor", "Person - Individual", null)
+                        {
+                            IsPrincipalAdvisor = true
+                        };
+                        Organisation Advisor = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = advisorType,
+                            Email = user.Email,
+                            Name = user.FullName
+                        };
+
+                        Advisor.InsuranceAttributes.Add(advisorAttribute);
+                        Advisor.OrganisationalUnits.Add(defaultUnit);
+                        Advisor.OrganisationalUnits.Add(AdvisorUnit);
+                        user.Organisations.Add(Advisor);
+                        user.SetPrimaryOrganisation(Owner);
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(ProgrammeId);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, Owner);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[5];
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        sheet.Organisation.Add(Advisor);
+                        await _programmeService.Update(clientProgramme);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
                 }
             }
         }
@@ -2105,6 +2206,51 @@ namespace DealEngine.Services.Impl
                             preRenewOrRefData.EndorsementTitle = parts[4];
                         if (!string.IsNullOrEmpty(parts[5]))
                             preRenewOrRefData.EndorsementText = parts[5];
+
+                        await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportAbbottServicePreRenewData(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            PreRenewOrRefData preRenewOrRefData;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "AbbottPolicyData2019.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            preRenewOrRefData.CLRetro = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            preRenewOrRefData.OTRetro = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            preRenewOrRefData.EndorsementProduct = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            preRenewOrRefData.EndorsementTitle = parts[5];
+                        if (!string.IsNullOrEmpty(parts[6]))
+                            preRenewOrRefData.EndorsementText = parts[6];
 
                         await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
 

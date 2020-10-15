@@ -356,7 +356,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.InsuredName = informationSheet.Owner.Name;
 
-            string auditLogDetail = "Apollo PI UW created/modified";
+            string auditLogDetail = "Apollo PIFAP UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 

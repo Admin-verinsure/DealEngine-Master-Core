@@ -20,6 +20,7 @@
 
     $('#AddBoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
+
     });
     $('#BoatEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
@@ -72,10 +73,11 @@
         editButton.innerHTML = editbuttonstring;
         var Name = row.insertCell(1);
         Name.innerHTML = data.name;
-        var type = row.insertCell(2);
-        type.innerHTML = type;        
+        var OrganisationType = row.insertCell(2);
+        OrganisationType.innerHTML = type;        
         var deleteButton = row.insertCell(3);
         deleteButton.innerHTML = deletebuttonstring;
+        debugger;
     }
 
     function PopulateMilestoneView(Method, OutPut) {
@@ -156,10 +158,10 @@
                                 //hardcord date string
                                 var date = Value.substring(0, 10);
                                 if (date == "0001-01-01") {
-                                  element.value = null;
+                                    Element.value = null;
                                 } else {
-                                    element.value = date;
-                                    Element.type = "text";
+                                    Element.value = date;
+                                    //Element.type = "text";
                                 }
                             }
                             else {
@@ -190,7 +192,7 @@
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
-                    if (ProgrammeName.value == "Apollo Programme") {
+                    if (ProgrammeName.value == "Apollo Programme" || ProgrammeName.value == "Abbott Financial Advisor Liability Programme") {
                         ApolloOwnerOnLoad();
                     }        
                     TradingNameOwnerOnLoad();

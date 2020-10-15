@@ -15,7 +15,7 @@ namespace DealEngine.Domain.Entities
         public virtual ClientProgramme Programme { get; set; }
 		[Obsolete ("No longer required with the new Programme implementation")]        
         public virtual ClientAgreement ClientAgreement { get; set; }       
-        public virtual IList<ClientInformationAnswer> Answers { get; protected set; }
+        public virtual IList<ClientInformationAnswer> Answers { get; set; }
 		public virtual IList<Vehicle> Vehicles { get; protected set; }
         public virtual IList<Building> Buildings { get; protected set; }
         public virtual IList<BusinessInterruption> BusinessInterruptions { get; protected set; }
