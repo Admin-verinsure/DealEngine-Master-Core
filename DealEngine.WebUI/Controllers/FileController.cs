@@ -111,14 +111,11 @@ namespace DealEngine.WebUI.Controllers
         {
             ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
             ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
-
             SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
-
-
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
-            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            var htmlToPdfConv = new HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense

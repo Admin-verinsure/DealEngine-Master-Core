@@ -2587,7 +2587,7 @@ function UpdateChosen() {
         });
     };
 
-    function EditBoat(classId, boatId) {
+    function EditBoat(classId, boatId) {        
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
         var postData = {
@@ -2648,9 +2648,14 @@ function UpdateChosen() {
                 $('#othermarinSection').addClass("hidden");
             }
             else {
-                $('#BoatWaterLocation.' + classId).val("add");
-                $('#othermarinSection').removeClass("hidden");
-                $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
+                if (data.otherMarinaName != "") {
+                    $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
+                    $('#BoatWaterLocation.b').val("add");
+                    $('#othermarinSection').removeClass("hidden");
+                }
+                else {
+                    $('#othermarinSection').addClass("hidden");
+                }
             }
             vesselType1Selected();
             $('#BoatType2.b').val(data.boatType2);
@@ -2664,6 +2669,7 @@ function UpdateChosen() {
     };
 
     function updateEditBoat(data) {
+        debugger;
         if (data.hullConfiguration == "Other") {
             $('#HullConfigurationOtherSection').removeClass("hidden");
         }
