@@ -4412,6 +4412,7 @@ function UpdateChosen() {
     }
 
     function AddvesselType2Selected() {
+        debugger;
         var boatType2Selected = AddboatType2.options[AddboatType2.selectedIndex].value;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         $('#Addexcess').val('');
@@ -4451,6 +4452,9 @@ function UpdateChosen() {
             $('#AddBerthedMooringType').removeClass("hidden");
             $('#AddPileMooringType').addClass("hidden");
             $('#AddSwingMooringType').addClass("hidden");
+            if ($('#AddBoatWaterLocation').val() == "add") {
+                $('#AddothermarinSection').removeClass("hidden");
+            }
             AddhasTrailer();
 
         }
@@ -4465,6 +4469,9 @@ function UpdateChosen() {
             $('#AddBerthedMooringType').addClass("hidden");
             $('#AddPileMooringType').removeClass("hidden");
             $('#AddSwingMooringType').removeClass("hidden");
+            if ($('#AddBoatWaterLocation').val() == "add") {
+                $('#AddothermarinSection').removeClass("hidden");
+            }
             AddhasTrailer();
         }
         else {
@@ -5101,6 +5108,7 @@ function UpdateChosen() {
     }
 
     function vesselType2Selected() {
+        debugger;
         var boatType2Selected = boatType2.options[boatType2.selectedIndex].value;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         $('#excess').val('');
@@ -5136,6 +5144,9 @@ function UpdateChosen() {
             $('#PileMooringType').addClass("hidden");
             $('#SwingMooringType').addClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
+            if ($('#BoatWaterLocation').val() == "add") {
+                $('#othermarinSection').removeClass("hidden");
+            }
             hasTrailer();
         }
         else if (boatType2Selected == "Moored") {
@@ -5149,6 +5160,9 @@ function UpdateChosen() {
             $('#PileMooringType').removeClass("hidden");
             $('#SwingMooringType').removeClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
+            if ($('#BoatWaterLocation').val() == "add") {
+                $('#othermarinSection').removeClass("hidden");
+            }
             hasTrailer();
         }
         else {
