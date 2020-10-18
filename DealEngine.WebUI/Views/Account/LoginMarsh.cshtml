@@ -83,6 +83,12 @@
     <script src="~/Scripts/externalparty/rsa.js"></script>
 
     <script type="text/javascript">
+
+        $(document).ready(function () {
+            var token = encode_deviceprint();
+            $("#deviceprint").val(token);
+        });
+
         $(function () {
             // Validation
             $("#login-form").validate({
@@ -119,7 +125,6 @@
         // display wait modal when we login
         $("#submitButton").click(function () {
             var $valid = $("#login-form").valid();
-            debugger;
             if ($valid) {
                 $('#loginModal').modal('show');
             }
