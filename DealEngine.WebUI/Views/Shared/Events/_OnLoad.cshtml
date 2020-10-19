@@ -201,6 +201,10 @@
                     }        
                     TradingNameOwnerOnLoad();
                 }
+                if (OutPut["User"] == null) {
+                    //user is null so we override with organisation
+                    document.getElementById("User.Email").value = OutPut["Organisation"]["Email"];
+                }
             }
         } catch (ex) { debugger; }
     }
