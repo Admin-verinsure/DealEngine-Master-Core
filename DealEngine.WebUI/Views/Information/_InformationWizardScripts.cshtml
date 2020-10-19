@@ -2648,7 +2648,7 @@ function UpdateChosen() {
                 $('#othermarinSection').addClass("hidden");
             }
             else {
-                if (data.otherMarinaName != "") {
+                if (data.otherMarinaName != "" && data.otherMarinaName != null) {
                     $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
                     $('#BoatWaterLocation.b').val("add");
                     $('#othermarinSection').removeClass("hidden");
