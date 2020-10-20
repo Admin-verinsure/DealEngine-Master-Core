@@ -16,8 +16,13 @@ namespace DealEngine.Services.Impl
     public class HttpClientService : IHttpClientService
     {
         IMapperSession<LogInfo> _logInfoMapperSession;
-        public HttpClientService(IMapperSession<LogInfo> logInfoMapperSession)
+        IAppSettingService _appSettingService;
+        public HttpClientService(
+            IMapperSession<LogInfo> logInfoMapperSession, 
+            IAppSettingService appSettingService
+            )
         {
+            _appSettingService = appSettingService;
             _logInfoMapperSession = logInfoMapperSession;
         }
 
@@ -33,7 +38,7 @@ namespace DealEngine.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("MarshNZSOAPUser", "MarNZ0sa$0Cap16us"),
+                Credentials = new NetworkCredential("MarshNZSOAPUser", _appSettingService.MarshRSACredentials),
             };
 
             _httpRequestMessage = new HttpRequestMessage
@@ -79,7 +84,7 @@ namespace DealEngine.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("MarshNZSOAPUser", "MarNZ0sa$0Cap16us"),
+                Credentials = new NetworkCredential("MarshNZSOAPUser", _appSettingService.MarshRSACredentials),
             };
 
             _httpRequestMessage = new HttpRequestMessage
@@ -125,7 +130,7 @@ namespace DealEngine.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("MarshNZSOAPUser", "MarNZ0sa$0Cap16us"),
+                Credentials = new NetworkCredential("MarshNZSOAPUser", _appSettingService.MarshRSACredentials),
             };
 
             _httpRequestMessage = new HttpRequestMessage
@@ -172,7 +177,7 @@ namespace DealEngine.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("MarshNZSOAPUser", "MarNZ0sa$0Cap16us"),
+                Credentials = new NetworkCredential("MarshNZSOAPUser", _appSettingService.MarshRSACredentials),
             };
 
             _httpRequestMessage = new HttpRequestMessage

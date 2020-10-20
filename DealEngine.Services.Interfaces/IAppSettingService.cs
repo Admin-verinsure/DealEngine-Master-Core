@@ -17,6 +17,7 @@ namespace DealEngine.Services.Interfaces
         string GetSuperUser { get; }
         string NRecoUserName { get; }
         string NRecoLicense { get; }
+        string MarshRSACredentials { get; }
         string NRecoPdfToolPath { get; }
     }
 }
