@@ -2743,7 +2743,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
-                                foreach (SystemDocument template in agreeTemplateList)
+                                foreach (SystemDocument template in agreeDocList)//agreeTemplateList)
                                 {
                                     if (template.ContentType == MediaTypeNames.Application.Pdf)
                                     {
@@ -2753,7 +2753,7 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                     else
                                     {
-                                        //render docs except invoice
+                                        //if not Payment Confirmation or Advisory
                                         if (template.DocumentType != 4 && template.DocumentType != 6)
                                         {
                                             if (template.Name == "TripleA Individual TL Certificate")
@@ -2768,6 +2768,7 @@ namespace DealEngine.WebUI.Controllers
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
                                             }
+                                            // else if TripleA Base Premium Advice
                                             else if (template.DocumentType == 7)
                                             {
                                                 SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
@@ -2777,6 +2778,7 @@ namespace DealEngine.WebUI.Controllers
                                                 documentspremiumadvice.Add(renderedDoc);
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
+                                            // else if Apollo Invoice
                                             else if (template.DocumentType == 8)
                                             {
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
@@ -2796,6 +2798,7 @@ namespace DealEngine.WebUI.Controllers
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
                                         }
+                                        // else if TripleA Base Premium Advice
                                         else if (template.DocumentType == 7)
                                         {
                                             SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);

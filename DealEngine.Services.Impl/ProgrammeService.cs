@@ -10,6 +10,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using FluentNHibernate.Conventions;
 using NHibernate.Util;
+using FluentNHibernate.Utils;
+using ServiceStack;
 
 namespace DealEngine.Services.Impl
 {
@@ -426,36 +428,100 @@ namespace DealEngine.Services.Impl
             newClientInformationSheet.DateCreated = DateTime.Now;
             newClientInformationSheet.UnlockDate = DateTime.MinValue;
             newClientInformationSheet.PreviousInformationSheet = oldClientProgramme.InformationSheet;
-
-            if (oldClientProgramme.InformationSheet.Boats != null)
-            {
-                newClientInformationSheet.Boats.Clear();
-                foreach (Boat boat in oldClientProgramme.InformationSheet.Boats)
-                {
-                    Boat newBoat = oldClientProgramme.InformationSheet.Boats.FirstOrDefault().CloneForNewSheet(oldClientProgramme.InformationSheet);
-                    newBoat.Id = Guid.NewGuid();
-                    newClientInformationSheet.Boats.Add(newBoat);
-                }
-            }
-
-            if (oldClientProgramme.InformationSheet.Vehicles != null)
-            {
-                newClientInformationSheet.Vehicles.Clear();
-                foreach (Vehicle vehicle in oldClientProgramme.InformationSheet.Vehicles)
-                {
-                    Vehicle newVehicle = oldClientProgramme.InformationSheet.Vehicles.FirstOrDefault().CloneForNewSheet(oldClientProgramme.InformationSheet);
-                    newVehicle.Id = Guid.NewGuid();
-                    newClientInformationSheet.Vehicles.Add(newVehicle);
-                }
-            }
-
+            
             ClientProgramme newClientProgramme = new ClientProgramme(createdBy, oldClientProgramme.Owner, oldClientProgramme.BaseProgramme);
             newClientProgramme.BrokerContactUser = oldClientProgramme.BaseProgramme.BrokerContactUser;
             newClientProgramme.ChangeReason = changeReason;
             newClientProgramme.InformationSheet = newClientInformationSheet;
             newClientProgramme.InformationSheet.Programme = newClientProgramme;
-            await Update(newClientProgramme);
 
+            oldClientProgramme.InformationSheet.NextInformationSheet = newClientInformationSheet;
+            if (oldClientProgramme.InformationSheet.Vehicles != null)
+            {
+                newClientInformationSheet.Vehicles.Clear();
+                foreach (Vehicle vehicle in oldClientProgramme.InformationSheet.Vehicles)
+                {
+                    Vehicle newVehicle = vehicle.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Vehicles.Add(newVehicle);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.Boats != null)
+            {
+                newClientInformationSheet.Boats.Clear();
+                foreach (Boat boat in oldClientProgramme.InformationSheet.Boats)
+                {
+                    Boat newBoat = boat.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Boats.Add(newBoat);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.RevenueData != null)
+            {
+                newClientInformationSheet.RevenueData = null;
+                RevenueData newRevenueData = oldClientProgramme.InformationSheet.RevenueData.CloneForNewSheet(newClientInformationSheet);
+                newClientInformationSheet.RevenueData = newRevenueData;
+            }
+            if (oldClientProgramme.InformationSheet.RoleData != null)
+            {
+                newClientInformationSheet.RoleData = null;
+                RoleData newRoleData = oldClientProgramme.InformationSheet.RoleData.CloneForNewSheet(newClientInformationSheet);
+                newClientInformationSheet.RoleData = newRoleData;
+            }
+            if (oldClientProgramme.InformationSheet.Answers != null)
+            {
+                newClientInformationSheet.Answers.Clear();
+                foreach (ClientInformationAnswer answer in oldClientProgramme.InformationSheet.Answers)
+                {
+                    ClientInformationAnswer newClientInformationAnswer = answer.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Answers.Add(newClientInformationAnswer);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.BusinessInterruptions != null)
+            {
+                newClientInformationSheet.BusinessInterruptions.Clear();
+                foreach (BusinessInterruption businessInterruption in oldClientProgramme.InformationSheet.BusinessInterruptions)
+                {
+                    BusinessInterruption newBusinessInterruption = businessInterruption.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.BusinessInterruptions.Add(newBusinessInterruption);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.MaterialDamages != null)
+            {
+                newClientInformationSheet.MaterialDamages.Clear();
+                foreach (MaterialDamage materialDamage in oldClientProgramme.InformationSheet.MaterialDamages)
+                {
+                    MaterialDamage newMaterialDamage = materialDamage.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.MaterialDamages.Add(newMaterialDamage);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.BusinessContracts != null)
+            {
+                newClientInformationSheet.BusinessContracts.Clear();
+                foreach (BusinessContract businessContract in oldClientProgramme.InformationSheet.BusinessContracts)
+                {
+                    BusinessContract newBusinessContract = businessContract.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.BusinessContracts.Add(newBusinessContract);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.ResearchHouses != null)
+            {
+                newClientInformationSheet.ResearchHouses.Clear();
+                foreach (ResearchHouse researchHouse in oldClientProgramme.InformationSheet.ResearchHouses)
+                {
+                    ResearchHouse newResearchHouse = researchHouse.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.ResearchHouses.Add(newResearchHouse);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.SubClientInformationSheets != null)
+            {
+                newClientInformationSheet.SubClientInformationSheets.Clear();
+                foreach (SubClientInformationSheet subClientInformationSheet in oldClientProgramme.InformationSheet.SubClientInformationSheets)
+                {
+                    SubClientInformationSheet newSubClientInformationSheet = subClientInformationSheet.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
+                }
+            }
+
+            await Update(newClientProgramme);
             return newClientProgramme;
         }
 

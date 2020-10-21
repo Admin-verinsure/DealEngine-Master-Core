@@ -1,4 +1,5 @@
 ﻿using DealEngine.Domain.Entities.Abstracts;
+using System;
 
 namespace DealEngine.Domain.Entities
 {
@@ -13,24 +14,9 @@ namespace DealEngine.Domain.Entities
             AuditLogClientAgreement = auditLogClientAgreement;
             AuditLogDetail = auditLogDetail;
         }
-
-        public virtual ClientInformationSheet AuditLogClientInformationSheet
-        {
-            get;
-            set;
-        }
-
-        public virtual ClientAgreement AuditLogClientAgreement
-        {
-            get;
-            set;
-        }
-
-        public virtual string AuditLogDetail
-        {
-            get;
-            set;
-        }
+        public virtual ClientInformationSheet AuditLogClientInformationSheet { get; set; }
+        public virtual ClientAgreement AuditLogClientAgreement { get; set; }
+        public virtual string AuditLogDetail { get; set; }
     }
 }
 

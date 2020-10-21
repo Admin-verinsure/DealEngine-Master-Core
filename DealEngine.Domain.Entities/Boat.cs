@@ -18,255 +18,48 @@ namespace DealEngine.Domain.Entities
             BoatUses = new List<BoatUse>();
         }
 
-        public virtual Boat OriginalBoat
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatName
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatType1
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatType2
-        {
-            get;
-            set;
-        }
-
-        public virtual string HullConstruction
-        {
-            get;
-            set;
-        }
-
-        public virtual string HullConfiguration
-        {
-            get;
-            set;
-        }
-
-        public virtual Organisation BoatWaterLocation
-        {
-            get;
-            set;
-        }
-
-        public virtual Building BoatLandLocation
-        {
-            get;
-            set;
-        }
-
-        public virtual int YearOfManufacture
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatMake
-        {
-            get;
-            set;
-        }
-
-
-        public virtual string BoatModel
-        {
-            get;
-            set;
-        }
-
-        public virtual string OtherHullConstruction
-        {
-            get;
-            set;
-        }
-
-        public virtual string OtherHullConfiguration
-        {
-            get;
-            set;
-        }
-
-        public virtual int MaxSumInsured
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal Sum
-        {
-            get;
-            set;
-        }
-        public virtual string BuiltProfessionally
-        {
-            get;
-            set;
-        }
-
-        public virtual string MotorType
-        {
-            get;
-            set;
-        }
-
-        public virtual string ModifiedMotor
-        {
-            get;
-            set;
-        }
-
-        public virtual string MaxRatedSpeed
-        {
-            get;
-            set;
-        }
-
-        public virtual string RiggingType
-        {
-            get;
-            set;
-        }
-
-
-        public virtual string MastType
-        {
-            get;
-            set;
-        }
-
-        public virtual string AucklandRegistration
-        {
-            get;
-            set;
-        }
-
-        public virtual string NationalRegistration
-        {
-            get;
-            set;
-        }
-
-
-        public virtual IList<Organisation> InterestedParties
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatNotes
-        {
-            get;
-            set;
-        }
-        public virtual string WaterLocationMooringType
-        {
-            get;
-            set;
-        }
-
-        public virtual bool Removed
-        {
-            get;
-            set;
-        }
-
-        public virtual DateTime BoatEffectiveDate
-        {
-            get;
-            set;
-        }
-        public virtual DateTime BoatIPEffectiveDate
-        {
-            get;
-            set;
-        }
-        public virtual DateTime BoatCeaseDate
-        {
-            get;
-            set;
-        }
-
-        public virtual int BoatCeaseReason
-        {
-            get;
-            set;
-        }
-
-        public virtual DateTime BoatInceptionDate
-        {
-            get;
-            set;
-        }
-
-        public virtual DateTime BoatExpireDate
-        {
-            get;
-            set;
-        }
-
-        public virtual string BoatIsTrailered
-        {
-            get;
-            set;
-        }
-
-        public virtual IList<Vehicle> BoatTrailers
-        {
-            get;
-            set;
-        }
-
-        public virtual Organisation BoatOperator
-        {
-            get;
-            set;
-        }
-
-        public virtual IList<BoatUse> BoatUses
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal BoatQuickQuotePremium
-        {
-            get;
-            set;
-        }
-
-        public virtual int BoatQuoteExcessOption
-        {
-            get;
-            set;
-        }
-        public virtual string VesselArea
-        {
-            get;
-            set;
-        }
-
-        public virtual string OtherMarinaName
-        {
-            get;
-            set;
-        }
-
-        public virtual Boolean OtherMarina
-        {
-            get;
-            set;
-        }
+        public virtual Boat OriginalBoat { get; set; }
+        public virtual string BoatName { get; set; }
+        public virtual string BoatType1 { get; set; }
+        public virtual string BoatType2 { get; set; }
+        public virtual string HullConstruction { get; set; }
+        public virtual string HullConfiguration { get;set; }
+        public virtual Organisation BoatWaterLocation { get; set; }
+        public virtual Building BoatLandLocation { get; set; }
+        public virtual int YearOfManufacture { get; set; }
+        public virtual string BoatMake { get; set; }
+        public virtual string BoatModel { get; set; }
+        public virtual string OtherHullConstruction { get; set; }
+        public virtual string OtherHullConfiguration { get; set; }
+        public virtual int MaxSumInsured { get; set; }
+        public virtual decimal Sum { get; set; }
+        public virtual string BuiltProfessionally { get; set; }
+        public virtual string MotorType { get; set; }
+        public virtual string ModifiedMotor { get; set; }
+        public virtual string MaxRatedSpeed { get; set; }
+        public virtual string RiggingType { get; set; }
+        public virtual string MastType { get; set; }
+        public virtual string AucklandRegistration { get; set; }
+        public virtual string NationalRegistration { get; set; }
+        public virtual IList<Organisation> InterestedParties { get; set; }
+        public virtual string BoatNotes { get; set; }
+        public virtual string WaterLocationMooringType { get; set; }
+        public virtual bool Removed { get; set;}
+        public virtual DateTime BoatEffectiveDate{ get; set;}
+        public virtual DateTime BoatIPEffectiveDate { get;set; }
+        public virtual DateTime BoatCeaseDate{ get; set; }
+        public virtual int BoatCeaseReason { get; set; }
+        public virtual DateTime BoatInceptionDate { get; set; }
+        public virtual DateTime BoatExpireDate { get; set; }
+        public virtual string BoatIsTrailered { get; set; }
+        public virtual IList<Vehicle> BoatTrailers { get; set;}
+        public virtual Organisation BoatOperator { get; set; }
+        public virtual IList<BoatUse> BoatUses { get; set; }
+        public virtual decimal BoatQuickQuotePremium { get; set; }
+        public virtual int BoatQuoteExcessOption { get; set; }
+        public virtual string VesselArea { get; set; }
+        public virtual string OtherMarinaName { get; set; }
+        public virtual Boolean OtherMarina { get; set; }
 
         // public virtual string SelectedBoatUse { get; set; }
         // public virtual string[] Boatselected { get; set; }
@@ -274,6 +67,7 @@ namespace DealEngine.Domain.Entities
         public virtual Boat CloneForNewSheet(ClientInformationSheet newSheet)
         {
             Boat newBoat = new Boat(newSheet.CreatedBy);
+            //newBoat.Id = Guid.NewGuid();
             newBoat.OriginalBoat = this;
             newBoat.BoatName = BoatName;
             newBoat.BoatType1 = BoatType1;
@@ -294,8 +88,8 @@ namespace DealEngine.Domain.Entities
             newBoat.MastType = MastType;
             newBoat.AucklandRegistration = AucklandRegistration;
             newBoat.NationalRegistration = NationalRegistration;
-            newBoat.InterestedParties = InterestedParties;
-            newBoat.BoatUses = BoatUses;
+            newBoat.InterestedParties = new List<Organisation>(InterestedParties);
+            newBoat.BoatUses = new List<BoatUse>(BoatUses);
             newBoat.BoatNotes = BoatNotes;           
             newBoat.BoatWaterLocation = BoatWaterLocation;
             newBoat.BoatLandLocation = BoatLandLocation;
@@ -307,26 +101,26 @@ namespace DealEngine.Domain.Entities
             newBoat.OtherMarina = OtherMarina;
             newBoat.VesselArea = VesselArea;
             newBoat.WaterLocationMooringType = WaterLocationMooringType;
-            newBoat.BoatTrailers = BoatTrailers;
-            if (BoatEffectiveDate > DateTime.MinValue)
-                newBoat.BoatEffectiveDate = BoatEffectiveDate;
-            if (BoatCeaseDate > DateTime.MinValue)
-                newBoat.BoatCeaseDate = BoatCeaseDate;
+            // Should add your Vehicles to your newSheet before calling this
+            newBoat.BoatTrailers = new List<Vehicle>(newSheet.Vehicles);//.ToList(); 
             newBoat.BoatCeaseReason = BoatCeaseReason;
+            if (BoatEffectiveDate > DateTime.MinValue)
+            {
+                newBoat.BoatEffectiveDate = BoatEffectiveDate;
+            }
+            if (BoatCeaseDate > DateTime.MinValue)
+            {
+                newBoat.BoatCeaseDate = BoatCeaseDate;
+            }
             if (BoatInceptionDate > DateTime.MinValue)
+            {
                 newBoat.BoatInceptionDate = BoatInceptionDate;
+            }
             if (BoatExpireDate > DateTime.MinValue)
+            {
                 newBoat.BoatExpireDate = BoatExpireDate;
+            }
             return newBoat;
-
-            //Old logic
-            //newBoat.BoatTrailers = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
-            //newBoat.InterestedParties = new List<Organisation>(InterestedParties);
-            //newBoat.BoatUses = new List<BoatUse>();
-            //newBoat.BoatUses.Add(BoatUses.FirstOrDefault());
-            //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
-            //newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
-            //newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == BoatLandLocation.Id);          
         }
     }
 }

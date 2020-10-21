@@ -460,8 +460,6 @@ namespace DealEngine.WebUI.Controllers
                 // PDF
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
-
-
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
 
