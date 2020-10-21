@@ -1714,6 +1714,10 @@ namespace DealEngine.WebUI.Controllers
                 if (clientProgramme.InformationSheet.IsChange)
                 {
                     SubClientProgrammes = clientProgramme.InformationSheet.PreviousInformationSheet.Programme.SubClientProgrammes;
+                    if (!SubClientProgrammes.Any())
+                    {
+                        SubClientProgrammes = clientProgramme.SubClientProgrammes;
+                    }
                 }
                 else
                 {
