@@ -2743,7 +2743,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
-                                foreach (SystemDocument template in agreeDocList)//agreeTemplateList)
+                                foreach (SystemDocument template in agreeTemplateList)//)agreeDocList
                                 {
                                     if (template.ContentType == MediaTypeNames.Application.Pdf)
                                     {
