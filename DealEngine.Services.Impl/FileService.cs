@@ -1381,7 +1381,10 @@ namespace DealEngine.Services.Impl
             {
                 html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
             }
-
+            if (html.Contains("\r\n"))
+            {
+                html = html.Replace("\r\n", string.Empty);
+            }
             foreach (string ele in badHtml)
             {
                 int x = CountStringOccurrences(html, ele);
