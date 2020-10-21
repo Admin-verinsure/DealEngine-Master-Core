@@ -2743,7 +2743,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
-                                foreach (SystemDocument template in agreeDocList)//agreeTemplateList)
+                                foreach (SystemDocument template in agreeTemplateList)
                                 {
                                     if (template.ContentType == MediaTypeNames.Application.Pdf)
                                     {
@@ -2824,8 +2824,6 @@ namespace DealEngine.WebUI.Controllers
                                             documents.Add(renderedDoc);
                                             await _fileService.UploadFile(renderedDoc);
                                         }
-
-
                                     }
                                     //render all subsystem
                                     if (template.DocumentType == 6)
@@ -2856,12 +2854,9 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
-
                                 if (programme.BaseProgramme.ProgEnableEmail)
                                 {
                                     //send out policy document email
-
-
                                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                     if (emailTemplate != null)
                                     {

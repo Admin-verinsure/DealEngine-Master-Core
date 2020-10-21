@@ -922,57 +922,25 @@ namespace DealEngine.Services.Impl
         public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
 			if (document.ContentType == MediaTypeNames.Text.Html) {
-				// Testing HtmlToOpenXml
-				string html = _fileService.FromBytes (document.Contents);
-				using (MemoryStream virtualFile = new MemoryStream ()) {
-					using (WordprocessingDocument wordDocument = WordprocessingDocument.Create (virtualFile, WordprocessingDocumentType.Document)) {
-						// Add a main document part. 
-						MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
-						new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
 
-                        //================
-                        //document override
-                        string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
-                        string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+                document = await _fileService.FormatCKHTMLforDocx(document.Id);
 
-                        // Create document with a "main part" to it. No data has been added yet.
-                        if (html.Contains(showBorder))
-                        {
-                            html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
-                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
-                        }
-                        if (html.Contains(noBorder))
-                        {
-                            html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
-                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
-                        }
-                        string pathurl = "https://" + _appSettingService.domainQueryString + "/Image";
-                        string oldpath = "<img src=\"../../../images";
-                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
-                        if (html.Contains(oldpath))
-                        {
-                            html = html.Replace(oldpath, newpath);
-                        }
-
-                        HtmlConverter converter = new HtmlConverter (mainPart);
+                string html = _fileService.FromBytes(document.Contents);
+                using (MemoryStream virtualFile = new MemoryStream())
+                {
+                    using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                    {
+                        MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                        new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                        HtmlConverter converter = new HtmlConverter(mainPart);
                         converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-
-                        try
-                        {
-                            converter.ParseHtml(html);
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationLoggingService.LogInformation(null,ex,null,null); //(ex, html);
-                        }
-					}
-					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
+                        converter.ParseHtml(html);
+                    }
+                    return new Attachment(new MemoryStream (virtualFile.ToArray()), document.Name + ".docx");
 				}
 			}
             else if (document.ContentType == MediaTypeNames.Application.Pdf)
             {
-
-
                 var path = document.Path;
 
                 try
@@ -995,7 +963,7 @@ namespace DealEngine.Services.Impl
             }
 		}
 
-		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
+		public async Task<List<Attachment>> ToAttachments(IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
