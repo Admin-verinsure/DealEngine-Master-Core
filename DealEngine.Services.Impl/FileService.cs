@@ -224,7 +224,7 @@ namespace DealEngine.Services.Impl
                         }
 
                         //Endorsements
-                        if (agreementlist.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).Count() > 0)
+                        if (agreementlist.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && !ce.Removed).Count() > 0)
                         {
                             DataTable dt9 = new DataTable();
                             dt9.Columns.Add("Endorsement Name");
@@ -233,7 +233,7 @@ namespace DealEngine.Services.Impl
 
                             foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreementlist.ClientAgreementEndorsements)
                             {
-                                if (ClientAgreementEndorsement.DateDeleted == null)
+                                if (ClientAgreementEndorsement.DateDeleted == null && !ClientAgreementEndorsement.Removed)
                                 {
                                     DataRow dr9 = dt9.NewRow();
 
@@ -1254,7 +1254,7 @@ namespace DealEngine.Services.Impl
             }
 
             //Endorsements
-            if (agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).Count() > 0)
+            if (agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && !ce.Removed).Count() > 0)
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Endorsement Name");
@@ -1263,7 +1263,7 @@ namespace DealEngine.Services.Impl
 
                 foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements)
                 {
-                    if (ClientAgreementEndorsement.DateDeleted == null)
+                    if (ClientAgreementEndorsement.DateDeleted == null && !ClientAgreementEndorsement.Removed)
                     {
                         DataRow dr = dt.NewRow();
 

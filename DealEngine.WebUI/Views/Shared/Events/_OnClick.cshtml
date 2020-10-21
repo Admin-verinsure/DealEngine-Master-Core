@@ -183,7 +183,8 @@
             $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
                 type: "POST",
-                data: $("#tab_1 :input").serialize({ json: true })
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
             })
                 .done(function () {
                     //Save the session and reload

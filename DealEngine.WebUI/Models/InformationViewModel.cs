@@ -404,6 +404,7 @@ namespace DealEngine.WebUI.Models
             HasEPLIOptions = GetSelectListOptions();
             IsInsuredClaimOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
+            HaveAnyEmployeeYN = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -433,7 +434,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> PostingNoticesOptions { get; set; }
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
         public IList<SelectListItem> IsInsuredClaimOptions { get; set; }
-        
+        public IList<SelectListItem> HaveAnyEmployeeYN { get; set; }
+
         public int CoverAmount { get; set; }
         public string DateLapsed { get; set; }
         public string RetroactiveDate { get; set; }
