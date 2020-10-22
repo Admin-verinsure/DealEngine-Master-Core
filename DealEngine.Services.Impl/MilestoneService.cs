@@ -244,7 +244,7 @@ namespace DealEngine.Services.Impl
                 userTask = new UserTask(user, "Rejoin", null)
                 {
                     URL = URL,
-                    Body = "Person Removed From Sheet",
+                    Body = organisationUser.FirstName+ " click here to rejoin " + programme.Name,
                     IsActive = true
                 };
 
@@ -269,7 +269,7 @@ namespace DealEngine.Services.Impl
                 userTask = new UserTask(ProgrammeUser, "Attach", null)
                 {
                     URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
-                    Body = "Person Attach to Sheet",
+                    Body = "click here to rejoin "+ organisation.Name+ " to "+ programme.Name,
                     IsActive = true
                 };
 
