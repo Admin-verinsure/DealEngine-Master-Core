@@ -193,6 +193,10 @@
                         @Html.Label("Mobile Phone")
                         @Html.TextBox("OrganisationViewModel.Organisation.Phone", "", new { @class = "form-control", @name = "OrganisationViewModel.Organisation.Phone" })
                     </div>
+                    <div class="form-group">
+                        @Html.Label("Does not require Principal Advisor")
+                        @Html.DropDownList("Principal.Advisor", Model.BooleanOptions, new { @class = "form-control", @name = "Principal Advisor" })
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="next" type="submit" class="btn btn-success btn-sm">Submit</button>
