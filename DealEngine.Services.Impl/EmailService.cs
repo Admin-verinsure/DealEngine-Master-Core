@@ -973,7 +973,6 @@ namespace DealEngine.Services.Impl
                 }
                 else
                 {
-
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
 

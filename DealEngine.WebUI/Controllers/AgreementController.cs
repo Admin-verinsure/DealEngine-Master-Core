@@ -3596,7 +3596,6 @@ namespace DealEngine.WebUI.Controllers
                                 documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
-
                         }
 
                         //if (emailTemplate == null)
