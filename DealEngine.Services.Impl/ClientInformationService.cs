@@ -15,15 +15,18 @@ namespace DealEngine.Services.Impl
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
         IMapperSession<Reference> _referenceRepository;
-        IMapperSession<User> _userRepository;
+        IUserService _userService;
+        IOrganisationService _organisationService;
         public ClientInformationService(
+            IOrganisationService organisationService,
             IMapperSession<Reference> referenceRepository,
-            IMapperSession<User> userRepository,
+            IUserService userService,
             IMapperSession<ClientInformationSheet> customerInformationRepository
             )
         {
+            _organisationService = organisationService;
             _referenceRepository = referenceRepository;
-            _userRepository = userRepository;
+            _userService = userService;
             _customerInformationRepository = customerInformationRepository;
         }
 
@@ -107,7 +110,7 @@ namespace DealEngine.Services.Impl
 
             BuildAnswerFromModel(sheet, collection, user);
             await UpdateInformation(sheet);
-            await _userRepository.UpdateAsync(user);
+            await _userService.Update(user);
         }
 
         private async void BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection, User user)
@@ -320,40 +323,29 @@ namespace DealEngine.Services.Impl
             return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
         }
 
-        public async Task RemoveOrganisationFromSheets(Organisation organisation)
+        public async Task DetachOrganisation(IFormCollection collection)
         {
-            var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(organisation)).ToListAsync();
-            foreach (var sheet in iSheets)
+            if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
             {
-                sheet.Organisation.Remove(organisation);
-                await _customerInformationRepository.UpdateAsync(sheet);
-            }
-        }
-
-        public async Task DeveloperTool()
-        {
-            int count = 0;
-            var clientSheets = await _customerInformationRepository.FindAll().Where(s => s.Programme.BaseProgramme.Name == "TripleA Programme").ToListAsync();
-            foreach(var sheet in clientSheets)
-            {
-                if (sheet.SubClientInformationSheets.Any())
+                if (AttachOrganisationId != Guid.Empty)
                 {
-                    if (sheet.Status != "Not Started" || sheet.Status != "Sumbitted" || sheet.Status != "Started")
+                    var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
+                    var User = await _userService.GetUserPrimaryOrganisation(Organisation);
+                    if (User != null)
                     {
-                        if(sheet.SubClientInformationSheets.Any(sc=>sc.DateDeleted == null && (sc.Status == "Not Started" || sc.Status == "Started")))
+                        User.PrimaryOrganisation.Removed = false;
+                        User.Email = collection["RemovedOrganisation.Email"];
+                        User.PrimaryOrganisation.Email = User.Email;
+                        await _userService.Update(User);
+                        var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(User.PrimaryOrganisation)).ToListAsync();
+                        foreach (var sheet in iSheets)
                         {
-                            count++;
+                            sheet.Organisation.Remove(User.PrimaryOrganisation);
+                            await _customerInformationRepository.UpdateAsync(sheet);
                         }
                     }
                 }
-                
-            }
-            Console.WriteLine(count);
-        }
-
-        public async Task<List<ClientInformationSheet>> GetAllInformationSheets()
-        {
-            return await _customerInformationRepository.FindAll().Where(s=>s.DateDeleted == null).ToListAsync();
+            }                       
         }
     }
 
