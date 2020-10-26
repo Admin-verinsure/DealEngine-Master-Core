@@ -2437,7 +2437,11 @@ namespace DealEngine.WebUI.Controllers
                     var agreeDocList = agreement.GetDocuments();
                     foreach (SystemDocument doc in agreeDocList)
                     {
-                        doc.Delete(user);
+                        // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                        if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                        {
+                            doc.Delete(user);
+                        }
                     }
 
                     foreach (SystemDocument template in agreement.Product.Documents)
@@ -2536,7 +2540,11 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
-                            doc.Delete(user);
+                            // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                            if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                            {
+                                doc.Delete(user);
+                            }
                         }
 
                         //tripleA DO use case, remove when all client set as company
@@ -2734,7 +2742,11 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
-                            doc.Delete(user);
+                            // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                            if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                            {
+                                doc.Delete(user);
+                            }
                         }
 
                         //tripleA DO use case, remove when all client set as company
@@ -3418,7 +3430,11 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
                                 {
-                                    doc.Delete(user);
+                                    // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                                    if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                                    {
+                                        doc.Delete(user);
+                                    }
                                 }
                                 foreach (SystemDocument template in agreement.Product.Documents)
                                 {
@@ -3576,14 +3592,24 @@ namespace DealEngine.WebUI.Controllers
                         var agreeDocList = agreement.GetDocuments();
                         foreach (SystemDocument doc in agreeDocList)
                         {
-                            doc.Delete(user);
+                            // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                            if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                            {
+                                doc.Delete(user);
+                            }
                         }
                         foreach (SystemDocument template in agreement.Product.Documents)
                         {
                             if (!eglobalsuccess)
                             {
+                                // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+                                if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+                                {
+                                    agreement.Documents.Add(template);
+                                    documents.Add(template);
+                                }
                                 //render docs except invoice
-                                if (template.DocumentType != 4)
+                                else if(template.DocumentType != 4)
                                 {
                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -3594,11 +3620,20 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
-                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
-                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                agreement.Documents.Add(renderedDoc);
-                                documents.Add(renderedDoc);
-                                await _fileService.UploadFile(renderedDoc);
+                                // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+                                if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+                                {
+                                    agreement.Documents.Add(template);
+                                    documents.Add(template);
+                                }
+                                else
+                                {
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    agreement.Documents.Add(renderedDoc);
+                                    documents.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
                             }
                         }
 
@@ -3723,7 +3758,6 @@ namespace DealEngine.WebUI.Controllers
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a => a.DateDeleted == null))
                     {
                         agreeDocList = agreement.GetDocuments();
-
                         foreach (Document doc in agreeDocList)
                         {
                             if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && doc.DocumentType != 8))
@@ -3890,7 +3924,11 @@ namespace DealEngine.WebUI.Controllers
                     agreeDocList = agreement.GetDocuments();
                     foreach (Document doc in agreeDocList)
                     {
-                        doc.Delete(user);
+                        // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                        if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                        {
+                            doc.Delete(user);
+                        }
                     }
 
                     if (agreement.Product.Id == new Guid("bdbdda02-ee4e-44f5-84a8-dd18d17287c1") &&

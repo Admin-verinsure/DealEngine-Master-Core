@@ -186,10 +186,29 @@ namespace DealEngine.Services.Impl
 			email.UseHtmlBody (true);
             if(documents != null)
             {
-                var documentsList = await ToAttachments(documents);
-                email.Attachments(documentsList.ToArray());
+                SystemDocument pdfDocument = new SystemDocument();
+                foreach (SystemDocument document in documents)
+                {
+                    if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
+                    {
+                        pdfDocument = document;                        
+                    }
+                }
+                documents.Remove(pdfDocument); // Remove Local PDF from document list due to FileStream Issue
+                var documentsList = await ToAttachments(documents);             
+                using (var fs = new FileStream(pdfDocument.Path, FileMode.Open)) // Make our attachment with using
+                {
+                    Attachment pdfAttachment = new Attachment(fs, pdfDocument.Path, MediaTypeNames.Application.Pdf);
+                    pdfAttachment.Name = pdfDocument.Name;
+                    documentsList.Add(pdfAttachment);
+                    email.Attachments(documentsList.ToArray());
+                    email.Send();
+                }
             }
-			email.Send ();
+            else
+            {
+                email.Send();
+            }
         }
 
         public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
@@ -942,14 +961,13 @@ namespace DealEngine.Services.Impl
             else if (document.ContentType == MediaTypeNames.Application.Pdf)
             {
                 var path = document.Path;
-
                 try
                 {
-                    var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
-                    Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
-                    pdf.Name = document.Name;
-
-                    return pdf;
+                    // Shouldn't be done here until you can fix filestream error where filestream is closed after email
+                    var fileStream = new FileStream(path, FileMode.Open);
+                    Attachment attachment = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
+                    attachment.Name = document.Name;
+                    return attachment;
                 }
                 catch (Exception ex)
                 {

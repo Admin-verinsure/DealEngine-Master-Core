@@ -169,6 +169,11 @@ namespace DealEngine.Services.Impl
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
+            // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+            if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+            {
+                return (T)template;
+            }
             // store all the fields to be merged
             List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
