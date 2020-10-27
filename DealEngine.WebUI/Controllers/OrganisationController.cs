@@ -331,8 +331,12 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AttachOrganisation(IFormCollection collection)
         {
+            User currentUser = await CurrentUser();
             await _clientInformationService.DetachOrganisation(collection);
             await _programmeService.AttachOrganisationToClientProgramme(collection);
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(collection["ClientProgrammeId"]));
+            Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(collection["RemovedOrganisation.Id"]));
+            await _milestoneService.CompleteAttachOrganisationTask(currentUser, clientProgramme.BaseProgramme, organisation);
             return RedirectToAction("Index", "Home");
         }
 
@@ -387,19 +391,25 @@ namespace DealEngine.WebUI.Controllers
             User user = await CurrentUser();
             Guid Id = Guid.Parse(collection["OrganisationId"]);
             Organisation organisation = await _organisationService.GetOrganisation(Id);
-            var organisationUser = await _userService.GetUserPrimaryOrganisation(organisation);
             organisation.Removed = true;
             await _organisationService.Update(organisation);
+            ClientInformationSheet clientInformationSheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationId"]));
+           
 
-            if (user.UserName == "JDillon")
+            if(clientInformationSheet != null)
             {
-                if (organisationUser != null)
+                if (clientInformationSheet.IsChange)
                 {
-                    Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
-                    var Programme = await _programmeService.GetProgramme(ProgrammeId);
-                    // after testing await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
-                    await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                    var organisationUser = await _userService.GetUserPrimaryOrganisation(organisation);
+                    if (organisationUser != null)
+                    {
+                        Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
+                        var Programme = await _programmeService.GetProgramme(ProgrammeId);
+                        // after testing await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                    }
                 }
+                
             }
 
             return Ok();

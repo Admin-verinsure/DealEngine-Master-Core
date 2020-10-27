@@ -90,7 +90,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 Console.WriteLine(ex.Message);
             }
 
-            if (responseUserStatus != UserStatus.LOCKOUT || responseUserStatus != UserStatus.DELETE)
+            if (responseUserStatus != UserStatus.LOCKOUT && responseUserStatus != UserStatus.DELETE)
 			{				
 				if (responseUserStatus == UserStatus.UNVERIFIED)
 				{

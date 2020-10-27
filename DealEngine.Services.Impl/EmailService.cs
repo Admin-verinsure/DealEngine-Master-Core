@@ -1013,6 +1013,19 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
+        public async Task JoinOrganisationEmail(User organisationUser)
+        {
+            //using hardcoded variables
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, organisationUser.Email);
+            string subject = "Rejoin Programme";
+            string body = "Dear "+organisationUser.FirstName+", A change on your insurance policy requires an action by you. If or when you wish rejoin 'Programme' Please login and action the task that is on your task list";
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
+            email.Send();
+        }
+
         #region Merge Field Library
         public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {

@@ -21,7 +21,8 @@ namespace DealEngine.WebUI.Models.Organisation
             {
                 Owners.Add(new SelectListItem()
                 {
-                    Text = clientProgramme.InformationSheet.Owner.Name,
+                    Text = clientProgramme.InformationSheet.Owner.Name + " Reference: "+ clientProgramme.InformationSheet.ReferenceId
+                    + " Status: "+ clientProgramme.InformationSheet.Status,
                     Value= clientProgramme.Id.ToString()
                 });
             }            

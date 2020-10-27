@@ -34,56 +34,56 @@
                                     }
 
                                 </h5>
-                                    </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" id="heading_@item.SubClientProgrammes.FirstOrDefault().Id">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse_@item.SubClientProgrammes.FirstOrDefault().Id" aria-expanded="false" aria-controls="collapse_@item.SubClientProgrammes.FirstOrDefault().Id">
-                                                    Subclients
-                                                </button>
-                                            </h2>
-                                        </div>
-                                        <div id="collapse_@item.SubClientProgrammes.FirstOrDefault().Id" class="collapse" aria-labelledby="heading_@item.SubClientProgrammes.FirstOrDefault().Id" data-parent="#subsystemAccodion">
-                                            <div class="card-body">
-                                                <table class="table table-striped">
-                                                    <thead class="thead-light">
-                                                        <tr>
-                                                            <th>
-                                                                Client
-                                                            </th>
-                                                            <th>
-                                                                Status
-                                                            </th>
-                                                            <th>
-                                                                View
-                                                            </th>
-                                                            <th>
-                                                                <a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgrammes?clientProgrammeId=@item.Id">View all</a>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach (var client in item.SubClientProgrammes)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    @client.Owner.Name
-                                                                </td>
-                                                                <td>
-                                                                    @client.InformationSheet.Status
-                                                                </td>
-                                                                <td>
-                                                                    <a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgramme?subClientProgrammeId=@client.Id">View</a>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="heading_@item.SubClientProgrammes.FirstOrDefault().Id">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse_@item.SubClientProgrammes.FirstOrDefault().Id" aria-expanded="false" aria-controls="collapse_@item.SubClientProgrammes.FirstOrDefault().Id">
+                                        Subclients
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="collapse_@item.SubClientProgrammes.FirstOrDefault().Id" class="collapse" aria-labelledby="heading_@item.SubClientProgrammes.FirstOrDefault().Id" data-parent="#subsystemAccodion">
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>
+                                                    Client
+                                                </th>
+                                                <th>
+                                                    Status
+                                                </th>
+                                                <th>
+                                                    View
+                                                </th>
+                                                <th>
+                                                    <a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgrammes?clientProgrammeId=@item.Id">View all</a>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var client in item.SubClientProgrammes)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @client.Owner.Name
+                                                    </td>
+                                                    <td>
+                                                        @client.InformationSheet.Status
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgramme?subClientProgrammeId=@client.Id">View</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                     </td>
                                 }
                                 else
