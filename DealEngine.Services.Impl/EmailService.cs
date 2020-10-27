@@ -17,6 +17,7 @@ using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DealEngine.Services.Impl
 {
@@ -186,29 +187,11 @@ namespace DealEngine.Services.Impl
 			email.UseHtmlBody (true);
             if(documents != null)
             {
-                SystemDocument pdfDocument = new SystemDocument();
-                foreach (SystemDocument document in documents)
-                {
-                    if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
-                    {
-                        pdfDocument = document;                        
-                    }
-                }
-                documents.Remove(pdfDocument); // Remove Local PDF from document list due to FileStream Issue
-                var documentsList = await ToAttachments(documents);             
-                using (var fs = new FileStream(pdfDocument.Path, FileMode.Open)) // Make our attachment with using
-                {
-                    Attachment pdfAttachment = new Attachment(fs, pdfDocument.Path, MediaTypeNames.Application.Pdf);
-                    pdfAttachment.Name = pdfDocument.Name;
-                    documentsList.Add(pdfAttachment);
-                    email.Attachments(documentsList.ToArray());
-                    email.Send();
-                }
-            }
-            else
-            {
+                var documentsList = await ToAttachments(documents);
+                email.Attachments(documentsList.ToArray());
                 email.Send();
             }
+            email.Send();
         }
 
         public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
@@ -958,42 +941,25 @@ namespace DealEngine.Services.Impl
                     return new Attachment(new MemoryStream (virtualFile.ToArray()), document.Name + ".docx");
 				}
 			}
-            else if (document.ContentType == MediaTypeNames.Application.Pdf)
-            {
-                var path = document.Path;
-                try
-                {
-                    // Shouldn't be done here until you can fix filestream error where filestream is closed after email
-                    var fileStream = new FileStream(path, FileMode.Open);
-                    Attachment attachment = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
-                    attachment.Name = document.Name;
-                    return attachment;
-                }
-                catch (Exception ex)
-                {
-                    await _applicationLoggingService.LogInformation(null, ex, null, null); //(ex, html);
-                }
-                return null;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
 		}
 
 		public async Task<List<Attachment>> ToAttachments(IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-                if (document.DocumentType != 8 && document.DocumentType != 99)
+                if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))
                 {
                     attachments.Add(await ToAttachment(document));
+                }
+                else if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
+                {
+                    attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
                 }
                 else
                 {
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
-
             return attachments;
 		}
 
