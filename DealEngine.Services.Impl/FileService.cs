@@ -169,6 +169,11 @@ namespace DealEngine.Services.Impl
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
+            // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+            if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+            {
+                return (T)template;
+            }
             // store all the fields to be merged
             List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
@@ -1372,9 +1377,12 @@ namespace DealEngine.Services.Impl
             // array of elements that need updated
             string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
 
+            // If re-writing this to adjust for behavior caused by lack of closing tags for elements i.e divs for images - might pay to serialize all of the elements (we didn't have serializer when this was written - and process them that way so you can get the full elements)
+
             // Border Fix (show & no border use cases)
             if (html.Contains(showBorder))
             {
+
                 html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
             }
             if (html.Contains(noBorder))
@@ -1472,7 +1480,7 @@ namespace DealEngine.Services.Impl
                         if (ele.Equals(centerResize) == true)
                         {
                             html = regex.Replace(html, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                            html = regex2.Replace(html, "g\"></div>", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1); //supposed to find end of src=https://...../file.png> but alt tag exists in some images so doesn't close, works either way even if you don't close div - you'd have to write code to remove the alt tag if you wanted this to work every time
                         }
                         else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
                         {
@@ -1486,7 +1494,6 @@ namespace DealEngine.Services.Impl
                         }
                     }
                 }
-
             }
 
             doc.Contents = ToBytes(html);

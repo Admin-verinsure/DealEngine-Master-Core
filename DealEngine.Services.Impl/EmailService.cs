@@ -17,6 +17,7 @@ using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DealEngine.Services.Impl
 {
@@ -188,8 +189,12 @@ namespace DealEngine.Services.Impl
             {
                 var documentsList = await ToAttachments(documents);
                 email.Attachments(documentsList.ToArray());
+                email.Send();
             }
-			email.Send ();
+            else
+            {
+                email.Send();
+            }
         }
 
         public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
@@ -939,43 +944,25 @@ namespace DealEngine.Services.Impl
                     return new Attachment(new MemoryStream (virtualFile.ToArray()), document.Name + ".docx");
 				}
 			}
-            else if (document.ContentType == MediaTypeNames.Application.Pdf)
-            {
-                var path = document.Path;
-
-                try
-                {
-                    var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
-                    Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
-                    pdf.Name = document.Name;
-
-                    return pdf;
-                }
-                catch (Exception ex)
-                {
-                    await _applicationLoggingService.LogInformation(null, ex, null, null); //(ex, html);
-                }
-                return null;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
 		}
 
 		public async Task<List<Attachment>> ToAttachments(IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-                if (document.DocumentType != 8 && document.DocumentType != 99)
+                if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))
                 {
                     attachments.Add(await ToAttachment(document));
+                }
+                else if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
+                {
+                    attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
                 }
                 else
                 {
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
-
             return attachments;
 		}
 
