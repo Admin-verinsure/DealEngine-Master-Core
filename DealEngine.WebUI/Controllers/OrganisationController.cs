@@ -331,11 +331,8 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AttachOrganisation(IFormCollection collection)
         {
+            await _clientInformationService.DetachOrganisation(collection);
             await _programmeService.AttachOrganisationToClientProgramme(collection);
-
-            //var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
-            //var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);
-            //AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
             return RedirectToAction("Index", "Home");
         }
 

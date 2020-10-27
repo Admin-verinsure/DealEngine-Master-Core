@@ -478,6 +478,7 @@ namespace DealEngine.WebUI.Controllers
                             LocalDateCreated = localDateCreated,
                             LocalDateSubmitted = localDateSubmitted,
                             Status = status,
+                            IsChange = client.InformationSheet.IsChange,
                             ReferenceId = referenceId,// Move into ClientProgramme?
                             SubClientProgrammes = client.SubClientProgrammes,
                             AgreementStatus = agreementSatus,
@@ -533,6 +534,7 @@ namespace DealEngine.WebUI.Controllers
                         Id = client.Id.ToString(),
                         Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
                         NextInfoSheet = nextInfoSheet,
+                        IsChange = client.InformationSheet.IsChange,
                         ProgrammeAllowUsesChange = programmeAllowUsesChange,
                         ProgrammeUseEglobal = programmeUseEglobal,
                         LocalDateCreated = localDateCreated,
