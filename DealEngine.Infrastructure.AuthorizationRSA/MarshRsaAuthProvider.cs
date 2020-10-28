@@ -75,11 +75,14 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             analyzeRequest.request = GetAnalyzeRequest(rsaUser);            
             string xml = SerializeRSARequest(analyzeRequest, "Analyze");
             
-            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
+            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);
+
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, analyzeResponseXmlStr);
 
             try
             {                
                 xDoc.LoadXml(analyzeResponseXmlStr);
+
                 var analyseResponse = await BuildAnalyzeResponse(xDoc);
                 responseUserStatus = analyseResponse.identificationData.userStatus;
                 reponseActionCode = analyseResponse.riskResult.triggeredRule.actionCode;
