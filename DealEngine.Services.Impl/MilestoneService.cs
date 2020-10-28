@@ -17,14 +17,17 @@ namespace DealEngine.Services.Impl
         IProgrammeService _programmeService;
         ITaskingService _taskingService;
         IUserService _userService;
+        IEmailService _emailService;
 
         public MilestoneService(
+            IEmailService emailService,
             IUserService userService,
             IMapperSession<Milestone> milestoneRepository,
             IProgrammeService programmeService,
             ITaskingService taskingService
             )
         {
+            _emailService = emailService;
             _userService = userService;
             _taskingService = taskingService;
             _programmeService = programmeService;
@@ -228,13 +231,6 @@ namespace DealEngine.Services.Impl
 
         }
 
-        public Task DeveloperTool()
-        {
-            //var list = _taskingService.GetAllActiveTasks();
-            throw new NotImplementedException();
-
-        }
-
         public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme)
         {
             string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisationUser.PrimaryOrganisation.Id.ToString();
@@ -244,19 +240,19 @@ namespace DealEngine.Services.Impl
                 userTask = new UserTask(user, "Rejoin", null)
                 {
                     URL = URL,
-                    Body = "Person Removed From Sheet",
+                    Body = organisationUser.FirstName + " click here to rejoin " + programme.Name,
                     IsActive = true
                 };
 
                 //var programmeUser = programme.BrokerContactUser;
                 var programmeUser = user;
-                programmeUser.UserTasks.Add(userTask);             
+                programmeUser.UserTasks.Add(userTask);
                 await _userService.Update(programmeUser);
-            }                   
+            }
         }
 
         public async Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation)
-        {            
+        {
             string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
             //var ProgrammeUser = programme.BrokerContactUser;
             var ProgrammeUser = user;
@@ -269,12 +265,24 @@ namespace DealEngine.Services.Impl
                 userTask = new UserTask(ProgrammeUser, "Attach", null)
                 {
                     URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
-                    Body = "Person Attach to Sheet",
+                    Body = "click here to rejoin " + organisation.Name + " to " + programme.Name,
                     IsActive = true
                 };
 
                 ProgrammeUser.UserTasks.Add(userTask);
-                await _userService.Update(ProgrammeUser);   
+                await _userService.Update(ProgrammeUser);
+            }
+        }
+
+        public async Task CompleteAttachOrganisationTask(User user, Programme programme, Organisation organisation)
+        {
+            string URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
+            UserTask userTask = user.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            if (userTask != null)
+            {
+                userTask.Complete(user);
+                user.UserTasks.Remove(userTask);
+                await _userService.Update(user);
             }
         }
     }

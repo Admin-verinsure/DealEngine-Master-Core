@@ -91,6 +91,7 @@ namespace DealEngine.WebUI.Models
 		public string AgreementStatus { get; set; }
 		public string DocSendDate { get; set; }
 		public Boolean IsSubclientSubmitted { get; set; }
+		public bool IsChange { get; set; }
 		public string GetStatusDisplay(string agreementstatus)
 		{
 			List<string> statusDisplay = new List<string>();

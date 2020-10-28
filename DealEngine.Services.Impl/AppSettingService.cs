@@ -43,6 +43,14 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public string MarshRSACredentials
+        {
+            get
+            {
+                return _configuration.GetValue<string>("MarshRSACredentials");
+            }
+        }
+
         public string RequireRSA
         {
             get

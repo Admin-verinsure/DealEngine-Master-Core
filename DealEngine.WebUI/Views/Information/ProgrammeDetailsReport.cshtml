@@ -169,11 +169,10 @@
     @*<script src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>*@
     <script>
         $(window).on("load", function () {
-            debugger;
             window.setTimeout(viewreport, 1000);
 
             function viewreport() {
-                debugger;
+
                 var commonyou = $("#You").html();
                 var insuredDetails = $("#AddOrganisation").html();
                 var locations = $("#locationtab1").html();
@@ -202,10 +201,10 @@
                 var investmentproduct = $("#Investment").html();
                 var Outsidetrustee = $("#Outside").html();
                 var IndependentResearch = $("#Independent").html();
+                var fap = $("#FAP").html();
 
                 var commonreportstr = "";
                 var prog = document.getElementById("ClientProgramme_BaseProgramme_Name").value;
-                debugger;
                 if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "CEAS Programme") {
                     commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
                         + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
@@ -230,29 +229,28 @@
                 } else {
                     if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "TripleA Programme") {
                         commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
-                            //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
-                            + "</div>" + "</br></br><hr><hr></br></br>" + investmentproduct
-                            + "</div>" + "</br></br><hr><hr></br></br>" + Outsidetrustee
-                            + "</div>" + "</br></br><hr><hr></br></br>" + IndependentResearch
-                            + "<div style='border-style : groove; page-break-before: always;' >" + professional
-                            + "</div>" + "<div style='border-style : groove;' >" + statutory
-                            + "</div>" + "<div style='border-style : groove;' >" + employers
-                            + "</div>" + "<div style='border-style : groove;' >" + employment
-                            + "</div>" + "<div style='border-style : groove;' >" + directors
-                            + "</div>" + "<div style='border-style : groove;' >" + general
-                            + "</div>" + "<div style='border-style : groove;' >" + cyber
-                            + "</div>" + "<div style='border-style : groove;' >" + claims
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
-                            + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
+                        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
+                        + "</div>" + "</br></br><hr><hr></br></br>" + investmentproduct
+                        + "<div style='border-style : groove; page-break-before: always;' >" + professional
+                        + "</div>" + "<div style='border-style : groove;' >" + directors
+                        + "</div>" + "<div style='border-style : groove;' >" + statutory
+                        + "</div>" + "<div style='border-style : groove;' >" + employment
+                        + "</div>" + "</br></br><hr><hr></br></br>" + Outsidetrustee
+                        + "</div>" + "<div style='border-style : groove;' >" + cyber
+                        + "</div>" + "<div style='border-style : groove;' >" + fap
+                        + "</div>" + "</br></br><hr><hr></br></br>" + IndependentResearch
+                        + "</div>" + "<div style='border-style : groove;' >" + claims
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
+                        + "</div>" + "<div style='border-style : groove;' >" + employers
+                        + "</div>" + "<div style='border-style : groove;' >" + general
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
+                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
                     }
-
                 }
-
 
                 commonreportstr = commonreportstr.replaceAll('“', "&quot");
                 commonreportstr = commonreportstr.replaceAll('”', "&quot");

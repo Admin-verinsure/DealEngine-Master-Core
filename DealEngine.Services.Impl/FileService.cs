@@ -11,6 +11,13 @@ using System.Globalization;
 using System.Threading.Tasks;
 using NHibernate.Linq;
 using SystemDocument = DealEngine.Domain.Entities.Document;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml;
+using HtmlToOpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Extensions.Logging;
+using Document = DealEngine.Domain.Entities.Document;
+using System.Text.RegularExpressions;
 
 
 namespace DealEngine.Services.Impl
@@ -34,9 +41,12 @@ namespace DealEngine.Services.Impl
         IClientAgreementBVTermService _clientAgreementBVTermService;
         IProgrammeService _programmeService;
         IProductService _productService;
+        IAppSettingService _appSettingService;
+
+
 
         public FileService(IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository,
-        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, IProductService productService)
+        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, IProductService productService, IAppSettingService appSettingService)
 		{
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
@@ -44,6 +54,7 @@ namespace DealEngine.Services.Impl
             _clientAgreementBVTermService = clientAgreementBVTermService;
             _programmeService = programmeService;
             _productService = productService;
+            _appSettingService = appSettingService;
 
             FileDirectory = Path.Combine (
 				Directory.GetCurrentDirectory (),
@@ -158,6 +169,11 @@ namespace DealEngine.Services.Impl
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
+            // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+            if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+            {
+                return (T)template;
+            }
             // store all the fields to be merged
             List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
@@ -1330,8 +1346,172 @@ namespace DealEngine.Services.Impl
             return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
         }
 
+        public async Task<Document> FormatCKHTMLforDocx(Guid DocumentId)
+        {
+            User user = null;
 
+            SystemDocument doc = await _documentRepository.GetByIdAsync(DocumentId);
+            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                
+            string html = FromBytes(doc.Contents);
+                
+            // Bugfix for images added before Image Path fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
 
+            // Image resize/positioning
+            string centerImage = "<figure class=\"image\"><img src=\"";
+            string centerResize = "<figure class=\"image image_resized\" style=";
+            string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
+            string leftResize = "<figure class=\"image image-style-align-left image_resized\" style=";
+            string leftResize2 = "<figure class=\"image image_resized image-style-align-left\" style=";
+            string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
+            string rightResize = "<figure class=\"image image-style-align-right image_resized\" style=";
+            string rightResize2 = "<figure class=\"image image_resized image-style-align-right\" style=";
+
+            // Border
+            string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+            string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+            // array of elements that need updated
+            string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
+
+            // If re-writing this to adjust for behavior caused by lack of closing tags for elements i.e divs for images - might pay to serialize all of the elements (we didn't have serializer when this was written - and process them that way so you can get the full elements)
+
+            // Border Fix (show & no border use cases)
+            if (html.Contains(showBorder))
+            {
+
+                html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
+            }
+            if (html.Contains(noBorder))
+            {
+                html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+            }
+            if (html.Contains("\r\n"))
+            {
+                html = html.Replace("\r\n", string.Empty);
+            }
+            foreach (string ele in badHtml)
+            {
+                int x = CountStringOccurrences(html, ele);
+                var regex = new Regex(Regex.Escape(ele));
+                var regex2 = new Regex(Regex.Escape("g\"></figure>"));
+
+                for (int j = 0; j < x; j++)
+                {
+                    if (ele.Contains("image_resized") == false)
+                    {
+                        if (ele.Equals(centerImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:center\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if (ele.Equals(leftImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:left\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if (ele.Equals(rightImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:right\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                    }
+                    else
+                    {
+                        int widthIndex = ele.Length;
+                        string width = html.Substring(html.IndexOf(ele) + widthIndex + 7, 5);
+                        width = width.Replace("%", "");
+                        width = width.Replace("\"", "");
+                        width = width.Replace(";", "");
+                        width = width.Replace(">", "");
+
+                        int srcEndIndex = html.IndexOf(ele) + widthIndex;
+                        int end = 21 + width.Length;
+                        html = html.Remove(srcEndIndex, end);
+
+                        string url = html.Substring(srcEndIndex);
+
+                        if (url.Contains(".jpg") == true)
+                        {
+                            if (url.Contains(".png") == true)
+                            {
+                                if (url.IndexOf(".jpg") < url.IndexOf(".png"))
+                                {
+                                    url = url.Substring(0, url.IndexOf(".jpg") + 4);
+                                }
+                                else
+                                {
+                                    url = url.Substring(0, url.IndexOf(".png") + 4);
+                                }
+                            }
+                            else
+                            {
+                                url = url.Substring(0, url.IndexOf(".jpg") + 4);
+                            }
+                        }
+                        else if (url.Contains(".png") == true)
+                        {
+                            url = url.Substring(0, url.IndexOf(".png") + 4);
+                        }
+                        else
+                        {
+                            // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
+                        }
+
+                        decimal widthPercent = decimal.Parse(width);
+                        widthPercent = decimal.Divide(widthPercent, 100);
+                        decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
+                        int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
+                        string pixelWidthStr = pixelWidthZeroDP.ToString();
+
+                        #region 
+                        //get the actual images width
+                        // note: Not useful at moment as the % CK gives you is of the page not the images actual width
+
+                        //byte[] imageData = new WebClient().DownloadData(url);
+                        //MemoryStream imgStream = new MemoryStream(imageData);
+                        //System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
+                        //decimal pixelWidth = img.Width;
+                        #endregion
+
+                        if (ele.Equals(centerResize) == true)
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1); //supposed to find end of src=https://...../file.png> but alt tag exists in some images so doesn't close, works either way even if you don't close div - you'd have to write code to remove the alt tag if you wanted this to work every time
+                        }
+                        else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:left;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:right;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                    }
+                }
+            }
+
+            doc.Contents = ToBytes(html);
+            return doc;
+        }
+
+        public static int CountStringOccurrences(string text, string pattern)
+        {
+            // Loop through all instances of the string 'text'.
+            int count = 0;
+            int i = 0;
+            while ((i = text.IndexOf(pattern, i)) != -1)
+            {
+                i += pattern.Length;
+                count++;
+            }
+            return count;
+        }
         //public async Task<IActionResult> GetPDF(Guid id)
         //{
         //    User user = null;

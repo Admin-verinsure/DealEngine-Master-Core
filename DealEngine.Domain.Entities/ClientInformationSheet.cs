@@ -18,8 +18,8 @@ namespace DealEngine.Domain.Entities
         public virtual IList<ClientInformationAnswer> Answers { get; set; }
 		public virtual IList<Vehicle> Vehicles { get; protected set; }
         public virtual IList<Building> Buildings { get; protected set; }
-        public virtual IList<BusinessInterruption> BusinessInterruptions { get; protected set; }
-        public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }        
+        public virtual IList<BusinessInterruption> BusinessInterruptions { get; set; }
+        public virtual IList<MaterialDamage> MaterialDamages { get; set; }        
         public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
         public virtual IList<Location> Locations { get; set; }
         public virtual IList<WaterLocation> WaterLocations { get; set; }
@@ -32,7 +32,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Status { get; set; }        
         public virtual string ReferenceId { get; set; }        
         public virtual ClientInformationSheet PreviousInformationSheet { get; set; }        
-        public virtual ClientInformationSheet NextInformationSheet { get; protected set; }
+        public virtual ClientInformationSheet NextInformationSheet { get; set; }
 		public virtual bool IsRenewawl { get; set; }
         public virtual bool IsChange { get; set; }
         public virtual string SheetReference { get; set; }
@@ -41,7 +41,7 @@ namespace DealEngine.Domain.Entities
         public virtual DateTime UnlockDate { get; set; }
         public virtual User UnlockedBy { get; set; }
         [JsonIgnore]
-        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
+        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; set; }
 
         public virtual void submitted(User user)
         {
@@ -50,11 +50,11 @@ namespace DealEngine.Domain.Entities
             SubmittedBy = user;
         }
 
-        public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
+        public virtual IList<BusinessContract> BusinessContracts { get; set; }
         public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
        
         protected ClientInformationSheet () : this (null) { }
-        public virtual IList<ResearchHouse> ResearchHouses { get; protected set; }
+        public virtual IList<ResearchHouse> ResearchHouses { get; set; }
         protected ClientInformationSheet (User createdBy)
 			: base (createdBy)
 		{
@@ -306,6 +306,18 @@ namespace DealEngine.Domain.Entities
         public virtual decimal CurrentYearTotal { get; set; }
         public virtual decimal LastFinancialYearTotal { get; set; }
         public virtual AdditionalActivityInformation AdditionalActivityInformation { get; set; }
+
+        public virtual RevenueData CloneForNewSheet(ClientInformationSheet newSheet)
+        {
+            RevenueData newRevenueData = new RevenueData();
+            newRevenueData.Territories = Territories.ToList();
+            newRevenueData.Activities = Activities.ToList();
+            newRevenueData.NextFinancialYearTotal = NextFinancialYearTotal;
+            newRevenueData.CurrentYearTotal = CurrentYearTotal;
+            newRevenueData.LastFinancialYearTotal = LastFinancialYearTotal;
+            newRevenueData.AdditionalActivityInformation = AdditionalActivityInformation;
+            return newRevenueData;
+        }
     }
 
     public class AdditionalActivityInformation : EntityBase
@@ -341,6 +353,41 @@ namespace DealEngine.Domain.Entities
     {
         public virtual ClientInformationSheet BaseClientInformationSheet { get; set; }
         public SubClientInformationSheet() { }
+
+        public virtual SubClientInformationSheet CloneForNewSheet(ClientInformationSheet newSheet)
+        {
+            SubClientInformationSheet newSubClientInformationSheet = new SubClientInformationSheet();
+            newSubClientInformationSheet.Answers = Answers.ToList();
+            newSubClientInformationSheet.BaseClientInformationSheet = newSheet;
+            newSubClientInformationSheet.Boats = Boats.ToList();
+            newSubClientInformationSheet.Buildings = Buildings.ToList();
+            newSubClientInformationSheet.BusinessContracts = BusinessContracts.ToList();
+            newSubClientInformationSheet.BusinessInterruptions = BusinessInterruptions.ToList();
+            newSubClientInformationSheet.ClaimNotifications = ClaimNotifications.ToList();
+            newSubClientInformationSheet.ClientInformationSheetAuditLogs = ClientInformationSheetAuditLogs.ToList();
+            newSubClientInformationSheet.CreatedBy = newSheet.CreatedBy;
+            newSubClientInformationSheet.DateCreated = DateTime.Now;
+            newSubClientInformationSheet.IsChange = IsChange;
+            newSubClientInformationSheet.IsRenewawl = IsRenewawl;
+            newSubClientInformationSheet.Locations = Locations.ToList();
+            newSubClientInformationSheet.MaterialDamages = MaterialDamages.ToList();
+            newSubClientInformationSheet.Organisation = Organisation.ToList();
+            newSubClientInformationSheet.Owner = Owner;
+            newSubClientInformationSheet.PreRenewOrRefDatas = PreRenewOrRefDatas.ToList();
+            newSubClientInformationSheet.PreviousInformationSheet = newSheet.PreviousInformationSheet;
+            newSubClientInformationSheet.Product = Product;
+            newSubClientInformationSheet.Programme = Programme;
+            newSubClientInformationSheet.ReferenceId = ReferenceId;
+            newSubClientInformationSheet.ResearchHouses = ResearchHouses.ToList();
+            newSubClientInformationSheet.RevenueData = RevenueData;
+            newSubClientInformationSheet.RoleData = RoleData;
+            newSubClientInformationSheet.SheetReference = SheetReference;
+            newSubClientInformationSheet.Status = Status;
+            newSubClientInformationSheet.Vehicles = Vehicles.ToList();
+            return newSubClientInformationSheet;
+        }
+
+
     }
 }
 

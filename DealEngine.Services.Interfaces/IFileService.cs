@@ -27,6 +27,7 @@ namespace DealEngine.Services.Interfaces
 
         Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
 
+		Task<Document> FormatCKHTMLforDocx(Guid DocumentId);
 		byte [] ToBytes (string contents);
 		string FromBytes (byte [] bytes);
         Task<Document> GetDocumentByType(Organisation primaryOrganisation, int documentType);
