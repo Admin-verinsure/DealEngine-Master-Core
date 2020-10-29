@@ -1835,7 +1835,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(cagreement => cagreement.DateDeleted == null))
                     {
                         ViewAgreementViewModel model = new ViewAgreementViewModel
                         {
@@ -1902,7 +1902,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(cagreement => cagreement.DateDeleted == null))
                     {
                         ViewAgreementViewModel model = new ViewAgreementViewModel
                         {
@@ -1962,7 +1962,7 @@ namespace DealEngine.WebUI.Controllers
                 currencyFormat.CurrencyNegativePattern = 2;
 
                 decimal totalPayable = 0M;
-                foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(cagreement => cagreement.DateDeleted == null))
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel
                     {

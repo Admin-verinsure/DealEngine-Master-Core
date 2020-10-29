@@ -75,11 +75,14 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             analyzeRequest.request = GetAnalyzeRequest(rsaUser);            
             string xml = SerializeRSARequest(analyzeRequest, "Analyze");
             
-            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
+            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);
+
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, analyzeResponseXmlStr);
 
             try
             {                
                 xDoc.LoadXml(analyzeResponseXmlStr);
+
                 var analyseResponse = await BuildAnalyzeResponse(xDoc);
                 responseUserStatus = analyseResponse.identificationData.userStatus;
                 reponseActionCode = analyseResponse.riskResult.triggeredRule.actionCode;
@@ -261,15 +264,18 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             return stringPayLoad;
         }
 
-		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
+		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService, string username)
 		{            
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();
-            var user = await _userService.GetUser(rsaUser.Username);
+            //var user = await _userService.GetUser(rsaUser.Username);
+            var user = await _userService.GetUser(username);
             authenticateRequest.request = GetAuthenticateRequest(rsaUser);
             var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
             var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
+
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, authenticateResponseXmlStr);
 
             try
             {
