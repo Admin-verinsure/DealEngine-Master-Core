@@ -264,15 +264,18 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             return stringPayLoad;
         }
 
-		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
+		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService, string username)
 		{            
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();
-            var user = await _userService.GetUser(rsaUser.Username);
+            //var user = await _userService.GetUser(rsaUser.Username);
+            var user = await _userService.GetUser(username);
             authenticateRequest.request = GetAuthenticateRequest(rsaUser);
             var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
             var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
+
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, authenticateResponseXmlStr);
 
             try
             {
