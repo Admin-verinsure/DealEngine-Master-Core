@@ -451,7 +451,7 @@ namespace DealEngine.WebUI.Controllers
                     rsaUser.DevicePrint = viewModel.DevicePrint;
                     rsaUser.Email = user.Email;
                     //rsaUser.Username = user.UserName;
-                    rsaUser.Username = rsaAuth.GetHashedId(user.UserName+"@mnzconnect.com");
+                    rsaUser.Username = rsaAuth.GetHashedId(user.UserName+"@mnzconnect.com"); //use hashed username + production domain name as requested by Marsh
                     rsaUser.HttpReferer = "~Account/LoginMarsh";
                     rsaUser.OrgName = "Marsh_Model";
                     rsaUser.RsaStatus = RsaStatus.Deny;

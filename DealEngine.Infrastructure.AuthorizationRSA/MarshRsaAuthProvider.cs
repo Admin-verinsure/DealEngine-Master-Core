@@ -77,6 +77,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             
             var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);
 
+            //used for RSA analyze request and response log 
             await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, analyzeResponseXmlStr);
 
             try
@@ -270,12 +271,13 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();
             //var user = await _userService.GetUser(rsaUser.Username);
-            var user = await _userService.GetUser(username);
+            var user = await _userService.GetUser(username); //changed to use not hashed username to find user in application
             authenticateRequest.request = GetAuthenticateRequest(rsaUser);
             var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
             var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
 
-            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, authenticateResponseXmlStr);
+            //used for RSA authenticate request and response log
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", username, xml, authenticateResponseXmlStr);
 
             try
             {
