@@ -13,9 +13,9 @@ namespace DealEngine.Services.Interfaces
         Task CreateMilestone(User user, IFormCollection collection);
         Task<string> SetMilestoneFor(string activity, User user, ClientInformationSheet sheet);
         Task<string> GetMilestone(IFormCollection collection);
-        Task DeveloperTool();
         Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme);
         Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation);
+        Task CompleteAttachOrganisationTask(User user, Programme programme, Organisation organisation);
     }
     
 }

@@ -315,6 +315,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
                         term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
                         term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        if(term2millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term2millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                        if (term3millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term3millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                        if (term5millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimitpremiumoption.PremiumDiffer = 0;
+                        }
                     }
 
                 }

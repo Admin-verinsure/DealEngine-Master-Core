@@ -17,6 +17,7 @@ using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DealEngine.Services.Impl
 {
@@ -188,8 +189,12 @@ namespace DealEngine.Services.Impl
             {
                 var documentsList = await ToAttachments(documents);
                 email.Attachments(documentsList.ToArray());
+                email.Send();
             }
-			email.Send ();
+            else
+            {
+                email.Send();
+            }
         }
 
         public async Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
@@ -350,6 +355,19 @@ namespace DealEngine.Services.Impl
             email.From(DefaultSender);
             email.WithSubject(subjectPrefix + subject);            
             email.UseHtmlBody(true);
+            email.Send();
+        }
+
+        public async Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML)
+        {
+            string strRsaLogEmailSubject = "RSA Log for " + loginUserUserName;
+            string strRsaLogEmailBody = "Request XML:" + Environment.NewLine + Environment.NewLine + requestXML + Environment.NewLine + Environment.NewLine + "Response XML:" + Environment.NewLine + Environment.NewLine + responseXML;
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
+            email.WithSubject(strRsaLogEmailSubject);
+            email.WithBody(strRsaLogEmailBody);
+            //email.UseHtmlBody(true);
             email.Send();
         }
 
@@ -922,93 +940,42 @@ namespace DealEngine.Services.Impl
         public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
 			if (document.ContentType == MediaTypeNames.Text.Html) {
-				// Testing HtmlToOpenXml
-				string html = _fileService.FromBytes (document.Contents);
-				using (MemoryStream virtualFile = new MemoryStream ()) {
-					using (WordprocessingDocument wordDocument = WordprocessingDocument.Create (virtualFile, WordprocessingDocumentType.Document)) {
-						// Add a main document part. 
-						MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
-						new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
 
-                        //================
-                        //document override
-                        string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
-                        string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+                document = await _fileService.FormatCKHTMLforDocx(document.Id);
 
-                        // Create document with a "main part" to it. No data has been added yet.
-                        if (html.Contains(showBorder))
-                        {
-                            html = html.Replace(showBorder, "<table e border=\"1\"><tbody><tr>");
-                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
-                        }
-                        if (html.Contains(noBorder))
-                        {
-                            html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
-                            // NEED TO DO CLOSING TAGS TOO      width=\"100%\" align=\"center\"     <tr style=\"font-weight:bold\">
-                        }
-                        string pathurl = "https://" + _appSettingService.domainQueryString + "/Image";
-                        string oldpath = "<img src=\"../../../images";
-                        string newpath = "<p style=\"margin-left:36.0pt; text-align:center;\"/><img  height ='100' width='100' src=\"" + pathurl;
-                        if (html.Contains(oldpath))
-                        {
-                            html = html.Replace(oldpath, newpath);
-                        }
-
-                        HtmlConverter converter = new HtmlConverter (mainPart);
+                string html = _fileService.FromBytes(document.Contents);
+                using (MemoryStream virtualFile = new MemoryStream())
+                {
+                    using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                    {
+                        MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                        new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                        HtmlConverter converter = new HtmlConverter(mainPart);
                         converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-
-                        try
-                        {
-                            converter.ParseHtml(html);
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationLoggingService.LogInformation(null,ex,null,null); //(ex, html);
-                        }
-					}
-					return new Attachment (new MemoryStream (virtualFile.ToArray ()), document.Name + ".docx");
+                        converter.ParseHtml(html);
+                    }
+                    return new Attachment(new MemoryStream (virtualFile.ToArray()), document.Name + ".docx");
 				}
 			}
-            else if (document.ContentType == MediaTypeNames.Application.Pdf)
-            {
-
-
-                var path = document.Path;
-
-                try
-                {
-                    var fileStream = new FileStream(path, FileMode.Open); // filestream not disposed of...
-                    Attachment pdf = new Attachment(fileStream, path, MediaTypeNames.Application.Pdf);
-                    pdf.Name = document.Name;
-
-                    return pdf;
-                }
-                catch (Exception ex)
-                {
-                    await _applicationLoggingService.LogInformation(null, ex, null, null); //(ex, html);
-                }
-                return null;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
 		}
 
-		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
+		public async Task<List<Attachment>> ToAttachments(IEnumerable<SystemDocument> documents)
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-                if (document.DocumentType != 8 && document.DocumentType != 99)
+                if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))
                 {
                     attachments.Add(await ToAttachment(document));
                 }
+                else if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
+                {
+                    attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
+                }
                 else
                 {
-
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
-
             return attachments;
 		}
 
@@ -1043,6 +1010,19 @@ namespace DealEngine.Services.Impl
             email.WithSubject(subject);
             email.UseHtmlBody(true);
             email.WithBody(clientProgramme.Owner.Name);
+            email.Send();
+        }
+
+        public async Task JoinOrganisationEmail(User organisationUser)
+        {
+            //using hardcoded variables
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, organisationUser.Email);
+            string subject = "Rejoin Programme";
+            string body = "Dear "+organisationUser.FirstName+", A change on your insurance policy requires an action by you. If or when you wish rejoin 'Programme' Please login and action the task that is on your task list";
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
             email.Send();
         }
 

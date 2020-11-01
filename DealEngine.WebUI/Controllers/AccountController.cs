@@ -450,7 +450,8 @@ namespace DealEngine.WebUI.Controllers
                     MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
                     rsaUser.DevicePrint = viewModel.DevicePrint;
                     rsaUser.Email = user.Email;
-                    rsaUser.Username = user.UserName;
+                    //rsaUser.Username = user.UserName;
+                    rsaUser.Username = rsaAuth.GetHashedId(user.UserName+"@mnzconnect.com"); //use hashed username + production domain name as requested by Marsh
                     rsaUser.HttpReferer = "~Account/LoginMarsh";
                     rsaUser.OrgName = "Marsh_Model";
                     rsaUser.RsaStatus = RsaStatus.Deny;
@@ -515,14 +516,15 @@ namespace DealEngine.WebUI.Controllers
                 MarshRsaUser rsaUser = rsaAuth.GetRsaUser(username);                
                 rsaUser.DevicePrint = viewModel.DevicePrint;
                 rsaUser.DeviceTokenCookie = viewModel.DeviceTokenCookie;
-                rsaUser.Username = username;
+                //rsaUser.Username = username;
+                rsaUser.Username = rsaAuth.GetHashedId(username+"@mnzconnect.com");
                 rsaUser.HttpReferer = "";
                 rsaUser.OrgName = "Marsh_Model";
                 rsaUser.Otp = viewModel.OtpCode;
                 rsaUser.CurrentSessionId = viewModel.SessionId;
                 rsaUser.CurrentTransactionId = viewModel.TransactionId;
                 var user = await _userService.GetUser(viewModel.UserName);
-                bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService);                
+                bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService, username);                
                 if (isAuthenticated)
                 {
                     var result = await DealEngineIdentityUserLogin(user, viewModel.Password);

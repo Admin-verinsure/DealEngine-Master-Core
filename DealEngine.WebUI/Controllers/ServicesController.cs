@@ -34,6 +34,8 @@ namespace DealEngine.WebUI.Controllers
         ILocationService _locationService;
         IMapperSession<WaterLocation> _waterLocationRepository;
         IMapperSession<Boat> _boatRepository;
+        IMapperSession<Vehicle> _vehicleRepository;
+
         IBoatUseService _boatUseService;
         IVehicleService _vehicleService;
         IOrganisationService _organisationService;
@@ -72,6 +74,7 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationalUnitService organisationalUnitService,
             ILocationService locationService,
             IMapperSession<WaterLocation> waterLocationRepository,
+            IMapperSession<Vehicle> vehicleRepository,
             IMapperSession<Building> buildingRepository,
             IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository,
@@ -119,7 +122,7 @@ namespace DealEngine.WebUI.Controllers
             _emailService = emailService;
             _businessContractService = businessContractService;
             _researchHouseService = researchHouseService;
-
+            _vehicleRepository = vehicleRepository;
         }
 
         #region Vehicle
@@ -225,29 +228,31 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
 
                 if (model == null)
+                {
                     throw new ArgumentNullException(nameof(model));
+                }
 
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
+                {
                     throw new Exception("Unable to save Vehicle - No Client information for " + model.AnswerSheetId);
+                }
 
                 // get existing vehicle (if any)
                 Vehicle vehicle = await _vehicleService.GetVehicleById(model.VehicleId);
                 // no vehicle, so create new
                 if (vehicle == null)
-                    vehicle = model.ToEntity(user);
-                model.UpdateEntity(vehicle);                
-                
-                if (model.VehicleLocation != Guid.Empty)
-                    vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
-
-                foreach(var boat in sheet.Boats)
                 {
-                    boat.BoatTrailers.Add(vehicle);
-                    sheet.Vehicles.Add(vehicle);
-                    await _boatRepository.UpdateAsync(boat);
+                    vehicle = model.ToEntity(user);          
                 }
-
+                model.UpdateEntity(vehicle);           
+                if (model.VehicleLocation != Guid.Empty)
+                {
+                    vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
+                }
+                vehicle.ClientInformationSheet = sheet;
+                await _vehicleRepository.AddAsync(vehicle);
+                sheet.Vehicles.Add(vehicle);
                 model.VehicleId = vehicle.Id;
                 return Json(model);
             }
@@ -1941,7 +1946,12 @@ namespace DealEngine.WebUI.Controllers
                 if (model.BoatOperator != Guid.Empty)
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
-
+                if (model.BoatTrailer != null)
+                {
+                    boat.BoatTrailers.Clear();
+                    Vehicle trailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
+                    boat.BoatTrailers.Add(trailer);
+                }
                 if (model.SelectedBoatUse != Guid.Empty)
                 {
                     var BoatUse = await _boatUseService.GetBoatUse(model.SelectedBoatUse);

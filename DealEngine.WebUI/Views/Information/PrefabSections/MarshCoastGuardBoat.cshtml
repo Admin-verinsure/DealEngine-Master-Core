@@ -425,14 +425,11 @@
                                     <label class="input form-group">
                                         <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            @foreach (var trailer in Model.ClientInformationSheet.Vehicles.Where(t => t.Removed == false))
                                             {
-                                                foreach (var trailer in boat.BoatTrailers)
+                                                if (trailer != null)
                                                 {
-                                                    if (trailer != null)
-                                                    {
-                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
-                                                    }
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
                                                 }
                                             }
                                             <option value="add">Add Trailer</option>
@@ -941,14 +938,11 @@
                                     <label class="input form-group">
                                         <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            @foreach (var trailer in Model.ClientInformationSheet.Vehicles.Where(t => t.Removed == false))
                                             {
-                                                foreach (var trailer in boat.BoatTrailers)
+                                                if (trailer != null)
                                                 {
-                                                    if (trailer != null)
-                                                    {
-                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
-                                                    }
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
                                                 }
                                             }
                                             <option value="add">Add Trailer</option>

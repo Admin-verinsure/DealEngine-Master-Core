@@ -96,30 +96,11 @@ namespace DealEngine.Domain.Entities
         #endregion
 
         #region Getters
-        public virtual string Name
-        {
-            get;
-            set;
-        }
-
+        public virtual string Name { get; set; }
         [Display(Name = "Trading Name")]
-        public virtual string TradingName
-        {
-            get;
-            set;
-        }
-
-        public virtual OrganisationType OrganisationType
-        {
-            get;
-            set;
-        }
-        public virtual bool Removed
-        {
-            get;
-            set;
-        }
-
+        public virtual string TradingName { get; set; }
+        public virtual OrganisationType OrganisationType { get; set; }
+        public virtual bool Removed { get; set; }
         // public virtual string Othercompanyname { get; set; }
         public virtual string Description { get; set; }
         public virtual string Phone { get; set; }
@@ -131,7 +112,31 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsApproved { get; set; }
         public virtual string Clientmembership { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
-
+        //public virtual Organisation CloneForNewSheet(ClientInformationSheet newSheet)
+        //{
+        //    Organisation newOrganisation = new Organisation();
+        //    newOrganisation.Clientmembership = Clientmembership;
+        //    newOrganisation.CreatedBy = newSheet.CreatedBy;
+        //    newOrganisation.DateCreated = DateTime.Now;
+        //    newOrganisation.DateofIncorportation = DateofIncorportation;
+        //    newOrganisation.Description = Description;
+        //    newOrganisation.Domain = Domain;
+        //    newOrganisation.DORetroactivedate = DORetroactivedate;
+        //    newOrganisation.Email = Email;
+        //    newOrganisation.Id = Guid.NewGuid();
+        //    newOrganisation.InsuranceAttributes = InsuranceAttributes;
+        //    newOrganisation.IsApproved = IsApproved;
+        //    newOrganisation.IsBroker = IsBroker;
+        //    newOrganisation.IsInsurer = IsInsurer;
+        //    newOrganisation.IsTC = IsTC;
+        //    newOrganisation.Name = Name;
+        //    newOrganisation.OrganisationalUnits = OrganisationalUnits;
+        //    newOrganisation.OrganisationType = OrganisationType;
+        //    newOrganisation.Phone = Phone;
+        //    newOrganisation.PIRetroactivedate = PIRetroactivedate;
+        //    newOrganisation.TradingName = TradingName;
+        //    return newOrganisation;
+        //}
 
         #endregion
 
@@ -236,7 +241,6 @@ namespace DealEngine.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
-
             Name = name;
         }
         #endregion

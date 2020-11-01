@@ -42,6 +42,8 @@ namespace DealEngine.Services.Interfaces
         Task SendFullProposalReport(string recipent, SystemDocument documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
         Task EmailHunterPremiumFunding(ClientProgramme clientProgramme);
         Task EmailPaymentFrequency(ClientProgramme clientProgramme);
+        Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML);
+        Task JoinOrganisationEmail(User organisationUser);
     }
 }
 

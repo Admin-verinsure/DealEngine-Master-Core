@@ -319,127 +319,15 @@ namespace DealEngine.WebUI.Controllers
                     // DOCX
                     else if (format == "docx")
                     {
+                        doc = await _fileService.FormatCKHTMLforDocx(doc.Id);
+                        html = _fileService.FromBytes(doc.Contents);
+
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-
-                                // Border Fix (show & no border use cases)
-                                if (html2.Contains(showBorder))
-                                {
-                                    html2 = html2.Replace(showBorder, "<table border=\"1\"><tbody><tr>");                 // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
-                                }
-                                if (html2.Contains(noBorder))
-                                {
-                                    html2 = html2.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
-                                }
-
-                                foreach (string ele in badHtml)
-                                {
-                                    int x = CountStringOccurrences(html2, ele);
-                                    var regex = new Regex(Regex.Escape(ele));
-                                    var regex2 = new Regex(Regex.Escape("g\"></figure>"));
-
-                                    for (int j = 0; j < x; j++)
-                                    {
-                                        if (ele.Contains("image_resized") == false)
-                                        {
-                                            if (ele.Equals(centerImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:center\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if (ele.Equals(leftImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:left\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if (ele.Equals(rightImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:right\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            int widthIndex = ele.Length;
-                                            string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);
-                                            width = width.Replace("%", "");
-                                            width = width.Replace("\"", "");
-                                            width = width.Replace(";", "");
-                                            width = width.Replace(">", "");
-
-                                            int srcEndIndex = html2.IndexOf(ele) + widthIndex;
-                                            int end = 21 + width.Length;
-                                            html2 = html2.Remove(srcEndIndex, end);
-
-                                            string url = html2.Substring(srcEndIndex);
-
-                                            if (url.Contains(".jpg") == true)
-                                            {
-                                                if (url.Contains(".png") == true)
-                                                {
-                                                    if (url.IndexOf(".jpg") < url.IndexOf(".png"))
-                                                    {
-                                                        url = url.Substring(0, url.IndexOf(".jpg") + 4);
-                                                    }
-                                                    else
-                                                    {
-                                                        url = url.Substring(0, url.IndexOf(".png") + 4);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    url = url.Substring(0, url.IndexOf(".jpg") + 4);
-                                                }
-                                            }
-                                            else if (url.Contains(".png") == true)
-                                            {
-                                                url = url.Substring(0, url.IndexOf(".png") + 4);
-                                            }
-                                            else
-                                            {
-                                                // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
-                                            }
-
-                                            decimal widthPercent = decimal.Parse(width);
-                                            widthPercent = decimal.Divide(widthPercent, 100);
-                                            decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
-                                            int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
-                                            string pixelWidthStr = pixelWidthZeroDP.ToString();
-
-                                            #region 
-                                            //get the actual images width
-                                            // note: Not useful at moment as the % CK gives you is of the page not the images actual width
-
-                                            //byte[] imageData = new WebClient().DownloadData(url);
-                                            //MemoryStream imgStream = new MemoryStream(imageData);
-                                            //System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
-                                            //decimal pixelWidth = img.Width;
-                                            #endregion
-
-                                            if (ele.Equals(centerResize) == true)
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:left;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:right;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                        }
-                                    }
-
-                                }
-                                html = html2;
                                 HtmlConverter converter = new HtmlConverter(mainPart); // refer to this: https://github.com/onizet/html2openxml/wiki/Tags-Supported
                                 converter.ImageProcessing = ImageProcessing.ManualProvisioning;
                                 Body body = mainPart.Document.Body;
@@ -460,8 +348,6 @@ namespace DealEngine.WebUI.Controllers
                 // PDF
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
-
-
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
 
