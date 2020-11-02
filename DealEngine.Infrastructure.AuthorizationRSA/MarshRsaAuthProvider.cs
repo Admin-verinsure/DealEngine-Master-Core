@@ -457,12 +457,12 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				new EventData {
 					clientDefinedAttributeList = new ClientDefinedFact[] {
 						new ClientDefinedFact {
-							name = "FILTERED_TAM_GROUP",
-							value = "MFA",
-							dataType = DataType.STRING,
-							dataTypeSpecified = true,
+							//name = "FILTERED_TAM_GROUP",
+							//value = "MFA",
+							//dataType = DataType.STRING,
+							//dataTypeSpecified = true,     // removed as Marsh request
 						}
-					},
+                    },
 					eventType = EventType.SESSION_SIGNIN,
 					eventTypeSpecified = true,
 				}
@@ -511,7 +511,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				autoCreateUserFlag = true,                                  // confirm value
 				autoCreateUserFlagSpecified = true,
 				credentialDataList = GetCredentialDataList (),
-				eventDataList = GetEventData (rsaUser),
+				eventDataList = GetEventData (rsaUser),       
 				runRiskType = RunRiskType.ALL,                  // confirm value
 				channelIndicator = ChannelIndicatorType.WEB,    // fairly sure that this is supposed to be web
 				channelIndicatorSpecified = true,
