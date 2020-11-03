@@ -147,7 +147,7 @@ namespace DealEngine.WebUI.Controllers
 
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
 
-            return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
+            return File(pdfBytes, "application/pdf", "InformationSheetReport.pdf");
 
         }
 
@@ -382,7 +382,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
                 user = await CurrentUser();
-                document = new SystemDocument(user, "FullProposalReport", MediaTypeNames.Text.Html, 99);
+                document = new SystemDocument(user, "Information Sheet Report", MediaTypeNames.Text.Html, 99);
                 document.Description = "FullProposal Report Pdf";
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(Reportstr));
                 document.OwnerOrganisation = user.PrimaryOrganisation;
@@ -391,13 +391,10 @@ namespace DealEngine.WebUI.Controllers
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-
-
                     if (clientProgramme != null)
                     {
                         foreach (ClientAgreement agreement in clientProgramme.Agreements)
                         {
-
                             if (agreement.Product.IsMasterProduct)
                             {
                                 foreach (var doc in agreement.Documents)
@@ -407,7 +404,6 @@ namespace DealEngine.WebUI.Controllers
                                         agreement.Documents.Remove(doc);
                                         break;
                                     }
-
                                 }
                                 if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf") && clientProgramme.BaseProgramme.EnableFullProposalReport)
                                 {
@@ -424,7 +420,6 @@ namespace DealEngine.WebUI.Controllers
             {
 
             }
-
             return Json(document.Id);
         }
 

@@ -2953,7 +2953,7 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
-                            if (doc.Name.EqualsIgnoreCase("FullProposalReport") && programme.BaseProgramme.EnableFullProposalReport)
+                            if (doc.Name.EqualsIgnoreCase("Information Sheet Report") && programme.BaseProgramme.EnableFullProposalReport)
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id, programme);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -3105,7 +3105,7 @@ namespace DealEngine.WebUI.Controllers
             margins.Right = 15;
             htmlToPdfConv.Margins = margins;
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, "FullProposalReport", "application/pdf", 99);
+            Document document = new Document(user, "Information Sheet Report", "application/pdf", 99);
             document.Contents = pdfBytes;
             return document;
 
@@ -3760,7 +3760,7 @@ namespace DealEngine.WebUI.Controllers
                         agreeDocList = agreement.GetDocuments();
                         foreach (Document doc in agreeDocList)
                         {
-                            if ((!doc.Name.EqualsIgnoreCase("FullProposalReport") && doc.DocumentType != 8))
+                            if ((!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
                             }
