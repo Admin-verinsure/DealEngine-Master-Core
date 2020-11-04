@@ -109,6 +109,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsBroker { get; set; }
         public virtual bool IsInsurer { get; set; }
         public virtual bool IsTC { get; set; }
+        public virtual bool IsProgrammeManager { get; set; }
         public virtual bool IsApproved { get; set; }
         public virtual string Clientmembership { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
