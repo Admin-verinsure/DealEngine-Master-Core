@@ -26,6 +26,7 @@ namespace DealEngine.Services.Impl
 		IUserService _userService;		
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
+        IEmailTemplateService _emailTemplateService;
         IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
         IAppSettingService _appSettingService;
         IApplicationLoggingService _applicationLoggingService;
@@ -34,12 +35,13 @@ namespace DealEngine.Services.Impl
 
         private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService, IApplicationLoggingService applicationLoggingService)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IEmailTemplateService emailTemplateService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession, IAppSettingService appSettingService, IApplicationLoggingService applicationLoggingService)
 		{
             _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
             _userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
+            _emailTemplateService = emailTemplateService;
             _configuration = configuration;
             _appSettingService = appSettingService;
             _applicationLoggingService = applicationLoggingService;
@@ -201,7 +203,6 @@ namespace DealEngine.Services.Impl
         {
             string PremiumAdviceEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Premium Advice for " + clientInformationSheet.Owner.Name;
             string PremiumAdviceEmailbody = "<p>Hi There,</p><p>Please check the attached premium advice.</p>";
-
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
             if (!string.IsNullOrEmpty(recipentcc))
@@ -222,8 +223,17 @@ namespace DealEngine.Services.Impl
 
         public async Task SendFullProposalReport(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
         {
+            List<EmailTemplate> emailTemplates = await _emailTemplateService.GetEmailTemplateFor(clientInformationSheet.Programme.BaseProgramme, "SendPDFReport");
+
             string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Full Proposal Report for " + clientInformationSheet.Owner.Name;
             string FullProposalEmailbody = "<p>Hi There,</p><p>Please check the attached Full Proposal Report.</p>";
+
+            if (emailTemplates.FirstOrDefault() != null)
+            {
+                EmailTemplate emailTemplate = emailTemplates.FirstOrDefault();
+                FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Full Proposal Report for " + clientInformationSheet.Owner.Name;
+                FullProposalEmailbody = emailTemplate.Body;
+            }
 
             EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             email.From(DefaultSender);
@@ -236,12 +246,12 @@ namespace DealEngine.Services.Impl
             email.UseHtmlBody(true);
             if (document != null)
             {
-               
-                //var documentsList = await ToAttachments(new Attachment(new MemoryStream(document.Contents),"FullProposalReport.pdf"));
-                email.Attachments(new Attachment(new MemoryStream(document.Contents), "FullProposalReport.pdf"));
+                email.Attachments(new Attachment(new MemoryStream(document.Contents), "InformationSheetReport.pdf"));
             }
             email.Send();
         }
+
+        #region Commented Invoice PDF Email
         //public async Task GetInvoicePDF(string recipent, SystemDocument document, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc)
         //{
         //    string FullProposalEmailsubject = clientInformationSheet.Programme.BaseProgramme.Name + " - Invoice for " + clientInformationSheet.Owner.Name;
@@ -264,6 +274,7 @@ namespace DealEngine.Services.Impl
         //    }
         //    email.Send();
         //}
+        #endregion
 
         public async Task SendDataEmail(string recipient, Data data)
         {
