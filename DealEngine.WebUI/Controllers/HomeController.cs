@@ -117,6 +117,10 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.CurrentUserType = "TC";
                 }
+                if (user.PrimaryOrganisation.IsProgrammeManager)
+                {
+                    model.CurrentUserType = "ProgrammeManager";
+                }
 
                 IList<string> languages = new List<string>();
                 languages.Add("nz");
@@ -407,7 +411,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
             }
-            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsProgrammeManager)
             {
                 Boolean Issubclientsubmitted = false;
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
@@ -569,6 +573,14 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 model.CurrentUserIsTC = "False";
+            }
+            if (user.PrimaryOrganisation.IsProgrammeManager)
+            {
+                model.CurrentUserIsProgrammeManager = "True";
+            }
+            else
+            {
+                model.CurrentUserIsProgrammeManager = "False";
             }
 
             return model;

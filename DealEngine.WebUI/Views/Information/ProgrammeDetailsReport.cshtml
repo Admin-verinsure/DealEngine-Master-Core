@@ -20,7 +20,10 @@
     {
         <a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">Generate and Save Proposal Report</a>
         <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@true" style="display:none">
-            <i class="fa fa-edit"></i> Send Documents
+            <i class="fa fa-edit"></i> Send Report to Programme Recipient
+        </a>
+        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
+            <i class="fa fa-edit"></i> Send Report to Insured
         </a>
     }
 
@@ -109,55 +112,61 @@
                         <h3>UIS No:  @Model.ClientInformationSheet.ReferenceId </h3>
                         <h4>Issued To: @Model.ClientInformationSheet.SubmittedBy</h4>
                     </div>
+
                     <div id="reportdetails">
+                        
+                        <div name="Section" style="border-style:groove">
+                            <h2 name="Title">Advisory</h2>
+                            <div name="Content">
+                                @Html.Raw(Model.Advisory)
+                            </div>
+                        </div>
+
                         @foreach (var item in Model.Sections.OrderBy(ob => ob.Position))
                         {
-                            <div id=@item.Name>
-                                <h2>@item.Name</h2>
-                                @Html.Partial("PrefabSections/" + item.CustomView, Model)
+                            <div id=@item.Name.Replace(" ","") name="Section" style="border-style:groove;">
+                                <h2 name="Title">@item.Name</h2>
+                                <div name="Content">
+                                    @Html.Partial("PrefabSections/" + item.CustomView, Model)
+                                </div>
                             </div>
-                            <br />
+                            <br/>
                         }
-                    </div>
 
+                        <div name="Section" style="border-style:groove">
+                            <h2 name="Title">Limits Selected</h2>
+                            <div name="Content">
+                                <table class="table table-bordered table-responsive-md table-striped text-center">
+                                    <tr>
+                                        <th class="text-center" width="40%">Product Name</th>
+                                        <th class="text-center" width="30%">Limit</th>
+                                        <th class="text-center" width="30%">Excess</th>
+                                    </tr>
+                                    @foreach (var limits in Model.LimitsSelected)
+                                    {
+                                        @if (limits != null)
+                                        {
+                                            <tr>
+                                                @foreach (var limit in limits)
+                                                {
+                                                    <td>
+                                                        @limit
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
 
-                    <div id="AdvisorySection">
-                        <div style='border-style : groove'>
-                            <h2>Advisory</h2>
-                            @Html.Raw(Model.Advisory)
+                        <div name="Section" style="border-style:groove">
+                            <h2 name="Title">Declaration</h2>
+                            <div name="Content">
+                                @Html.Raw(Model.Programme.Declaration)
+                            </div>
                         </div>
                     </div>
-
-                    <div id="DeclarationSection">
-                        @Html.Raw(Model.Programme.Declaration)
-                    </div>
-
-
-                    <div id="LimitsSelected">
-                        <table class="table table-bordered table-responsive-md table-striped text-center">
-                            <tr>
-                                <th class="text-center" width="40%">Product Name</th>
-                                <th class="text-center" width="30%">Limit</th>
-                                <th class="text-center" width="30%">Excess</th>
-                            </tr>
-                            @foreach (var limits in Model.LimitsSelected)
-                            {
-                                @if (limits != null)
-                                {
-                                    <tr>
-                                        @foreach (var limit in limits)
-                                        {
-                                            <td>
-                                                @limit
-                                            </td>
-                                        }
-                                    </tr>
-                                }
-                            }
-                        </table>
-
-                    </div>
-
                 </div>
             </article>
         </div>
@@ -172,126 +181,158 @@
             window.setTimeout(viewreport, 1000);
 
             function viewreport() {
+                debugger;
 
-                var commonyou = $("#You").html();
-                var insuredDetails = $("#AddOrganisation").html();
-                var locations = $("#locationtab1").html();
-                var revenue1 = $("#RevenueTab1").html();
-                var revenue2 = $("#RevenueTab2").html();
-                var revenue3 = $("#RevenueTab3").html();
-                var role1 = $("#RoleTab1").html();
-                var role2 = $("#RoleTab2").html();
-                var projectdetails = $("#gview_tblCEASproject").html();
-
-                var professional = $("#Professional").html();
-                var statutory = $("#Statutory").html();
-                var employers = $("#Employers").html();
-                var employment = $("#Employment").html();
-                var directors = $("#Directors").html();
-
-                var general = $("#General").html();
-                var cyber = $("#Cyber").html();
-                var claims = $("#Claims").html();
-                var notifications = $("#gview_tblClaim").html();
-                var advisory = $("#AdvisorySection").html();
-                var limitsselected = $("#LimitsSelected").html();
-                var declaration = $("#DeclarationSection").html();
-
-                ///AAA
-                var investmentproduct = $("#Investment").html();
-                var Outsidetrustee = $("#Outside").html();
-                var IndependentResearch = $("#Independent").html();
-                var fap = $("#FAP").html();
-
-                var commonreportstr = "";
-                var prog = document.getElementById("ClientProgramme_BaseProgramme_Name").value;
-                if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "CEAS Programme") {
-                    commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
-                        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
-                        + "</div>" + "</br></br><hr><hr></br><h2>Projects </h2></br>" + projectdetails
-                        + "<div style='border-style : groove; page-break-before: always;' >" + professional
-                        + "</div>" + "<div style='border-style : groove;' >" + statutory
-                        + "</div>" + "<div style='border-style : groove;' >" + employers
-                        + "</div>" + "<div style='border-style : groove;' >" + employment
-                        + "</div>" + "<div style='border-style : groove;' >" + directors
-                        + "</div>" + "<div style='border-style : groove;' >" + general
-                        + "</div>" + "<div style='border-style : groove;' >" + cyber
-                        + "</div>" + "<div style='border-style : groove;' >" + claims
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
-
-
-                } else {
-                    if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "TripleA Programme") {
-                        commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
-                        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
-                        + "</div>" + "</br></br><hr><hr></br></br>" + investmentproduct
-                        + "<div style='border-style : groove; page-break-before: always;' >" + professional
-                        + "</div>" + "<div style='border-style : groove;' >" + directors
-                        + "</div>" + "<div style='border-style : groove;' >" + statutory
-                        + "</div>" + "<div style='border-style : groove;' >" + employment
-                        + "</div>" + "</br></br><hr><hr></br></br>" + Outsidetrustee
-                        + "</div>" + "<div style='border-style : groove;' >" + cyber
-                        + "</div>" + "<div style='border-style : groove;' >" + fap
-                        + "</div>" + "</br></br><hr><hr></br></br>" + IndependentResearch
-                        + "</div>" + "<div style='border-style : groove;' >" + claims
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
-                        + "</div>" + "<div style='border-style : groove;' >" + employers
-                        + "</div>" + "<div style='border-style : groove;' >" + general
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
-                        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
+                $("[name ='Section']").each(
+                    function (index, element) {
+                        // Do whatever you want to Section                 
                     }
-                }
+                )
+                $("[name ='Title']").each(
+                    function (index, element) {
+                        // Do whatever you want to Title                        
+                    }
+                )
+                $("[name ='Content']").each(
+                    function (index, element) {
+                        // Old Jquery/SmartAdmin Table, Tab 1 only
+                        var table = $(element).find('[id*="gview_tbl"]');
+                        if (table[0] != null) {
+                            $(element).empty();
+                            $(element).append(table);
+                        }
+                        // New Jquery Table, All Tabs "ui-tabs"
+                        table = $(element).find('.tab-content');
+                        if (table[0] != null) {
+                            $(table).find("[role ='tabpanel']").removeAttr("aria-hidden");
+                            $(table).find("[role ='tabpanel']").removeAttr("style");
+                            // Remove Edit/Add Tabs
+                            var editTab = $(table).find("label:contains('Click Edit Button')").parents().eq(1).empty();
+                            $(editTab).next().empty();
+                            // Remove the Tab List
+                            $(table).prev().empty();
+                        }
+                    }
+                )
+
+                var commonreportstr = $("#reportdetails").html();
+
+                // #region Ashu's Old code
+                //var commonyou = $("#You").html();
+                //var insuredDetails = $("#AddOrganisation").html();
+                //var locations = $("#locationtab1").html();
+                //var revenue1 = $("#RevenueTab1").html();
+                //var revenue2 = $("#RevenueTab2").html();
+                //var revenue3 = $("#RevenueTab3").html();
+                //var role1 = $("#RoleTab1").html();
+                //var role2 = $("#RoleTab2").html();
+                //var projectdetails = $("#gview_tblCEASproject").html();
+
+                //var professional = $("#Professional").html();
+                //var statutory = $("#Statutory").html();
+                //var employers = $("#Employers").html();
+                //var employment = $("#Employment").html();
+                //var directors = $("#Directors").html();
+
+                //var general = $("#General").html();
+                //var cyber = $("#Cyber").html();
+                //var claims = $("#Claims").html();
+                //var notifications = $("#gview_tblClaim").html();
+                //var advisory = $("#AdvisorySection").html();
+                //var limitsselected = $("#LimitsSelected").html();
+                //var declaration = $("#DeclarationSection").html();
+
+                /////AAA
+                //var investmentproduct = $("#Investment").html();
+                //var Outsidetrustee = $("#Outside").html();
+                //var IndependentResearch = $("#Independent").html();
+                //var fap = $("#FAP").html();
+
+                //var commonreportstr = "";
+                //var prog = document.getElementById("ClientProgramme_BaseProgramme_Name").value;
+                //if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "CEAS Programme") {
+                //    commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
+                //        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
+                //        + "</div>" + "</br></br><hr><hr></br><h2>Projects </h2></br>" + projectdetails
+                //        + "<div style='border-style : groove; page-break-before: always;' >" + professional
+                //        + "</div>" + "<div style='border-style : groove;' >" + statutory
+                //        + "</div>" + "<div style='border-style : groove;' >" + employers
+                //        + "</div>" + "<div style='border-style : groove;' >" + employment
+                //        + "</div>" + "<div style='border-style : groove;' >" + directors
+                //        + "</div>" + "<div style='border-style : groove;' >" + general
+                //        + "</div>" + "<div style='border-style : groove;' >" + cyber
+                //        + "</div>" + "<div style='border-style : groove;' >" + claims
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
+                //} else {
+                //    if ((document.getElementById("ClientProgramme_BaseProgramme_Name").value) == "TripleA Programme") {
+                //        commonreportstr = commonyou + "<div style='border-style : groove' >" + advisory
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Insured Details / Named Parties</h2>" + insuredDetails
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Location </h2>" + locations
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Fee Income / Activities</h2>" + revenue1 + revenue2 + revenue3
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Roles </h2>" + role1 + role2
+                //        //+ "</div>" + "<div style='border-style : groove; page-break-after: always;' >"+ "<h2>Projects </h2>" + projectdetails
+                //        + "</div>" + "</br></br><hr><hr></br></br>" + investmentproduct
+                //        + "<div style='border-style : groove; page-break-before: always;' >" + professional
+                //        + "</div>" + "<div style='border-style : groove;' >" + directors
+                //        + "</div>" + "<div style='border-style : groove;' >" + statutory
+                //        + "</div>" + "<div style='border-style : groove;' >" + employment
+                //        + "</div>" + "</br></br><hr><hr></br></br>" + Outsidetrustee
+                //        + "</div>" + "<div style='border-style : groove;' >" + cyber
+                //        + "</div>" + "<div style='border-style : groove;' >" + fap
+                //        + "</div>" + "</br></br><hr><hr></br></br>" + IndependentResearch
+                //        + "</div>" + "<div style='border-style : groove;' >" + claims
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Notifications </h2>" + notifications
+                //        + "</div>" + "<div style='border-style : groove;' >" + employers
+                //        + "</div>" + "<div style='border-style : groove;' >" + general
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Limits Selected </h2>" + limitsselected
+                //        + "</div>" + "<div style='border-style : groove;' >" + "<h2>Declaration </h2>" + declaration;
+                //    }
+                //}
+
+                // #endregion 
 
                 commonreportstr = commonreportstr.replaceAll('“', "&quot");
                 commonreportstr = commonreportstr.replaceAll('”', "&quot");
                 commonreportstr = commonreportstr.replaceAll("’", "&#39 ");
                 commonreportstr = commonreportstr.replaceAll(" – ", "--");
+                commonreportstr = commonreportstr.replaceAll("&nbsp;", "");
                
                 var postData = { Reportstr: commonreportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
 
-                  $.ajax({
-                                url: '@Url.Action("SavePDFFile", "File")',
-                                type: "POST",
-                                data: postData
-                  })
-                      .done(function (data) {
-                          debugger;
-                                  $("#Pdfreport").attr("href", "/File/GetPDF?Id=" + data + "&ClientProgrammeId=" + "@Model.ClientProgramme.Id");
-                                  $(".fullreport").show();
-                              })
-                                .fail(function (a, s, d) {
-                                });
-
+                $.ajax({
+                    url: '@Url.Action("SavePDFFile", "File")',
+                    type: "POST",
+                    data: postData
+                })
+                .done(function (data) {
+                    debugger;
+                    $("#Pdfreport").attr("href", "/File/GetPDF?Id=" + data + "&ClientProgrammeId=" + "@Model.ClientProgramme.Id");
+                    $(".fullreport").show();
+                })
+                .fail(function (a, s, d) {
+                });
             }
-
         });
 
         function GetReport() {
             var docId = $("#docID").val();
+            var postData = { Id: docId};
 
-             var postData = { Id: docId};
-
-                  $.ajax({
-                                url: '@Url.Action("GetPDF", "File")',
-                                type: "POST",
-                                data: postData
-                  })
-                              .done(function (data) {
-                              })
-                                .fail(function (a, s, d) {
-                                });
-
-
+            $.ajax({
+                url: '@Url.Action("GetPDF", "File")',
+                type: "POST",
+                data: postData
+            })
+            .done(function (data) {
+            })
+            .fail(function (a, s, d) {
+            });
         }
     </script>
     @await Html.PartialAsync("_InformationWizardScripts")

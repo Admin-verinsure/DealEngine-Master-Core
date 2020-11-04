@@ -145,8 +145,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                     rsaUser.RsaStatus = RsaStatus.RequiresOtp;
 
                     return rsaUser;									
-				}
-				if (reponseActionCode == ActionCode.ALLOW)
+				} else if (reponseActionCode == ActionCode.ALLOW)
 				{
 					// Need to save the deviceTokenCookie from analyzeReponse
 					UpdateRsaUserFromResponse(response, rsaUser);
@@ -207,9 +206,11 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode = callStatusNodes.FirstChild.InnerText;
 
             IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+            DeviceResult deviceData = GetDeviceResultResponse(xDoc);
 
             authenticateResponse.identificationData = identificationData;
             authenticateResponse.credentialAuthResultList = credentialAuthResultList;
+            authenticateResponse.deviceResult = deviceData;
 
             return authenticateResponse;
         }
@@ -291,7 +292,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
             var userStatus = authenticateResponse.identificationData.userStatus;
             var statusCode = authenticateResponse.credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode;
-            user.DeviceTokenCookie = authenticateRequest.request.deviceRequest.deviceTokenCookie;
+            user.DeviceTokenCookie = authenticateResponse.deviceResult.deviceData.deviceTokenCookie;
             if (userStatus == UserStatus.LOCKOUT || userStatus == UserStatus.DELETE)
             {                
                 user.Lock();
@@ -457,12 +458,12 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				new EventData {
 					clientDefinedAttributeList = new ClientDefinedFact[] {
 						new ClientDefinedFact {
-							name = "FILTERED_TAM_GROUP",
-							value = "MFA",
-							dataType = DataType.STRING,
-							dataTypeSpecified = true,
+							//name = "FILTERED_TAM_GROUP",
+							//value = "MFA",
+							//dataType = DataType.STRING,
+							//dataTypeSpecified = true,     // removed as Marsh request
 						}
-					},
+                    },
 					eventType = EventType.SESSION_SIGNIN,
 					eventTypeSpecified = true,
 				}
@@ -511,7 +512,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				autoCreateUserFlag = true,                                  // confirm value
 				autoCreateUserFlagSpecified = true,
 				credentialDataList = GetCredentialDataList (),
-				eventDataList = GetEventData (rsaUser),
+				eventDataList = GetEventData (rsaUser),       
 				runRiskType = RunRiskType.ALL,                  // confirm value
 				channelIndicator = ChannelIndicatorType.WEB,    // fairly sure that this is supposed to be web
 				channelIndicatorSpecified = true,
