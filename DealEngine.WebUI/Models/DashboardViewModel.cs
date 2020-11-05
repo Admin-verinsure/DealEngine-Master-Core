@@ -161,6 +161,7 @@ namespace DealEngine.WebUI.Models
 		public string CurrentUserIsBroker { get; set; }
 		public string CurrentUserIsInsurer { get; set; }
 		public string CurrentUserIsTC { get; set; }
+		public string CurrentUserIsProgrammeManager { get; set; }
 		public bool IsSubclientEnabled { get; set; }
 		public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; internal set; }
