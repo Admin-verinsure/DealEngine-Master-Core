@@ -26,11 +26,12 @@
 
     function RemoveOrganisation(organisationId, AccordionId) {        
         var programmeId = document.getElementById("Programme_Id").value;
+        var clientInformationId = document.getElementById("AnswerSheetId").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
             url: '@Url.Action("RemoveOrganisation", "Organisation")',
             type: "POST",
-            data: { OrganisationId: organisationId, ProgrammeId: programmeId },
+            data: { OrganisationId: organisationId, ProgrammeId: programmeId, ClientInformationId: clientInformationId },
             success: function (Data) {
                 try {
                     location.reload();
@@ -183,7 +184,8 @@
             $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
                 type: "POST",
-                data: $("#tab_1 :input").serialize({ json: true })
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
             })
                 .done(function () {
                     //Save the session and reload

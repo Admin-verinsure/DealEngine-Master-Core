@@ -445,6 +445,7 @@
                     $('#tblWaterLocation').trigger('reloadGrid');
                     $('#tblLocation').trigger('reloadGrid');
                     $('#tblRegisteredMV').trigger('reloadGrid');
+                    $('#tblUnRegisteredMV').trigger('reloadGrid');
                     $('#tblOperator').trigger('reloadGrid');
                     $('#tblBoatUse').trigger('reloadGrid');
                     $('#tblOU').trigger('reloadGrid');
@@ -666,6 +667,7 @@
     }
 
     function RemoveVehicle(vehicleId, status, sourceTable, destTable, Modelstatus) {
+        debugger;
         var _sheetId = $('#AnswerSheetId').val();
         var postData = {
             'vehicleId': vehicleId,
@@ -677,7 +679,8 @@
             data: postData
         })
         .done(function (data) {
-            if (data.OriginalVehicleId != "00000000-0000-0000-0000-000000000000") {
+            debugger;
+            if (data.originalVehicleId != "00000000-0000-0000-0000-000000000000") {
                 if (Modelstatus != "Submitted") {
                     $('#VehicleRemoveModal').show();
                     $('.modal').css({ "width": "600px", "margin-left": "600px" });
@@ -1602,6 +1605,7 @@ function UpdateChosen() {
     }
 
     function AddMotorVehicleModal(event) {
+        debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
         var registration = $('#RegistrationModal').serialize();
@@ -2587,7 +2591,7 @@ function UpdateChosen() {
         });
     };
 
-    function EditBoat(classId, boatId) {
+    function EditBoat(classId, boatId) {        
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
         var postData = {
@@ -2648,9 +2652,14 @@ function UpdateChosen() {
                 $('#othermarinSection').addClass("hidden");
             }
             else {
-                $('#BoatWaterLocation.' + classId).val("add");
-                $('#othermarinSection').removeClass("hidden");
-                $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
+                if (data.otherMarinaName != "" && data.otherMarinaName != null) {
+                    $('#OtherBoatWaterLocation.b').val(data.otherMarinaName);
+                    $('#BoatWaterLocation.b').val("add");
+                    $('#othermarinSection').removeClass("hidden");
+                }
+                else {
+                    $('#othermarinSection').addClass("hidden");
+                }
             }
             vesselType1Selected();
             $('#BoatType2.b').val(data.boatType2);
@@ -2664,6 +2673,7 @@ function UpdateChosen() {
     };
 
     function updateEditBoat(data) {
+        debugger;
         if (data.hullConfiguration == "Other") {
             $('#HullConfigurationOtherSection').removeClass("hidden");
         }
@@ -3841,7 +3851,8 @@ function UpdateChosen() {
         });
     };
 
-    function ValidateMotorVehicle(event,tabId, tableId, currenttab) {
+    function ValidateMotorVehicle(event, tabId, tableId, currenttab) {
+        debugger;
         event.preventDefault();
         var sumInsured = $('#SumInsured').val();
         var vehicleLocation = $('#VehicleLocation').val();
@@ -3942,6 +3953,7 @@ function UpdateChosen() {
     }
 
     function AddMotorVehicle(tabId, tableId) {
+        debugger;
         var registration = $('#Registration').serialize();
         var informationId = $('#AnswerSheetId').serialize();
         $('#AddTrailer').show();
@@ -4406,6 +4418,7 @@ function UpdateChosen() {
     }
 
     function AddvesselType2Selected() {
+        debugger;
         var boatType2Selected = AddboatType2.options[AddboatType2.selectedIndex].value;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         $('#Addexcess').val('');
@@ -4445,6 +4458,9 @@ function UpdateChosen() {
             $('#AddBerthedMooringType').removeClass("hidden");
             $('#AddPileMooringType').addClass("hidden");
             $('#AddSwingMooringType').addClass("hidden");
+            if ($('#AddBoatWaterLocation').val() == "add") {
+                $('#AddothermarinSection').removeClass("hidden");
+            }
             AddhasTrailer();
 
         }
@@ -4459,6 +4475,9 @@ function UpdateChosen() {
             $('#AddBerthedMooringType').addClass("hidden");
             $('#AddPileMooringType').removeClass("hidden");
             $('#AddSwingMooringType').removeClass("hidden");
+            if ($('#AddBoatWaterLocation').val() == "add") {
+                $('#AddothermarinSection').removeClass("hidden");
+            }
             AddhasTrailer();
         }
         else {
@@ -5095,6 +5114,7 @@ function UpdateChosen() {
     }
 
     function vesselType2Selected() {
+        debugger;
         var boatType2Selected = boatType2.options[boatType2.selectedIndex].value;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         $('#excess').val('');
@@ -5130,6 +5150,9 @@ function UpdateChosen() {
             $('#PileMooringType').addClass("hidden");
             $('#SwingMooringType').addClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
+            if ($('#BoatWaterLocation').val() == "add") {
+                $('#othermarinSection').removeClass("hidden");
+            }
             hasTrailer();
         }
         else if (boatType2Selected == "Moored") {
@@ -5143,6 +5166,9 @@ function UpdateChosen() {
             $('#PileMooringType').removeClass("hidden");
             $('#SwingMooringType').removeClass("hidden");
             $('#BoatLandLocationSection').addClass("hidden");
+            if ($('#BoatWaterLocation').val() == "add") {
+                $('#othermarinSection').removeClass("hidden");
+            }
             hasTrailer();
         }
         else {
@@ -5690,12 +5716,17 @@ function UpdateChosen() {
     function DefaultDateRestore() {
         if (document.getElementById("dateselected") != null) {
             var ds = document.getElementById("dateselected").value;
+            var ds2 = "";
+            var date = new Date();
+            var day = ("0" + date.getDate()).slice(-2);
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var year = date.getFullYear();
             if (ds == null) {
-                var date = new Date();
-                var day = ("0" + date.getDate()).slice(-2);
-                var month = ("0" + (date.getMonth() + 1)).slice(-2);
-                var year = date.getFullYear();
                 ds = year + "-" + month + "-" + day;
+                ds2 = ds;
+            }
+            else {
+                ds2 = year + "-" + month + "-" + day; // This is for when you just want the Default Date not to set with Policy Effective Date
             }
             if (document.getElementById("AddBoatEffectiveDate") != null) {
                 document.getElementById("AddBoatEffectiveDate").value = ds;
@@ -5720,6 +5751,12 @@ function UpdateChosen() {
             }
             if (document.getElementById("TrailerEffectiveDateModal") != null) {
                 document.getElementById("TrailerEffectiveDateModal").value = ds;
+            }
+            if (document.getElementById("RemoveVehicleCeaseEffectiveDate") != null) {
+                document.getElementById("RemoveVehicleCeaseEffectiveDate").value = ds2;
+            }
+            if (document.getElementById("RemoveCeaseEffectiveDate") != null) {
+                document.getElementById("RemoveCeaseEffectiveDate").value = ds2;
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿using DealEngine.Domain.Entities.Abstracts;
+using System;
+using System.Linq;
 
 namespace DealEngine.Domain.Entities
 {
@@ -30,6 +32,5 @@ namespace DealEngine.Domain.Entities
         public virtual string EndorsementTitle { get; set; }
         public virtual string EndorsementProduct { get; set; }
         public virtual string EndorsementText { get; set; }
-
     }
 }

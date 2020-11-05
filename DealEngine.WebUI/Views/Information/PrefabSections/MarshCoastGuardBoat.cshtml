@@ -87,7 +87,7 @@
                                 <label class="label required">Vessel Type</label>
                                 <label class="input form-group">
                                     <select onchange="vesselType1Selected()" class="form-control b" id="BoatType1" name="BoatType1" title="" required>
-                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option selected="selected" value="">-- Select --</option>
                                         <option value="Powerboats">Powerboats</option>
                                         <option value="CruisersandLaunches">Cruisers and Launches</option>
                                         <option value="YachtsandCatamarans">Yachts and Catamarans</option>
@@ -151,7 +151,7 @@
                                     <label class="label required">Personal Watercraft Registration Area</label>
                                     <label class="input form-group">
                                         <select class="form-control b" id="VesselArea" name="VesselArea" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
+                                            <option selected="selected" value="">-- Select --</option>
                                             <option value="Auckland">Auckland</option>
                                             <option value="Bay Of Plenty">Bay Of Plenty</option>
                                             <option value="Gisborne">Gisborne</option>
@@ -425,14 +425,11 @@
                                     <label class="input form-group">
                                         <select onchange="addNewTrailer()" class="form-control b" id="BoatTrailer" name="BoatTrailer" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            @foreach (var trailer in Model.ClientInformationSheet.Vehicles.Where(t => t.Removed == false))
                                             {
-                                                foreach (var trailer in boat.BoatTrailers)
+                                                if (trailer != null)
                                                 {
-                                                    if (trailer != null)
-                                                    {
-                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
-                                                    }
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
                                                 }
                                             }
                                             <option value="add">Add Trailer</option>
@@ -468,7 +465,7 @@
                                     <label class="label required">Vessel Water Location</label>
                                     <label class="input form-group">
                                         <select onchange="addNewWaterLoc()" class="form-control b" id="BoatWaterLocation" name="BoatWaterLocation" required>
-                                            <option value="">-- Select --</option>
+                                            <option selected="selected" value="">-- Select --</option>
                                             @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                             {
                                                 <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
@@ -597,7 +594,7 @@
                                 <label class="label required">Vessel Type</label>
                                 <label class="input form-group">
                                     <select onchange="AddvesselType1Selected()" class="form-control b" id="AddBoatType1" name="BoatType1" title="" required>
-                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option selected="selected" value="">-- Select --</option>
                                         <option value="Powerboats">Powerboats</option>
                                         <option value="CruisersandLaunches">Cruisers and Launches</option>
                                         <option value="YachtsandCatamarans">Yachts and Catamarans</option>
@@ -661,7 +658,7 @@
                                     <label class="label required">Personal Watercraft Registration Area</label>
                                     <label class="input form-group">
                                         <select class="form-control b" id="AddVesselArea" name="VesselArea" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
+                                            <option selected="selected" value="">-- Select --</option>
                                             <option value="Auckland">Auckland</option>
                                             <option value="Bay Of Plenty">Bay Of Plenty</option>
                                             <option value="Gisborne">Gisborne</option>
@@ -941,14 +938,11 @@
                                     <label class="input form-group">
                                         <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
                                             <option selected="selected" value="">-- Select --</option>
-                                            @foreach (var boat in Model.ClientInformationSheet.Boats.Where(b => b.BoatTrailers.Any()))
+                                            @foreach (var trailer in Model.ClientInformationSheet.Vehicles.Where(t => t.Removed == false))
                                             {
-                                                foreach (var trailer in boat.BoatTrailers)
+                                                if (trailer != null)
                                                 {
-                                                    if (trailer != null)
-                                                    {
-                                                        <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
-                                                    }
+                                                    <option value="@trailer.Id">@string.Join(", ", trailer.Year, trailer.Make, trailer.Model, trailer.Registration == null ? "" : trailer.Registration)</option>
                                                 }
                                             }
                                             <option value="add">Add Trailer</option>
@@ -984,7 +978,8 @@
                                     <label class="label required">Vessel Water Location</label>
                                     <label class="input form-group">
                                         <select onchange="AddaddNewWaterLoc()" class="form-control b" id="AddBoatWaterLocation" name="BoatWaterLocation" required>
-                                                @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
+                                            <option selected="selected" value="">-- Select --</option>   
+                                            @foreach (var marina in Model.ClientInformationSheet.WaterLocations)
                                                 {
                                                     <option value="@marina.Id">@string.Join(", ", marina.MarinaName)</option>
                                                 }

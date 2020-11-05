@@ -14,10 +14,6 @@ namespace DealEngine.WebUI.Models
 
 		}
 
-		public LocationViewModel()
-		{
-		}
-
 		private IList<Location> GetLocations(ClientInformationSheet ClientInformationSheet)
 		{
 			Locations = new List<Location>();

@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {            
-            //WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Data\\Import\\";
+            WorkingDirectory = "/tmp/";
+            //WorkingDirectory = "C:\\Users\\Public\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -2217,6 +2217,49 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportApolloSetELDefaultVale(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "ApolloSubmittedUIS2020.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(parts[0]))
+                        {
+                            var sheet = await _clientInformationService.GetInformation(new Guid(parts[0]));
+
+                            if (!sheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").Any())
+                            {
+                                var newanswer = new ClientInformationAnswer(currentUser, "EPLViewModel.HaveAnyEmployeeYN", "1");
+                                sheet.Answers.Add(newanswer);
+                            }
+
+                            await _clientInformationService.UpdateInformation(sheet);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
 
         public async Task ImportAbbottServicePreRenewData(User CreatedUser)
         {

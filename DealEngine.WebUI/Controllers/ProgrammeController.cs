@@ -1412,6 +1412,11 @@ namespace DealEngine.WebUI.Controllers
                             emailtemplatename = "Online Payment Instructions";
                             break;
                         }
+                    case "SendPDFReport":
+                        {
+                            emailtemplatename = "PDF Report";
+                            break;
+                        }
                     default:
                         {
                             throw new Exception(string.Format("Invalid Email Template Type for Programme ID: ", model.BaseProgrammeID));

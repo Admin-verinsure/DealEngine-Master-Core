@@ -3,7 +3,6 @@
 <form id="DAOLIViewModel" class="is-valid" data-accordianId="Directors and Officers Liability Insurance">
 
     <div id="DAOLIViewModel.HasDAOLIOptions">
-
         <div class="form-group">
             <label>
                 <strong>Please advise the following information regarding your companies as at your last financial year end(please total):</strong>
@@ -29,7 +28,7 @@
                     </label>
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.DAOLIViewModel.AssetTotal, new { @class = "form-control", @id = "assettotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    @Html.TextBoxFor(m => m.DAOLIViewModel.DebtTotal, new { @class = "form-control", @id = "debttotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
                 </div>
             </div>
         </div>

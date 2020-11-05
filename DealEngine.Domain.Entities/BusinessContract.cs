@@ -23,22 +23,9 @@ namespace DealEngine.Domain.Entities
         public virtual Boolean ProjectCoordinator { get; set; }
         public virtual Boolean ProjectEngineer { get; set; }
         public virtual string Country { get; set; }
-
-        public virtual ClientInformationSheet ClientInformationSheet
-        {
-            get;
-            set;
-        }
-        public virtual BusinessContract OriginalBusinessContract
-        {
-            get;
-            protected set;
-        }
-        public virtual bool Removed
-        {
-            get;
-            set;
-        }
+        public virtual ClientInformationSheet ClientInformationSheet { get; set; }
+        public virtual BusinessContract OriginalBusinessContract { get; protected set; }
+        public virtual bool Removed { get; set; }
         public virtual string ProjectDescription { get; set; }
         public virtual string MajorResponsibilities { get; set; }
         public virtual string ProjectDuration { get; set; }

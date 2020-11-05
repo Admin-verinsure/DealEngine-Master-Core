@@ -21,9 +21,7 @@ namespace DealEngine.Services.Interfaces
         Task<bool> IsBaseClass(ClientInformationSheet sheet);
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
-        Task RemoveOrganisationFromSheets(Organisation organisation);
-        Task DeveloperTool();
-        Task<List<ClientInformationSheet>> GetAllInformationSheets();
+        Task DetachOrganisation(IFormCollection collection);
     }
 }
 

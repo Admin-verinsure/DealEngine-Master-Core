@@ -313,13 +313,13 @@ namespace DealEngine.WebUI.Controllers
                         
                         DealEngine.Domain.Entities.Document newFile = new DealEngine.Domain.Entities.Document {
                             Name = filename,
-                            Description = "testing",
-                            DocumentType = 1,
+                            Description = "Local PDF for " + model.Product,
+                            DocumentType = 0,
                             IsTemplate = true,
                             ContentType = model.File.ContentType,
-                            FileRendered = false,                                                       
+                            FileRendered = false,                                                  
                             Path = path
-                        };                       
+                        };
 
                         await _fileRepository.AddAsync(newFile);
 

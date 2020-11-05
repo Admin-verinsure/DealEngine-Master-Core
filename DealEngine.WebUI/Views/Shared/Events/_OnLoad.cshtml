@@ -44,6 +44,12 @@
     $('#TrailerEffectiveDateModal').datepicker({
         dateFormat: "yy-mm-dd",
     });
+    $('#RemoveCeaseEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
+    $('#RemoveVehicleCeaseEffectiveDate').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
 
     function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
         var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
@@ -200,6 +206,10 @@
                         ApolloOwnerOnLoad();
                     }        
                     TradingNameOwnerOnLoad();
+                }
+                if (OutPut["User"] == null) {
+                    //user is null so we override with organisation
+                    document.getElementById("User.Email").value = OutPut["Organisation"]["Email"];
                 }
             }
         } catch (ex) { debugger; }

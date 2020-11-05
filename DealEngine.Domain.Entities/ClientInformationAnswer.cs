@@ -45,7 +45,7 @@ namespace DealEngine.Domain.Entities
 			//	throw new Exception ("Cannot clone answer for original information");
 
 			ClientInformationAnswer answer = new ClientInformationAnswer (newSheet.CreatedBy, ItemName, Value);
-			answer.OriginalAnswer = this;
+            answer.OriginalAnswer = this;
 			return answer;
 		}
 	}

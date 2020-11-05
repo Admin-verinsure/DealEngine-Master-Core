@@ -242,7 +242,7 @@ namespace DealEngine.Domain.Entities
 			newVehicle.VehicleType = VehicleType;
 			newVehicle.UseType = UseType;
 			newVehicle.SubUseType = SubUseType;
-			newVehicle.InterestedParties = InterestedParties;
+			newVehicle.InterestedParties = InterestedParties.ToList();
 			newVehicle.Notes = Notes;
 			newVehicle.Validated = Validated;
 			newVehicle.GarageLocation = GarageLocation;
@@ -256,8 +256,6 @@ namespace DealEngine.Domain.Entities
 			if (VehicleExpireDate > DateTime.MinValue)
 				newVehicle.VehicleExpireDate = VehicleExpireDate;
 			return newVehicle;
-
-			//new List<Organisation> (InterestedParties);
 		}
 	}
 }
