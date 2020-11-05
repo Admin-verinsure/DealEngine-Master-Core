@@ -2953,16 +2953,15 @@ namespace DealEngine.WebUI.Controllers
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
+                            // Keep going until you find a HTML Information Sheet Report and convert it to PDF Information Sheet
                             if (doc.Name.EqualsIgnoreCase("Information Sheet Report") && programme.BaseProgramme.EnableFullProposalReport)
                             {
                                 SystemDocument renderedDoc = await GetPdfDocument(doc.Id, programme);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                 document = renderedDoc;
-                                // documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }
                         }
-
 
                         if (programme.BaseProgramme.ProgEnableEmail && agreement.MasterAgreement)
                         {
@@ -3108,8 +3107,6 @@ namespace DealEngine.WebUI.Controllers
             Document document = new Document(user, "Information Sheet Report", "application/pdf", 99);
             document.Contents = pdfBytes;
             return document;
-
-
         }
 
         [HttpGet]
@@ -3924,8 +3921,8 @@ namespace DealEngine.WebUI.Controllers
                     agreeDocList = agreement.GetDocuments();
                     foreach (Document doc in agreeDocList)
                     {
-                        // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
-                        if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                        // The PDF document will skip rendering so we don't delete the old document here (as re-rending will make new doc) and all others are getting regenerated so we delete the old ones
+                        if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0) && !(doc.DocumentType == 99))
                         {
                             doc.Delete(user);
                         }

@@ -307,6 +307,7 @@ namespace DealEngine.WebUI.Controllers
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
+                    #region Commented code
                     //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                     //if (milestone != null)
                     //{
@@ -317,29 +318,24 @@ namespace DealEngine.WebUI.Controllers
                     //        advisoryDesc = advisory.Description;
                     //    }
                     //}
-
+                    #endregion
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
                 }
-
-
                 var claims = new List<ClaimViewModel>();
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
                 {
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
                 }
-
                 model.Claims = claims;
-
                 var interestedParties = new List<OrganisationViewModel>();
-
                 var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
                 {
-
+                    #region Commented code
                     //foreach (var org in IA.IAOrganisations)
                     //{
                     //    if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
@@ -350,7 +346,10 @@ namespace DealEngine.WebUI.Controllers
                     //        interestedParties.Add(ovm);
                     //    }
                     //}
+                    #endregion
                 }
+                
+                #region Commented code
 
                 //model.InterestedParties = interestedParties;
 
@@ -415,10 +414,11 @@ namespace DealEngine.WebUI.Controllers
                 //    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
 
                 //}
-
+                #endregion
                 var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
                 {
+                    #region Commented code
                     //foreach (var org in IA.IAOrganisations)
                     //{
                     //    if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
@@ -429,14 +429,16 @@ namespace DealEngine.WebUI.Controllers
                     //        MarinaLocations.Add(ovm);
                     //    }
                     //}
+                    #endregion
                 }
-
+                #region Commented code
                 //model.MarinaLocations = MarinaLocations;
 
                 //for (var i = 0; i < sheet.WaterLocations.Count(); i++)
                 //{
                 //    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
                 //}
+                #endregion
 
                 var availableProducts = new List<SelectListItem>();
 
@@ -1421,6 +1423,7 @@ namespace DealEngine.WebUI.Controllers
             return await RedirectToLocal();
         }
 
+        #region Commented code
         //[HttpPost]
         //public async Task<IActionResult> CreateInformationSheet(IFormCollection form)
         //{
@@ -1588,6 +1591,7 @@ namespace DealEngine.WebUI.Controllers
         // Oualification - Name, DateObtained
 
         // Parties - Party, Org Name, Org Type, Qualification
+        #endregion
 
         #region Test Data
         private string _importantNotices = @"<table id=""Table3"" border=""1"" cellpadding=""4"" cellspacing=""0"" width=""100%"">
