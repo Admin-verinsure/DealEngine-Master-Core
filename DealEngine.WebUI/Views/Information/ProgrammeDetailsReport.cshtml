@@ -10,16 +10,12 @@
         </h1>
         @Html.HiddenFor(m => m.ClientProgramme.BaseProgramme.Name)
     </div>
-    @if (@Model.ClientProgramme.BaseProgramme.EnableFullProposalReport)
-    {
-        <!--a href="~/Home/GetPDF?Id=" id="Pdfreport" class="btn btn-success btn-sm fullreport" style="display:none">Generate Proposal Report</a-->
-        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@true" style="display:none">
-            <i class="fa fa-edit"></i> Generate and Send Report to Programme Recipient
-        </a>
-        <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false" style="display:none">
-            <i class="fa fa-edit"></i> Generate and Send Report to Insured
-        </a>
-    }
+    <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@true">
+        <i class="fa fa-edit"></i> Generate and Send Report to Programme Recipient
+    </a>
+    <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@Model.AnswerSheetId&sendUser=@false">
+        <i class="fa fa-edit"></i> Generate and Send Report to Insured
+    </a>
     <section id="widget-grid" class="">
         <div class="row">
             <article class="col-sm-12 col-md-12 col-lg-6">
@@ -172,12 +168,18 @@
                         }
                     }
                 )
-                var commonreportstr = $("#reportdetails").html();               
-                commonreportstr = commonreportstr.replaceAll('“', "&quot");
-                commonreportstr = commonreportstr.replaceAll('”', "&quot");
-                commonreportstr = commonreportstr.replaceAll("’", "&#39 ");
-                commonreportstr = commonreportstr.replaceAll(" – ", "--");
-                commonreportstr = commonreportstr.replaceAll("&nbsp;", "");              
+                var commonreportstr = $("#reportdetails").html();
+                commonreportstr = commonreportstr.replace(/“/g, '&quot');
+                commonreportstr = commonreportstr.replace(/”/g, '&quot');
+                commonreportstr = commonreportstr.replace(/’/g, '&#39');
+                commonreportstr = commonreportstr.replace(/ – /g, '--');
+                commonreportstr = commonreportstr.replace(/&nbsp;/g, '');
+
+                //commonreportstr = commonreportstr.replaceAll('“', "&quot");
+                //commonreportstr = commonreportstr.replaceAll('”', "&quot");
+                //commonreportstr = commonreportstr.replaceAll("’", "&#39 ");
+                //commonreportstr = commonreportstr.replaceAll(" – ", "--");
+                //commonreportstr = commonreportstr.replaceAll("&nbsp;", "");              
                 var postData = { Reportstr: commonreportstr , ClientProgrammeId : "@Model.ClientProgramme.Id"};
                 $.ajax({
                     url: '@Url.Action("SavePDFFile", "File")',
@@ -186,7 +188,6 @@
                 })
                 .done(function (data) {
                     //This is where the HTML saved by "SavePDFFile" should be then creating the PDF file by Ajax Request to controller to fileservice or something rather than doing it in 2 seperate functions in different controllers (for maintainability purposes)
-                    //$("#Pdfreport").attr("href", "/File/GetPDF?Id=" + data + "&ClientProgrammeId=" + "Model.ClientProgramme.Id");
                     $(".fullreport").show();
                 })
                 .fail(function (a, s, d) {

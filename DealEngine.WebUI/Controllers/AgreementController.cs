@@ -2970,7 +2970,14 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 if (sendUser)
                                 {
-                                    await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent, document, agreement.ClientInformationSheet, agreement, null);
+                                    if (programme.BaseProgramme.FullProposalReportRecipent != null)
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.FullProposalReportRecipent, document, agreement.ClientInformationSheet, agreement, null);
+                                    }
+                                    else
+                                    {
+                                        await _emailService.SendFullProposalReport(programme.BaseProgramme.BrokerContactUser.Email, document, agreement.ClientInformationSheet, agreement, null);
+                                    }
                                 }
                                 else
                                 {
