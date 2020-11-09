@@ -37,6 +37,15 @@
                 <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.Programme.Id" class="btn btn-primary btn-sm" style="color:white">View Report </a>
             </li>*@
         }
+        else if (Model.CurrentUserIsProgrammeManager == "True")
+        {
+            <li class="nav-item">
+                <a class="btn btn-primary btn-sm" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.Programme.Id" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
+            </li>
+        }
         @*<li class="nav-item">
             <a onclick="location.href='@Url.Action("getuserdetails", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>
         </li>*@
