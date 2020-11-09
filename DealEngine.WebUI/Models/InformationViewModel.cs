@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models
 {
-
     public class InformationViewModel : BaseViewModel
     {
         public InformationViewModel() { }

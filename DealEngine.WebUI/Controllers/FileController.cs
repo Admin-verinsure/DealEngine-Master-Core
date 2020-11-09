@@ -374,6 +374,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SavePDFFile(String Reportstr, Guid ClientProgrammeId)
         {
+            // Is actually saving HTML not PDF.. Bad function name..
             SystemDocument document = null;
 
             User user = null;
