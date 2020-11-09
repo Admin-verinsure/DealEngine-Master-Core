@@ -9,7 +9,7 @@
         <form action="ImpersonateUser" method="post">
             <div class="form-group">
                 <select class="form-control" name="username">
-                    @foreach (var user in Model.Users)
+                    @foreach (var user in Model.Users.OrderBy(muser => muser.UserName))
                     {
                         <option value="@user.UserName">@user.UserName - @user.Email</option>
                     }
