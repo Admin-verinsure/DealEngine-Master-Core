@@ -37,6 +37,7 @@
     });
 
     function OnChange(Id, Name) {
+        debugger;
         var obj = document.getElementById(Id);
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
@@ -115,6 +116,7 @@
     }
 
     function DefaultRule(Value, Name) {
+        debugger;
         if (Value === "1") {
             ShowElement(Name);
         } else {
@@ -346,6 +348,31 @@
                         else {
                             element.classList.remove("is-invalid");
                             element.classList.add("is-valid");
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
+            if (Rule == "AttachOrganisationEmail") {
+                // Unhide the element
+                // Check Regex pattern first
+                var Form = document.getElementById("attachOrganisationViewModel");
+                $.ajax({
+                    url: '@Url.Action("ValidateAttachOrganisationEmail", "Organisation")',
+                    type: "POST",
+                    data: $("#" + Form.id).serialize(),
+                    success: function (Data) {
+                        var element = document.getElementById("RemovedOrganisation.Email");
+                        if (Data == true) {
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-invalid");
+                            ShowElement(Name);
+                        }
+                        else {
+                            element.classList.remove("is-invalid");
+                            element.classList.add("is-valid");
+                            ShowElement(Name);
                         }
                     }, error: function (request, error) {
                         debugger;
@@ -638,6 +665,7 @@
     }
 
     function HideElement(id) {
+        debugger;
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = true;

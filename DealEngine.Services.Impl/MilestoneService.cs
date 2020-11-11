@@ -231,9 +231,9 @@ namespace DealEngine.Services.Impl
 
         }
 
-        public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme)
+        public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme, Organisation organisation)
         {
-            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisationUser.PrimaryOrganisation.Id.ToString();
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
             UserTask userTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
             if (userTask == null)
             {

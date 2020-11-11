@@ -23,6 +23,7 @@ namespace DealEngine.Services.Impl
         IReferenceService _referenceService;
         ICloneService _cloneService;
         IMapperSession<Organisation> _organisationRepository;
+        IMapperSession<Reference> _referenceRepository;
 
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
@@ -30,6 +31,7 @@ namespace DealEngine.Services.Impl
             IClientInformationService clientInformationService,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
+            IMapperSession<Reference> referenceRepository,
             ICloneService cloneService
             )
         {
@@ -39,6 +41,7 @@ namespace DealEngine.Services.Impl
             _programmeRepository = programmeRepository;
             _clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
+            _referenceRepository = referenceRepository;
         }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
@@ -408,7 +411,7 @@ namespace DealEngine.Services.Impl
             return Sheets;
         }
 
-        public async Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection)
+        public async Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection, Dictionary<string,string> collection)
         {            
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
@@ -417,8 +420,23 @@ namespace DealEngine.Services.Impl
 
             var cloneMapper = mapperConfiguration.CreateMapper();
 
-            ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
-            ClientProgramme oldClientProgramme = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
+            ClientProgramme oldClientProgramme = null;
+            ChangeReason changeReason = null;
+
+            if (formCollection != null)
+            {
+                changeReason = new ChangeReason(createdBy, formCollection);
+                oldClientProgramme = await GetClientProgramme(Guid.Parse(formCollection["DealId"]));
+            }
+            else
+            {
+                changeReason = new ChangeReason(createdBy);
+                changeReason.ChangeType = collection["ChangeType"];
+                changeReason.Reason = collection["Reason"];
+                changeReason.Description = collection["ReasonDesc"];
+                changeReason.EffectiveDate = DateTime.Now;
+                oldClientProgramme = await GetClientProgramme(Guid.Parse(collection["ClientProgrammeID"]));
+            }
             
             ClientInformationSheet newClientInformationSheet = new ClientInformationSheet(createdBy, oldClientProgramme.Owner, null);
             newClientInformationSheet = cloneMapper.Map<ClientInformationSheet>(oldClientProgramme.InformationSheet);
@@ -428,7 +446,8 @@ namespace DealEngine.Services.Impl
             newClientInformationSheet.DateCreated = DateTime.Now;
             newClientInformationSheet.UnlockDate = DateTime.MinValue;
             newClientInformationSheet.PreviousInformationSheet = oldClientProgramme.InformationSheet;
-            
+            await _referenceRepository.AddAsync(new Reference(newClientInformationSheet.Id, newClientInformationSheet.ReferenceId));
+
             ClientProgramme newClientProgramme = new ClientProgramme(createdBy, oldClientProgramme.Owner, oldClientProgramme.BaseProgramme);
             newClientProgramme.BrokerContactUser = oldClientProgramme.BaseProgramme.BrokerContactUser;
             newClientProgramme.ChangeReason = changeReason;
@@ -545,7 +564,7 @@ namespace DealEngine.Services.Impl
             return Destination;
         }
 
-        public async Task AttachOrganisationToClientProgramme(IFormCollection collection)
+        public async Task AttachOrganisationToClientProgramme(IFormCollection collection, ClientProgramme clientProgramme)
         {
             if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
             {
@@ -553,24 +572,23 @@ namespace DealEngine.Services.Impl
                 {
                     var Organisation = await _organisationRepository.GetByIdAsync(AttachOrganisationId);
                     Organisation.Removed = false;
+                    foreach (AdvisorUnit unit in Organisation.OrganisationalUnits)
+                    {
+                        if (unit.IsPrincipalAdvisor == true)
+                        {
+                            unit.IsPrincipalAdvisor = false;
+                        }
+                    }
                     if (Organisation != null)
                     {
-                        if (Guid.TryParse(collection["ClientProgrammeId"], out Guid ClientProgrammeId))
+                        if (clientProgramme != null)
                         {
-                            if (ClientProgrammeId != Guid.Empty)
+                            if (!clientProgramme.InformationSheet.Organisation.Contains(Organisation))
                             {
-                                var clientProgramme = await GetClientProgrammebyId(ClientProgrammeId);
-                                //assume the last client programme to check?
-                                if (clientProgramme != null)
-                                {
-                                    if (!clientProgramme.InformationSheet.Organisation.Contains(Organisation))
-                                    {
-                                        clientProgramme.InformationSheet.Organisation.Add(Organisation);
-                                        await Update(clientProgramme);
-                                    }
-                                }
+                                clientProgramme.InformationSheet.Organisation.Add(Organisation);
+                                await Update(clientProgramme);
                             }
-                        }
+                        }                        
                     }
                 }                
             }

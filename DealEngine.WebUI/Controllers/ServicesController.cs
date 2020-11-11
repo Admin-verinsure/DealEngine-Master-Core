@@ -169,7 +169,7 @@ namespace DealEngine.WebUI.Controllers
                     clientProgramme.EGlobalClientNumber = Collection["ClientProgramme.EGlobalClientNumber"];
                     clientProgramme.Tier = Collection["ClientProgramme.Tier"];
                     await _programmeService.Update(clientProgramme);
-                    User OwnerUser = await _userService.GetUserPrimaryOrganisation(clientProgramme.Owner);
+                    User OwnerUser = await _userService.GetUserPrimaryOrganisationOrEmail(clientProgramme.Owner);
                     OwnerUser.Email = Collection["Organisation.Email"];
                     OwnerUser.PrimaryOrganisation.Email = Collection["Organisation.Email"];
                     OwnerUser.PrimaryOrganisation.Name = Collection["Organisation.Name"];

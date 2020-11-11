@@ -330,7 +330,7 @@ namespace DealEngine.Services.Impl
                 if (AttachOrganisationId != Guid.Empty)
                 {
                     var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
-                    var User = await _userService.GetUserPrimaryOrganisation(Organisation);
+                    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
                     if (User != null)
                     {
                         User.PrimaryOrganisation.Removed = false;

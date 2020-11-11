@@ -39,10 +39,10 @@ namespace DealEngine.Services.Interfaces
         Task<bool> AddOrganisationByMembership(Organisation organisation, string membership);
         Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
         Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
-        Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection);
+        Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection, Dictionary<string,string> collection);
         Task DeveloperTool();
         Task<Programme> PostProgramme(User user, User brokerUser, Programme jsonProgramme, Programme programme);
-        Task AttachOrganisationToClientProgramme(IFormCollection collection);
+        Task AttachOrganisationToClientProgramme(IFormCollection collection, ClientProgramme clientProgramme);
     }
 }
 

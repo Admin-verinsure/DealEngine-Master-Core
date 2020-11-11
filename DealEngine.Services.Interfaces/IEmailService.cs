@@ -44,6 +44,7 @@ namespace DealEngine.Services.Interfaces
         Task EmailPaymentFrequency(ClientProgramme clientProgramme);
         Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML);
         Task JoinOrganisationEmail(User organisationUser);
+        Task RemoveOrganisationUserEmail(User removedUser, ClientInformationSheet sheet);
     }
 }
 

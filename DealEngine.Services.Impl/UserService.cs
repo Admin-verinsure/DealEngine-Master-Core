@@ -263,7 +263,7 @@ namespace DealEngine.Services.Impl
 			return users;			
 		}
 		
-		public async Task<User> GetUserPrimaryOrganisation(Organisation org)
+		public async Task<User> GetUserPrimaryOrganisationOrEmail(Organisation org)
 		{
 			var user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.PrimaryOrganisation == org);
 			if(user == null)

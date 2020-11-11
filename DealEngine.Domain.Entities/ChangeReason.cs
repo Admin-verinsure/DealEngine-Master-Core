@@ -8,16 +8,15 @@ namespace DealEngine.Domain.Entities
     {
 
         public ChangeReason() : base (null) { }
-
+        public ChangeReason(User createdBy) : base(createdBy) { }     
         public ChangeReason(User createdBy, IFormCollection formCollection)
-        : base(createdBy)
+            : base(createdBy)
         {
             if(formCollection != null)
             {
                 PopulateEntity(formCollection);
             }
         }
-
         public ChangeReason(User createdBy, ChangeReason changeReason)
             : base(createdBy)
         {

@@ -6,7 +6,7 @@
             Attach Advisor
         </div>
         <div class="card-body">
-            @using (Html.BeginForm("AttachOrganisation", "Organisation", FormMethod.Post))
+            @using (Html.BeginForm("AttachOrganisation", "Organisation", FormMethod.Post, new { @id = "attachOrganisationViewModel" }))
             {
                 <div class="form-group">
                     @Html.HiddenFor(t => t.RemovedOrganisation.Id)
@@ -15,7 +15,8 @@
                 </div>
                 <div class="form-group">
                     @Html.Label("Advisor's new email address (if applicable)")
-                    @Html.TextBoxFor(t => t.RemovedOrganisation.Email, new { @class = "form-control" })
+                    @Html.TextBoxFor(t => t.RemovedOrganisation.Email, new { @class = "form-control", @id="RemovedOrganisation.Email", @data_rule = "AttachOrganisationEmail", @onchange = "OnChange(this.id, this.name)", @required = "", @type = "text"  })
+                    <div id="InvalidOrganisationEmail" class="invalid-feedback">Please enter a valid email address. (note: You can't use an existing Organisation email address.)</div>
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.Owners, new { @class = "label required" })

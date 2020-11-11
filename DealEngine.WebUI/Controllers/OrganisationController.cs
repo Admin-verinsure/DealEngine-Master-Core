@@ -3,6 +3,7 @@ using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Organisation;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace DealEngine.WebUI.Controllers
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
         IMapper _mapper;
+        IEmailService _emailService;
 
         public OrganisationController(
             IProgrammeService programmeService,
@@ -35,6 +37,7 @@ namespace DealEngine.WebUI.Controllers
             IApplicationLoggingService applicationLoggingService,
             IOrganisationService organisationService,
             IUserService userRepository,
+            IEmailService emailService,
             IMapper mapper
             )
             : base (userRepository)
@@ -46,7 +49,8 @@ namespace DealEngine.WebUI.Controllers
             _clientInformationService = clientInformationService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
-            _organisationService = organisationService;                    
+            _organisationService = organisationService;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -88,6 +92,35 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ValidateAttachOrganisationEmail(IFormCollection collection)
+        {
+            bool ValidBackEndEmail;
+            // You can modify the below line to get the email address from the collection for ANY ViewModel 
+            // and use this for any email validation outside of the OrganisationViewModel and AttachOrganisationViewModel, 
+            // but ensure this works for AttachOrganisationViewModel
+            var email = collection["RemovedOrganisation.Email"].ToString();
+            Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
+            try
+            {
+                // Checks if you can create an email from the string (only works if it's a valid email)
+                var addr = new System.Net.Mail.MailAddress(email);
+                ValidBackEndEmail = addr.Address == email;
+
+                // Checks if org exists if it doesn't then email address isn't in system
+                if (organisation != null)
+                {
+                    return Json(true);
+                }
+                return Json(false);
+            }
+            catch
+            {
+                return Json(true);
+            }
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> GetOrganisation(OrganisationViewModel model)
         {
             User user = null;
@@ -96,7 +129,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                User orgUser = await _userService.GetUserPrimaryOrganisation(organisation);
+                User orgUser = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
                 JsonObjects.Add("Organisation", organisation);
                 JsonObjects.Add("User", orgUser);
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
@@ -332,9 +365,24 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AttachOrganisation(IFormCollection collection)
         {
             User currentUser = await CurrentUser();
-            await _clientInformationService.DetachOrganisation(collection);
-            await _programmeService.AttachOrganisationToClientProgramme(collection);
             ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(collection["ClientProgrammeId"]));
+            if (clientProgramme.InformationSheet.Status == "Submitted")
+            {
+                clientProgramme.InformationSheet.Status = "Started";
+                await _programmeService.Update(clientProgramme);
+            }
+            else if (clientProgramme.InformationSheet.Status == "Bound")
+            {
+                Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
+                changeDefaults.Add("ChangeType", "Amend or Add NamedParty");
+                changeDefaults.Add("Reason", "Change in cover requirements");
+                changeDefaults.Add("ReasonDesc", "Reattach Advisor");
+                changeDefaults.Add("ClientProgrammeID", Guid.Parse(collection["ClientProgrammeId"]).ToString());
+                clientProgramme = await _programmeService.CloneForUpdate(currentUser, null, changeDefaults);                
+            }
+
+            await _clientInformationService.DetachOrganisation(collection);
+            await _programmeService.AttachOrganisationToClientProgramme(collection, clientProgramme);
             Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(collection["RemovedOrganisation.Id"]));
             await _milestoneService.CompleteAttachOrganisationTask(currentUser, clientProgramme.BaseProgramme, organisation);
             return RedirectToAction("Index", "Home");
@@ -395,18 +443,22 @@ namespace DealEngine.WebUI.Controllers
             await _organisationService.Update(organisation);
             ClientInformationSheet clientInformationSheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationId"]));
            
-
             if(clientInformationSheet != null)
             {
                 if (clientInformationSheet.IsChange)
-                {
-                    var organisationUser = await _userService.GetUserPrimaryOrganisation(organisation);
+                {                    
+                    var organisationUser = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
+
                     if (organisationUser != null)
                     {
                         Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
                         var Programme = await _programmeService.GetProgramme(ProgrammeId);
-                        // after testing await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
-                        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme);
+                        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme, organisation); 
+                        await _emailService.RemoveOrganisationUserEmail(organisationUser, clientInformationSheet);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("organisationUser cannot be null");
                     }
                 }
                 

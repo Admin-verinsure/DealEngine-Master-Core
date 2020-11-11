@@ -1215,7 +1215,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 createdBy = await CurrentUser();
-                ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection);
+                ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection, null);
 
                 return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
             }

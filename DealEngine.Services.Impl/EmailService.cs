@@ -1037,6 +1037,18 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
+        public async Task RemoveOrganisationUserEmail(User removedUser, ClientInformationSheet sheet)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, removedUser.Email);
+            string subject = "Removed from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance.";
+            string body = "Dear " + removedUser.FirstName + ", you have been removed as an Advisor from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. ";
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
+            email.Send();
+        }
+
         #region Merge Field Library
         public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
