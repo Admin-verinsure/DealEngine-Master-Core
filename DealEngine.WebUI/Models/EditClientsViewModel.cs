@@ -50,7 +50,7 @@ namespace DealEngine.WebUI.Models
             Domain.Entities.Organisation org = null;
             try
             {
-                foreach (var owner in programme.ClientProgrammes.Where(c=>c.DateDeleted==null).ToList())
+                foreach (var owner in programme.ClientProgrammes.Where(c=>c.DateDeleted==null).OrderBy(pclp => pclp.Owner.Name).ToList())
                 {
                     var objectType = owner.GetType();
                     if (!objectType.IsSubclassOf(typeof(ClientProgramme)))
