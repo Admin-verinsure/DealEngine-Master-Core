@@ -527,13 +527,13 @@ namespace DealEngine.WebUI.Models
             _Types = new List<SelectListItem>() {
                     new SelectListItem
                     {
-                        Text = "Private",
-                        Value = "Person - Individual"
+                        Text = "Company",
+                        Value = "Corporation – Limited liability"
                     },
                     new SelectListItem
                     {
-                        Text = "Company",
-                        Value = "Corporation – Limited liability"
+                        Text = "Private",
+                        Value = "Person - Individual"
                     },
                     new SelectListItem
                     {

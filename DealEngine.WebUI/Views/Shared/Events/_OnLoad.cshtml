@@ -122,6 +122,7 @@
     }
 
     function PopulateOrganisationView(Method, OutPut) {
+        debugger;
         try {
             var Form = document.getElementById("organisationViewModel");
             var TradingName = document.getElementById("NoTradingName");
@@ -198,14 +199,16 @@
                     document.getElementById("Organisation.OrganisationType").disabled = true;
                     document.getElementById("Organisation.InsuranceAttribute").disabled = true;
                     document.getElementById("Else").hidden = false;
+
+                    TradingNameOwnerOnLoad();
+
                     var ProgrammeName = document.getElementById("Programme_Name");
                     if (ProgrammeName.value == "NZPI Programme") {
                         NZPIOwnerOnLoad();
                     }
                     if (ProgrammeName.value == "Apollo Programme" || ProgrammeName.value == "Abbott Financial Advisor Liability Programme") {
                         ApolloOwnerOnLoad();
-                    }        
-                    TradingNameOwnerOnLoad();
+                    } 
                 }
                 if (OutPut["User"] == null) {
                     //user is null so we override with organisation
@@ -216,6 +219,7 @@
     }
 
     function TradingNameOwnerOnLoad() {
+        debugger;
         var TradingName = document.getElementById("NoTradingName");
         if (TradingName != null) {
             document.getElementById("TradingName").hidden = false;
