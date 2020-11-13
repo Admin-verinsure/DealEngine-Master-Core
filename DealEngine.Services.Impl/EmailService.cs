@@ -1037,16 +1037,25 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
-        public async Task RemoveOrganisationUserEmail(User removedUser, ClientInformationSheet sheet)
+        public async Task RemoveOrganisationUserEmail(User removedUser, User programmeOwnerUser, ClientInformationSheet sheet)
         {
-            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, removedUser.Email);
-            string subject = "Removed from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance.";
-            string body = "Dear " + removedUser.FirstName + ", you have been removed as an Advisor from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. ";
-            email.From(DefaultSender);
-            email.WithSubject(subject);
-            email.UseHtmlBody(true);
-            email.WithBody(body);
-            email.Send();
+            EmailBuilder removedUserEmail = await GetLocalizedEmailBuilder(DefaultSender, removedUser.Email);
+            string removedUserEmailsubject = "Removed from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. Reference ID: " + sheet.ReferenceId.ToString();
+            string removedUserEmailbody = "Dear " + removedUser.FirstName + ", you have been removed as an Advisor from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. Reference ID: " + sheet.ReferenceId.ToString();
+            removedUserEmail.From(DefaultSender);
+            removedUserEmail.WithSubject(removedUserEmailsubject);
+            removedUserEmail.UseHtmlBody(true);
+            removedUserEmail.WithBody(removedUserEmailbody);
+            removedUserEmail.Send();
+
+            EmailBuilder programmeOwnerUserEmail = await GetLocalizedEmailBuilder(DefaultSender, programmeOwnerUser.Email);
+            string programmeOwnerUserEmailsubject = removedUser.FirstName + " has been removed from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. Reference ID: " + sheet.ReferenceId.ToString();
+            string programmeOwnerUserEmailbody = "Dear " + programmeOwnerUser.FirstName + ", " + removedUser.FirstName + " has been removed from " + sheet.Owner.Name + "'s " + sheet.Programme.BaseProgramme.Name + " of Insurance. Reference ID: " + sheet.ReferenceId.ToString();
+            programmeOwnerUserEmail.From(DefaultSender);
+            programmeOwnerUserEmail.WithSubject(programmeOwnerUserEmailsubject);
+            programmeOwnerUserEmail.UseHtmlBody(true);
+            programmeOwnerUserEmail.WithBody(programmeOwnerUserEmailbody);
+            programmeOwnerUserEmail.Send();
         }
 
         #region Merge Field Library

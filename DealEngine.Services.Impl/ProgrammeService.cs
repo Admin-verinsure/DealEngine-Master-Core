@@ -572,8 +572,9 @@ namespace DealEngine.Services.Impl
                 {
                     var Organisation = await _organisationRepository.GetByIdAsync(AttachOrganisationId);
                     Organisation.Removed = false;
-                    foreach (AdvisorUnit unit in Organisation.OrganisationalUnits)
+                    foreach (AdvisorUnit unit in Organisation.OrganisationalUnits.OfType<AdvisorUnit>())
                     {
+
                         if (unit.IsPrincipalAdvisor == true)
                         {
                             unit.IsPrincipalAdvisor = false;

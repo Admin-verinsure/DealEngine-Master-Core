@@ -334,8 +334,6 @@ namespace DealEngine.Services.Impl
                     if (User != null)
                     {
                         User.PrimaryOrganisation.Removed = false;
-                        User.Email = collection["RemovedOrganisation.Email"];
-                        User.PrimaryOrganisation.Email = User.Email;
                         await _userService.Update(User);
                         var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(User.PrimaryOrganisation)).ToListAsync();
                         foreach (var sheet in iSheets)

@@ -590,7 +590,6 @@
         }
 
         function validationCheck(type) {
-            debugger;
             //get boxes
             var indiQuoteSpan = document.getElementById("indiQuoteSpan");
             var quoteInc = document.getElementById("quoteIncludes");
@@ -640,7 +639,6 @@
 
         function validationCheck2(type) {
             //for tab2
-            debugger;
             var f = document.getElementById("fnamefgroup");
             var s = document.getElementById("snamefgroup");
             var e = document.getElementById("emailfgroup");
@@ -683,13 +681,10 @@
                     data: { craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] },
                 })
                     .done(function (data, textStatus, jQxhr) {
-                        debugger;
                         SetCurrentTab('Tab5');
                         t5.classList.add("active");
-                        debugger;
                     })
                     .fail(function (jqXhr, textStatus, errorThrown) {
-                        debugger;
                         console.log(errorThrown);
                     });
 
@@ -705,7 +700,6 @@
         }
 
         function postCGData() {
-            debugger;
               $('#getQuoteModal').show();
             var datae = {craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] };
 
@@ -752,7 +746,6 @@
         }
 
         function updateLabel() {
-            debugger;
             var ct = document.getElementById("CraftTypeDrop");
             document.getElementById("mnumb").value = "";
             document.getElementById("vival").value = "";
@@ -821,7 +814,6 @@
         }
 
         function quickQuote() {
-            debugger;
             var insVal = document.getElementById("vival").value;
             var craftType = document.getElementById("CraftType").innerHTML;
             var qref = document.getElementById("qref");
@@ -869,7 +861,6 @@
                 curTypes.push(vtype, ctype, hcfig, mtype);
                 minPrem = 400;
             }
-            debugger;
             quoteRes.hidden = false;
             $('#quoteResult').show();
             //quoteRes.classList.remove("hidden");
@@ -881,7 +872,6 @@
             }
 
             if (badCount > 0 || (craftType == "Roadtrailer" && insVal > 250000) || (craftType == "Stored" && insVal > 250000) || (vtype == "Jetski" && insVal > 100000) || (craftType == "Berthed" && insVal > 500000) || (craftType == "Moored" && insVal > 500000)) {
-                debugger;
                 ////qref.classList.remove("hidden");
                 //$('#qref').show();
                  qref.hidden = false;
@@ -896,7 +886,6 @@
 
             else {
                 if (badCount < 1) {
-                    debugger;
                     $('#mnumb').attr('readonly', 'readonly');
                     $('#mnumb').disableSelection;
                     $('#vtype').attr('readonly', 'readonly');
@@ -1177,14 +1166,12 @@
 
         //Fill Label with URL and change displayed Select Elements and their sub options when page is ready
         $(document).ready(function () {
-            debugger;
             //var logo = document.getElementById("logo");
             //logo.removeChild(logo.children[0]);
             //logo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 311.36 46.77"><defs><style>.cls-1a{fill:#85d2e3;}.cls-2a{fill:#0080b2;}.cls-3a{fill:#00afd3;}.cls-4a{fill:#004180;}</style></defs><title>18-1236_CA_Coastguard_Quick_Quote_Site Elements v1</title><polygon class="cls-1a" points="60.76 46.77 40.51 35.08 60.76 23.39 60.76 46.77"/><polygon class="cls-2a" points="20.25 46.77 0 35.08 20.25 23.39 20.25 46.77"/><polygon class="cls-3a" points="40.51 35.08 60.76 23.39 60.76 0 20.25 23.39 40.51 35.08"/><polygon class="cls-2a" points="81.01 35.08 60.76 23.39 81.01 11.7 81.01 35.08"/><polygon class="cls-3a" points="60.76 46.77 81.01 35.08 60.76 23.39 60.76 46.77"/><polygon class="cls-3a" points="20.25 0 0 11.69 0 35.08 20.25 23.39 20.25 0"/><polygon class="cls-4a" points="20.25 23.39 40.51 11.69 20.25 0 20.25 23.39"/><polygon class="cls-1a" points="20.25 46.77 40.51 35.08 20.25 23.39 20.25 46.77"/><polygon class="cls-4a" points="60.76 23.39 81.01 11.69 60.76 0 60.76 23.39"/><path class="cls-3a" d="M219.94,26.51c6.86-.8,11.77-5.38,11.77-12.22,0-4.15-3.06-11.24-13.64-11.24H201.46V43.72H208V8.25h8.43c5.87,0,8.57,2.85,8.57,6.77s-3,6.75-9.43,6.75h-7.05l17.52,22h8.12Z"/><path class="cls-3a" d="M171.83,3.05L155.49,43.72h6.77l4.37-11.34h17.11l4.37,11.34h7L179,3.05h-7.19Zm3.55,7.39,6.38,16.62h-13l6.44-16.62h0.21Z"/><path class="cls-3a" d="M126.59,34.8L113.76,3.06h-9.28V43.72h6.28V12h0.14l12.74,31.77h5.59l13.34-32h0.13v32h6.38V3.06h-9.15L126.79,34.8h-0.2Z"/><path class="cls-3a" d="M239,39.78a25.11,25.11,0,0,0,15,4.69c8.7,0,14.76-4.27,14.76-11.5,0-7-6.78-10.17-12.55-12.87-4.56-2.12-8.83-3.66-8.83-7.09s2.67-5.41,7.26-5.41A18.79,18.79,0,0,1,265.5,11l2.9-5a25.31,25.31,0,0,0-13.59-3.74c-8.69,0-14.32,4.35-14.32,10.92,0,6.78,6.62,9.68,12.13,12.2,5.22,2.4,9.21,4.22,9.21,7.92s-3.24,5.82-8,5.82c-6.19,0-10.82-3.63-11.58-4.15Z"/><path class="cls-3a" d="M304.77,3.05v16.6H283.41V3.05h-6.59V43.72h6.59V25h21.36V43.72h6.59V3.05h-6.59Z"/></svg>';
 
             var option = window.location.search;
             if (option.length != 0) {
-                debugger;
                 option = option.substr(1);
                 option = toTitleCase(option);
                 document.getElementById("CraftType").innerHTML = option;

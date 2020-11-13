@@ -495,9 +495,7 @@ else
     <script type="text/javascript">
 
          $(window).on("load", function () {
-            debugger;
            if ("@Model.InformationSheetStatus" == "Started" || "@Model.InformationSheetStatus" == "Submitted") {
-                debugger;
 
                 var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
@@ -508,7 +506,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -566,7 +563,6 @@ else
 
         function ValidateCoverOption() {
             var itemPI = $('#Professional Indemnity input:radio:checked').val()
-            debugger;
         }
 
 
@@ -602,7 +598,6 @@ else
 
 
           if ( "@Model.InformationSheetStatus" == "Submitted") {
-                debugger;
 
                 var progId = $("#ClientProgrammeId").val();
                 //var progId = $('#ClientProgrammeId').val();
@@ -613,7 +608,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -633,7 +627,6 @@ else
         }
 
           if ("@Model.InformationSheetStatus" == "Started") {
-                debugger;
 
                 var progId = $("#ClientProgrammeId").val();
                 //var progId = $('#ClientProgrammeId').val();
@@ -644,7 +637,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];

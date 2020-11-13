@@ -8,9 +8,9 @@ using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class User : EntityBase, IAggregateRoot
     {
-        [JsonIgnore]
         private Organisation _primaryOrganisation;
 
         protected User() : this(null) { }
@@ -31,7 +31,6 @@ namespace DealEngine.Domain.Entities
             InvoiceConfigNotifyProgrammes = new List<Programme>();
         }
 
-        [JsonIgnore]
         public virtual OrganisationalUnit DefaultOU { get; set; }
         public virtual string UserName { get; set; }
         public virtual string SalesPersonUserName { get; set; }
@@ -53,13 +52,10 @@ namespace DealEngine.Domain.Entities
         public virtual string FullName { get; set; }
 
 		public virtual string Description { get; set; }
-        [JsonIgnore]
         public virtual Image ProfilePicture { get; set; }
 
 		public virtual bool Locked { get; protected set; }
-        [JsonIgnore]
         public virtual Guid LegacyId { get; set; }
-        [JsonIgnore]
         public virtual DateTime? LockTime { get; protected set; }
 
         public virtual string MobilePhone { get; set; }
@@ -73,7 +69,6 @@ namespace DealEngine.Domain.Entities
         /// (something that should be impossible due to individual user organisations) it will return null.
         /// </summary>
         /// <value>The primary organisation.</value>
-        [JsonIgnore]
         public virtual Organisation PrimaryOrganisation { 
 			get {
 				if (_primaryOrganisation != null)
@@ -84,25 +79,21 @@ namespace DealEngine.Domain.Entities
 				} else
 					return null;
 			}
-			protected set {
+			set {
 				_primaryOrganisation = value;
 			}
 		}
 
         //public virtual IEnumerable<Organisation> Organisations { get; set; }
-        [JsonIgnore]
         public virtual IList<Organisation> Organisations { get; set; }
 
         //public Guid[] OrganisationIDs { get; set; }
-        [JsonIgnore]
         public virtual IEnumerable<OrganisationalUnit> Branches { get; set; }
 
         //public Guid[] BranchIDs { get; set; }
-        [JsonIgnore]
         public virtual IEnumerable<Department> Departments { get; set; }
 
         //public Guid[] DepartmentIDs { get; set; }
-        [JsonIgnore]
         public virtual Location Location { get; set; }
 
         //public virtual UserTask LastActiveTask { get; set; }

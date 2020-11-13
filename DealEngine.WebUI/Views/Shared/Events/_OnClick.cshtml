@@ -1,5 +1,6 @@
 ﻿<script type="text/javascript">
     function OnClick(Method, Type, Id, SheetId) {
+        debugger;
         if (Type == "Organisation") {
             $.ajax({
                 url: '@Url.Action("GetOrganisation", "Organisation")',
@@ -20,7 +21,8 @@
         }
     }
 
-    function EditOrganisation() {        
+    function EditOrganisation() {
+        debugger;
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 

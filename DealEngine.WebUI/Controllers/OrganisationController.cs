@@ -95,27 +95,44 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ValidateAttachOrganisationEmail(IFormCollection collection)
         {
             bool ValidBackEndEmail;
-            // You can modify the below line to get the email address from the collection for ANY ViewModel 
-            // and use this for any email validation outside of the OrganisationViewModel and AttachOrganisationViewModel, 
-            // but ensure this works for AttachOrganisationViewModel
+
             var email = collection["RemovedOrganisation.Email"].ToString();
+            Organisation removedOrg = await _organisationService.GetOrganisation(Guid.Parse(collection["RemovedOrganisation.Id"]));
             Organisation organisation = await _organisationService.GetOrganisationByEmail(email);
             try
             {
-                // Checks if you can create an email from the string (only works if it's a valid email)
                 var addr = new System.Net.Mail.MailAddress(email);
                 ValidBackEndEmail = addr.Address == email;
-
-                // Checks if org exists if it doesn't then email address isn't in system
-                if (organisation != null)
+                
+                // Checks if you can create an email from the string (only works if it's a valid email)
+                if (ValidBackEndEmail == true)
                 {
-                    return Json(true);
+                    // Checks if there is an organisation with that email already
+                    if (organisation != null)
+                    {
+                        // Then it has to be the same as removedOrg.Email otherwise data is invalid
+                        if (email == removedOrg.Email)
+                        {
+                            return Json(false); //Valid
+                        }
+                        else
+                        {
+                            return Json(true); // Not Valid
+                        }
+                    }
+                    else
+                    {
+                        return Json(false); //Valid
+                    }
                 }
-                return Json(false);
+                else
+                {
+                    return Json(true); // Not Valid
+                }                                             
             }
             catch
             {
-                return Json(true);
+                return Json(true); // Not Valid
             }
         }
 
@@ -356,8 +373,32 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)
         {
             var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
-            var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);            
-            AttachOrganisationViewModel model = new AttachOrganisationViewModel(Programme.ClientProgrammes, RemovedOrg);
+            var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);
+            
+            // We want to prepare which clientprogrammes we want to give to our ViewModel, 
+            // which is Non deleted and Latest versions of a Programme (ie. Change and Original ones (if original and no change then won't have a nextInformationSheet) 
+            var allClientProgrammes = Programme.ClientProgrammes;
+            var selectedClientProgrammes = new List<ClientProgramme>();
+            
+            // Add Change ClientProgrammes
+            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == true).ToList())
+            {
+                bool isClientProgrammeNotSub = await _programmeService.IsBaseClass(clientProgramme);
+                if (isClientProgrammeNotSub)
+                {
+                    selectedClientProgrammes.Add(clientProgramme);
+                }
+            }
+            // Add Original ClientProgrammes
+            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == false).Where(p => p.InformationSheet.NextInformationSheet == null).ToList())
+            {
+                bool isClientProgrammeNotSub = await _programmeService.IsBaseClass(clientProgramme);
+                if (isClientProgrammeNotSub)
+                {
+                    selectedClientProgrammes.Add(clientProgramme);
+                }
+            }
+            AttachOrganisationViewModel model = new AttachOrganisationViewModel(selectedClientProgrammes, RemovedOrg);
             return View(model);
         }
 
@@ -382,6 +423,29 @@ namespace DealEngine.WebUI.Controllers
             }
 
             await _clientInformationService.DetachOrganisation(collection);
+
+            // here we update the emails we've saved in form - can put in service
+            if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
+            {
+                if (AttachOrganisationId != Guid.Empty)
+                {
+                    var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
+                    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
+                    if (User != null) //&& User.Email != collection["RemovedOrganisation.Email"]
+                    {
+                        User.PrimaryOrganisation.Removed = false;
+                        User.Email = collection["RemovedOrganisation.Email"];
+                        User.PrimaryOrganisation = Organisation;
+                        await _userService.Update(User);
+                    }
+                    if (Organisation != null && Organisation.Email != collection["RemovedOrganisation.Email"])
+                    {
+                        Organisation.Email = collection["RemovedOrganisation.Email"];
+                        await _organisationService.Update(Organisation);
+                    }
+                }
+            }
+
             await _programmeService.AttachOrganisationToClientProgramme(collection, clientProgramme);
             Organisation organisation = await _organisationService.GetOrganisation(Guid.Parse(collection["RemovedOrganisation.Id"]));
             await _milestoneService.CompleteAttachOrganisationTask(currentUser, clientProgramme.BaseProgramme, organisation);
@@ -453,8 +517,8 @@ namespace DealEngine.WebUI.Controllers
                     {
                         Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
                         var Programme = await _programmeService.GetProgramme(ProgrammeId);
-                        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme, organisation); 
-                        await _emailService.RemoveOrganisationUserEmail(organisationUser, clientInformationSheet);
+                        await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme, organisation);
+                        await _emailService.RemoveOrganisationUserEmail(organisationUser, Programme.BrokerContactUser, clientInformationSheet);
                     }
                     else
                     {

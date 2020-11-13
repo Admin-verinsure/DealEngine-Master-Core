@@ -234,44 +234,68 @@ namespace DealEngine.Services.Impl
         public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme, Organisation organisation)
         {
             string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
-            UserTask userTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
-            if (userTask == null)
+            UserTask programmeUserTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            UserTask removedUserTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (programmeUserTask == null)
             {
-                userTask = new UserTask(user, "Rejoin", null)
+                programmeUserTask = new UserTask(user, "Rejoin", null)
+                {
+                    URL = URL,
+                    Body = organisationUser.FirstName + " click here to rejoin " + programme.Name,
+                    IsActive = true
+                };
+                removedUserTask = new UserTask(user, "Rejoin", null)
                 {
                     URL = URL,
                     Body = organisationUser.FirstName + " click here to rejoin " + programme.Name,
                     IsActive = true
                 };
 
-                //var programmeUser = programme.BrokerContactUser;
-                var programmeUser = user;
-                programmeUser.UserTasks.Add(userTask);
+                var programmeUser = programme.BrokerContactUser;
+                programmeUser.UserTasks.Add(programmeUserTask);
+                organisationUser.UserTasks.Add(removedUserTask);
+
                 await _userService.Update(programmeUser);
+                await _userService.Update(organisationUser);
             }
         }
 
         public async Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation)
-        {
+        {           
             string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
-            //var ProgrammeUser = programme.BrokerContactUser;
-            var ProgrammeUser = user;
-            UserTask userTask = ProgrammeUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
-            if (userTask != null)
-            {
-                userTask.Complete(ProgrammeUser);
-                user.UserTasks.Remove(userTask);
+            var programmeUser = programme.BrokerContactUser;
+            var removedUser = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
 
-                userTask = new UserTask(ProgrammeUser, "Attach", null)
+            // Remove the old Task for Rejoin from Broker and RemovedUser
+            UserTask programmeUserTask = programmeUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            UserTask removedUserTask = removedUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (programmeUserTask != null)
+            {
+                if (user == programmeUser)
+                {
+                    programmeUserTask.Complete(programmeUser);
+                }
+                else
+                {
+                    removedUserTask.Complete(removedUser);
+                }
+
+                programmeUser.UserTasks.Remove(programmeUserTask);
+                removedUser.UserTasks.Remove(removedUserTask);
+
+
+                programmeUserTask = new UserTask(programmeUser, "Attach", null)
                 {
                     URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
                     Body = "click here to rejoin " + organisation.Name + " to " + programme.Name,
                     IsActive = true
                 };
 
-                ProgrammeUser.UserTasks.Add(userTask);
-                await _userService.Update(ProgrammeUser);
-            }
+                programmeUser.UserTasks.Add(programmeUserTask);
+                await _userService.Update(programmeUser);
+            }           
         }
 
         public async Task CompleteAttachOrganisationTask(User user, Programme programme, Organisation organisation)

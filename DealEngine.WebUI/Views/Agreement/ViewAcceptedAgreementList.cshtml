@@ -384,9 +384,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
         };
 
          $(window).on("load", function () {
-            debugger;
             if ("@ViewBag.Sheetstatus" != "Started") {
-                debugger;
 
                 var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
@@ -397,7 +395,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];

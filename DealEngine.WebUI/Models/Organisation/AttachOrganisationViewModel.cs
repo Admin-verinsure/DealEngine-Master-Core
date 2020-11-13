@@ -1,5 +1,6 @@
 ﻿
 using DealEngine.Domain.Entities;
+using DealEngine.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,26 +15,18 @@ namespace DealEngine.WebUI.Models.Organisation
             PopulateOwnerList(clientProgrammes);
             RemovedOrganisation = removedOrganisation;
         }
+
+
         private void PopulateOwnerList(IList<ClientProgramme> clientProgrammes)
         {
             Owners = new List<SelectListItem>();
-            // Add Change Programmes
-            foreach (var clientProgramme in clientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == true).ToList())
+            
+            foreach (var clientProgramme in clientProgrammes.ToList())
             {
                 Owners.Add(new SelectListItem()
                 {
                     Text = clientProgramme.InformationSheet.Owner.Name + " Reference: " + clientProgramme.InformationSheet.ReferenceId
                     + " Status: " + clientProgramme.InformationSheet.Status,
-                    Value = clientProgramme.Id.ToString()
-                });
-            }
-            // Add Original Programmes
-            foreach (var clientProgramme in clientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == false).Where(p => p.InformationSheet.NextInformationSheet == null).ToList())
-            {
-                Owners.Add(new SelectListItem()
-                {
-                    Text = clientProgramme.InformationSheet.Owner.Name + " Reference: "+ clientProgramme.InformationSheet.ReferenceId
-                    + " Status: "+ clientProgramme.InformationSheet.Status,
                     Value = clientProgramme.Id.ToString()
                 });
             }
