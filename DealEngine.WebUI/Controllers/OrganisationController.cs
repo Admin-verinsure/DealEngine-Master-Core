@@ -522,6 +522,10 @@ namespace DealEngine.WebUI.Controllers
                     }
                     else
                     {
+                        // Case where there is no User for the Organisation being removed
+                        // If you want it to not end up in ListRemoved then uncomment below two lines
+                        //organisation.Removed = false;
+                        //await _organisationService.Update(organisation);
                         throw new ArgumentException("organisationUser cannot be null");
                     }
                 }
