@@ -456,6 +456,13 @@ namespace DealEngine.WebUI.Controllers
                     rsaUser.OrgName = "Marsh_Model";
                     rsaUser.RsaStatus = RsaStatus.Deny;
                     rsaUser.DeviceTokenCookie = user.DeviceTokenCookie;
+                    if (!string.IsNullOrEmpty(user.DeviceTokenCookie)) //As marsh adviced ClientGenCookie is a Mandatory field for none-enrollment request, use DeviceTokenCookie to define the enrollment status
+                    {
+                        rsaUser.ClientGenCookie = Guid.NewGuid().ToString(); 
+                    } else
+                    {
+                        rsaUser.ClientGenCookie = "";
+                    }
                     rsaUser = await rsaAuth.Analyze(rsaUser);
 
                     if (rsaUser.RsaStatus == RsaStatus.Allow)

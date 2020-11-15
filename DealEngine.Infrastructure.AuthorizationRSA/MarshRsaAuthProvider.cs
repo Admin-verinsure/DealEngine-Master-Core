@@ -408,20 +408,50 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		DeviceRequest GetDeviceRequest (MarshRsaUser rsaUser)
 		{
-			return new DeviceRequest {
-				devicePrint = rsaUser.DevicePrint,
-				deviceTokenCookie = rsaUser.DeviceTokenCookie,
-				// following fields required? if so, will need provide web request data - specialized web api?
-				httpAccept = "",
-				httpAcceptEncoding = "",
-				httpAcceptLanguage = "",
-				httpReferrer = rsaUser.HttpReferer,
-                ipAddress = GetIP(),
-				userAgent = rsaUser.UserAgent
-			};
+            if (string.IsNullOrEmpty(rsaUser.ClientGenCookie))
+            {
+                return new DeviceRequest
+                {
+                    devicePrint = rsaUser.DevicePrint,
+                    deviceTokenCookie = rsaUser.DeviceTokenCookie,
+                    // following fields required? if so, will need provide web request data - specialized web api?
+                    httpAccept = "",
+                    httpAcceptEncoding = "",
+                    httpAcceptLanguage = "",
+                    httpReferrer = rsaUser.HttpReferer,
+                    ipAddress = GetIP(),
+                    userAgent = rsaUser.UserAgent,
+                };
+            } else
+            {
+                return new DeviceRequest
+                {
+                    devicePrint = rsaUser.DevicePrint,
+                    deviceTokenCookie = rsaUser.DeviceTokenCookie,
+                    // following fields required? if so, will need provide web request data - specialized web api?
+                    httpAccept = "",
+                    httpAcceptEncoding = "",
+                    httpAcceptLanguage = "",
+                    httpReferrer = rsaUser.HttpReferer,
+                    ipAddress = GetIP(),
+                    userAgent = rsaUser.UserAgent,
+                    deviceIdentifier = GetDeviceIdentifier(rsaUser), //added as Marsh request
+                };
+            }
+            
 		}
 
-		IdentificationData GetIdentificationData (MarshRsaUser rsaUser)
+        DeviceIdentifier [] GetDeviceIdentifier(MarshRsaUser rsaUser)
+        {
+            return new DeviceIdentifier []
+            {
+                new ClientGenCookie {
+                    clientGenCookie = rsaUser.ClientGenCookie,
+                }
+            };
+        }
+
+        IdentificationData GetIdentificationData (MarshRsaUser rsaUser)
 		{
             return new IdentificationData {
                 delegated = false,          // confirm
