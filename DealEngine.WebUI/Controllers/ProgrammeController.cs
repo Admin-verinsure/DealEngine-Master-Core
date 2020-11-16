@@ -494,6 +494,9 @@ namespace DealEngine.WebUI.Controllers
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
+                //used for eglobal request and response log 
+                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+
                 EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
                 eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
@@ -664,6 +667,9 @@ namespace DealEngine.WebUI.Controllers
             var xmlPayload = eGlobalSerializer.SerializePolicy(originalEglobalsubmission.EGlobalSubmissionClientProgramme, user, _unitOfWork, transactionreferenceid, paymentType, true, false, originalEglobalsubmission);
 
             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
+
+            //used for eglobal request and response log 
+            await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
 
             EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 

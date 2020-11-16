@@ -1946,7 +1946,7 @@ namespace DealEngine.WebUI.Controllers
                 if (model.BoatOperator != Guid.Empty)
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
-                if (model.BoatTrailer != null)
+                if (model.BoatTrailer != Guid.Empty)
                 {
                     boat.BoatTrailers.Clear();
                     Vehicle trailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
