@@ -238,8 +238,9 @@ namespace DealEngine.Services.Impl
             try
             {
                 HttpClient client = new HttpClient(_socketsHttpHandler);
-                response = await client.SendAsync(_httpRequestMessage, HttpCompletionOption.ResponseHeadersRead);
-                Thread.Sleep(1500);
+                response = await client.SendAsync(_httpRequestMessage);
+                //response = await client.SendAsync(_httpRequestMessage, HttpCompletionOption.ResponseHeadersRead);
+                Thread.Sleep(1000);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
                 client.Dispose();
