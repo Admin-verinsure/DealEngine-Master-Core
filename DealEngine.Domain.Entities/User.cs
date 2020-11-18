@@ -140,10 +140,10 @@ namespace DealEngine.Domain.Entities
             {
                 PopulateEntity(collection);
                 Random random = new Random();
-                UserName = FirstName.Replace(" ", string.Empty)
-                    + "_"
-                    + LastName.Replace(" ", string.Empty)
-                    + random.Next(1000);
+                UserName = FirstName.Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty)
+                + "_"
+                + LastName.Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty)
+                + random.Next(1000);
                 FullName = FirstName + " " + LastName;
             }
         }

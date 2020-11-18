@@ -794,6 +794,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = DateTime.UtcNow;
                 DateTime expiryDate = DateTime.UtcNow.AddYears(1);
 
+                //inception date rule to use policy effective date
                 if (informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyDate").Any())
                 {
                     inceptionDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyDate").First().Value);

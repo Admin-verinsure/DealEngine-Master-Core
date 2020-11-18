@@ -3398,11 +3398,11 @@ namespace DealEngine.WebUI.Controllers
                         user = await _userService.GetUserByEmail(email);
                         if (!user.Organisations.Contains(organisation))
                             user.Organisations.Add(organisation);
-                        var username = user.FirstName;
+                        var username = (user.FirstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
                     }
                     catch (Exception ex)
                     {
-                        string username = firstName + "_" + lastName;
+                        string username = (firstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
 
                         try
                         {
