@@ -372,12 +372,11 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> AttachOrganisation(Guid ProgrammeId, Guid OrganisationId)
         {
-            var Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            var allClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(ProgrammeId);
             var RemovedOrg = await _organisationService.GetOrganisation(OrganisationId);
-            
+
             // We want to prepare which clientprogrammes we want to give to our ViewModel, 
             // which is Non deleted and Latest versions of a Programme (ie. Change and Original ones (if original and no change then won't have a nextInformationSheet) 
-            var allClientProgrammes = Programme.ClientProgrammes;
             var selectedClientProgrammes = new List<ClientProgramme>();
             
             // Add Change ClientProgrammes

@@ -16,6 +16,6 @@ namespace DealEngine.Services.Interfaces
         Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme, Organisation organisation);
         Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation);
         Task CompleteAttachOrganisationTask(User user, Programme programme, Organisation organisation);
-    }
-    
+        Task RemoveTask(User user, IFormCollection collection);
+    }   
 }

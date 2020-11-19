@@ -171,6 +171,8 @@ namespace DealEngine.WebUI.Models
 	public class TaskItem : BaseViewModel
 	{
 		public Guid Id { get; set; }
+
+
 		public string ClientName { get; set; }
 
 		public string Description { get; set; }

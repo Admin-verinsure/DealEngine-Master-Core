@@ -289,7 +289,7 @@ namespace DealEngine.Services.Impl
                 programmeUserTask = new UserTask(programmeUser, "Attach", null)
                 {
                     URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
-                    Body = "click here to rejoin " + organisation.Name + " to " + programme.Name,
+                    Body = "Click here to rejoin " + organisation.Name + " to " + programme.Name,
                     IsActive = true
                 };
 
@@ -307,6 +307,22 @@ namespace DealEngine.Services.Impl
                 userTask.Complete(user);
                 user.UserTasks.Remove(userTask);
                 await _userService.Update(user);
+            }
+        }
+
+        public async Task RemoveTask(User user, IFormCollection collection)
+        {
+            List<UserTask> tasks = await _taskingService.GetUserTasksByName(collection["taskName"]);
+
+            foreach(UserTask task in tasks)
+            {
+                if (task.URL.Contains(collection["programmeId"]) && task.URL.Contains(collection["organisationId"]))
+                {
+                    task.Removed = true;
+                    task.DateDeleted = DateTime.Now;
+                    task.DeletedBy = user; 
+                    await _taskingService.Update(task);
+                }
             }
         }
     }
