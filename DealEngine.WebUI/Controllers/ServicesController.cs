@@ -1946,7 +1946,7 @@ namespace DealEngine.WebUI.Controllers
                 if (model.BoatOperator != Guid.Empty)
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
-                if (model.BoatTrailer != null)
+                if (model.BoatTrailer != Guid.Empty)
                 {
                     boat.BoatTrailers.Clear();
                     Vehicle trailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
@@ -3398,11 +3398,11 @@ namespace DealEngine.WebUI.Controllers
                         user = await _userService.GetUserByEmail(email);
                         if (!user.Organisations.Contains(organisation))
                             user.Organisations.Add(organisation);
-                        var username = user.FirstName;
+                        var username = (user.FirstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
                     }
                     catch (Exception ex)
                     {
-                        string username = firstName + "_" + lastName;
+                        string username = (firstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
 
                         try
                         {

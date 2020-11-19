@@ -43,6 +43,7 @@ namespace DealEngine.Services.Interfaces
         Task EmailHunterPremiumFunding(ClientProgramme clientProgramme);
         Task EmailPaymentFrequency(ClientProgramme clientProgramme);
         Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML);
+        Task EGlobalLogEmail(string recipient, string transactionreferenceid, string requestXML, string responseXML);
         Task JoinOrganisationEmail(User organisationUser);
         Task RemoveOrganisationUserEmail(User removedUser, User brokerContactUser, ClientInformationSheet sheet);
     }

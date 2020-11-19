@@ -382,6 +382,19 @@ namespace DealEngine.Services.Impl
             email.Send();
         }
 
+        public async Task EGlobalLogEmail(string recipient, string transactionreferenceid, string requestXML, string responseXML)
+        {
+            string strRsaLogEmailSubject = "EGlobal Log for " + transactionreferenceid;
+            string strRsaLogEmailBody = "Request XML:" + Environment.NewLine + Environment.NewLine + requestXML + Environment.NewLine + Environment.NewLine + "Response XML:" + Environment.NewLine + Environment.NewLine + responseXML;
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
+            email.WithSubject(strRsaLogEmailSubject);
+            email.WithBody(strRsaLogEmailBody);
+            //email.UseHtmlBody(true);
+            email.Send();
+        }
+
         public async Task SendSystemEmailLogin(string recipent)
         {
             var user = await _userService.GetUserByEmail(recipent);
