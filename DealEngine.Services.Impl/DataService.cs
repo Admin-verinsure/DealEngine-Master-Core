@@ -71,7 +71,7 @@ namespace DealEngine.Services.Impl
             {
                 data.Brokerage = clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Brokerage.ToString();
                 data.Coy = (clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Premium - clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().FSL).ToString();
-                data.Excess = clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Excess.ToString();
+                //data.Excess = clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Excess.ToString();
                 data.TotalPremium = clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Premium.ToString();
                 data.GST = (clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().Premium * clientProgramme.Agreements.FirstOrDefault().Product.TaxRate).ToString();
                 data.TotalSumInsured = clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().TermLimit.ToString();
@@ -80,7 +80,6 @@ namespace DealEngine.Services.Impl
                 // programme specific attributes
                 if (clientProgramme.InformationSheet.Boats != null)
                 {
-                    // TODO if dataBoats already exist we need to update the DataBoats rather than create new ones each time???
                     IList<DataBoat> dataBoats = new List<DataBoat>();
                     foreach (Boat b in clientProgramme.InformationSheet.Boats)
                     {
@@ -90,6 +89,14 @@ namespace DealEngine.Services.Impl
                         dataBoat.Model = b.BoatModel;
                         dataBoat.Type = b.BoatType2;
                         dataBoat.Construction = b.HullConstruction;
+                        foreach (ClientAgreementBVTerm term in clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().BoatTerms)
+                        {
+                            if (term.Boat.Id == b.Id)
+                            {
+                                dataBoat.BoatExcess = term.Excess.ToString();
+                                dataBoat.BoatLimit = term.TermLimit.ToString();
+                            }
+                        }
                         if (b.BoatLandLocation != null)
                         {
                             string location = b.BoatLandLocation.Location.LocationType + ", " + b.BoatLandLocation.Location.Street + ", " + b.BoatLandLocation.Location.Suburb + ", " + b.BoatLandLocation.Location.City;
@@ -97,11 +104,7 @@ namespace DealEngine.Services.Impl
                         }
                         dataBoat.SumInsured = b.Sum.ToString();
                         dataBoat.Hull = b.HullConfiguration;
-                        if (b.BoatTrailers.FirstOrDefault() != null)
-                        {
-                            string trailer = b.BoatTrailers.FirstOrDefault().Year + ", " + b.BoatTrailers.FirstOrDefault().Make + ", " + b.BoatTrailers.FirstOrDefault().Model + ", " + b.BoatTrailers.FirstOrDefault().GroupSumInsured.ToString() + ", " + b.BoatTrailers.FirstOrDefault().VehicleEffectiveDate.ToString();
-                            dataBoat.Trailer = trailer;
-                        }
+
                         if (b.BoatUses.FirstOrDefault() != null)
                         {
                             if (b.BoatUses.FirstOrDefault().BoatUseRace != null)
@@ -113,8 +116,35 @@ namespace DealEngine.Services.Impl
                     }
                     data.Boats = dataBoats;
                 }
+                if (clientProgramme.InformationSheet.Vehicles != null)
+                {
+                    IList<DataVehicle> dataVehicles = new List<DataVehicle>();
 
+                    foreach (Vehicle v in clientProgramme.InformationSheet.Vehicles)
+                    {
+                        DataVehicle dataVehicle = new DataVehicle();
+                        dataVehicle.Registration = v.Registration;
+                        dataVehicle.Year = v.Year;
+                        dataVehicle.Make = v.Make;
+                        dataVehicle.Model = v.Model;
+                        dataVehicle.GroupSumInsured = v.GroupSumInsured.ToString();
+                        dataVehicle.VehicleEffectiveDate = v.VehicleEffectiveDate.ToString();
+
+                        foreach (ClientAgreementMVTerm term in clientProgramme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault().MotorTerms)
+                        {
+                            if (term.Vehicle.Id == v.Id)
+                            {
+                                // For Marsh there is no TrailerExcess
+                                // dataVehicle.TrailerExcess = term.Excess.ToString();
+                                dataVehicle.TrailerLimit = term.TermLimit.ToString();
+                            }
+                        }
+                        dataVehicles.Add(dataVehicle);
+                    }
+                    data.Vehicles = dataVehicles;
+                }
             }
+
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, null, null);

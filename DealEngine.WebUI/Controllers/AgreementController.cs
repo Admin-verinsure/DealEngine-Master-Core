@@ -3688,6 +3688,7 @@ namespace DealEngine.WebUI.Controllers
                     data = await _dataService.Update(data, Id, BindType);
                     await _dataService.ToJson(data, "Not yet implemented - just pass in empty string is fine.", Id);
                     await _emailService.SendDataEmail("staff@techcertain.com", data);
+                    await _emailService.SendDataEmail("Warren.J.Blomquist@marsh.com", data);
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
