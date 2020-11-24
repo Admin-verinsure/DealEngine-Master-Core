@@ -72,6 +72,7 @@ namespace DealEngine.Domain.Entities
         public virtual User CompletedBy { get; set; }
         public virtual DateTime CompletedOn { get; set; }
         public virtual bool IsActive { get; set; }
+        public virtual bool Removed { get; set; }
 
         protected UserTask() : base(null) {
             IsActive = true;
@@ -88,6 +89,7 @@ namespace DealEngine.Domain.Entities
             }            
             DueDate = DateTime.Now.AddDays(7);
             Completed = false;
+            Removed = false;
         }
 
         public virtual void Complete(User completedBy)

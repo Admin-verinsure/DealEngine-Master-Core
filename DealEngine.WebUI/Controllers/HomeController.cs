@@ -101,7 +101,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                model.UserTasks = user.UserTasks.Where(t=>t.Completed == false).ToList();
+                model.UserTasks = user.UserTasks.Where(t=>t.Completed == false && t.Removed == false).ToList();
                 model.DisplayDeals = true;
                 model.DisplayProducts = false;
                 model.CurrentUserType = "Client";

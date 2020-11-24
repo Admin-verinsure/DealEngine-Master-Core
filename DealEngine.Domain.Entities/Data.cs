@@ -33,6 +33,7 @@ namespace DealEngine.Domain.Entities
 
         // Coastguard Attributes
         public virtual IList<DataBoat> Boats { get; set; }
+        public virtual IList<DataVehicle> Vehicles { get; set; }
 
 
     }

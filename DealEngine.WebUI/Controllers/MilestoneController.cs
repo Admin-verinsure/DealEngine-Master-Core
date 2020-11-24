@@ -92,5 +92,22 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemoveTask(IFormCollection collection)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                await _milestoneService.RemoveTask(user, collection);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
     }
 }

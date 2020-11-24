@@ -24,8 +24,12 @@ namespace DealEngine.Domain.Entities
         public virtual string Location { get; set; }
         public virtual string SumInsured { get; set; }
         public virtual string Hull { get; set; }
-        public virtual string Trailer { get; set; }
+        // Now handled in DataVehicle
+        //public virtual string Trailer { get; set; }
         public virtual string RacingRisk { get; set; }
+        public virtual string BoatExcess { get; set; }
+        public virtual string BoatLimit { get; set; }
+
     }
 }
 
