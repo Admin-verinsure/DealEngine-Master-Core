@@ -1350,6 +1350,7 @@ namespace DealEngine.Services.Impl
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
             html = html.Replace("’", "&#39");
+            html = html.Replace("'", "&#39");
             html = html.Replace(" – ", "--");
             html = html.Replace("&nbsp;", " ");
             
