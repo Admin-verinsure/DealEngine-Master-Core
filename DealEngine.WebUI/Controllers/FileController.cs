@@ -72,11 +72,8 @@ namespace DealEngine.WebUI.Controllers
         {
             ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
             ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
-
             SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
 
-
-            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
@@ -319,7 +316,7 @@ namespace DealEngine.WebUI.Controllers
                     // DOCX
                     else if (format == "docx")
                     {
-                        doc = await _fileService.FormatCKHTMLforDocx(doc.Id);
+                        doc = await _fileService.FormatCKHTMLforConversion(doc);
                         html = _fileService.FromBytes(doc.Contents);
 
                         using (MemoryStream virtualFile = new MemoryStream())
@@ -343,9 +340,12 @@ namespace DealEngine.WebUI.Controllers
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
                     }
-
+                    else if (format == "pdf")
+                    {
+                        return File(doc.Contents, "application/pdf", doc.Name + ".pdf");
+                    }
                 }
-                // PDF
+                // PDF - When is this hit?
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
@@ -532,6 +532,7 @@ namespace DealEngine.WebUI.Controllers
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = user.PrimaryOrganisation;
                 document.IsTemplate = true;
+                document.RenderToPDF = model.RenderToPDF;
                 await _documentRepository.AddAsync(document);
                 //if (model.ProductId != null)
                 //{

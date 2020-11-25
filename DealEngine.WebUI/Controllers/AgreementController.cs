@@ -5,6 +5,7 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using SystemDocument = DealEngine.Domain.Entities.Document;
+using Document = DealEngine.Domain.Entities.Document;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.WebUI.Models.Agreement;
@@ -2463,11 +2464,11 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (programme.EGlobalClientNumber != null)
                             {
-                                models.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                                models.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, RenderToPDF = doc.RenderToPDF });
                             }
                         }
                         else
-                            models.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                            models.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, RenderToPDF = doc.RenderToPDF });
                     }
 
                     if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
@@ -3078,6 +3079,48 @@ namespace DealEngine.WebUI.Controllers
         //    }
         //}
 
+        //public async Task<Document> ConvertHTMLToPDF(Document doc)
+        //{
+        //    //ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+        //    //ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
+
+        //    //SystemDocument doc = await _documentRepository.GetByIdAsync(DocumentId);
+        //    // DOCX & HTML
+        //    string html = _fileService.FromBytes(doc.Contents);
+        //    var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+        //    htmlToPdfConv.License.SetLicenseKey(
+        //       _appSettingService.NRecoUserName,
+        //       _appSettingService.NRecoLicense
+        //   );            // for Linux/OS-X: "wkhtmltopdf"
+        //    htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+        //    htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+        //    //htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
+        //    //    + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
+        //    //    + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
+        //    //    + " <strong> UIS No:" + clientInformationSheet.ReferenceId + "</strong></br>"
+        //    //    + " <strong> Sheet Submitted On:" + clientInformationSheet.SubmitDate + "</strong></br>"
+        //    //    + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
+        //    //    + " <strong> Issued To:" + clientInformationSheet.SubmittedBy.FullName + "</strong></br>"
+        //    //    + "<h2> </br>  </h2> </p>";
+
+        //    //htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
+        //    var margins = new PageMargins();
+        //    margins.Bottom = 18;
+        //    margins.Top = 38;
+        //    margins.Left = 15;
+        //    margins.Right = 15;
+        //    htmlToPdfConv.Margins = margins;
+
+        //    // Legacy Image Path Fix
+        //    string badURL = "../../../images/";
+        //    var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+        //    html = html.Replace(badURL, newURL);
+
+        //    var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+        //    doc.Contents = pdfBytes;
+        //    return doc;
+        //}
         [HttpGet]
         public async Task<Document> GetPdfDocument(Guid id, ClientProgramme clientprogramme)
         {
@@ -3626,6 +3669,12 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    renderedDoc.RenderToPDF = template.RenderToPDF;
+                                    if (renderedDoc.RenderToPDF == true)
+                                    {
+                                        renderedDoc = await _fileService.FormatCKHTMLforConversion(renderedDoc);
+                                        renderedDoc = await _fileService.ConvertHTMLToPDF(renderedDoc);
+                                    }
                                     agreement.Documents.Add(renderedDoc);
                                     documents.Add(renderedDoc);
                                     await _fileService.UploadFile(renderedDoc);
@@ -3643,6 +3692,12 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    renderedDoc.RenderToPDF = template.RenderToPDF;
+                                    if (renderedDoc.RenderToPDF == true)
+                                    {
+                                        renderedDoc = await _fileService.FormatCKHTMLforConversion(renderedDoc);
+                                        renderedDoc = await _fileService.ConvertHTMLToPDF(renderedDoc);
+                                    }
                                     agreement.Documents.Add(renderedDoc);
                                     documents.Add(renderedDoc);
                                     await _fileService.UploadFile(renderedDoc);
@@ -3650,6 +3705,7 @@ namespace DealEngine.WebUI.Controllers
                             }
                         }
 
+                        #region Commented Email function
                         //if (emailTemplate == null)
                         //{
                         //    //default email or send them somewhere??
@@ -3661,6 +3717,7 @@ namespace DealEngine.WebUI.Controllers
                         //        await uow.Commit();
                         //    }
                         //}
+                        #endregion
 
                         if (programme.BaseProgramme.ProgEnableEmail)
                         {
@@ -3732,7 +3789,7 @@ namespace DealEngine.WebUI.Controllers
                         agreeDocList = agreement.GetDocuments();
                         foreach (Document doc in agreeDocList)
                         {
-                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, RenderToPDF = doc.RenderToPDF });
                         }
                     }
                 }
@@ -3776,18 +3833,18 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if ((!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
                             {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
                             else if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
                             else
                             {
                                 ViewBag.IsPDFgenerated = "" + agreement.IsPDFgenerated;
                                 ViewBag.IsReportSend = "" + agreement.IsFullProposalDocSend;
 
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetPDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetPDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
 
                             }
                         }
@@ -3984,6 +4041,12 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    renderedDoc.RenderToPDF = template.RenderToPDF;
+                                    if (renderedDoc.RenderToPDF == true)
+                                    {
+                                        renderedDoc = await _fileService.FormatCKHTMLforConversion(renderedDoc);
+                                        renderedDoc = await _fileService.ConvertHTMLToPDF(renderedDoc);
+                                    }
                                     agreement.Documents.Add(renderedDoc);
                                     await _fileService.UploadFile(renderedDoc);
                                 }

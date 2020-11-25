@@ -18,7 +18,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Extensions.Logging;
 using Document = DealEngine.Domain.Entities.Document;
 using System.Text.RegularExpressions;
-
+using NReco.PdfGenerator;
 
 namespace DealEngine.Services.Impl
 {
@@ -1319,8 +1319,7 @@ namespace DealEngine.Services.Impl
 			return System.Text.Encoding.UTF8.GetString (bytes);
 		}
 
-
-		public string ConvertDataTableToHTML (DataTable dt)
+        public string ConvertDataTableToHTML (DataTable dt)
 		{
 			decimal deccolumnwidth = 100 / dt.Columns.Count;
 
@@ -1345,13 +1344,36 @@ namespace DealEngine.Services.Impl
         {
             return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
         }
+        public async Task<Document> ConvertHTMLToPDF(Document doc)
+        {
+            string html = FromBytes(doc.Contents);
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace("’", "&#39");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
+            
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
 
-        public async Task<Document> FormatCKHTMLforDocx(Guid DocumentId)
+            var margins = new PageMargins();
+            margins.Bottom = 15;
+            margins.Top = 15;
+            margins.Left = 25;
+            margins.Right = 25;
+            htmlToPdfConv.Margins = margins;
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            
+            var output = htmlToPdfConv.GeneratePdf(html);
+            doc.Contents = output;
+
+            return doc;
+        }
+        public async Task<Document> FormatCKHTMLforConversion(Document doc)
         {
             User user = null;
-
-            SystemDocument doc = await _documentRepository.GetByIdAsync(DocumentId);
-            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
                 
             string html = FromBytes(doc.Contents);
                 
@@ -1382,7 +1404,6 @@ namespace DealEngine.Services.Impl
             // Border Fix (show & no border use cases)
             if (html.Contains(showBorder))
             {
-
                 html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
             }
             if (html.Contains(noBorder))

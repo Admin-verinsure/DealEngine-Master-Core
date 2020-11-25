@@ -25,6 +25,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsTemplate { get; set; }
 		public virtual bool FileRendered { get; set; }
 		public virtual string Path { get; set; }
+		public virtual bool RenderToPDF { get; set; }
         public Document () { }
 
 		public Document (User createdBy, string name, string contentType, int documentType)
