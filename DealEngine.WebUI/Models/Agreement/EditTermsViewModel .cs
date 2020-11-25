@@ -32,6 +32,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public IEnumerable<ClientAgreementMVTerm> MVTerms { get; set; }
 
         public decimal BasePremium { get; set; }
+        public decimal PremiumDiffer { get; set; }
 
     }
 }

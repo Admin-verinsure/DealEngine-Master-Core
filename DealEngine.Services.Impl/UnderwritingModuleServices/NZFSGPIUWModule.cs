@@ -274,6 +274,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
             term2millimitpremiumoption.Premium = TermPremium2mil;
+            term2millimitpremiumoption.BasePremium = TermPremium2mil;
             term2millimitpremiumoption.Excess = TermExcess;
             term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
@@ -284,6 +285,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
             term3millimitpremiumoption.Premium = TermPremium3mil;
+            term3millimitpremiumoption.BasePremium = TermPremium3mil;
             term3millimitpremiumoption.Excess = TermExcess;
             term3millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term3millimitpremiumoption.Brokerage = TermBrokerage3mil;
@@ -294,6 +296,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
             term5millimitpremiumoption.Premium = TermPremium5mil;
+            term5millimitpremiumoption.BasePremium = TermPremium5mil;
             term5millimitpremiumoption.Excess = TermExcess;
             term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
@@ -308,14 +311,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (term.Bound)
                     {
                         var PreviousBoundPremium = term.Premium;
-                        if (term.BasePremium > 0)
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
                         {
                             PreviousBoundPremium = term.BasePremium;
                         }
                         term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
                         term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
                         term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
-                        if(term2millimitpremiumoption.PremiumDiffer < 0)
+                        term2millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        term3millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        term5millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term2millimitpremiumoption.PremiumDiffer < 0)
                         {
                             term2millimitpremiumoption.PremiumDiffer = 0;
                         }

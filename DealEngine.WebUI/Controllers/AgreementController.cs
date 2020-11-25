@@ -1309,7 +1309,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
                 }
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
@@ -1321,7 +1322,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
 
 
@@ -1335,7 +1337,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
 
 
@@ -1349,7 +1352,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
 
 
@@ -1363,7 +1367,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
 
 
@@ -1377,7 +1382,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
 
 
@@ -1391,7 +1397,8 @@ namespace DealEngine.WebUI.Controllers
                         TermLimit = plterm.TermLimit,
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium
+                        BasePremium = plterm.BasePremium,
+                        PremiumDiffer = plterm.PremiumDiffer
                     });
                 }
                 model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
@@ -1465,6 +1472,7 @@ namespace DealEngine.WebUI.Controllers
                         term.Premium = clientAgreementSubTerm.Premium;
                         term.TermLimit = clientAgreementSubTerm.TermLimit;
                         term.Excess = clientAgreementSubTerm.Excess;
+                        term.PremiumDiffer = clientAgreementSubTerm.PremiumDiffer;
                         await uow.Commit();
                     }
                 }
