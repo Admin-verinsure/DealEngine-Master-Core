@@ -1346,11 +1346,13 @@ namespace DealEngine.Services.Impl
         }
         public async Task<Document> ConvertHTMLToPDF(Document doc)
         {
+
             string html = FromBytes(doc.Contents);
+            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
-            html = html.Replace("’", "&#39");
-            html = html.Replace("'", "&#39");
+            //html = html.Replace("’", "&#39");
+            //html = html.Replace("'", "&#39");
             html = html.Replace(" – ", "--");
             html = html.Replace("&nbsp;", " ");
             
