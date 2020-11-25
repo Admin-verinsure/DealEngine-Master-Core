@@ -1003,7 +1003,7 @@ namespace DealEngine.Services.Impl
                 }
                 else if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
                 {
-                    //attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
+                    attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
                 }
                 else
                 {
