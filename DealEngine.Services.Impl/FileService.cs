@@ -1349,10 +1349,9 @@ namespace DealEngine.Services.Impl
 
             string html = FromBytes(doc.Contents);
             html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
-            //html = html.Replace("’", "&#39");
-            //html = html.Replace("'", "&#39");
             html = html.Replace(" – ", "--");
             html = html.Replace("&nbsp;", " ");
             
