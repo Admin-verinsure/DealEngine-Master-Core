@@ -12,7 +12,7 @@
             <!-- PAGE HEADER -->
             <i class="fa-fw fa fa-home"></i>  <span>
                 <a href="~/Home/Index"> Dashboard</a>
-                > My Documents
+                > My Templates
             </span>
         </h1>
     </div>
@@ -27,18 +27,17 @@
                 <span class="widget-icon">
                     @if (productId == "")
                     {
-                        <h2><i class="fa fa-comments txt-color-white"></i> My Documents </h2>
+                        <h2><i class="fa fa-comments txt-color-white"></i> My Templates </h2>
                     }
                     else
                     {
 
-                        <h2><i class="fa fa-comments txt-color-white"></i> My Documents </h2><a class="btn btn-primary float-right" href="/File/CreateDocument?productId=@Model.FirstOrDefault().ProductId">Create New Document</a>
+                        <h2><i class="fa fa-comments txt-color-white"></i> My Templates </h2><a class="btn btn-primary float-right m-1" href="/File/CreateDocument?productId=@Model.FirstOrDefault().ProductId">Create New Template</a>
                     }
 
                     @if (@ViewBag.IsTC)
                     {
-                        <a class="btn btn-sm btn-primary text-light" data-toggle="modal" data-target="#htmlpdfmodal">Create Invoice Html</a>
-
+                        <a class="btn btn-primary float-right m-1" style="color: #fff !important" data-toggle="modal" data-target="#htmlpdfmodal">Create Template from Local HTML</a>
                     }
 
                 </span>
@@ -48,9 +47,9 @@
                     <thead>
                         <tr>
                             <th style="width:28%;">Name</th>
-                            <th>Product</th>
+                            @*<th>Product</th>*@
                             <th>Type</th>
-                            <th>Owner</th>
+                            @*<th>Owner</th>*@
                             <th>Actions</th>
                             <th>Downloads</th>
 
@@ -61,28 +60,28 @@
                         {
                             <tr>
                                 <td style="width:28%;">@doc.DisplayName</td>
-                                <td>@doc.ProductName</td>
+                                @*<td>@doc.ProductName</td>*@
                                 <td>@doc.Type</td>
-                                <td>@doc.Owner</td>
+                                @*<td>@doc.Owner</td>*@
                                 <td>
                                     @*@if (doc.Attachment == "")*@
-                                    <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;"><i class="fa fa-eye"></i> View</a>
+                                    @*<a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;"><i class="fa fa-eye"></i> View</a>*@
 
                                     @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                     {
                                         @if (productId == "")
                                         {
-                                            <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/CreateDocument?id=@doc.Id"><i class="fa fa-edit"></i> Edit</a>
+                                            <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/CreateDocument?id=@doc.Id"><i class="fa fa-edit"></i> Clone to New</a>
                                         }
                                         else
                                         {
-                                            <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId"><i class="fa fa-edit"></i> Edit</a>
+                                            <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId"><i class="fa fa-edit"></i> Clone to New</a>
                                         }                                        
                                     }                            
-                                    <a class="btn btn-danger btn-xs" style="color: white; font-size: 10pt;border: 0;" href="/File/DeleteDocument?id=@doc.Id"><i class="fa fa-trash"></i> Delete</a>                                
+                                    @*<a class="btn btn-danger btn-xs" style="color: white; font-size: 10pt;border: 0;" href="/File/DeleteDocument?id=@doc.Id"><i class="fa fa-trash"></i> Delete</a>*@                                
                                 </td>
                                 <td>
-                                    <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/GetDocument/@(doc.Id)"><i class="fa fa-download"></i> Get Html</a>
+                                    <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/GetDocument/@(doc.Id)?format=pdf"><i class="fa fa-download"></i> Get PDF</a>
                                     <a class="btn btn-primary btn-xs" style="color:white; font-size:10pt; border:0;" href="/File/GetDocument/@(doc.Id)?format=docx"><i class="fa fa-download"></i> Get Docx</a>
                                 </td>
                             </tr>
@@ -98,6 +97,9 @@
     <div class="modal-dialog" role="form">
         <div class="modal-content">
             <div class="modal-header">
+                @*<p>This should probably be modified to instead have an upload function where you give it the document via browser and then make work for PDF too, 
+                    would be easier to use and less setup... We don't really want to keep HTML templates in our repo or any Local files for documents.
+                    Could then use this for PDF templates that clients give us (which don't require having MergeFields - unless we can figure way to convert PDF to HTML again) just my 2c  - nathan </p>*@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -111,13 +113,11 @@
                             </label>
                     </section>
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <label>Actual File Name</label>
+                            <label>Actual File Name (don't include .html)</label>
                             <label class="input ">
                                 <input data-type="TEXTBOX" name="ActualFileName" id="ActualFileName" placeholder="Actual File Name" value="">
-                            </label>
-                        
+                            </label>                       
                     </section>
-
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <select id="documentType" name="DocumentType" class="form-control input-lg">
                             <option value="" selected="">-- Select --</option>
@@ -132,9 +132,6 @@
                             <option value="8">Invoice</option>
                         </select>
                     </section>
-
-
-
                 </div>
             </div>
             <div class="modal-footer">
@@ -145,8 +142,6 @@
         </div>
     </div>
 </div>
-
-
 
 <script>
     function AddProgrammeHtml(event, progName) {
@@ -176,9 +171,6 @@
 
       $('#htmlpdfmodal').on('show.bs.modal', function (e) {
         debugger;
-
-        $('.modal').css('width', '1500px');
-       
-
+        $('.modal').css('width', '1500px');     
     });
 </script>

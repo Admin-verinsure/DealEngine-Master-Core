@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
 
 namespace DealEngine.WebUI.Models
 {
@@ -11,6 +14,8 @@ namespace DealEngine.WebUI.Models
 		public string Content { get; set; }
         public string ProductId { get; set; }
 		public bool RenderToPDF { get; set; }
+		//public IList<Product> Products { get; set; }
+		//public Product Product { get; set; }
 		public DocumentViewModel ()
 		{
 		}

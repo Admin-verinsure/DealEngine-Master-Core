@@ -3135,11 +3135,8 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
 
             SystemDocument doc = await _documentRepository.GetByIdAsync(id);
-            string extension = "";
-            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-            // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
-            //  docContents = ToBytes(html);
+
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
               _appSettingService.NRecoUserName,
@@ -3147,13 +3144,20 @@ namespace DealEngine.WebUI.Controllers
             );            // for Linux/OS-X: "wkhtmltopdf"
             htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
+
+            string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
+            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.Name == "TechCertain Ltd.")
+            {
+                submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+            }
+
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
-               + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
-               + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
-               + " <strong> UIS No:" + clientprogramme.InformationSheet.ReferenceId + "</strong></br>"
-               + " <strong> Sheet Submitted On:" + clientprogramme.InformationSheet.SubmitDate + "</strong></br>"
-               + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
-               + " <strong> Issued To:" + clientprogramme.InformationSheet.SubmittedBy.FullName + "</strong></br>"
+               + "</br><strong> Title: " + clientprogramme.BaseProgramme.Name + "</strong></br>"
+               + " <strong> Information Sheet for : " + clientprogramme.Owner.Name + "</strong></br>"
+               + " <strong> UIS No: " + clientprogramme.InformationSheet.ReferenceId + "</strong></br>"
+               + " <strong> Sheet Submitted On: " + clientprogramme.InformationSheet.SubmitDate.ToShortDateString() + "</strong></br>"
+               + " <strong> Report Generated On: " + DateTime.Now.ToShortDateString() + "</strong></br>"
+               + " <strong> Submitted By: " + submittedBy + "</strong></br>"
                + "<h2> </br>  </h2> </p>";
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";

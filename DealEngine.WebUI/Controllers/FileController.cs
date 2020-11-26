@@ -119,13 +119,20 @@ namespace DealEngine.WebUI.Controllers
            );            // for Linux/OS-X: "wkhtmltopdf"
             htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+
+            string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
+            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.Name == "TechCertain Ltd.")
+            {
+                submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+            }
+
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
-                + "</br><strong> Title:" + clientprogramme.BaseProgramme.Name + "</strong></br>"
-                + " <strong> Information Sheet for :" + clientprogramme.Owner.Name + "</strong></br>"
-                + " <strong> UIS No:" + clientInformationSheet.ReferenceId + "</strong></br>"
-                + " <strong> Sheet Submitted On:" + clientInformationSheet.SubmitDate + "</strong></br>"
-                + " <strong> Report Generated On:" + DateTime.Now + "</strong></br>"
-                + " <strong> Issued To:" + clientInformationSheet.SubmittedBy.FullName + "</strong></br>"
+                + "</br><strong> Title: " + clientprogramme.BaseProgramme.Name + "</strong></br>"
+                + " <strong> Information Sheet for: " + clientprogramme.Owner.Name + "</strong></br>"
+                + " <strong> UIS No: " + clientInformationSheet.ReferenceId + "</strong></br>"
+                + " <strong> Sheet Submitted On: " + clientInformationSheet.SubmitDate.ToShortDateString() + "</strong></br>"
+                + " <strong> Report Generated On: " + DateTime.Now.ToShortDateString() + "</strong></br>"
+                + " <strong> Submitted By: " + submittedBy + "</strong></br>"
                 + "<h2> </br>  </h2> </p>";
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
@@ -151,7 +158,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> covertdoctohtml(string TemplateName, string ActualFileName, string DocumentType)
         {
-
+            // Ashu's function to get local file stored in Web/Template/"templatename".html and create a Document in the database for it
             string htmlbody = string.Empty;
             var path = "./Template/" + TemplateName + ".html";
             using (StreamReader reader = new StreamReader("./Template/" + TemplateName + ".html"))
@@ -342,6 +349,12 @@ namespace DealEngine.WebUI.Controllers
                     }
                     else if (format == "pdf")
                     {
+                        // This is for ManageDocuments where we haven't hit ProcessRequestConfiguration which Formats and Converts the document
+                        if (doc.IsTemplate == true)
+                        {
+                            doc = await _fileService.FormatCKHTMLforConversion(doc);
+                            doc = await _fileService.ConvertHTMLToPDF(doc);
+                        }
                         return File(doc.Contents, "application/pdf", doc.Name + ".pdf");
                     }
                 }
@@ -496,6 +509,7 @@ namespace DealEngine.WebUI.Controllers
                 model.DocumentType = document.DocumentType;
                 model.Content = _fileService.FromBytes(document.Contents);
                 model.ProductId = productId;
+                //model.Products = _productRepository.FindAll().ToList();
 
                 return View(model);
             }
