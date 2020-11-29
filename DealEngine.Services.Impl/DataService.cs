@@ -102,7 +102,7 @@ namespace DealEngine.Services.Impl
                             string location = b.BoatLandLocation.Location.LocationType + ", " + b.BoatLandLocation.Location.Street + ", " + b.BoatLandLocation.Location.Suburb + ", " + b.BoatLandLocation.Location.City;
                             dataBoat.Location = location;
                         }
-                        dataBoat.SumInsured = b.Sum.ToString();
+                        dataBoat.SumInsured = b.MaxSumInsured.ToString();
                         dataBoat.Hull = b.HullConfiguration;
 
                         if (b.BoatUses.FirstOrDefault() != null)

@@ -963,23 +963,32 @@ namespace DealEngine.Services.Impl
 
         public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
-			if (document.ContentType == MediaTypeNames.Text.Html) {
+            string html = _fileService.FromBytes(document.Contents);
 
-                document = await _fileService.FormatCKHTMLforDocx(document.Id);
-
-                string html = _fileService.FromBytes(document.Contents);
-                using (MemoryStream virtualFile = new MemoryStream())
+            if (document.ContentType == MediaTypeNames.Text.Html) {               
+                // Create PDF Attachment
+                if (document.RenderToPDF == true)
                 {
-                    using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                    return new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf);
+                }
+
+                // Create DOCX Attachment
+                else
+                {
+                    using (MemoryStream virtualFile = new MemoryStream())
                     {
-                        MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                        new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-                        HtmlConverter converter = new HtmlConverter(mainPart);
-                        converter.ImageProcessing = ImageProcessing.ManualProvisioning;
-                        converter.ParseHtml(html);
+                        using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                        {
+                            MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                            new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                            HtmlConverter converter = new HtmlConverter(mainPart);
+                            converter.ImageProcessing = ImageProcessing.ManualProvisioning;
+                            converter.ParseHtml(html);
+                        }
+                        return new Attachment(new MemoryStream(virtualFile.ToArray()), document.Name + ".docx");
                     }
-                    return new Attachment(new MemoryStream (virtualFile.ToArray()), document.Name + ".docx");
-				}
+                }
+
 			}
             return null;
 		}
