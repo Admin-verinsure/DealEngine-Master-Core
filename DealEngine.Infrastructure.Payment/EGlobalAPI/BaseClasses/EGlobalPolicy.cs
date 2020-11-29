@@ -745,6 +745,7 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI.BaseClasses
                 set;
             }
 
+            [XmlIgnore()] //added as Marsh requested to remove this tag
             [XmlElement("PLY_EXTERNALSYSTEMINVNO")]
             public int ExternalSystemInvNumber
             {

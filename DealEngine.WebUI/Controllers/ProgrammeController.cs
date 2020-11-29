@@ -477,9 +477,6 @@ namespace DealEngine.WebUI.Controllers
                     throw new NullReferenceException("Client number is null");
                 }
 
-
-                
-
                 var eGlobalSerializer = new EGlobalSerializerAPI();
 
                 //check Eglobal parameters
