@@ -459,6 +459,19 @@ namespace DealEngine.Services.Impl
             newClientProgramme.ChangeReason = changeReason;
             newClientProgramme.InformationSheet = newClientInformationSheet;
             newClientProgramme.InformationSheet.Programme = newClientProgramme;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalBranchCode))
+                newClientProgramme.EGlobalBranchCode = oldClientProgramme.EGlobalBranchCode;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalClientNumber))
+                newClientProgramme.EGlobalClientNumber = oldClientProgramme.EGlobalClientNumber;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalClientStatus))
+                newClientProgramme.EGlobalClientStatus = oldClientProgramme.EGlobalClientStatus;
+            newClientProgramme.HasEGlobalCustomDescription = oldClientProgramme.HasEGlobalCustomDescription;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalCustomDescription))
+                newClientProgramme.EGlobalCustomDescription = oldClientProgramme.EGlobalCustomDescription;
+            if (!string.IsNullOrEmpty(oldClientProgramme.ClientProgrammeMembershipNumber))
+                newClientProgramme.ClientProgrammeMembershipNumber = oldClientProgramme.ClientProgrammeMembershipNumber;
+            if (!string.IsNullOrEmpty(oldClientProgramme.Tier))
+                newClientProgramme.Tier = oldClientProgramme.Tier;
 
             oldClientProgramme.InformationSheet.NextInformationSheet = newClientInformationSheet;
             if (oldClientProgramme.InformationSheet.Vehicles != null)
