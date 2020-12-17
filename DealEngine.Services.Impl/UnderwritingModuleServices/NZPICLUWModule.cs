@@ -64,6 +64,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             decimal feeincome = 0;
             decimal extpremium = 0m;
 
@@ -163,7 +166,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
             TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k) + extpremium;
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium250k = TermPremium250k / coverperiodindays * agreementperiodindays;
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
@@ -180,7 +184,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
             TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k) + extpremium;
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium500k = TermPremium500k / coverperiodindays * agreementperiodindays;
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit500k, TermExcess);
@@ -193,6 +198,35 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl500klimitoption.DateDeleted = null;
             termcl500klimitoption.DeletedBy = null;
 
+            //Change policy premium claculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termcl250klimitoption.PremiumDiffer = (TermPremium250k - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termcl250klimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termcl250klimitoption.PremiumDiffer < 0)
+                        {
+                            termcl250klimitoption.PremiumDiffer = 0;
+                        }
+                        termcl500klimitoption.PremiumDiffer = (TermPremium500k - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termcl500klimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termcl500klimitoption.PremiumDiffer < 0)
+                        {
+                            termcl500klimitoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Not a renewal of an existing policy

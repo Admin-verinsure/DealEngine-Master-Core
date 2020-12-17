@@ -60,6 +60,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             int intnumberofadvisors = 0;
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
@@ -119,7 +125,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 TermPremium250k = rates["do250klimitpremiumover2employee"];
             }
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium250k = TermPremium250k / coverperiodindays * agreementperiodindays;
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             int TermExcess = 0;
@@ -167,6 +174,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo250klimitoption.Brokerage = TermBrokerage250k;
             termdo250klimitoption.DateDeleted = null;
             termdo250klimitoption.DeletedBy = null;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "DO"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termdo250klimitoption.PremiumDiffer = (TermPremium250k - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termdo250klimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termdo250klimitoption.PremiumDiffer < 0)
+                        {
+                            termdo250klimitoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Asset Size

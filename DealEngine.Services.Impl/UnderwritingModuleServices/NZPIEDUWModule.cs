@@ -63,6 +63,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -108,7 +111,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 TermPremium100k = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) * rates["edpremiumover2employee"];
             }
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium100k = TermPremium100k / coverperiodindays * agreementperiodindays;
             TermBrokerage100k = TermPremium100k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termed100klimitoption = GetAgreementTerm(underwritingUser, agreement, "ED", TermLimit100k, TermExcess);
@@ -121,6 +125,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termed100klimitoption.DateDeleted = null;
             termed100klimitoption.DeletedBy = null;
 
+            //Change policy premium claculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "ED"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termed100klimitoption.PremiumDiffer = (TermPremium100k - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termed100klimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termed100klimitoption.PremiumDiffer < 0)
+                        {
+                            termed100klimitoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //ED Issues

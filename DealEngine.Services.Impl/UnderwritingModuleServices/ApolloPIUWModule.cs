@@ -65,6 +65,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             decimal feeincomelastyear = 0M;
             decimal FGCfeeincomelastyear = 0M;
             decimal FGDfeeincomelastyear = 0M;
@@ -263,6 +266,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil1kExcess = 0M;
             decimal TermBrokerage1mil1kExcess = 0M;
             TermPremium1mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium1mil1kExcess = TermPremium1mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage1mil1kExcess = TermPremium1mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil1kExcess, TermExcess1k);
@@ -279,6 +284,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil5kExcess = 0M;
             decimal TermBrokerage1mil5kExcess = 0M;
             TermPremium1mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit1mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium1mil5kExcess = TermPremium1mil5kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage1mil5kExcess = TermPremium1mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil5kExcess, TermExcess5k);
@@ -295,6 +302,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium2mil1kExcess = 0M;
             decimal TermBrokerage2mil1kExcess = 0M;
             TermPremium2mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium2mil1kExcess = TermPremium2mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil1kExcess, TermExcess1k);
@@ -311,6 +320,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium2mil5kExcess = 0M;
             decimal TermBrokerage2mil5kExcess = 0M;
             TermPremium2mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium2mil5kExcess = TermPremium2mil5kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage2mil5kExcess = TermPremium2mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil5kExcess, TermExcess5k);
@@ -327,6 +338,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium3mil1kExcess = 0M;
             decimal TermBrokerage3mil1kExcess = 0M;
             TermPremium3mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium3mil1kExcess = TermPremium3mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil1kExcess, TermExcess1k);
@@ -343,6 +356,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium3mil5kExcess = 0M;
             decimal TermBrokerage3mil5kExcess = 0M;
             TermPremium3mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium3mil5kExcess = TermPremium3mil5kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage3mil5kExcess = TermPremium3mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil5kExcess, TermExcess5k);
@@ -359,6 +374,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5mil1kExcess = 0M;
             decimal TermBrokerage5mil1kExcess = 0M;
             TermPremium5mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium5mil1kExcess = TermPremium5mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil1kExcess, TermExcess1k);
@@ -375,6 +392,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5mil5kExcess = 0M;
             decimal TermBrokerage5mil5kExcess = 0M;
             TermPremium5mil5kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil5kExcess, TermExcess5k, decInv, decDishonestyOptionPremium, strtier);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium5mil5kExcess = TermPremium5mil5kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage5mil5kExcess = TermPremium5mil5kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimit5kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil5kExcess, TermExcess5k);
@@ -386,6 +405,73 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimit5kexcesspremiumoption.Brokerage = TermBrokerage5mil5kExcess;
             term5millimit5kexcesspremiumoption.DateDeleted = null;
             term5millimit5kexcesspremiumoption.DeletedBy = null;
+
+
+            //Change policy premium claculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term1millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium1mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term1millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term1millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term1millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term1millimit5kexcesspremiumoption.PremiumDiffer = (TermPremium1mil5kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term1millimit5kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term1millimit5kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term1millimit5kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term2millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium2mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term2millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term2millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term2millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term2millimit5kexcesspremiumoption.PremiumDiffer = (TermPremium2mil5kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term2millimit5kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term2millimit5kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term2millimit5kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term3millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium3mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term3millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term3millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term3millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term3millimit5kexcesspremiumoption.PremiumDiffer = (TermPremium3mil5kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term3millimit5kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term3millimit5kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term3millimit5kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term5millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium5mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term5millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term5millimit5kexcesspremiumoption.PremiumDiffer = (TermPremium5mil5kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term5millimit5kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimit5kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimit5kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
 
             //Referral points per agreement
@@ -450,7 +536,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
                 //if (DateTime.UtcNow > product.DefaultInceptionDate)
                 //{
                 //    inceptionDate = DateTime.UtcNow;

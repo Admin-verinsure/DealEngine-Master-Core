@@ -60,6 +60,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -94,7 +100,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermExcess1mil = 0;
             TermPremium1mil = rates["pl1millimitpremium"];
             TermExcess1mil = rates["pl1millimitexcess"];
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium1mil = TermPremium1mil / coverperiodindays * agreementperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess1mil);
@@ -113,7 +120,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermExcess2mil = 0;
             TermPremium2mil = rates["pl2millimitpremium"];
             TermExcess2mil = rates["pl2millimitexcess"];
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium2mil = TermPremium2mil / coverperiodindays * agreementperiodindays;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess2mil);
@@ -132,7 +140,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermExcess5mil = 0;
             TermPremium5mil = rates["pl5millimitpremium"];
             TermExcess5mil = rates["pl5millimitexcess"];
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium5mil = TermPremium5mil / coverperiodindays * agreementperiodindays;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit5mil, TermExcess5mil);
@@ -144,6 +153,44 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termpl5millimitoption.Brokerage = TermBrokerage5mil;
             termpl5millimitoption.DateDeleted = null;
             termpl5millimitoption.DeletedBy = null;
+
+
+            //Change policy premium claculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PL"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termpl1millimitoption.PremiumDiffer = (TermPremium1mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termpl1millimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termpl1millimitoption.PremiumDiffer < 0)
+                        {
+                            termpl1millimitoption.PremiumDiffer = 0;
+                        }
+                        termpl2millimitoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termpl2millimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termpl2millimitoption.PremiumDiffer < 0)
+                        {
+                            termpl2millimitoption.PremiumDiffer = 0;
+                        }
+                        termpl5millimitoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termpl5millimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termpl5millimitoption.PremiumDiffer < 0)
+                        {
+                            termpl5millimitoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
+
 
             //Referral points per agreement
 

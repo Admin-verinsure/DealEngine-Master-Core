@@ -64,6 +64,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             decimal extpremium = 0m;
 
             string strProfessionalBusiness = "General Insurance Brokers, Life Agents, Investment Advisers, Financial Planning and Mortgage Broking, Consultants and Advisers in the sale of any financial product including referrals to other financial product providers.";
@@ -169,6 +172,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermBrokerage100kBase = 0m;
                 TermPremium100kBase = rates["cl100klimitpremiumbase"] + extpremium;
 
+                //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+                TermPremium100kBase = TermPremium100kBase / coverperiodindays * agreementperiodindays;
+
                 TermBrokerage100kBase = TermPremium100kBase * agreement.Brokerage / 100;
 
                 ClientAgreementTerm termcl100klimitoptionbase = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100kBase, TermExcess);
@@ -181,12 +187,41 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 termcl100klimitoptionbase.DateDeleted = null;
                 termcl100klimitoptionbase.DeletedBy = null;
 
+                //Change policy premium claculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            termcl100klimitoptionbase.PremiumDiffer = (TermPremium100kBase - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            termcl100klimitoptionbase.PremiumPre = PreviousBoundPremium;
+                            if (termcl100klimitoptionbase.PremiumDiffer < 0)
+                            {
+                                termcl100klimitoptionbase.PremiumDiffer = 0;
+                            }
+
+                        }
+
+                    }
+                }
+
+
             } else
             {
                 int TermLimit100kUltra = 100000;
                 decimal TermPremium100kUltra = 0m;
                 decimal TermBrokerage100kUltra = 0m;
                 TermPremium100kUltra = rates["cl100klimitpremiumultra"] + extpremium;
+
+                //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+                TermPremium100kUltra = TermPremium100kUltra / coverperiodindays * agreementperiodindays;
 
                 TermBrokerage100kUltra = TermPremium100kUltra * agreement.Brokerage / 100;
 
@@ -205,6 +240,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decimal TermBrokerage250kUltra = 0m;
                 TermPremium250kUltra = rates["cl250klimitpremiumultra"] + extpremium;
 
+                //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+                TermPremium250kUltra = TermPremium250kUltra / coverperiodindays * agreementperiodindays;
+
                 TermBrokerage250kUltra = TermPremium250kUltra * agreement.Brokerage / 100;
 
                 ClientAgreementTerm termcl250klimitoptionultra = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250kUltra, TermExcess);
@@ -216,6 +254,38 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 termcl250klimitoptionultra.Brokerage = TermBrokerage250kUltra;
                 termcl250klimitoptionultra.DateDeleted = null;
                 termcl250klimitoptionultra.DeletedBy = null;
+
+                //Change policy premium claculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            termcl100klimitoptionultra.PremiumDiffer = (TermPremium100kUltra - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            termcl100klimitoptionultra.PremiumPre = PreviousBoundPremium;
+                            if (termcl100klimitoptionultra.PremiumDiffer < 0)
+                            {
+                                termcl100klimitoptionultra.PremiumDiffer = 0;
+                            }
+                            termcl250klimitoptionultra.PremiumDiffer = (TermPremium250kUltra - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            termcl250klimitoptionultra.PremiumPre = PreviousBoundPremium;
+                            if (termcl250klimitoptionultra.PremiumDiffer < 0)
+                            {
+                                termcl250klimitoptionultra.PremiumDiffer = 0;
+                            }
+
+                        }
+
+                    }
+                }
+
             }
 
             //Referral points per agreement
@@ -261,11 +331,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
-                //if (DateTime.UtcNow > product.DefaultInceptionDate)
-                //{
-                //    inceptionDate = DateTime.UtcNow;
-                //}
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

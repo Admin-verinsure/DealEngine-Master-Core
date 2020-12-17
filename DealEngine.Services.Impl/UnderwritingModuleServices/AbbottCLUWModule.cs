@@ -60,8 +60,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            //Abbott programme is not a full year policy
             int coverperiodindays = 0;
-            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddMonths(-9).AddDays(1)).Days;
+
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
             string strProfessionalBusiness = "Sales & Promotion of Life, Investment & General Insurance products, Financial planning & Mortgage Brokering Services";
 
@@ -161,7 +165,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
             TermPremium250k = rates["cl250klimitpremium"];
-
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium250k = TermPremium250k / coverperiodindays * agreementperiodindays;
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
@@ -173,6 +178,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl250klimitoption.Brokerage = TermBrokerage250k;
             termcl250klimitoption.DateDeleted = null;
             termcl250klimitoption.DeletedBy = null;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termcl250klimitoption.PremiumDiffer = (TermPremium250k - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termcl250klimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termcl250klimitoption.PremiumDiffer < 0)
+                        {
+                            termcl250klimitoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Not a renewal of an existing policy
@@ -218,11 +247,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
-                //if (DateTime.UtcNow > product.DefaultInceptionDate)
-                //{
-                //    inceptionDate = DateTime.UtcNow;
-                //}
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

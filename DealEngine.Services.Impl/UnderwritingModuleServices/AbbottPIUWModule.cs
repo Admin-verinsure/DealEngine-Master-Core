@@ -61,8 +61,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            //Abbott programme is not a full year policy
             int coverperiodindays = 0;
-            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddMonths(-9).AddDays(1)).Days;
+
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
             decimal feeincomelastyear = 0M;
             decimal FGCfeeincomelastyear = 0M;
@@ -228,6 +232,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium2mil1kExcess = 0M;
             decimal TermBrokerage2mil1kExcess = 0M;
             TermPremium2mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit2mil1kExcess, TermExcess1k, decInv, decMB);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium2mil1kExcess = TermPremium2mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage2mil1kExcess = TermPremium2mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil1kExcess, TermExcess1k);
@@ -245,6 +251,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium3mil1kExcess = 0M;
             decimal TermBrokerage3mil1kExcess = 0M;
             TermPremium3mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit3mil1kExcess, TermExcess1k, decInv, decMB);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium3mil1kExcess = TermPremium3mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage3mil1kExcess = TermPremium3mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil1kExcess, TermExcess1k);
@@ -262,6 +270,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium5mil1kExcess = 0M;
             decimal TermBrokerage5mil1kExcess = 0M;
             TermPremium5mil1kExcess = GetPremiumForAdvisors(rates, intnumberofadvisors, TermLimit5mil1kExcess, TermExcess1k, decInv, decMB);
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium5mil1kExcess = TermPremium5mil1kExcess / coverperiodindays * agreementperiodindays;
             TermBrokerage5mil1kExcess = TermPremium5mil1kExcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimit1kexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil1kExcess, TermExcess1k);
@@ -273,6 +283,42 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimit1kexcesspremiumoption.Brokerage = TermBrokerage5mil1kExcess;
             term5millimit1kexcesspremiumoption.DateDeleted = null;
             term5millimit1kexcesspremiumoption.DeletedBy = null;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term2millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium2mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term2millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term2millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term2millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term3millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium3mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term3millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term3millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term3millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                        term5millimit1kexcesspremiumoption.PremiumDiffer = (TermPremium5mil1kExcess - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term5millimit1kexcesspremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimit1kexcesspremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimit1kexcesspremiumoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
 
             //Referral points per agreement
@@ -332,11 +378,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
-                //if (DateTime.UtcNow > product.DefaultInceptionDate)
-                //{
-                //    inceptionDate = DateTime.UtcNow;
-                //}
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

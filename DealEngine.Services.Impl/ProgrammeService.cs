@@ -549,15 +549,15 @@ namespace DealEngine.Services.Impl
                     newClientInformationSheet.ResearchHouses.Add(newResearchHouse);
                 }
             }
-            if (oldClientProgramme.InformationSheet.SubClientInformationSheets != null)
-            {
-                newClientInformationSheet.SubClientInformationSheets.Clear();
-                foreach (SubClientInformationSheet subClientInformationSheet in oldClientProgramme.InformationSheet.SubClientInformationSheets)
-                {
-                    SubClientInformationSheet newSubClientInformationSheet = subClientInformationSheet.CloneForNewSheet(newClientInformationSheet);
-                    newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
-                }
-            }
+            //if (oldClientProgramme.InformationSheet.SubClientInformationSheets != null)
+            //{
+            //    newClientInformationSheet.SubClientInformationSheets.Clear();
+            //    foreach (SubClientInformationSheet subClientInformationSheet in oldClientProgramme.InformationSheet.SubClientInformationSheets)
+            //    {
+            //        SubClientInformationSheet newSubClientInformationSheet = subClientInformationSheet.CloneForNewSheet(newClientInformationSheet);
+            //        newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
+            //    }
+            //}
 
             await Update(newClientProgramme);
             return newClientProgramme;

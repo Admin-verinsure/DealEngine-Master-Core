@@ -71,10 +71,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            //Abbott programme is not a full year policy
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddMonths(-9).AddDays(1)).Days;
+
             int fapagreementperiodindays = 0;
             fapagreementperiodindays = (agreement.ExpiryDate - Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value)).Days;
 
             agreement.InceptionDate = Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value);
+
+            int coverperiodindaysforchange = 0;
+            if (DateTime.UtcNow > Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value))
+            {
+                coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+            }
+            else
+            {
+                coverperiodindaysforchange = (agreement.ExpiryDate - agreement.InceptionDate).Days;
+            }
 
             string strProfessionalBusiness = "Sales & Promotion of Life, Investment & General Insurance products, Financial planning & Mortgage Brokering Services";
 
@@ -196,6 +210,49 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 term5millimitpremiumoption.DateDeleted = null;
                 term5millimitpremiumoption.DeletedBy = null;
 
+                //Change policy premium claculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PIFAP"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            term1millimitpremiumoption.PremiumDiffer = (TermPremium1mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term1millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term1millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term1millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term2millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term2millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term2millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term3millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term3millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term3millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term5millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term5millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term5millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            
+                        }
+
+                    }
+                }
+
 
             }
             else
@@ -209,6 +266,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 term0millimitpremiumoption.Brokerage = 0;
                 term0millimitpremiumoption.DateDeleted = null;
                 term0millimitpremiumoption.DeletedBy = null;
+
+                //Change policy premium calculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PIFAP"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            term0millimitpremiumoption.PremiumDiffer = (0 - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term0millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term0millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term0millimitpremiumoption.PremiumDiffer = 0;
+                            }
+
+                        }
+
+                    }
+                }
             }
 
 
@@ -256,11 +338,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
-                //Inception date rule
-                //if (DateTime.UtcNow > product.DefaultInceptionDate)
-                //{
-                //    inceptionDate = DateTime.UtcNow;
-                //}
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {

@@ -336,18 +336,38 @@ namespace DealEngine.WebUI.Models.Agreement
                             }
                             else
                             {
-                                MultiCoverOptions.Add(new MultiCoverOptions
+
+                                if (agreement.ClientInformationSheet.IsChange)
                                 {
-                                    TermId = term.Id,
-                                    isSelected = (term.Bound == true) ? "checked" : "",
-                                    ProductId = agreement.Product.Id,
-                                    RiskName = agreement.Product.Name,
-                                    Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
-                                    Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
-                                    TotalPremium = term.Premium.ToString("C", userCulture),
-                                    monthlypremium = (term.Premium / intMonthlyInstalmentNumber).ToString("C", userCulture),
-                                    Dependableproduct = "NonDependable"
-                                });
+                                    MultiCoverOptions.Add(new MultiCoverOptions
+                                    {
+                                        TermId = term.Id,
+                                        isSelected = (term.Bound == true) ? "checked" : "",
+                                        ProductId = agreement.Product.Id,
+                                        RiskName = agreement.Product.Name,
+                                        Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                        Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                        TotalPremium = term.PremiumDiffer.ToString("C", userCulture),
+                                        monthlypremium = (term.PremiumDiffer / intMonthlyInstalmentNumber).ToString("C", userCulture),
+                                        Dependableproduct = "NonDependable"
+                                    });
+                                }
+                                else
+                                {
+                                    MultiCoverOptions.Add(new MultiCoverOptions
+                                    {
+                                        TermId = term.Id,
+                                        isSelected = (term.Bound == true) ? "checked" : "",
+                                        ProductId = agreement.Product.Id,
+                                        RiskName = agreement.Product.Name,
+                                        Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
+                                        Exclusion = "Excess: " + term.Excess.ToString("C", userCulture),
+                                        TotalPremium = term.Premium.ToString("C", userCulture),
+                                        monthlypremium = (term.Premium / intMonthlyInstalmentNumber).ToString("C", userCulture),
+                                        Dependableproduct = "NonDependable"
+                                    });
+                                }
+                               
                             }
 
                         }
