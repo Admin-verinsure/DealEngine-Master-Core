@@ -68,6 +68,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             int fapagreementperiodindays = 0;
             fapagreementperiodindays = (agreement.ExpiryDate - Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value)).Days;
 
@@ -234,6 +237,37 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
                 term2millimitpremiumoption.DateDeleted = null;
                 term2millimitpremiumoption.DeletedBy = null;
+
+                //Change policy premium calculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            term1millimitpremiumoption.PremiumDiffer = (TermPremium1mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term1millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term1millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term1millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term2millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term2millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term2millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                        }
+
+                    }
+                }
+
             }
            
             int TermLimit5mil = 5000000;
@@ -255,6 +289,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
+
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term5millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
 
             //Referral points per agreement
