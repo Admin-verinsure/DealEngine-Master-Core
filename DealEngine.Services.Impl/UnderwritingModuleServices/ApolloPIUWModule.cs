@@ -569,10 +569,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
 
                 //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
-                //if (DateTime.UtcNow > product.DefaultInceptionDate)
-                //{
-                //    inceptionDate = DateTime.UtcNow;
-                //}
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {
