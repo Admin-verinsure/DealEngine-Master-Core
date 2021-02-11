@@ -109,6 +109,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termot250klimitoption.DateDeleted = null;
             termot250klimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termot250klimitoption.Bound = true;
+            }
+
             //Referral points per agreement
 
 

@@ -113,6 +113,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl100klimitoption.DateDeleted = null;
             termsl100klimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termsl100klimitoption.Bound = true;
+            }
+
             //Referral points per agreement
 
 

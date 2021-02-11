@@ -139,6 +139,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo1millimitoption.DateDeleted = null;
             termdo1millimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termdo1millimitoption.Bound = true;
+            }
+
+
             //Referral points per agreement
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "1")
             {
