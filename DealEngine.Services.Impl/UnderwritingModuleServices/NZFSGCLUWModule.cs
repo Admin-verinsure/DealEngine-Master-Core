@@ -176,6 +176,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termcl250klimitoption.DateDeleted = null;
             termcl250klimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termcl250klimitoption.Bound = true;
+            }
+
             //Referral points per agreement
             //Cyber Issue
             uwrclissue(underwritingUser, agreement);

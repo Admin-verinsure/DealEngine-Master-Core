@@ -114,6 +114,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termfid250klimitoption.DateDeleted = null;
             termfid250klimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termfid250klimitoption.Bound = true;
+            }
+
             //Referral points per agreement
 
 

@@ -112,6 +112,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termpl5millimitoption.DateDeleted = null;
             termpl5millimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termpl5millimitoption.Bound = true;
+            }
+
             //Referral points per agreement
 
 

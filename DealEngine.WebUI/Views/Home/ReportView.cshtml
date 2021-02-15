@@ -69,18 +69,18 @@
                                         }
 
                                     }
-                                    @{
+                                    @*@{
                                         if (Model.ProgrammeName == "TripleA Programme" && Model.EnableFAPReport)
                                         {
-                                            <option value="FAP">AAA FAP Report</option>
+                                            <option value="FAP"> FAP Report</option>
 
                                         }
 
-                                    }
+                                    }*@
                                     @{
-                                        if (Model.ProgrammeName == "Abbott Financial Advisor Liability Programme" && Model.EnableFAPReport)
+                                        if ((Model.ProgrammeName == "Abbott Financial Advisor Liability Programme" || Model.ProgrammeName == "TripleA Programme") && Model.EnableFAPReport)
                                         {
-                                            <option value="FAP">Abbott Financial Advisor Liability  FAP Report</option>
+                                            <option value="FAP">FAP Report</option>
 
                                         }
 

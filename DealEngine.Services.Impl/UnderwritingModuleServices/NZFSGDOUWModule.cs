@@ -168,6 +168,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo500klimitoption.DateDeleted = null;
             termdo500klimitoption.DeletedBy = null;
 
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termdo500klimitoption.Bound = true;
+            }
+
             //Referral points per agreement
             //D&O Issues
             uwrdoissue(underwritingUser, agreement, decDOTotalAssets, decDOTotalLiabilities, decDOCurrentAssets, decDOCurrentLiabilities, decDOAftertaxProfitOrLoss);
