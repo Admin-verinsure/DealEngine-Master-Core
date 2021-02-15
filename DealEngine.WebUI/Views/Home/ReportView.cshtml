@@ -1,8 +1,10 @@
 ﻿@model IssueUISViewModel
 
 <div class="container">
-    <form id="ReportForm"    method="POST" action="~/Home/GetReportView" novalidate>
+    <form id="ReportForm" method="POST" action="~/Home/GetReportView" novalidate>
         <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
+        <input type="text" class="form-control" value="@Model.ProgrammeName" id="programmeName" name="ProgrammeName" hidden>
+
         <div class="card">
             <div class="card-header">
                 <h5>
@@ -27,15 +29,58 @@
                             <td>
                                 <select class="form-control b" id="ClientProg" name="queryselect">
                                     <option selected="selected" value="">-- Select --</option>
-                                    <option value="PI">PI Cover Limit and Premium Selected</option>
-                                    <option value="ED">ED Premium</option>
-                                    <option value="CL">Cyber Premium</option>
-                                    <option value="Ed">Limit and Premium Breakdown</option>
-                                    <option value="Cyber">Investment Defence and Settlement Costs Sub-Limit Premium and Limits</option>
                                     @{
-                                        if (Model.ProgrammeName == "NZFSG Programme")
+                                        if (Model.EnablePIReport)
                                         {
-                                            <option value="NZFSGFAP">NZFG FAP Report</option>
+                                            <option value="PI">PI Cover Limit and Premium Selected</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.EnableEDReport)
+                                        {
+                                            <option value="ED">ED Premium</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.EnableCLReport)
+                                        {
+                                            <option value="CL">Cyber Premium</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.EnableCyberReport)
+                                        {
+                                            <option value="Cyber">Investment Defence and Settlement Costs Sub-Limit Premium and Limits</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.ProgrammeName == "NZFSG Programme" && Model.EnableFAPReport)
+                                        {
+                                            <option value="FAP">NZFG FAP Report</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.ProgrammeName == "TripleA Programme" && Model.EnableFAPReport)
+                                        {
+                                            <option value="FAP">AAA FAP Report</option>
+
+                                        }
+
+                                    }
+                                    @{
+                                        if (Model.ProgrammeName == "Abbott Financial Advisor Liability Programme" && Model.EnableFAPReport)
+                                        {
+                                            <option value="FAP">Abbott Financial Advisor Liability  FAP Report</option>
 
                                         }
 

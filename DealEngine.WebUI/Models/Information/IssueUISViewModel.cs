@@ -13,6 +13,11 @@ namespace DealEngine.WebUI.Models
 		public string IsSubUIS { get; set; }
 		public List<SelectListItem> ListClientProgrammes { get; set; }
 		public List<SelectListItem> ListQueries { get; set; }
+		public  bool EnablePIReport { get; set; }
+		public  bool EnableEDReport { get; set; }
+		public  bool EnableCLReport { get; set; }
+		public  bool EnableCyberReport { get; set; }
+		public  bool EnableFAPReport { get; set; }
 
 	}
 }

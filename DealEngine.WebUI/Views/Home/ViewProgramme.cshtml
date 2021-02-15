@@ -33,9 +33,9 @@
             <li class="nav-item">
                 @*<a class="btn btn-primary btn-sm" href="~/Home/GetBreakdown?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Breakdown</a>*@
             </li>
-            @*<li class="nav-item">
+            <li class="nav-item">
                 <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.Programme.Id" class="btn btn-primary btn-sm" style="color:white">View Report </a>
-            </li>*@
+            </li>
         }
         else if (Model.CurrentUserIsProgrammeManager == "True")
         {
