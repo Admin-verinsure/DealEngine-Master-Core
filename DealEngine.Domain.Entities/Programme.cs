@@ -64,6 +64,13 @@ namespace DealEngine.Domain.Entities
         public virtual string FullProposalReportRecipent { get; set; }
         public virtual bool EnableMonthlyPremiumDisplay { get; set; }
         public virtual int MonthlyInstalmentNumber { get; set; }
+        public virtual bool EnablePIReport { get; set; }
+        public virtual bool EnableEDReport { get; set; }
+        public virtual bool EnableCLReport { get; set; }
+        public virtual bool EnableCyberReport { get; set; }
+        public virtual bool EnableFAPReport { get; set; }
+
+
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)
