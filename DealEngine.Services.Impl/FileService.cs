@@ -10,6 +10,15 @@ using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using SystemDocument = DealEngine.Domain.Entities.Document;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml;
+using HtmlToOpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Extensions.Logging;
+using Document = DealEngine.Domain.Entities.Document;
+using System.Text.RegularExpressions;
+using NReco.PdfGenerator;
 
 namespace DealEngine.Services.Impl
 {
@@ -32,9 +41,12 @@ namespace DealEngine.Services.Impl
         IClientAgreementBVTermService _clientAgreementBVTermService;
         IProgrammeService _programmeService;
         IProductService _productService;
+        IAppSettingService _appSettingService;
+
+
 
         public FileService(IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository,
-        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, IProductService productService)
+        IProgrammeService programmeService, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, IProductService productService, IAppSettingService appSettingService)
 		{
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
@@ -42,6 +54,7 @@ namespace DealEngine.Services.Impl
             _clientAgreementBVTermService = clientAgreementBVTermService;
             _programmeService = programmeService;
             _productService = productService;
+            _appSettingService = appSettingService;
 
             FileDirectory = Path.Combine (
 				Directory.GetCurrentDirectory (),
@@ -156,11 +169,23 @@ namespace DealEngine.Services.Impl
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
+            // This is for Locally Saved PDF Wording Documents which don't need to be rendered.
+            if (template.Path != null && template.ContentType == "application/pdf" && template.DocumentType == 0)
+            {
+                return (T)template;
+            }
             // store all the fields to be merged
             List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;
             Decimal PremiumTotal = 0.0m;
+
+            int intMonthlyInstalmentNumber = 1;
+            if (agreement.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
+            {
+                intMonthlyInstalmentNumber = agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber;
+            }
+
             // loop over terms and set merge feilds
             foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements)
             {
@@ -168,6 +193,8 @@ namespace DealEngine.Services.Impl
                 {
                     if (term.Bound)
                     {
+                        
+
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
@@ -191,6 +218,7 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             PremiumTotal += term.PremiumDiffer;
                         }
                         else
@@ -207,7 +235,44 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             PremiumTotal += term.Premium;
+                        }
+
+                        //Endorsements
+                        if (agreementlist.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && !ce.Removed).Count() > 0)
+                        {
+                            DataTable dt9 = new DataTable();
+                            dt9.Columns.Add("Endorsement Name");
+                            dt9.Columns.Add("Product Name");
+                            dt9.Columns.Add("Endorsement Text");
+
+                            foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreementlist.ClientAgreementEndorsements)
+                            {
+                                if (ClientAgreementEndorsement.DateDeleted == null && !ClientAgreementEndorsement.Removed)
+                                {
+                                    DataRow dr9 = dt9.NewRow();
+
+                                    dr9["Endorsement Name"] = ClientAgreementEndorsement.Name;
+                                    if (agreementlist.Product != null)
+                                    {
+                                        dr9["Product Name"] = agreementlist.Product.Name;
+                                    }
+
+                                    dr9["Endorsement Text"] = ClientAgreementEndorsement.Value;
+
+                                    dt9.Rows.Add(dr9);
+                                }
+
+                            }
+
+                            dt9.TableName = "EndorsementTable";
+
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[EndorsementTable_{0}]]", term.SubTermType), ConvertDataTableToHTML(dt9)));
+                        }
+                        else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[EndorsementTable_{0}]]", term.SubTermType), ""));
                         }
 
                         if (term.SubTermType == "CL")
@@ -236,9 +301,23 @@ namespace DealEngine.Services.Impl
                 }
             }
 
-            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_Total]]", ""), PremiumTotal.ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_GST]]", ""), (PremiumTotal * (decimal)0.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGstMonthly_Total]]", ""), (PremiumTotal * (decimal)1.15 / intMonthlyInstalmentNumber).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
+            if (agreement.ClientInformationSheet.Locations.Any())
+            {
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostalAddress]]", ""),
+            agreement.ClientInformationSheet.Locations.FirstOrDefault().Street + " " + agreement.ClientInformationSheet.Locations.FirstOrDefault().Suburb));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredCity]]", ""),
+                agreement.ClientInformationSheet.Locations.FirstOrDefault().City));
+
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
+               agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
+            }
+            
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
@@ -407,7 +486,7 @@ namespace DealEngine.Services.Impl
                 //dtbv4.Columns.Add("Year");
                 //dtbv4.Columns.Add("Make");
                 //dtbv4.Columns.Add("Model");
-                dtbv4.Columns.Add("Yacht Racing Risk");
+                dtbv4.Columns.Add("Excess");
 
                 DataTable dtbv5 = new DataTable();
                 dtbv5.Columns.Add("Name");
@@ -457,12 +536,12 @@ namespace DealEngine.Services.Impl
                     //drbv4["Year"] = bVTerm.YearOfManufacture;
                     //drbv4["Make"] = bVTerm.BoatMake;
                     //drbv4["Model"] = bVTerm.BoatModel;
-                    drbv4["Yacht Racing Risk"] = "Not Included";
-                    if (bVTerm.Boat.BoatType1 == "YachtsandCatamarans" && bVTerm.Boat.BoatUse.Where(ycbu => ycbu.BoatUseCategory == "Race" && !ycbu.Removed && ycbu.DateDeleted == null).Count() > 0)
+                    drbv4["Excess"] = "Not Included";
+                    if (bVTerm.Boat.BoatType1 == "YachtsandCatamarans" && bVTerm.Boat.BoatUses.Where(ycbu => ycbu.BoatUseCategory == "Race" && !ycbu.Removed && ycbu.DateDeleted == null).Count() > 0)
                     {
-                        foreach (BoatUse boatuse in bVTerm.Boat.BoatUse)
+                        foreach (BoatUse boatuse in bVTerm.Boat.BoatUses)
                         {
-                            drbv4["Yacht Racing Risk"] = "Included";
+                            drbv4["Excess"] = "$2,500";
                         }
                     }
                     dtbv4.Rows.Add(drbv4);
@@ -557,64 +636,106 @@ namespace DealEngine.Services.Impl
 
             string stradvisorlist = "";
             string stradvisorlist1 = "";
+            string stradvisorlist2 = "";
             string strnominatedrepresentative = "";
             string strotherconsultingbusiness = "";
-            
+            string strmentoradvisorlist = "";
+
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
 
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var unit= (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
-                    if(unit != null)
+                    if (!uisorg.Removed)
                     {
-                        if (string.IsNullOrEmpty(stradvisorlist))
+                        var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                        if (unit != null)
                         {
-                            stradvisorlist = "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            if (string.IsNullOrEmpty(stradvisorlist))
+                            {
+                                stradvisorlist = "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            }
+                            else
+                            {
+                                stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
+                            }
+                            if (string.IsNullOrEmpty(stradvisorlist1))
+                            {
+                                stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
+                            else
+                            {
+                                stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
+                                    "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
+                            }
+                            if (string.IsNullOrEmpty(stradvisorlist2))
+                            {
+                                stradvisorlist2 = uisorg.Name;
+                            }
+                            else
+                            {
+                                stradvisorlist2 += ", " + uisorg.Name;
+                            }
                         }
-                        else
-                        {
-                            stradvisorlist += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.PIRetroactivedate;
-                        }
-                        if (string.IsNullOrEmpty(stradvisorlist1))
-                        {
-                            stradvisorlist1 = "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
-                        }
-                        else
-                        {
-                            stradvisorlist1 += "<br />" + "Advisor:                                           " + uisorg.Name +
-                                "<br />" + "Retroactive Date:                          " + unit.DORetroactivedate;
-                        }
-                    }
 
-                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
-                    if (unit != null)
-                    {
-                        if (string.IsNullOrEmpty(strnominatedrepresentative))
+                        var unit1 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Nominated Representative");
+                        if (unit1 != null)
                         {
-                            strnominatedrepresentative = "Nominated Representative:       " + uisorg.Name;
+                            if (string.IsNullOrEmpty(strnominatedrepresentative))
+                            {
+                                strnominatedrepresentative = "Nominated Representative:       " + uisorg.Name;
+                            }
+                            else
+                            {
+                                strnominatedrepresentative += ", " + uisorg.Name;
+                            }
                         }
-                        else
-                        {
-                            strnominatedrepresentative += ", " + uisorg.Name;
-                        }
-                    }
 
-                    unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
-                    if (unit != null)
-                    {
-                        if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                        var unit2 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Other Consulting Business");
+                        if (unit2 != null)
                         {
-                            strotherconsultingbusiness = uisorg.Name;
+                            if (string.IsNullOrEmpty(strotherconsultingbusiness))
+                            {
+                                strotherconsultingbusiness = uisorg.Name;
+                            }
+                            else
+                            {
+                                strotherconsultingbusiness += ", " + uisorg.Name;
+                            }
                         }
-                        else
+
+                        var unit3 = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Mentored Advisor");
+                        if (unit3 != null)
                         {
-                            strotherconsultingbusiness += ", " + uisorg.Name;
+                            string mentoredadvisorexpirydate = "";
+                            if (unit3.DateofCommencement.Value.AddMonths(6) > agreement.ExpiryDate)
+                            {
+                                mentoredadvisorexpirydate = 
+                                    TimeZoneInfo.ConvertTimeFromUtc(agreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                            } else
+                            {
+                                mentoredadvisorexpirydate =
+                                    TimeZoneInfo.ConvertTimeFromUtc(unit3.DateofCommencement.Value.AddMonths(6), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                            }
+
+                            if (string.IsNullOrEmpty(strmentoradvisorlist))
+                            {
+                                strmentoradvisorlist = "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
+                            }
+                            else
+                            {
+                                strmentoradvisorlist += "<br />" + "Name:            " + uisorg.Name +
+                                    "<br />" + "Expiry Date:  " + mentoredadvisorexpirydate;
+                            }
                         }
+
+
                     }
+                    
                 }
 
                 if (!string.IsNullOrEmpty(strnominatedrepresentative))
@@ -627,9 +748,20 @@ namespace DealEngine.Services.Impl
                     strotherconsultingbusiness = "No Additional Insureds.";
                 }
 
+                if (string.IsNullOrEmpty(strmentoradvisorlist))
+                {
+                    strmentoradvisorlist = "No Mentored Advisor insured under this policy.";
+                }
+                if (string.IsNullOrEmpty(stradvisorlist2))
+                {
+                    stradvisorlist2 = "No Advisor insured under this policy.";
+                }
+
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", stradvisorlist));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", stradvisorlist1));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", strotherconsultingbusiness));
+                mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", strmentoradvisorlist));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", stradvisorlist2));
 
             }
             else
@@ -637,6 +769,8 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTablePI]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorDetailsTableDO]]", "No Advisor insured under this policy."));
                 mergeFields.Add(new KeyValuePair<string, string>("[[OtherConsultingBusiness]]", "No Additional Insured insureds."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[MontoredAdvisorDetails]]", "No Mentored Advisor insured under this policy."));
+                mergeFields.Add(new KeyValuePair<string, string>("[[AdvisorNames]]", "No Advisor insured under this policy."));
             }
 
             //Advisor list with FAP Number
@@ -764,15 +898,18 @@ namespace DealEngine.Services.Impl
                 {
                     foreach (var prodsubuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(prossubuis => prossubuis.DateDeleted == null))
                     {
-                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
+                        if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).Any())
                         {
-                            if (string.IsNullOrEmpty(OTAdvisorList))
+                            if (prodsubuis.Answers.Where(sa => sa.ItemName == OTProduct.OptionalProductRequiredAnswer).First().Value == "1")
                             {
-                                OTAdvisorList += prodsubuis.Owner.Name;
-                            }
-                            else
-                            {
-                                OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                if (string.IsNullOrEmpty(OTAdvisorList))
+                                {
+                                    OTAdvisorList += prodsubuis.Owner.Name;
+                                }
+                                else
+                                {
+                                    OTAdvisorList += ", " + prodsubuis.Owner.Name;
+                                }
                             }
                         }
                     }
@@ -811,7 +948,8 @@ namespace DealEngine.Services.Impl
 			return (T)doc;
 		}
 
-        private List<KeyValuePair<string, string>> GetMergeFields(ClientAgreement agreement, ClientInformationSheet clientInformationSheet)
+       
+            private List<KeyValuePair<string, string>> GetMergeFields(ClientAgreement agreement, ClientInformationSheet clientInformationSheet)
         {
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", agreement.InsuredName));
@@ -822,7 +960,16 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerPhone]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Phone));
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerEmail]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Email));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            if(agreement.ClientInformationSheet.Programme.BaseProgramme.Name == "Apollo Programme")
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null
+                                                                                    ?agreement.ClientInformationSheet.Programme.EGlobalClientNumber
+                                                                                    : agreement.ClientInformationSheet.ReferenceId));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            }
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
             mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
             //mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]",
@@ -914,7 +1061,7 @@ namespace DealEngine.Services.Impl
                         //    TimeZoneInfo.ConvertTimeFromUtc(eGlobalResponse.DateCreated.GetValueOrDefault(), TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
                         mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
-                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString().PadLeft(3, '0')));
                     }
                 }
             }
@@ -961,8 +1108,31 @@ namespace DealEngine.Services.Impl
                         mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                     }
 
+                    if (term.SubTermType == "PIFAP")
+                    {
+                        if (term.TermLimit == 0 && term.Excess == 0 && term.Premium == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), "Same as Professional Indemnity"));
+                        }
+                        else
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx3_{0}]]", term.SubTermType), (term.TermLimit * 3).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx4_{0}]]", term.SubTermType), (term.TermLimit * 4).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPLimitx5_{0}]]", term.SubTermType), (term.TermLimit * 5).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFAPExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        }
+                    }
+
                     if (term.SubTermType == "CL")
                     {
+                        //Extension Without Ultra Option
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
@@ -981,11 +1151,67 @@ namespace DealEngine.Services.Impl
                                 mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
                             }
                         }
+
+                        //Extension With Ultra Option
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").Count() == 0 || 
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension NOT Included"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1" && 
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLUltra]]", "Extension NOT Included"));
+                            }
+                        }
+
+                        //Ultra vs Base differences
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYB"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYB0316"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$50,000"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$50,000"));
+                            mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "$50,000"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalUltraOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYU"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYU0316"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$100,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$250,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "25% of the Limit of Indemnity"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLPolciyNumber]]", "-CYB"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLWording]]", "Cyber CYB0316"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt1]]", "$50,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt2]]", "$50,000"));
+                                mergeFields.Add(new KeyValuePair<string, string>("[[CLSublimitOpt3]]", "$50,000"));
+                            }
+                        }
                     }
                 }
             }
-            //mergeFields.Add(new KeyValuePair<string, string>("â€‹[[InsuredPostalAddress]]", 
-            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+           
+            //Address needs re-work
             //mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
             mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 
                 TimeZoneInfo.ConvertTimeFromUtc(agreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))));
@@ -1044,7 +1270,7 @@ namespace DealEngine.Services.Impl
             }
 
             //Endorsements
-            if (agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).Count() > 0)
+            if (agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && !ce.Removed).Count() > 0)
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Endorsement Name");
@@ -1053,7 +1279,7 @@ namespace DealEngine.Services.Impl
 
                 foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements)
                 {
-                    if (ClientAgreementEndorsement.DateDeleted == null)
+                    if (ClientAgreementEndorsement.DateDeleted == null && !ClientAgreementEndorsement.Removed)
                     {
                         DataRow dr = dt.NewRow();
 
@@ -1093,8 +1319,7 @@ namespace DealEngine.Services.Impl
 			return System.Text.Encoding.UTF8.GetString (bytes);
 		}
 
-
-		public string ConvertDataTableToHTML (DataTable dt)
+        public string ConvertDataTableToHTML (DataTable dt)
 		{
 			decimal deccolumnwidth = 100 / dt.Columns.Count;
 
@@ -1119,6 +1344,218 @@ namespace DealEngine.Services.Impl
         {
             return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
         }
+        public async Task<Document> ConvertHTMLToPDF(Document doc)
+        {
+
+            string html = FromBytes(doc.Contents);
+            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
+            
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+
+            var margins = new PageMargins();
+            margins.Bottom = 15;
+            margins.Top = 15;
+            margins.Left = 25;
+            margins.Right = 25;
+            htmlToPdfConv.Margins = margins;
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+            
+            var output = htmlToPdfConv.GeneratePdf(html);
+            doc.Contents = output;
+
+            return doc;
+        }
+        public async Task<Document> FormatCKHTMLforConversion(Document doc)
+        {
+            User user = null;
+                
+            string html = FromBytes(doc.Contents);
+                
+            // Bugfix for images added before Image Path fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
+
+            // Image resize/positioning
+            string centerImage = "<figure class=\"image\"><img src=\"";
+            string centerResize = "<figure class=\"image image_resized\" style=";
+            string leftImage = "<figure class=\"image image-style-align-left\"><img src=\"";
+            string leftResize = "<figure class=\"image image-style-align-left image_resized\" style=";
+            string leftResize2 = "<figure class=\"image image_resized image-style-align-left\" style=";
+            string rightImage = "<figure class=\"image image-style-align-right\"><img src=\"";
+            string rightResize = "<figure class=\"image image-style-align-right image_resized\" style=";
+            string rightResize2 = "<figure class=\"image image_resized image-style-align-right\" style=";
+
+            // Border
+            string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+            string noBorder = "<figure class=\"table\"><table><tbody><tr>";
+
+            // array of elements that need updated
+            string[] badHtml = { centerResize, leftResize, rightResize, leftResize2, rightResize2, centerImage, leftImage, rightImage };
+
+            // If re-writing this to adjust for behavior caused by lack of closing tags for elements i.e divs for images - might pay to serialize all of the elements (we didn't have serializer when this was written - and process them that way so you can get the full elements)
+
+            // Border Fix (show & no border use cases)
+            if (html.Contains(showBorder))
+            {
+                html = html.Replace(showBorder, "<table border=\"1\"><tbody><tr>");
+            }
+            if (html.Contains(noBorder))
+            {
+                html = html.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
+            }
+            if (html.Contains("\r\n"))
+            {
+                html = html.Replace("\r\n", string.Empty);
+            }
+            foreach (string ele in badHtml)
+            {
+                int x = CountStringOccurrences(html, ele);
+                var regex = new Regex(Regex.Escape(ele));
+                var regex2 = new Regex(Regex.Escape("g\"></figure>"));
+
+                for (int j = 0; j < x; j++)
+                {
+                    if (ele.Contains("image_resized") == false)
+                    {
+                        if (ele.Equals(centerImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:center\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if (ele.Equals(leftImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:left\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if (ele.Equals(rightImage))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:right\"</div> <img src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                    }
+                    else
+                    {
+                        int widthIndex = ele.Length;
+                        string width = html.Substring(html.IndexOf(ele) + widthIndex + 7, 5);
+                        width = width.Replace("%", "");
+                        width = width.Replace("\"", "");
+                        width = width.Replace(";", "");
+                        width = width.Replace(">", "");
+
+                        int srcEndIndex = html.IndexOf(ele) + widthIndex;
+                        int end = 21 + width.Length;
+                        html = html.Remove(srcEndIndex, end);
+
+                        string url = html.Substring(srcEndIndex);
+
+                        if (url.Contains(".jpg") == true)
+                        {
+                            if (url.Contains(".png") == true)
+                            {
+                                if (url.IndexOf(".jpg") < url.IndexOf(".png"))
+                                {
+                                    url = url.Substring(0, url.IndexOf(".jpg") + 4);
+                                }
+                                else
+                                {
+                                    url = url.Substring(0, url.IndexOf(".png") + 4);
+                                }
+                            }
+                            else
+                            {
+                                url = url.Substring(0, url.IndexOf(".jpg") + 4);
+                            }
+                        }
+                        else if (url.Contains(".png") == true)
+                        {
+                            url = url.Substring(0, url.IndexOf(".png") + 4);
+                        }
+                        else
+                        {
+                            // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
+                        }
+
+                        decimal widthPercent = decimal.Parse(width);
+                        widthPercent = decimal.Divide(widthPercent, 100);
+                        decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
+                        int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
+                        string pixelWidthStr = pixelWidthZeroDP.ToString();
+
+                        #region 
+                        //get the actual images width
+                        // note: Not useful at moment as the % CK gives you is of the page not the images actual width
+
+                        //byte[] imageData = new WebClient().DownloadData(url);
+                        //MemoryStream imgStream = new MemoryStream(imageData);
+                        //System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
+                        //decimal pixelWidth = img.Width;
+                        #endregion
+
+                        if (ele.Equals(centerResize) == true)
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1); //supposed to find end of src=https://...../file.png> but alt tag exists in some images so doesn't close, works either way even if you don't close div - you'd have to write code to remove the alt tag if you wanted this to work every time
+                        }
+                        else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:left;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                        else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
+                        {
+                            html = regex.Replace(html, "<div style=\"text-align:right;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
+                            html = regex2.Replace(html, "g\"></div>", 1);
+                        }
+                    }
+                }
+            }
+
+            doc.Contents = ToBytes(html);
+            return doc;
+        }
+
+        public static int CountStringOccurrences(string text, string pattern)
+        {
+            // Loop through all instances of the string 'text'.
+            int count = 0;
+            int i = 0;
+            while ((i = text.IndexOf(pattern, i)) != -1)
+            {
+                i += pattern.Length;
+                count++;
+            }
+            return count;
+        }
+        //public async Task<IActionResult> GetPDF(Guid id)
+        //{
+        //    User user = null;
+
+        //    SystemDocument doc = await _documentRepository.GetByIdAsync(id);
+        //    string extension = "";
+        //    var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+        //    // DOCX & HTML
+        //    string html = FromBytes(doc.Contents);
+
+
+        //    var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+        //    htmlToPdfConv.License.SetLicenseKey(
+        //       "PDF_Generator_Src_Examples_Pack_250473855326",
+        //       "iES8O5aKZQacEPEDg3tX5ouIxQ7lmPUZ1QsTMppGWDF2jJ50HIVh1PwkigtKyxquPDKs8hdf5wm2Zn2CEjMUwquXiB3uRpPBWTIAlloLpaLAmYAQOFV7OVu2LXp5f1MWOd5Jg8PD2pEtX6n8c70rHsTLSAIGQDwSCNM4g7AOuQ4="
+        //   );            // for Linux/OS-X: "wkhtmltopdf"
+
+        //    var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+
+        //    return File(pdfBytes, "application/pdf", "FullProposalReport.pdf");
+        //}
 
         #endregion
     }

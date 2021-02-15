@@ -28,11 +28,13 @@ namespace DealEngine.Domain.Entities
         public virtual IList<SubClientProgramme> SubClientProgrammes { get; set; }       
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string PaymentType { get; set; }
+        public virtual string PaymentFrequency { get; set; }
         public virtual string EGlobalBranchCode { get; set; }
         public virtual string EGlobalClientNumber { get; set; }
         public virtual string EGlobalClientStatus { get; set; }
         public virtual string EGlobalCustomDescription { get; set; }
         public virtual string ClientProgrammeMembershipNumber { get; set; }
+        public virtual string Tier { get; set; }
         public virtual bool IsDocsApproved { get; set; }
         protected ClientProgramme() : this(null, null, null) { }
 

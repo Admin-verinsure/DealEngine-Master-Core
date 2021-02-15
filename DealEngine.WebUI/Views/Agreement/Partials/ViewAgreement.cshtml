@@ -390,32 +390,41 @@ else
                         <th class="text-center" width="20%">Limit</th>
                         <th class="text-center" width="20%">Excess</th>
                         <th class="text-center" width="16%">Premium</th>
+                        @if (Model.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
+                        {
+                            <th class="text-center" width="16%">Monthly Premium</th>
+                        }
                         <th class="text-center" width="17%" hidden>Dependableproduct</th>
 
                     </tr>
                     @foreach (var item in Model.MultiCoverOptions)
                     {
-                        <tr class="clickable-row">
-                            <td>
-                                <input type="radio" dirname=""
-                                       id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
-                            </td>
-                            <td class="pt-3-half" width="12%" contenteditable="true">
-                                @item.RiskName
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Inclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Exclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.TotalPremium
-                            </td>
-                            <td class="pt-3-half" width="12%" contenteditable="true" value="@item.Dependableproduct" hidden>
-                                @item.Dependableproduct
-                            </td>
-                        </tr>
+                    <tr class="clickable-row">
+                        <td>
+                            <input type="radio" dirname=""
+                                   id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                        </td>
+                        <td class="pt-3-half" width="12%" contenteditable="true">
+                            @item.RiskName
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Inclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Exclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.TotalPremium
+                        </td>
+                        @if(Model.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay){
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.monthlypremium
+                        </td>
+                        }
+                        <td class="pt-3-half" width="12%" contenteditable="true" value="@item.Dependableproduct" hidden>
+                            @item.Dependableproduct
+                        </td>
+                    </tr>
                     }
                     @if (Model.IsOptionalProduct)
                     {
@@ -486,9 +495,7 @@ else
     <script type="text/javascript">
 
          $(window).on("load", function () {
-            debugger;
            if ("@Model.InformationSheetStatus" == "Started" || "@Model.InformationSheetStatus" == "Submitted") {
-                debugger;
 
                 var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
@@ -499,7 +506,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -513,7 +519,7 @@ else
                         }
                     }
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("There was an error while trying to save the Vehicle.");
+                alert("There was an error while trying to get the Cover Options.");
                 });
 
              }
@@ -557,7 +563,6 @@ else
 
         function ValidateCoverOption() {
             var itemPI = $('#Professional Indemnity input:radio:checked').val()
-            debugger;
         }
 
 
@@ -593,7 +598,6 @@ else
 
 
           if ( "@Model.InformationSheetStatus" == "Submitted") {
-                debugger;
 
                 var progId = $("#ClientProgrammeId").val();
                 //var progId = $('#ClientProgrammeId').val();
@@ -604,7 +608,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -618,13 +621,12 @@ else
                         }
                     }
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("There was an error while trying to save the Vehicle.");
+                alert("There was an error while trying to get the Cover Options.");
                 });
 
         }
 
           if ("@Model.InformationSheetStatus" == "Started") {
-                debugger;
 
                 var progId = $("#ClientProgrammeId").val();
                 //var progId = $('#ClientProgrammeId').val();
@@ -635,7 +637,6 @@ else
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -650,7 +651,7 @@ else
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     debugger;
-                alert("There was an error while trying to save the Vehicle.");
+                alert("There was an error while trying to save default cover option.");
                 });
 
              }

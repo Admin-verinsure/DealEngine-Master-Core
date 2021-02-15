@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
 using DealEngine.WebUI.Models.ProductModels;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace DealEngine.WebUI.Models.Programme
 {
@@ -25,14 +25,19 @@ namespace DealEngine.WebUI.Models.Programme
             {
                 Id = programme.Id;
                 Name = programme.Name;
-                this.Programme = programme;
+                Programme = programme;
+                if (Brokers != null)
+                {
+                    Brokers.FirstOrDefault(i => i.Value == programme.BrokerContactUser.Id.ToString()).Selected = true;
+                }                
             }
             if(clientProgramme != null)
             {
                 ClientProgramme = clientProgramme;
             }
+            BooleanOptions = GetBooleanOptions();
         }
-
+        public IList<SelectListItem> BooleanOptions { get; set; }
         private IList<SelectListItem> GetBrokerSelectList(List<User> brokers)
         {
             Brokers = new List<SelectListItem>();
@@ -53,12 +58,12 @@ namespace DealEngine.WebUI.Models.Programme
         public bool EGlobalIsActiveOrNot { get; set; }
         public ClientProgramme ClientProgramme { get; set; }
         public IList<ProductInfoViewModel> Product { get; set; }
-        public IList<Organisation> Owner { get; set; }
+        public IList<Domain.Entities.Organisation> Owner { get; set; }
         public IList<EGlobalSubmission> EGlobalSubmissions { get; set; }
         public IList<EGlobalResponse> EGlobalResponses { get; set; }
         public User BrokerContactUser { get; set; }
         public string Name { get; set; }
-        public Domain.Entities.Programme Programme { get; }
+        public Domain.Entities.Programme Programme { get; set; }
         public string OwnerCompany { get; set; }
         public string DateCreated { get; set; }
         public IList<SelectListItem> Brokers { get; set; }

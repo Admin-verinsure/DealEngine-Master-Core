@@ -9,6 +9,8 @@ using DealEngine.Services.Interfaces;
 using NHibernate.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
@@ -17,22 +19,24 @@ namespace DealEngine.Services.Impl
 		IMapperSession<User> _userRepository;
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
-        IOrganisationTypeService _organisationTypeService;
+		IMapperSession<Organisation> _organisationRepository;
 		ILogger<UserService> _logger;
-
+		IMapper _mapper;
 
         public UserService(
+			IMapper mapper,
 			IMapperSession<User> userRepository, 
 			ILdapService ldapService, 
-			ILegacyLdapService legacyLdapService, 
-			IOrganisationTypeService organisationTypeService,
+			ILegacyLdapService legacyLdapService,
+			IMapperSession<Organisation> organisationRepository,
 			ILogger<UserService> logger
 			)
         {
+			_mapper = mapper;
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
-            _organisationTypeService = organisationTypeService;
+			_organisationRepository = organisationRepository;
 			_logger = logger;
 
 		}
@@ -98,7 +102,6 @@ namespace DealEngine.Services.Impl
             try
             {
                 user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
-
             }
             catch(Exception ex)
             {
@@ -244,12 +247,7 @@ namespace DealEngine.Services.Impl
 
         protected async Task CreateDefaultUserOrganisation (User user)
 		{
-            OrganisationType personalOrganisationType = null;
-            personalOrganisationType = await _organisationTypeService.GetOrganisationTypeByName("default");
-            if (personalOrganisationType == null)
-            {
-                personalOrganisationType = new OrganisationType(user, "default");
-            }
+            OrganisationType personalOrganisationType = new OrganisationType(user, "Default");
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);
 		}
@@ -264,13 +262,8 @@ namespace DealEngine.Services.Impl
 			var users = await _userRepository.FindAll().Where(u => u.PrimaryOrganisation.IsBroker == true).ToListAsync();
 			return users;			
 		}
-		public async Task<List<String>> GetUsers()
-		{
-			var users = await _userRepository.FindAll().Select(x => x.UserName).ToListAsync();
-			return users;
-		}
 		
-		public async Task<User> GetUserPrimaryOrganisation(Organisation org)
+		public async Task<User> GetUserPrimaryOrganisationOrEmail(Organisation org)
 		{
 			var user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.PrimaryOrganisation == org);
 			if(user == null)
@@ -287,6 +280,28 @@ namespace DealEngine.Services.Impl
         private void UpdateLDap(User user)
         {
 			_ldapService.Update(user);
+		}
+
+        public async Task<User> PostCreateUser(User jsonUser, User currentUser, IFormCollection form)
+        {
+			var createUser = await GetUserByEmail(form["User.Email"]);
+			if (Guid.TryParse(form["Organisation.Id"], out Guid OrganisationId))
+			{
+				if (OrganisationId != Guid.Empty)
+				{
+					createUser = _mapper.Map(jsonUser, createUser);
+					var PrimaryOrganisation = await _organisationRepository.GetByIdAsync(OrganisationId);
+					createUser.SetPrimaryOrganisation(PrimaryOrganisation);
+					await Update(createUser);
+				}
+			}
+			else
+			{
+				createUser = new User(currentUser, Guid.NewGuid(), form);
+				createUser = _mapper.Map(jsonUser, createUser);
+				await Create(createUser);
+			}
+			return createUser;
 		}
     }
 }

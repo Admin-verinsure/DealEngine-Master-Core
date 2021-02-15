@@ -15,17 +15,13 @@ namespace DealEngine.Services.Interfaces
         Task<ClientInformationSheet> GetInformation (Guid informationSheetId);
         Task<List<ClientInformationSheet>> GetAllInformationFor (User owner);
         Task<List<ClientInformationSheet>> GetAllInformationFor (Organisation owner);
-        Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId);
         Task UpdateInformation (ClientInformationSheet sheet);
 		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection, User user);
-        Task<List<ClientInformationSheet>> FindByBoatName(string searchValue);
         Task<SubClientInformationSheet> IssueSubInformationFor();
         Task<bool> IsBaseClass(ClientInformationSheet sheet);
         Task UnlockSheet(ClientInformationSheet sheet, User user);
         Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal);
-        Task<List<ClientInformationSheet>> FindByAdvisoryName(IFormCollection collection);
-        Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation);
-        Task RemoveOrganisationFromSheets(Organisation organisation);
+        Task DetachOrganisation(IFormCollection collection);
     }
 }
 

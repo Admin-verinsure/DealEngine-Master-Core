@@ -22,18 +22,19 @@ using ServiceStack;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Net;
-using FastReport.Export.PdfSimple.PdfObjects;
+//using FastReport.Export.PdfSimple.PdfObjects;
+using NReco.PdfGenerator;
 
 namespace DealEngine.WebUI.Controllers
 {
-	[Authorize]
+    [Authorize]
     public class FileController : BaseController
-    {		
-		IUnitOfWork _unitOfWork;
-		IFileService _fileService;
+    {
+        IUnitOfWork _unitOfWork;
+        IFileService _fileService;
         IProgrammeService _programmeService;
-		IMapperSession<SystemDocument> _documentRepository;
-		IMapperSession<Image> _imageRepository;
+        IMapperSession<SystemDocument> _documentRepository;
+        IMapperSession<Image> _imageRepository;
         IMapperSession<Product> _productRepository;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
@@ -45,25 +46,135 @@ namespace DealEngine.WebUI.Controllers
             ILogger<FileController> logger,
             IProgrammeService programmeService,
             IApplicationLoggingService applicationLoggingService,
-            IUserService userRepository, 
-            IUnitOfWork unitOfWork, 
+            IUserService userRepository,
+            IUnitOfWork unitOfWork,
             IFileService fileService,
-            IMapperSession<SystemDocument> documentRepository, 
-            IMapperSession<Image> imageRepository, 
+            IMapperSession<SystemDocument> documentRepository,
+            IMapperSession<Image> imageRepository,
             IMapperSession<Product> productRepository,
             IAppSettingService appSettingService
             )
-			: base (userRepository)
-		{
+            : base(userRepository)
+        {
             _programmeService = programmeService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _unitOfWork = unitOfWork;
-			_fileService = fileService;
-			_documentRepository = documentRepository;
-			_imageRepository = imageRepository;
+            _fileService = fileService;
+            _documentRepository = documentRepository;
+            _imageRepository = imageRepository;
             _productRepository = productRepository;
             _appSettingService = appSettingService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInvoicePDF(Guid Id, Guid ClientProgrammeId, string invoicename)
+        {
+            ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+            ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
+            SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+
+            // DOCX & HTML
+            string html = _fileService.FromBytes(doc.Contents);
+            var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(
+               _appSettingService.NRecoUserName,
+               _appSettingService.NRecoLicense
+           );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+            var margins = new PageMargins();
+            margins.Bottom = 10;
+            margins.Top = 10;
+            margins.Left = 30;
+            margins.Right = 10;
+            htmlToPdfConv.Margins = margins;
+
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
+            // Legacy Image Path Fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
+
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+
+            return File(pdfBytes, "application/pdf", invoicename + ".pdf");
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPDF(Guid Id, Guid ClientProgrammeId)
+        {
+            ClientProgramme clientprogramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+            ClientInformationSheet clientInformationSheet = clientprogramme.InformationSheet;
+            SystemDocument doc = await _documentRepository.GetByIdAsync(Id);
+            var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+            // DOCX & HTML
+            string html = _fileService.FromBytes(doc.Contents);
+            var htmlToPdfConv = new HtmlToPdfConverter();
+            htmlToPdfConv.License.SetLicenseKey(
+               _appSettingService.NRecoUserName,
+               _appSettingService.NRecoLicense
+           );            // for Linux/OS-X: "wkhtmltopdf"
+            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
+
+            string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
+            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.Name == "TechCertain Ltd.")
+            {
+                submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+            }
+
+            htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
+                + "</br><strong> Title: " + clientprogramme.BaseProgramme.Name + "</strong></br>"
+                + " <strong> Information Sheet for: " + clientprogramme.Owner.Name + "</strong></br>"
+                + " <strong> UIS No: " + clientInformationSheet.ReferenceId + "</strong></br>"
+                + " <strong> Sheet Submitted On: " + clientInformationSheet.SubmitDate.ToShortDateString() + "</strong></br>"
+                + " <strong> Report Generated On: " + DateTime.Now.ToShortDateString() + "</strong></br>"
+                + " <strong> Submitted By: " + submittedBy + "</strong></br>"
+                + "<h2> </br>  </h2> </p>";
+
+            htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
+
+            var margins = new PageMargins();
+            margins.Bottom = 18;
+            margins.Top = 38;
+            margins.Left = 15;
+            margins.Right = 15;
+            htmlToPdfConv.Margins = margins;
+
+            // Legacy Image Path Fix
+            string badURL = "../../../images/";
+            var newURL = "https://" + _appSettingService.domainQueryString + "/Image/";
+            html = html.Replace(badURL, newURL);
+
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+
+            return File(pdfBytes, "application/pdf", "InformationSheetReport.pdf");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> covertdoctohtml(string TemplateName, string ActualFileName, string DocumentType)
+        {
+            // Ashu's function to get local file stored in Web/Template/"templatename".html and create a Document in the database for it
+            string htmlbody = string.Empty;
+            var path = "./Template/" + TemplateName + ".html";
+            using (StreamReader reader = new StreamReader("./Template/" + TemplateName + ".html"))
+            {
+                htmlbody = reader.ReadToEnd();
+            }
+            User user = await CurrentUser();
+            SystemDocument document = null;
+            Product product = null;
+            document = new SystemDocument(user, ActualFileName, MediaTypeNames.Text.Html, int.Parse(DocumentType));
+            document.Description = TemplateName + ".pdf";
+            document.Contents = _fileService.ToBytes(htmlbody);
+            document.IsTemplate = true;
+            await _documentRepository.AddAsync(document);
+
+            return Json("OK");
         }
 
         [HttpGet]
@@ -212,127 +323,15 @@ namespace DealEngine.WebUI.Controllers
                     // DOCX
                     else if (format == "docx")
                     {
+                        doc = await _fileService.FormatCKHTMLforConversion(doc);
+                        html = _fileService.FromBytes(doc.Contents);
+
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-
-                                // Border Fix (show & no border use cases)
-                                if (html2.Contains(showBorder))
-                                {
-                                    html2 = html2.Replace(showBorder, "<table border=\"1\"><tbody><tr>");                 // width=\"100%\" align=\"center\" <tr style=\"font-weight:bold\">
-                                }
-                                if (html2.Contains(noBorder))
-                                {
-                                    html2 = html2.Replace(noBorder, "<table border=\"0\"><tbody><tr>");
-                                }
-
-                                foreach (string ele in badHtml)
-                                {
-                                    int x = CountStringOccurrences(html2, ele);
-                                    var regex = new Regex(Regex.Escape(ele));
-                                    var regex2 = new Regex(Regex.Escape("g\"></figure>"));
-
-                                    for (int j = 0; j < x; j++)
-                                    {
-                                        if (ele.Contains("image_resized") == false)
-                                        {
-                                            if (ele.Equals(centerImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:center\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if (ele.Equals(leftImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:left\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if (ele.Equals(rightImage))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:right\"</div> <img src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            int widthIndex = ele.Length;
-                                            string width = html2.Substring(html2.IndexOf(ele) + widthIndex + 7, 5);
-                                            width = width.Replace("%", "");
-                                            width = width.Replace("\"", "");
-                                            width = width.Replace(";", "");
-                                            width = width.Replace(">", "");
-
-                                            int srcEndIndex = html2.IndexOf(ele) + widthIndex;
-                                            int end = 21 + width.Length;
-                                            html2 = html2.Remove(srcEndIndex, end);
-
-                                            string url = html2.Substring(srcEndIndex);
-
-                                            if (url.Contains(".jpg") == true)
-                                            {
-                                                if (url.Contains(".png") == true)
-                                                {
-                                                    if (url.IndexOf(".jpg") < url.IndexOf(".png"))
-                                                    {
-                                                        url = url.Substring(0, url.IndexOf(".jpg") + 4);
-                                                    }
-                                                    else
-                                                    {
-                                                        url = url.Substring(0, url.IndexOf(".png") + 4);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    url = url.Substring(0, url.IndexOf(".jpg") + 4);
-                                                }
-                                            }
-                                            else if (url.Contains(".png") == true)
-                                            {
-                                                url = url.Substring(0, url.IndexOf(".png") + 4);
-                                            }
-                                            else
-                                            {
-                                                // we shouldn't get here ever as there should always be an image when we get here either .jpg or .png
-                                            }
-
-                                            decimal widthPercent = decimal.Parse(width);
-                                            widthPercent = decimal.Divide(widthPercent, 100);
-                                            decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
-                                            int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
-                                            string pixelWidthStr = pixelWidthZeroDP.ToString();
-
-                                            #region 
-                                            //get the actual images width
-                                            // note: Not useful at moment as the % CK gives you is of the page not the images actual width
-
-                                            //byte[] imageData = new WebClient().DownloadData(url);
-                                            //MemoryStream imgStream = new MemoryStream(imageData);
-                                            //System.Drawing.Image img = System.Drawing.Image.FromStream(imgStream);
-                                            //decimal pixelWidth = img.Width;
-                                            #endregion
-
-                                            if (ele.Equals(centerResize) == true)
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:center;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if ((ele.Equals(leftResize) == true) || (ele.Equals(leftResize2) == true))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:left;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                            else if ((ele.Equals(rightResize) == true) || (ele.Equals(rightResize2) == true))
-                                            {
-                                                html2 = regex.Replace(html2, "<div style=\"text-align:right;\"> <img width=\"" + pixelWidthStr + "\" src=\"", 1);
-                                                html2 = regex2.Replace(html2, "g\"></div>", 1);
-                                            }
-                                        }
-                                    }
-
-                                }
-                                html = html2;
                                 HtmlConverter converter = new HtmlConverter(mainPart); // refer to this: https://github.com/onizet/html2openxml/wiki/Tags-Supported
                                 converter.ImageProcessing = ImageProcessing.ManualProvisioning;
                                 Body body = mainPart.Document.Body;
@@ -348,12 +347,20 @@ namespace DealEngine.WebUI.Controllers
                             return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
                     }
-
+                    else if (format == "pdf")
+                    {
+                        // This is for ManageDocuments where we haven't hit ProcessRequestConfiguration which Formats and Converts the document
+                        if (doc.IsTemplate == true)
+                        {
+                            doc = await _fileService.FormatCKHTMLforConversion(doc);
+                            doc = await _fileService.ConvertHTMLToPDF(doc);
+                        }
+                        return File(doc.Contents, "application/pdf", doc.Name + ".pdf");
+                    }
                 }
-                // PDF
+                // PDF - When is this hit?
                 else if (doc.ContentType == MediaTypeNames.Application.Pdf)
                 {
-                    // RETURN PDF
                     return PhysicalFile(doc.Path, doc.ContentType, doc.Name);
                 }
 
@@ -376,10 +383,109 @@ namespace DealEngine.WebUI.Controllers
             return View(productList);
         }
 
-		[HttpGet]
-		public async Task<IActionResult> CreateDocument (string id, string productId)
-		{
-			DocumentViewModel model = new DocumentViewModel ();
+
+        [HttpPost]
+        public async Task<IActionResult> SavePDFFile(String Reportstr, Guid ClientProgrammeId)
+        {
+            // Is actually saving HTML not PDF.. Bad function name..
+            SystemDocument document = null;
+
+            User user = null;
+            Product product = null;
+            try
+            {
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientProgrammeId);
+                user = await CurrentUser();
+                document = new SystemDocument(user, "Information Sheet Report", MediaTypeNames.Text.Html, 99);
+                document.Description = "FullProposal Report Pdf";
+                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(Reportstr));
+                document.OwnerOrganisation = user.PrimaryOrganisation;
+                //document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if (clientProgramme != null)
+                    {
+                        foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                        {
+                            if (agreement.Product.IsMasterProduct)
+                            {
+                                foreach (var doc in agreement.Documents)
+                                {
+                                    if (doc.Description.EqualsIgnoreCase("FullProposal Report Pdf"))
+                                    {
+                                        agreement.Documents.Remove(doc);
+                                        break;
+                                    }
+                                }
+                                if (document.Description.EqualsIgnoreCase("FullProposal Report Pdf") && clientProgramme.BaseProgramme.EnableFullProposalReport)
+                                {
+                                    agreement.Documents.Add(document);
+                                    agreement.IsPDFgenerated = true;
+                                }
+                            }
+                        }
+                        await uow.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return Json(document.Id);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveDocumentHtml(DocumentViewModel model)
+        {
+            User user = null;
+            SystemDocument document = null;
+            Product product = null;
+            try
+            {
+                user = await CurrentUser();
+                if (model.DocumentId != Guid.Empty)
+                {
+                    document = await _documentRepository.GetByIdAsync(model.DocumentId);
+                    if (document != null)
+                    {
+                        document.DateDeleted = DateTime.Now;
+                        await _documentRepository.AddAsync(document);
+                    }
+
+                }
+
+                document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
+                document.Description = model.Description;
+                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
+                document.Name = document.Name;
+                document.OwnerOrganisation = user.PrimaryOrganisation;
+                document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+                //if (model.ProductId != null)
+                //{
+                //    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+                //    product.Documents.Add(document);
+                //    await _productRepository.AddAsync(product);
+                //}
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> CreateDocument(string id, string productId)
+        {
+            DocumentViewModel model = new DocumentViewModel();
             User user = null;
             try
             {
@@ -403,6 +509,7 @@ namespace DealEngine.WebUI.Controllers
                 model.DocumentType = document.DocumentType;
                 model.Content = _fileService.FromBytes(document.Contents);
                 model.ProductId = productId;
+                //model.Products = _productRepository.FindAll().ToList();
 
                 return View(model);
             }
@@ -413,14 +520,15 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-		[HttpPost]
-		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
-		{
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDocument(DocumentViewModel model)
+        {
             User user = null;
             SystemDocument document = null;
             Product product = null;
             try
-            {                
+            {
                 user = await CurrentUser();
                 if (model.DocumentId != Guid.Empty)
                 {
@@ -432,12 +540,13 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                
+
                 document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
                 document.Description = model.Description;
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = user.PrimaryOrganisation;
                 document.IsTemplate = true;
+                document.RenderToPDF = model.RenderToPDF;
                 await _documentRepository.AddAsync(document);
                 //if (model.ProductId != null)
                 //{
@@ -455,15 +564,15 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-		[HttpGet]
-		public async Task<IActionResult> ManageDocuments()
-		{
-			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
+        [HttpGet]
+        public async Task<IActionResult> ManageDocuments()
+        {
+            BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel>();
             User user = null;
             try
             {
                 user = await CurrentUser();
-                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation).ToList();
+                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation && d.IsTemplate).ToList();
 
                 if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
                 {
@@ -476,7 +585,7 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                if(docs.Count != 0)
+                if (docs.Count != 0)
                 {
                     foreach (SystemDocument doc in docs)
                     {
@@ -523,6 +632,11 @@ namespace DealEngine.WebUI.Controllers
                                     documentType = "Premium Advice";
                                     break;
                                 }
+                            case 99:
+                                {
+                                    documentType = "Full Proposal Report";
+                                    break;
+                                }
                             default:
                                 {
                                     throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
@@ -537,12 +651,14 @@ namespace DealEngine.WebUI.Controllers
                             Owner = doc.OwnerOrganisation.Name,
                             Id = doc.Id,
                         });
+
+                        ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                     }
                 }
                 else
                 {
-                    return RedirectToAction("CreateDocument");                    
-                }                
+                    return RedirectToAction("CreateDocument");
+                }
 
                 return View(models);
             }
@@ -553,9 +669,9 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-		[HttpGet]
-		public async Task<IActionResult> Render (string id)
-		{
+        [HttpGet]
+        public async Task<IActionResult> Render(string id)
+        {
             throw new Exception("Method will need to be re-written");
             //string serverFile = Path.Combine(_appData, _uploadFolder, id);
             //string filepath = Server.MapPath(serverFile);

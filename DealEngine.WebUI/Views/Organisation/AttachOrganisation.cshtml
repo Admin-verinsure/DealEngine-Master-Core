@@ -1,0 +1,37 @@
+﻿@model DealEngine.WebUI.Models.Organisation.AttachOrganisationViewModel
+<div id="content" class="container">
+
+    <div class="card">
+        <div class="card-header">
+            Attach Advisor
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AttachOrganisation", "Organisation", FormMethod.Post, new { @id = "attachOrganisationViewModel" }))
+            {
+                <div class="form-group">
+                    @Html.HiddenFor(t => t.RemovedOrganisation.Id)
+                    @Html.LabelFor(t => t.RemovedOrganisation)
+                    @Html.TextBoxFor(t => t.RemovedOrganisation.Name, new { @Disabled = "", @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.Label("Advisor's new email address (if applicable)")
+                    @Html.TextBoxFor(t => t.RemovedOrganisation.Email, new { @class = "form-control", @id="RemovedOrganisation.Email", @data_rule = "AttachOrganisationEmail", @onchange = "OnChange(this.id, this.name)", @required = "", @type = "text"  })
+                    <div id="InvalidOrganisationEmail" class="invalid-feedback">Please enter a valid email address. (note: You can't use an existing Organisation email address.)</div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Owners, new { @class = "label required" })
+                    <select name="ClientProgrammeId" class="custom-select" required>
+                        @foreach (var option in Model.Owners)
+                        {
+                            <option value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-success" type="submit">Add</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

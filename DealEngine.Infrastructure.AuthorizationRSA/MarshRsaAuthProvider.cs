@@ -75,11 +75,15 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             analyzeRequest.request = GetAnalyzeRequest(rsaUser);            
             string xml = SerializeRSARequest(analyzeRequest, "Analyze");
             
-            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
+            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);
+
+            //used for RSA analyze request and response log 
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", rsaUser.Username, xml, analyzeResponseXmlStr);
 
             try
             {                
                 xDoc.LoadXml(analyzeResponseXmlStr);
+
                 var analyseResponse = await BuildAnalyzeResponse(xDoc);
                 responseUserStatus = analyseResponse.identificationData.userStatus;
                 reponseActionCode = analyseResponse.riskResult.triggeredRule.actionCode;
@@ -90,7 +94,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 Console.WriteLine(ex.Message);
             }
 
-            if (responseUserStatus != UserStatus.LOCKOUT || responseUserStatus != UserStatus.DELETE)
+            if (responseUserStatus != UserStatus.LOCKOUT && responseUserStatus != UserStatus.DELETE)
 			{				
 				if (responseUserStatus == UserStatus.UNVERIFIED)
 				{
@@ -141,8 +145,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                     rsaUser.RsaStatus = RsaStatus.RequiresOtp;
 
                     return rsaUser;									
-				}
-				if (reponseActionCode == ActionCode.ALLOW)
+				} else if (reponseActionCode == ActionCode.ALLOW)
 				{
 					// Need to save the deviceTokenCookie from analyzeReponse
 					UpdateRsaUserFromResponse(response, rsaUser);
@@ -190,8 +193,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         {
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             CredentialAuthResultList credentialAuthResultList = new CredentialAuthResultList();
-            credentialAuthResultList.acspAuthenticationResponseData = new AcspAuthenticationResponseData();
+            credentialAuthResultList.acspAuthenticationResponseData = new AcspAuthenticationResponseData();            
             credentialAuthResultList.acspAuthenticationResponseData.callStatus = new CallStatus();
+            
 
             var authResults = xDoc.GetElementsByTagName("credentialAuthResultList", "http://ws.csd.rsa.com");
             var responseData = authResults[0];
@@ -202,9 +206,11 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode = callStatusNodes.FirstChild.InnerText;
 
             IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+            DeviceResult deviceData = GetDeviceResultResponse(xDoc);
 
             authenticateResponse.identificationData = identificationData;
             authenticateResponse.credentialAuthResultList = credentialAuthResultList;
+            authenticateResponse.deviceResult = deviceData;
 
             return authenticateResponse;
         }
@@ -260,15 +266,19 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             return stringPayLoad;
         }
 
-		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
+		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService, string username)
 		{            
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();
-
+            //var user = await _userService.GetUser(rsaUser.Username);
+            var user = await _userService.GetUser(username); //changed to use not hashed username to find user in application
             authenticateRequest.request = GetAuthenticateRequest(rsaUser);
             var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
             var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
+
+            //used for RSA authenticate request and response log
+            await _emailService.RsaLogEmail("marshevents@proposalonline.com", username, xml, authenticateResponseXmlStr);
 
             try
             {
@@ -282,15 +292,16 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
             var userStatus = authenticateResponse.identificationData.userStatus;
             var statusCode = authenticateResponse.credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode;
-
+            user.DeviceTokenCookie = authenticateResponse.deviceResult.deviceData.deviceTokenCookie;
             if (userStatus == UserStatus.LOCKOUT || userStatus == UserStatus.DELETE)
-            {
-                var user = await _userService.GetUser(rsaUser.Username);
+            {                
                 user.Lock();
                 await _userService.Update(user);                
             }            
             else if (statusCode == "SUCCESS")
-            {                                
+            {
+                
+                await _userService.Update(user);
                 return true;
             }
             //invalid otp or user locked
@@ -397,20 +408,50 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		DeviceRequest GetDeviceRequest (MarshRsaUser rsaUser)
 		{
-			return new DeviceRequest {
-				devicePrint = rsaUser.DevicePrint,
-				deviceTokenCookie = rsaUser.DeviceTokenCookie,
-				// following fields required? if so, will need provide web request data - specialized web api?
-				httpAccept = "",
-				httpAcceptEncoding = "",
-				httpAcceptLanguage = "",
-				httpReferrer = rsaUser.HttpReferer,
-                ipAddress = GetIP(),
-				userAgent = rsaUser.UserAgent
-			};
+            if (string.IsNullOrEmpty(rsaUser.ClientGenCookie))
+            {
+                return new DeviceRequest
+                {
+                    devicePrint = rsaUser.DevicePrint,
+                    deviceTokenCookie = rsaUser.DeviceTokenCookie,
+                    // following fields required? if so, will need provide web request data - specialized web api?
+                    httpAccept = "",
+                    httpAcceptEncoding = "",
+                    httpAcceptLanguage = "",
+                    httpReferrer = rsaUser.HttpReferer,
+                    ipAddress = GetIP(),
+                    userAgent = rsaUser.UserAgent,
+                };
+            } else
+            {
+                return new DeviceRequest
+                {
+                    devicePrint = rsaUser.DevicePrint,
+                    deviceTokenCookie = rsaUser.DeviceTokenCookie,
+                    // following fields required? if so, will need provide web request data - specialized web api?
+                    httpAccept = "",
+                    httpAcceptEncoding = "",
+                    httpAcceptLanguage = "",
+                    httpReferrer = rsaUser.HttpReferer,
+                    ipAddress = GetIP(),
+                    userAgent = rsaUser.UserAgent,
+                    deviceIdentifier = GetDeviceIdentifier(rsaUser), //added as Marsh request
+                };
+            }
+            
 		}
 
-		IdentificationData GetIdentificationData (MarshRsaUser rsaUser)
+        DeviceIdentifier [] GetDeviceIdentifier(MarshRsaUser rsaUser)
+        {
+            return new DeviceIdentifier []
+            {
+                new ClientGenCookie {
+                    clientGenCookie = rsaUser.ClientGenCookie,
+                }
+            };
+        }
+
+        IdentificationData GetIdentificationData (MarshRsaUser rsaUser)
 		{
             return new IdentificationData {
                 delegated = false,          // confirm
@@ -447,12 +488,12 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				new EventData {
 					clientDefinedAttributeList = new ClientDefinedFact[] {
 						new ClientDefinedFact {
-							name = "FILTERED_TAM_GROUP",
-							value = "MFA",
-							dataType = DataType.STRING,
-							dataTypeSpecified = true,
+							//name = "FILTERED_TAM_GROUP",
+							//value = "MFA",
+							//dataType = DataType.STRING,
+							//dataTypeSpecified = true,     // removed as Marsh request
 						}
-					},
+                    },
 					eventType = EventType.SESSION_SIGNIN,
 					eventTypeSpecified = true,
 				}
@@ -501,7 +542,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				autoCreateUserFlag = true,                                  // confirm value
 				autoCreateUserFlagSpecified = true,
 				credentialDataList = GetCredentialDataList (),
-				eventDataList = GetEventData (rsaUser),
+				eventDataList = GetEventData (rsaUser),       
 				runRiskType = RunRiskType.ALL,                  // confirm value
 				channelIndicator = ChannelIndicatorType.WEB,    // fairly sure that this is supposed to be web
 				channelIndicatorSpecified = true,

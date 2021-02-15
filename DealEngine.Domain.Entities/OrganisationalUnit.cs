@@ -15,14 +15,11 @@ namespace DealEngine.Domain.Entities
             : base(createdBy)
         {
             Name = name;
-            Locations = new List<Location>();
-            Marinaorgmooredtype = new List<string>();
         }
 
         public OrganisationalUnit(User createdBy, string name, string type, IFormCollection collection)
             : base(createdBy)
         {
-            Locations = new List<Location>();
             if (collection != null)
             {
                 PopulateEntity(collection);
@@ -33,15 +30,9 @@ namespace DealEngine.Domain.Entities
 
         public virtual string Type { get; set; }
         public virtual string Name { get; set; }
-        public virtual IList<Location> Locations { get; set; }
-
-
-        public virtual IList<string> Marinaorgmooredtype { get; set; }
         public virtual string EserviceProducerCode { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
         public virtual string HPFBranchCode { get; set; }
-        public virtual string OfcPhoneno { get; set; }         
-
     }
 
     public class AdvisorUnit : OrganisationalUnit
@@ -50,11 +41,12 @@ namespace DealEngine.Domain.Entities
         public AdvisorUnit(User User, string Name, string Type, IFormCollection Collection)
             : base(User, Name, Type, Collection)
         {
-
         }
 
         [Display(Name = "List any industry qualifications you have. (If none please put nil)")]
         public virtual string Qualifications { get; set; }
+        [Display(Name = "Insurance experience and positions held")]
+        public virtual string Experience { get; set; }
         [Display(Name = "This Person has retired or deceased ?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
@@ -68,11 +60,16 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Date of Retirement(Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
         [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
-
-        public virtual DateTime? DateofDeceased { get; set; }        
+        public virtual DateTime? DateofDeceased { get; set; }
+        [Display(Name = "Date of Commencement")]
+        public virtual DateTime? DateofCommencement { get; set; }
         public virtual string MyCRMId { get; set; }
-        public virtual DateTime? PIRetroactivedate { get; set; }
-        public virtual DateTime? DORetroactivedate { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
+        [Display(Name = "Please select the Professional Bodies or Associations that the company or individual is a member of:")]
+        public virtual IList<string> Associations { get; set; }
+        [Display(Name = "If Other is specified, please describe")]
+        public virtual string OtherInformation { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit
@@ -159,6 +156,66 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Please list all Name of company(s)")]
         public virtual string TradingName { get; set; }
     }
+
+    public class PlannerUnit : OrganisationalUnit
+    {
+        public PlannerUnit() { }
+        public PlannerUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        [Display(Name = "Are you a member of NZPI")]
+        public virtual bool IsNZPIAMember { get; set; }
+
+        [Display(Name = "Qualifications")]
+        public virtual string Qualifications { get; set; }
+        [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateQualified { get; set; }
+        [Display(Name = "Years at firm?")]
+        public virtual int YearsAtFirm { get; set; }
+        [Display(Name = "Solely contracted to the Insured?")]
+        public virtual bool ContractedInsured { get; set; }
+        [Display(Name = "Years working for Insured?")]
+        public virtual int YearsAtInsured { get; set; }
+        [Display(Name = "Principal Planner?")]
+        public virtual bool IsPrincipalPlanner { get; set; }
+        [Display(Name = "Enter fees received from the Insured in the last 12 months?")]
+        public virtual int FeesIn12Months { get; set; }
+
+
+
+    }
+
+    public class InterestedPartyUnit : OrganisationalUnit
+    {
+        public InterestedPartyUnit() { }
+        public InterestedPartyUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        [Display(Name = "Type of Interested Party?")]
+        public virtual string PartyType { get; set; }
+        [Display(Name = "Type of Interested Party?")]
+        public virtual Location Location { get; set; }
+    }
+
+    public class MarinaUnit : OrganisationalUnit
+    {
+        public MarinaUnit() { }
+        public MarinaUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        public virtual WaterLocation WaterLocation { get; set; }
+    }
+
 }
 
-    
+
+

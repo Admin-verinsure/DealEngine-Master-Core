@@ -23,7 +23,7 @@
                             <label class="label"><strong>Tax Rate: </strong></label>
                         </div>
                         <div class="col-8">
-                            @Html.TextBoxFor(m => m.Programme.TaxRate, new { @class = "form-control"})
+                            @Html.TextBoxFor(m => m.Programme.TaxRate, new { @class = "form-control" })
                         </div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                             <label class="label"><strong>Policy Number Prefix String: </strong></label>
                         </div>
                         <div class="col-8">
-                            @Html.TextBoxFor(m => m.Programme.PolicyNumberPrefixString, new { @class = "form-control"})
+                            @Html.TextBoxFor(m => m.Programme.PolicyNumberPrefixString, new { @class = "form-control" })
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                                 <label class="label"><strong>Declaration: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextAreaFor(m => m.Programme.Declaration, new { @class = "form-control"})
+                                @Html.TextAreaFor(m => m.Programme.Declaration, new { @class = "form-control" })
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                 <label class="label"><strong>No Payment Required Message: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control"})
+                                @Html.TextAreaFor(m => m.Programme.NoPaymentRequiredMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -81,43 +81,47 @@
                                 <label class="label"><strong>Permission Claim: </strong></label>
                             </div>
                             <div class="col-8">
-                                @Html.TextBoxFor(m => m.Programme.Claim, new { @class = "form-control" })
+                                @Html.TextBoxFor(m => m.Programme.Claim, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        @Html.CheckBoxFor(m => m.Programme.UsesEGlobal)
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to use EGlobal API." readonly>
+                            <div class="col-4">
+                                <label class="label"><strong>I want this programme to use EGlobal API: </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.UsesEGlobal, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        @Html.CheckBoxFor(m => m.Programme.IsPublic)
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to be publicly available." readonly>
+                            <div class="col-4">
+                                <label class="label"><strong>I want this programme to be publicly available. </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.IsPublic, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        @Html.CheckBoxFor(m => m.Programme.StopAgreement, new { @onchange = "OnChange(this.id, this.name)" })
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want this programme to suspend all agreements." readonly>
+                            <div class="col-4">
+                                <label class="label"><strong>I want to enable programme emails. </strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.ProgEnableEmail, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="label"><strong>I want this programme to suspend all agreements.</strong></label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.StopAgreement, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -130,20 +134,20 @@
                                     </label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control"})
+                                    @Html.TextAreaFor(m => m.Programme.StopAgreementMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        @Html.CheckBoxFor(m => m.Programme.HasSubsystemEnabled, new { @onchange = "OnChange(this.id, this.name)" })
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" aria-label="Text input with radio button" value="I want to enable the sub system." readonly>
+                            <div class="col-4">
+                                <label class="label required">
+                                    <strong>I want to enable the sub system: </strong>
+                                </label>
+                            </div>
+                            <div class="col-8">
+                                @Html.DropDownListFor(m => m.Programme.HasSubsystemEnabled, Model.BooleanOptions, new { @class = "custom-select", @onChange = "OnChange(this.id, this.name)" })
                             </div>
                         </div>
                     </div>
@@ -154,7 +158,7 @@
                                     <label class="label required"><strong>Subsystem Declaration: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control"})
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemDeclaration, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>
@@ -164,7 +168,7 @@
                                     <label class="label required"><strong>Subsystem Stop Agreement Message: </strong></label>
                                 </div>
                                 <div class="col-8">
-                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control"})
+                                    @Html.TextAreaFor(m => m.Programme.SubsystemStopAgreementMessage, new { @class = "form-control", @onChange = "OnChange(this.id, this.name)" })
                                 </div>
                             </div>
                         </div>

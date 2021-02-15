@@ -8,9 +8,9 @@ using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
+    [JsonObject]
     public class User : EntityBase, IAggregateRoot
     {
-        [JsonIgnore]
         private Organisation _primaryOrganisation;
 
         protected User() : this(null) { }
@@ -21,6 +21,7 @@ namespace DealEngine.Domain.Entities
 			Organisations = new List<Organisation> ();
 			Branches = new List<OrganisationalUnit> ();
 			Departments = new List<Department> ();
+            UserTasks = new List<UserTask>();
             UISIssueNotifyProgrammes = new List<Programme>();
             UISSubmissionNotifyProgrammes = new List<Programme>();
             AgreementReferNotifyProgrammes = new List<Programme>();
@@ -28,9 +29,9 @@ namespace DealEngine.Domain.Entities
             AgreementBoundNotifyProgrammes = new List<Programme>();
             PaymentConfigNotifyProgrammes = new List<Programme>();
             InvoiceConfigNotifyProgrammes = new List<Programme>();
+            RemoveAdvisorNotifyProgrammes = new List<Programme>();
         }
 
-        [JsonIgnore]
         public virtual OrganisationalUnit DefaultOU { get; set; }
         public virtual string UserName { get; set; }
         public virtual string SalesPersonUserName { get; set; }
@@ -52,13 +53,10 @@ namespace DealEngine.Domain.Entities
         public virtual string FullName { get; set; }
 
 		public virtual string Description { get; set; }
-        [JsonIgnore]
         public virtual Image ProfilePicture { get; set; }
 
 		public virtual bool Locked { get; protected set; }
-        [JsonIgnore]
         public virtual Guid LegacyId { get; set; }
-        [JsonIgnore]
         public virtual DateTime? LockTime { get; protected set; }
 
         public virtual string MobilePhone { get; set; }
@@ -72,7 +70,6 @@ namespace DealEngine.Domain.Entities
         /// (something that should be impossible due to individual user organisations) it will return null.
         /// </summary>
         /// <value>The primary organisation.</value>
-        [JsonIgnore]
         public virtual Organisation PrimaryOrganisation { 
 			get {
 				if (_primaryOrganisation != null)
@@ -83,25 +80,21 @@ namespace DealEngine.Domain.Entities
 				} else
 					return null;
 			}
-			protected set {
+			set {
 				_primaryOrganisation = value;
 			}
 		}
 
         //public virtual IEnumerable<Organisation> Organisations { get; set; }
-        [JsonIgnore]
         public virtual IList<Organisation> Organisations { get; set; }
 
         //public Guid[] OrganisationIDs { get; set; }
-        [JsonIgnore]
         public virtual IEnumerable<OrganisationalUnit> Branches { get; set; }
 
         //public Guid[] BranchIDs { get; set; }
-        [JsonIgnore]
         public virtual IEnumerable<Department> Departments { get; set; }
 
         //public Guid[] DepartmentIDs { get; set; }
-        [JsonIgnore]
         public virtual Location Location { get; set; }
 
         //public virtual UserTask LastActiveTask { get; set; }
@@ -119,7 +112,12 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Programme> PaymentConfigNotifyProgrammes { get; set; }
         [JsonIgnore]
         public virtual IList<Programme> InvoiceConfigNotifyProgrammes { get; set; }
-        
+        [JsonIgnore]
+        public virtual IList<Programme> RemoveAdvisorNotifyProgrammes { get; set; }
+        [JsonIgnore]
+        public virtual IList<UserTask> UserTasks { get; set; }
+        public virtual string EbixDepartmentCode { get; set; }
+        public virtual string DeviceTokenCookie { get; set; }
 
         public User(User createdBy, string strUsername)
 			: this (createdBy)
@@ -145,10 +143,10 @@ namespace DealEngine.Domain.Entities
             {
                 PopulateEntity(collection);
                 Random random = new Random();
-                UserName = FirstName.Replace(" ", string.Empty)
-                    + "_"
-                    + LastName.Replace(" ", string.Empty)
-                    + random.Next(1000);
+                UserName = FirstName.Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty)
+                + "_"
+                + LastName.Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty)
+                + random.Next(1000);
                 FullName = FirstName + " " + LastName;
             }
         }
@@ -190,19 +188,15 @@ namespace DealEngine.Domain.Entities
 			throw new Exception (string.Format ("User {0} doesn't have a personal organisation", UserName));
 		}
     }
-
     public class Location : EntityBase, IAggregateRoot
     {
 		protected Location () : base (null) { }
 
 		public Location (User createdBy) : base (createdBy) {
-            OrganisationalUnits = new List<OrganisationalUnit>();
         }
 
 		public virtual Location OriginalLocation { get; protected set; }
-
-		public virtual ClientInformationSheet ClientInformationSheet { get; set; }
-
+        public virtual bool IsPublic { get; set; }
         public virtual string Street { get; set; }
         public virtual string Suburb { get; set; }
         public virtual string Postcode { get; set; }
@@ -221,16 +215,13 @@ namespace DealEngine.Domain.Entities
         public virtual string ValidationStatus { get; set; }
         public virtual bool Removed { get; set; }
         public virtual string RiskZone { get; set; }
-        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
+        [JsonIgnore]
         public virtual IList<Building> Buildings { get; set; }
-        public virtual IList<WaterLocation> WaterLocations { get; set; }
         public virtual string LocationType { get; set; }
+  
 
         public virtual Location CloneForNewSheet (ClientInformationSheet newSheet)
 		{
-			if (ClientInformationSheet == newSheet)
-				throw new Exception ("Cannot clone location for original information");
-
 			Location newLocation = new Location (newSheet.CreatedBy);
 			newLocation.Street = Street;
 			newLocation.Suburb = Suburb;
@@ -239,7 +230,6 @@ namespace DealEngine.Domain.Entities
 			newLocation.State = State;
 			newLocation.Country = Country;
 			newLocation.CommonName = CommonName;
-			newLocation.OrganisationalUnits = new List<OrganisationalUnit> (OrganisationalUnits);
             newLocation.LocationType = LocationType;
 
             newLocation.OriginalLocation = this;

@@ -99,15 +99,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decDOAssets = 0m;
             decimal decDOLiabs = 0m;
 
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").Any())
             {
                 intCompanyAge = DateTime.Now.Subtract(Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value)).Days;
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").Any())
             {
                 decDOAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").Any())
             {
                 decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
             }
@@ -139,12 +139,22 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo1millimitoption.DateDeleted = null;
             termdo1millimitoption.DeletedBy = null;
 
-            //Referral points per agreement
-            //Asset Size
-            uwrfassetsize(underwritingUser, agreement, rates);
-            //D&O Issues
-            uwrdoissue(underwritingUser, agreement);
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termdo1millimitoption.Bound = true;
+            }
 
+
+            //Referral points per agreement
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "1")
+            {
+                //Asset Size
+                uwrfassetsize(underwritingUser, agreement, rates);
+                //D&O Issues
+                uwrdoissue(underwritingUser, agreement);
+            }
+            
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
             {

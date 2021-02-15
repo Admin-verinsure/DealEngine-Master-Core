@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script>
+function subst() {
+    var vars={};
+    var x=document.location.search.substring(1).split('&');
+
+    for(var i in x) {var z=x[i].split('=',2);vars[z[0]] = unescape(z[1]);}
+    var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+    for(var i in x) {
+      var y = document.getElementsByClassName(x[i]);
+      for(var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+    }
+}
+</script></head><body style="border:0; margin: 0;" onload="subst()">
+			<div style="border-bottom:1px solid gray;">
+				<div style="float:left;">
+					<img src="http://nrecosite.com/img/logo.png" width="32" />
+					NReco PdfGenerator
+				</div>
+				<div style="float:right;">
+					Page <span class="page"></span>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</body></html>

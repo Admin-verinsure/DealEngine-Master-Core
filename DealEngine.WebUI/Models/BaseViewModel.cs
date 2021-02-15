@@ -1,9 +1,14 @@
 ﻿using FluentNHibernate.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using DealEngine.WebUI.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DealEngine.WebUI.Models
 {
@@ -13,10 +18,27 @@ namespace DealEngine.WebUI.Models
 	public class BaseViewModel
 	{
 		public List<string> UserRoles { get; set; }
+		public IList<SelectListItem> BooleanOptions { get; }
 
 		public BaseViewModel ()
 		{
 			UserRoles = new List<string> ();
+			BooleanOptions = GetBooleanOptions();
+		}
+
+		public CultureInfo UserCulture
+		{
+			//get
+			//{
+			//	return Request.HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.Culture;
+			//}
+
+			get { return CultureInfo.CreateSpecificCulture ("en-NZ"); }
+		}
+
+		protected string LocalizeTime(DateTime dateTime, string format)
+		{
+			return dateTime.ToTimeZoneTime(UserTimeZone).ToString("G", UserCulture);
 		}
 
 		public void SetRoles (params string [] roles)
@@ -48,6 +70,24 @@ namespace DealEngine.WebUI.Models
             get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
         }
 
+		public static List<SelectListItem> GetBooleanOptions()
+        {
+			var options = new List<SelectListItem>();
+			options.Add(
+				new SelectListItem
+				{
+					Text = "True",
+					Value = "true"
+				});
+			options.Add(
+			new SelectListItem
+			{
+				Text = "False",
+				Value = "false"
+			});
+
+			return options;
+		}
     }
 
 	public class BaseListViewModel<ViewModel> : BaseViewModel, IList<ViewModel>
@@ -119,43 +159,7 @@ namespace DealEngine.WebUI.Models
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return this.GetEnumerator ();
-		}
-
-		public void PopulateEntity(Entity entity)
-        {
-			PropertyInfo propertyInfo;			
-			try
-			{
-				foreach (var property in GetType().GetProperties())
-				{
-					propertyInfo = entity.GetType().GetProperty(property.Name);
-					if (propertyInfo != null)
-                    {
-						//var value = propertyInfo.GetValue(propertyInfo);
-						//if (property.PropertyType == typeof(string))
-						//{
-						//	property.SetValue(this, value.ToString());
-						//}
-						//else if (property.PropertyType == typeof(bool))
-						//{
-						//	property.SetValue(this, bool.Parse(value));
-						//}
-						//else if (property.PropertyType == typeof(DateTime))
-						//{
-						//	property.SetValue(this, DateTime.Parse(dateValue));
-						//}
-						//else
-						//{
-						//	throw new Exception("add new type condition " + property.PropertyType.Name);
-						//}
-					}			
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-			}
-		}
+		}		
 	}
 }
 

@@ -119,23 +119,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decDOCurrentLiabilities = 0m;
             decimal decDOAftertaxProfitOrLoss = 0m;
 
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").Any())
             {
                 decDOTotalAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityTotal").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityTotal").Any())
             {
                 decDOTotalLiabilities = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityTotal").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetCurrent").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetCurrent").Any())
             {
                 decDOCurrentAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetCurrent").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityCurrent").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityCurrent").Any())
             {
                 decDOCurrentLiabilities = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.LiabilityCurrent").First().Value);
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").First().Value != null)
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").Any())
             {
                 decDOAftertaxProfitOrLoss = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").First().Value);
             }
@@ -167,6 +167,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo500klimitoption.Brokerage = TermBrokerage500k;
             termdo500klimitoption.DateDeleted = null;
             termdo500klimitoption.DeletedBy = null;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termdo500klimitoption.Bound = true;
+            }
 
             //Referral points per agreement
             //D&O Issues

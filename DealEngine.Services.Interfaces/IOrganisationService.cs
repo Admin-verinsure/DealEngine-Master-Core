@@ -16,16 +16,20 @@ namespace DealEngine.Services.Interfaces
         Task<Organisation> GetOrganisation(Guid organisationId);
         Task<Organisation> GetOrganisationByName(string organisationName);
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
-        Task<Organisation> GetExistingOrganisationByEmail(string organisationEmail);
         Task PostOrganisation(IFormCollection collection, Organisation organistaion);
         Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet); 
         Task<List<Organisation>> GetTripleASubsystemAdvisors(ClientInformationSheet sheet);
         Task<List<Organisation>> GetAllOrganisationsByEmail(string email);
         Task<Organisation> CreateOrganisation(string Email, string Type, string OrganisationName, string OrganisationTypeName, string FirstName, string LastName, User Creator, IFormCollection collection);
-        Task<Organisation> GetAnyRemovedAdvisor(string email);
         Task Update(Organisation organisation);
-        Task RefactorOrganisations();
-        //Task RefactorOrganisations(Guid programmeId);
+        Task UpdateAdvisorDates(IFormCollection collection);
+        Task<List<Organisation>> GetPublicMarinas();
+        Task<List<Organisation>> GetPublicFinancialInstitutes();
+        Task<Organisation> GetMarina(WaterLocation waterLocation);
+        Task<List<Organisation>> GetAllMarinas();
+        Task<List<Organisation>> GetFinancialInstitutes();
+        Task PostMarina(IFormCollection model);
+        Task PostInstitute(IFormCollection model);
     }
 }
 

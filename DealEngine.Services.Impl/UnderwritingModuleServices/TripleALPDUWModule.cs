@@ -67,9 +67,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.LPDRetro))
                         {
-                            strretrodate = preRenewOrRefData.GLRetro;
+                            strretrodate = preRenewOrRefData.LPDRetro;
                         }
 
                     }
@@ -106,6 +106,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termlpd100klimitoption.Brokerage = TermBrokerage100k;
             termlpd100klimitoption.DateDeleted = null;
             termlpd100klimitoption.DeletedBy = null;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termlpd100klimitoption.Bound = true;
+            }
 
             //Referral points per agreement
 

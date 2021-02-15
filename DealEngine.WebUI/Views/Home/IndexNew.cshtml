@@ -75,17 +75,31 @@
                                 }
                                 else
                                 {
-                                    <div class="list-group">
+                                    <div class="container">
                                         @foreach (var task in Model.UserTasks)
                                         {
-
-                                            <a href="@task.Description" class="list-group-item list-group-item-action">
-                                                <div class="d-flex w-100 justify-content-between">
-                                                    <h6 class="mb-1">@task.Details</h6>
-                                                    <small>@task.DueDate.ToString("dd/MM/yyyy")</small>
+                                            <div class="row" style="padding: 1rem 0.25rem 0.25rem .25rem; border: 1px solid rgba(0,0,0,.125);">
+                                                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" style="padding-top:0.15rem;padding-left:1rem;">
+                                                    <a style="vertical-align: middle;" id="@task.Id" href="@task.URL">
+                                                        <h6>@task.Body</h6>
+                                                    </a>
                                                 </div>
-                                                <p class="mb-1"></p>
-                                            </a>
+                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                                    <p style="vertical-align: middle;" class="pull-right">@task.DueDate.ToString("dd/MM/yyyy")</p>
+                                                </div>
+                                                @if (Model.CurrentUserType == "Broker")
+                                                {
+                                                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                                    <button style="vertical-align: middle;" onclick="RemoveTask('@task.Id', '@task.URL', '@task.Name')" type="button" class="pull-right btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                                </div>
+                                                }
+                                                else {
+                                                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                                    <button  style="vertical-align: middle;" type="button" class="pull-right btn btn-secondary btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                                                </div>
+                                                }
+                                            </div>
+                                            <p class="m-1"></p>
                                         }
                                     </div>
                                 }
@@ -114,13 +128,13 @@
                                     <tbody>
                                         @foreach (var item in Model.ProgrammeItems)
                                         {
-                                            if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
+                                            if (!string.IsNullOrWhiteSpace(item.Programme.Claim))
                                             {
-                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
+                                                if (User.HasClaim(item.Programme.Claim, item.Programme.Claim) || User.IsInRole("TCUser"))
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @item.Name
+                                                            @item.Programme.Name
                                                         </td>
                                                         <td>
                                                             @foreach (var lang in item.Languages)
@@ -129,7 +143,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -138,7 +152,7 @@
                                             {
                                                 <tr>
                                                     <td>
-                                                        @item.Name
+                                                        @item.Programme.Name
                                                     </td>
                                                     <td>
                                                         @foreach (var lang in item.Languages)
@@ -147,7 +161,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Home/ViewProgramme/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -184,13 +198,13 @@
                                     <tbody>
                                         @foreach (var item in Model.ProgrammeItems)
                                         {
-                                            if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
+                                            if (!string.IsNullOrWhiteSpace(item.Programme.Claim))
                                             {
-                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
+                                                if (User.HasClaim(item.Programme.Claim, item.Programme.Claim) || User.IsInRole("TCUser"))
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @item.Name
+                                                            @item.Programme.Name
                                                         </td>
                                                         <td>
                                                             @foreach (var lang in item.Languages)
@@ -199,7 +213,7 @@
                                                             }
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                            <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -208,7 +222,7 @@
                                             {
                                                 <tr>
                                                     <td>
-                                                        @item.Name
+                                                        @item.Programme.Name
                                                     </td>
                                                     <td>
                                                         @foreach (var lang in item.Languages)
@@ -217,7 +231,7 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        <a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Programme/TermSheetConfirguration/@item.Programme.Id"><i class="fa fa-search"></i> View</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -264,6 +278,10 @@
                                                 <td>Roles</td>
                                                 <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Product/CreateRole"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
+                                            <tr>
+                                                <td>Manage Organisations</td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
                                         }
                                         @if (User.HasClaim("ViewEmploymentPrincipals", "ViewEmploymentPrincipals"))
                                         {
@@ -284,7 +302,7 @@
                                         @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
                                         {
                                             <tr>
-                                                <td>Manage Documents</td>
+                                                <td>Manage Templates</td>
                                                 <td>Certs, Schedules, Wording, Invoices</td>
                                                 <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
@@ -304,23 +322,29 @@
                                                 <td>For selecting as Named Parties</td>
                                                 <td><a class="btn btn-success btn-sm disabled pull-right" style="width:100px;" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
-                                        }                                      
+                                        }
+                                        @if (User.HasClaim("ViewFileGallery","ViewFileGallery"))
+                                        {
                                         <tr>
                                             <td>File Manager</td>
                                             <td>Manage Images and Upload Files</td>
                                             <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Image/ManageImage"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
+                                        }
+                                        @if (User.HasClaim("ViewReport","ViewReport"))
+                                        { 
                                         <tr>
                                             <td>Report Manager</td>
                                             <td>Generate a Report</td>
                                             <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Report/CreateReport"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
+                                        }
                                         @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
                                         {
                                             <tr>
                                                 <td>Milestones</td>
                                                 <td>Milestones</td>
-                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+                                                <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="/Milestone/Index"><i class="fa fa-search"></i> View</a></td>
                                             </tr>
                                         }
                                         @if (User.HasClaim("ViewMotor", "ViewMotor"))
@@ -409,10 +433,6 @@
                                         <tr>
                                             <td>Manage Admin function</td>
                                             <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Manage Organisations</td>
-                                            <td><a class="btn btn-success btn-sm pull-right" style="width:100px;" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
                                             <td>Manage Permissions</td>

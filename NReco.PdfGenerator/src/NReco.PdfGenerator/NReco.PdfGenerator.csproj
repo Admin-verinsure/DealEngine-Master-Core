@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{ECBF19CE-5DE7-44F1-A8B2-9E1ECAC66265}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NReco.PdfGenerator</RootNamespace>
+    <AssemblyName>NReco.PdfGenerator</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\NReco.PdfGenerator.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\NReco.PdfGenerator.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LicenseInfo.cs" />
+    <Compile Include="WkHtmlInput.cs" />
+    <Compile Include="WkHtmlToPdfException.cs" />
+    <Compile Include="HtmlToPdfConverter.cs" />
+    <Compile Include="PageMargins.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WkHtmlToPdf\wkhtmltopdf.exe.gz" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NReco.PdfGenerator.snk" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-conio-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-convert-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-environment-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-filesystem-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-heap-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-locale-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-math-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-multibyte-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-private-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-process-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-runtime-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-stdio-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-string-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-time-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-crt-utility-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\concrt140.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\msvcp140.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\ucrtbase.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\vcruntime140.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-console-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-datetime-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-debug-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-errorhandling-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-file-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-file-l1-2-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-file-l2-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-handle-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-heap-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-interlocked-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-libraryloader-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-localization-l1-2-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-memory-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-namedpipe-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-processenvironment-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-processthreads-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-processthreads-l1-1-1.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-profile-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-rtlsupport-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-string-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-synch-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-synch-l1-2-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-sysinfo-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-timezone-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\api-ms-win-core-util-l1-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\API-MS-Win-core-xstate-l2-1-0.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\msvcp140_1.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\msvcp140_2.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\vccorlib140.dll.gz" />
+    <EmbeddedResource Include="WkHtmlToPdf\vcomp140.dll.gz" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

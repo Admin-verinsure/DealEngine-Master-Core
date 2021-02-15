@@ -16,22 +16,53 @@ namespace DealEngine.Domain.Entities
         {
             BoatUseCategory = boatUseCategory;
         }
-        public virtual IList<Boat> Boat
-        {
-            get;
-            set;
-        }
-        public virtual BoatUse OriginalBoatUse
-        {
-            get;
-            protected set;
-        }
+        //public virtual void PopulateEntity()
+        //{
 
-        public virtual ClientInformationSheet ClientInformationSheet
-        {
-            get;
-            set;
-        }
+        //    // Populating the Entity
+        //    BoatUseCategory = boatUse.BoatUseCategory
+        //    BoatUseLiveOnBoard
+        //    BoatUseRace
+        //    BoatUseRaceCategory
+        //    BoatUseRaceUseSpinnakers
+        //    BoatUseLiveNotes
+        //    BoatUseRaceNotes
+        //    BoatUseAdditionalNotes
+
+        //    boatUse.BoatUseCategory = BoatUseCategory;
+        //    boatUse.BoatUseLiveOnBoard = ;
+        //    boatUse.BoatUseRace = BoatUseRace;
+        //    boatUse.BoatUseRaceCategory = BoatUseRaceCategory;
+        //    boatUse.BoatUseRaceUseSpinnakers = BoatUseRaceUseSpinnakers;
+        //    boatUse.BoatUseLiveNotes = BoatUseLiveNotes;
+        //    boatUse.BoatUseRaceNotes = BoatUseRaceNotes;
+
+        //    boatUse.BoatUseAdditionalNotes = BoatUseAdditionalNotes;
+        //    if (!string.IsNullOrEmpty(BoatUseEffectiveDate))
+        //    {
+        //        boatUse.BoatUseEffectiveDate = DateTime.Parse(BoatUseEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+        //    }
+        //    else
+        //    {
+        //        boatUse.BoatUseEffectiveDate = DateTime.MinValue;
+        //    }
+        //    if (!string.IsNullOrEmpty(BoatUseCeaseDate))
+        //    {
+        //        boatUse.BoatUseCeaseDate = DateTime.Parse(BoatUseCeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+        //    }
+        //    else
+        //    {
+        //        boatUse.BoatUseCeaseDate = DateTime.MinValue;
+        //    }
+        //    boatUse.BoatUseCeaseReason = BoatUseCeaseReason;
+
+        //}
+
+        //public virtual BoatUse OriginalBoatUse
+        //{
+        //    get;
+        //    protected set;
+        //}
 
         public virtual string BoatUseCategory
         {
@@ -116,12 +147,9 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-        
+
         public virtual BoatUse CloneForNewSheet(ClientInformationSheet newSheet)
         {
-            if (ClientInformationSheet == newSheet)
-                throw new Exception("Cannot clone boat use for original information");
-
             BoatUse newBoatUse = new BoatUse(newSheet.CreatedBy, BoatUseCategory);
             newBoatUse.BoatUseLiveOnBoard = BoatUseLiveOnBoard;
             newBoatUse.BoatUseRace = BoatUseRace;
@@ -138,7 +166,7 @@ namespace DealEngine.Domain.Entities
                 newBoatUse.BoatUseInceptionDate = BoatUseInceptionDate;
             if (BoatUseExpireDate > DateTime.MinValue)
                 newBoatUse.BoatUseExpireDate = BoatUseExpireDate;
-            newBoatUse.OriginalBoatUse = this;
+            //newBoatUse.OriginalBoatUse = this;
             return newBoatUse;
         }
     }

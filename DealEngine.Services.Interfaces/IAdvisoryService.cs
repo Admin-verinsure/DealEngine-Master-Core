@@ -9,6 +9,5 @@ namespace DealEngine.Services.Interfaces
     {
         Task CreateAdvisory(Advisory advisory);
         Task UpdateAdvisory(Advisory advisory);
-        Task<List<Advisory>> GetAdvisorysByMilestone(Milestone milestone);
     }
 }

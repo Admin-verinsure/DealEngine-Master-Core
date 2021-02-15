@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
-using DealEngine.WebUI.Controllers;
-using DealEngine.WebUI.Models.Programme;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
@@ -10,19 +8,20 @@ namespace DealEngine.WebUI.Models
 {
     public static class MapperConfig
     {
-        public static IMapper ConfigureMaps()
+        public static IMapper DefaultProfile()
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfile());
+                cfg.AddProfile(new DefaultProfile());
             });
             return mapperConfiguration.CreateMapper();
         }
+
     }
 
-    public class MappingProfile : Profile
+    public class DefaultProfile : Profile
     {
-        public MappingProfile()
+        public DefaultProfile()
         {
             // place all automapper maps here
             CreateMap<OrganisationalUnit, OrganisationalUnit>()
@@ -52,8 +51,32 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Name, map => map.Ignore())
                 .ForMember(dest => dest.Type, map => map.Ignore())
                 .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+            
+            CreateMap<PlannerUnit, PlannerUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
 
-            CreateMap<Organisation, Organisation>()
+            CreateMap<MarinaUnit, MarinaUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<WaterLocation, WaterLocation>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<Location, Location>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<Domain.Entities.Organisation, Domain.Entities.Organisation>()
                 .ForMember(dest => dest.InsuranceAttributes, map => map.Ignore())
                 .ForMember(dest => dest.OrganisationalUnits, map => map.Ignore())                
                 .ForMember(dest => dest.Id, map => map.Ignore())
@@ -65,6 +88,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.Organisations, map => map.Ignore())
                 .ForMember(dest => dest.UserName, map => map.Ignore())
                 .ForMember(dest => dest.Branches, map => map.Ignore())
+                .ForMember(dest => dest.UserTasks, map => map.Ignore())
                 .ForMember(dest => dest.Departments, map => map.Ignore())
                 .ForMember(dest => dest.UISIssueNotifyProgrammes, map => map.Ignore())
                 .ForMember(dest => dest.UISSubmissionNotifyProgrammes, map => map.Ignore())
@@ -110,12 +134,10 @@ namespace DealEngine.WebUI.Models
             CreateMap<SubmitButtonItem, InformationItemViewModel>();
             CreateMap<SectionBreakItem, InformationItemViewModel>();
             CreateMap<MotorVehicleListItem, InformationItemViewModel>();
-
             CreateMap<Location, LocationViewModel>();
             CreateMap<Vehicle, VehicleViewModel>();
             CreateMap<OrganisationalUnit, OrganisationalUnitViewModel>();
-            CreateMap<Organisation, OrganisationViewModel>();
-            CreateMap<User, UserDetailsVM>();
+            CreateMap<Domain.Entities.Organisation, OrganisationViewModel>();
             CreateMap<BusinessActivity, BusinessActivityViewModel>();
 
             // Policy
@@ -127,70 +149,21 @@ namespace DealEngine.WebUI.Models
 
             CreateMap<AdditionalRoleInformation, AdditionalRoleInformationViewModel>();
             CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
-                .IncludeAllDerived();
-                
-
-                //.ForMember(dest => dest.HasInspectionReportOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasIssuedCertificatesOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasObservationServicesOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasRecommendedCladdingOptions, map => map.Ignore())
-                //.ForMember(dest => dest.HasStateSchoolOptions, map => map.Ignore());
-
-            //subsystem            
-            CreateMap<InformationTemplate, SubInformationTemplate>()
-                .ForMember(dest => dest.BaseInformationTemplate, map => map.Ignore())
-                .ForMember(dest => dest.Sections, map => map.Ignore())
-                .ForMember(dest => dest.Name, map => map.MapFrom(t => t.Name + " Sub"))
-                .ForMember(dest => dest.Id, map => map.Ignore());
-            CreateMap<ClientInformationSheet, SubClientInformationSheet>()
-                .ForMember(dest => dest.BaseClientInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.Id, map => map.Ignore())
-                .ForMember(dest => dest.SubClientInformationSheets, map => map.Ignore())
-                .ForMember(dest => dest.Answers, map => map.Ignore())
-                .ForMember(dest => dest.RoleData, map => map.Ignore())
-                .ForMember(dest => dest.Programme, map => map.Ignore())
-                .ForMember(dest => dest.ClaimNotifications, map => map.Ignore())
-                .ForMember(dest => dest.ReferenceId, map => map.Ignore())
-                .ForMember(dest => dest.PreviousInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.CreatedBy, map => map.Ignore())
-                .ForMember(dest => dest.SubmittedBy, map => map.Ignore())
-                .ForMember(dest => dest.RevenueData, map => map.Ignore())
-                .ForMember(dest => dest.NextInformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.BusinessContracts, map => map.Ignore())
-                .ForMember(dest => dest.Organisation, map => map.Ignore());
-            CreateMap<ClientProgramme, SubClientProgramme>()
-                .ForMember(dest => dest.BaseClientProgramme, map => map.Ignore())
-                .ForMember(dest => dest.BrokerContactUser, map => map.Ignore())
-                .ForMember(dest => dest.EGlobalClientStatus, map => map.Ignore())
-                .ForMember(dest => dest.SubClientProgrammes, map => map.Ignore())
-                .ForMember(dest => dest.ChangeReason, map => map.Ignore())
-                .ForMember(dest => dest.Products, map => map.Ignore())
-                .ForMember(dest => dest.ClientProgrammeMembershipNumber, map => map.Ignore())
-                .ForMember(dest => dest.CreatedBy, map => map.Ignore())
-                .ForMember(dest => dest.Payment, map => map.Ignore())
-                .ForMember(dest => dest.InformationSheet, map => map.Ignore())
-                .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())
-                .ForMember(dest => dest.ClientAgreementEGlobalSubmissions, map => map.Ignore())
-                .ForMember(dest => dest.Agreements, map => map.Ignore())
-                .ForMember(dest => dest.Id, map => map.Ignore());
-            CreateMap<InformationSection, InformationSection>()                
-                .ForMember(dest => dest.Id, map => map.Ignore());
+                .IncludeAllDerived();         
 
             //clonesystem
-            CreateMap<ClientInformationSheet, ClientInformationSheet>()
-                .ForMember(dest => dest.Id, map => map.Ignore())
-               .ForMember(dest => dest.Owner, map => map.Ignore());
-            CreateMap<ClientProgramme, ClientProgramme>()
-                .ForMember(dest => dest.Id, map => map.Ignore());
+            //CreateMap<SubClientInformationSheet, SubClientInformationSheet>()
+            //    .ForMember(dest => dest.Programme, map => map.Ignore())
+            //    .ForMember(dest => dest.BaseClientInformationSheet, map => map.Ignore())
+            //    .ForMember(dest => dest.ReferenceId, map => map.Ignore())
+            //    .ForMember(dest => dest.Owner, map => map.Ignore())
+            //    .ForMember(dest => dest.UnlockedBy, map => map.Ignore())
+            //    .ForMember(dest => dest.SubmittedBy, map => map.Ignore())
+            //    .ForMember(dest => dest.CreatedBy, map => map.Ignore())
+            //    .ForMember(dest => dest.Id, map => map.Ignore());
         }
 
 
     }
-    public static class MapperExtensions
-    {
-        public static T ResolveJson<T>(this JObject jobj, string target)
-        {
-            return JsonConvert.DeserializeObject<T>(jobj.SelectToken(target).ToString());
-        }
-    }
+    
 }

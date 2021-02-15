@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System;
@@ -14,7 +15,7 @@ namespace DealEngine.Domain.Entities.Abstracts
         public virtual Guid Id { get; set; }
 
         [DisplayName("Date Created")]
-		public virtual DateTime? DateCreated { get; protected set; }
+		public virtual DateTime? DateCreated { get; set; }
 
         [DisplayName("Date Deleted")]
 		public virtual DateTime? DateDeleted { get; set; }
@@ -74,6 +75,8 @@ namespace DealEngine.Domain.Entities.Abstracts
             return hash;
         }
 
+      
+
         public virtual void PopulateEntity(IFormCollection Collection)
         {
             //PropertyInfo property;
@@ -108,14 +111,26 @@ namespace DealEngine.Domain.Entities.Abstracts
                                 var boolValue = value.ToString();
                                 property.SetValue(this, bool.Parse(value));
                             }
-                            else if (property.PropertyType == typeof(DateTime))
-                            {
-                                var dateValue = value.ToString();
-                                property.SetValue(this, DateTime.Parse(dateValue));
+                            else if (property.PropertyType == typeof(int))
+                            {                                
+                                property.SetValue(this, int.Parse(value));
                             }
                             else if (property.PropertyType == typeof(Guid))
                             {
                                 //throw new Exception("Cant save Ids");
+                            }
+                            else if (property.PropertyType == typeof(DateTime))
+                            {
+                                bool valid = DateTime.TryParse(value.ToString(), out DateTime Date);
+                                if (valid)
+                                {
+                                    property.SetValue(this, Date);
+                                }                                
+                            }
+                            else if(typeof(IList<string>) == property.PropertyType)
+                            {
+                                var options = value.ToString().Split(',').ToList();
+                                property.SetValue(this, options);                              
                             }
                             else
                             {

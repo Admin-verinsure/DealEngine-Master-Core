@@ -20,22 +20,22 @@ using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.IO;
+using DealEngine.Infrastructure.Ldap.Interfaces;
 
 namespace DealEngine.WebUI.Controllers
 {
     //[Authorize]
     public class ServicesController : BaseController
     {
+        IAuthenticationService _authenticationService;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
         IOrganisationalUnitService _organisationalUnitService;
         ILocationService _locationService;
         IMapperSession<WaterLocation> _waterLocationRepository;
         IMapperSession<Boat> _boatRepository;
+        IMapperSession<Vehicle> _vehicleRepository;
+
         IBoatUseService _boatUseService;
         IVehicleService _vehicleService;
         IOrganisationService _organisationService;
@@ -44,6 +44,7 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<MaterialDamage> _materialDamageRepository;
         IClaimNotificationService _claimNotificationService;
         IProductService _productService;
+        ISerializerationService _serializerationService;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
         IUnitOfWork _unitOfWork;
@@ -55,11 +56,15 @@ namespace DealEngine.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
         IMapper _mapper;
+        Infrastructure.Ldap.Interfaces.ILdapService _ldapService;
 
 
         public ServicesController(
+            ILdapService ldapService,
+            IAuthenticationService authenticationService,
             IMapper mapper,
             ILogger<ServicesController> logger,
+            ISerializerationService serializerationService,
             IApplicationLoggingService applicationLoggingService,
             IBusinessContractService businessContractService,
             IUserService userService,
@@ -69,6 +74,7 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationalUnitService organisationalUnitService,
             ILocationService locationService,
             IMapperSession<WaterLocation> waterLocationRepository,
+            IMapperSession<Vehicle> vehicleRepository,
             IMapperSession<Building> buildingRepository,
             IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository,
@@ -82,13 +88,15 @@ namespace DealEngine.WebUI.Controllers
             IOrganisationTypeService organisationTypeService,
             IEmailService emailService,
             IUnitOfWork unitOfWork,
-            IInsuranceAttributeService insuranceAttributeService,
             IReferenceService referenceService,
             IResearchHouseService researchHouseService
             )
 
             : base(userService)
         {
+            _ldapService = ldapService;
+            _serializerationService = serializerationService;
+            _authenticationService = authenticationService;
             _mapper = mapper;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
@@ -114,10 +122,67 @@ namespace DealEngine.WebUI.Controllers
             _emailService = emailService;
             _businessContractService = businessContractService;
             _researchHouseService = researchHouseService;
-
+            _vehicleRepository = vehicleRepository;
         }
 
         #region Vehicle
+
+        [HttpPost]
+        public async Task<IActionResult> GetClient(IFormCollection Collection)
+        {
+            User user = null;
+            try
+            {
+                Guid.TryParse(Collection["Id"], out Guid OrganisationId);
+                Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
+                Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+                if (organisation != null)
+                {
+                    var ClientProgrammes = await _programmeService.GetClientProgrammesByOwner(organisation.Id);
+                    if (ClientProgrammes.Any())
+                    {
+                        JsonObjects.Add("Organisation", organisation);
+                        JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
+                        var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
+                        return Json(jsonObj);
+                    }
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostClient(IFormCollection Collection)
+        {
+            User user = null;
+            try
+            {
+                Guid.TryParse(Collection["ClientProgramme.Id"], out Guid ClientId);
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(ClientId);
+                if(clientProgramme != null)
+                {
+                    clientProgramme.EGlobalClientNumber = Collection["ClientProgramme.EGlobalClientNumber"];
+                    clientProgramme.Tier = Collection["ClientProgramme.Tier"];
+                    await _programmeService.Update(clientProgramme);
+                    User OwnerUser = await _userService.GetUserPrimaryOrganisationOrEmail(clientProgramme.Owner);
+                    OwnerUser.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Email = Collection["Organisation.Email"];
+                    OwnerUser.PrimaryOrganisation.Name = Collection["Organisation.Name"];
+                    await _userService.Update(OwnerUser);
+                }
+                return Redirect("../Home/EditClients?ProgrammeId=" + clientProgramme.BaseProgramme.Id.ToString());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> SearchVehicle(string registration)
@@ -163,35 +228,32 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
 
                 if (model == null)
+                {
                     throw new ArgumentNullException(nameof(model));
+                }
 
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
+                {
                     throw new Exception("Unable to save Vehicle - No Client information for " + model.AnswerSheetId);
+                }
 
                 // get existing vehicle (if any)
                 Vehicle vehicle = await _vehicleService.GetVehicleById(model.VehicleId);
                 // no vehicle, so create new
                 if (vehicle == null)
-                    vehicle = model.ToEntity(user);
-                model.UpdateEntity(vehicle);
-
-                if (model.VehicleLocation != Guid.Empty)
-                    vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
-
-                var allOrganisations = await _organisationService.GetAllOrganisations();
-                if (model.InterestedParties != null)
-                    vehicle.InterestedParties = allOrganisations.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    sheet.Vehicles.Add(vehicle);
-                    await uow.Commit();
+                    vehicle = model.ToEntity(user);          
                 }
-
+                model.UpdateEntity(vehicle);           
+                if (model.VehicleLocation != Guid.Empty)
+                {
+                    vehicle.GarageLocation = await _locationService.GetLocationById(model.VehicleLocation);
+                }
+                vehicle.ClientInformationSheet = sheet;
+                await _vehicleRepository.AddAsync(vehicle);
+                sheet.Vehicles.Add(vehicle);
                 model.VehicleId = vehicle.Id;
-
-
                 return Json(model);
             }
             catch (Exception ex)
@@ -467,75 +529,75 @@ namespace DealEngine.WebUI.Controllers
         //    }
         //}
 
-        [HttpGet]
-        public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                       string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
+        //[HttpGet]
+        //public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+        //                               string searchField, string searchString, string searchOper, string filters)
+        //{
+        //    User user = null;
 
-            try
-            {
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+        //    try
+        //    {
+        //        XDocument document = null;
+        //        JqGridViewModel model = new JqGridViewModel();
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
 
-                var userList = await _userService.GetAllUsers();
-                User userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
+        //        var userList = await _userService.GetAllUsers();
+        //        User userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+        //        if (sheet == null)
+        //            throw new Exception("No valid information for id " + informationId);
 
-                var organisations = new List<Organisation>();
-                foreach (var org in sheet.Organisation.Where(o => o.Removed == true))
-                {
-                    organisations.Add(org);
-                }
+        //        var organisations = new List<Organisation>();
+        //        foreach (var org in sheet.Organisation.Where(o => o.Removed == true))
+        //        {
+        //            organisations.Add(org);
+        //        }
 
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
-                model.Page = page;
-                model.TotalRecords = organisations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-                    Organisation organisation = organisations[i];
-                    JqGridRow row = new JqGridRow(organisation.Id);
+        //        if (_search)
+        //        {
+        //            switch (searchOper)
+        //            {
+        //                case "eq":
+        //                    organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+        //                    break;
+        //                case "bw":
+        //                    organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+        //                    break;
+        //                case "cn":
+        //                    organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+        //                    break;
+        //            }
+        //        }
+        //        //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+        //        model.Page = page;
+        //        model.TotalRecords = organisations.Count;
+        //        model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+        //        int offset = rows * (page - 1);
+        //        for (int i = offset; i < offset + rows; i++)
+        //        {
+        //            if (i == model.TotalRecords)
+        //                break;
+        //            Organisation organisation = organisations[i];
+        //            JqGridRow row = new JqGridRow(organisation.Id);
 
-                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
-                    {
-                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
-                    }
-                    model.AddRow(row);
-                }
+        //            for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+        //            {
+        //                row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+        //            }
+        //            model.AddRow(row);
+        //        }
 
 
-                //// convert model to XDocument for rendering.
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        //// convert model to XDocument for rendering.
+        //        document = model.ToXml();
+        //        return Xml(document);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
 
 
@@ -956,6 +1018,33 @@ namespace DealEngine.WebUI.Controllers
         #endregion
 
         #region Locations
+        [HttpPost]
+        public async Task<IActionResult> LocationTableRefreshAPI(IFormCollection collection)
+        {
+            User user = null;
+            
+            var dictionary = new Dictionary<string, string>();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+            foreach(var location in sheet.Locations)
+            {
+
+                //string editbutton = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('"+location.Id+"', '"+location.LocationType+"', '"+ location.CommonName+ "', '"+location.Street+"', '"+ location.City + "', '"+ location.Country + "', '"+ location.Suburb + "', '"+location.Postcode+"')\"><i class=\"fa fa-edit\"></i> Edit</button>";
+                
+                //string removebutton = 
+                
+                //dictionary.Add("editButton", editbutton);
+                //if (!dictionary.ContainsKey("deleteButton"))
+                //    dictionary.Add("deleteButton", removebutton);
+
+                //dictionary["deleteButton"].a(removebutton);
+                
+                //if (!dictionary.ContainsKey("editButton"))
+                //    dictionary.Add("editButton", removebutton);
+
+                //dictionary["editButton"].Add(removebutton);
+            }
+            return Json(sheet.Locations);
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddLocation(IFormCollection collection)
@@ -988,8 +1077,6 @@ namespace DealEngine.WebUI.Controllers
                         property.SetValue(location, collection[keyField].ToString());
                     }
                 }
-                var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
-                location.OrganisationalUnits.Add(OUList);
 
                 if (sheet.Locations.Contains(location))
                 {
@@ -1251,30 +1338,30 @@ namespace DealEngine.WebUI.Controllers
 
         #region WaterLocations
 
-        [HttpPost]
-        public async Task<IActionResult> SearchWaterLocationName(Guid answerSheetId, string waterLocationName)
-        {
-            WaterLocationViewModel model = new WaterLocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> SearchWaterLocationName(Guid answerSheetId, string waterLocationName)
+        //{
+        //    WaterLocationViewModel model = new WaterLocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                model.WaterLocationName = waterLocationName;
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wl => wl.WaterLocationName == waterLocationName);
-                if (waterLocation != null)
-                {
-                    model = WaterLocationViewModel.FromEntity(waterLocation);
-                }
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        model.WaterLocationName = waterLocationName;
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+        //        WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wl => wl.WaterLocationName == waterLocationName);
+        //        if (waterLocation != null)
+        //        {
+        //            model = WaterLocationViewModel.FromEntity(waterLocation);
+        //        }
+        //        return Json(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> AddWaterLocation(WaterLocationViewModel model)
@@ -1294,18 +1381,6 @@ namespace DealEngine.WebUI.Controllers
                     waterLocation = model.ToEntity(user);
                 model.UpdateEntity(waterLocation);
 
-                if (model.WaterLocationLocation != Guid.Empty)
-                    waterLocation.WaterLocationLocation = await _locationService.GetLocationById(model.WaterLocationLocation);
-                if (model.WaterLocationMarinaLocation != null)
-                {
-                    waterLocation.WaterLocationMarinaLocation = await _organisationService.GetOrganisation(model.WaterLocationMarinaLocation);
-
-                }
-                if (model.OrganisationalUnit != null)
-                {
-                    waterLocation.OrganisationalUnit = await _organisationalUnitService.GetOrganisationalUnit(model.OrganisationalUnit);
-
-                }
                 // waterLocation.OrganisationalUnit = OrganisationalUnit;
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1324,155 +1399,155 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetWaterLocation(Guid answerSheetId, Guid waterLocationId)
-        {
-            WaterLocationViewModel model = new WaterLocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> GetWaterLocation(Guid answerSheetId, Guid waterLocationId)
+        //{
+        //    WaterLocationViewModel model = new WaterLocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                WaterLocation waterLocation = sheet.WaterLocations.FirstOrDefault(wloc => wloc.Id == waterLocationId);
-                if (waterLocation != null)
-                {
-                    model = WaterLocationViewModel.FromEntity(waterLocation);
-                    model.AnswerSheetId = answerSheetId;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+        //        WaterLocation waterLocation = sheet.WaterLocations.FirstOrDefault(wloc => wloc.Id == waterLocationId);
+        //        if (waterLocation != null)
+        //        {
+        //            model = WaterLocationViewModel.FromEntity(waterLocation);
+        //            model.AnswerSheetId = answerSheetId;
 
-                    if (waterLocation.WaterLocationLocation != null)
-                        model.WaterLocationLocation = waterLocation.WaterLocationLocation.Id;
-                    if (waterLocation.WaterLocationMarinaLocation != null)
-                        model.WaterLocationMarinaLocation = waterLocation.WaterLocationMarinaLocation.Id;
-                    if (waterLocation.OrganisationalUnit != null)
-                        model.OrganisationalUnit = waterLocation.OrganisationalUnit.Id;
+        //            if (waterLocation.WaterLocationLocation != null)
+        //                model.WaterLocationLocation = waterLocation.WaterLocationLocation.Id;
+        //            if (waterLocation.WaterLocationMarinaLocation != null)
+        //                model.WaterLocationMarinaLocation = waterLocation.WaterLocationMarinaLocation.Id;
+        //            if (waterLocation.OrganisationalUnit != null)
+        //                model.OrganisationalUnit = waterLocation.OrganisationalUnit.Id;
 
 
-                }
+        //        }
 
-                Organisation organisation = null;
+        //        Organisation organisation = null;
 
-                organisation = await _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id);
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        organisation = await _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id);
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
 
-                foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
-                {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
-                }
+        //        foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
+        //        {
+        //            organisationalUnits.Add(new OrganisationalUnitViewModel
+        //            {
+        //                OrganisationalUnitId = ou.Id,
+        //                Name = ou.Name
+        //            });
+        //        }
 
-                model.LOrganisationalUnits = organisationalUnits;
+        //        model.LOrganisationalUnits = organisationalUnits;
 
-                var Locations = new List<LocationViewModel>();
+        //        var Locations = new List<LocationViewModel>();
 
-                foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
-                {
-                    model.Locations.Add(loc);
-                }
+        //        foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
+        //        {
+        //            model.Locations.Add(loc);
+        //        }
 
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+        //        return Json(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-        }
+        //}
 
         //removing this through new bootstrap
-        [HttpGet]
-        public async Task<IActionResult> GetWaterLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                          string searchField, string searchString, string searchOper, string filters)
-        {
-            User user = null;
+        //[HttpGet]
+        //public async Task<IActionResult> GetWaterLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+        //                                  string searchField, string searchString, string searchOper, string filters)
+        //{
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
-                if (sheet == null)
-                    throw new Exception("No valid information for id " + informationId);
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+        //        if (sheet == null)
+        //            throw new Exception("No valid information for id " + informationId);
 
-                var waterLocations = new List<WaterLocation>();
+        //        var waterLocations = new List<WaterLocation>();
 
-                waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
+        //        waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
 
-                if (_search)
-                {
-                    switch (searchOper)
-                    {
-                        case "eq":
-                            waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
-                    }
-                }
-                //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
+        //        if (_search)
+        //        {
+        //            switch (searchOper)
+        //            {
+        //                case "eq":
+        //                    waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
+        //                    break;
+        //                case "bw":
+        //                    waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+        //                    break;
+        //                case "cn":
+        //                    waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+        //                    break;
+        //            }
+        //        }
+        //        //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
 
-                XDocument document = null;
-                JqGridViewModel model = new JqGridViewModel();
-                model.Page = page;
-                model.TotalRecords = waterLocations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+        //        XDocument document = null;
+        //        JqGridViewModel model = new JqGridViewModel();
+        //        model.Page = page;
+        //        model.TotalRecords = waterLocations.Count;
+        //        model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
 
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
+        //        int offset = rows * (page - 1);
+        //        for (int i = offset; i < offset + rows; i++)
+        //        {
+        //            if (i == model.TotalRecords)
+        //                break;
 
-                    WaterLocation waterLocation = waterLocations[i];
-                    JqGridRow row = new JqGridRow(waterLocation.Id);
-                    if (waterLocation.WaterLocationMarinaLocation != null)
-                    {
-                        row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, waterLocation.WaterLocationMarinaLocation.Name, waterLocation.WaterLocationMooringType, waterLocation.Id);
-                    }
-                    else
-                    {
-                        row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, " ", waterLocation.WaterLocationMooringType, waterLocation.Id);
+        //            WaterLocation waterLocation = waterLocations[i];
+        //            JqGridRow row = new JqGridRow(waterLocation.Id);
+        //            if (waterLocation.WaterLocationMarinaLocation != null)
+        //            {
+        //                row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, waterLocation.WaterLocationMarinaLocation.Name, waterLocation.WaterLocationMooringType, waterLocation.Id);
+        //            }
+        //            else
+        //            {
+        //                row.AddValues(waterLocation.Id, waterLocation.WaterLocationName, " ", waterLocation.WaterLocationMooringType, waterLocation.Id);
 
-                    }
-                    model.AddRow(row);
-                }
+        //            }
+        //            model.AddRow(row);
+        //        }
 
-                // convert model to XDocument for rendering.
-                document = model.ToXml();
-                return Xml(document);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        // convert model to XDocument for rendering.
+        //        document = model.ToXml();
+        //        return Xml(document);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> GetWaterLocationName(string term)
-        {
-            User user = null;
+        //[HttpGet]
+        //public async Task<IActionResult> GetWaterLocationName(string term)
+        //{
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                var waterLocationNameList = _waterLocationRepository.FindAll().Select(wl => wl.WaterLocationName);
-                var results = waterLocationNameList.Where(n => n.ToLower().Contains(term.ToLower()));
-                return new JsonResult(results.ToArray());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        var waterLocationNameList = _waterLocationRepository.FindAll().Select(wl => wl.WaterLocationName);
+        //        var results = waterLocationNameList.Where(n => n.ToLower().Contains(term.ToLower()));
+        //        return new JsonResult(results.ToArray());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> GetWaterLocationList(Guid answerSheetId)
@@ -1846,39 +1921,6 @@ namespace DealEngine.WebUI.Controllers
         #region Boat
 
         [HttpPost]
-        public async Task<IActionResult> AddUsetoBoat(string[] Boatuse, Guid BoatId)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                Boat boat = await _boatRepository.GetByIdAsync(BoatId);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUse = new List<BoatUse>();
-                    foreach (var useid in Boatuse)
-                    {
-                        //ListBoatUse.Add(useid);
-                        //ListBoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)));
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
-                    await uow.Commit();
-                }
-                return Json(boat);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-
-        }
-
-        [HttpPost]
         public async Task<IActionResult> AddBoat(BoatViewModel model)
         {
             User user = null;
@@ -1904,10 +1946,26 @@ namespace DealEngine.WebUI.Controllers
                 if (model.BoatOperator != Guid.Empty)
                     boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
                 boat.BoatWaterLocation = null;
+                if (model.BoatTrailer != Guid.Empty)
+                {
+                    boat.BoatTrailers.Clear();
+                    Vehicle trailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
+                    boat.BoatTrailers.Add(trailer);
+                }
+                if (model.SelectedBoatUse != Guid.Empty)
+                {
+                    var BoatUse = await _boatUseService.GetBoatUse(model.SelectedBoatUse);
+                    boat.BoatUses.Clear();
+                    boat.BoatUses.Add(BoatUse);                                        
+                }
+                boat.BoatOperator = await _organisationService.GetOrganisation(model.BoatOperator);
 
                 if (model.BoatWaterLocation != Guid.Empty)
-                    boat.BoatWaterLocation = await _organisationService.GetOrganisation(model.BoatWaterLocation);
-
+                {
+                    var waterLocation = await _waterLocationRepository.GetByIdAsync(model.BoatWaterLocation);
+                    boat.BoatWaterLocation = await _organisationService.GetMarina(waterLocation);
+                }
+                    
                 if (model.OtherMarinaName != null)
                 {
                     boat.OtherMarinaName = model.OtherMarinaName;
@@ -1916,24 +1974,6 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
                     boat.OtherMarina = false;
-
-                }
-                if (model.SelectedBoatUse != null)
-                {
-
-                    List<string> boatuselist = new List<string>();
-
-                    boat.BoatUse = new List<BoatUse>();
-
-                    //string strArray = model.SelectedBoatUse.Substring(0, model.SelectedBoatUse.Length - 1);
-                    string[] BoatUse = model.SelectedBoatUse.Split(',');
-
-                    model.BoatUse = new List<BoatUse>();
-
-                    foreach (var useid in BoatUse)
-                    {
-                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    }
                 }
 
                 if (model.SelectedInterestedParty != null)
@@ -1953,9 +1993,6 @@ namespace DealEngine.WebUI.Controllers
                         boat.InterestedParties.Add(await _organisationService.GetOrganisation(Guid.Parse(useid)));
                     }
                 }
-
-                if (model.BoatTrailer != Guid.Empty)
-                    boat.BoatTrailer = await _vehicleService.GetVehicleById(model.BoatTrailer);
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2050,19 +2087,23 @@ namespace DealEngine.WebUI.Controllers
                     if (boat.BoatLandLocation != null)
                         model.BoatLandLocation = boat.BoatLandLocation.Id;
                     if (boat.BoatWaterLocation != null)
-                        model.BoatWaterLocation = boat.BoatWaterLocation.Id;
-                    if (boat.BoatTrailer != null)
-                        if (boat.BoatTrailer != null)
-                            model.BoatTrailer = boat.BoatTrailer.Id;
+                    {
+                        var unit = (MarinaUnit)boat.BoatWaterLocation.OrganisationalUnits.FirstOrDefault();
+                        model.BoatWaterLocation = unit.WaterLocation.Id;
+                    }
 
+                    // Workaround - if multiple trailers are added by the user, the wrong one could be selected on EDIT. Which one is the right one? Probably the last one added?
+                    if (boat.BoatTrailers.Any())
+                        model.BoatTrailer = boat.BoatTrailers.LastOrDefault().Id;
+                        // model.BoatTrailer = sheet.Vehicles.FirstOrDefault().Id;
                     if (boat.OtherMarinaName != null)
                         model.OtherMarinaName = boat.OtherMarinaName;
-                    if (boat.BoatUse != null)
+                    if (boat.BoatUses != null)
                         model.BoatselectedVal = new List<String>();
 
                     model.BoatselectedText = new List<Guid>();
 
-                    foreach (var boatuse in boat.BoatUse)
+                    foreach (var boatuse in boat.BoatUses)
                     {
                         model.BoatselectedVal.Add(boatuse.BoatUseCategory);
                         model.BoatselectedText.Add(boatuse.Id);
@@ -2130,8 +2171,6 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                //boats = boats.OrderBy(sidx + " " + sord).ToList();
-
                 XDocument document = null;
                 JqGridViewModel model = new JqGridViewModel();
                 model.Page = page;
@@ -2146,12 +2185,10 @@ namespace DealEngine.WebUI.Controllers
 
                     Boat boat = boats[i];
                     JqGridRow row = new JqGridRow(boat.Id);
-                    //row.AddValue("");
                     row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                     model.AddRow(row);
                 }
 
-                // convert model to XDocument for rendering.
                 document = model.ToXml();
                 return Xml(document);
             }
@@ -2173,10 +2210,10 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-                if (boat.BoatTrailer != null)
-                {
-                    hasTrailer = true;
-                }
+                //if (boat.BoatTrailer != null)
+                //{
+                //    hasTrailer = true;
+                //}
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2223,7 +2260,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             User user = null;
-
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             try
             {
                 user = await CurrentUser();
@@ -2231,11 +2268,11 @@ namespace DealEngine.WebUI.Controllers
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-
-                    boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
-
+                    
+                    //boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+                    boat.BoatCeaseDate = DateTime.Parse(ceaseDate.ToString(), System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
                     boat.BoatCeaseReason = ceaseReason;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 return new JsonResult(true);
@@ -2278,53 +2315,35 @@ namespace DealEngine.WebUI.Controllers
         #region BoatUse
 
         [HttpPost]
-        public async Task<IActionResult> AddBoatUse(BoatUseViewModel model)
+        public async Task<IActionResult> AddBoatUse(IFormCollection collection)
         {
             User user = null;
             BoatUse boatUse = null;
             try
             {
                 user = await CurrentUser();
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-                // get existing boat (if any)
-                if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                if(Guid.TryParse(collection["AnswerSheetId"], out Guid InformationId))
                 {
-                    boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                    if (boatUse == null)
-                        boatUse = model.ToEntity(user);
-                }
-                else
-                {
-                    boatUse = model.ToEntity(user);
-                }
-
-                model.UpdateEntity(boatUse);
-
-
-                //if (model.BoatUseBoat != Guid.Empty)
-                //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.BoatUses.Add(boatUse);
-                    await uow.Commit().ConfigureAwait(false);
-                }
-                model.BoatUseId = boatUse.Id;
-
-
-                var boatUses = new List<BoatUseViewModel>();
-                foreach (BoatUse bu in sheet.BoatUses)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(bu));
+                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(InformationId);
+                    if (collection.ContainsKey("BoatUseId"))
+                    {
+                        if (Guid.TryParse(collection["BoatUseId"], out Guid BoatUseId))
+                        {
+                            if (BoatUseId != Guid.Empty)
+                            {
+                                boatUse = await _boatUseService.GetBoatUse(BoatUseId);
+                            }                            
+                        }
+                    }
+                    else
+                    {
+                        boatUse = new BoatUse(user, "");
+                        boatUse.PopulateEntity(collection);
+                        await _boatUseService.UpdateBoatUse(boatUse);
+                    }                    
                 }
 
-                return Json(model);
+                return Json(boatUse);
             }
             catch (Exception ex)
             {
@@ -2337,26 +2356,6 @@ namespace DealEngine.WebUI.Controllers
         //{
         //    throw new Exception("Unfinihed core update");
         //}
-
-        [HttpPost]
-        public async Task<IActionResult> RemoveOrganisation(IFormCollection collection)
-        {
-            Guid Id = Guid.Parse(collection["OrganisationId"]);
-            Organisation organisation = await _organisationService.GetOrganisation(Id);
-            organisation.Removed = true;
-            await _organisationService.Update(organisation);
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RestoreOrganisation(IFormCollection collection)
-        {
-            Guid Id = Guid.Parse(collection["OrganisationId"]);
-            Organisation organisation = await _organisationService.GetOrganisation(Id);
-            organisation.Removed = false;
-            await _organisationService.Update(organisation);
-            return Ok();
-        }
 
         //[HttpPost]
         //public async Task<IActionResult> AddOrganisation(IFormCollection collection)
@@ -2427,63 +2426,63 @@ namespace DealEngine.WebUI.Controllers
         //}
 
 
-        [HttpPost]
-        public async Task<IActionResult> GetMooredType(Guid OrgID)
-        {
-            Organisation organisation = null;
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> GetMooredType(Guid OrgID)
+        //{
+        //    Organisation organisation = null;
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                organisation = await _organisationService.GetOrganisation(OrgID);
-                var organisationalUnits = new List<OrganisationalUnitViewModel>();
-                List<SelectListItem> mooredtypes = new List<SelectListItem>();
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        organisation = await _organisationService.GetOrganisation(OrgID);
+        //        var organisationalUnits = new List<OrganisationalUnitViewModel>();
+        //        List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
-                foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
-                {
-                    mooredtypes.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = mooredtype,
-                        Text = mooredtype
-                    });
-                }
+        //        foreach (var mooredtype in organisation.OrganisationalUnits.First().Marinaorgmooredtype)
+        //        {
+        //            mooredtypes.Add(new SelectListItem
+        //            {
+        //                Selected = false,
+        //                Value = mooredtype,
+        //                Text = mooredtype
+        //            });
+        //        }
 
-                return Json(mooredtypes);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+        //        return Json(mooredtypes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-        }
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> OUSelected(Guid OUselect)
-        {
-            OrganisationalUnit orgunit = null;
-            var location = new LocationViewModel();
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> OUSelected(Guid OUselect)
+        //{
+        //    OrganisationalUnit orgunit = null;
+        //    var location = new LocationViewModel();
+        //    User user = null;
 
-            try
-            {
-                user = await CurrentUser();
-                orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
-                foreach (Location ou in orgunit.Locations)
-                {
-                    location.Locations.Add(ou);
-                }
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
+        //        foreach (Location ou in orgunit.Locations)
+        //        {
+        //            location.Locations.Add(ou);
+        //        }
 
-                return Json(location);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        return Json(location);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
 
         [HttpPost]
@@ -2496,12 +2495,16 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                BoatUse boatUse = sheet.BoatUses.FirstOrDefault(bu => bu.Id == boatUseId);
-                if (boatUse != null)
+                foreach(var boat in sheet.Boats.Where(b => b.BoatUses.Any()))
                 {
-                    model = BoatUseViewModel.FromEntity(boatUse);
-                    model.AnswerSheetId = answerSheetId;
+                    foreach(var boatUse in boat.BoatUses)
+                    {
+                        model = BoatUseViewModel.FromEntity(boatUse);
+                        model.AnswerSheetId = answerSheetId;
+                    }
+                    
                 }
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -2524,15 +2527,55 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
 
+                var boats = new List<Boat>();
                 var boatUses = new List<BoatUse>();
 
+                /*
+                ceased doesn't look to be stored in table????
                 if (ceased)
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate > DateTime.MinValue).ToList();
                 }
                 else
                 {
-                    boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue)).ToList();
+                    //boatUses = sheet.BoatUses.Where(bu => bu.Removed == removed && bu.DateDeleted == null && bu.BoatUseCeaseDate == DateTime.MinValue).ToList();
+                }*/
+
+
+                // Get all the boat uses in the sheet that are removed or not removed THIS DOESNT WORK FAM as it just grabs the boat with them all anyways
+                if (removed)
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == true)).ToList();                  
+                }
+                else
+                {
+                    boats = sheet.Boats.Where(b => b.BoatUses.Any(bu => bu.Removed == false)).ToList();
+                }
+
+                // For each of the boats that have been removed or not removed
+                foreach (var boat in boats)
+                {
+                    // for the boat uses for that boat add to our boat uses list NO FILTERING 
+                    foreach (var boatUse in boat.BoatUses)
+                    {
+                        if (removed)
+                        {
+                            // add only removed boats to the list
+                            if (boatUse.Removed == true)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
+                        else
+                        {
+                            if (boatUse.Removed == false)
+                            {
+                                boatUses.Add(boatUse);
+                            }
+                        }
+                    }
                 }
 
                 if (_search)
@@ -2812,85 +2855,7 @@ namespace DealEngine.WebUI.Controllers
 
         #region Operators
 
-        [HttpPost]
-        public async Task<IActionResult> AddOperator(OrganisationViewModel model)
-        {
-            User currentUser = null;
-            throw new Exception("new organisation method");
-            //try
-            //{
-            //    AddOrganisation(model);
-            //    if (model == null)
-            //        throw new ArgumentNullException(nameof(model));
-
-            //    currentUser = await CurrentUser();
-            //    ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-            //    if (sheet == null)
-            //        throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-            //    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
-            //    if (insuranceAttribute == null)
-            //    {
-            //        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Skipper");
-            //    }
-            //    OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-            //    if (organisationType == null)
-            //    {
-            //        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
-            //    }
-
-            //    Organisation organisation = null;
-            //    User userdb = null;
-            //    try
-            //    {
-            //        userdb = await _userService.GetUserByEmail(model.Email);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-            //        userdb.FirstName = model.FirstName;
-            //        userdb.LastName = model.LastName;
-            //        userdb.FullName = model.FirstName + " " + model.LastName;
-            //        userdb.Email = model.Email;
-            //        userdb.Phone = model.Phone;
-            //        userdb.Password = "";
-
-            //        await _userService.Create(userdb);
-
-            //    }
-            //    finally
-            //    {
-            //        organisation = await _organisationService.GetOrganisationByEmail(model.Email);
-            //        if (organisation == null)
-            //        {
-            //            var organisationName = model.FirstName + " " + model.LastName;
-            //            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
-            //            organisation.InsuranceAttributes.Add(insuranceAttribute);
-            //            insuranceAttribute.IAOrganisations.Add(organisation);
-            //            await _organisationService.CreateNewOrganisation(organisation);
-            //            userdb.SetPrimaryOrganisation(organisation);
-
-            //        }
-
-            //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            //        {
-            //            userdb.SetPrimaryOrganisation(organisation);
-            //            currentUser.Organisations.Add(organisation);
-            //            userdb.Organisations.Add(organisation);
-            //            sheet.Organisation.Add(organisation);
-            //            model.ID = organisation.Id;
-            //            await uow.Commit();
-            //        }
-
-            //    }
-            //    return Json(model);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}
-        }
+        
 
 
         #endregion
@@ -3433,11 +3398,11 @@ namespace DealEngine.WebUI.Controllers
                         user = await _userService.GetUserByEmail(email);
                         if (!user.Organisations.Contains(organisation))
                             user.Organisations.Add(organisation);
-                        var username = user.FirstName;
+                        var username = (user.FirstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
                     }
                     catch (Exception ex)
                     {
-                        string username = firstName + "_" + lastName;
+                        string username = (firstName + "_" + lastName).Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
 
                         try
                         {
@@ -3485,6 +3450,7 @@ namespace DealEngine.WebUI.Controllers
 
                         try
                         {
+                            _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
                             var programme = await _programmeService.GetCoastGuardProgramme();
                             var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                             var reference = await _referenceService.GetLatestReferenceId();
@@ -3501,8 +3467,8 @@ namespace DealEngine.WebUI.Controllers
                                     HullConstruction = constructionType,
                                     HullConfiguration = hullConfiguration,
                                     BoatIsTrailered = trailered,
-                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue),
-                                    BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
+                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue)
+                                    //BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
                                 };
                                 sheet.Boats.Add(vessel);
                                 organisation.OrganisationalUnits.Add(ou);
@@ -3523,14 +3489,17 @@ namespace DealEngine.WebUI.Controllers
 
                             if (programme.ProgEnableEmail)
                             {
-                                //send out login email
-                                await _emailService.SendSystemEmailLogin(email);
+                                //send password reset
+                                SingleUseToken token = await _authenticationService.GenerateSingleUseToken(email);
+                                string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                                await _emailService.SendPasswordResetEmail(email, token.Id, domain);
                                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                                 if (emailTemplate != null)
                                 {
                                     await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
                                 }
                                 //send out information sheet issue notification email
+
                                 await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                             }
 
@@ -3602,14 +3571,14 @@ namespace DealEngine.WebUI.Controllers
             string LastName = collection["OrganisationViewModel.User.FirstName"].ToString();
             string OrganisationTypeName = collection["OrganisationViewModel.OrganisationType"].ToString();
 
-            Guid programmeId = Guid.Parse(collection["ProgrammeId"]);
+            Guid programmeId = Guid.Parse(collection["Programme.Id"]);
             Organisation organisation = null;
             string membershipNumber = collection["MemberShipNo"];
 
             try
             {
                 currentUser = await CurrentUser();
-                organisation = await _organisationService.CreateOrganisation(Email, "Private", Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
+                organisation = await _organisationService.CreateOrganisation(Email, OrganisationTypeName, Name, OrganisationTypeName, FirstName, LastName, currentUser, collection);                                    
                 var user = await _userService.GetUserByEmail(Email);
                 var sheet = await _programmeService.CreateUIS(programmeId, user, organisation);
                 
@@ -3634,34 +3603,27 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CoastGuardSelfRegCall(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
-            string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
+        public async Task<IActionResult> ValidateDateOfCommencement(IFormCollection collection)
         {
             User user = null;
-
             try
             {
                 user = await CurrentUser();
-                var emailBody = "First Mate Cover Programme Quick Quote Please Call Request " + "<br/>" +
-                " Client Details : <br/>" +
-                " First Name : " + firstName + "<br/>" +
-                " Last Name : " + lastName + "<br/>" +
-                " Email : " + email + "<br/>" +
-                " Mobile phone : " + mobilePhone + "<br/>" +
-                " Home Phone : " + homePhone + "<br/>" +
-                " Craft type : " + craftType + "<br/>" +
-                " Membership Number : " + membershipNumber + "<br/>" +
-                " Boat type : " + boatType + "<br/>" +
-                " Construction type : " + constructionType + "<br/>" +
-                " Hull configuration : " + hullConfiguration + "<br/>" +
-                " Moored type : " + mooredType + "<br/>" +
-                " Trailered : " + trailered + "<br/>" +
-                " Boat insured value : " + boatInsuredValue + "<br/>" +
-                " Quick Quote premium : " + quickQuotePremium + "<br/>";
-                if (_appSettingService.GetMarineInsuranceSpecialistEmail != "")
-                    await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
+                if (Guid.TryParse(collection["Id"], out Guid Id) && !string.IsNullOrWhiteSpace(collection["Date"]))
+                {
 
-                return Ok();
+                    DateTime.TryParse(collection["Date"], UserCulture, DateTimeStyles.None, out DateTime dateTime);
+                    //DateTime dateTime = DateTime.Parse(().ToString(CultureInfo.GetCultureInfo("en-NZ").DateTimeFormat.ShortDatePattern));
+                    ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
+                    var product = clientProgramme.BaseProgramme.Products.FirstOrDefault();
+                    if(dateTime >= product.DefaultInceptionDate && dateTime <= product.DefaultExpiryDate)
+                    {
+                        return Json(false);
+                    }
+                    return Json(true);
+                }
+
+                return Json(false);
             }
             catch (Exception ex)
             {

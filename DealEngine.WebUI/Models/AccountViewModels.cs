@@ -20,6 +20,7 @@ namespace DealEngine.WebUI.Models
         public string Password { get; set; }
 
         public string ReturnUrl { get; set; }
+        [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
         public string DevicePrint { get; set; }
         public string DomainString { get; set; }

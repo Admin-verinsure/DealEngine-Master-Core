@@ -183,13 +183,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
 
                 //Additional loading for BoatType1 (YachtsandCatamarans) + BoatUseRaceUseSpinnakers (Yes) + BoatUseRaceCategory (YachtClubSocialRacingupto50nm, Yachtracingupto200nm)
-                if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.BoatUseCategory == "Race" && ycbu.DateDeleted == null && !ycbu.Removed))
+                if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.BoatUseCategory == "Race" && ycbu.DateDeleted == null && !ycbu.Removed))
                 {
-                    if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "YachtClubSocialRacingupto50nm")) //BoatUseRaceCategory (YachtClubSocialRacingupto50nm)
+                    if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "YachtClubSocialRacingupto50nm")) //BoatUseRaceCategory (YachtClubSocialRacingupto50nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp50nm"]);
                     }
-                    else if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
+                    else if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp200nm"]);
                     }
@@ -294,14 +294,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             {
                                 preboatperiodindays = (boat.BoatExpireDate - boat.BoatInceptionDate).Days;
                             }
-                            if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue && boat.BoatEffectiveDate > DateTime.MinValue)
-                            {
-                                if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue && boat.OriginalBoat.BoatEffectiveDate == boat.BoatEffectiveDate)
-                                {
-                                    preboatperiodindays = (boat.BoatExpireDate - boat.BoatEffectiveDate).Days;
-                                }
-                            }
-
                             if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue && boat.BoatEffectiveDate > DateTime.MinValue)
                             {
                                 if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue && boat.OriginalBoat.BoatEffectiveDate == boat.BoatEffectiveDate)
@@ -801,6 +793,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 DateTime inceptionDate = DateTime.UtcNow;
                 DateTime expiryDate = DateTime.UtcNow.AddYears(1);
+
+                //inception date rule to use policy effective date
+                if (informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyDate").Any())
+                {
+                    inceptionDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyDate").First().Value);
+                    expiryDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyDate").First().Value).AddYears(1);
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {
@@ -1464,7 +1463,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
+                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && !acscn.Removed && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -1488,7 +1487,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status != "Pending")
                 {
                     if ((boat.BoatType1 == "CruisersandLaunches" || boat.BoatType1 == "YachtsandCatamarans")
-                        && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "LiveOnBoard" && ycbu.DateDeleted == null && !ycbu.Removed))
+                        && boat.BoatUses.Any(ycbu => ycbu.BoatUseCategory == "LiveOnBoard" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -1511,10 +1510,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseraceotheroption" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "Race" && ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.DateDeleted == null && !ycbu.Removed))
+                    if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUses.Any(ycbu => ycbu.BoatUseCategory == "Race" && ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
-                        if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") ||
-                            boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Category1Racing")) //BoatUseRaceCategory (Oceangoingracingover200nm, Category1Racing)
+                        if (boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") ||
+                            boat.BoatUses.Any(ycbu => ycbu.BoatUseRaceCategory == "Category1Racing")) //BoatUseRaceCategory (Oceangoingracingover200nm, Category1Racing)
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseraceotheroption" && cref.DateDeleted == null).Status = "Pending";
                         }

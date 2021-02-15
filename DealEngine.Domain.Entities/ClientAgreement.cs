@@ -42,11 +42,14 @@ namespace DealEngine.Domain.Entities
             ReferenceId = reference;
 
         }
-
-        public virtual IList<ClientAgreementTerm> ClientAgreementTerms { get; protected set; }
+        public virtual IList<ClientAgreementTerm> ClientAgreementTerms { get; set; }
+        [JsonIgnore]
         public virtual IList<ClientAgreementRule> ClientAgreementRules { get; protected set; }
+        [JsonIgnore]
         public virtual IList<ClientAgreementReferral> ClientAgreementReferrals { get; protected set; }
+        [JsonIgnore]
         public virtual IList<AuditLog> ClientAgreementAuditLogs { get; protected set; }
+        [JsonIgnore]
         public virtual IList<ClientAgreementEndorsement> ClientAgreementEndorsements { get; protected set; }
         public virtual string InsuredName { get;  set; }
         public virtual bool CustomInceptionDate { get; set; }
@@ -84,6 +87,7 @@ namespace DealEngine.Domain.Entities
         public virtual int ReferenceNumber { get; protected set; }
         public virtual Product Product { get; protected set; }
         public virtual AgreementTemplate AgreementTemplate { get; protected set; }
+        [JsonIgnore]
         public virtual ClientInformationSheet ClientInformationSheet { get; protected set; }
         [JsonIgnore]
 		public virtual IList<Document> Documents { get; protected set; }
@@ -98,6 +102,7 @@ namespace DealEngine.Domain.Entities
         public virtual DateTime CancelledDate { get; set; }
         public virtual bool MasterAgreement { get; set; }
         public virtual ClientAgreement PreviousAgreement { get; set; }
+        [JsonIgnore]
         public virtual IList<ClientAgreementTermCancel> ClientAgreementTermsCancel { get; set; }
         public virtual string issuetobrokercomment { get; set; }
         public virtual DateTime IssuedToBroker { get; set; }
@@ -113,7 +118,8 @@ namespace DealEngine.Domain.Entities
         public virtual string BindNotes { get; set; }
         public virtual DateTime BindEffectiveDate { get; set; }
         public virtual User BindByUserID { get; set; }
-
+        public virtual bool IsPDFgenerated { get; set; }
+        public virtual bool IsFullProposalDocSend { get; set; }
 
         public virtual List<Document> GetDocuments()
         {

@@ -19,18 +19,25 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
         /// <param name="result">The Async result.</param>
         public string ProcessAsyncResult(string res, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, EGlobalSubmission eglobalsubmission)
         {
-            // adjust the response
-            Envelope processingxml = GetPreResponseClass(res);
-            // decode string to Base64
-            byte[] byteStream = Convert.FromBase64String(processingxml.Body.CreateInvoiceResponse.Text);
-            ASyncInvoice = Encoding.UTF8.GetString(byteStream, 0, byteStream.Length);
+            try
+            {
+                // adjust the response
+                Envelope processingxml = GetPreResponseClass(res);
+                // decode string to Base64
+                byte[] byteStream = Convert.FromBase64String(processingxml.Body.CreateInvoiceResponse.Text);
+                ASyncInvoice = Encoding.UTF8.GetString(byteStream, 0, byteStream.Length);
 
-            // process response
-            EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
-            ProcessResponse(xo, programme, CurrentUser, _unitOfWork, ASyncInvoice, eglobalsubmission);
+                // process response
+                EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
+                ProcessResponse(xo, programme, CurrentUser, _unitOfWork, ASyncInvoice, eglobalsubmission);
 
-            // indicate we have received a response
-            ASyncInvoiceRecieved = true;
+                // indicate we have received a response
+                ASyncInvoiceRecieved = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             return ASyncInvoice;
         }

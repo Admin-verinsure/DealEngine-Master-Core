@@ -180,12 +180,20 @@
                                 @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendOnlinePaymentInstructions", description = "Online Payment Instructions -- Sent to clients when a agreement is issued to them for payment online which they can log on and view the agreement/make the payment. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
                             </td>
                         </tr>
-
+                        <tr>
+                            <td align="left">
+                                User Information Sheet PDF Report
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Sent to clients after the Report has been generated and triggered by either Send Report to Programme Recipient or Send Report to Insured.
+                            </td>
+                            <td>
+                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendPDFReport", description = "PDF Report -- Sent to clients after the Report has been generated and triggered by either Send Report to Programme Recipient or Send Report to Insured." }, new { @class = "btn btn-success btn-sm" })
+                            </td>
+                        </tr>
                     </table>
                 </form>
             </div>
         </div>
-
     </div>
-
 </div>

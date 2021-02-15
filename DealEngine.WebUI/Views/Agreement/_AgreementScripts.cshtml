@@ -6,7 +6,6 @@
 
 
     $('#hiddenInput').on('click', function () {
-        debugger;
   var $input = $('.datepicker').pickadate();
   var picker = $input.pickadate('picker');
 
@@ -37,7 +36,6 @@
     });
     $('#VesselModal').on('show.bs.modal', function (e) {
         $('.modal').css('width', '600px');
-        debugger;
         var MotorMake = $(e.relatedTarget).data('motor-make');
         var MotorRego = $(e.relatedTarget).data('motor-registration');
         var SumInsured = $(e.relatedTarget).data('motor-sum');
@@ -56,19 +54,21 @@
 
     });
 
-     $('#SubTermModal').on('show.bs.modal', function (e) {
-        $('.modal').css('width', '600px');
+    $('#SubTermModal').on('show.bs.modal', function (e) {
         debugger;
+        $('.modal').css('width', '600px');
         var subSumInsured = $(e.relatedTarget).data('sub-sum');
         var subPremium = $(e.relatedTarget).data('sub-premium');
         var subExcess = $(e.relatedTarget).data('sub-excess');
         var subType = $(e.relatedTarget).data('sub-type');
+        var subPremiumDiffer = $(e.relatedTarget).data('sub-premiumdiffer');
         var subId = $(e.relatedTarget).data('sub-id');
         $(e.currentTarget).find('input[name="Id"]').val(subId);
         $(e.currentTarget).find('input[name="TermType"]').val(subType);
         $(e.currentTarget).find('input[name="SumInsured"]').val(subSumInsured);
         $(e.currentTarget).find('input[name="Excess"]').val(subExcess);
         $(e.currentTarget).find('input[name="Premium"]').val(subPremium);
+        $(e.currentTarget).find('input[name="PremiumDiffer"]').val(subPremiumDiffer);
      });
 
 
@@ -94,7 +94,6 @@
     });
 
         $("#btnSubmit").click(function () {
-            debugger;
             var valid = ValidateVesselTerm();
             if (valid) {
                 vesselSubmit();
@@ -112,9 +111,7 @@
     });
 
     $(document).ready(function () {
-        debugger;
         $("#btnSubmit").click(function () {
-            debugger;
             var valid = ValidateVesselTerm();
             if (valid) {
                 vesselSubmit();
@@ -139,7 +136,6 @@
         });
 
         $("#btnMotorDelete").click(function () {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var motorId = $("#Motor_Id").val();
             var prodData = {
@@ -160,7 +156,6 @@
         });
 
            $("#btnTermDelete").click(function () {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var termId = $("#Term_Id").val();
             var prodData = {
@@ -181,7 +176,6 @@
            });
 
         $("#btnDelete").click(function () {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var boatId = $("#Boat_Id").val();
             var prodData = {
@@ -203,12 +197,10 @@
     });
 
      $("#btnAdd").click(function () {
-            debugger;
                 termSubmit();
      });
 
     function LoadSubmit() {
-        debugger;
         var ClientAgreementId = $('#ClientAgreementId').val();
         var SheetId = $('#InformationSheetId').val();
         var Type = "Authorise";
@@ -239,7 +231,6 @@
                     })
     }
         function ValidateVesselTerm() {
-            debugger;
             var boatExcess = $("#Excess").val();
             var boatPremium = $("#Premium").val();
             var boatFSL = $("#FSL").val();
@@ -293,10 +284,10 @@
     }
 
      function ValidateSubTerm() {
-            debugger;
             var termExcess = $("#TermExcess").val();
             var termPremium = $("#TermPremium").val();
             var termSum = $("#TermSumInsured").val();
+            var termPremiumDiffer = $("#TermPremiumDiffer").val();
 
             var validation = true;
             if (termExcess == "") {
@@ -322,11 +313,18 @@
                 }
             }else {
                 $('#validateTermSum').html("");
-            }
+             }
+             if (termPremiumDiffer == "") {
+                 $('#validateTermPremiumDiffer').html("<font color='red'>Field is required</font>");
+                 if (validation) {
+                     validation = false;
+                 }
+             } else {
+                 $('#validateTermPremiumDiffer').html("");
+             }
             return validation;
         }
         function ValidateMotorTerm() {
-            debugger;
             var motorExcess = $("#MotorExcess").val();
             var motorPremium = $("#MotorPremium").val();
             var motorFSL = $("#MotorFSL").val();
@@ -386,7 +384,6 @@
         }
 
         function vesselSubmit() {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var boatName = $("#Boat_Name").val();
             var boatSumInsured = $("#SumInsured").val().replace("$", " ");
@@ -438,7 +435,6 @@
           })
     }
     function selectorgUser() {
-        debugger;
         var selectedParty = $('input[name=Parties]:checked').val();
         var informationId = $('#AnswerSheetId').serialize();
 
@@ -507,6 +503,36 @@
         alert("There was an error while trying to authorise referrals.");
                });
     }
+
+     function CalculateAdjustment() {
+         var adjustmentAmount = $('#AdjustmentAmount').val();
+          var selectedPremium = $('#SelectedPremium').val();
+
+         $("#AdjustmentVal").val(parseFloat(adjustmentAmount) + parseFloat(selectedPremium));
+         var agreementid = $('#ClientAgreementId').val();
+
+         var postData = {
+             AdjustmentAmount: adjustmentAmount,
+             AgreementId: agreementid
+         };
+
+          $.ajax({
+                url: '@Url.Action("CalculateAdjustment", "Agreement")',
+                type: "POST",
+              //  contentType: "application/json; charset=utf-8",
+              //data: JSON.stringify({ clientAgreementModel: prodData })
+                data: postData,
+                async: true
+            })
+           .done(function (data) {
+               alert("Premium Updated Successfully");
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+        alert("There was an error while trying to authorise referrals.");
+               });
+    }
+
 
     function Decline() {
         var sheetId = $('#InformationSheetId').val();
@@ -613,7 +639,6 @@
     }
 
      function motorSubmit() {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var boatSumInsured = $("#MotorSumInsured").val().replace("$", " ");
             var boatExcess = $("#MotorExcess").val().replace("$", " ");
@@ -647,12 +672,12 @@
 
     
      function termSubmit() {
-            debugger;
             var agreement = $("#ClientAgreementId").val();
             var termType = $("#TermType").val();
             var SumInsured = $("#TermSumInsured").val().replace("$", " ");
             var Excess = $("#TermExcess").val().replace("$", " ");
-            var Premium = $("#TermPremium").val().replace("$", " ");
+         var Premium = $("#TermPremium").val().replace("$", " ");
+         var PremiumDiffer = $("#TermPremiumDiffer").val().replace("$", " ");
             var id = $("#TermId").val();
             var postData = {
                 "TermLimit": SumInsured.replace(/,/g, '').trim(),
@@ -660,7 +685,8 @@
                 "Premium": Premium.replace(/,/g, '').trim(),
                 "TermId": id,
                 "TermType": termType,
-                clientAgreementId : agreement
+                clientAgreementId: agreement,
+                "PremiumDiffer": PremiumDiffer.replace(/,/g, '').trim()
             };
             $.ajax({
                 type: "Post",

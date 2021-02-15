@@ -10,9 +10,9 @@
         <div class="card-body">
             
             <div class="client-form">
-                @if (Model.Where(mstatus => mstatus.Status == "Referred").Count() > 0)
+                @if (Model.Where(mstatus => mstatus.Status == "Referred").Count() > 0 || Model.Where(mstatus =>mstatus.Status == "Authorised" ).Count() > 0)
                 {
-                    @foreach (var item in Model.Where(mstatus => mstatus.Status == "Referred"))
+                @foreach (var item in Model.Where(mstatus => mstatus.Status == "Referred" || mstatus.Status == "Authorised"))
                     {
                         @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
                         break;
@@ -20,11 +20,11 @@
                 }
                 else
                 {
-                    @foreach (var item in Model)
-                    {
-                        @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
-                        break;
-                    }
+                @foreach (var item in Model)
+                {
+                    @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
+                    break;
+                }
                 }
 
 

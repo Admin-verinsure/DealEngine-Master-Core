@@ -37,7 +37,7 @@ namespace DealEngine.WebUI.Models
         public string WaterLocationApproved { get; set; }
 
         public string WaterLocationMooringType { get; set; }
-        public IList<Organisation> LMarinalocation { get; set; }
+        public IList<Domain.Entities.Organisation> LMarinalocation { get; set; }
 
         public WaterLocation ToEntity(User creatingUser)
         {
@@ -48,13 +48,13 @@ namespace DealEngine.WebUI.Models
 
         public WaterLocation UpdateEntity(WaterLocation waterLocation)
         {
-            waterLocation.WaterLocationName = WaterLocationName;
-            waterLocation.WaterLocationLatitude = WaterLocationLatitude;
-            waterLocation.WaterLocationLongitude = WaterLocationLongitude;
-            waterLocation.WaterLocationApproved = WaterLocationApproved;
+            waterLocation.MarinaName = WaterLocationName;
+            waterLocation.Latitude = WaterLocationLatitude;
+            waterLocation.Longitude = WaterLocationLongitude;
+            waterLocation.Approved = WaterLocationApproved;
 
 
-            waterLocation.WaterLocationMooringType = WaterLocationMooringType;
+            waterLocation.MooringType = WaterLocationMooringType;
             return waterLocation;
         }
 
@@ -63,12 +63,11 @@ namespace DealEngine.WebUI.Models
             WaterLocationViewModel model = new WaterLocationViewModel
             {
                 WaterLocationId = waterLocation.Id,
-                WaterLocationName = waterLocation.WaterLocationName,
-                WaterLocationLatitude = waterLocation.WaterLocationLatitude,
-                WaterLocationLongitude = waterLocation.WaterLocationLongitude,
-                WaterLocationApproved = waterLocation.WaterLocationApproved,
-                WaterLocationMooringType = waterLocation.WaterLocationMooringType,
-                MarinaLocationName = waterLocation.MarinaLocationName,
+                WaterLocationLatitude = waterLocation.Latitude,
+                WaterLocationLongitude = waterLocation.Longitude,
+                WaterLocationApproved = waterLocation.Approved,
+                WaterLocationMooringType = waterLocation.MooringType,
+                MarinaLocationName = waterLocation.MarinaName,
         };
             return model;
         }

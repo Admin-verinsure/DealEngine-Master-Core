@@ -1,7 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.ProgrammeItem
 <!-- MAIN CONTENT -->
 <div id="widget-grid" class="container">
-    @Html.HiddenFor(m => m.ProgrammeId)
+    @Html.HiddenFor(m => m.Programme.Id)
 
     <ul class="nav">
         <li class="nav-item">
@@ -10,38 +10,46 @@
         @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
         {
             <li class="nav-item">
-                <a class="btn btn-primary btn-sm" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+                <a class="btn btn-primary btn-sm" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.Programme.Id" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
             </li>
             <li class="nav-item">
-                <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.ProgrammeId ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
+                <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
             </li>
 
             if (Model.IsSubclientEnabled)
             {
                 <li class="nav-item">
-                    <a onclick="location.href='@Url.Action("IssueSubUIS", "Home", new { ProgrammeId = @Model.ProgrammeId, actionname = "IssueUIS" })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Sub UIS </a>
+                    <a onclick="location.href='@Url.Action("IssueSubUIS", "Home", new { ProgrammeId = @Model.Programme.Id, actionname = "IssueUIS" })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Sub UIS </a>
                 </li>
             }
 
             <li class="nav-item">
-                <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Issue Reminder</a>
+                <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.Programme.Id"><i class="fa fa-pencil"></i>Issue Reminder</a>
             </li>
 
             <li class="nav-item">
-                <a onclick="location.href='@Url.Action("IssueUIS", "Home", new { ProgrammeId=@Model.ProgrammeId ,actionname="EditClient"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
+                <a onclick="location.href='@Url.Action("EditClients", "Home", new { ProgrammeId=@Model.Programme.Id })'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Edit Client </a>
             </li>
             <li class="nav-item">
-                @*<a class="btn btn-primary btn-sm" href="~/Home/GetBreakdown?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Breakdown</a>*@                
+                @*<a class="btn btn-primary btn-sm" href="~/Home/GetBreakdown?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-pencil"></i>Breakdown</a>*@
             </li>
-
+            @*<li class="nav-item">
+                <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.Programme.Id" class="btn btn-primary btn-sm" style="color:white">View Report </a>
+            </li>*@
+        }
+        else if (Model.CurrentUserIsProgrammeManager == "True")
+        {
+            <li class="nav-item">
+                <a class="btn btn-primary btn-sm" href="#CreateUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.Programme.Id" data-toggle="modal"><i class="fa fa-pencil"></i> Create UIS</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="location.href='@Url.Action("IssueUIS", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="IssueUIS"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue UIS </a>
+            </li>
         }
         @*<li class="nav-item">
             <a onclick="location.href='@Url.Action("getuserdetails", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>
         </li>*@
-        <li class="nav-item">
-            <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.ProgrammeId" class="btn btn-primary btn-sm" style="color:white">View Report </a>
-            @*<a onclick="location.href='@Url.Action("ReportView", "Home", new { ProgrammeId = @Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> View Report </a>*@
-        </li>
+
 
     </ul>
 
@@ -160,7 +168,7 @@
                     <button type="button" class="close" id="CreateUISModalClose" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    @Html.HiddenFor(m => m.ProgrammeId)
+                    @Html.HiddenFor(m => m.Programme.Id)
                     <div class="form-group">
                         @Html.LabelFor(m => m.OrganisationViewModel.OrganisationTypes, new { @class = "label required" })
                         <select id="Organisation.OrganisationType" name="OrganisationViewModel.OrganisationType" class="custom-select" onclick="OrganisationTypeChange(this.value)" required>
@@ -194,6 +202,10 @@
                         @Html.Label("Mobile Phone")
                         @Html.TextBox("OrganisationViewModel.Organisation.Phone", "", new { @class = "form-control", @name = "OrganisationViewModel.Organisation.Phone" })
                     </div>
+                    @*<div class="form-group">
+                        @Html.Label("Does not require Principal Advisor")
+                        @Html.DropDownList("Principal.Advisor", Model.BooleanOptions, new { @class = "form-control", @name = "Principal Advisor" })
+                    </div>*@
                 </div>
                 <div class="modal-footer">
                     <button id="next" type="submit" class="btn btn-success btn-sm">Submit</button>
@@ -261,7 +273,7 @@
              });
         });
 
-        $('#myChangeModal').on('show.bs.modal', function (e) {
+        $('#myChangeModal').on('show.bs.modal', function (e) {            
             $('.modal').css({ "width": "50%", "margin-left": "25%" });
             var dealId = $(e.relatedTarget).data('dealitem-id');
             $(e.currentTarget).find('input[name="DealId"]').val(dealId);

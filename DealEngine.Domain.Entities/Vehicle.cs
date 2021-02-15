@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities.Abstracts;
+using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
 {
 	public class Vehicle : EntityBase, IAggregateRoot
 	{
-		protected Vehicle () : base (null) { }
+		public Vehicle () : base (null) { }
 
 		public Vehicle (User createdBy, string registration, string make, string model)
 			: base (createdBy)
@@ -21,9 +22,9 @@ namespace DealEngine.Domain.Entities
 
 		public virtual Vehicle OriginalVehicle {
 			get;
-			protected set;
+			set;
 		}
-
+		[JsonIgnore]
 		public virtual ClientInformationSheet ClientInformationSheet {
 			get;
 			set;
@@ -225,11 +226,9 @@ namespace DealEngine.Domain.Entities
 		#endregion
 
 		public virtual Vehicle CloneForNewSheet (ClientInformationSheet newSheet)
-		{
-			if (ClientInformationSheet == newSheet)
-				throw new Exception ("Cannot clone vehicle for original information");
-
+		{		
 			Vehicle newVehicle = new Vehicle (newSheet.CreatedBy, Registration, Make, Model);
+			newVehicle.OriginalVehicle = this;
 			newVehicle.Year = Year;
 			newVehicle.VIN = VIN;
 			newVehicle.ChassisNumber = ChassisNumber;
@@ -243,10 +242,10 @@ namespace DealEngine.Domain.Entities
 			newVehicle.VehicleType = VehicleType;
 			newVehicle.UseType = UseType;
 			newVehicle.SubUseType = SubUseType;
-			newVehicle.InterestedParties = new List<Organisation> (InterestedParties);
+			newVehicle.InterestedParties = InterestedParties.ToList();
 			newVehicle.Notes = Notes;
 			newVehicle.Validated = Validated;
-			newVehicle.GarageLocation = newSheet.Locations.FirstOrDefault (l => l.OriginalLocation.Id == GarageLocation.Id);
+			newVehicle.GarageLocation = GarageLocation;
 			if (VehicleEffectiveDate > DateTime.MinValue)
 				newVehicle.VehicleEffectiveDate = VehicleEffectiveDate;
 			if (VehicleCeaseDate > DateTime.MinValue)
@@ -256,8 +255,6 @@ namespace DealEngine.Domain.Entities
 				newVehicle.VehicleInceptionDate = VehicleInceptionDate;
 			if (VehicleExpireDate > DateTime.MinValue)
 				newVehicle.VehicleExpireDate = VehicleExpireDate;
-
-			newVehicle.OriginalVehicle = this;
 			return newVehicle;
 		}
 	}

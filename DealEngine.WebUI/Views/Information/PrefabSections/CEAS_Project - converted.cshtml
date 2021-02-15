@@ -4,17 +4,16 @@
     int count = 0;
 }
 <div id="Project" class="container-fluid">
-    <form id="ProjectViewModel">
         <input id="ProjectId" name="ProjectViewModel.ProjectId" hidden />
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="tab1">
-                <a class="nav-link active" href="#projecttab1" data-toggle="tab" onclick="ResetFormView('ProjectViewModel', 'projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> List All </a>
+                <a class="nav-link active" href="#projecttab1" data-toggle="tab" onclick="ResetForm('projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> List All </a>
             </li>
             <li class="nav-item" id="tab2">
                 <a class="nav-link" href="#projecttab2" data-toggle="tab"> Edit </a>
             </li>
             <li class="nav-item" id="tab3">
-                <a class="nav-link" href="#projecttab3" data-toggle="tab" onclick="ResetFormView('ProjectViewModel', 'projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> Add </a>
+                <a class="nav-link" href="#projecttab3" data-toggle="tab" onclick="ResetForm('projecttab3','projecttab2', 'Project', 'ProjectAddButton', 'ProjectCancelButton')"> Add </a>
             </li>
             <li class="nav-item" id="tab4">
                 <a class="nav-link" href="#projecttab4" data-toggle="tab"> List Removed </a>
@@ -63,100 +62,102 @@
                 </div>
             </div>
             <div id="projecttab3" class="tab-pane" role="tabpanel">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="projecttitle" class="label required">
-                                Your Client (i.e. Employer)
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextAreaFor(m => m.ProjectViewModel.ContractTitle, new { id = "projecttitle", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="projectdetails" class="label required">
-                                The Project Description
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDescription, new { id = "projectdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                <form id="ProjectViewModel">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="projecttitle" class="label required">
+                                    Your Client (i.e. Employer)
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextAreaFor(m => m.ProjectViewModel.ContractTitle, new { id = "projecttitle", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="projectcountry" class="label">
-                                Country/Territories
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            <select id="projectcountry" name="ProjectViewModel.Country" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.ProjectViewModel.Territories)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                }
-                            </select>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="projectdetails" class="label required">
+                                    The Project Description
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDescription, new { id = "projectdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="projectmajorresponsibilities" class="label required">
-                                Your Major Responsibilities
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.MajorResponsibilities, new { id = "projectmajorresponsibilities", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="projectfees" class="label required">
-                                Your Earned Fees
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.Fees, new { id = "projectfees", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="projectcountry" class="label">
+                                    Country/Territories
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                <select id="projectcountry" name="ProjectViewModel.Country" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.ProjectViewModel.Territories)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="contractdetails" class="label">
-                                The Construction Value (if any)
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.ConstructionValue, new { id = "contractdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)"})
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="durationdetails" class="label">
-                                Duration (Months):
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDuration, new { id = "durationdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="projectmajorresponsibilities" class="label required">
+                                    Your Major Responsibilities
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.ProjectViewModel.MajorResponsibilities, new { id = "projectmajorresponsibilities", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="projectfees" class="label required">
+                                    Your Earned Fees
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.ProjectViewModel.Fees, new { id = "projectfees", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="contractdetails" class="label">
+                                    The Construction Value (if any)
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.ProjectViewModel.ConstructionValue, new { id = "contractdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="durationdetails" class="label">
+                                    Duration (Months):
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                @Html.TextBoxFor(m => m.ProjectViewModel.ProjectDuration, new { id = "durationdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <a class="btn btn-sm btn-success text-light" id="ProjectAddButton" onclick="AddProject('Projects')"> Add </a>
-                    <a class="btn btn-sm btn-danger text-light" id="ProjectCancelButton" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Clear and Cancel </a>
-                </div>
+                    <div class="form-group">
+                        <a class="btn btn-sm btn-success text-light" id="ProjectAddButton" onclick="AddProject('Projects')"> Add </a>
+                        <a class="btn btn-sm btn-danger text-light" id="ProjectCancelButton" onclick="Cancel('ProjectViewModel', 'projecttab1')"> Clear and Cancel </a>
+                    </div>
+                </form>
             </div>
             <div id="projecttab4" class="tab-pane" role="tabpanel">
                 <table id="tblRemovedProject"
@@ -192,7 +193,6 @@
                 </table>
             </div>
         </div>
-    </form>
 </div>
 
 
@@ -683,7 +683,7 @@
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                         debugger;
-                alert("There was an error while trying to save the Vehicle.");
+                alert("There was an error while trying to Edit CEAS Project.");
             });
     };
 

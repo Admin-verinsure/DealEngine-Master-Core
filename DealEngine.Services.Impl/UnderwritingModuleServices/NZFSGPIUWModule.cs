@@ -62,6 +62,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
+
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             decimal feeincome = 0;
@@ -175,35 +179,37 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
                     var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
-                    if(unit!= null)
+                    if (unit != null)
                     {
-                        intnumberofadvisors += 1;
-
-                        if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
                         {
-                            advisorhasnocrmid = true;
+                            intnumberofadvisors += 1;
+                            if (!advisorhasnocrmid && string.IsNullOrEmpty(unit.MyCRMId))
+                            {
+                                advisorhasnocrmid = true;
+                            }
                         }
                     }
-                }
+                }                                    
             }
 
             bool subuisreferred = false;
-            if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
-            {
-                foreach (var subuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null))
-                {
-                    if ((subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasDamageLossOptions").First().Value == "1" ||
-                        subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasWithdrawnOptions").First().Value == "1" ||
-                        subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
-                        subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
-                        subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
-                        subuis.ClaimNotifications.Where(subacscn => subacscn.DateDeleted == null && (subacscn.ClaimStatus == "Settled" || subacscn.ClaimStatus == "Precautionary notification only" || subacscn.ClaimStatus == "Part Settled")).Count() > 0) &&
-                        !subuisreferred)
-                    {
-                        subuisreferred = true;
-                    }
-                }
-            }
+            //if (agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null).Count() > 0)
+            //{
+            //    foreach (var subuis in agreement.ClientInformationSheet.SubClientInformationSheets.Where(subuis => subuis.DateDeleted == null))
+            //    {
+            //        if ((subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasDamageLossOptions").First().Value == "1" ||
+            //            subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasWithdrawnOptions").First().Value == "1" ||
+            //            subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
+            //            subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
+            //            subuis.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
+            //            subuis.ClaimNotifications.Where(subacscn => subacscn.DateDeleted == null && (subacscn.ClaimStatus == "Settled" || subacscn.ClaimStatus == "Precautionary notification only" || subacscn.ClaimStatus == "Part Settled")).Count() > 0) &&
+            //            !subuisreferred)
+            //        {
+            //            subuisreferred = true;
+            //        }
+            //    }
+            //}
 
 
             ClientAgreementEndorsement afendorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Professional Services & Business Description Extension");
@@ -268,6 +274,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
             term2millimitpremiumoption.Premium = TermPremium2mil;
+            term2millimitpremiumoption.BasePremium = TermPremium2mil;
             term2millimitpremiumoption.Excess = TermExcess;
             term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
@@ -278,6 +285,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
             term3millimitpremiumoption.Premium = TermPremium3mil;
+            term3millimitpremiumoption.BasePremium = TermPremium3mil;
             term3millimitpremiumoption.Excess = TermExcess;
             term3millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term3millimitpremiumoption.Brokerage = TermBrokerage3mil;
@@ -288,12 +296,60 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
             term5millimitpremiumoption.Premium = TermPremium5mil;
+            term5millimitpremiumoption.BasePremium = TermPremium5mil;
             term5millimitpremiumoption.Excess = TermExcess;
             term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
 
+            //Change policy premium claculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term3millimitpremiumoption.PremiumDiffer = (TermPremium3mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindays / agreementperiodindays;
+                        term2millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term2millimitpremiumoption.TermLimit == term.TermLimit && term2millimitpremiumoption.Excess == term.Excess)
+                        {
+                            term2millimitpremiumoption.Bound = true;
+                        }
+                        term3millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term3millimitpremiumoption.TermLimit == term.TermLimit && term3millimitpremiumoption.Excess == term.Excess)
+                        {
+                            term3millimitpremiumoption.Bound = true;
+                        }
+                        term5millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimitpremiumoption.TermLimit == term.TermLimit && term5millimitpremiumoption.Excess == term.Excess)
+                        {
+                            term5millimitpremiumoption.Bound = true;
+                        }
+                        if (term2millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term2millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                        if (term3millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term3millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                        if (term5millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Claims / Insurance History
@@ -584,7 +640,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
+                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && !acscn.Removed && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }

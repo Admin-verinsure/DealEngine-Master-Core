@@ -1,5 +1,6 @@
 ﻿<script type="text/javascript">
     function OnClick(Method, Type, Id, SheetId) {
+        debugger;
         if (Type == "Organisation") {
             $.ajax({
                 url: '@Url.Action("GetOrganisation", "Organisation")',
@@ -21,15 +22,18 @@
     }
 
     function EditOrganisation() {
+        debugger;
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 
-    function RemoveOrganisation(organisationId, AccordionId) {
+    function RemoveOrganisation(organisationId, AccordionId) {        
+        var programmeId = document.getElementById("Programme_Id").value;
+        var clientInformationId = document.getElementById("AnswerSheetId").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
-            url: '@Url.Action("RemoveOrganisation", "Services")',
+            url: '@Url.Action("RemoveOrganisation", "Organisation")',
             type: "POST",
-            data: { OrganisationId: organisationId },
+            data: { OrganisationId: organisationId, ProgrammeId: programmeId, ClientInformationId: clientInformationId },
             success: function (Data) {
                 try {
                     location.reload();
@@ -37,6 +41,7 @@
                     debugger;
                 }
             }, error: function (request, error) {
+                window.alert("There is no User record for this Organisation.");
                 debugger;
             }
         });
@@ -45,7 +50,7 @@
     function RestoreOrganisation(organisationId, AccordionId) {
         sessionStorage.setItem('accordianTrigger', AccordionId);
         $.ajax({
-            url: '@Url.Action("RestoreOrganisation", "Services")',
+            url: '@Url.Action("RestoreOrganisation", "Organisation")',
             type: "POST",
             data: { OrganisationId: organisationId },
             success: function (Data) {
@@ -58,16 +63,29 @@
                 debugger;
             }
         });
-    }
+    }    
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
-        var editTabHTML = document.getElementById(EditTabId);
         var addTabHTML = document.getElementById(AddTabId);
-        editTabHTML.innerHTML = addTabHTML.innerHTML;
+        var editTabHTML = document.getElementById(EditTabId);
+        var form = document.getElementById(addTabHTML.firstElementChild.id);
+        editTabHTML.innerHTML = "";
+        var obj = $("#" + form.id).clone();
+        $("#" + EditTabId).append(obj);
+        form = document.getElementById(editTabHTML.firstElementChild.id);
         addTabHTML.innerHTML = "";
         document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";        
         SetCurrentTab(EditTabId);
+        var lists = form.getElementsByClassName("chosen-select");
+        if (lists != null) {     
+            for (i = 0; i < lists.length; i++) {
+                var chosenList = document.getElementById(lists[i].id);
+                chosenList.nextElementSibling.remove();
+            }            
+            $(".chosen-select").chosen({ width: "95%" });
+
+        }
     }
 
     function ImportValue(Element, Value) {
@@ -140,10 +158,21 @@
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
-            var addTabHTML = document.getElementById(AddTabId);
-            addTabHTML.innerHTML = editTabHTML.innerHTML;
+            var form = document.getElementById(editTabHTML.firstElementChild.id);
+            var obj = $("#" + form.id).clone();
+            $("#" + AddTabId).append(obj);                       
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
+            var addTabHTML = document.getElementById(AddTabId);
+            form = document.getElementById(addTabHTML.firstElementChild.id);       
+            var lists = form.getElementsByClassName("chosen-select");
+            if (lists != null) {
+                for (i = 0; i < lists.length; i++) {
+                    var chosenList = document.getElementById(lists[i].id);
+                    chosenList.nextElementSibling.remove();
+                } 
+                $(".chosen-select").chosen({ width: "95%" });
+            }
         }
         document.getElementById(AddButtonId).innerText = "Add";
         document.getElementById(CancelButtonId).innerText = "Clear and Cancel";
@@ -158,7 +187,8 @@
             $.ajax({
                 url: '@Url.Action("AddLocation", "Services")',
                 type: "POST",
-                data: $("#tab_1 :input").serialize({ json: true })
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
             })
                 .done(function () {
                     //Save the session and reload
@@ -207,8 +237,7 @@
 
     function EditLocation(Id, LocationType, CommonName, Street, City, Country, Suburb, Postcode) {
         event.preventDefault();
-        CloneFormView("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
-
+        CloneForm("locationtab3", "locationtab2", "LocationAddButton", "LocationCancelButton");
         document.getElementById("LocationId").value = Id;
         document.getElementById("locationtypeoptions").value = LocationType;
         document.getElementById("commonnamedetails").value = CommonName;
@@ -217,7 +246,6 @@
         document.getElementById("countrydetails").value = Country;
         document.getElementById("suburbdetails").value = Suburb;
         document.getElementById("postcodedetails").value = Postcode;
-
         SetCurrentTab("locationtab2");
     }
 
@@ -278,7 +306,6 @@
             });
     }
 
-
     function RestoreResearchHouse(Id) {
         sessionStorage.setItem('accordianTrigger', 'Independent Research');
         var postData = { ProjectId: Id };
@@ -300,7 +327,7 @@
         ProjectTitle, ProjectType, ProjectCountry, ProjectMajorResponsibilities, ProjectResponsibilityData) {
 
         event.preventDefault();
-        CloneFormView("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
+        CloneForm("projecttab3", "projecttab2", "ProjectAddButton", "ProjectCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("projectdetails") != null) {
@@ -370,7 +397,7 @@
 
     function EditResearchHouse(Id, ResearchServices, ResearchName) {
         event.preventDefault();
-        CloneFormView("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
+        CloneForm("ResearchHouse3", "ResearchHouse2", "ResearchAddButton", "ResearchHouseCancelButton");
 
         document.getElementById("ProjectId").value = Id;
         if (document.getElementById("researchName") != null) {
@@ -421,5 +448,55 @@
                 debugger;
             });
     }
+    function RemoveTask(Id, URL, Name) {
+        var searchParams = URL.split('/').slice(3, 4).join('/').substring(1);
+        var parsedParams = parse_query_string(searchParams);
+
+        // #region Better Code when IE goes away - not tested but using URLSearchParams is best
+        // IE doesn't like this but we can use once IE is gone next year. :) Can still use old way to get the taskType
+        //var url = new URL('http://irrelevant.domain/' + URL);
+        //var searchUrl = new URLSearchParams(url);
+        //var programmeId = searchUrl.get('ProgrammeId');
+        //var organisationId = searchUrl.get('OrganisationId');
+        // #endregion
+
+        var postData = { taskId: Id, taskName: Name, programmeId: parsedParams.ProgrammeId, organisationId: parsedParams.OrganisationId };
+        $.ajax({
+            url: '@Url.Action("RemoveTask", "Milestone")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                window.location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
+    }
+
+    function parse_query_string(query) {
+        var vars = query.split("&");
+        var query_string = {};
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            // If first entry with this name
+            if (typeof query_string[key] === "undefined") {
+                query_string[key] = decodeURIComponent(value);
+                // If second entry with this name
+            }
+            else if (typeof query_string[key] === "string") {
+                var arr = [query_string[key], decodeURIComponent(value)];
+                query_string[key] = arr;
+                // If third or later entry with this name
+            }
+            else {
+                query_string[key].push(decodeURIComponent(value));
+            }
+        }
+        return query_string;
+    }
+
 
 </script>

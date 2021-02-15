@@ -14,29 +14,20 @@ namespace DealEngine.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
-        IMapperSession<Programme> _programmeRepository;
         IMapperSession<Reference> _referenceRepository;
-        IMapperSession<Boat> _boatRepository;
-        IMapperSession<Organisation> _organisationRepository;
-        IMapperSession<User> _userRepository;
-        IMapper _mapper;
-
+        IUserService _userService;
+        IOrganisationService _organisationService;
         public ClientInformationService(
-            IMapperSession<Programme> programmeRepository,
+            IOrganisationService organisationService,
             IMapperSession<Reference> referenceRepository,
-            IMapperSession<User> userRepository,
-            IMapperSession<Organisation> organisationRepository,
-            IMapperSession<ClientInformationSheet> customerInformationRepository, 
-            IMapperSession<Boat> boatRepository,
-            IMapper mapper
+            IUserService userService,
+            IMapperSession<ClientInformationSheet> customerInformationRepository
             )
         {
+            _organisationService = organisationService;
             _referenceRepository = referenceRepository;
-            _userRepository = userRepository;
-            _organisationRepository = organisationRepository;
-            _mapper = mapper;
+            _userService = userService;
             _customerInformationRepository = customerInformationRepository;
-            _boatRepository = boatRepository;
         }
 
         public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
@@ -52,7 +43,7 @@ namespace DealEngine.Services.Impl
                 throw new Exception("ClientProgramme [" + clientProgramme.Id + "] already has an InformationSheet assigned");
 
             ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, clientProgramme.BaseProgramme.Products.FirstOrDefault().InformationTemplate, reference);
-            
+
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;
             await _customerInformationRepository.AddAsync(sheet);
@@ -62,14 +53,14 @@ namespace DealEngine.Services.Impl
 
         public async Task<ClientInformationSheet> GetInformation(Guid informationSheetId)
         {
-            return await _customerInformationRepository.GetByIdAsync(informationSheetId);            
+            return await _customerInformationRepository.GetByIdAsync(informationSheetId);
         }
 
         public async Task<List<ClientInformationSheet>> GetAllInformationFor(User owner)
         {
             var list = new List<ClientInformationSheet>();
             var sheetList = await _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner)).ToListAsync();
-            foreach(var sheet in sheetList)
+            foreach (var sheet in sheetList)
             {
                 var isBaseClass = await IsBaseClass(sheet);
                 if (isBaseClass)
@@ -84,21 +75,6 @@ namespace DealEngine.Services.Impl
         {
             var list = new List<ClientInformationSheet>();
             var sheetList = await _customerInformationRepository.FindAll().Where(s => s.Owner == owner).ToListAsync();
-            foreach (var sheet in sheetList)
-            {
-                var isBaseClass = await IsBaseClass(sheet);
-                if (isBaseClass)
-                {
-                    list.Add(sheet);
-                }
-            }
-            return list;
-        }
-
-        public async Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId)
-        {
-            var list = new List<ClientInformationSheet>();
-            var sheetList = await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
             foreach (var sheet in sheetList)
             {
                 var isBaseClass = await IsBaseClass(sheet);
@@ -134,7 +110,7 @@ namespace DealEngine.Services.Impl
 
             BuildAnswerFromModel(sheet, collection, user);
             await UpdateInformation(sheet);
-            await _userRepository.UpdateAsync(user);
+            await _userService.Update(user);
         }
 
         private async void BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection, User user)
@@ -154,12 +130,13 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("OTViewModel", StringComparison.CurrentCulture))); 
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GeneralViewModel", StringComparison.CurrentCulture)));
         }
 
         private void AnswerFromUserDetails(User user, IFormCollection collection, IEnumerable<string> enumerable)
         {
-            foreach(string key in enumerable)
+            foreach (string key in enumerable)
             {
                 try
                 {
@@ -167,7 +144,7 @@ namespace DealEngine.Services.Impl
                     var userProperty = user.GetType().GetProperty(userFieldAttribute);
                     userProperty.SetValue(user, collection[key].ToString());
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
@@ -212,9 +189,9 @@ namespace DealEngine.Services.Impl
                     {
                         var variabletype = sheet.RoleData.AdditionalRoleInformation.GetType();
                         var field = variabletype.GetProperty(modelArray.LastOrDefault());
-                        
+
                         field.SetValue(sheet.RoleData.AdditionalRoleInformation, collection[key].ToString());
-                        
+
                     }
                 }
                 catch (Exception ex)
@@ -229,7 +206,7 @@ namespace DealEngine.Services.Impl
         {
             foreach (var key in enumerable)
             {
-                sheet.AddAnswer(key, collection[key]);
+                sheet.AddAnswer(key, collection[key]);          
             }
         }
 
@@ -317,20 +294,9 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
-        {
-            var clientList = new List<ClientInformationSheet>();
-            var boats = await _boatRepository.FindAll().Where(b => b.BoatName == searchValue).ToListAsync();
-            foreach(var boat in boats)
-            {
-                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(boat)).ToList());
-            }
-            return clientList;
-        }
-
         public async Task<SubClientInformationSheet> IssueSubInformationFor()
         {
-            return new SubClientInformationSheet();            
+            return new SubClientInformationSheet();
         }
 
         public async Task UnlockSheet(ClientInformationSheet sheet, User user)
@@ -347,35 +313,40 @@ namespace DealEngine.Services.Impl
 
         public async Task<SubClientInformationSheet> GetSubInformationSheetFor(Organisation principal)
         {
-            return (SubClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Owner == principal);                     
+            var list = await _customerInformationRepository.FindAll().Where(s => s.Owner == principal).ToListAsync();
+            var clientsheet = list.LastOrDefault();
+            return (SubClientInformationSheet)clientsheet;
         }
 
-        public async Task<List<ClientInformationSheet>> FindByAdvisoryName(IFormCollection collection)
-        {
-            //var programmes = await 
-            //var clientList = new List<ClientInformationSheet>();
-            //var orgs = await _organisationRepository.FindAll().Where(b => b.Name.Contains(searchValue)).ToListAsync();
-            //foreach (var org in orgs)
-            //{
-            //    clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Organisation.Contains(org)).ToList());
-            //}
-            return null;
-        }
         public async Task<ClientInformationSheet> GetInformationSheetforOrg(Organisation organisation)
         {
-                return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
-
+            return (ClientInformationSheet)await _customerInformationRepository.FindAll().FirstOrDefaultAsync(s => s.Organisation.Contains(organisation));
         }
 
-        public async Task RemoveOrganisationFromSheets(Organisation organisation)
+        public async Task DetachOrganisation(IFormCollection collection)
         {
-            var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(organisation)).ToListAsync();
-            foreach(var sheet in iSheets)
+            if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
             {
-                sheet.Organisation.Remove(organisation);                
-                await _customerInformationRepository.UpdateAsync(sheet);
-            }
+                if (AttachOrganisationId != Guid.Empty)
+                {
+                    var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
+                    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
+                    if (User != null)
+                    {
+                        User.PrimaryOrganisation.Removed = false;
+                        await _userService.Update(User);
+                        var iSheets = await _customerInformationRepository.FindAll().Where(s => s.Organisation.Contains(User.PrimaryOrganisation)).ToListAsync();
+                        foreach (var sheet in iSheets)
+                        {
+                            sheet.Organisation.Remove(User.PrimaryOrganisation);
+                            await _customerInformationRepository.UpdateAsync(sheet);
+                        }
+                    }
+                }
+            }                       
         }
     }
+
+
 }
 

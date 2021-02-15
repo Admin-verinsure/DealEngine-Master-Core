@@ -36,11 +36,13 @@
                             <h2>Client Information Sheet Section</h2>
                         </header>
                         <!-- widget div-->
-                        @if(Model.SectionView != ""){
-                        @Html.Partial("PrefabSections/" + Model.SectionView, Model)
+                        @if (Model.SectionView != "")
+                        {
+                            @Html.Partial("PrefabSections/" + Model.SectionView, Model)
 
                         }
 
+                        
 
                     </div>
                 </article>
@@ -98,6 +100,7 @@
 
              }
 
+           
 
         });
     </script>

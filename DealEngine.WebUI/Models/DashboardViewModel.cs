@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DealEngine.Domain.Entities;
 
 namespace DealEngine.WebUI.Models
@@ -90,6 +91,7 @@ namespace DealEngine.WebUI.Models
 		public string AgreementStatus { get; set; }
 		public string DocSendDate { get; set; }
 		public Boolean IsSubclientSubmitted { get; set; }
+		public bool IsChange { get; set; }
 		public string GetStatusDisplay(string agreementstatus)
 		{
 			List<string> statusDisplay = new List<string>();
@@ -111,39 +113,66 @@ namespace DealEngine.WebUI.Models
 
 	public class ProgrammeItem : BaseViewModel
 	{
-		public ProgrammeItem()
+		[Obsolete]
+        public ProgrammeItem(Domain.Entities.Programme baseProgramme)
         {
-            try
-            {
-				OrganisationViewModel = new OrganisationViewModel(null, null);
-			}
-			catch(Exception ex)
-            {
-				throw ex;
-            }
+			OrganisationViewModel = new OrganisationViewModel(null, null);
+			Programme = baseProgramme;
+			Deals = new List<DealItem>();
 		}
-		public string Name { get; set; }
 
-		public string ProgrammeId { get; set; }
+        public ProgrammeItem(List<ClientInformationSheet> sheets)
+        {
+			OrganisationViewModel = new OrganisationViewModel(null, null);
+			Programme = sheets.FirstOrDefault().Programme.BaseProgramme;
+			BuildDeals(sheets);
+        }
 
+        private void BuildDeals(List<ClientInformationSheet> sheets)
+        {
+			Deals = new List<DealItem>();
+			foreach (ClientInformationSheet sheet in sheets)
+			{
+				ClientProgramme client = sheet.Programme;
+
+				string status = client.InformationSheet.Status;
+				string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
+				string localDateSubmitted = null;
+
+				if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+				{
+					localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
+				}
+
+				Deals.Add(new DealItem
+				{
+					Id = client.Id.ToString(),
+					Name = sheet.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+					LocalDateCreated = localDateCreated,
+					LocalDateSubmitted = localDateSubmitted,
+					Status = status,
+					SubClientProgrammes = client.SubClientProgrammes,
+					ReferenceId = client.InformationSheet.ReferenceId// Move into ClientProgramme?
+				});
+			}
+		}
 		public IList<string> Languages { get; set; }
-
 		public IList<DealItem> Deals { get; set; }
-		public OrganisationViewModel OrganisationViewModel { get; set; }
-
 		public string CurrentUserIsBroker { get; set; }
-
 		public string CurrentUserIsInsurer { get; set; }
-
 		public string CurrentUserIsTC { get; set; }
-		public string ProgrammeClaim { get; set; }
+		public string CurrentUserIsProgrammeManager { get; set; }
 		public bool IsSubclientEnabled { get; set; }
-
-	}
+		public OrganisationViewModel OrganisationViewModel { get; set; }
+        public Domain.Entities.Programme Programme { get; internal set; }
+		public ChangeReason ChangeReason { get; set; }
+    }
 
 	public class TaskItem : BaseViewModel
 	{
 		public Guid Id { get; set; }
+
+
 		public string ClientName { get; set; }
 
 		public string Description { get; set; }

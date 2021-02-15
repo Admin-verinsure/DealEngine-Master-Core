@@ -33,7 +33,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditRegisteredMotorVehicle(\'rmv\', \'' + cellvalue + '\'); SetCurrentTab(\'rmvTabs3\');" type="button"class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                            return ('<button onclick="EditRegisteredMotorVehicle(\'rmv\', \'' + cellvalue + '\'); SetCurrentTab(\'rmvTabs3\');" type="button"class="btn btn-success btn-sm">Edit <i class="fa fa-edit"></i></button>');
                                         }
                                         //{ return '<button onclick="alert(&quot;'+cellvalue+'&quot;);" type="button">Edit</button>'; }
                                     },
@@ -224,7 +224,7 @@
                                 <label class="label required">Effective Date</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control rmv" data-dateformat="dd/mm/yy" id="EffectiveDate" type="text" required>
+                                    <input name="EffectiveDate" placeholder="Effective Date" class="form-control rmv" id="EffectiveDate" type="text" required>
                                 </label>
                                 <p class="validationContainer" id="validateEffectiveDate"></p>
                             </section>
@@ -376,7 +376,7 @@
                                 <label class="label required">Effective Date</label>
                                 <label class="input">
                                     <i class="icon-append fa fa-calendar"></i>
-                                    <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control rmv" data-dateformat="dd/mm/yy" id="AddEffectiveDate" type="text" required>
+                                    <input name="EffectiveDate" placeholder="Effective Date" class="form-control rmv" id="AddEffectiveDate" type="text" required>
                                 </label> <p class="validationContainer" id="validateAddEffectiveDate"></p>
                             </section>
                             @*@if (Model.IsChange)

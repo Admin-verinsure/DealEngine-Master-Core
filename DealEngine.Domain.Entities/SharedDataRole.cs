@@ -24,6 +24,15 @@ namespace DealEngine.Domain.Entities
                 DataRoles = CreateRoles(sheet);
             }
         }
+        public virtual RoleData CloneForNewSheet(ClientInformationSheet newSheet)
+        {
+            RoleData newRoleData = new RoleData();
+            newRoleData.AdditionalRoleInformation = AdditionalRoleInformation;
+            newRoleData.CreatedBy = newSheet.CreatedBy;
+            newRoleData.DataRoles = DataRoles.ToList();
+            newRoleData.DateCreated = DateTime.Now;
+            return newRoleData;
+        }
 
         private IList<SharedDataRole> CreateRoles(ClientInformationSheet sheet)
         {

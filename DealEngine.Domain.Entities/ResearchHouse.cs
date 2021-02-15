@@ -30,6 +30,17 @@ namespace DealEngine.Domain.Entities
         }
         public virtual string Services { get; set; }
         public virtual string Name { get; set; }
-     
+        public virtual ResearchHouse CloneForNewSheet(ClientInformationSheet newSheet)
+        {
+            ResearchHouse newResearchHouse = new ResearchHouse(newSheet.CreatedBy);
+            newResearchHouse.ClientInformationSheet = newSheet;
+            newResearchHouse.ConstructionValue = ConstructionValue;
+            newResearchHouse.DateCreated = DateTime.Now;
+            newResearchHouse.Name = Name;
+            newResearchHouse.Services = Services;
+            return newResearchHouse;
+        }
     }
+
+
 }

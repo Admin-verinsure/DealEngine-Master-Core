@@ -27,6 +27,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<User> AgreementBoundNotifyUsers { get; set; }
         public virtual IList<User> PaymentConfigNotifyUsers { get; set; }
         public virtual IList<User> InvoiceConfigNotifyUsers { get; set; }
+        public virtual IList<User> RemoveAdvisorNotifyUsers { get; set; }
         public virtual bool StopAgreement { get; set; }
         public virtual bool StopDeclaration { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
@@ -59,6 +60,10 @@ namespace DealEngine.Domain.Entities
         public virtual bool ProgEnableSendPremiumAdvice { get; set; }
         public virtual string PremiumAdviceRecipent { get; set; }
         public virtual string PremiumAdviceRecipentCC { get; set; }
+        public virtual bool EnableFullProposalReport{ get; set; }
+        public virtual string FullProposalReportRecipent { get; set; }
+        public virtual bool EnableMonthlyPremiumDisplay { get; set; }
+        public virtual int MonthlyInstalmentNumber { get; set; }
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)
@@ -78,6 +83,7 @@ namespace DealEngine.Domain.Entities
             AgreementBoundNotifyUsers = new List<User>();
             PaymentConfigNotifyUsers = new List<User>();
             InvoiceConfigNotifyUsers = new List<User>();
+            RemoveAdvisorNotifyUsers = new List<User>();
             Packages = new List<Package>();
         }
 

@@ -37,6 +37,7 @@
     });
 
     function OnChange(Id, Name) {
+        debugger;
         var obj = document.getElementById(Id);
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
@@ -115,6 +116,7 @@
     }
 
     function DefaultRule(Value, Name) {
+        debugger;
         if (Value === "1") {
             ShowElement(Name);
         } else {
@@ -132,7 +134,6 @@
                     Value = "2";
                 }
             }
-
             if (Value == 'true' || Value == 'false') {
                 if (Value == 'true') {
                     Value = "1";
@@ -197,7 +198,7 @@
                 if (Value == "1") {
                     document.getElementById(ids[0]).hidden = false;
                 }
-                else if (Value == "2"){
+                else if (Value == "2") {
                     document.getElementById(ids[1]).hidden = false;
                 }
             }
@@ -248,14 +249,17 @@
                 DefaultRule(Value, element.name);
             }
             if (Rule === "OTAlert") {
-                var OTAlert = "Please ensure that you provide details in the notification section";
-                Value = ShowAlert(Value, OTAlert);
+                var sheetstatus = document.getElementById("ClientInformationSheet_Status").value;
+                if (sheetstatus == "Started") {
+                   var OTAlert = "Please ensure that you provide details in the notification section";
+                   Value = ShowAlert(Value, OTAlert);
+                }
             }
             if (Rule === "OrganisationType") {
                 OrganisationTypeOnChange(Value);
             }
             if (Rule === "OrganisationEmail") {
-                var Form = document.getElementById("organisationViewModel"); 
+                var Form = document.getElementById("organisationViewModel");
                 $.ajax({
                     url: '@Url.Action("ValidateOrganisationEmail", "Organisation")',
                     type: "POST",
@@ -275,8 +279,106 @@
                     }
                 });
             }
+            if (Rule === "GetMilestone") {
+                var Form = document.getElementById("MilestoneViewModel");
+                $.ajax({
+                    url: '@Url.Action("GetMilestone", "Milestone")',
+                    type: "POST",
+                    data: $("#" + Form.id).serialize(),
+                    success: function (Data) {
+                        var OutPut = JSON.parse(Data);
+                        PopulateMilestoneView("", OutPut);
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
+            if (Rule === "DefaultEffectiveDate") {
+                var datefix = Value.replaceAll('-', '');
+                var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var newDate = new Date(year, month - 1, day);
+                $('#AddBoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#BoatEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#AddPlantEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#EffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#MotorEffectiveDate').datepicker('option', 'minDate', newDate);
+                $('#TrailerEffectiveDateModal').datepicker('option', 'minDate', newDate);
+
+                document.getElementById("AddBoatEffectiveDate").value = Value;
+                document.getElementById("BoatEffectiveDate").value = Value;
+                document.getElementById("AddEffectiveDate").value = Value;
+                document.getElementById("AddPlantEffectiveDate").value = Value;
+                document.getElementById("EffectiveDate").value = Value;
+                document.getElementById("MotorEffectiveDate").value = Value;
+                document.getElementById("TrailerEffectiveDateModal").value = Value;
+            }
+            if (Rule === "OtherOptions") {
+                if (obj.multiple) {
+                    for (var i = 0; i < obj.selectedOptions.length; i++) {
+                        if (obj.selectedOptions[i].value != "Other") {
+                            DefaultRule("2", Name);
+                        } else {
+                            DefaultRule("1", Name);
+                            break;
+                        }
+                    }
+                }
+                else if (Value == "Other") {
+                    DefaultRule("1", Name);
+                }
+                else {
+                    DefaultRule("2", Name);
+                }
+            }
+            if (Rule == "ValidateDateOfCommencement") {
+                var id = document.getElementById("ClientProgramme_Id");
+                $.ajax({
+                    url: '@Url.Action("ValidateDateOfCommencement", "Services")',
+                    type: "POST",
+                    data: { Id: id.value, Date: Value},
+                    success: function (Data) {
+                        var element = document.getElementById("AdvisorUnit.DateofCommencement");
+                        if (Data == true) {
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-invalid");
+                        }
+                        else {
+                            element.classList.remove("is-invalid");
+                            element.classList.add("is-valid");
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
+            if (Rule == "AttachOrganisationEmail") {
+                var Form = document.getElementById("attachOrganisationViewModel");
+                $.ajax({
+                    url: '@Url.Action("ValidateAttachOrganisationEmail", "Organisation")',
+                    type: "POST",
+                    data: $("#" + Form.id).serialize(),
+                    success: function (Data) {
+                        var element = document.getElementById("RemovedOrganisation.Email");
+                        if (Data == true) {
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-invalid");
+                            ShowElement(Name);
+                        }
+                        else {
+                            element.classList.remove("is-invalid");
+                            element.classList.add("is-valid");
+                            ShowElement(Name);
+                        }
+                    }, error: function (request, error) {
+                        debugger;
+                    }
+                });
+            }
         } catch (ex) {
-            //these rules need to be re-run regardless of the catch            
+            //these rules need to be re-run regardless of the catch
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
@@ -301,37 +403,37 @@
     }
 
     function OrganisationTypeOnChange(Value) {
-        //defaults
-        document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;
-        var IsPrincipalAdvisor = document.getElementById("HidePrincipalAdvisor");
-        if (IsPrincipalAdvisor != null) {
-            IsPrincipalAdvisor.hidden = false;
-        }
-        var IsTripleAApproval = document.getElementById("HideTripleAApproval");
-        if (IsTripleAApproval != null) {
-            IsTripleAApproval.hidden = false;
-        }
+        //reset views to default
+        ResetOrganisationUnitView();
 
         var List = document.getElementById("Organisation.OrganisationType");
         List.disabled = false;
-
         if (Value == "Advisor" ||
             Value == "Personnel" ||
             Value == "Principal" ||
             Value == "Administration" ||
-            Value == "Nominated Representative") {
+            Value == "Nominated Representative" ||
+            Value == "Contractor" ||
+            Value == "Planner" ||
+            Value == "Skipper" ||
+            Value == "Mentored Advisor") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
-                IsPrincipalAdvisor.hidden = true;
-                IsTripleAApproval.hidden = true;
-                document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+                AdvisorOnChange();
             }
+
+            if (Value == "Mentored Advisor") {
+                AdvisorOnChange();
+
+            }
+
             if (Value == "Nominated Representative") {
-                IsPrincipalAdvisor.hidden = true;
-                IsTripleAApproval.hidden = true;
-                document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+                AdvisorOnChange();
+            }
+
+            if (Value == "Contractor") {
+                ContractorOnChange();
             }
 
             for (var i = 0; i < List.options.length; i++) {
@@ -342,12 +444,70 @@
             }
 
             List.disabled = true;
-            
         } else {
             document.getElementById("Else").hidden = false;
+            if (Value == "Other Consulting Business") {
+                var NoTradingName = document.getElementById("NoTradingName");
+                if (NoTradingName != null) {
+                    document.getElementById("TradingName").hidden = false;
+                    var TradingName = document.getElementById("Organisation.TradingName");
+                    TradingName.hidden = false;
+                    TradingName.removeAttribute("required");
+                }
+            }
         }
 
         DefaultRule("1", Value);
+    }
+
+    function ContractorOnChange() {
+        var IsContractorUnit = document.getElementById("HideContractor");
+        if (IsContractorUnit != null) {
+            IsContractorUnit.hidden = false;
+        }
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
+        }
+        document.getElementById("PlannerUnit.IsPrincipalPlanner").options[0].selected = true;
+    }
+
+    function AdvisorOnChange() {
+        var IsTripleAApproval = document.getElementById("HideTripleAApproval");
+        if (IsTripleAApproval != null) {
+            IsTripleAApproval.hidden = true;
+            document.getElementById("AdvisorUnit.IsPrincipalAdvisor").options[0].selected = true;
+        }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = false;
+        }
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = true;
+        }
+
+    }
+
+    function ResetOrganisationUnitView() {
+        document.getElementById("Private").hidden = true;
+        document.getElementById("Else").hidden = true;
+        var IsPrincipal = document.getElementById("HidePrincipal");
+        if (IsPrincipal != null) {
+            IsPrincipal.hidden = false;
+        }
+        var IsTripleAApproval = document.getElementById("HideTripleAApproval");
+        if (IsTripleAApproval != null) {
+            IsTripleAApproval.hidden = false;
+        }
+        var IsContractor = document.getElementById("HideContractor");
+        if (IsContractor != null) {
+            IsContractor.hidden = true;
+        }
+        var IsCommencement = document.getElementById("HideCommencement");
+        if (IsCommencement != null) {
+            IsCommencement.hidden = true;
+        }
     }
 
     function AdditionalActivityInformation(Id) {
@@ -356,7 +516,7 @@
         //convert to use selectedOptions
         for (var i = 0; i < activities.options.length; i++) {
             var additionalactivityId = activities.options[i].value;
-            if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039") {
+            if (additionalactivityId == "CUS0029" || additionalactivityId == "CUS0039" || additionalactivityId == "CUS0044" || additionalactivityId == "CUS0061" || additionalactivityId == "CUS0076") {
                 additionalactivityId = "CUS0018";
             }
             if (activities.options[i].selected === true) {
@@ -382,7 +542,6 @@
 
     function AdditionalRoleInformation(Id) {
         var roles = document.getElementById(Id);
-
         document.getElementById("noadditionalroleinfolabel").hidden = false;
         document.getElementById("RoleOther").hidden = true;
         //convert to use selectedOptions
@@ -390,7 +549,7 @@
             if (roles.options[i].selected === true) {
                 var strArray = roles.options[i].text.split('-');
                 var other = strArray[strArray.length - 1];
-                if (other === " Other") {
+                if (other.search("Other") != -1) {
                     document.getElementById("noadditionalroleinfolabel").hidden = true;
                     document.getElementById("RoleOther").hidden = false;
                 }
@@ -504,6 +663,7 @@
     }
 
     function HideElement(id) {
+        debugger;
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = true;

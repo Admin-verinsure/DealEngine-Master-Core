@@ -1,79 +1,127 @@
-﻿<div id="content" class="container">
-
+﻿@model OrganisationViewModel
+<div id="content" class="container">
     <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/Home/Index"> Dashboard</a>
-                > Manage Organisation
-            </span>
-        </h1>
-    </div>
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="container">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                        <h2> Manage Organisation </h2>
-
-                    </header>
-                    <div>
-                        <!-- end widget edit box -->
-                        <div class="widget-body widget-hide-overflow no-padding">
-                            <!-- content goes here -->
-                            <table class="table table-striped table-hover table-condensed">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            Add New Organisation
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm" href="~/Organisation/AddNewOrganisation">Go</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Add New User
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm" href="/AddNewUser">Go</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Add New Organisational Unit
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm" href="/AddNewOrganisationalUnit">Go</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Add New Location
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm" href="/AddNewLocation">Go</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <!-- end content -->
-                        </div>
+        <div class="col-sm-6" style="margin-top:30px;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update/Add Marina</h5>
+                    <p class="card-text" style="margin-top:30px;">Marina Name</p>
+                    <div class="form-group">
+                        <select class="form-control" Id="MarinaId" onchange="GetMarina(this.id)">
+                            <option selected="selected" value="">Add New</option>
+                            @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToList())
+                            {
+                                <option value="@marina.Id">@marina.Name</option>
+                            }
+                        </select>
+                        <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
+                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Marina.Id" })                            
+                            <div class="form-group">
+                                <label class="label">Name</label>
+                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Marina.Name" })
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="label">Email</label>
+                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Marina.Email" })
+                            </div>                            
+                            <div class="form-group">
+                                <label class="label">Marina Name</label>
+                                @Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })
+                            </div>
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </form>
                     </div>
-                    <!-- end widget div -->
                 </div>
-                <!-- end widget -->
-            </article>
+            </div>
         </div>
-    </section>
-    <!-- end widget grid -->
+        <div class="col-sm-6" style="margin-top:30px;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update/Add Financial Institute</h5>
+                    <p class="card-text" style="margin-top:30px;">Financial Institutes</p>
+                    <div class="form-group">
+                        <select class="form-control" Id="FinancialId" onchange="GetInstitute(this.id)">
+                            <option selected="selected" value="">Add New</option>
+                            @foreach (var Financial in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
+                            {
+                                <option value="@Financial.Id">@Financial.Name</option>
+                            }
+                        </select>
+                        <form method="POST" action="~/Organisation/PostInstitute" novalidate style="margin-top:30px;">
+                            @Html.HiddenFor(m => m.Organisation.Id, new { @id = "Institute.Id" })
+                            <div class="form-group">
+                                <label class="label">Institute Name</label>
+                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Institute.Name" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Email</label>
+                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Institute.Email" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Common Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.CommonName, new { @class = "form-control", @id = "Location.CommonName" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Street Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Street, new { @class = "form-control", @id = "Location.Street" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">Suburb Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Suburb, new { @class = "form-control", @id = "Location.Suburb" })
+                            </div>
+                            <div class="form-group">
+                                <label class="label">City Name</label>
+                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.City, new { @class = "form-control", @id = "Location.City" })
+                            </div>
+                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+@section pagespecific {
+    <script type="text/javascript">
+        function GetMarina(Id) {
+            var organisationId = document.getElementById(Id);
+            var id = organisationId.options[organisationId.selectedIndex].value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetMarina", "Organisation")',
+                data: { Id: id }
+            })
+                .done(function (data) {
+                    debugger;
+                    var OutPut = JSON.parse(data);
+                    PopulateView(OutPut);
+
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+        }
+
+        function GetInstitute(Id) {
+            var organisationId = document.getElementById(Id);
+            var id = organisationId.options[organisationId.selectedIndex].value;
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetInstitute", "Organisation")',
+                data: { Id: id }
+            })
+                .done(function (data) {
+                    var OutPut = JSON.parse(data);
+                    PopulateView(OutPut);
+
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
+        }
+    </script>
+}

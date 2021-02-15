@@ -9,31 +9,28 @@ namespace DealEngine.WebUI.Models
     public class SearchViewModel
     {
 
-        public SearchViewModel(List<Domain.Entities.Programme> programmes, string companyName)
+        public SearchViewModel(List<Domain.Entities.Programme> programmes)
         {
-            SearchOptions = GetSearchOptions(companyName);
+            SearchOptions = GetSearchOptions();
             Programmes = programmes;
         }
 
-        private IList<SelectListItem> GetSearchOptions(string companyName)
+        private IList<SelectListItem> GetSearchOptions()
         {
             SearchOptions = new List<SelectListItem>();
-            if(companyName == "Marsh")
+            //if(companyName == "Marsh")
+            //{
+            //    SearchOptions.Add(new SelectListItem
+            //    {
+            //        Text = "Boat Name",
+            //        Value = "Boat"
+            //    });
+            //}
+            SearchOptions.Add(new SelectListItem
             {
-                SearchOptions.Add(new SelectListItem
-                {
-                    Text = "Boat Name",
-                    Value = "Boat"
-                });
-            }
-            if (companyName == "AIB")
-            {
-                SearchOptions.Add(new SelectListItem
-                {
-                    Text = "Advisor Name",
-                    Value = "Advisory"
-                });
-            }
+                Text = "Advisor Name",
+                Value = "Advisor"
+            });            
             SearchOptions.Add(new SelectListItem
             {
                 Text = "Reference Number",
@@ -54,6 +51,7 @@ namespace DealEngine.WebUI.Models
         }
         public IList<SelectListItem> SearchOptions;
         public List<Domain.Entities.Programme> Programmes;
+        private IList<System.Security.Claims.Claim> claims;
     }
 }
 

@@ -27,10 +27,15 @@ namespace DealEngine.Services.Interfaces
 
         Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
 
+		Task<Document> ConvertHTMLToPDF(Document document);
+
+		Task<Document> FormatCKHTMLforConversion(Document document);
 		byte [] ToBytes (string contents);
 		string FromBytes (byte [] bytes);
         Task<Document> GetDocumentByType(Organisation primaryOrganisation, int documentType);
 		Task<List<Document>> GetDocumentByOwner(Organisation Owner);
-    }
+		 //Task<IActionResult> GetPDF(Guid id);
+
+	}
 }
 

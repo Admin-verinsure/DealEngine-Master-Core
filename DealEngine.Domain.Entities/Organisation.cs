@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace DealEngine.Domain.Entities
@@ -98,30 +96,11 @@ namespace DealEngine.Domain.Entities
         #endregion
 
         #region Getters
-        public virtual string Name
-        {
-            get;
-            set;
-        }
-
+        public virtual string Name { get; set; }
         [Display(Name = "Trading Name")]
-        public virtual string TradingName
-        {
-            get;
-            set;
-        }
-
-        public virtual OrganisationType OrganisationType
-        {
-            get;
-            set;
-        }
-        public virtual bool Removed
-        {
-            get;
-            set;
-        }
-
+        public virtual string TradingName { get; set; }
+        public virtual OrganisationType OrganisationType { get; set; }
+        public virtual bool Removed { get; set; }
         // public virtual string Othercompanyname { get; set; }
         public virtual string Description { get; set; }
         public virtual string Phone { get; set; }
@@ -129,12 +108,36 @@ namespace DealEngine.Domain.Entities
         public virtual string Email { get; set; }
         public virtual bool IsBroker { get; set; }
         public virtual bool IsInsurer { get; set; }
-        public virtual bool IsReinsurer { get; set; }
         public virtual bool IsTC { get; set; }
+        public virtual bool IsProgrammeManager { get; set; }
         public virtual bool IsApproved { get; set; }
         public virtual string Clientmembership { get; set; }
         public virtual IList<InsuranceAttribute> InsuranceAttributes { get; set; }
-
+        //public virtual Organisation CloneForNewSheet(ClientInformationSheet newSheet)
+        //{
+        //    Organisation newOrganisation = new Organisation();
+        //    newOrganisation.Clientmembership = Clientmembership;
+        //    newOrganisation.CreatedBy = newSheet.CreatedBy;
+        //    newOrganisation.DateCreated = DateTime.Now;
+        //    newOrganisation.DateofIncorportation = DateofIncorportation;
+        //    newOrganisation.Description = Description;
+        //    newOrganisation.Domain = Domain;
+        //    newOrganisation.DORetroactivedate = DORetroactivedate;
+        //    newOrganisation.Email = Email;
+        //    newOrganisation.Id = Guid.NewGuid();
+        //    newOrganisation.InsuranceAttributes = InsuranceAttributes;
+        //    newOrganisation.IsApproved = IsApproved;
+        //    newOrganisation.IsBroker = IsBroker;
+        //    newOrganisation.IsInsurer = IsInsurer;
+        //    newOrganisation.IsTC = IsTC;
+        //    newOrganisation.Name = Name;
+        //    newOrganisation.OrganisationalUnits = OrganisationalUnits;
+        //    newOrganisation.OrganisationType = OrganisationType;
+        //    newOrganisation.Phone = Phone;
+        //    newOrganisation.PIRetroactivedate = PIRetroactivedate;
+        //    newOrganisation.TradingName = TradingName;
+        //    return newOrganisation;
+        //}
 
         #endregion
 
@@ -225,9 +228,11 @@ namespace DealEngine.Domain.Entities
         //public virtual bool IsPrincipalAdvisor { get; set; }
         //public virtual string OfcPhoneno { get; set; }
         //public virtual string MyCRMId { get; set; }
-        //public virtual string PIRetroactivedate { get; set; }
-        //public virtual string DORetroactivedate { get; set; }
+        public virtual string PIRetroactivedate { get; set; }
+        public virtual string DORetroactivedate { get; set; }
         //public virtual IList<AuditHistory> AuditHistory { get; set; }
+        [Display(Name = "Date of Company Incorporation")]
+        public virtual DateTime? DateofIncorportation { get; set; }
 
         #endregion
 
@@ -237,7 +242,6 @@ namespace DealEngine.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
-
             Name = name;
         }
         #endregion
@@ -248,7 +252,8 @@ namespace DealEngine.Domain.Entities
         {
             return new Organisation(creatingUser, Guid.NewGuid(), "Default user organisation for " + owner.FullName, organisationType)
             {
-                Domain = "#"
+                Domain = "#",
+                Email = owner.Email
             };
         }
     }

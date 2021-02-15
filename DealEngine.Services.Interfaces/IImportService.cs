@@ -27,9 +27,15 @@ namespace DealEngine.Services.Interfaces
         Task ImportNZFSGServiceIndividuals(User user);
         Task ImportNZFSGServicePrincipals(User user);
         Task ImportAAAServiceIndividuals(User user);
-        Task ImportAAAAdministrationIndividuals(User user);
-        Task ImportAAAServicePrincipals(User user);
+        Task ImportNZPIImportOwners(User user);
+        Task ImportNZPIImportPlanners(User user);
         Task ImportAAAServicePreRenewData(User user);
-
+        Task ImportNZPIImportContractors(User user);
+        Task ImportNZPIServicePreRenewData(User user);
+        Task ImportApolloImportOwners(User user);
+        Task ImportApolloServicePreRenewData(User user);
+        Task ImportApolloSetELDefaultVale(User user);
+        Task ImportAbbottImportOwners(User user);
+        Task ImportAbbottServicePreRenewData(User user);
     }
 }

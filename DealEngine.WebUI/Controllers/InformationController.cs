@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
-using DealEngine.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -34,7 +34,6 @@ namespace DealEngine.WebUI.Controllers
         ITerritoryService _territoryService;
         IFileService _fileService;
         IClientInformationService _clientInformationService;
-        IChangeProcessService _changeProcessService;
         IUnlockProcessService _unlockProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
@@ -55,9 +54,13 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _clientInformationAnswer;
         IOrganisationTypeService _organisationTypeService;
+        IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IMapperSession<WaterLocation> _waterLocation;
+        ISubsystemService _subsystemService;
 
 
         public InformationController(
+            ISubsystemService subsystemService,
             IOrganisationTypeService organisationTypeService,
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
@@ -71,7 +74,6 @@ namespace DealEngine.WebUI.Controllers
             IUserService userService,
             ITerritoryService territoryService,
             IInformationItemService informationItemService,
-            IChangeProcessService changeProcessService,
             IUnlockProcessService unlockProcessService,
             IFileService fileService,
             IEmailService emailService,
@@ -92,10 +94,16 @@ namespace DealEngine.WebUI.Controllers
             IBusinessActivityService businessActivityService,
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
+            IMapperSession<ClientProgramme> clientProgrammeRepository,
+            IMapperSession<WaterLocation> waterLocation,
+            //IGeneratePdf generatePdf,
+
             IMapper mapper
             )
             : base(userService)
         {
+            _subsystemService = subsystemService;
+            _waterLocation = waterLocation;
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
@@ -130,6 +138,9 @@ namespace DealEngine.WebUI.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _emailService = emailService;
+            _clientProgrammeRepository = clientProgrammeRepository;
+            //_generatePdf = generatePdf;
+
         }
 
 
@@ -238,6 +249,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+     
 
         [HttpGet]
         public async Task<IActionResult> PartialViewProgramme(Guid id, String name = "", List<string> viewlist = null)
@@ -295,39 +307,35 @@ namespace DealEngine.WebUI.Controllers
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
-                    var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
-                    if (milestone != null)
-                    {
-                        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
-                        if (advisory != null)
-                        {
-                            advisoryDesc = advisory.Description;
-                        }
-                    }
-
+                    #region Commented code
+                    //var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                    //if (milestone != null)
+                    //{
+                    //    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                    //    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
+                    //    if (advisory != null)
+                    //    {
+                    //        advisoryDesc = advisory.Description;
+                    //    }
+                    //}
+                    #endregion
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
                 }
-
-
                 var claims = new List<ClaimViewModel>();
                 for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
                 {
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
                 }
-
                 model.Claims = claims;
-
                 var interestedParties = new List<OrganisationViewModel>();
-
                 var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
                 {
-
+                    #region Commented code
                     //foreach (var org in IA.IAOrganisations)
                     //{
                     //    if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
@@ -338,7 +346,10 @@ namespace DealEngine.WebUI.Controllers
                     //        interestedParties.Add(ovm);
                     //    }
                     //}
+                    #endregion
                 }
+                
+                #region Commented code
 
                 //model.InterestedParties = interestedParties;
 
@@ -356,31 +367,32 @@ namespace DealEngine.WebUI.Controllers
 
                 //model.InterestedPartyList = linterestedparty;
 
-                var boatUses = new List<BoatUseViewModel>();
-                for (var i = 0; i < sheet.BoatUses.Count(); i++)
-                {
-                    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
+                //var boatUses = new List<BoatUseViewModel>();
+                //for (var i = 0; i < sheet.BoatUses.Count(); i++)
+                //{
+                //    boatUses.Add(BoatUseViewModel.FromEntity(sheet.BoatUses.ElementAtOrDefault(i)));
 
-                }
+                //}
 
-                List<SelectListItem> list = new List<SelectListItem>();
+                //List<SelectListItem> list = new List<SelectListItem>();
 
-                for (var i = 0; i < boatUses.Count(); i++)
-                {
-                    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
-                    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
+                //for (var i = 0; i < boatUses.Count(); i++)
+                //{
+                //    var text = boatUses.ElementAtOrDefault(i).BoatUseCategory.Substring(0, 4);
+                //    var val = boatUses.ElementAtOrDefault(i).BoatUseId.ToString();
 
-                    list.Add(new SelectListItem
-                    {
-                        Selected = false,
-                        Value = val,
-                        Text = text
-                    });
+                //    list.Add(new SelectListItem
+                //    {
+                //        Selected = false,
+                //        Value = val,
+                //        Text = text
+                //    });
 
-                }
+                //}
 
-                model.BoatUseslist = list;
+                //model.BoatUseslist = list;
                 // TODO - find a better way to pass these in
+                //model.HasVehicles = sheet.Vehicles.Count > 0;
                 //var vehicles = new List<VehicleViewModel>();
                 //foreach (Vehicle v in sheet.Vehicles.Where(v => v.Removed == false))
                 //{
@@ -391,21 +403,22 @@ namespace DealEngine.WebUI.Controllers
                 //model.UnregisteredVehicles = vehicles.Where(v => string.IsNullOrWhiteSpace(v.Registration));
 
 
-                var locations = new List<LocationViewModel>();
-                var buildings = new List<BuildingViewModel>();
-                var waterLocations = new List<WaterLocationViewModel>();
-                var MarinaLocations = new List<OrganisationViewModel>();
-                var organisationalunit = new List<OrganisationalUnit>();
+                //var locations = new List<LocationViewModel>();
+                //var buildings = new List<BuildingViewModel>();
+                //var waterLocations = new List<WaterLocationViewModel>();
+                //var MarinaLocations = new List<OrganisationViewModel>();
+                //var organisationalunit = new List<OrganisationalUnit>();
 
-                for (var i = 0; i < sheet.Buildings.Count(); i++)
-                {
-                    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
+                //for (var i = 0; i < sheet.Buildings.Count(); i++)
+                //{
+                //    buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
 
-                }
-
+                //}
+                #endregion
                 var insuranceAttributeList1 = await _insuranceAttributeService.GetInsuranceAttributes();
                 foreach (InsuranceAttribute IA in insuranceAttributeList1.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
                 {
+                    #region Commented code
                     //foreach (var org in IA.IAOrganisations)
                     //{
                     //    if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
@@ -416,14 +429,16 @@ namespace DealEngine.WebUI.Controllers
                     //        MarinaLocations.Add(ovm);
                     //    }
                     //}
+                    #endregion
                 }
+                #region Commented code
+                //model.MarinaLocations = MarinaLocations;
 
-                model.MarinaLocations = MarinaLocations;
-
-                for (var i = 0; i < sheet.WaterLocations.Count(); i++)
-                {
-                    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
-                }
+                //for (var i = 0; i < sheet.WaterLocations.Count(); i++)
+                //{
+                //    waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
+                //}
+                #endregion
 
                 var availableProducts = new List<SelectListItem>();
 
@@ -436,51 +451,31 @@ namespace DealEngine.WebUI.Controllers
                         Text = product.Name
                     });
                 }
-                //var availableorganisation = new List<SelectListItem>();
-
-                //foreach (Organisation organisation in await _organisationService.GetOrganisationPrincipals(sheet))
-                //{
-                //    availableorganisation.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Value = "" + organisation.Id,
-                //        Text = organisation.Name
-                //    });
-                //}
-
-                //availableorganisation.Add(new SelectListItem
-                //{
-                //    Selected = false,
-                //    Value = "" + sheet.Owner.Id,
-                //    Text = sheet.Owner.Name
-                //});
-
-                //model.AvailableOrganisations = availableorganisation;
-                //model.AllVehicles = vehicles;
-
-                var userDetails = _mapper.Map<UserDetailsVM>(user);
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
-                userDetails.FirstName = user.FirstName;
-                userDetails.Email = user.Email;
-
-                var organisationDetails = new OrganisationDetailsVM
+                var AgreementCount = clientProgramme.Agreements.Where(cp => cp.DateDeleted == null).Count();
+                String[][] OptionItems = new String[AgreementCount][];
+                String[] OptionItem;
+                var count = 0;
+                ///not deleted agreement deleteddate = null 
+                foreach (var agreement in clientProgramme.Agreements.Where(cp => cp.DateDeleted == null))
                 {
-                    Name = sheet.Owner.Name,
-                    Phone = sheet.Owner.Phone,
-                    Website = sheet.Owner.Domain
-                };
+                    foreach (var term in agreement.ClientAgreementTerms)
+                    {
+                        OptionItem = new String[3];
+                        if (term.Bound)
+                        {
+                            OptionItem[0] = agreement.Product.Name;
+                            OptionItem[1] = ""+ term.TermLimit;
+                            OptionItem[2] = "" + term.Excess;
+                            OptionItems[count] = OptionItem;
+                            count++;
+                        }
+                    }
+                }
+                model.LimitsSelected = OptionItems;
+               // model.DeclarationMessage = sheet.Programme.BaseProgramme.Declaration;
 
-                //model.Locations = locations;
-                //model.Buildings = buildings;
-                //model.Buildings.
-                //model.WaterLocations = waterLocations;
-                //model.InterestedParties = interestedParties;
+                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
 
-
-                //model.ClaimProducts = availableProducts;
-                model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
                 model.Status = sheet.Status;
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
@@ -658,7 +653,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
                         if (term == null)
-                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.AggregateLimit).FirstOrDefault();
+                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.TermLimit).FirstOrDefault();
 
                         OptionItem = new String[2];
 
@@ -678,8 +673,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-
 
 
         [HttpPost]
@@ -780,7 +773,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-
+                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
                 //build custom models
                 await GetRevenueViewModel(model, sheet.RevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
@@ -799,24 +792,11 @@ namespace DealEngine.WebUI.Controllers
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
                 await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("OTViewModel", StringComparison.CurrentCulture)));
-
-                model.AnswerSheetId = sheet.Id;
-                model.ClientInformationSheet = sheet;
-                model.ClientProgramme = clientProgramme;
-                
-                //testing dynamic wizard here
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
-                if (isSubsystem)
-                {
-                    model.Wizardsteps = LoadWizardsteps("Subsystem");
-                }
-                else
-                {
-                    model.Wizardsteps = LoadWizardsteps("Standard");
-                }
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("GeneralViewModel", StringComparison.CurrentCulture)));               
 
                 if (sheet.Status == "Not Started")
-                {                    
+                {
+                    model.Status = "Not Started";
                     sheet.Status = "Started";
                     await _clientInformationService.UpdateInformation(sheet);
                 }
@@ -827,15 +807,8 @@ namespace DealEngine.WebUI.Controllers
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
                 }               
 
-                var userDetails = _mapper.Map<UserDetailsVM>(user);
-                userDetails.PostalAddress = user.Address;
-                userDetails.StreetAddress = user.Address;
-                userDetails.FirstName = user.FirstName;
-                userDetails.Email = user.Email;
                 model.Claims = claims;
-                model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
-                model.UserDetails = userDetails;
-                model.Status = sheet.Status;
+                
 
                 return View("InformationWizard", model);
             }
@@ -851,7 +824,6 @@ namespace DealEngine.WebUI.Controllers
             //build models from answers
             foreach (var answer in Model)
             {
-                var value = 0;
                 try
                 {
                     var modelName = "";
@@ -880,8 +852,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(int) == property.PropertyType)
                         {
-                            int.TryParse(answer.Value, out value);
-                            property.SetValue(reflectModel, value);
+                            int.TryParse(answer.Value, out int intvalue);
+                            property.SetValue(reflectModel, intvalue);
+                        }
+                        if (typeof(decimal) == property.PropertyType)
+                        {
+                            decimal.TryParse(answer.Value, out decimal decvalue);
+                            property.SetValue(reflectModel, decvalue);
                         }
                         if (typeof(IList<SelectListItem>) == property.PropertyType)
                         {
@@ -895,13 +872,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            var defaultDate = DateTime.Parse("01/01/0001");
                             var date = DateTime.Parse(answer.Value);
-                            if (date == defaultDate || date == null)
-                            {
-                                date = DateTime.Now;
-                            }
                             property.SetValue(reflectModel, date);
+                        }
+                        if (typeof(DateTime?) == property.PropertyType)
+                        {
+                            var date = DateTime.Parse(answer.Value);                         
+                            property.SetValue(reflectModel, date.ToString("dd/MM/yyyy"));
                         }
                     }
                 }
@@ -983,6 +960,39 @@ namespace DealEngine.WebUI.Controllers
 
                 var url = "/Information/EditInformation/" + UnlockReason.DealId;
                 return Json(new { url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetStatus(Guid id)
+        {
+            User user = null;
+            try
+            {
+                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+                ClientInformationSheet sheet = clientProgramme.InformationSheet;
+                user = await CurrentUser();
+                if (sheet != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (sheet.Status == "Started")
+                        {
+                            sheet.Status = "Not Started";
+                            sheet.LastModifiedOn = DateTime.UtcNow;
+                            sheet.LastModifiedBy = user;
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                var url = "/Home/ViewProgramme/" + clientProgramme.BaseProgramme.Id;
+                return Redirect(url);
             }
             catch (Exception ex)
             {
@@ -1118,8 +1128,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
-                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));                
                 var sheet = clientProgramme.InformationSheet;
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
 
@@ -1136,13 +1145,13 @@ namespace DealEngine.WebUI.Controllers
                     if (!isBaseSheet)
                     {
                         SubClientInformationSheet subSheet = (SubClientInformationSheet)sheet;
-                        var baseSheet = subSheet.BaseClientInformationSheet;
+                        sheet = subSheet.BaseClientInformationSheet;
 
-                        if (baseSheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
+                        if (sheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
-                            await GenerateUWM(user, baseSheet, baseSheet.ReferenceId);
-                            await _emailService.SendSystemEmailAllSubUISComplete(baseSheet.Owner, baseSheet.Programme.BaseProgramme, baseSheet);
-                            sheet = baseSheet;
+                            await GenerateUWM(user, sheet, sheet.ReferenceId);
+                            await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            //sheet = baseSheet;
                         }
                     }
 
@@ -1206,24 +1215,9 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 createdBy = await CurrentUser();
-                ChangeReason changeReason = new ChangeReason();
-               // changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(formCollection["BoatEffectiveDate"], "d"));
-                //ChangeReason ChangeReason = new ChangeReason(createdBy, changeReason);
-                changeReason.DealId = Guid.Parse(formCollection["DealId"]);
-                changeReason.ChangeType = formCollection["ChangeType"];
-                changeReason.Reason = formCollection["Reason"];
-                changeReason.ReasonDesc = formCollection["ReasonDesc"];
-                changeReason.EffectiveDate = DateTime.Parse(LocalizeTime(DateTime.Parse(formCollection["BoatEffectiveDate"]), "d"));
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Guid.Parse(formCollection["DealId"]));
-                if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + createdBy.UserName);
+                ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection, null);
 
-                ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, createdBy, changeReason);
-                await _programmeService.Update(newClientProgramme);
-                return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
-                //var url = "/Information/EditInformation/" + newClientProgramme.Id;
-                  //return Json(new { url });
-                //return Json(createdBy);
+                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
             }
             catch (Exception ex)
             {
@@ -1293,14 +1287,40 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                user = await CurrentUser();
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
                 var OrgUser = await _userService.GetUserByEmail(clientProgramme.InformationSheet.Owner.Email);
+                List<Organisation> DefaultMarinas = await _organisationService.GetPublicMarinas();
+                List<Organisation> DefaultInstitutes = await _organisationService.GetPublicFinancialInstitutes();
+                
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser)
+                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
                 };
-                model.Name = programme.Name;
+                if (DefaultMarinas.Any())
+                {                    
+                    foreach(var marina in DefaultMarinas)
+                    {
+                        MarinaUnit unit = (MarinaUnit)marina.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.WaterLocations.Contains(unit.WaterLocation))
+                            model.ClientInformationSheet.WaterLocations.Add(unit.WaterLocation);
+                    }                    
+                }
+                if (DefaultInstitutes.Any())
+                {
+                    foreach (var Institute in DefaultInstitutes)
+                    {
+                        InterestedPartyUnit unit = (InterestedPartyUnit)Institute.OrganisationalUnits.FirstOrDefault();
+                        if (!model.ClientInformationSheet.Locations.Contains(unit.Location))
+                        {
+                            //model.ClientInformationSheet.Locations.Add(unit.Location);
+                            model.OrganisationViewModel.PublicOrganisations.Add(Institute);
+                        }
+                    }
+                }
+                model.Name = programme.Name;                
                 Product product = null;
                 if (programme.Products.Count > 1)
                 {
@@ -1312,14 +1332,15 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 InformationTemplate informationTemplate;
-                List<InformationSection> sections = new List<InformationSection>();
-                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                List<InformationSection> sections = new List<InformationSection>();                
                 if (!isSubsystem)
                 {
                     informationTemplate = product.SubInformationTemplate;
+                    model.Wizardsteps = LoadWizardsteps("Standard");
                 }
                 else
                 {
+                    model.Wizardsteps = LoadWizardsteps("Subsystem");
                     //remove after checking with ray
                     if (product.InformationTemplate == null)
                     {
@@ -1402,6 +1423,7 @@ namespace DealEngine.WebUI.Controllers
             return await RedirectToLocal();
         }
 
+        #region Commented code
         //[HttpPost]
         //public async Task<IActionResult> CreateInformationSheet(IFormCollection form)
         //{
@@ -1569,6 +1591,7 @@ namespace DealEngine.WebUI.Controllers
         // Oualification - Name, DateObtained
 
         // Parties - Party, Org Name, Org Type, Qualification
+        #endregion
 
         #region Test Data
         private string _importantNotices = @"<table id=""Table3"" border=""1"" cellpadding=""4"" cellspacing=""0"" width=""100%"">

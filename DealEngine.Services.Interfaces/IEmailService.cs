@@ -23,6 +23,7 @@ namespace DealEngine.Services.Interfaces
         Task MarshRsaOneTimePassword(string sender, string subject);
         Task ContactSupport (string sender, string subject, string body);
         Task SendSystemEmailLogin(string recipent);
+        Task SendDataEmail(string recipient, Data data);
         Task SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
@@ -38,6 +39,13 @@ namespace DealEngine.Services.Interfaces
         Task IssueToBrokerSendEmail(string recipent, string EmailContent, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, User sender);
         Task SendSystemEmailAllSubUISComplete(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet);
         Task SendSystemEmailAllSubUISInstruction(Organisation insuredOrg, Programme programme, ClientInformationSheet sheet);
+        Task SendFullProposalReport(string recipent, SystemDocument documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
+        Task EmailHunterPremiumFunding(ClientProgramme clientProgramme);
+        Task EmailPaymentFrequency(ClientProgramme clientProgramme);
+        Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML);
+        Task EGlobalLogEmail(string recipient, string transactionreferenceid, string requestXML, string responseXML);
+        Task JoinOrganisationEmail(User organisationUser);
+        Task RemoveOrganisationUserEmail(User removedUser, User brokerContactUser, ClientInformationSheet sheet);
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.Services.Interfaces
 {
@@ -17,7 +18,6 @@ namespace DealEngine.Services.Interfaces
         Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 		Task Update (params ClientProgramme[] clientProgrammes);
         Task Update(Programme programmes);
-        Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
         Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
         Task<List<Programme>> GetAllProgrammes();
@@ -28,7 +28,6 @@ namespace DealEngine.Services.Interfaces
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
-        Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
         Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);
         Task<bool> HasProgrammebyMembership(string membershipNumber);
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
@@ -37,8 +36,13 @@ namespace DealEngine.Services.Interfaces
         Task<List<ClientProgramme>> GetSubClientProgrammesForProgramme(Guid programmeId);
         Task AttachProgrammeToDataRole(Programme programme, SharedDataRoleTemplate template);
         Task<ClientInformationSheet> CreateUIS(Guid programmeId, User user, Organisation organisation);
-        Task AddOrganisationByMembership(Organisation organisation);
+        Task<bool> AddOrganisationByMembership(Organisation organisation, string membership);
         Task<SubClientProgramme> GetSubClientProgrammeFor(Organisation org);
+        Task<List<ClientInformationSheet>> SearchProgrammes(IFormCollection collection);
+        Task<ClientProgramme> CloneForUpdate(User createdBy, IFormCollection formCollection, Dictionary<string,string> collection);
+        Task DeveloperTool();
+        Task<Programme> PostProgramme(User user, User brokerUser, Programme jsonProgramme, Programme programme);
+        Task AttachOrganisationToClientProgramme(IFormCollection collection, ClientProgramme clientProgramme);
     }
 }
 

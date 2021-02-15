@@ -3,228 +3,129 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
-using DealEngine.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using NHibernate.Linq;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DealEngine.Services.Impl
 {
     public class MilestoneService : IMilestoneService
     {
         IMapperSession<Milestone> _milestoneRepository;
-        ISystemEmailService _systemEmailService;
+        IProgrammeService _programmeService;
         ITaskingService _taskingService;
-        IProgrammeProcessService _programmeProcessService;
-        IActivityService _activityService;
-        IAdvisoryService _advisoryService;
-        IMilestoneTemplateService _milestoneTemplateService;
-        IClientInformationService _clientInformationService;
+        IUserService _userService;
+        IEmailService _emailService;
 
         public MilestoneService(
-            IClientInformationService clientInformationService,
+            IEmailService emailService,
+            IUserService userService,
             IMapperSession<Milestone> milestoneRepository,
-                                IAdvisoryService advisoryService,
-                                ISystemEmailService systemEmailService,
-                                IProgrammeProcessService programmeProcessService,
-                                IActivityService activityService,
-                                ITaskingService taskingService,
-                                IMilestoneTemplateService milestoneTemplateService
-                                )
+            IProgrammeService programmeService,
+            ITaskingService taskingService
+            )
         {
-            _clientInformationService = clientInformationService;
-            _milestoneTemplateService = milestoneTemplateService;
-            _advisoryService = advisoryService;
-            _activityService = activityService;
-            _programmeProcessService = programmeProcessService;
-            _milestoneRepository = milestoneRepository;
-            _systemEmailService = systemEmailService;
+            _emailService = emailService;
+            _userService = userService;
             _taskingService = taskingService;
+            _programmeService = programmeService;
+            _milestoneRepository = milestoneRepository;
         }
 
-        public async Task<Milestone> CreateMilestone(User createdBy, Guid programmeProcessId, Guid activityId, Programme programme)
-        {
-            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
-            var activity = await _activityService.GetActivityId(activityId);
-
-            Milestone milestone = new Milestone(createdBy);
-            milestone.HasTriggered = false;
-            milestone.Programme = programme;
-            await _milestoneRepository.AddAsync(milestone);
-
-            activity.Milestone = milestone;
-            await _activityService.UpdateActivity(activity);
-
-            programmeProcess.Milestone = milestone;
-            await _programmeProcessService.UpdateProgrammeProcess(programmeProcess);
-
-            return milestone;
-        }
-
-        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)
-        {
-            var activity = await _activityService.GetActivityId(activityId);
-            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
-            SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(activity.Name);
-            if (systemEmailTemplate == null)
-            {
-                systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
-                await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
-            }
-
-            systemEmailTemplate.Milestone = milestone;
-            systemEmailTemplate.Activity = activity;
-            await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
-        }
-
-        public async Task CreateAdvisory(User user, Milestone milestone, Activity activity, string advisoryString)
-        {
-            var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-            var advisory = advisoryList.FirstOrDefault(a => a.DateDeleted == null && a.Activity == activity);
-            
-            if (advisory != null)
-            {
-                advisory.DateDeleted = DateTime.Now;
-                advisory.DeletedBy = user;
-                await _advisoryService.UpdateAdvisory(advisory);
-            }
-
-            advisory = new Advisory(advisoryString)
-            {
-                Milestone = milestone,
-                Activity = activity,
-                Description = advisoryString
-            };
-
-            await _advisoryService.CreateAdvisory(advisory);
-        }
-
-        public async Task CreateMilestoneUserTask(User user, Organisation createdFor, DateTime dueDate, 
-            Milestone milestone, Activity activity, int priority, string description, string details)
-        {
-            var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
-            var userTask = userTaskList.FirstOrDefault(t => t.DateDeleted == null && t.Activity == activity);
-            if (userTask != null)
-            {
-                userTask.DateDeleted = DateTime.Now;
-                userTask.DeletedBy = user;
-                await _taskingService.UpdateUserTask(userTask);                
-            }
-
-            userTask = new UserTask(user, createdFor)
-            {
-                Description = description,
-                Details = details,
-                Milestone = milestone,
-                Activity = activity
-            };
-
-            await _taskingService.CreateTask(userTask);
-        }
-
-        public async Task<Milestone> GetMilestoneByBaseProgramme(Guid programmeId)
+        public async Task<Milestone> GetMilestoneProgrammeId(Guid programmeId)
         {
             return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Programme.Id == programmeId);
         }
 
-        public async Task UpdateMilestone(Milestone milestone)
-        {
-            await _milestoneRepository.UpdateAsync(milestone);
-        }
-
         public async Task<string> SetMilestoneFor(string activityName, User user, ClientInformationSheet sheet)
         {
-            var hasActivity = await _activityService.GetActivityByName(activityName);
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
             string Discription = "";
-            if(hasActivity == null)
+            if (milestone != null)
             {
-                await _milestoneTemplateService.CreateMilestoneTemplate(user);
-            }
-            if (activityName == "Agreement Status - Not Started")
-            {                
-                Discription = await NotStartedMilestone(activityName, user, sheet);
-                await CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
-            }
-            if (activityName == "Agreement Status - Started")
-            {
-                Discription = await StartedMilestone(activityName, user, sheet);
-            }
-            if (activityName == "Agreement Status – Referred")
-            {
-                await ReferredMilestone(activityName, user, sheet);
+                if (activityName == "Agreement Status - Not Started")
+                {
+                    Discription = await NotStartedMilestone(activityName, user, milestone);
+                    await CompleteMilestoneFor("Agreement Status - Not Started", user, sheet);
+                }
+                if (activityName == "Agreement Status - Declined")
+                {
+                    Discription = await DeclinedMilestone(activityName, user, milestone);                    
+                }
+                if (activityName == "Agreement Status – Referred")
+                {
+                    Discription = await ReferredMilestone(activityName, user, milestone, sheet);
+                }
             }
             return Discription;
         }
 
-        private async Task<string> StartedMilestone(string activityName, User user, ClientInformationSheet sheet)
+        private async Task<string> DeclinedMilestone(string activityName, User user, Milestone milestone)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
-            if (milestone != null)
+            var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
+            if (ProgrammeProcesse != null)
             {
-                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == activityName && a.DateDeleted == null);
-                if (advisory != null)
-                {
-                    return advisory.Description;
-                }
+                //run task
+                //run email
+                return ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory.Description;
             }
             return "";
         }
 
-        private async Task<string> NotStartedMilestone(string activityName, User user, ClientInformationSheet sheet)
+        private async Task<string> NotStartedMilestone(string activityName, User user, Milestone milestone)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
-            if(milestone != null)
+            var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
+            if (ProgrammeProcesse != null)
             {
-                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == activityName && a.DateDeleted == null);
-                if (advisory != null)
-                {
-                    return advisory.Description;
-                }
+                //run task
+                //run email
+                return ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory.Description;
             }
             return "";
         }
 
-        private async Task ReferredMilestone(string activityType, User user, ClientInformationSheet sheet)
-        {            
-            UserTask task;
-            var activity = await _activityService.GetActivityByName(activityType);
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
-            if (milestone == null)
+        private async Task<string> ReferredMilestone(string activityName, User user, Milestone milestone, ClientInformationSheet sheet)
+        {
+            var ProgrammeProcesse = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Activities.Any(a => a.Name == activityName));
+            if (ProgrammeProcesse != null)
             {
-                milestone = new Milestone(user);
-                milestone.Programme = sheet.Programme.BaseProgramme;
-            }
-
-            var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
-            if (tasks.Any())
-            {
-                task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
-                if(task == null)
+                //run task
+                var NotifyUsers = sheet.Programme.BaseProgramme.BrokerContactUser;
+                var Advisory = ProgrammeProcesse.Activities.FirstOrDefault(a => a.Name == activityName).Advisory;
+                if (!NotifyUsers.UserTasks.Any(t => t.Name.Contains(activityName + "_" + sheet.Id)))
                 {
-                    //task process 
-                    task = new UserTask(user, user.PrimaryOrganisation);                         
-                    task.Milestone = milestone;
-                    task.Activity = activity;
-                    task.Details = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")";
-                    task.Description = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString();
+                    UserTask ReferralTask = new UserTask(user, activityName + "_" + sheet.Id, null)
+                    {
+                        URL = "/Agreement/ViewAcceptedAgreement/" + sheet.Programme.Id.ToString(),
+                        Body = "UIS Referral: " + sheet.ReferenceId + " (" + sheet.Programme.BaseProgramme.Name + " - " + sheet.Programme.Owner.Name + ")"
+                    };
 
-                    await _taskingService.CreateTask(task);
-                }
-            }         
+                    NotifyUsers.UserTasks.Add(ReferralTask);
+                    await _userService.Update(NotifyUsers);
+                }                           
+                //run email
+                return Advisory.Description;
+            }
+            return "";
         }
 
         public async Task CompleteMilestoneFor(string activityName, User user, ClientInformationSheet sheet)
         {
-            if (activityName == "Agreement Status - Not Started")
+            var milestone = await GetMilestoneProgrammeId(sheet.Programme.BaseProgramme.Id);
+            if(milestone!= null)
             {
-                await NotStartedCompleted(activityName, user, sheet);
+                if (activityName == "Agreement Status - Not Started")
+                {
+                    await NotStartedCompleted(activityName, user, sheet);
+                }
+                if (activityName == "Agreement Status – Referred")
+                {
+                    await ReferredComplete(activityName, user, sheet);
+                }
             }
-            if (activityName == "Agreement Status – Referred")
-            {
-                await ReferredComplete(activityName, user, sheet);
-            }
+
         }
 
         private async Task NotStartedCompleted(string activityName, User user, ClientInformationSheet sheet)
@@ -236,34 +137,192 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async Task ReferredComplete(string activityType, User user, ClientInformationSheet sheet)
+        public async Task CreateMilestone(User user, IFormCollection collection)
         {
-            var milestone = await GetMilestoneByBaseProgramme(sheet.Programme.BaseProgramme.Id);
+            Guid.TryParse(collection["MilestoneViewModel.Programme"].ToString(), out Guid ProgrammeId);
+            string programmeProcess = collection["MilestoneViewModel.ProgrammeProcesses"].ToString();
+            string activity = collection["MilestoneViewModel.Activity"].ToString();
+            Programme programme =  await _programmeService.GetProgramme(ProgrammeId);
+            Milestone milestone =  await GetMilestoneProgrammeId(programme.Id);
             if (milestone == null)
             {
-                milestone = new Milestone(user);
-                milestone.Programme = sheet.Programme.BaseProgramme;
+                milestone = new Milestone(user, programme);
+            }
+            var ProgrammeProcess = milestone.ProgrammeProcesses.FirstOrDefault(p => p.Name == programmeProcess);
+            if (ProgrammeProcess == null)
+            {
+                ProgrammeProcess = new ProgrammeProcess(user, programmeProcess);
+                milestone.ProgrammeProcesses.Add(ProgrammeProcess);
+            }
+            var Activity = ProgrammeProcess.Activities.FirstOrDefault(a => a.Name == activity);
+            if (Activity == null)
+            {
+                Activity = new Activity(user, activity, collection, null);
+                ProgrammeProcess.Activities.Add(Activity);
+            }
+            else
+            {
+                Activity.Advisory.PopulateEntity(collection);
             }
 
-            var activity = await _activityService.GetActivityByName(activityType);
-            try
-            {
-                var tasks = await _taskingService.GetUserTasksByMilestone(milestone);
+            await Update(milestone);
+        }
 
-            
-            if(tasks.Any())
+        private async Task Update(Milestone milestone)
+        {
+            await _milestoneRepository.AddAsync(milestone);
+        }
+
+        private async Task ReferredComplete(string activityName, User user, ClientInformationSheet sheet)
+        {
+            //close task
+            var UserTask = sheet.Programme.BaseProgramme.BrokerContactUser.UserTasks.FirstOrDefault(t => t.Name == activityName + "_" + sheet.Id && t.Completed == false);
+            if (UserTask != null)
             {
-                var task = tasks.FirstOrDefault(t => t.Activity == activity && t.Completed == false);
-                if (task != null)
-                {                   
-                    task.Complete(user);
-                    await _taskingService.UpdateUserTask(task);
+                UserTask.Complete(user);
+                await _taskingService.Update(UserTask);
+            }
+            //run email
+            
+        }
+
+        public async Task<string> GetMilestone(IFormCollection collection)
+        {
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            Guid.TryParse(collection["MilestoneViewModel.Programme"].ToString(), out Guid ProgrammeId);
+            string programmeProcess = collection["MilestoneViewModel.ProgrammeProcesses"].ToString();
+            string activity = collection["MilestoneViewModel.Activity"].ToString();
+            Milestone Milestone = await GetMilestoneProgrammeId(ProgrammeId);
+            if (Milestone != null)
+            {
+                var ProgrammeProcess = Milestone.ProgrammeProcesses.FirstOrDefault(p => p.Name == programmeProcess);
+                if (ProgrammeProcess != null)
+                {
+                    var Activity = ProgrammeProcess.Activities.FirstOrDefault(a => a.Name == activity);
+                    if (Activity != null)
+                    {
+                        JsonObjects.Add("Advisory", Activity.Advisory);
+                        //JsonObjects.Add("UserTask", Activity.UserTask);
+                        return GetSerializedModel(JsonObjects);
+                    }
                 }
             }
+            return string.Empty;
+        }
+
+        public string GetSerializedModel(object model)
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(model,
+                    new JsonSerializerSettings()
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        FloatFormatHandling = FloatFormatHandling.DefaultValue,
+                        DateParseHandling = DateParseHandling.DateTime
+                    });
             }
             catch (Exception ex)
             {
+                return ex.Message;
+            }
 
+        }
+
+        public async Task CreateJoinOrganisationTask(User user, User organisationUser, Programme programme, Organisation organisation)
+        {
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
+            UserTask programmeUserTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            UserTask removedUserTask = organisationUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (programmeUserTask == null)
+            {
+                programmeUserTask = new UserTask(user, "Rejoin", null)
+                {
+                    URL = URL,
+                    Body = organisationUser.FirstName + " click here to rejoin " + programme.Name,
+                    IsActive = true
+                };
+                removedUserTask = new UserTask(user, "Rejoin", null)
+                {
+                    URL = URL,
+                    Body = organisationUser.FirstName + " click here to rejoin " + programme.Name,
+                    IsActive = true
+                };
+
+                var programmeUser = programme.BrokerContactUser;
+                programmeUser.UserTasks.Add(programmeUserTask);
+                organisationUser.UserTasks.Add(removedUserTask);
+
+                await _userService.Update(programmeUser);
+                await _userService.Update(organisationUser);
+            }
+        }
+
+        public async Task CreateAttachOrganisationTask(User user, Programme programme, Organisation organisation)
+        {           
+            string URL = "/Organisation/RejoinProgramme/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
+            var programmeUser = programme.BrokerContactUser;
+            var removedUser = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
+
+            // Remove the old Task for Rejoin from Broker and RemovedUser
+            UserTask programmeUserTask = programmeUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            UserTask removedUserTask = removedUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (programmeUserTask != null)
+            {
+                if (user == programmeUser)
+                {
+                    programmeUserTask.Complete(programmeUser);
+                }
+                else
+                {
+                    removedUserTask.Complete(removedUser);
+                }
+
+                programmeUser.UserTasks.Remove(programmeUserTask);
+                removedUser.UserTasks.Remove(removedUserTask);
+
+
+                programmeUserTask = new UserTask(programmeUser, "Attach", null)
+                {
+                    URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString(),
+                    Body = "Click here to rejoin " + organisation.Name + " to " + programme.Name,
+                    IsActive = true
+                };
+
+                programmeUser.UserTasks.Add(programmeUserTask);
+                await _userService.Update(programmeUser);
+            }           
+        }
+
+        public async Task CompleteAttachOrganisationTask(User user, Programme programme, Organisation organisation)
+        {
+            string URL = "/Organisation/AttachOrganisation/?ProgrammeId=" + programme.Id.ToString() + "&OrganisationId=" + organisation.Id.ToString();
+            UserTask userTask = user.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+            if (userTask != null)
+            {
+                userTask.Complete(user);
+                user.UserTasks.Remove(userTask);
+                await _userService.Update(user);
+            }
+        }
+
+        public async Task RemoveTask(User user, IFormCollection collection)
+        {
+            List<UserTask> tasks = await _taskingService.GetUserTasksByName(collection["taskName"]);
+
+            foreach(UserTask task in tasks)
+            {
+                if (task.URL.Contains(collection["programmeId"]) && task.URL.Contains(collection["organisationId"]))
+                {
+                    task.Removed = true;
+                    task.DateDeleted = DateTime.Now;
+                    task.DeletedBy = user; 
+                    await _taskingService.Update(task);
+                }
             }
         }
     }

@@ -23,10 +23,6 @@ namespace DealEngine.Services.Impl
             await _advisoryRepository.AddAsync(advisory);
         }
 
-        public async Task<List<Advisory>> GetAdvisorysByMilestone(Milestone milestone)
-        {
-            return await _advisoryRepository.FindAll().Where(a=>a.Milestone == milestone && a.DateDeleted == null).ToListAsync();
-        }
         public async Task UpdateAdvisory(Advisory advisory)
         {
             await _advisoryRepository.UpdateAsync(advisory);

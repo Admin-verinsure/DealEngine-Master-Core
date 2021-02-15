@@ -3,10 +3,16 @@
 @{
     var agreementStatus = Model.Status;
     string clientMessage = "";
+    bool Isenablebacktoclient = false;
 
-    if (agreementStatus == "Referred")
+    if (agreementStatus == "Referred" || agreementStatus == "Authorised"  )
     {
         clientMessage = @"Thank you for completing the information sheet.  Due to some answers in the information sheet, it has been referred to your broker and insurer for manual processing.  They will contact you with more information.  In the meantime if you have any questions, please contact your broker.  Please click on the 'Back to Dashboard' button below to go back to the dashboard.  Thank you.";
+
+        if(Model.CurrentUser.PrimaryOrganisation.IsBroker || Model.CurrentUser.PrimaryOrganisation.IsTC || Model.CurrentUser.PrimaryOrganisation.IsInsurer)
+        {
+            Isenablebacktoclient = true;
+        }
 
     }
     else
@@ -26,6 +32,12 @@
         <div class="form-group">
             <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
         </div>
+        @if (Isenablebacktoclient)
+        {
+          <div class="form-group">
+			<a class="btn btn-primary btn-xs" href="~/Home/ViewSubClientProgrammes?clientProgrammeId=@Model.ClientProgrammeId" id="backbutton"><i class="fa fa-random"></i> Back to Client</a>
+          </div>
+        }
 
         <div class="form-group nonsubmitted">
             <div class="input-group">
@@ -79,7 +91,7 @@
 }
 
 
-@if (Model.Status == "Referred")
+@if (Model.Status == "Referred" || Model.Status == "Authorised")
 {
     
     <script type="text/javascript">

@@ -7,15 +7,15 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Qualifications, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Qualifications, new { @class = "form-control", @id = "AdvisorUnit.Qualifications", @required = "" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Qualifications, new { @class = "form-control", @id = "AdvisorUnit.Qualifications", @onchange = "OnChange(this.id, this.name)", @required = "" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "form-control", @id = "AdvisorUnit.Duration", @required = "" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Duration, new { @class = "form-control", @id = "AdvisorUnit.Duration", @onchange = "OnChange(this.id, this.name)", @required = "" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.RegisteredStatus, new { @class = "label required" })
-            <select id="AdvisorUnit.RegisteredStatus" name="OrganisationViewModel.AdvisorUnit.IsRetiredorDecieved" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdvisorUnit.RegisteredStatus" name="OrganisationViewModel.AdvisorUnit.RegisteredStatus" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in @Model.OrganisationViewModel.HasRegisteredOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">
@@ -28,7 +28,7 @@
     <div class="form-group col-md-6">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased)
-            <select id="AdvisorUnit.IsRetiredorDeceased" name="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdvisorUnit.IsRetiredorDeceased" name="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" data-rule="RetirementDateValidation"  class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in Model.OrganisationViewModel.HasRetiredorDeceasedOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -38,17 +38,19 @@
         <div id="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" hidden>
             <div class="form-group">
                 @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @required = "" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "form-control", @id = "AdvisorUnit.DateofRetirement", @type = "date", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Retirement" })
             </div>
             <div class="form-group">
-                @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @required = "" })
+                @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofRetirement, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofDeceased, new { @class = "form-control", @id = "AdvisorUnit.DateofDeceased", @type = "date", @onchange = "OnChange(this.id, this.name)", @placeholder = "Date of Deceased" })
             </div>
         </div>
-        <div class="form-group">
+
+
+        <div class="form-group" id="HidePrincipal">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor, new { @class = "label required" })
-            <select id="AdvisorUnit.IsPrincipalAdvisor" name="OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                @foreach (var option in @Model.OrganisationViewModel.HasPrincipalAdvisor)
+            <select id="AdvisorUnit.IsPrincipalAdvisor" name="OrganisationViewModel.AdvisorUnit.IsPrincipalAdvisor" class="custom-select" data-rule="PrincipalAdvisor" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasPrincipalOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">
                         @option.Text

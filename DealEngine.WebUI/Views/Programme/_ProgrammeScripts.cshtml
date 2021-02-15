@@ -93,14 +93,7 @@
                     else if (stepNumber == 2) {
                         var form = document.getElementById('templateform');
                         form.classList.add('was-validated');
-                        //if (form.checkValidity() === false) {
-                        //    debugger;
-                        //    throw "stop process";
-                        //}
-                        //else {
-                        //    debugger;
-                            form.submit();
-                        //}
+                        form.submit();
                     }
                     else if (stepNumber == 3) {
                         var form = document.getElementById('informationform');
@@ -374,6 +367,7 @@
      };
 
     function selectorgUser() {
+        debugger;///
         var SelectedParty = $('#selectParty').val();
         var InformationId = $('#Id').val();
         var postdata = {selectedParty : SelectedParty , informationId: InformationId};

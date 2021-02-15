@@ -10,6 +10,7 @@
     <PackageReference Include="ElmahCore" Version="1.2.5" />
     <PackageReference Include="ElmahCore.Postgresql" Version="1.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="NReco.PdfGenerator.LT" Version="1.1.17" />
     <PackageReference Include="ServiceStack.Client" Version="5.7.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.20" />
   </ItemGroup>
@@ -18,7 +19,6 @@
     <ProjectReference Include="..\DealEngine.Infrastructure.Email\DealEngine.Infrastructure.Email.csproj" />
     <ProjectReference Include="..\DealEngine.Infrastructure.FluentNHibernate\DealEngine.Infrastructure.FluentNHibernate.csproj" />
     <ProjectReference Include="..\DealEngine.Infrastructure.Ldap\DealEngine.Infrastructure.Ldap.csproj" />
-    <ProjectReference Include="..\DealEngine.Infrastructure.Tasking\DealEngine.Infrastructure.Tasking.csproj" />
     <ProjectReference Include="..\DealEngine.Services.Interfaces\DealEngine.Services.Interfaces.csproj" />
   </ItemGroup>
 </Project>

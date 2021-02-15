@@ -68,6 +68,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindays = 0;
             coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
 
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             int fapagreementperiodindays = 0;
             fapagreementperiodindays = (agreement.ExpiryDate - Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "FAPViewModel.CoverStartDate").First().Value)).Days;
 
@@ -114,13 +117,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 //foreach (var uisorg in agreement.ClientInformationSheet.Organisation.Where(o=>o.InsuranceAttributes.Any(i=>i.Name == "Advisor" || i.Name == "Nominated Representative")))
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
                 {
-                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor" || u.Name == "Nominated Representative") && u.DateDeleted == null);
-
-                    if (principleadvisorunit != null)
+                    if (!uisorg.Removed)
                     {
-                        if (uisorg.DateDeleted == null && !uisorg.Removed)
+                        var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor" || u.Name == "Nominated Representative") && u.DateDeleted == null);
+
+                        if (principleadvisorunit != null)
                         {
-                            intnumberofadvisors += 1;
+                            if (uisorg.DateDeleted == null && !uisorg.Removed)
+                            {
+                                intnumberofadvisors += 1;
+                            }
                         }
                     }
                 }
@@ -231,6 +237,45 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
                 term2millimitpremiumoption.DateDeleted = null;
                 term2millimitpremiumoption.DeletedBy = null;
+
+                //Change policy premium calculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                {
+                    var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                    foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                    {
+                        if (term.Bound)
+                        {
+                            var PreviousBoundPremium = term.Premium;
+                            if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremium = term.BasePremium;
+                            }
+                            term1millimitpremiumoption.PremiumDiffer = (TermPremium1mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term1millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term1millimitpremiumoption.TermLimit == term.TermLimit && term1millimitpremiumoption.Excess == term.Excess)
+                            {
+                                term1millimitpremiumoption.Bound = true;
+                            }
+                            if (term1millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term1millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                            term2millimitpremiumoption.PremiumDiffer = (TermPremium2mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                            term2millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                            if (term2millimitpremiumoption.TermLimit == term.TermLimit && term2millimitpremiumoption.Excess == term.Excess)
+                            {
+                                term2millimitpremiumoption.Bound = true;
+                            }
+                            if (term2millimitpremiumoption.PremiumDiffer < 0)
+                            {
+                                term2millimitpremiumoption.PremiumDiffer = 0;
+                            }
+                        }
+
+                    }
+                }
+
             }
            
             int TermLimit5mil = 5000000;
@@ -252,6 +297,35 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
+
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        term5millimitpremiumoption.PremiumDiffer = (TermPremium5mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        term5millimitpremiumoption.PremiumPre = PreviousBoundPremium;
+                        if (term5millimitpremiumoption.TermLimit == term.TermLimit && term5millimitpremiumoption.Excess == term.Excess)
+                        {
+                            term5millimitpremiumoption.Bound = true;
+                        }
+                        if (term5millimitpremiumoption.PremiumDiffer < 0)
+                        {
+                            term5millimitpremiumoption.PremiumDiffer = 0;
+                        }
+                    }
+
+                }
+            }
 
 
             //Referral points per agreement
@@ -670,7 +744,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
-                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
+                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && !acscn.Removed && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }
@@ -777,7 +851,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null) == null)
             {
                 if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Name,
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Name,
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Value,
