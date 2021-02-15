@@ -60,6 +60,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int coverperiodindays = 0;
+            coverperiodindays = (agreement.ExpiryDate - agreement.ExpiryDate.AddYears(-1)).Days;
+
+            int coverperiodindaysforchange = 0;
+            coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
+
             string strretrodate = "";
             if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
@@ -135,6 +141,36 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termdo1millimitoption.Brokerage = TermBrokerage1mil;
             termdo1millimitoption.DateDeleted = null;
             termdo1millimitoption.DeletedBy = null;
+            termdo1millimitoption.BasePremium = TermPremium1mil;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "DO"));
+                foreach (var term in PreviousAgreement.ClientAgreementTerms)
+                {
+                    if (term.Bound)
+                    {
+                        var PreviousBoundPremium = term.Premium;
+                        if (term.BasePremium > 0 && PreviousAgreement.ClientInformationSheet.IsChange)
+                        {
+                            PreviousBoundPremium = term.BasePremium;
+                        }
+                        termdo1millimitoption.PremiumDiffer = (TermLimit1mil - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termdo1millimitoption.PremiumPre = PreviousBoundPremium;
+                        if (termdo1millimitoption.TermLimit == term.TermLimit && termdo1millimitoption.Excess == term.Excess)
+                        {
+                            termdo1millimitoption.Bound = true;
+                        }
+                        if (termdo1millimitoption.PremiumDiffer < 0)
+                        {
+                            termdo1millimitoption.PremiumDiffer = 0;
+                        }
+
+                    }
+
+                }
+            }
 
             //Referral points per agreement
             //Asset Size
@@ -178,6 +214,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
+
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {
