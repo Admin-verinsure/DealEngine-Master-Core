@@ -464,6 +464,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Change policy premium claculation
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
+                //set admin fee $0
+                agreement.BrokerFee = 0M;
+
                 var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
                 foreach (var term in PreviousAgreement.ClientAgreementTerms)
                 {
