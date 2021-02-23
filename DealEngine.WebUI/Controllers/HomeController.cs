@@ -834,7 +834,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 try
                 {
-                    if (reportName == "NZFSGFAP")
+                    if (reportName == "FAP")
                     {
                         ListReport = new List<String>();
 
@@ -983,13 +983,18 @@ namespace DealEngine.WebUI.Controllers
                 ListReport.Add(supercp.InformationSheet.Owner.Name);
                   }
                  else
+
                  {
                     ListReport.Add(cp.InformationSheet.Owner.Name);
 
                   
                   }
                 ListReport.Add(cp.InformationSheet.Status);
-                ListReport.Add(organisation.Email);
+                ListReport.Add(cp.InformationSheet.ReferenceId);
+                ListReport.Add((cp.InformationSheet.IsChange).ToString());
+
+
+            ListReport.Add(organisation.Email);
                 User user = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
                 if (isSubClient)
                  {
@@ -1019,8 +1024,8 @@ namespace DealEngine.WebUI.Controllers
                 }
                 
 
-                //if(programme.Name == "NZFSG Programme")
-                //{
+                if(cp.InformationSheet.Status != "Not Started" && cp.InformationSheet.Status != "Started")
+                {
                 
                 ClientInformationAnswer CoverStartDate = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.CoverStartDate", clientInformationSheetID);
                 ClientInformationAnswer TraditionalLicenceOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasTraditionalLicenceOptions", clientInformationSheetID);
@@ -1095,9 +1100,19 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 ListReport.Add(IsprincipalAdvisor.ToString());
-           
-          
-            // }
+
+
+            }
+            else
+            {
+                ListReport.Add("Not Selected");
+                ListReport.Add("Not Selected");
+                ListReport.Add("Not Selected");
+                ListReport.Add("Not Selected");
+                ListReport.Add("Not Selected");
+
+            }
+
 
 
 
@@ -1113,6 +1128,8 @@ namespace DealEngine.WebUI.Controllers
             List<String> ListReport = new List<String>();
             ListReport.Add("Insured");
             ListReport.Add("Status");
+            ListReport.Add("Reference Id");
+            ListReport.Add("Is Change");
             ListReport.Add("Email");
             ListReport.Add("Advisor Names");
             ListReport.Add("If not 15 March 2021, when do you want this cover to start?");
@@ -1124,7 +1141,7 @@ namespace DealEngine.WebUI.Controllers
 
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null).OrderByDescending(o => o.InformationSheet.ReferenceId))
             {
                 try
                 {
