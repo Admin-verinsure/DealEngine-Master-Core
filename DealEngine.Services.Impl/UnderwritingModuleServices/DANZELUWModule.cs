@@ -104,6 +104,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.Brokerage = TermBrokerage1mil;
             termsl1millimitoption.DateDeleted = null;
             termsl1millimitoption.DeletedBy = null;
+            termsl1millimitoption.BasePremium = TermPremium1mil;
+
+            //Change policy premium calculation
+            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                termsl1millimitoption.Bound = true;
+            }
 
             ////Referral points per agreement
 
@@ -144,6 +151,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow.AddYears(1);
+
+                //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
+                if (DateTime.UtcNow > product.DefaultInceptionDate)
+                {
+                    inceptionDate = DateTime.UtcNow;
+                }
 
                 if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
                 {
