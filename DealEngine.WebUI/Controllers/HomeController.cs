@@ -528,7 +528,7 @@ namespace DealEngine.WebUI.Controllers
                         programmeUseEglobal = true;
                     }
 
-                    if (null != client.InformationSheet.PreviousInformationSheet)
+                    if (null != client.InformationSheet.NextInformationSheet)
                     {
                         nextInfoSheet = true;
                     }
