@@ -2605,6 +2605,8 @@ function UpdateChosen() {
         })
         .done(function (data) {
             debugger;
+                     $('a[href="boatTabs2"]').removeClass("hidden");
+
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
                 $('#SelectedBoatUse').val(data.boatselectedText).trigger('chosen:updated');
