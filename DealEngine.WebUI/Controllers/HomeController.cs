@@ -830,7 +830,7 @@ namespace DealEngine.WebUI.Controllers
             ListReport.Add("Please select from the following options (if selected no)");
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o =>  o.InformationSheet.DateDeleted == null))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o =>  o.InformationSheet.DateDeleted == null ))
             {
                 try
                 {
@@ -1141,7 +1141,7 @@ namespace DealEngine.WebUI.Controllers
 
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null).OrderByDescending(o => o.InformationSheet.ReferenceId))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null))
             {
                 try
                 {
