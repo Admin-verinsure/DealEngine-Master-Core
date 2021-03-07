@@ -127,7 +127,7 @@
 
                 <ul id="tab" class="nav nav-tabs">
                     <li class="nav nav-tabs active"> <a href="#clTabs1"> List All </a> </li>
-                    <li class="nav nav-tabs"> <a href="#clTabs2"> Edit </a> </li>
+                    <li class="nav nav-tabs hidden" id="NotificationEdit" > <a href="#clTabs2"> Edit </a> </li>
                     <li class="nav nav-tabs"> <a href="#clTabs3"> Add </a> </li>
                     <li class="nav nav-tabs"> <a href="#clTabs4" Class="ClaimRemoved"> List Removed </a> </li>
 
@@ -150,7 +150,7 @@
                                     colModel: [
                                         {
                                             name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                                return ('<button onclick="EditClaim(\'' + cellvalue + '\', \'#tblClaim\'); SetCurrentTab(\'clTabs2\');" type="button"class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                                return ('<button onclick="UnhideEdit(\'NotificationEdit\');EditClaim(\'' + cellvalue + '\', \'#tblClaim\'); SetCurrentTab(\'clTabs2\');" type="button"class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
                                             }
                                         },
 							            { name: "ClaimTitle", align: 'center', key: 'true' },
@@ -414,8 +414,8 @@
 
                                 @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-2','clTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
 
-                                <button onclick="ValidateClaim(event,'#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="ClaimUpdate">Update</button>
-                                <button onclick="ClearBoats(event,'#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+                                <button onclick="ValidateClaim(event, '#clTabs2', '#tblClaim', 'clTabs1');HideEdit('NotificationEdit');" class="btn-sm updateBoat" id="ClaimUpdate">Update</button>
+                                <button onclick="HideEdit('NotificationEdit');ClearBoats(event,'#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
 
                             </section>
                         </div>

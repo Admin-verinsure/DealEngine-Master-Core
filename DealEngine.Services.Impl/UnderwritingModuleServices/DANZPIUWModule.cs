@@ -461,7 +461,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimit10kexcessoption.DeletedBy = null;
             term2millimit10kexcessoption.BasePremium = TermPremium2mil10kExcess;
 
-            //Change policy premium claculation
+            //Change policy premium calculation
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
                 //set admin fee $0
