@@ -21,6 +21,22 @@
         }
     }
 
+    function UnhideEdit(tabId) {
+                debugger;
+
+        var ele = document.getElementById(tabId);
+        ele.classList.remove('hidden');
+
+    }
+
+     function HideEdit(tabId) {
+                debugger;
+         var ele = document.getElementById(tabId);
+
+        ele.classList.add('hidden');
+
+     }
+
     function EditOrganisation() {
         debugger;
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
@@ -66,6 +82,7 @@
     }    
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
+        debugger;
         var addTabHTML = document.getElementById(AddTabId);
         var editTabHTML = document.getElementById(EditTabId);
         var form = document.getElementById(addTabHTML.firstElementChild.id);
@@ -111,6 +128,7 @@
     }
 
     function Cancel(Form, Tab) {
+        debugger;
         document.getElementById(Form).reset();
         SetCurrentTab(Tab);
     }

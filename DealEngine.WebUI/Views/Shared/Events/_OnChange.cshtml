@@ -37,7 +37,6 @@
     });
 
     function OnChange(Id, Name) {
-        debugger;
         var obj = document.getElementById(Id);
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
@@ -116,7 +115,6 @@
     }
 
     function DefaultRule(Value, Name) {
-        debugger;
         if (Value === "1") {
             ShowElement(Name);
         } else {
@@ -663,7 +661,6 @@
     }
 
     function HideElement(id) {
-        debugger;
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = true;

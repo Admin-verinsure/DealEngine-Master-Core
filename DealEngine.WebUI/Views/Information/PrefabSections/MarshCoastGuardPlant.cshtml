@@ -7,7 +7,7 @@
 
             <ul id="tab" class="nav nav-tabs">
                 <li class="nav nav-tabs active"> <a href="#omvTabs1"> List All </a> </li>
-                <li class="nav nav-tabs"> <a href="#omvTabs2" Class="EditButton"> Edit </a> </li>
+                <li class="nav nav-tabs hidden" id="TrailerEdit"> <a href="#omvTabs2"  Class="EditButton"> Edit </a> </li>
                 <li class="nav nav-tabs"> <a href="#omvTabs3" Class="AddButton"> Add </a> </li>
                 <li class="nav nav-tabs"> <a href="#omvTabs4" Class="PlantRomoved"> List Removed </a> </li>
 
@@ -30,7 +30,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditRegisteredMotorVehicle(\'omv\', \'' + cellvalue + '\'); SetCurrentTab(\'omvTabs2\');" type="button" class="btn btn-success btn-sm">Edit <i class="fa fa-edit"></i></button>');
+                                            return ('<button onclick="UnhideEdit(\'TrailerEdit\');EditRegisteredMotorVehicle(\'omv\', \'' + cellvalue + '\'); SetCurrentTab(\'omvTabs2\');" type="button" class="btn btn-success btn-sm">Edit <i class="fa fa-edit"></i></button>');
                                         }
                                     },
                                     { name: "Year", align: 'center', key: 'true' },
@@ -171,8 +171,8 @@
                     <!-- 6th row -->
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateNRegisteredMotor(event,'#omvTabs2', '#tblRegisteredMV','omvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats(event,'#omvTabs3','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ValidateNRegisteredMotor(event, '#omvTabs2', '#tblRegisteredMV', 'omvTabs1');HideEdit('TrailerEdit');" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="HideEdit('TrailerEdit');ClearBoats(event,'#omvTabs3','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                         </section>
                     </div>
