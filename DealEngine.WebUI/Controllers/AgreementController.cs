@@ -2606,16 +2606,16 @@ namespace DealEngine.WebUI.Controllers
                                                     documentspremiumadvice.Add(renderedDoc);
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
-                                                //else if (template.DocumentType == 8)
-                                                //{
-                                                //    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
+                                                else if (template.DocumentType == 8)
+                                                {
+                                                    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null);
 
-                                                //    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-                                                //    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                                //    agreement.Documents.Add(renderedDoc1);
-                                                //    documents.Add(renderedDoc);
-                                                //    await _fileService.UploadFile(renderedDoc);
-                                                //}
+                                                    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                    agreement.Documents.Add(renderedDoc1);
+                                                    documents.Add(renderedDoc);
+                                                    await _fileService.UploadFile(renderedDoc);
+                                                }
                                                 else
                                                 {
                                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
@@ -2681,15 +2681,15 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                         }
 
-                                        ////send out premium advice
-                                        //if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
-                                        //    agreement.Product.ProductEnablePremiumAdvice)
-                                        //{
-                                        //    await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
-                                        //}
+                                        //send out premium advice
+                                        if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
+                                            agreement.Product.ProductEnablePremiumAdvice)
+                                        {
+                                            await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
+                                        }
 
-                                        ////send out agreement bound notification email
-                                        //await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                                        //send out agreement bound notification email
+                                        await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                                     }
 
                                 }

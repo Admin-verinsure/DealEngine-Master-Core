@@ -995,10 +995,10 @@ namespace DealEngine.WebUI.Controllers
 
 
             ListReport.Add(organisation.Email);
-                User user = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
+                User user = await _userService.GetApplicationUserByEmail(organisation.Email);
                 if (isSubClient)
                  {
-                    if (user.FullName != null)
+                    if (user != null)
                     {
                        ListReport.Add(user.FullName);
                     }
@@ -1141,7 +1141,7 @@ namespace DealEngine.WebUI.Controllers
 
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
             {
                 try
                 {
