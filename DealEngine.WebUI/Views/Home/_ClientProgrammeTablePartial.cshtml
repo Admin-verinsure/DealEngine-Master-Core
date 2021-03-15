@@ -212,6 +212,7 @@
             <form id="ProdForm" method="post" action="~/Information/UpdateInformation">
                 <input class="form-control" hidden type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
                 <table class="table table-striped">
+
                     <tr>
                         <td>
                             <label for="changeType" class="required">Change Type</label>
@@ -246,6 +247,7 @@
                             <p class="validationContainer" id="validateChangeType"></p>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <label for="Reason" class="required">Reason</label>
@@ -269,17 +271,22 @@
                             <p class="validationContainer" id="validateChangeReason"></p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <label for="ReasonDesc" class="required">Reason Description</label>
-                        </td>
-                        <td>
-                            @Html.TextAreaFor(m => m.ChangeReason.Description, new { @class = "form-control", @required = "" })
-                        </td>
-                        <td>
-                            <p class="validationContainer" id="validateDescription"></p>
-                        </td>
-                    </tr>
+                    @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "False")
+                    @*@if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")*@
+                    {
+                        <tr>
+                            @Model.CurrentUserIsBroker, @Model.CurrentUserIsInsurer, @Model.CurrentUserIsTC
+                            <td>
+                                <label for="ReasonDesc" class="required">Reason Description</label>
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(m => m.ChangeReason.Description, new { @class = "form-control", @required = "" })
+                            </td>
+                            <td>
+                                <p class="validationContainer" id="validateDescription"></p>
+                            </td>
+                        </tr>
+                    }
                     <tr>
                         <td>
                             <label for="EffectiveDate" class="required">Effective Date</label>
