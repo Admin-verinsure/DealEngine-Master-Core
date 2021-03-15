@@ -289,3 +289,20 @@ deploy_insurerotary:
   when: manual
   dependencies:
     - build
+    
+deploy_stagingi2ibrokers:
+  stage: deploy
+  script:
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$staging.i2ibrokers.online" './DE-DeployPrep.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$staging.i2ibrokers.online:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$staging.i2ibrokers.online" './DE-DeployFin.sh'
+
+  environment:
+    name: stagingi2ibrokers
+    url: staging.i2ibrokers.online
+  when: manual
+  dependencies:
+    - build
