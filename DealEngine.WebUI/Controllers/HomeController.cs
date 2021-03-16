@@ -776,8 +776,8 @@ namespace DealEngine.WebUI.Controllers
                 model.EnableCLReport = programme.EnableCLReport;
                 model.EnableCyberReport = programme.EnableCyberReport;
                 model.EnableFAPReport = programme.EnableFAPReport;
-
                 model.ProgrammeName = programme.Name;
+                model.ProgrammeNamedPartyUnitName = programme.NamedPartyUnitName;
                 return View(model);
             }
             catch (Exception ex)
@@ -856,9 +856,9 @@ namespace DealEngine.WebUI.Controllers
 
                         }
 
-                        //if(programme.Name == "NZFSG Programme")
+                        //if(programme.NamedPartyUnitName == "NZFSG Programme")
                         //{
-                            if(cp.BaseProgramme.Id == programme.Id)
+                        if (cp.BaseProgramme.Id == programme.Id)
                             {
                                 clientInformationSheetID = cp.InformationSheet.Id;
 
@@ -1145,7 +1145,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 try
                 {
-                    if (reportName == "FAP" || programme.Name == "Abbott Financial Advisor Liability Programme")
+                    if (reportName == "FAP" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
                     {
                         Guid clientInformationSheetID = Guid.NewGuid();
                         if (cp.BaseProgramme.Id == programme.Id)
@@ -1191,14 +1191,14 @@ namespace DealEngine.WebUI.Controllers
                 DataTable table = new DataTable();
                 //List<String> ListReport = new List<String>();
                 List<List<string>> Lreportset = new List<List<string>>();
-                if (programme.Name == "NZFSG Programme")
+                if (programme.NamedPartyUnitName == "NZFSG Programme")
                 {
                    Lreportset = await GetNZFGReportSet(ProgrammeId, queryselect);
 
                 }
                 else
                 {
-                    if (programme.Name == "TripleA Programme" || programme.Name == "Abbott Financial Advisor Liability Programme")
+                    if (programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
                     {
                         Lreportset = await GetAAAReportSet(ProgrammeId, queryselect);
 

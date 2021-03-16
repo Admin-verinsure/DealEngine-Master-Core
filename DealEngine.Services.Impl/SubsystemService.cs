@@ -53,7 +53,7 @@ namespace DealEngine.Services.Impl
         public async Task<bool> CreateSubObjects(Guid clientProgrammeId, ClientInformationSheet sheet, User user)
         {
             List<Organisation> principalOrganisations = null;
-            if (sheet.Programme.BaseProgramme.Name == "TripleA Programme")
+            if (sheet.Programme.BaseProgramme.NamedPartyUnitName == "TripleA Programme")
             {
                 principalOrganisations = await _organisationService.GetTripleASubsystemAdvisors(sheet);
             }
@@ -282,7 +282,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<bool> ValidateProgramme(ClientInformationSheet informationSheet, User user)
         {
-            if (informationSheet.Programme.BaseProgramme.Name == "NZFSG Programme")
+            if (informationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme")
             {
                 var advisors = await _organisationService.GetNZFSGSubsystemAdvisors(informationSheet);
                 await ValidateSubObjects(informationSheet, user, advisors);
