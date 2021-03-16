@@ -298,7 +298,7 @@ deploy_stagingi2ibrokers:
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLstagingi2ibrokers" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@"$URLstagingi2ibrokers":/home/ubuntu/projects/dealengine
-  - ssh ubuntu@ubuntu@"$URLstagingi2ibrokers" './DE-DeployFin.sh'
+  - ssh ubuntu@"$URLstagingi2ibrokers" './DE-DeployFin.sh'
   environment:
     name: stagingi2ibrokers
     url: https://$URLstagingi2ibrokers
