@@ -18,6 +18,7 @@ namespace DealEngine.WebUI.Models
 		public  bool EnableCLReport { get; set; }
 		public  bool EnableCyberReport { get; set; }
 		public  bool EnableFAPReport { get; set; }
+		public string ProgrammeNamedPartyUnitName { get; set; }
 
 	}
 }

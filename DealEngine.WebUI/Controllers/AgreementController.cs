@@ -294,6 +294,7 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientAgreementId = agreementId;
                 model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
                 model.ProgrammeName = programme.Name;
+                model.ProgrammeNamedPartyName = programme.NamedPartyUnitName;
 
                 if (!string.IsNullOrEmpty(agreement.issuetobrokercomment))
                 {
@@ -3841,6 +3842,7 @@ namespace DealEngine.WebUI.Controllers
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ProgrammeName = programme.BaseProgramme.Name;
+                    model.ProgrammeNamedPartyName = programme.BaseProgramme.NamedPartyUnitName;
                     ViewBag.Ispdfenable = "" + programme.BaseProgramme.EnableFullProposalReport;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a => a.DateDeleted == null))

@@ -837,16 +837,14 @@ namespace DealEngine.WebUI.Controllers
                 Programme programme = await _programmeService.GetProgramme(Id);
                 model.Id = Id;
 
-                foreach (var programmeProduct in programme.Products)
-                {
-                    var product = await _productService.GetProductById(programmeProduct.Id);
+               
+                    var product = await _productService.GetProductById(productId);
 
                     foreach (var rule in product.Rules)
                     {
                         rules.Add(rule);
                     }
-                }
-
+               
                 model.Rules = rules;
                 model.ProductId = productId;
 
@@ -904,7 +902,7 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ManageRules(Guid Id)
+        public async Task<IActionResult> ManageRules(Guid Id,string RuleType)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
@@ -932,6 +930,7 @@ namespace DealEngine.WebUI.Controllers
                 model.Product = product;
 
                 ViewBag.Title = "Add/Edit Programme Email Template";
+                ViewBag.RuleType = RuleType;
 
                 return View("ProgrammeRules", model);
             }
