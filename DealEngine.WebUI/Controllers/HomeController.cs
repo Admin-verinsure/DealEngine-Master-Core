@@ -1000,8 +1000,17 @@ namespace DealEngine.WebUI.Controllers
                  {
                     if (user != null)
                     {
-                       ListReport.Add(user.FullName);
-                    }
+                       if(user.FullName != null)
+                       {
+                        ListReport.Add(user.FullName);
+  
+                       }
+                        else
+                        {
+                         ListReport.Add(user.FirstName +" "+user.LastName);
+
+                        }
+                }
                     else
                     {
                        ListReport.Add(organisation.Name);
