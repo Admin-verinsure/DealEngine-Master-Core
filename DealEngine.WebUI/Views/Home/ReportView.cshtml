@@ -4,7 +4,7 @@
     <form id="ReportForm" method="POST" action="~/Home/GetReportView" novalidate>
         <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
         <input type="text" class="form-control" value="@Model.ProgrammeName" id="programmeName" name="ProgrammeName" hidden>
-
+        <input type="text" class="form-control" value="@Model.ProgrammeNamedPartyUnitName" id="programmeNamedPartyUnitName" name="ProgrammeNamedPartyUnitName" hidden>
         <div class="card">
             <div class="card-header">
                 <h5>
@@ -62,7 +62,7 @@
 
                                     }
                                     @{
-                                        if (Model.ProgrammeName == "NZFSG Programme" && Model.EnableFAPReport)
+                                        if (Model.ProgrammeNamedPartyUnitName == "NZFSG Programme" && Model.EnableFAPReport)
                                         {
                                             <option value="FAP">NZFG FAP Report</option>
 
@@ -70,7 +70,7 @@
 
                                     }
                                     @*@{
-                                        if (Model.ProgrammeName == "TripleA Programme" && Model.EnableFAPReport)
+                                        if (Model.ProgrammeNamedPartyUnitName == "TripleA Programme" && Model.EnableFAPReport)
                                         {
                                             <option value="FAP"> FAP Report</option>
 
@@ -78,7 +78,7 @@
 
                                     }*@
                                     @{
-                                        if ((Model.ProgrammeName == "Abbott Financial Advisor Liability Programme" || Model.ProgrammeName == "TripleA Programme") && Model.EnableFAPReport)
+                                        if ((Model.ProgrammeNamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || Model.ProgrammeNamedPartyUnitName == "TripleA Programme") && Model.EnableFAPReport)
                                         {
                                             <option value="FAP">FAP Report</option>
 

@@ -1297,6 +1297,7 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet, OrgUser, user)
                 {
                     Name = programme.Name,
+                    ProgNamedPartyName = programme.NamedPartyUnitName,
                     Sections = new List<InformationSectionViewModel>()
                 };
                 if (DefaultMarinas.Any())
@@ -1320,7 +1321,8 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
                 }
-                model.Name = programme.Name;                
+                model.Name = programme.Name;
+                model.ProgNamedPartyName = programme.NamedPartyUnitName;
                 Product product = null;
                 if (programme.Products.Count > 1)
                 {

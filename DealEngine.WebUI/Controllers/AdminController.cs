@@ -95,24 +95,32 @@ namespace DealEngine.WebUI.Controllers
 		{
             AdminViewModel model = new AdminViewModel();
             var user = await CurrentUser();
-            try
-            {         
-                var privateServers = await _privateServerService.GetAllPrivateServers();
-                var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
-                var merchants = await _merchantService.GetAllMerchants();
-                var users = _userManager.Users.ToList();
 
-                model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
-                model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
-                model.Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants);
-                model.Users = users;
-                return View(model);
-            }
-            catch(Exception ex)
+            if (user.PrimaryOrganisation.IsTC)
             {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }            
+                try
+                {
+                    var privateServers = await _privateServerService.GetAllPrivateServers();
+                    var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
+                    var merchants = await _merchantService.GetAllMerchants();
+                    var users = _userManager.Users.ToList();
+
+                    model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
+                    model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
+                    model.Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants);
+                    model.Users = users;
+                    return View(model);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                    return RedirectToAction("Error500", "Error");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Error404", "Error");
+            }
         }
         
         [HttpGet]
