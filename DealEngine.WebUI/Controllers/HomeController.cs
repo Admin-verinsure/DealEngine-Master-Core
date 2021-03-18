@@ -1078,11 +1078,11 @@ namespace DealEngine.WebUI.Controllers
                     ListReport.Add("I do have other advisers working under my license");
                 }
 
-                if (TransitionalLicenseNum.Value != "")
+                if (null != TransitionalLicenseNum )
                 {
                     ListReport.Add(TransitionalLicenseNum.Value);
                 }
-                else if (TransitionalLicenseNum.Value == "")
+                else
                 {
                     ListReport.Add("Not Selected");
                 }
@@ -1150,7 +1150,7 @@ namespace DealEngine.WebUI.Controllers
 
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null))
             {
                 try
                 {
@@ -1232,7 +1232,7 @@ namespace DealEngine.WebUI.Controllers
                 //object[] values = new object[props.Count];
                 object[] values1 = new object[table.Columns.Count];
 
-                for (int i = 1; i < Lreportset.Count-1; i++)
+                for (int i = 1; i <= Lreportset.Count-1; i++)
                 {
                     try
                     {

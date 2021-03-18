@@ -61,14 +61,14 @@
                                         }
 
                                     }
-                                    @{
+                                    @*@{
                                         if (Model.ProgrammeNamedPartyUnitName == "NZFSG Programme" && Model.EnableFAPReport)
                                         {
                                             <option value="FAP">NZFG FAP Report</option>
 
                                         }
 
-                                    }
+                                    }*@
                                     @*@{
                                         if (Model.ProgrammeNamedPartyUnitName == "TripleA Programme" && Model.EnableFAPReport)
                                         {
@@ -78,7 +78,7 @@
 
                                     }*@
                                     @{
-                                        if ((Model.ProgrammeNamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || Model.ProgrammeNamedPartyUnitName == "TripleA Programme") && Model.EnableFAPReport)
+                                        if ( Model.EnableFAPReport)
                                         {
                                             <option value="FAP">FAP Report</option>
 
