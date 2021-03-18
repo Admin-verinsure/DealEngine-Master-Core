@@ -42,6 +42,7 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationService _organisationService;
         IClientInformationAnswerService _clientInformationAnswer;
         IUnitOfWork _unitOfWork;
+        IMilestoneService _milestoneService;
 
         public HomeController(
             UserManager<IdentityUser> userManager,
@@ -61,6 +62,7 @@ namespace DealEngine.WebUI.Controllers
             IClientAgreementService clientAgreementService,
             IClientInformationService clientInformationService,
             IUnitOfWork unitOfWork,
+            IMilestoneService milestoneService,
             IClientInformationAnswerService clientInformationAnswer
 
 
@@ -85,6 +87,7 @@ namespace DealEngine.WebUI.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _clientInformationAnswer = clientInformationAnswer;
+            _milestoneService = milestoneService;
 
         }
 
@@ -630,6 +633,14 @@ namespace DealEngine.WebUI.Controllers
                 ProgrammeItem model = new ProgrammeItem(programme);
                 model = await GetClientProgrammeListModel(user, clientList, programme);
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
+                
+                if (programme.RenewFromProgramme != null)
+                {
+                    model.IsRenewFromProgramme = true;
+                } else
+                {
+                    model.IsRenewFromProgramme = false;
+                }
 
                 return View(model);
             }
@@ -705,6 +716,38 @@ namespace DealEngine.WebUI.Controllers
                 return View("IssueUIS", model);
 
 
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IssueRenewal(string ProgrammeId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                IssueUISViewModel model = new IssueUISViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                List<ClientProgramme> renewClientProgrammes = await _programmeService.GetRenewBaseClientProgrammesForProgramme(programme.RenewFromProgramme.Id);
+
+                foreach (var client in renewClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    if (client.DateDeleted == null && client.InformationSheet != null)
+                    {
+                        clientProgrammes.Add(client);
+                    }
+                }
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
+                model.IsSubUIS = "false";
+
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -1368,6 +1411,57 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> IssueRenewal(IFormCollection formCollection)
+        {
+            User user = null;
+            Programme programme = null;
+            string email = null;
+
+            try
+            {
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+
+                foreach (var key in formCollection.Keys)
+                {
+
+                    email = key;
+                    var correctEmail = await _userService.GetUserByEmail(email);
+                    if (correctEmail != null)
+                    {
+                        if (programme.ProgEnableEmail)
+                        {
+                            var renewfromClientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
+                            renewfromClientProgramme.RenewNotificationDate = DateTime.UtcNow;
+                            await _programmeService.Update(renewfromClientProgramme);
+
+                            //create renew task
+                            //await _milestoneService.CreateRenewNotificationTask(user, renewfromClientProgramme, organisation);
+
+                            //send out renew notification email
+                            EmailTemplate emailTemplate = null;
+                            emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstructionRenew");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            }
+
+                            //send out uis issue notification email
+                            //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
+                        }
+                    }
+
+                }
+
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditClients(string ProgrammeId)

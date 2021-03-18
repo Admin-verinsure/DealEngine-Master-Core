@@ -310,6 +310,28 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task CreateRenewNotificationTask(User user, ClientProgramme renewFromProgrammeBase, Organisation renewClientOrg)
+        {
+            string URL = "/Programme/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString();
+            var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
+
+            UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (renewOrgContactUserTask == null)
+            {
+                renewOrgContactUserTask = new UserTask(user, "Renew Notification", null)
+                {
+                    URL = URL,
+                    Body = renewOrgContactUser.FirstName + " please click here to renew " + renewFromProgrammeBase.BaseProgramme.NamedPartyUnitName + " insurance",
+                    IsActive = true
+                };
+
+                renewOrgContactUser.UserTasks.Add(renewOrgContactUserTask);
+
+                await _userService.Update(renewOrgContactUser);
+            }
+        }
+
         public async Task RemoveTask(User user, IFormCollection collection)
         {
             List<UserTask> tasks = await _taskingService.GetUserTasksByName(collection["taskName"]);
