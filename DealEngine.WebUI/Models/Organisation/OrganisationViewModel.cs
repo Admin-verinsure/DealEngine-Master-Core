@@ -20,25 +20,27 @@ namespace DealEngine.WebUI.Models
             if (ClientInformationSheet != null)
             {
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
-                if(Programme.Name == "NZFSG Programme" || Programme.Name == "TripleA Programme" || Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme" || 
-                    Programme.Name == "Financial Advice New Zealand Inc Programme")
+                if(Programme.NamedPartyUnitName == "NZFSG Programme" || Programme.NamedPartyUnitName == "TripleA Programme" || Programme.NamedPartyUnitName == "Apollo Programme" || 
+                    Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
+                    Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
-                    if (Programme.Name == "NZFSG Programme") 
+                    if (Programme.NamedPartyUnitName == "NZFSG Programme") 
                     { 
                         InsuranceAttributes = GetAdvisorTypes1(); 
                     } 
-                    else if(Programme.Name == "TripleA Programme")
+                    else if(Programme.NamedPartyUnitName == "TripleA Programme")
                     {
                         InsuranceAttributes = GetAdvisorTypes2();
                     }
-                    else if (Programme.Name == "Apollo Programme" || Programme.Name == "Abbott Financial Advisor Liability Programme" || Programme.Name == "Financial Advice New Zealand Inc Programme")
+                    else if (Programme.NamedPartyUnitName == "Apollo Programme" || Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
+                        Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                     {
                         InsuranceAttributes = GetAdvisorTypes3();
-                        if(Programme.Name == "Apollo Programme") 
+                        if(Programme.NamedPartyUnitName == "Apollo Programme") 
                         { 
                             HasAssociationOptions = GetAssociationOptions1(); 
-                        } else if (Programme.Name == "Abbott Financial Advisor Liability Programme")
+                        } else if (Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
                         { 
                             HasAssociationOptions = GetAssociationOptions2(); 
                         } else
@@ -54,7 +56,7 @@ namespace DealEngine.WebUI.Models
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
                     
                 }
-                if (Programme.Name == "DANZ Programme" || Programme.Name == "PMINZ Programme")
+                if (Programme.NamedPartyUnitName == "DANZ Programme" || Programme.NamedPartyUnitName == "PMINZ Programme")
                 {
                     InsuranceAttributes = GetPersonnelTypes();
                     PersonnelUnit = new PersonnelUnit(null, null, null, null); //(PersonnelUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Personnel");
@@ -69,7 +71,7 @@ namespace DealEngine.WebUI.Models
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetBooleanSelectOptions();
                 }
-                if (Programme.Name == "CEAS Programme" || Programme.Name == "NZACS Programme")
+                if (Programme.NamedPartyUnitName == "CEAS Programme" || Programme.NamedPartyUnitName == "NZACS Programme")
                 {
                     InsuranceAttributes = GetPrincipalTypes();
                     PrincipalUnit = new PrincipalUnit(null, null, null, null); //(PrincipalUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Type == "Principal");
@@ -80,7 +82,7 @@ namespace DealEngine.WebUI.Models
                     HasIsADNZmemberOptions = GetStandardSelectOptions();
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
-                if (Programme.Name == "NZPI Programme")
+                if (Programme.NamedPartyUnitName == "NZPI Programme")
                 {
                     InsuranceAttributes = GetContractorTypes();
                     PlannerUnit = new PlannerUnit(null, null, null, null);
@@ -88,7 +90,7 @@ namespace DealEngine.WebUI.Models
                     HasContractedInsuredOptions = GetBooleanSelectOptions();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                 }
-                if(Programme.Name == "First Mate Cover")
+                if(Programme.NamedPartyUnitName == "First Mate Cover")
                 {
                     InterestedPartyUnit = new InterestedPartyUnit(null, null, null, null);
                     InsuranceAttributes = GetMarshTypes();

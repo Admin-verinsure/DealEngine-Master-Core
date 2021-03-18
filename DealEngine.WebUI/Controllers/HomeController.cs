@@ -776,8 +776,8 @@ namespace DealEngine.WebUI.Controllers
                 model.EnableCLReport = programme.EnableCLReport;
                 model.EnableCyberReport = programme.EnableCyberReport;
                 model.EnableFAPReport = programme.EnableFAPReport;
-
                 model.ProgrammeName = programme.Name;
+                model.ProgrammeNamedPartyUnitName = programme.NamedPartyUnitName;
                 return View(model);
             }
             catch (Exception ex)
@@ -856,9 +856,9 @@ namespace DealEngine.WebUI.Controllers
 
                         }
 
-                        //if(programme.Name == "NZFSG Programme")
+                        //if(programme.NamedPartyUnitName == "NZFSG Programme")
                         //{
-                            if(cp.BaseProgramme.Id == programme.Id)
+                        if (cp.BaseProgramme.Id == programme.Id)
                             {
                                 clientInformationSheetID = cp.InformationSheet.Id;
 
@@ -995,13 +995,22 @@ namespace DealEngine.WebUI.Controllers
 
 
             ListReport.Add(organisation.Email);
-                User user = await _userService.GetUserPrimaryOrganisationOrEmail(organisation);
+                User user = await _userService.GetApplicationUserByEmail(organisation.Email);
                 if (isSubClient)
                  {
-                    if (user.FullName != null)
+                    if (user != null)
                     {
-                       ListReport.Add(user.FullName);
-                    }
+                       if(user.FullName != null)
+                       {
+                        ListReport.Add(user.FullName);
+  
+                       }
+                        else
+                        {
+                         ListReport.Add(user.FirstName +" "+user.LastName);
+
+                        }
+                }
                     else
                     {
                        ListReport.Add(organisation.Name);
@@ -1069,11 +1078,11 @@ namespace DealEngine.WebUI.Controllers
                     ListReport.Add("I do have other advisers working under my license");
                 }
 
-                if (TransitionalLicenseNum.Value != "")
+                if (null != TransitionalLicenseNum )
                 {
                     ListReport.Add(TransitionalLicenseNum.Value);
                 }
-                else if (TransitionalLicenseNum.Value == "")
+                else
                 {
                     ListReport.Add("Not Selected");
                 }
@@ -1145,7 +1154,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 try
                 {
-                    if (reportName == "FAP" || programme.Name == "Abbott Financial Advisor Liability Programme")
+                    if (reportName == "FAP" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
                     {
                         Guid clientInformationSheetID = Guid.NewGuid();
                         if (cp.BaseProgramme.Id == programme.Id)
@@ -1191,14 +1200,14 @@ namespace DealEngine.WebUI.Controllers
                 DataTable table = new DataTable();
                 //List<String> ListReport = new List<String>();
                 List<List<string>> Lreportset = new List<List<string>>();
-                if (programme.Name == "NZFSG Programme")
+                if (programme.NamedPartyUnitName == "NZFSG Programme")
                 {
                    Lreportset = await GetNZFGReportSet(ProgrammeId, queryselect);
 
                 }
                 else
                 {
-                    if (programme.Name == "TripleA Programme" || programme.Name == "Abbott Financial Advisor Liability Programme")
+                    if (programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
                     {
                         Lreportset = await GetAAAReportSet(ProgrammeId, queryselect);
 
@@ -1223,7 +1232,7 @@ namespace DealEngine.WebUI.Controllers
                 //object[] values = new object[props.Count];
                 object[] values1 = new object[table.Columns.Count];
 
-                for (int i = 1; i < Lreportset.Count-1; i++)
+                for (int i = 1; i <= Lreportset.Count-1; i++)
                 {
                     try
                     {

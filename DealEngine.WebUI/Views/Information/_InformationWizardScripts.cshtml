@@ -51,7 +51,7 @@
                 event.preventDefault();
                 if (stepDirection == "forward") {
                     var forms = document.getElementsByClassName('needs-validation');
-                    InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.Name', '@Model.ClientInformationSheet.Status', forms);
+                    InformationSheetSubmit('@Model.ClientProgramme.BaseProgramme.NamedPartyUnitName', '@Model.ClientInformationSheet.Status', forms);
                     debugger;
                       var vesselExists = document.getElementById("Vessel");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;

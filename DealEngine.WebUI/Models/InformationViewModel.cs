@@ -45,6 +45,7 @@ namespace DealEngine.WebUI.Models
         public Guid Id { get; set; }
         public string Status { get; set; }
         public string Name { get; set; }
+        public string ProgNamedPartyName { get; set; }
         public string SectionView { get; set; }
         public String[][] LimitsSelected { get; set; }
         public List<InformationSection> Section { get; set; }
