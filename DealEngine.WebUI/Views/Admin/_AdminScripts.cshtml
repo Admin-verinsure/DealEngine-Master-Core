@@ -1,0 +1,97 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script type="text/javascript">
+
+    $('#updateTypeDelete').on('show.bs.modal', function (e) {
+        $('.modal .modal-body').css('height', 'auto');
+        var updateTypeId = $(e.relatedTarget).data('updateType-id');
+        $(e.currentTarget).find('input[name="UpdateTypeId"]').val(updateTypeId);
+    });
+
+    $("#btnUpdateTypeSubmit").click(function () {
+        var valid = ValidateUpdateType();
+        if (valid) {
+            updateTypeSubmit();
+        }
+
+    });
+
+
+
+    function ValidateUpdateType() {
+        var updateTypeName = $("#NameType").val();
+        var updateTypeValue = $("#ValueType").val();
+        var validation = true;
+    
+        if (updateTypeValue == "") {
+            $('#validateUpdateTypeName').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
+            }
+        } else {
+            $('#validateUpdateTypeName').html("");
+        }
+        if (updateTypeName == "") {
+            $('#validateUpdateTypeValue').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
+            }
+        } else {
+            $('#validateUpdateTypeValue').html("");
+        }
+     
+        return validation;
+    }
+
+
+
+    function updateTypeSubmit() {
+        //var agreement = $("#ClientAgreementId").val();
+        var nameType = $("#NameType").val();
+        var valueType = $("#ValueType").val();
+        var TcCheckbox = document.getElementById("tc");
+        var Tc = TcCheckbox.checked;
+        console.log("TcCheckbox=" + Tc);
+
+        var BrokerCheckbox = document.getElementById("broker");
+        var Broker = BrokerCheckbox.checked;
+        console.log("Broker=" + Broker);
+
+        var InsurerCheckbox = document.getElementById("insurer");
+        var Insurer = InsurerCheckbox.checked;
+        console.log("Insurer=" + Insurer);
+
+        var ClientCheckbox = document.getElementById("client");
+        var Client = ClientCheckbox.checked;
+        console.log("Client=" + Client);
+     
+        var id = $("#UpdateTypeId").val();
+        var postData = {
+            "UpdateTypeId": id,
+            "NameType": nameType,
+            "ValueType": valueType,
+            "TypeIsTc": Tc,
+            "TypeIsBroker": Broker,
+            "TypeIsInsurer": Insurer,
+            "TypeIsClient": Client
+        };
+        $.ajax({
+            type: "Post",
+            //data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
+            url: "/Admin/EditUpdateType",
+            //contentType: "application/json; charset=utf-8",
+            data: postData,
+            async: true,
+            success: function () {
+                $("#UpadetTypeModal").modal("hide");
+                alert("Saved Successfully!");
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>

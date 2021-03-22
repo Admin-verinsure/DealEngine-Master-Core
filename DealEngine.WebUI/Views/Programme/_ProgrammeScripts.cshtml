@@ -491,4 +491,47 @@
     }
 
 
+
+
+    // for updateType modal
+    $("#updateTypeSubmit").click(function () {
+        updateTypeSubmit();
+    });
+
+    function updateTypeSubmit() {
+        debugger;
+        //var productId = $("#ProductId").val();
+        //var ID = $("#Id").val();
+
+        //var RuleId = $("#RuleId").val();
+        var UpdateTypeName = $("#updateTypeName").val();
+        
+
+        var updateTypeData = {
+            "Name": UpdateTypeName,
+         
+        };
+
+          $.ajax({
+                url: '@Url.Action("AddUpdateType", "Admin")',
+              type: "Post",
+              data: updateTypeData
+
+            })
+                .done(function (data) {
+                    debugger;
+                    alert("success");
+                    $("#myModalId").click();
+                    location.reload(true);
+
+                })
+              .fail(function (jqXHR, textStatus, errorThrown) {
+                  debugger;
+                    alert("There was an error while trying to save the Boat Use.");
+            });
+
+
+    }
+
+
 </script>

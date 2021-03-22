@@ -58,6 +58,7 @@
                                 <td><a class="btn btn-success btn-sm" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
                         }
+                     
                         @if (User.HasClaim("ViewEmails", "ViewEmails"))
                         {
                             <tr>

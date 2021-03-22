@@ -51,6 +51,8 @@ namespace DealEngine.WebUI.Models
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
+        //public AdminViewModel AdminViewModel { get; set; }
+        public UpdateTypesViewModel UpdateTypesViewModel { get; set; }
         public List<BoatUse> BoatUsesList { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }

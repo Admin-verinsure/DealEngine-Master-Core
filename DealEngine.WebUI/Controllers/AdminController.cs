@@ -41,8 +41,12 @@ namespace DealEngine.WebUI.Controllers
         IOrganisationService _organisationService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
+        // IUpdateTypeService _updateTypeService;
+        IUpdateTypeService _updateTypeServices;
+        public AdminController(
+                    //
 
-        public AdminController (
+        IUpdateTypeService updateTypeService,
             IOrganisationService organisationService,
             ISerializerationService serializerationService,
             IMilestoneService milestoneService,
@@ -88,6 +92,8 @@ namespace DealEngine.WebUI.Controllers
             _systemEmailService = systemEmailService;
             _referenceService = referenceService;
             _developerToolService = developerToolService;
+            //
+            _updateTypeServices = updateTypeService;
         }
 
 		[HttpGet]
@@ -722,6 +728,81 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+         [HttpGet]
+        public async Task<IActionResult> UpdateType(IFormCollection collection)
+        {
+
+            //var sheets = await _programmeService.SearchProgrammes(collection);
+           // var sheets = await _updateType.SearchProgrammes(collection);
+
+            //ProgrammeItem model = new ProgrammeItem(sheets);
+            AdminViewModel model = new AdminViewModel();
+            var user = await CurrentUser();
+            
+            try
+            { 
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpPost]
+
+        //EditUpdateType
+        public async Task<IActionResult> EditUpdateType(Guid updateTypeId, UpdateTypesViewModel updateType)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                UpdateType updatetype = await _updateTypeServices.GetUpdateType(updateTypeId);
+                if (updateType.Id != Guid.Empty)
+                {
+                    //    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
+                    //UpdateType updatetypeEdit = updatetype
+                     using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                    //        term.Premium = clientAgreementSubTerm.Premium;
+                            updatetype.TypeName = updateType.NameType;
+                        updatetype.TypeValue = updateType.ValueType;
+                        updatetype.TypeIsTc = updateType.TypeIsTc;
+                        updatetype.TypeIsBroker = updateType.TypeIsBroker;
+                        updatetype.TypeIsClient = updatetype.TypeIsClient;
+                        //        term.TermLimit = clientAgreementSubTerm.TermLimit;
+                        //        term.Excess = clientAgreementSubTerm.Excess;
+                        //        term.PremiumDiffer = clientAgreementSubTerm.PremiumDiffer;
+                        await uow.Commit();
+                    }
+                }
+                else
+                {
+                    
+                        //string nameType = updateType.NameType;
+                        //        decimal brokeragerate = agreement.Product.DefaultBrokerage;
+                        //        decimal Brokerage = clientAgreementSubTerm.Premium * agreement.Product.DefaultBrokerage / 100;
+                        //        _clientAgreementTermService.AddAgreementTerm(user, clientAgreementSubTerm.TermLimit, clientAgreementSubTerm.Excess, clientAgreementSubTerm.Premium, 0.0m, brokeragerate, Brokerage, agreement, clientAgreementSubTerm.TermType);
+                        _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient);
+                    
+                }
+                //return Redirect("~/Admin/Index");
+                return RedirectToAction("UpdateType", new { id = updateTypeId });
+
+            }
+            catch (Exception ex)
+            {
+               await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+               return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> SysEmailTemplate(String systemEmailType, String internalNotes)

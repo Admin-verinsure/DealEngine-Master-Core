@@ -36,6 +36,7 @@ namespace DealEngine.WebUI.Controllers
         IAppSettingService _appSettingService;
         IEmailService _emailService;
         IProgrammeService _programmeService;
+        //IUpdateTypeServices _updateType;
         IProductService _productService;
         ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;

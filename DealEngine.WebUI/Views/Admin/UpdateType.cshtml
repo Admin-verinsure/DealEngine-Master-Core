@@ -1,0 +1,246 @@
+﻿@model DealEngine.WebUI.Models.AdminViewModel
+<!-- START MAIN CONTENT -->
+@*<table id="tableUpdateType"
+           class="table table-striped" width="100%"
+           data-show-columns="true"
+           data-pagination="true"
+           data-search="true"
+           data-show-jump-to="true">
+        <thead>
+            <tr>
+                <th data-field="name" data-sortable="true">Name Type</th>
+                <th data-field="status" data-sortable="true">Value Type</th>
+                <th data-sortable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.UpdateTypes != null)
+            {
+                @foreach (var item in Model.UpdateTypes)
+                {
+            <tr>
+
+
+                <td>@item.NameType</td>
+                <td>@item.ValueType</td>
+                <td>
+                    <a href="#myChangeModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id=""><i class="fa fa-edit"></i> Add</a>
+
+                </td>
+
+            </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>test</td>
+                    <td>test</td>
+                    <td>
+                        <a href="#myUnlockModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal"><i class="fa fa-edit"></i> Add</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
+
+@*<div id="myUnlockModal1" class="modal container" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="color:blue; font-size:22px">Update Type Details</h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="ProdForm">
+                        <table class="table table-striped">
+                            <tr>
+                                <td>
+                                    <label for="typeName" class="required">Type Name</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" data-type="TEXT" id="typeNameID" name="typeName" placeholder="Notes" value="">
+                                </td>
+                                <td>
+                                    <p class="validationContainer" id="validateDescription"></p>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" onclick="postUnlockData();" data-toggle="tab">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    <div class="modal overlay" id="CreateUISProcess" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p><img src="/img/loading.gif" /> Loading Information. Please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+
+
+
+
+
+
+
+
+@* New code for add data *@
+<div class="form-group">
+    <div class="card">
+        <div class="card-header">
+            <header>  Update Type <a href="#UpadetTypeModal" aria-hidden="true" data-sub-type="updateType" style="color:green" data-toggle="modal"> <u>  Add New Term </u></a></header>
+
+
+        </div>
+        <div class="card-body">
+
+            @*@if (Model.UpdateTypes.Any())
+        {
+            var count = 0;
+            <form action="~/Admin/UpdateType/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="UpdateTypeTable">
+                    <tr>
+                        <th class="text-center" width="12%" hidden> Id</th>
+                        <th class="text-center" width="11%">Name Type</th>
+                        <th class="text-center" width="11%">Value Type</th>
+                        <th class="text-center" width="9%"></th>
+                    </tr>
+                    @foreach (var item in Model.UpdateTypes)
+                    {
+                        <tr class="clickable-row">
+                            <td class="pt-3-half" width="12%" contenteditable="true" id="UpdateTypeId" hidden>
+                                @item.Id
+                            </td>
+
+                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                @item.NameType.ToString()
+                            </td>
+                            <td class="pt-3-half" width="11%" contenteditable="true">
+                                @item.ValueType.ToString()
+                            </td>
+                            <td width="9%">
+                                <a href="#UpadetTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                   data-sub-id="@item.Id"
+                                   data-sub-nameType="@item.NameType.ToString()"
+                                   data-sub-valueType="@item.ValueType.ToString()">
+                                    <i class="fa fa-edit"> </i>
+                                </a>
+                                <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id"><span class="fa fa-trash" id="span"></span></a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+            </form>
+
+        }*@
+
+        </div>
+    </div>
+</div>
+
+@* new modal code *@
+<div id="UpadetTypeModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <!-- Modal content-->
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color:blue; font-size:22px">Update Type</h4>
+            </div>
+            <div class="modal-body">
+                <form id="ProdForm">
+
+                    <div class="form-group" hidden>
+                        <label for="UpdateTypeId">Update Type Id</label>
+                        <input type="text" class="form-control " id="UpdateTypeId" name="Id" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="NameType">Name Type</label>
+                        <input type="text" class="form-control " id="NameType" name="NameType" />
+                        <p class="validationContainer" id="validateUpdateTypeName"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="ValueType">Value Type</label>
+                        <input type="text" class="form-control " id="ValueType" name="ValueType" />
+                        <p class="validationContainer" id="validateUpdateTypeValue"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Role">User Role</label>
+                        <div>
+                            <input type="checkbox" id="tc" name="tc"
+                                   checked>
+                            <label for="tc">TC</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="broker" name="broker">
+                            <label for="broker">broker</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="insurer" name="insurer">
+                            <label for="insurer">insurer</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="client" name="client">
+                            <label for="client">client</label>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="Reset" value="Submit" class="btn btn-success" id="btnUpdateTypeSubmit">
+                <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="updateTypeDelete" role="dialog" aria-labelledby="updateTypeDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="color:black;font-size:18px; ">Confirm To Delete This Update Type</p>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control " id="UpdateTypeId_Id" name="UpdateTypeId" hidden />
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="modal-footer">
+                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnUpdateTypeDelete">Confirm </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pagespecific {
+
+    @await Html.PartialAsync("_AdminScripts")
+
+}
+
+
+
+
+
+
+
+
+
