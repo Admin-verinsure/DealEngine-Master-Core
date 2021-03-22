@@ -53,7 +53,7 @@
 <div class="form-group">
     <div class="card">
         <div class="card-header">
-            <header>  Update Type <a href="#UpadetTypeModal" aria-hidden="true" data-sub-type="updateType" style="color:green" data-toggle="modal"> <u>  Add New Term </u></a></header>
+            <header>  Update Type <a href="#UpdateTypeModal" aria-hidden="true" data-sub-type="updateType" style="color:green" data-toggle="modal"> <u>  Add New Term </u></a></header>
 
 
         </div>
@@ -82,9 +82,19 @@
 
                                 <td>@item.NameType</td>
                                 <td>@item.ValueType</td>
-                                <td>
-                                    <a href="#myChangeModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id=""><i class="fa fa-edit"></i> Edit</a>
-
+                                <td width="9%">
+                                    <a href="#UpdateTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                       data-sub-nameType="@item.NameType"
+                                       data-sub-valueType="@item.ValueType"
+                                       data-sub-broker="@item.TypeIsBroker"
+                                       data-sub-client="@item.TypeIsClient"
+                                       data-sub-insurer="@item.TypeIsInsurer"
+                                       data-sub-tc="@item.TypeIsTc"
+                                       data-sub-id="@item.Id" 
+                                     >
+                                        <i class="fa fa-edit"> </i>
+                                    </a>
+                                    @*<a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>*@
                                 </td>
 
                             </tr>
@@ -96,61 +106,19 @@
                             <td>test</td>
                             <td>test</td>
                             <td>
-                                <a href="#myUnlockModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal"><i class="fa fa-edit"></i> Add</a>
+                                <a href="#myUnlockModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal"><i class="fa fa-edit"></i> Edit</a>
                             </td>
                         </tr>
                     }*@
                 </tbody>
             </table>
 
-            @*@if (Model.UpdateTypes.Any())
-        {
-            var count = 0;
-            <form action="~/Admin/UpdateType/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
-
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="UpdateTypeTable">
-                    <tr>
-                        <th class="text-center" width="12%" hidden> Id</th>
-                        <th class="text-center" width="11%">Name Type</th>
-                        <th class="text-center" width="11%">Value Type</th>
-                        <th class="text-center" width="9%"></th>
-                    </tr>
-                    @foreach (var item in Model.UpdateTypes)
-                    {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half" width="12%" contenteditable="true" id="UpdateTypeId" hidden>
-                                @item.Id
-                            </td>
-
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.NameType.ToString()
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.ValueType.ToString()
-                            </td>
-                            <td width="9%">
-                                <a href="#UpadetTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-id="@item.Id"
-                                   data-sub-nameType="@item.NameType.ToString()"
-                                   data-sub-valueType="@item.ValueType.ToString()">
-                                    <i class="fa fa-edit"> </i>
-                                </a>
-                                <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                    }
-                </table>
-
-            </form>
-
-        }*@
-
         </div>
     </div>
 </div>
 
 @* new modal code *@
-<div id="UpadetTypeModal" class="modal" tabindex="-1" role="dialog">
+<div id="UpdateTypeModal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <!-- Modal content-->
 

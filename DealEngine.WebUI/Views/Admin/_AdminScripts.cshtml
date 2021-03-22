@@ -4,7 +4,7 @@
 @{
 }
 <script type="text/javascript">
-
+    /*add data*/
     $('#updateTypeDelete').on('show.bs.modal', function (e) {
         $('.modal .modal-body').css('height', 'auto');
         var updateTypeId = $(e.relatedTarget).data('updateType-id');
@@ -86,12 +86,37 @@
             data: postData,
             async: true,
             success: function () {
-                $("#UpadetTypeModal").modal("hide");
+                $("#UpdateTypeModal").modal("hide");
                 alert("Saved Successfully!");
                 location.reload(true);
 
             }
         });
+
+
     }
 
+
+
+    /*edit data*/
+    $('#UpdateTypeModal').on('show.bs.modal', function (e) {
+        debugger;
+        $('.modal').css('width', '600px');
+        var nameType = $(e.relatedTarget).data('sub-nameType');
+        console.log($(e.relatedTarget).data());
+        var valueType = $(e.relatedTarget).data('sub-valueType');
+        var broker = $(e.relatedTarget).data('sub-broker');
+        var client = $(e.relatedTarget).data('sub-client');
+        var insurer = $(e.relatedTarget).data('sub-insurer');
+        var tc = $(e.relatedTarget).data('sub-tc');
+        var updateTypeId = $(e.relatedTarget).data('sub-id');
+        $(e.currentTarget).find('input[name="Id"]').val(updateTypeId);
+        $(e.currentTarget).find('input[name="NameType"]').val(nameType);
+        $(e.currentTarget).find('input[name="ValueType"]').val(valueType);
+        $(e.currentTarget).find('input[name="tc"]').val(tc);
+        $(e.currentTarget).find('input[name="broker"]').val(broker);
+        $(e.currentTarget).find('input[name="insurer"]').val(insurer);
+        $(e.currentTarget).find('input[name="client"]').val(client);
+
+    });
 </script>
