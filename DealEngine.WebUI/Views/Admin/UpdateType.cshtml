@@ -1,48 +1,4 @@
-﻿@model DealEngine.WebUI.Models.AdminViewModel
-<!-- START MAIN CONTENT -->
-@*<table id="tableUpdateType"
-           class="table table-striped" width="100%"
-           data-show-columns="true"
-           data-pagination="true"
-           data-search="true"
-           data-show-jump-to="true">
-        <thead>
-            <tr>
-                <th data-field="name" data-sortable="true">Name Type</th>
-                <th data-field="status" data-sortable="true">Value Type</th>
-                <th data-sortable="false"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.UpdateTypes != null)
-            {
-                @foreach (var item in Model.UpdateTypes)
-                {
-            <tr>
-
-
-                <td>@item.NameType</td>
-                <td>@item.ValueType</td>
-                <td>
-                    <a href="#myChangeModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id=""><i class="fa fa-edit"></i> Add</a>
-
-                </td>
-
-            </tr>
-                }
-            }
-            else
-            {
-                <tr>
-                    <td>test</td>
-                    <td>test</td>
-                    <td>
-                        <a href="#myUnlockModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal"><i class="fa fa-edit"></i> Add</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>*@
+﻿@model DealEngine.WebUI.Models.UpdateTypesViewModel
 
 @*<div id="myUnlockModal1" class="modal container" role="dialog">
             <div class="modal-content">
@@ -102,6 +58,50 @@
 
         </div>
         <div class="card-body">
+            <!-- START MAIN CONTENT -->
+            <table id="tableUpdateType"
+                   class="table table-striped" width="100%"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-jump-to="true">
+                <thead>
+                    <tr>
+                        <th data-field="name" data-sortable="true">Name Type</th>
+                        <th data-field="status" data-sortable="true">Value Type</th>
+                        <th data-sortable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.UpdateTypes != null)
+                    {
+                        @foreach (var item in Model.UpdateTypes)
+                        {
+                            <tr>
+
+
+                                <td>@item.NameType</td>
+                                <td>@item.ValueType</td>
+                                <td>
+                                    <a href="#myChangeModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id=""><i class="fa fa-edit"></i> Edit</a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    @*else
+                    {
+                        <tr>
+                            <td>test</td>
+                            <td>test</td>
+                            <td>
+                                <a href="#myUnlockModal1" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal"><i class="fa fa-edit"></i> Add</a>
+                            </td>
+                        </tr>
+                    }*@
+                </tbody>
+            </table>
 
             @*@if (Model.UpdateTypes.Any())
         {

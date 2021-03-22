@@ -729,20 +729,37 @@ namespace DealEngine.WebUI.Controllers
             }
         }
          [HttpGet]
-        public async Task<IActionResult> UpdateType(IFormCollection collection)
+        public async Task<IActionResult> UpdateType()
         {
 
-            //var sheets = await _programmeService.SearchProgrammes(collection);
-           // var sheets = await _updateType.SearchProgrammes(collection);
+            //AdminViewModel updateTypeModel = new AdminViewModel();
+            //var allUpdateTypes = new List<UpdateTypesViewModel>();
+            //var user = await CurrentUser();
+            User user = null;
+            UpdateTypesViewModel model = new UpdateTypesViewModel();
 
-            //ProgrammeItem model = new ProgrammeItem(sheets);
-            AdminViewModel model = new AdminViewModel();
-            var user = await CurrentUser();
-            
             try
-            { 
+            {
+                user = await CurrentUser();
+                var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
+                var updateTypeModel = new List<UpdateTypesViewModel>();
+
+
+                foreach (var updateType in dbUpdatemodelTypes)
+                {
+                    updateTypeModel.Add(new UpdateTypesViewModel
+                    {
+                        Id = updateType.Id,
+                        NameType = updateType.TypeName,
+                        ValueType = updateType.TypeValue
+                    });
+
+
+                }
+                model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
                 return View(model);
             }
+
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
@@ -752,8 +769,6 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-
-        //EditUpdateType
         public async Task<IActionResult> EditUpdateType(Guid updateTypeId, UpdateTypesViewModel updateType)
         {
             User user = null;
@@ -764,33 +779,22 @@ namespace DealEngine.WebUI.Controllers
                 UpdateType updatetype = await _updateTypeServices.GetUpdateType(updateTypeId);
                 if (updateType.Id != Guid.Empty)
                 {
-                    //    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
-                    //UpdateType updatetypeEdit = updatetype
                      using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
-                    //        term.Premium = clientAgreementSubTerm.Premium;
                             updatetype.TypeName = updateType.NameType;
                         updatetype.TypeValue = updateType.ValueType;
                         updatetype.TypeIsTc = updateType.TypeIsTc;
                         updatetype.TypeIsBroker = updateType.TypeIsBroker;
                         updatetype.TypeIsClient = updatetype.TypeIsClient;
-                        //        term.TermLimit = clientAgreementSubTerm.TermLimit;
-                        //        term.Excess = clientAgreementSubTerm.Excess;
-                        //        term.PremiumDiffer = clientAgreementSubTerm.PremiumDiffer;
                         await uow.Commit();
                     }
                 }
                 else
                 {
-                    
-                        //string nameType = updateType.NameType;
-                        //        decimal brokeragerate = agreement.Product.DefaultBrokerage;
-                        //        decimal Brokerage = clientAgreementSubTerm.Premium * agreement.Product.DefaultBrokerage / 100;
-                        //        _clientAgreementTermService.AddAgreementTerm(user, clientAgreementSubTerm.TermLimit, clientAgreementSubTerm.Excess, clientAgreementSubTerm.Premium, 0.0m, brokeragerate, Brokerage, agreement, clientAgreementSubTerm.TermType);
                         _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient);
                     
                 }
-                //return Redirect("~/Admin/Index");
+                //return Redirect("~/Admin/UpdateType");
                 return RedirectToAction("UpdateType", new { id = updateTypeId });
 
             }

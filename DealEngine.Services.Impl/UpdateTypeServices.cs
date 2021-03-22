@@ -1,5 +1,5 @@
 ﻿using System;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 //using System.Text;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
@@ -18,7 +18,6 @@ namespace DealEngine.Services.Impl
     public class UpdateTypeServices : IUpdateTypeService
     {
 		IMapperSession<UpdateType> _updateType;
-		//IMapperSession<PaymentGateway> _paymentGatewayRepository;
 
 		public UpdateTypeServices(IMapperSession<UpdateType> updateType){ _updateType = updateType;}
 		//public async Task AddUpdateType(UpdateType updateType)
