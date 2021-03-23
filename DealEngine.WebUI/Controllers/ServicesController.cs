@@ -3518,9 +3518,9 @@ namespace DealEngine.WebUI.Controllers
 
                 if (hasAccount)
                 {
-
                     return new JsonResult(true);
                 }
+
                 else
                 {
                     return new JsonResult(false);

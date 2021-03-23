@@ -15,6 +15,7 @@ using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using AutoMapper;
 using Newtonsoft.Json;
+using System;
 
 namespace DealEngine.WebUI
 {
@@ -57,6 +58,10 @@ namespace DealEngine.WebUI
             services.AddResponseCaching();
             services.AddMvc()
                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            //services.AddSession(options =>
+            //{
+            //    options.IdleTimeout = TimeSpan.FromMinutes(60);
+            //});
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -83,6 +88,8 @@ namespace DealEngine.WebUI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            //app.UseSession();
+            //app.UseMiddleware()
             
             app.UseEndpoints(endpoints =>
             {
