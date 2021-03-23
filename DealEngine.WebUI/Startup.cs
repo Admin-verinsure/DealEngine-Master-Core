@@ -178,29 +178,31 @@ public sealed class SecurityHeadersMiddleware
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 
+            // https://content-security-policy.com/unsafe-inline/
+
             context.Response.Headers.Add("Content-Security-Policy", new StringValues(
-            "default-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://fonts.gstatic.com https://fonts.googleapis.com ;" +
-            "img-src 'self' data: ;"
+            "base-uri 'self';" +
+            "block-all-mixed-content;" +
+            "default-src 'self';" +
+            "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com ;" +
+            "img-src 'self' data: https:;" +
+            "script-src 'self' 'unsafe-inline';" +
+            "style-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com;" +
+            "upgrade-insecure-requests;"
 
             #region Other Directives that can be used
-            //"base-uri 'self';" +
-            //"block-all-mixed-content;" +
             //"child-src 'none';" +
             //"connect-src 'self';" +
-            //"font-src 'self' ;" +
+            //"object-src 'self';" +
             //"form-action 'self' ;" +
             //"frame-ancestors 'none';" +
             //"frame-src 'none';" +
             //"manifest-src 'none';" +
             //"media-src 'none';" +
-            //"object-src 'self';" +
             //"sandbox allow-scripts allow-forms;" +
-            //"script-src 'self';" +
             //"script-src-elem 'self' 'unsafe-inline';" +
-            //"style-src 'self';" +
             //"style-src-attr 'self' 'unsafe-inline';" +
             //"style-src-elem 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com  ;" +
-            //"upgrade-insecure-requests;"// +
             //"worker-src 'self';"
             #endregion
 
