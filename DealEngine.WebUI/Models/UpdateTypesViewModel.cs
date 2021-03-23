@@ -14,7 +14,7 @@ namespace DealEngine.WebUI.Models
         // public int Id { get; set; }
         public Guid Id { get; set; }
         //public List<EditTermsViewModel> CLTerms { get; internal set; }
-        public List<UpdateTypesViewModel> UpdateTypes { get; internal set; }
+        public List<UpdateTypesViewModel> UpdateTypes { get; set; }
 
 
         public virtual bool TypeIsTc
@@ -53,20 +53,20 @@ namespace DealEngine.WebUI.Models
         //    return model;
         //}
 
-        internal static UpdateTypesViewModel FromEntity(UpdateType pg)
-        {
-            //throw new NotImplementedException();
-            UpdateTypesViewModel model = new UpdateTypesViewModel
-            {
-                Id = pg.Id,
-                NameType = pg.TypeName,
-                ValueType = pg.TypeValue,
-                TypeIsBroker = pg.TypeIsBroker,
-                TypeIsClient = pg.TypeIsClient,
-                TypeIsInsurer = pg.TypeIsInsurer,
-                TypeIsTc = pg.TypeIsTc
-            };
-            return model;
-        }
+        //internal static UpdateTypesViewModel FromEntity(UpdateType pg)
+        //{
+        //    //throw new NotImplementedException();
+        //    UpdateTypesViewModel model = new UpdateTypesViewModel
+        //    {
+        //        Id = pg.Id,
+        //        NameType = pg.TypeName,
+        //        ValueType = pg.TypeValue,
+        //        TypeIsBroker = pg.TypeIsBroker,
+        //        TypeIsClient = pg.TypeIsClient,
+        //        TypeIsInsurer = pg.TypeIsInsurer,
+        //        TypeIsTc = pg.TypeIsTc
+        //    };
+        //    return model;
+        //}
     }
 }

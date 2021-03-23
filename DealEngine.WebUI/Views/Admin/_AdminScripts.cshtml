@@ -102,13 +102,13 @@
     $('#UpdateTypeModal').on('show.bs.modal', function (e) {
         debugger;
         $('.modal').css('width', '600px');
-        var nameType = $(e.relatedTarget).data('sub-nameType');
-        console.log($(e.relatedTarget).data());
-        var valueType = $(e.relatedTarget).data('sub-valueType');
-        var broker = $(e.relatedTarget).data('sub-broker');
-        var client = $(e.relatedTarget).data('sub-client');
-        var insurer = $(e.relatedTarget).data('sub-insurer');
-        var tc = $(e.relatedTarget).data('sub-tc');
+        var nameType = $(e.relatedTarget).data('subNametype');
+        console.log($(e.relatedTarget));
+        var valueType = $(e.relatedTarget).data('subValuetype');
+        var broker = $(e.relatedTarget).data('subBroker');
+        var client = $(e.relatedTarget).data('subClient');
+        var insurer = $(e.relatedTarget).data('subInsurer');
+        var tc = $(e.relatedTarget).data('subTc');
         var updateTypeId = $(e.relatedTarget).data('sub-id');
         $(e.currentTarget).find('input[name="Id"]').val(updateTypeId);
         $(e.currentTarget).find('input[name="NameType"]').val(nameType);

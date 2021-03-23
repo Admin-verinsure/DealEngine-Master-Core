@@ -751,7 +751,11 @@ namespace DealEngine.WebUI.Controllers
                     {
                         Id = updateType.Id,
                         NameType = updateType.TypeName,
-                        ValueType = updateType.TypeValue
+                        ValueType = updateType.TypeValue,
+                        TypeIsBroker = updateType.TypeIsBroker,
+                        TypeIsClient = updateType.TypeIsClient,
+                        TypeIsInsurer = updateType.TypeIsInsurer,
+                        TypeIsTc = updateType.TypeIsTc
                     });
 
 
