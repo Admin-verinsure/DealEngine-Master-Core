@@ -907,14 +907,15 @@ namespace DealEngine.WebUI.Controllers
             ListReport.Add("Email");
             //ListReport.Add("Advisor Names");
             ListReport.Add("Limit");
-            ListReport.Add("Premium");
             ListReport.Add("Excess");
+            ListReport.Add("Premium");
+            ListReport.Add("Premium Difference");
+
 
 
             ListReportSet.Add(ListReport);
 
-              foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null 
-                                                                                  && o.InformationSheet.Status == "Bound"))
+              foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null  && o.InformationSheet.Status == "Bound"))
             { 
                 try
                 {
@@ -966,8 +967,10 @@ namespace DealEngine.WebUI.Controllers
                     if (term != null)
                     {
                         ListReport.Add(term.TermLimit.ToString());
-                        ListReport.Add(term.Premium.ToString());
-                        ListReport.Add(term.Excess.ToString());
+                        ListReport.Add(term.Excess.ToString("N0"));
+                        ListReport.Add(term.Premium.ToString("N2"));
+                        ListReport.Add(term.PremiumDiffer.ToString("N2"));
+
                         break;
                     }
                     //else
@@ -1208,8 +1211,13 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection , string IsReport)
         {
+
             User user = null;
-            try
+            user = await CurrentUser();
+            if (user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer)
+            {
+         
+                try
             {
                 Guid ProgrammeId = Guid.Parse(formCollection["ProgrammeId"]);
                 Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
@@ -1338,6 +1346,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
+            }
+
+            }
+            else
+            {
+                return RedirectToAction("Error404", "Error");
             }
         }
 
