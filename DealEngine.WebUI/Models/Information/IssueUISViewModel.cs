@@ -7,6 +7,8 @@ namespace DealEngine.WebUI.Models
 	public class IssueUISViewModel : BaseViewModel
 	{		
 		public List<ClientProgramme> ClientProgrammes { get; set; }
+		public DealEngine.Domain.Entities.Programme programme { get; set; }
+
 		public string ProgrammeId { get; set; }
 		public string ProgrammeName { get; set; }
 		public List<User> users { get; set; }
