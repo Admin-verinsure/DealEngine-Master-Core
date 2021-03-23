@@ -54,21 +54,22 @@
         var valueType = $("#ValueType").val();
         var TcCheckbox = document.getElementById("tc");
         var Tc = TcCheckbox.checked;
-        console.log("TcCheckbox=" + Tc);
+        //console.log("TcCheckbox=" + Tc);
 
         var BrokerCheckbox = document.getElementById("broker");
         var Broker = BrokerCheckbox.checked;
-        console.log("Broker=" + Broker);
+        //console.log("Broker=" + Broker);
 
         var InsurerCheckbox = document.getElementById("insurer");
         var Insurer = InsurerCheckbox.checked;
-        console.log("Insurer=" + Insurer);
+        //console.log("Insurer=" + Insurer);
 
         var ClientCheckbox = document.getElementById("client");
         var Client = ClientCheckbox.checked;
-        console.log("Client=" + Client);
+        //console.log("Client=" + Client);
      
         var id = $("#UpdateTypeId").val();
+        console.log("id=" + id);
         var postData = {
             "UpdateTypeId": id,
             "NameType": nameType,
@@ -100,7 +101,7 @@
 
     /*edit data*/
     $('#UpdateTypeModal').on('show.bs.modal', function (e) {
-        debugger;
+       // debugger;
         $('.modal').css('width', '600px');
         var nameType = $(e.relatedTarget).data('subNametype');
         console.log($(e.relatedTarget));
@@ -118,5 +119,39 @@
         $(e.currentTarget).find('input[name="insurer"]').val(insurer);
         $(e.currentTarget).find('input[name="client"]').val(client);
 
+        if (client == "True") {
+           // document.getElementById("client").checked = "true";
+            document.getElementById('client').checked = "checked"
+            $("#tc").removeAttr('checked');
+            $("#broker").removeAttr('checked');
+            $("#insurer").removeAttr('checked');
+        }
+        if (broker == "True") {
+            document.getElementById('broker').checked = "checked"
+            $("#tc").removeAttr('checked');
+            $("#client").removeAttr('checked');
+            $("#insurer").removeAttr('checked');
+        }
+        if (insurer == "True") {
+            document.getElementById('insurer').checked = "checked"
+            $("#tc").removeAttr('checked');
+            $("#client").removeAttr('checked');
+            $("#broker").removeAttr('checked');
+        }
+        if (tc == "True") {
+            document.getElementById('tc').checked = "checked"
+            $("#insurer").removeAttr('checked');
+            $("#client").removeAttr('checked');
+            $("#broker").removeAttr('checked');
+        }
+
     });
+
+    /*delete data*/
+    $('#UpdateTypeDelete').on('show.bs.modal', function (e) {
+        $('.modal .modal-body').css('height', 'auto');
+        var termId = $(e.relatedTarget).data('term-id');
+        $(e.currentTarget).find('input[name="TermId"]').val(termId);
+    });
+
 </script>

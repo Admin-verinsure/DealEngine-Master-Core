@@ -1,53 +1,5 @@
 ﻿@model DealEngine.WebUI.Models.UpdateTypesViewModel
 
-@*<div id="myUnlockModal1" class="modal container" role="dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" style="color:blue; font-size:22px">Update Type Details</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="ProdForm">
-                        <table class="table table-striped">
-                            <tr>
-                                <td>
-                                    <label for="typeName" class="required">Type Name</label>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" data-type="TEXT" id="typeNameID" name="typeName" placeholder="Notes" value="">
-                                </td>
-                                <td>
-                                    <p class="validationContainer" id="validateDescription"></p>
-                                </td>
-                            </tr>
-
-                        </table>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success btn-sm" onclick="postUnlockData();" data-toggle="tab">Submit</button>
-                </div>
-            </div>
-        </div>
-
-    <div class="modal overlay" id="CreateUISProcess" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p><img src="/img/loading.gif" /> Loading Information. Please wait...</p>
-                </div>
-            </div>
-        </div>
-    </div>*@
-
-
-
-
-
-
-
-
-
 
 @* New code for add data *@
 <div class="form-group">
@@ -82,7 +34,7 @@
 
                                 <td>@item.NameType</td>
                                 <td>@item.ValueType</td>
-                                <td>@item.TypeIsBroker, @item.TypeIsClient, @item.TypeIsInsurer, @item.TypeIsTc</td>
+                                <td> @item.TypeIsTc, @item.TypeIsBroker, @item.TypeIsInsurer, @item.TypeIsClient </td>
                                 <td width="9%">
                                     <a href="#UpdateTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
                                        data-sub-nameType="@item.NameType"
@@ -95,7 +47,9 @@
                                      >
                                         <i class="fa fa-edit"> </i>
                                     </a>
-                                    @*<a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>*@
+                                    <a href="#UpdateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.Id">
+                                        <span class="fa fa-trash" id="span"></span>
+                                    </a>
                                 </td>
 
                             </tr>
@@ -158,15 +112,15 @@
 
                         <div>
                             <input type="checkbox" id="broker" name="broker">
-                            <label for="broker">broker</label>
+                            <label for="broker">Broker</label>
                         </div>
                         <div>
                             <input type="checkbox" id="insurer" name="insurer">
-                            <label for="insurer">insurer</label>
+                            <label for="insurer">Insurer</label>
                         </div>
                         <div>
                             <input type="checkbox" id="client" name="client">
-                            <label for="client">client</label>
+                            <label for="client">Client</label>
                         </div>
                     </div>
 

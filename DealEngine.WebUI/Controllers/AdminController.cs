@@ -781,16 +781,19 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 UpdateType updatetype = await _updateTypeServices.GetUpdateType(updateTypeId);
-                if (updateType.Id != Guid.Empty)
+                if (updatetype.Id != Guid.Empty)
                 {
-                    // using (var uow = _unitOfWork.BeginUnitOfWork())
-                    //{
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
                             updatetype.TypeName = updateType.NameType;
                         updatetype.TypeValue = updateType.ValueType;
                         updatetype.TypeIsTc = updateType.TypeIsTc;
                         updatetype.TypeIsBroker = updateType.TypeIsBroker;
                         updatetype.TypeIsClient = updatetype.TypeIsClient;
-                   // }
+                        updateType.TypeIsInsurer = updateType.TypeIsInsurer;
+                        await uow.Commit();
+
+                    }
                 }
                 else
                 {
