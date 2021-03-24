@@ -815,15 +815,15 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EditUpdateType(Guid updateTypeId, UpdateTypesViewModel updateType)
+        public async Task<IActionResult> EditUpdateType( UpdateTypesViewModel updateType)
         {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                UpdateType updatetype = await _updateTypeServices.GetUpdateType(updateTypeId);
-                if (updatetype.Id != Guid.Empty)
+                UpdateType updatetype = await _updateTypeServices.GetUpdateType(updateType.Id);
+                if (updateType.Id != Guid.Empty)
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -831,8 +831,8 @@ namespace DealEngine.WebUI.Controllers
                         updatetype.TypeValue = updateType.ValueType;
                         updatetype.TypeIsTc = updateType.TypeIsTc;
                         updatetype.TypeIsBroker = updateType.TypeIsBroker;
-                        updatetype.TypeIsClient = updatetype.TypeIsClient;
-                        updateType.TypeIsInsurer = updateType.TypeIsInsurer;
+                        updatetype.TypeIsClient = updateType.TypeIsClient;
+                        updatetype.TypeIsInsurer = updateType.TypeIsInsurer;
                         await uow.Commit();
 
                     }
@@ -843,7 +843,7 @@ namespace DealEngine.WebUI.Controllers
                     
                 }
                 //return Redirect("~/Admin/UpdateType");
-                return RedirectToAction("UpdateType", new { id = updateTypeId });
+                return RedirectToAction("UpdateType", new { id = updateType.Id });
 
             }
             catch (Exception ex)

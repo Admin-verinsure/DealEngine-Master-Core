@@ -9,7 +9,7 @@ namespace DealEngine.WebUI.Models
     public class AdminViewModel : BaseViewModel
     {
         // public UpdateTypesViewModel UpdateTypesViewModel { get; set; }
-        public List<UpdateTypesViewModel> UpdateTypes { get; set; }
+        //public List<UpdateTypesViewModel> UpdateTypes { get; set; }
 
         //public IList<UpdateTypesViewModel> UpdateTypes { get; set; }
 

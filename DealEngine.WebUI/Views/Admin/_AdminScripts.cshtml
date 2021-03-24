@@ -49,29 +49,20 @@
 
 
     function updateTypeSubmit() {
-        //var agreement = $("#ClientAgreementId").val();
         var nameType = $("#NameType").val();
         var valueType = $("#ValueType").val();
         var TcCheckbox = document.getElementById("tc");
         var Tc = TcCheckbox.checked;
-        //console.log("TcCheckbox=" + Tc);
-
         var BrokerCheckbox = document.getElementById("broker");
         var Broker = BrokerCheckbox.checked;
-        //console.log("Broker=" + Broker);
-
         var InsurerCheckbox = document.getElementById("insurer");
         var Insurer = InsurerCheckbox.checked;
-        //console.log("Insurer=" + Insurer);
-
         var ClientCheckbox = document.getElementById("client");
-        var Client = ClientCheckbox.checked;
-        //console.log("Client=" + Client);
-     
+        var Client = ClientCheckbox.checked;     
         var id = $("#UpdateTypeId").val();
         console.log("id=" + id);
         var postData = {
-            "UpdateTypeId": id,
+            "Id": id,
             "NameType": nameType,
             "ValueType": valueType,
             "TypeIsTc": Tc,
@@ -81,7 +72,6 @@
         };
         $.ajax({
             type: "Post",
-            //data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
             url: "/Admin/EditUpdateType",
             //contentType: "application/json; charset=utf-8",
             data: postData,
@@ -104,14 +94,15 @@
        // debugger;
         $('.modal').css('width', '600px');
         var nameType = $(e.relatedTarget).data('subNametype');
-        console.log($(e.relatedTarget));
+        
         var valueType = $(e.relatedTarget).data('subValuetype');
         var broker = $(e.relatedTarget).data('subBroker');
         var client = $(e.relatedTarget).data('subClient');
         var insurer = $(e.relatedTarget).data('subInsurer');
         var tc = $(e.relatedTarget).data('subTc');
-        var updateTypeId = $(e.relatedTarget).data('sub-id');
-        $(e.currentTarget).find('input[name="Id"]').val(updateTypeId);
+        var UpdateTypeId = $(e.relatedTarget).data('subId');
+        console.log("UpdateTypeId="+UpdateTypeId);
+        $(e.currentTarget).find('input[name="Id"]').val(UpdateTypeId);
         $(e.currentTarget).find('input[name="NameType"]').val(nameType);
         $(e.currentTarget).find('input[name="ValueType"]').val(valueType);
         $(e.currentTarget).find('input[name="tc"]').val(tc);
@@ -121,30 +112,48 @@
 
         if (client == "True") {
            // document.getElementById("client").checked = "true";
-            document.getElementById('client').checked = "checked"
-            $("#tc").removeAttr('checked');
-            $("#broker").removeAttr('checked');
-            $("#insurer").removeAttr('checked');
+            document.getElementById('client').checked = "checked";
         }
         if (broker == "True") {
-            document.getElementById('broker').checked = "checked"
-            $("#tc").removeAttr('checked');
-            $("#client").removeAttr('checked');
-            $("#insurer").removeAttr('checked');
+            document.getElementById('broker').checked = "checked";
+            //$("#tc").removeAttr('checked');
+            //$("#client").removeAttr('checked');
+            //$("#insurer").removeAttr('checked');
         }
-        if (insurer == "True") {
-            document.getElementById('insurer').checked = "checked"
-            $("#tc").removeAttr('checked');
-            $("#client").removeAttr('checked');
-            $("#broker").removeAttr('checked');
+        if (insurer == "True") {;
+            document.getElementById('insurer').checked = "checked";
         }
         if (tc == "True") {
-            document.getElementById('tc').checked = "checked"
-            $("#insurer").removeAttr('checked');
-            $("#client").removeAttr('checked');
-            $("#broker").removeAttr('checked');
+            document.getElementById('tc').checked = "checked";
         }
+        if(tc == "False")
+        {
+            $("#tc").removeAttr('checked');
+        }
+        //if (insurer == "False") {
+        //    $("#insurer").removeAttr('checked');
+        //    console.log("insurer");
+        //}
+        //if (broker == "False") {
+        //    $("#broker").removeAttr('checked');
+        //    console.log("broker");
+        //}
+        //if (client == "False") {
+        //    $("#client").removeAttr('checked');
+        //    console.log("client");
+        //}
+       // $(this).find('#userRole')[0].reset();  
+       // console.log($(this).find('#userRole')[0]);
 
+       // $(this).find('form').trigger('reset');
+       // $('#UpdateTypeModal').remove();
+
+    });
+    //modal clear data on cancle
+    $("#modalCancle").click(function (e) {
+        $('#UpdateTypeModal').find('form').trigger('reset');
+        //$('#UpdateTypeModal').remove();
+       // console.log(e);
     });
 
     /*delete data*/

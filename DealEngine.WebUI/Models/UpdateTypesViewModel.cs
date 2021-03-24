@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using NHibernate.AspNetCore.Identity;
 
 namespace DealEngine.WebUI.Models
 {
@@ -16,6 +18,7 @@ namespace DealEngine.WebUI.Models
         public Guid Id { get; set; }
         //public List<EditTermsViewModel> CLTerms { get; internal set; }
         public List<UpdateTypesViewModel> UpdateTypes { get; set; }
+        public List<UpdateTypesViewModel> updateType { get; set; }
 
 
         public virtual bool TypeIsTc
@@ -38,36 +41,5 @@ namespace DealEngine.WebUI.Models
             get;
             set;
         }
-
-        //public static UpdateTypesViewModel FromEntity(UpdateTypesViewModel updateType)
-        //{
-        //    UpdateTypesViewModel model = new UpdateTypesViewModel
-        //    {
-        //        Id = updateType.Id,
-        //        NameType = updateType.NameType,
-        //        ValueType = updateType.ValueType,
-        //        TypeIsBroker = updateType.TypeIsBroker,
-        //        TypeIsClient = updateType.TypeIsClient,
-        //        TypeIsInsurer = updateType.TypeIsInsurer,
-        //        TypeIsTc = updateType.TypeIsTc
-        //    };
-        //    return model;
-        //}
-
-        //internal static UpdateTypesViewModel FromEntity(UpdateType pg)
-        //{
-        //    //throw new NotImplementedException();
-        //    UpdateTypesViewModel model = new UpdateTypesViewModel
-        //    {
-        //        Id = pg.Id,
-        //        NameType = pg.TypeName,
-        //        ValueType = pg.TypeValue,
-        //        TypeIsBroker = pg.TypeIsBroker,
-        //        TypeIsClient = pg.TypeIsClient,
-        //        TypeIsInsurer = pg.TypeIsInsurer,
-        //        TypeIsTc = pg.TypeIsTc
-        //    };
-        //    return model;
-        //}
     }
 }
