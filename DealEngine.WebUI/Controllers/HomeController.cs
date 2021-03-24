@@ -812,15 +812,8 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 IssueUISViewModel model = new IssueUISViewModel();
-                model.ProgrammeId = ProgrammeId;
                 Programme programme = await _programmeService.GetProgrammeById(new Guid(ProgrammeId));
-                model.EnablePIReport = programme.EnablePIReport;
-                model.EnableEDReport = programme.EnableEDReport;
-                model.EnableCLReport = programme.EnableCLReport;
-                model.EnableCyberReport = programme.EnableCyberReport;
-                model.EnableFAPReport = programme.EnableFAPReport;
-                model.ProgrammeName = programme.Name;
-                model.ProgrammeNamedPartyUnitName = programme.NamedPartyUnitName;
+                model.programme = programme;
                 return View(model);
             }
             catch (Exception ex)
@@ -830,38 +823,10 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public PropertyDescriptorCollection generatequeryField(string Query)
+      
+        public async Task<List<List<string>>> GetNZFGReportSet(Guid programmeId, string reportName)
         {
-            PropertyDescriptorCollection props = null ;
-
-            if (Query == "PI Cover Limit")
-            {
-                props = TypeDescriptor.GetProperties(typeof(PIReport));
-            }
-            if (Query == "ED Premium")
-            {
-                props = TypeDescriptor.GetProperties(typeof(PIReport));
-            }
-            if (Query == "Cyber Premium")
-            {
-                props = TypeDescriptor.GetProperties(typeof(PIReport));
-            }
-            if (Query == "Limit and Premium Breakdown")
-            {
-                props = TypeDescriptor.GetProperties(typeof(PIReport));
-            }
-            if (Query == "FAP")
-            {
-                props = TypeDescriptor.GetProperties(typeof(FAPReport));
-            }
-
-            return props;
-        }
-
-        public async Task<List<List<string>>> GetNZFGReportSet(Guid programmeId , string reportName)
-        {
-            Programme programme =  await _programmeService.GetProgrammeById(programmeId);
+            Programme programme = await _programmeService.GetProgrammeById(programmeId);
             List<List<string>> ListReportSet = new List<List<string>>();
             List<String> ListReport = new List<String>();
             ListReport.Add("Member Name");
@@ -873,7 +838,7 @@ namespace DealEngine.WebUI.Controllers
             ListReport.Add("Please select from the following options (if selected no)");
             ListReportSet.Add(ListReport);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o =>  o.InformationSheet.DateDeleted == null ))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null))
             {
                 try
                 {
@@ -883,7 +848,7 @@ namespace DealEngine.WebUI.Controllers
 
                         Organisation organisation = cp.InformationSheet.Owner;
                         ////adding collumns to ListReport
-                        
+
 
                         ListReport.Add(organisation.Name);
                         ListReport.Add(cp.InformationSheet.Status);
@@ -894,7 +859,8 @@ namespace DealEngine.WebUI.Controllers
                         {
                             ListReport.Add(user.FullName);
                         }
-                        else{
+                        else
+                        {
                             ListReport.Add(organisation.Name);
 
                         }
@@ -902,112 +868,173 @@ namespace DealEngine.WebUI.Controllers
                         //if(programme.NamedPartyUnitName == "NZFSG Programme")
                         //{
                         if (cp.BaseProgramme.Id == programme.Id)
-                            {
-                                clientInformationSheetID = cp.InformationSheet.Id;
+                        {
+                            clientInformationSheetID = cp.InformationSheet.Id;
 
-                            }
-                            ClientInformationAnswer TraditionalLicenceOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasTraditionalLicenceOptions" , clientInformationSheetID);
-                            ClientInformationAnswer AdvisersOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasAdvisersOptions", clientInformationSheetID);
-                            ClientInformationAnswer AdditionalTraditionalLicenceOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasAdditionalTraditionalLicenceOptions", clientInformationSheetID);
-                            //TraditionalLicenceOptionsAnswers.Value == "0" ? ListReport.Add("Not Selected") : (TraditionalLicenceOptionsAnswers.Value == "1") ? ListReport.Add("Yes") : (TraditionalLicenceOptionsAnswers.Value == "2") ? ListReport.Add("No") ;
-                            if (TraditionalLicenceOptionsAnswers.Value == "0" )
-                            {
-                                ListReport.Add("Not Selected");
-                            } else if (TraditionalLicenceOptionsAnswers.Value == "1")
-                            {
-                                ListReport.Add("Yes");
-                            }
-                            else if (TraditionalLicenceOptionsAnswers.Value == "2")
-                            {
-                                ListReport.Add("No");
-                            }
-
-
-
-                            if (AdvisersOptionsAnswers.Value == "0")
-                            {
-                                ListReport.Add("Not Selected");
-                            }
-                            else if (AdvisersOptionsAnswers.Value == "1")
-                            {
-                                ListReport.Add("I do not have any other advisers working under my license");
-                            }
-                            else if (AdvisersOptionsAnswers.Value == "2")
-                            {
-                                ListReport.Add("I do have other advisers working under my license");
-                            }
+                        }
+                        ClientInformationAnswer TraditionalLicenceOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasTraditionalLicenceOptions", clientInformationSheetID);
+                        ClientInformationAnswer AdvisersOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasAdvisersOptions", clientInformationSheetID);
+                        ClientInformationAnswer AdditionalTraditionalLicenceOptionsAnswers = await _clientInformationAnswer.GetSheetAnsByName("FAPViewModel.HasAdditionalTraditionalLicenceOptions", clientInformationSheetID);
+                        //TraditionalLicenceOptionsAnswers.Value == "0" ? ListReport.Add("Not Selected") : (TraditionalLicenceOptionsAnswers.Value == "1") ? ListReport.Add("Yes") : (TraditionalLicenceOptionsAnswers.Value == "2") ? ListReport.Add("No") ;
+                        if (TraditionalLicenceOptionsAnswers.Value == "0")
+                        {
+                            ListReport.Add("Not Selected");
+                        }
+                        else if (TraditionalLicenceOptionsAnswers.Value == "1")
+                        {
+                            ListReport.Add("Yes");
+                        }
+                        else if (TraditionalLicenceOptionsAnswers.Value == "2")
+                        {
+                            ListReport.Add("No");
+                        }
 
 
 
+                        if (AdvisersOptionsAnswers.Value == "0")
+                        {
+                            ListReport.Add("Not Selected");
+                        }
+                        else if (AdvisersOptionsAnswers.Value == "1")
+                        {
+                            ListReport.Add("I do not have any other advisers working under my license");
+                        }
+                        else if (AdvisersOptionsAnswers.Value == "2")
+                        {
+                            ListReport.Add("I do have other advisers working under my license");
+                        }
 
-                            if (AdditionalTraditionalLicenceOptionsAnswers.Value == "0")
-                            {
-                                ListReport.Add("Not Selected");
-                            }
-                            else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "1")
-                            {
-                                ListReport.Add("I am taking my own Transitional Licence with no other advisers working under my license");
-                            }
-                            else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "2")
-                            {
-                                ListReport.Add("I will be coming under someone elses Transitional Licence");
-                            }
-                            else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "3")
-                            {
-                                ListReport.Add("Undecided");
-                            }
-                       // }
+
+
+
+                        if (AdditionalTraditionalLicenceOptionsAnswers.Value == "0")
+                        {
+                            ListReport.Add("Not Selected");
+                        }
+                        else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "1")
+                        {
+                            ListReport.Add("I am taking my own Transitional Licence with no other advisers working under my license");
+                        }
+                        else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "2")
+                        {
+                            ListReport.Add("I will be coming under someone elses Transitional Licence");
+                        }
+                        else if (AdditionalTraditionalLicenceOptionsAnswers.Value == "3")
+                        {
+                            ListReport.Add("Undecided");
+                        }
+                        // }
 
                         ListReportSet.Add(ListReport);
 
 
                     }
-                   // if (reportName == "PI")
-                   // {
-                    //PIReport report = new PIReport();
-                    //report.ReferenceID = cp.InformationSheet.ReferenceId;
-                    //report.IndividualName = cp.Owner.Name;
-                    //report.CompanyName = cp.Owner.Name;
-
-                    //if (cp.Agreements.Count > 0)
-                    //{
-                    //    foreach (ClientAgreement agreement in cp.Agreements)
-                    //    {
-                    //        var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == queryselect && ter.Bound == true);
-                    //        if (term != null)
-                    //        {
-                    //            report.selectedlimit = term.TermLimit.ToString();
-                    //            report.Premium = term.Premium.ToString();
-                    //            report.Inceptiondate = agreement.InceptionDate.ToString();
-                    //            break;
-                    //        }
-                    //        else
-                    //        {
-                    //            report.selectedlimit = "0";
-                    //            report.Premium = "0";
-                    //            report.Inceptiondate = agreement.InceptionDate.ToString();
-                    //            break;
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    report.selectedlimit = "0";
-                    //    report.Premium = "0";
-                    //    report.Inceptiondate = "0";
-                    //}
-                    //ListReport.Add(report);
-                    // }
-                   // else
-                    //{
-
-                   // }
+                   
 
                 }
                 catch (Exception ex)
                 { }
             }
             return ListReportSet;
+        }
+
+        public async Task<List<List<string>>> GetPremiumLimitReportSet(Guid programmeId , string reportName)
+        {
+            Programme programme =  await _programmeService.GetProgrammeById(programmeId);
+            List<List<string>> ListReportSet = new List<List<string>>();
+            List<String> ListReport = new List<String>();
+           
+            ListReport.Add("Insured");
+            ListReport.Add("Is Change");
+            ListReport.Add("Reference Id");
+            ListReport.Add("Email");
+            //ListReport.Add("Advisor Names");
+            ListReport.Add("Limit");
+            ListReport.Add("Excess");
+            ListReport.Add("Premium");
+            ListReport.Add("Premium Difference");
+
+
+
+            ListReportSet.Add(ListReport);
+
+              foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null  && o.InformationSheet.Status == "Bound"))
+            { 
+                try
+                {
+                        Guid clientInformationSheetID = Guid.NewGuid();
+                        if (cp.BaseProgramme.Id == programme.Id)
+                        {
+                            clientInformationSheetID = cp.InformationSheet.Id;
+
+                        }
+                        ListReportSet.Add(await CreatePremiumLimitReport( cp, clientInformationSheetID, true, false, reportName));
+
+                }
+                catch (Exception ex)
+                { }
+            }
+            return ListReportSet;
+        }
+
+        public async Task<List<string>> CreatePremiumLimitReport( ClientProgramme cp, Guid clientInformationSheetID, Boolean IsprincipalAdvisor, Boolean isSubClient,string reportName)
+        {
+
+            List<String> ListReport = new List<String>();
+
+
+            ListReport = new List<String>();
+
+            Organisation organisation = cp.InformationSheet.Owner;
+            ////adding collumns to ListReport
+
+
+            ListReport.Add(cp.InformationSheet.Owner.Name);
+            ListReport.Add((cp.InformationSheet.IsChange).ToString());
+
+
+
+            //ListReport.Add(cp.InformationSheet.Status);
+            ListReport.Add(cp.InformationSheet.ReferenceId);
+
+
+            ListReport.Add(organisation.Email);
+            User user = await _userService.GetApplicationUserByEmail(organisation.Email);
+           
+
+            if (cp.Agreements.Count > 0)
+            {
+                foreach (ClientAgreement agreement in cp.Agreements)
+                {
+                    var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == reportName && ter.Bound == true);
+                    if (term != null)
+                    {
+                        ListReport.Add(term.TermLimit.ToString());
+                        ListReport.Add(term.Excess.ToString("N0"));
+                        ListReport.Add(term.Premium.ToString("N2"));
+                        ListReport.Add(term.PremiumDiffer.ToString("N2"));
+
+                        break;
+                    }
+                    //else
+                    //{
+                    //    ListReport.Add("0");
+                    //    ListReport.Add("0");
+                    //    ListReport.Add("0");
+                    //    break;
+                    //}
+                }
+            }
+            else
+            {
+                ListReport.Add("0");
+                ListReport.Add("0");
+                ListReport.Add("0");
+            }
+
+
+            return ListReport;
+
         }
 
         public async Task<List<string>> CreateListReport(ClientProgramme supercp, ClientProgramme cp , Guid clientInformationSheetID,Boolean IsprincipalAdvisor ,Boolean isSubClient )
@@ -1227,8 +1254,13 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection , string IsReport)
         {
+
             User user = null;
-            try
+            user = await CurrentUser();
+            if (user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer)
+            {
+         
+                try
             {
                 Guid ProgrammeId = Guid.Parse(formCollection["ProgrammeId"]);
                 Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
@@ -1236,25 +1268,32 @@ namespace DealEngine.WebUI.Controllers
                 string queryselect = formCollection["queryselect"];
                 ViewBag.reportName = queryselect;
                 ViewBag.ProgrammeId = Guid.Parse(formCollection["ProgrammeId"]);
-                ViewBag.Title = "Financial Advice Provider(FAP)";
                 //PropertyDescriptorCollection props = generatequeryField(queryselect);
 
                 List<PIReport> reportset = new List<PIReport>();
                 DataTable table = new DataTable();
                 //List<String> ListReport = new List<String>();
                 List<List<string>> Lreportset = new List<List<string>>();
-                if (programme.NamedPartyUnitName == "NZFSG Programme")
+                if (programme.NamedPartyUnitName == "NZFSG Programme" && queryselect == "FAP")
                 {
-                   Lreportset = await GetNZFGReportSet(ProgrammeId, queryselect);
+                    ViewBag.Title = "Financial Advice Provider(FAP)";
+
+                    Lreportset = await GetNZFGReportSet(ProgrammeId, queryselect);
+
+                }
+                else if ((programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" )&& queryselect == "FAP")
+                {
+                    ViewBag.Title = "Financial Advice Provider(FAP)";
+
+                    Lreportset = await GetAAAReportSet(ProgrammeId, queryselect);
 
                 }
                 else
                 {
-                    if (programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
-                    {
-                        Lreportset = await GetAAAReportSet(ProgrammeId, queryselect);
+                    ViewBag.Title = "Bound " + queryselect + " Premium and Limits";
 
-                    }
+                    Lreportset = await GetPremiumLimitReportSet(ProgrammeId, queryselect);
+
                 }
 
 
@@ -1350,6 +1389,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
+            }
+
+            }
+            else
+            {
+                return RedirectToAction("Error404", "Error");
             }
         }
 
