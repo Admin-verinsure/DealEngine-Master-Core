@@ -181,30 +181,30 @@ public sealed class SecurityHeadersMiddleware
             // https://content-security-policy.com/unsafe-inline/
 
             context.Response.Headers.Add("Content-Security-Policy", new StringValues(
-            "base-uri 'self';" +
-            "block-all-mixed-content;" +
-            "default-src 'self';" +
-            "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com ;" +
-            "img-src 'self' data: https:;" +
-            "script-src 'self' 'unsafe-inline';" +
-            "style-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com;" +
-            "upgrade-insecure-requests;"
+                "base-uri 'self';" +
+                "block-all-mixed-content;" +
+                "default-src 'self';" +
+                "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com ;" +
+                "img-src 'self' data: https:;" +
+                "script-src 'self' 'unsafe-inline';" +
+                "style-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com;" +
+                "upgrade-insecure-requests;"
 
-            #region Other Directives that can be used
-            //"child-src 'none';" +
-            //"connect-src 'self';" +
-            //"object-src 'self';" +
-            //"form-action 'self' ;" +
-            //"frame-ancestors 'none';" +
-            //"frame-src 'none';" +
-            //"manifest-src 'none';" +
-            //"media-src 'none';" +
-            //"sandbox allow-scripts allow-forms;" +
-            //"script-src-elem 'self' 'unsafe-inline';" +
-            //"style-src-attr 'self' 'unsafe-inline';" +
-            //"style-src-elem 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com  ;" +
-            //"worker-src 'self';"
-            #endregion
+                #region Other Directives that can be used
+                //"child-src 'none';" +
+                //"connect-src 'self';" +
+                //"object-src 'self';" +
+                //"form-action 'self' ;" +
+                //"frame-ancestors 'none';" +
+                //"frame-src 'none';" +
+                //"manifest-src 'none';" +
+                //"media-src 'none';" +
+                //"sandbox allow-scripts allow-forms;" +
+                //"script-src-elem 'self' 'unsafe-inline';" +
+                //"style-src-attr 'self' 'unsafe-inline';" +
+                //"style-src-elem 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com  ;" +
+                //"worker-src 'self';"
+                #endregion
 
             ));
         }
