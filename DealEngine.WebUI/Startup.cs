@@ -132,8 +132,6 @@ public sealed class SecurityHeadersMiddleware
             //// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
             //context.Response.Headers.Add("x-content-type-options", new StringValues("nosniff"));
 
-
-
             //// https://security.stackexchange.com/questions/166024/does-the-x-permitted-cross-domain-policies-header-have-any-benefit-for-my-websit
             //context.Response.Headers.Add("X-Permitted-Cross-Domain-Policies", new StringValues("none"));
 
@@ -174,12 +172,17 @@ public sealed class SecurityHeadersMiddleware
             //    ));
             #endregion
 
-            //There are two options to protect against Clickjacking(to prevent a resource from being improperly framed):
-            //• The Content-Security - Policy header:
-            //Content - Security - Policy: frame - ancestors 'none' | 'self' | ref.CSP2 source - list
-            //• The X-Frame - Options header:
-            //X - Frame - Options: DENY | SAMEORIGIN | ALLOW - FROM origin
-            //CSP is the preferred solution.X - Frame - Options is widely supported by user-agents, but is deprecated for the more flexible CSP.
+            #region Clickjacking Reasoning/Solution
+            // There are two options to protect against Clickjacking(to prevent a resource from being improperly framed):
+
+            // • The Content-Security - Policy header:
+            // Content - Security - Policy: frame - ancestors 'none' | 'self' | ref.CSP2 source - list
+
+            // • The X-Frame - Options header:
+            // X - Frame - Options: DENY | SAMEORIGIN | ALLOW - FROM origin
+
+            // CSP is the preferred solution.X - Frame - Options is widely supported by user-agents, but is deprecated for the more flexible CSP.
+            #endregion
 
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
             context.Response.Headers.Add("x-frame-options", new StringValues("DENY"));
