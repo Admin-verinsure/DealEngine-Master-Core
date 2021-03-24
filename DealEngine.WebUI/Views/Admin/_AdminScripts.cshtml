@@ -148,10 +148,36 @@
     });
 
     /*delete data*/
-    $('#UpdateTypeDelete').on('show.bs.modal', function (e) {
+    $('#updateTypeDelete').on('show.bs.modal', function (e) {
+        debugger;
+        var updateTypeId = $(e.relatedTarget).data('updatetypeId');
+        console.log(updateTypeId);
+        $(e.currentTarget).find('input[name="updateTypeId"]').val(updateTypeId);
         $('.modal .modal-body').css('height', 'auto');
-        var termId = $(e.relatedTarget).data('term-id');
-        $(e.currentTarget).find('input[name="TermId"]').val(termId);
+       
     });
+
+    $("#btnUpdateTypeDelete").click(function () {
+        //var agreement = $("#ClientAgreementId").val();
+        var updateTypeId = $("#UpdateTypeId_Id").val();
+        console.log("UpdateTypeId2=" + updateTypeId);
+        var prodData = {
+            //"clientAgreementId": agreement,
+            "Id": updateTypeId
+
+        };
+        $.ajax({
+            type: "Post",
+            data: prodData,
+            url: "/Admin/DeleteUpdateType",
+            success: function () {
+                $("#myModal").modal("hide");
+                location.reload(true);
+                alert("Deleted Successfully!");
+
+            }
+        });
+    });
+
 
 </script>

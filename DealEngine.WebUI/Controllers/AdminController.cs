@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DealEngine.Domain.Entities;
+using SystemDocument = DealEngine.Domain.Entities.Document;
+using Document = DealEngine.Domain.Entities.Document;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
 using DealEngine.Infrastructure.FluentNHibernate;
@@ -743,9 +745,11 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
+                //updateTypeModel = updateTypeModel.FirstOrDefault(t => t.DateDeleted == null);
 
 
-                foreach (var updateType in dbUpdatemodelTypes)
+
+                foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
                 {
                     updateTypeModel.Add(new UpdateTypesViewModel
                     {
@@ -764,6 +768,44 @@ namespace DealEngine.WebUI.Controllers
                 return View(model);
             }
 
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteUpdateType(UpdateTypesViewModel updateType)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                UpdateType UpdateType = await _updateTypeServices.GetUpdateType(updateType.Id);
+                //UpdateType updateTypeData = UpdateType.UpdateTypes.FirstOrDefault(t => t.DateDeleted == null);
+
+                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
+                //ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
+                //ClientAgreementBVTerm bvTerm = null;
+
+                UpdateType updatetype = null;
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if(UpdateType.Id != null)
+                    {
+                        UpdateType.DateDeleted = DateTime.UtcNow;
+                     //updateTypeData.Delete(user,dateDeleted)
+
+                        await uow.Commit();
+
+                    }
+
+
+                }
+
+                return RedirectToAction("UpdateType", new { id = updateType.Id });
+            }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);

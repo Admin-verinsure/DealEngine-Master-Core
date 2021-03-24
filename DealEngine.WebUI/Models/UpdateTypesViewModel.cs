@@ -10,6 +10,7 @@ namespace DealEngine.WebUI.Models
     {
         public string ValueType { get; set; }
         public string NameType { get; set; }
+        public object DateDeleted { get; internal set; }
         //public bool userIs { get; set; }
         // public int Id { get; set; }
         public Guid Id { get; set; }
