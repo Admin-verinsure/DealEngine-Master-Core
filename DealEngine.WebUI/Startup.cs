@@ -132,8 +132,7 @@ public sealed class SecurityHeadersMiddleware
             //// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
             //context.Response.Headers.Add("x-content-type-options", new StringValues("nosniff"));
 
-            //// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-            //context.Response.Headers.Add("x-frame-options", new StringValues("DENY"));
+
 
             //// https://security.stackexchange.com/questions/166024/does-the-x-permitted-cross-domain-policies-header-have-any-benefit-for-my-websit
             //context.Response.Headers.Add("X-Permitted-Cross-Domain-Policies", new StringValues("none"));
@@ -175,15 +174,24 @@ public sealed class SecurityHeadersMiddleware
             //    ));
             #endregion
 
+            //There are two options to protect against Clickjacking(to prevent a resource from being improperly framed):
+            //• The Content-Security - Policy header:
+            //Content - Security - Policy: frame - ancestors 'none' | 'self' | ref.CSP2 source - list
+            //• The X-Frame - Options header:
+            //X - Frame - Options: DENY | SAMEORIGIN | ALLOW - FROM origin
+            //CSP is the preferred solution.X - Frame - Options is widely supported by user-agents, but is deprecated for the more flexible CSP.
+
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+            context.Response.Headers.Add("x-frame-options", new StringValues("DENY"));
+
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-
             // https://content-security-policy.com/unsafe-inline/
-
             context.Response.Headers.Add("Content-Security-Policy", new StringValues(
                 "base-uri 'self';" +
                 "block-all-mixed-content;" +
                 "default-src 'self';" +
+                "frame-ancestors 'none';" +
                 "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com ;" +
                 "img-src 'self' data: https:;" +
                 "script-src 'self' 'unsafe-inline';" +
@@ -195,7 +203,6 @@ public sealed class SecurityHeadersMiddleware
                 //"connect-src 'self';" +
                 //"object-src 'self';" +
                 //"form-action 'self' ;" +
-                //"frame-ancestors 'none';" +
                 //"frame-src 'none';" +
                 //"manifest-src 'none';" +
                 //"media-src 'none';" +
