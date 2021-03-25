@@ -136,10 +136,10 @@ namespace DealEngine.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
                 {
-                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme);
+                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme.Name).Select(bp => bp.FirstOrDefault());
                     foreach (var clientProgramme in clientProgList)
                     {
-                        programmeList.Add(clientProgramme.Key);
+                        programmeList.Add(clientProgramme.BaseProgramme);
                     }
                 }
                 else
@@ -147,7 +147,7 @@ namespace DealEngine.WebUI.Controllers
                     programmeList = await _programmeService.GetAllProgrammes();
                 }
 
-                foreach (Programme programme in programmeList)
+                foreach (Programme programme in programmeList.Distinct())
                 {
                     model.ProgrammeItems.Add(new ProgrammeItem(programme)
                     {
@@ -503,7 +503,7 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {
-                clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
+                clientList = await _programmeService.GetClientProgrammesByOwnerByProgramme(user.PrimaryOrganisation.Id, programme.Id);
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     string status = client.InformationSheet.Status;
@@ -1482,7 +1482,7 @@ namespace DealEngine.WebUI.Controllers
                             await _programmeService.Update(renewfromClientProgramme);
 
                             //create renew task
-                            //await _milestoneService.CreateRenewNotificationTask(user, renewfromClientProgramme, organisation);
+                            await _milestoneService.CreateRenewNotificationTask(user, renewfromClientProgramme, renewfromClientProgramme.Owner, programme);
 
                             //send out renew notification email
                             EmailTemplate emailTemplate = null;
@@ -1506,6 +1506,23 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RenewNotification(Guid renewFromProgrammeBaseId, Guid OrganisationId, Guid ProgrammeId)
+        {
+            User user = await CurrentUser();
+            Programme currentProgramme = await _programmeService.GetProgramme(ProgrammeId);
+            ClientProgramme renewFromProgrammeBase = await _programmeService.GetClientProgramme(renewFromProgrammeBaseId);
+            Organisation renewClientOrg = await _organisationService.GetOrganisation(OrganisationId);
+
+            //Complete the renew notification task
+            await _milestoneService.CreateRenewTask(user, renewFromProgrammeBase, renewClientOrg, currentProgramme);
+
+            //Create a renew
+            ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
+
+            return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
         }
 
         [HttpGet]
