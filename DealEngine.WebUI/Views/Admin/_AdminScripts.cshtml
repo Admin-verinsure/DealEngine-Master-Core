@@ -60,7 +60,7 @@
         var ClientCheckbox = document.getElementById("client");
         var Client = ClientCheckbox.checked;     
         var id = $("#UpdateTypeId").val();
-        console.log("id=" + id);
+        //console.log("id=" + id);
         var postData = {
             "Id": id,
             "NameType": nameType,
@@ -101,7 +101,7 @@
         var insurer = $(e.relatedTarget).data('subInsurer');
         var tc = $(e.relatedTarget).data('subTc');
         var UpdateTypeId = $(e.relatedTarget).data('subId');
-        console.log("UpdateTypeId="+UpdateTypeId);
+        //console.log("UpdateTypeId="+UpdateTypeId);
         $(e.currentTarget).find('input[name="Id"]').val(UpdateTypeId);
         $(e.currentTarget).find('input[name="NameType"]').val(nameType);
         $(e.currentTarget).find('input[name="ValueType"]').val(valueType);
@@ -160,7 +160,7 @@
     $('#updateTypeDelete').on('show.bs.modal', function (e) {
         debugger;
         var updateTypeId = $(e.relatedTarget).data('updatetypeId');
-        console.log(updateTypeId);
+        //console.log(updateTypeId);
         $(e.currentTarget).find('input[name="updateTypeId"]').val(updateTypeId);
         $('.modal .modal-body').css('height', 'auto');
        
@@ -169,7 +169,7 @@
     $("#btnUpdateTypeDelete").click(function () {
         //var agreement = $("#ClientAgreementId").val();
         var updateTypeId = $("#UpdateTypeId_Id").val();
-        console.log("UpdateTypeId2=" + updateTypeId);
+        //console.log("UpdateTypeId2=" + updateTypeId);
         var prodData = {
             //"clientAgreementId": agreement,
             "Id": updateTypeId
