@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DealEngine.WebUI
 {
@@ -48,7 +50,17 @@ namespace DealEngine.WebUI
                 //https://stackoverflow.com/questions/41289737/get-the-current-culture-in-a-controller-asp-net-core
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
             });
-
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-3.1
+            services.ConfigureApplicationCookie(options =>
+            {
+                // options.AccessDeniedPath = "/Identity/Account/AccessDenied";     not implemented
+                options.Cookie.Name = "DealEngine";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Account/Login";
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
             services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddRepositories();
             services.AddBaseLdap();
@@ -60,10 +72,11 @@ namespace DealEngine.WebUI
             services.AddResponseCaching();
             services.AddMvc()
                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-            //services.AddSession(options =>
-            //{
-            //    options.IdleTimeout = TimeSpan.FromMinutes(60);
-            //});
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.IOTimeout = TimeSpan.FromMinutes(120);
+            });
             services.AddHsts(options =>
             {
                 options.MaxAge = TimeSpan.FromDays(90);
@@ -96,9 +109,8 @@ namespace DealEngine.WebUI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseSession();
+            app.UseSession();
             app.UseMiddleware<SecurityHeadersMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
