@@ -36,13 +36,15 @@ namespace DealEngine.WebUI.Controllers
         IAppSettingService _appSettingService;
         IEmailService _emailService;
         IProgrammeService _programmeService;
-        //IUpdateTypeServices _updateType;
+        IUpdateTypeService _updateTypeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;
         IOrganisationService _organisationService;
         IClientInformationAnswerService _clientInformationAnswer;
         IUnitOfWork _unitOfWork;
+        IUpdateTypeService _updateTypeServices;
+
 
         public HomeController(
             UserManager<IdentityUser> userManager,
@@ -62,13 +64,15 @@ namespace DealEngine.WebUI.Controllers
             IClientAgreementService clientAgreementService,
             IClientInformationService clientInformationService,
             IUnitOfWork unitOfWork,
-            IClientInformationAnswerService clientInformationAnswer
+            IClientInformationAnswerService clientInformationAnswer,
+            IUpdateTypeService updateTypeService
 
 
             )
 
             : base(userRepository)
         {
+           
             _userManager = userManager;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
@@ -86,6 +90,7 @@ namespace DealEngine.WebUI.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _clientInformationAnswer = clientInformationAnswer;
+            _updateTypeServices = updateTypeService;
 
         }
 
@@ -629,9 +634,32 @@ namespace DealEngine.WebUI.Controllers
                 }
                 //ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 ProgrammeItem model = new ProgrammeItem(programme);
+
                 model = await GetClientProgrammeListModel(user, clientList, programme);
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
+                //model.updateTypes = _updateTypeService.GetAllUpdateTypes();
+                var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
+                var updateTypeModel = new List<UpdateTypesViewModel>();
+                //updateTypeModel = updateTypeModel.FirstOrDefault(t => t.DateDeleted == null);
 
+
+
+                foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
+                {
+                    updateTypeModel.Add(new UpdateTypesViewModel
+                    {
+                        Id = updateType.Id,
+                        NameType = updateType.TypeName,
+                        ValueType = updateType.TypeValue,
+                        TypeIsBroker = updateType.TypeIsBroker,
+                        TypeIsClient = updateType.TypeIsClient,
+                        TypeIsInsurer = updateType.TypeIsInsurer,
+                        TypeIsTc = updateType.TypeIsTc
+                    });
+
+
+                }
+                model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
                 return View(model);
             }
             catch (Exception ex)

@@ -10,6 +10,14 @@ namespace DealEngine.WebUI.Models
 {
     public class UpdateTypesViewModel : BaseViewModel
     {
+        public UpdateTypesViewModel() { }
+        //public UpdateTypesViewModel(UpdateType UpdateTypes) {
+        //    if(UpdateTypes != null)
+        //    {
+               
+        //    }
+        //}
+
         public string ValueType { get; set; }
         public string NameType { get; set; }
         public object DateDeleted { get; internal set; }

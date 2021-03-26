@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using Microsoft.AspNetCore.Identity;
+using UpdateType = DealEngine.Domain.Entities.UpdateType;
 
 namespace DealEngine.WebUI.Controllers
 {
