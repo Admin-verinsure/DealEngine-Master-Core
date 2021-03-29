@@ -11,20 +11,11 @@ namespace DealEngine.WebUI.Models
     public class UpdateTypesViewModel : BaseViewModel
     {
         public UpdateTypesViewModel() { }
-        //public UpdateTypesViewModel(UpdateType UpdateTypes) {
-        //    if(UpdateTypes != null)
-        //    {
-               
-        //    }
-        //}
 
         public string ValueType { get; set; }
         public string NameType { get; set; }
         public object DateDeleted { get; internal set; }
-        //public bool userIs { get; set; }
-        // public int Id { get; set; }
         public Guid Id { get; set; }
-        //public List<EditTermsViewModel> CLTerms { get; internal set; }
         public List<UpdateTypesViewModel> UpdateTypes { get; set; }
         public List<UpdateTypesViewModel> updateType { get; set; }
 

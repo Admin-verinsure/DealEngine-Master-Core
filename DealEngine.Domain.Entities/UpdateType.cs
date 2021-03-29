@@ -30,7 +30,6 @@ namespace DealEngine.Domain.Entities
             TypeIsClient = typeIsClient;
             TypeIsBroker = typeIsBroker;
         }
-         public virtual IList<UpdateType> UpdateTypes { get; set; }
 
         [JsonIgnore]
         

@@ -69,7 +69,6 @@
         $.ajax({
             type: "Post",
             url: "/Admin/EditUpdateType",
-            //contentType: "application/json; charset=utf-8",
             data: postData,
             async: true,
             success: function () {
@@ -87,7 +86,6 @@
 
     /*edit data*/
     $('#UpdateTypeModal').on('show.bs.modal', function (e) {
-       // debugger;
         $('.modal').css('width', '600px');
         var nameType = $(e.relatedTarget).data('subNametype');
         
@@ -97,7 +95,6 @@
         var insurer = $(e.relatedTarget).data('subInsurer');
         var tc = $(e.relatedTarget).data('subTc');
         var UpdateTypeId = $(e.relatedTarget).data('subId');
-        //console.log("UpdateTypeId="+UpdateTypeId);
         $(e.currentTarget).find('input[name="Id"]').val(UpdateTypeId);
         $(e.currentTarget).find('input[name="NameType"]').val(nameType);
         $(e.currentTarget).find('input[name="ValueType"]').val(valueType);
@@ -112,9 +109,6 @@
         }
         if (broker == "True") {
             document.getElementById('broker').checked = "checked";
-            //$("#tc").removeAttr('checked');
-            //$("#client").removeAttr('checked');
-            //$("#insurer").removeAttr('checked');
         }
         if (insurer == "True") {;
             document.getElementById('insurer').checked = "checked";
@@ -126,48 +120,27 @@
         {
             $("#tc").removeAttr('checked');
         }
-        //if (insurer == "False") {
-        //    $("#insurer").removeAttr('checked');
-        //    console.log("insurer");
-        //}
-        //if (broker == "False") {
-        //    $("#broker").removeAttr('checked');
-        //    console.log("broker");
-        //}
-        //if (client == "False") {
-        //    $("#client").removeAttr('checked');
-        //    console.log("client");
-        //}
-       // $(this).find('#userRole')[0].reset();  
-       // console.log($(this).find('#userRole')[0]);
-
-       // $(this).find('form').trigger('reset');
-       // $('#UpdateTypeModal').remove();
+    
 
     });
     //modal clear data on cancle
     $("#modalCancle").click(function (e) {
         $('#UpdateTypeModal').find('form').trigger('reset');
-        //$('#UpdateTypeModal').remove();
-       // console.log(e);
+       
     });
 
     /*delete data*/
     $('#updateTypeDelete').on('show.bs.modal', function (e) {
         debugger;
         var updateTypeId = $(e.relatedTarget).data('updatetypeId');
-        //console.log(updateTypeId);
         $(e.currentTarget).find('input[name="updateTypeId"]').val(updateTypeId);
         $('.modal .modal-body').css('height', 'auto');
        
     });
 
     $("#btnUpdateTypeDelete").click(function () {
-        //var agreement = $("#ClientAgreementId").val();
         var updateTypeId = $("#UpdateTypeId_Id").val();
-        //console.log("UpdateTypeId2=" + updateTypeId);
         var prodData = {
-            //"clientAgreementId": agreement,
             "Id": updateTypeId
 
         };

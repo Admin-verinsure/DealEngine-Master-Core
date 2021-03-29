@@ -212,9 +212,6 @@
             <form id="ProdForm" method="post" action="~/Information/UpdateInformation">
                 <input class="form-control" hidden type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
                 <table class="table table-striped">
-                    @*<tr>
-                        @Model.CurrentUserIsBroker, @Model.CurrentUserIsInsurer, @Model.CurrentUserIsTC, @Model.CurrentUserIsProgrammeManager
-                    </tr>*@
                     <tr>
                         <td>
                             <label for="changeType" class="required">Change Type</label>
@@ -222,7 +219,6 @@
                         <td>
                             <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
                                 <option selected="selected" value="">-- Select here --</option>
-                                @*@if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "False")*@
 
                                 @if (Model.UpdateTypes != null)
                                 {
@@ -261,13 +257,6 @@
                                     }
 
                                 }
-                               
-                                @*else
-                                {
-                                    <option Value="TC_addAmendRiskInfo">test</option>
-                                }*@
-
-
                             </select>
                         </td>
                         @*<td>

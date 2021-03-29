@@ -637,11 +637,8 @@ namespace DealEngine.WebUI.Controllers
 
                 model = await GetClientProgrammeListModel(user, clientList, programme);
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
-                //model.updateTypes = _updateTypeService.GetAllUpdateTypes();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
-                //updateTypeModel = updateTypeModel.FirstOrDefault(t => t.DateDeleted == null);
-
 
 
                 foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
