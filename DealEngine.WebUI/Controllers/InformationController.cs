@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
 using DocumentFormat.OpenXml.Bibliography;
+using DealEngine.WebUI.Models.Information;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -57,6 +58,7 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IMapperSession<WaterLocation> _waterLocation;
         ISubsystemService _subsystemService;
+        IChangeProcessService _changeProcessService;
 
 
         public InformationController(
@@ -96,6 +98,7 @@ namespace DealEngine.WebUI.Controllers
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IMapperSession<WaterLocation> waterLocation,
+            IChangeProcessService changeProcessService,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
@@ -139,6 +142,7 @@ namespace DealEngine.WebUI.Controllers
             _mapper = mapper;
             _emailService = emailService;
             _clientProgrammeRepository = clientProgrammeRepository;
+            _changeProcessService = changeProcessService;
             //_generatePdf = generatePdf;
 
         }
@@ -1211,7 +1215,21 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> UpdateInformation(IFormCollection formCollection)
         {
             User createdBy = null;
+            if (formCollection != null)
+            {
+                var reason = formCollection["Reason"];
 
+                if (reason == "TC_AdminUpdate – move advisor")
+                {
+                    createdBy = await CurrentUser();
+                    ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
+                    // Usually changeReason is saved by linking to the newProgramme and saving, but in this instance we aren't creating a newProgramme yet...
+                    await _changeProcessService.Add(changeReason);
+
+                    return Redirect("/Information/MoveAdvisors/" + Guid.Parse(formCollection["DealId"]));
+                }            
+            }
+        
             try
             {
                 createdBy = await CurrentUser();
@@ -1224,6 +1242,16 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, createdBy, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<ViewResult> MoveAdvisors(Guid id)
+        {
+            ClientProgramme programme = await _clientProgrammeRepository.GetByIdAsync(id);
+            IList<Organisation> advisors = programme.InformationSheet.Organisation;
+            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, advisors);
+
+            return View(model);
         }
 
         [HttpGet]
