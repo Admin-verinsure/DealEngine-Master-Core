@@ -123,11 +123,6 @@ namespace DealEngine.WebUI.Models
 
 	}
 
-	//public class UpdateTypeItem : UpdateTypesViewModel
- //   {
-	//	public List<UpdateTypesViewModel> UpdateTypes { get; set; }
-
-	//}
 	public class ProgrammeItem : BaseViewModel
 	{
 		[Obsolete]
@@ -145,12 +140,6 @@ namespace DealEngine.WebUI.Models
 			Programme = sheets.FirstOrDefault().Programme.BaseProgramme;
 			BuildDeals(sheets);
         }
-        //public ProgrammeItem(List<UpdateType> updateType)
-        //{
-        //	updateTypesViewModel = new UpdateTypesViewModel();
-        //	UpdateType = updateType.FirstOrDefault().updateType;
-        //	BuildDeals(updateType);
-        //}
         public ProgrammeItem(Domain.Entities.UpdateType updateType)
         {
             updateTypesViewModel = new UpdateTypesViewModel();

@@ -270,8 +270,6 @@
 
                             </select>
                         </td>
-                        @*@await Html.PartialAsync("_ChangeUpdateType", @Model)*@
-
                         @*<td>
             <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
                 <option selected="selected" value="">-- Select here --</option>
@@ -327,10 +325,8 @@
                         </td>
                     </tr>
                     @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                    @*@if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")*@
                     {
                         <tr>
-                            @*@Model.CurrentUserIsBroker, @Model.CurrentUserIsInsurer, @Model.CurrentUserIsTC*@
                             <td>
                                 <label for="ReasonDesc" class="required">Reason Description</label>
                             </td>

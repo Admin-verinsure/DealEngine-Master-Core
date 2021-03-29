@@ -1,8 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿
 <script type="text/javascript">
     /*add data*/
     $('#updateTypeDelete').on('show.bs.modal', function (e) {
@@ -26,7 +22,7 @@
         var updateTypeValue = $("#ValueType").val();
         var validation = true;
     
-        if (updateTypeValue == "") {
+        if (updateTypeName == "") {
             $('#validateUpdateTypeName').html("<font color='red'>Field is required</font>");
             if (validation) {
                 validation = false;
@@ -34,7 +30,7 @@
         } else {
             $('#validateUpdateTypeName').html("");
         }
-        if (updateTypeName == "") {
+        if (updateTypeValue == "") {
             $('#validateUpdateTypeValue').html("<font color='red'>Field is required</font>");
             if (validation) {
                 validation = false;

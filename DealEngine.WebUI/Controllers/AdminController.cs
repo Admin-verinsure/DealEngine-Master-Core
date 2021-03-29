@@ -734,10 +734,6 @@ namespace DealEngine.WebUI.Controllers
          [HttpGet]
         public async Task<IActionResult> UpdateType()
         {
-
-            //AdminViewModel updateTypeModel = new AdminViewModel();
-            //var allUpdateTypes = new List<UpdateTypesViewModel>();
-            //var user = await CurrentUser();
             User user = null;
             UpdateTypesViewModel model = new UpdateTypesViewModel();
 
@@ -746,8 +742,6 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
-                //updateTypeModel = updateTypeModel.FirstOrDefault(t => t.DateDeleted == null);
-
 
 
                 foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
@@ -783,11 +777,6 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 UpdateType UpdateType = await _updateTypeServices.GetUpdateType(updateType.Id);
-                //UpdateType updateTypeData = UpdateType.UpdateTypes.FirstOrDefault(t => t.DateDeleted == null);
-
-                //ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
-                //ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
-                //ClientAgreementBVTerm bvTerm = null;
 
                 UpdateType updatetype = null;
 
@@ -796,16 +785,14 @@ namespace DealEngine.WebUI.Controllers
                     if(UpdateType.Id != null)
                     {
                         UpdateType.DateDeleted = DateTime.UtcNow;
-                     //updateTypeData.Delete(user,dateDeleted)
-
                         await uow.Commit();
 
                     }
 
 
                 }
+                return RedirectToAction("UpdateType");
 
-                return RedirectToAction("UpdateType", new { id = updateType.Id });
             }
             catch (Exception ex)
             {
@@ -840,11 +827,12 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                        _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient);
+
+                    await _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient);
                     
                 }
-                //return Redirect("~/Admin/UpdateType");
-                return RedirectToAction("UpdateType", new { id = updateType.Id });
+                return RedirectToAction("UpdateType");
+
 
             }
             catch (Exception ex)

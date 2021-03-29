@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Text;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Infrastructure.Ldap.Interfaces;
@@ -20,10 +19,6 @@ namespace DealEngine.Services.Impl
 		IMapperSession<UpdateType> _updateType;
 
 		public UpdateTypeServices(IMapperSession<UpdateType> updateType){ _updateType = updateType;}
-		//public async Task AddUpdateType(UpdateType updateType)
-		//{
-		//	await _updateType.AddAsync(updateType);
-		//}
 		public async Task AddUpdateType (User createdBy, string nameType, string valueType, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient)
         {
 			if (string.IsNullOrWhiteSpace(nameType.ToString()))
