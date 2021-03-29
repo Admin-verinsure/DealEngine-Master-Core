@@ -597,6 +597,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
 
                 }
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+                        if (changeendorsement.DateDeleted == null &&
+                            changeendorsement.Name != "Related or Associated Entities & Family Members" && changeendorsement.Name != "Non Imputation" &&
+                            changeendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && changeendorsement.Name != "Design & Construct" &&
+                            changeendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && changeendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
+                            changeendorsement.Name != "Quantity Surveying Exclusion" && changeendorsement.Name != "Project Managers Endorsement" &&
+                            changeendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                            bolcustomendorsementrenew = true;
+                        }
+                    }
+                }
             }
 
 
