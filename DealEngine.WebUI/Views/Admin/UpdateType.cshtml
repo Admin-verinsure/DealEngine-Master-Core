@@ -21,6 +21,7 @@
                     <tr>
                         <th data-field="name" data-sortable="true">Name Type</th>
                         <th data-field="status" data-sortable="true">Value Type</th>
+                        <th data-field="status" data-sortable="true">Role</th>
                         <th data-sortable="false"></th>
                     </tr>
                 </thead>
@@ -29,29 +30,60 @@
                     {
                         @foreach (var item in Model.UpdateTypes)
                         {
-                            <tr>
+                    <tr>
 
 
-                                <td>@item.NameType</td>
-                                <td>@item.ValueType</td>
-                                @*<td> @item.TypeIsTc, @item.TypeIsBroker, @item.TypeIsInsurer, @item.TypeIsClient </td>*@
-                                <td width="9%">
-                                    <a href="#UpdateTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                       data-sub-nameType="@item.NameType"
-                                       data-sub-valueType="@item.ValueType"
-                                       data-sub-broker="@item.TypeIsBroker"
-                                       data-sub-client="@item.TypeIsClient"
-                                       data-sub-insurer="@item.TypeIsInsurer"
-                                       data-sub-tc="@item.TypeIsTc"
-                                       data-sub-id="@item.Id">
-                                        <i class="fa fa-edit"> </i>
-                                    </a>
-                                    <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id">
-                                        <span class="fa fa-trash" id="span"></span>
-                                    </a>
-                                </td>
+                        <td>@item.NameType</td>
+                        <td>@item.ValueType</td>
+                        <td>
+                            <ul style="list-style-type: none;padding: 0;">
+                                @if (@item.TypeIsTc is true)
+                                {
+                                    <li style="display:inline-block">TC</li>
+                                }
+                                @if (@item.TypeIsBroker is true)
+                                {
+                                    @if (@item.TypeIsTc is true)
+                                    {
+                                        <li style="display:inline-block">,</li>
+                                    }
+                                    <li style="display:inline-block">Broker</li>
+                                }
+                                @if (@item.TypeIsInsurer is true)
+                                {
+                                    @if (@item.TypeIsTc || @item.TypeIsBroker is true)
+                                    {
+                                        <li style="display:inline-block">,</li>
+                                    }
+                                    <li style="display:inline-block">Insurer</li>
+                                }
+                                @if (@item.TypeIsClient is true)
+                                {
+                                    @if (@item.TypeIsTc || @item.TypeIsBroker || @item.TypeIsInsurer is true)
+                                    {
+                                        <li style="display:inline-block">,</li>
+                                    }
+                                    <li style="display:inline-block">Client</li>
+                                }
+                            </ul>
+                        </td>
+                        <td width="9%">
+                            <a href="#UpdateTypeModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                               data-sub-nameType="@item.NameType"
+                               data-sub-valueType="@item.ValueType"
+                               data-sub-broker="@item.TypeIsBroker"
+                               data-sub-client="@item.TypeIsClient"
+                               data-sub-insurer="@item.TypeIsInsurer"
+                               data-sub-tc="@item.TypeIsTc"
+                               data-sub-id="@item.Id">
+                                <i class="fa fa-edit"> </i>
+                            </a>
+                            <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id">
+                                <span class="fa fa-trash" id="span"></span>
+                            </a>
+                        </td>
 
-                            </tr>
+                    </tr>
                         }
                     }
                     @*else
