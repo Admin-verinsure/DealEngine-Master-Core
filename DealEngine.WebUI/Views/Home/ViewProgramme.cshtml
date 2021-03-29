@@ -23,6 +23,13 @@
                 </li>
             }
 
+            if (Model.IsRenewFromProgramme)
+            {
+                <li class="nav-item">
+                    <a onclick="location.href='@Url.Action("IssueRenewal", "Home", new { ProgrammeId = @Model.Programme.Id})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Issue Renewal Notification </a>
+                </li>
+            }
+
             <li class="nav-item">
                 <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.Programme.Id"><i class="fa fa-pencil"></i>Issue Reminder</a>
             </li>

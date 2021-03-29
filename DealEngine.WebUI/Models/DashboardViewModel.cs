@@ -166,7 +166,9 @@ namespace DealEngine.WebUI.Models
 		public OrganisationViewModel OrganisationViewModel { get; set; }
         public Domain.Entities.Programme Programme { get; internal set; }
 		public ChangeReason ChangeReason { get; set; }
-    }
+		public bool IsRenewFromProgramme { get; set; }
+
+	}
 
 	public class TaskItem : BaseViewModel
 	{
