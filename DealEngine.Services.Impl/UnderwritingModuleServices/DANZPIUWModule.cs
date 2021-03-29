@@ -325,23 +325,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (renewFromAgreement != null)
                 {
                     strretrodate = renewFromAgreement.RetroactiveDate;
-                }
 
-                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
-                {
-                    if (renewendorsement.DateDeleted == null &&
-                        renewendorsement.Name != "Related or Associated Entities & Family Members" && renewendorsement.Name != "Non Imputation" &&
-                        renewendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && renewendorsement.Name != "Design & Construct" &&
-                        renewendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && renewendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
-                        renewendorsement.Name != "Quantity Surveying Exclusion" && renewendorsement.Name != "Project Managers Endorsement" &&
-                        renewendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        ClientAgreementEndorsement newclientendorsement =
-                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
-                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
-                        bolcustomendorsementrenew = true;
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Related or Associated Entities & Family Members" && renewendorsement.Name != "Non Imputation" &&
+                            renewendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && renewendorsement.Name != "Design & Construct" &&
+                            renewendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && renewendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
+                            renewendorsement.Name != "Quantity Surveying Exclusion" && renewendorsement.Name != "Project Managers Endorsement" &&
+                            renewendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                            bolcustomendorsementrenew = true;
+                        }
                     }
                 }
+                
             }
 
 

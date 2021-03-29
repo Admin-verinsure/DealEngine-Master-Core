@@ -162,19 +162,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (renewFromAgreement != null)
                 {
                     strretrodate = renewFromAgreement.RetroactiveDate;
-                }
 
-                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
-                {
-                    
-                    if (renewendorsement.DateDeleted == null && 
-                        renewendorsement.Name != "Data Recovery and Business Interruption Exclusion (DRB)" && renewendorsement.Name != "Unencrypted Portable Media Exclusion (UPM)")
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        ClientAgreementEndorsement newclientendorsement =
-                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
-                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Data Recovery and Business Interruption Exclusion (DRB)" && renewendorsement.Name != "Unencrypted Portable Media Exclusion (UPM)")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
                     }
                 }
+
+                
             }
 
             ClientAgreementTerm termcl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);

@@ -98,19 +98,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (renewFromAgreement != null)
                 {
                     strretrodate = renewFromAgreement.RetroactiveDate;
-                }
 
-                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
-                {
-
-                    if (renewendorsement.DateDeleted == null &&
-                        renewendorsement.Name != "Employment Disputes Liability - Split Limit of Indemnity - DANZ")
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        ClientAgreementEndorsement newclientendorsement =
-                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
-                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Employment Disputes Liability - Split Limit of Indemnity - DANZ")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
                     }
                 }
+
+                
             }
 
             int TermLimit100k = 100000;

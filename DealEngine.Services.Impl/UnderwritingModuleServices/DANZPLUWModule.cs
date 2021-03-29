@@ -94,24 +94,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             string strretrodate = "";
             if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
             {
-                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "GL"));
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PL"));
 
                 if (renewFromAgreement != null)
                 {
                     strretrodate = renewFromAgreement.RetroactiveDate;
-                }
 
-                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
-                {
-
-                    if (renewendorsement.DateDeleted == null &&
-                        renewendorsement.Name != "Business Advice or Service Exclusion 1")
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        ClientAgreementEndorsement newclientendorsement =
-                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
-                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Business Advice or Service Exclusion 1")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
                     }
                 }
+                
             }
 
             int TermLimit1mil = 1000000;

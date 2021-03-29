@@ -122,19 +122,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (renewFromAgreement != null)
                 {
                     strretrodate = renewFromAgreement.RetroactiveDate;
-                }
 
-                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
-                {
-
-                    if (renewendorsement.DateDeleted == null &&
-                        renewendorsement.Name != "Insolvency Exclusion")
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        ClientAgreementEndorsement newclientendorsement =
-                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
-                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Insolvency Exclusion")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
                     }
                 }
+
+                
             }
 
             //Return terms based on the limit options
