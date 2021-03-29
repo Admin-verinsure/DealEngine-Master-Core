@@ -294,26 +294,52 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolcustomendorsementrenew = false;
             string strretrodate = "";
 
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
-                        {
-                            strretrodate = preRenewOrRefData.PIRetro;
-                        }
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.PIRetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                bolcustomendorsementrenew = true;
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+                }
+
+                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
+                {
+                    if (renewendorsement.DateDeleted == null &&
+                        renewendorsement.Name != "Related or Associated Entities & Family Members" && renewendorsement.Name != "Non Imputation" &&
+                        renewendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && renewendorsement.Name != "Design & Construct" &&
+                        renewendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && renewendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
+                        renewendorsement.Name != "Quantity Surveying Exclusion" && renewendorsement.Name != "Project Managers Endorsement" &&
+                        renewendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
                     {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
-                        {
-                            bolcustomendorsementrenew = true;
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-                        }
+                        ClientAgreementEndorsement newclientendorsement =
+                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        bolcustomendorsementrenew = true;
                     }
                 }
             }
@@ -581,7 +607,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //High Fee Income
             uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
             //Negative Turnover
-            uwrfnegativefeeincome(underwritingUser, agreement, feeincome, rates);
+            //uwrfnegativefeeincome(underwritingUser, agreement, feeincome, rates);
             //Substancial Business Changes
             uwrfsubstancialbusinesschanges(underwritingUser, agreement);
             //Staff Dishonesty
@@ -598,7 +624,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Custom Endorsement renew
             uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
             //Not a renewal of an existing policy
-            uwrfnotrenewal(underwritingUser, agreement);
+            //uwrfnotrenewal(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)

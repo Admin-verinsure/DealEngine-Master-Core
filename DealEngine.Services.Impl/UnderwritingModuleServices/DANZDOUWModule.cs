@@ -66,29 +66,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindaysforchange = 0;
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
-            string strretrodate = "";
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.DORetro))
-                        {
-                            strretrodate = preRenewOrRefData.DORetro;
-                        }
+            //string strretrodate = "";
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.DORetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.DORetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "DO")
-                    {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
-                        {
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-                        }
-                    }
-                }
-            }
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "DO")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = rates["do1millimitpremium"];
@@ -112,6 +112,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").Any())
             {
                 decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
+            }
+
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "DO"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+                }
+
+                foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
+                {
+
+                    if (renewendorsement.DateDeleted == null &&
+                        renewendorsement.Name != "Insolvency Exclusion")
+                    {
+                        ClientAgreementEndorsement newclientendorsement =
+                            new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                        agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                    }
+                }
             }
 
             //Return terms based on the limit options
