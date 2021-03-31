@@ -2,7 +2,7 @@
 
 <div class="container">
     <form method="POST" action="~/Home/NTUcreate" novalidate>
-        @*<input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>*@
+        <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
         <div class="card">
             <div class="card-header">
                 <h5>
@@ -32,23 +32,20 @@
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
-                                                @*<input type="checkbox" aria-label="checkbox button for following text input" name="@clientProg.Owner.Email" value="@clientProg.Id">*@
-                                                <input type="checkbox" aria-label="checkbox button for following text input" name="" value="">
+                                                <input type="checkbox" aria-label="checkbox button for following text input" name="InformationSheetId" value="@client.InformationSheet.Id" readonly>
                                             </div>
                                         </div>
-                                        @* this client name *@
-                                        @*<input type="text" class="form-control" aria-label="Text input with radio button" value="@clientProg.Owner.Name" readonly>*@
-
+                     
                                         <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name" readonly>
                                     </div>
                                 </td>
                               
                                 @*<td>
-                                    <input type="text" class="dateInput form-control" value="@clientProg.IssueDate" readonly>
-                                </td>
-                                <td>
-                                    <input type="text" class="dateInput form-control" value="@Model.IsSubUIS" name="IsSubUIS" readonly>
+                                    <input type="text" class="dateInput form-control" value="@client.Owner.issue" readonly>
                                 </td>*@
+                                <td>
+                                    <input type="text" class="form-control" value="@client.InformationSheet.Status" name="Status" readonly>
+                                </td>
                             </tr>
                         }
                     </tbody>
