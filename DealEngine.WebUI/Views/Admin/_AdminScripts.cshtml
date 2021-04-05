@@ -97,13 +97,17 @@
     $('#UpdateTypeModal').on('show.bs.modal', function (e) {
         $('.modal').css('width', '600px');
         var nameType = $(e.relatedTarget).data('subNametype');
-        
+
+
         var valueType = $(e.relatedTarget).data('subValuetype');
         var broker = $(e.relatedTarget).data('subBroker');
         var client = $(e.relatedTarget).data('subClient');
         var insurer = $(e.relatedTarget).data('subInsurer');
         var tc = $(e.relatedTarget).data('subTc');
+        var Fmc = $(e.relatedTarget).data('subFmc');
+        var Fanz = $(e.relatedTarget).data('subFanz');
         var UpdateTypeId = $(e.relatedTarget).data('subId');
+
         $(e.currentTarget).find('input[name="Id"]').val(UpdateTypeId);
         $(e.currentTarget).find('input[name="NameType"]').val(nameType);
         $(e.currentTarget).find('input[name="ValueType"]').val(valueType);
@@ -111,6 +115,8 @@
         $(e.currentTarget).find('input[name="broker"]').val(broker);
         $(e.currentTarget).find('input[name="insurer"]').val(insurer);
         $(e.currentTarget).find('input[name="client"]').val(client);
+        $(e.currentTarget).find('input[name="fmc"]').val(Fmc);
+        $(e.currentTarget).find('input[name="faNZ"]').val(Fanz);
 
         if (client == "True") {
            // document.getElementById("client").checked = "true";
@@ -119,7 +125,7 @@
         if (broker == "True") {
             document.getElementById('broker').checked = "checked";
         }
-        if (insurer == "True") {;
+        if (insurer == "True") {
             document.getElementById('insurer').checked = "checked";
         }
         if (tc == "True") {
@@ -129,7 +135,18 @@
         {
             $("#tc").removeAttr('checked');
         }
-    
+
+      
+
+        if (Fanz == "True") {
+            document.getElementById('faNZ').checked = "checked";
+        }
+        if (Fmc == "True") {
+            document.getElementById('fmc').checked = "checked";
+        }
+        if (Fmc == "False") {
+            $("#fmc").removeAttr('checked');
+        }
 
     });
     //modal clear data on cancle

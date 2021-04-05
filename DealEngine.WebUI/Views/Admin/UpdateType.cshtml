@@ -35,7 +35,7 @@
 
 
                         <td>@item.NameType</td>
-                        <td>@item.ValueType</td>
+                        <td>@item.ValueType </td>
                         <td>
                             <ul style="list-style-type: none;padding: 0;">
                                 @if (@item.TypeIsTc is true)
@@ -76,7 +76,9 @@
                                data-sub-client="@item.TypeIsClient"
                                data-sub-insurer="@item.TypeIsInsurer"
                                data-sub-tc="@item.TypeIsTc"
-                               data-sub-id="@item.Id">
+                               data-sub-id="@item.Id"
+                               data-sub-Fanz="@item.ProgrammeIsFanz"
+                               data-sub-Fmc="@item.ProgrammeIsFmc">
                                 <i class="fa fa-edit"> </i>
                             </a>
                             <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id">

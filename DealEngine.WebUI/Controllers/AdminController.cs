@@ -754,7 +754,9 @@ namespace DealEngine.WebUI.Controllers
                         TypeIsBroker = updateType.TypeIsBroker,
                         TypeIsClient = updateType.TypeIsClient,
                         TypeIsInsurer = updateType.TypeIsInsurer,
-                        TypeIsTc = updateType.TypeIsTc
+                        TypeIsTc = updateType.TypeIsTc,
+                        ProgrammeIsFanz = updateType.ProgrammeIsFanz,
+                        ProgrammeIsFmc = updateType.ProgrammeIsFmc
                     });
 
 
