@@ -47,6 +47,7 @@
     function updateTypeSubmit() {
         var nameType = $("#NameType").val();
         var valueType = $("#ValueType").val();
+
         var TcCheckbox = document.getElementById("tc");
         var Tc = TcCheckbox.checked;
         var BrokerCheckbox = document.getElementById("broker");
@@ -54,7 +55,13 @@
         var InsurerCheckbox = document.getElementById("insurer");
         var Insurer = InsurerCheckbox.checked;
         var ClientCheckbox = document.getElementById("client");
-        var Client = ClientCheckbox.checked;     
+        var Client = ClientCheckbox.checked;    
+
+        var FmcCheckbox = document.getElementById("fmc");
+        var FMC = FmcCheckbox.checked;
+        var FaNZCheckbox = document.getElementById("faNZ");
+        var FANZ = FaNZCheckbox.checked;  
+
         var id = $("#UpdateTypeId").val();
         //console.log("id=" + id);
         var postData = {
@@ -64,7 +71,9 @@
             "TypeIsTc": Tc,
             "TypeIsBroker": Broker,
             "TypeIsInsurer": Insurer,
-            "TypeIsClient": Client
+            "TypeIsClient": Client,
+            "ProgrammeIsFanz": FANZ,
+            "ProgrammeIsFmc": FMC
         };
         $.ajax({
             type: "Post",

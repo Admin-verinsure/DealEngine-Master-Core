@@ -821,6 +821,9 @@ namespace DealEngine.WebUI.Controllers
                         updatetype.TypeIsBroker = updateType.TypeIsBroker;
                         updatetype.TypeIsClient = updateType.TypeIsClient;
                         updatetype.TypeIsInsurer = updateType.TypeIsInsurer;
+                        updatetype.ProgrammeIsFmc = updateType.ProgrammeIsFmc;
+                        updatetype.ProgrammeIsFanz = updateType.ProgrammeIsFanz;
+
                         await uow.Commit();
 
                     }
@@ -828,7 +831,7 @@ namespace DealEngine.WebUI.Controllers
                 else
                 {
 
-                    await _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient);
+                    await _updateTypeServices.AddUpdateType(user, updateType.NameType, updateType.ValueType, updateType.TypeIsTc, updateType.TypeIsBroker, updateType.TypeIsInsurer, updateType.TypeIsClient, updateType.ProgrammeIsFanz, updateType.ProgrammeIsFmc);
                     
                 }
                 return RedirectToAction("UpdateType");

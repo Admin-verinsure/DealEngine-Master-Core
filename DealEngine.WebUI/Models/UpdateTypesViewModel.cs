@@ -40,5 +40,9 @@ namespace DealEngine.WebUI.Models
             get;
             set;
         }
+
+        public virtual bool ProgrammeIsFmc { get; set; }
+
+        public virtual bool ProgrammeIsFanz { get; set; }
     }
 }

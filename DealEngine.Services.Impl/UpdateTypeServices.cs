@@ -19,13 +19,13 @@ namespace DealEngine.Services.Impl
 		IMapperSession<UpdateType> _updateType;
 
 		public UpdateTypeServices(IMapperSession<UpdateType> updateType){ _updateType = updateType;}
-		public async Task AddUpdateType (User createdBy, string nameType, string valueType, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient)
+		public async Task AddUpdateType (User createdBy, string nameType, string valueType, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient, bool programmeIsFanz, bool programmeIsFmc)
         {
 			if (string.IsNullOrWhiteSpace(nameType.ToString()))
 				throw new ArgumentNullException(nameof(nameType));
 			if (string.IsNullOrWhiteSpace(nameType.ToString()))
 				throw new ArgumentNullException(nameof(valueType));
-			await _updateType.AddAsync(new UpdateType(createdBy, nameType, valueType, typeIsTc, typeIsBroker, typeIsInsurer, typeIsClient));
+			await _updateType.AddAsync(new UpdateType(createdBy, nameType, valueType, typeIsTc, typeIsBroker, typeIsInsurer, typeIsClient, programmeIsFanz, programmeIsFmc));
 
 		}
 		public async Task<List<UpdateType>> GetAllUpdateTypes()

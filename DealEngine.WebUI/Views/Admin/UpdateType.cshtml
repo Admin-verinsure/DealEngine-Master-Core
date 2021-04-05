@@ -19,8 +19,10 @@
                 <thead>
                     <tr>
                         <th data-field="name" data-sortable="true">Name Type</th>
-                        <th data-field="status" data-sortable="true">Value Type</th>
-                        <th data-field="status" data-sortable="true">Role</th>
+                        <th data-field="Value" data-sortable="true">Value Type</th>
+                        <th data-field="Role" data-sortable="true">Role</th>
+                        <th data-field="Program" data-sortable="true">Program</th>
+
                         <th data-sortable="false"></th>
                     </tr>
                 </thead>
@@ -121,6 +123,21 @@
                         <input type="text" class="form-control " id="ValueType" name="ValueType" />
                         <p class="validationContainer" id="validateUpdateTypeValue"></p>
                     </div>
+                    <div class="form-group" id="Programme">
+                        <label for="Role">Select Programme</label>
+                        <div>
+                            <input type="checkbox" id="fmc" name="fmc"
+                                   checked>
+                            <label for="fmc">First Mate Cover</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="faNZ" name="faNZ">
+                            <label for="faNZ">Financial Advice New Zealand Inc Programme</label>
+                        </div>
+                      
+                    </div>
+
 
                     <div class="form-group" id="userRole">
                         <label for="Role">User Role</label>

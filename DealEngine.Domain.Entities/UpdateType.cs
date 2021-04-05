@@ -13,7 +13,7 @@ namespace DealEngine.Domain.Entities
     {
         protected UpdateType() : base(null) { }
 
-        public UpdateType(User createdBy, string typeName, string typeValue, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient)
+        public UpdateType(User createdBy, string typeName, string typeValue, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient, bool programmeIsFanz, bool programmeIsFmc)
             : base(createdBy)
         {
             if (string.IsNullOrWhiteSpace(typeName))
@@ -29,6 +29,10 @@ namespace DealEngine.Domain.Entities
             TypeIsInsurer = typeIsInsurer;
             TypeIsClient = typeIsClient;
             TypeIsBroker = typeIsBroker;
+            ProgrammeIsFanz = programmeIsFanz;
+            ProgrammeIsFmc = programmeIsFmc;
+
+
         }
 
         [JsonIgnore]
@@ -60,6 +64,16 @@ namespace DealEngine.Domain.Entities
             set;
         }
         public virtual bool TypeIsClient
+        {
+            get;
+            set;
+        }
+        public virtual bool ProgrammeIsFmc
+        {
+            get;
+            set;
+        }
+        public virtual bool ProgrammeIsFanz
         {
             get;
             set;
