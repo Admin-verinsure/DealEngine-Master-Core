@@ -44,7 +44,11 @@
                                     <input type="text" class="form-control" value="@clientProg.Owner.Email" readonly>
                                 </td>
                                 <td>
-                                    <input type="text" class="dateInput form-control" value="@clientProg.RenewNotificationDate" readonly>
+                                    @*<input type="text" class="dateInput form-control" value="@clientProg.RenewNotificationDate" readonly>*@
+                                    @*for windows, to do: need to work out how to check IsLinux*@
+                                    @*<input type="text" class="dateInput form-control" value="@TimeZoneInfo.ConvertTimeFromUtc(clientProg.RenewNotificationDate, TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time")).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" readonly>*@
+                                    @*for linux, to do: need to work out how to check IsLinux*@
+                                    <input type="text" class="dateInput form-control" value="@TimeZoneInfo.ConvertTimeFromUtc(clientProg.RenewNotificationDate, TimeZoneInfo.FindSystemTimeZoneById("NZ")).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" readonly>
                                 </td>
                             </tr>
                         }
@@ -65,12 +69,12 @@
 
         $('#select-all').on('click', function () {
             debugger;
-        // Get all rows with search applied
-       // Check/uncheck checkboxes for all rows in the table
+            // Get all rows with search applied
+            // Check/uncheck checkboxes for all rows in the table
             $('input[type="checkbox"]').prop('checked', this.checked);
 
 
-     });
+        });
 
     </script>
 
