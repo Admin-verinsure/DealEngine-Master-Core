@@ -43,7 +43,6 @@
     }
 
 
-
     function updateTypeSubmit() {
         var nameType = $("#NameType").val();
         var valueType = $("#ValueType").val();
@@ -57,10 +56,25 @@
         var ClientCheckbox = document.getElementById("client");
         var Client = ClientCheckbox.checked;    
 
-        //var FmcCheckbox = document.getElementById("fmc");
-        //var FMC = FmcCheckbox.checked;
-        //var FaNZCheckbox = document.getElementById("faNZ");
-        //var FANZ = FaNZCheckbox.checked;  
+       
+
+        //get_selected_checkboxes_array();
+
+        //function get_selected_checkboxes_array() {
+        //    var ch_list = Array();
+        //    var ch_id = Array();
+        //    $("input:checkbox[name=chkboxProgramme]:checked").each(function ()
+        //    {
+        //        ch_list.push($(this).val());
+        //        //console.log(ch_list);// get on
+
+        //        //ch_id.push($(this).id());
+        //        //console.log($(this)[0]);// get checkbox html ?? get id
+        //        console.log($(this).children);// get 
+
+        //    });
+           // return ch_list;
+       // }
 
         var id = $("#UpdateTypeId").val();
         //console.log("id=" + id);
