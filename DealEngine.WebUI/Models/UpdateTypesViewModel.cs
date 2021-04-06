@@ -41,8 +41,10 @@ namespace DealEngine.WebUI.Models
             set;
         }
 
-        public virtual bool ProgrammeIsFmc { get; set; }
+        public List<ProgrammeItem> ProgrammeItem { get; set; }
 
-        public virtual bool ProgrammeIsFanz { get; set; }
+        //public virtual bool ProgrammeIsFmc { get; set; }
+
+        //public virtual bool ProgrammeIsFanz { get; set; }
     }
 }

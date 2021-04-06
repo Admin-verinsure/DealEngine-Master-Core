@@ -76,9 +76,7 @@
                                data-sub-client="@item.TypeIsClient"
                                data-sub-insurer="@item.TypeIsInsurer"
                                data-sub-tc="@item.TypeIsTc"
-                               data-sub-id="@item.Id"
-                               data-sub-Fanz="@item.ProgrammeIsFanz"
-                               data-sub-Fmc="@item.ProgrammeIsFmc">
+                               data-sub-id="@item.Id">
                                 <i class="fa fa-edit"> </i>
                             </a>
                             <a href="#updateTypeDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-updateType-id="@item.Id">
@@ -127,17 +125,19 @@
                     </div>
                     <div class="form-group" id="Programme">
                         <label for="Role">Select Programme</label>
-                        <div>
-                            <input type="checkbox" id="fmc" name="fmc"
-                                   checked>
-                            <label for="fmc">First Mate Cover</label>
-                        </div>
+                        @foreach (var programme in Model.ProgrammeItem)
+                        {
+                            <div>
+                                <input type="checkbox" id="@programme.Programme" name="fmc"
+                                       checked>
+                                <label for="fmc">@programme.Programme</label>
+                            </div>
+                        }
+                        @*<div>
+            <input type="checkbox" id="faNZ" name="faNZ">
+            <label for="faNZ">Financial Advice New Zealand Inc Programme</label>
+        </div>*@
 
-                        <div>
-                            <input type="checkbox" id="faNZ" name="faNZ">
-                            <label for="faNZ">Financial Advice New Zealand Inc Programme</label>
-                        </div>
-                      
                     </div>
 
 
