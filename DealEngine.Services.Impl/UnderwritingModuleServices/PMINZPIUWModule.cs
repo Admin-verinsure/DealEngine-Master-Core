@@ -278,31 +278,55 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decexpiringpremium = 0m;
             string strretrodate = "";
 
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
+            //            decexpiringpremium = Convert.ToDecimal(preRenewOrRefData.PIBoundPremium);
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.PIRetro;
+            //            }
+
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
             {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+
+                if (renewFromAgreement != null)
                 {
-                    if (preRenewOrRefData.DataType == "preterm")
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
-                        decexpiringpremium = Convert.ToDecimal(preRenewOrRefData.PIBoundPremium);
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+
+                        if (renewendorsement.DateDeleted == null && renewendorsement.Name != "Project Managers (Construction)" &&
+                            renewendorsement.Name != "Project Managers (Non-Construction)" &&
+                            renewendorsement.Name != "Building Defects Extension")
                         {
-                            strretrodate = preRenewOrRefData.PIRetro;
-                        }
-                        
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
-                    {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
-                        {
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
                         }
                     }
                 }
-            }
 
+
+            }
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"] / 100);
@@ -431,6 +455,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                     }
 
+                }
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+
+                        if (changeendorsement.DateDeleted == null && changeendorsement.Name != "Project Managers (Construction)" &&
+                            changeendorsement.Name != "Project Managers (Non-Construction)" &&
+                            changeendorsement.Name != "Building Defects Extension")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
+                    }
                 }
             }
 

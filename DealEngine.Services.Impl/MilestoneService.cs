@@ -316,6 +316,12 @@ namespace DealEngine.Services.Impl
                 "&ProgrammeId=" + currentProgramm.Id.ToString();
             var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
 
+            DateTime taskduedate = DateTime.Now.AddDays(7);
+            if (renewFromProgrammeBase != null)
+            {
+                taskduedate = renewFromProgrammeBase.Agreements.First().ExpiryDate.AddDays(14);
+            }
+            
             UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
 
             if (renewOrgContactUserTask == null)
@@ -324,7 +330,8 @@ namespace DealEngine.Services.Impl
                 {
                     URL = URL,
                     Body = renewOrgContactUser.FirstName + " please click here to renew " + renewFromProgrammeBase.BaseProgramme.NamedPartyUnitName + " insurance",
-                    IsActive = true
+                    IsActive = true,
+                    DueDate = taskduedate
                 };
 
                 renewOrgContactUser.UserTasks.Add(renewOrgContactUserTask);
