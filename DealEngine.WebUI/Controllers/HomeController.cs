@@ -1251,6 +1251,146 @@ namespace DealEngine.WebUI.Controllers
             return ListReportSet;
         }
 
+
+        public async Task<List<List<string>>> GetRevenueReportSet(Guid programmeId, string reportName)
+        {
+            Programme programme = await _programmeService.GetProgrammeById(programmeId);
+            List<List<string>> ListReportSet = new List<List<string>>();
+            //List<String> ListReport = new List<String>();
+            List<String> ListCol = new List<String>();
+
+
+            ListCol.Add("Insured");
+            ListCol.Add("Status");
+            ListCol.Add("Reference Id");
+            ListCol.Add("Email");
+
+            foreach (var template in programme.TerritoryTemplates)
+            {
+                ListCol.Add(template.Location);
+            }
+
+            ListCol.Add("LastFinancialYearTotal");
+            ListCol.Add("CurrentYearTotal");
+            ListCol.Add("NextFinancialYearTotal");
+
+            foreach (var template in programme.BusinessActivityTemplates)
+            {
+                ListCol.Add(template.Description.Trim());
+
+            }
+
+
+
+            //ListReport.Add("Advisor Names");
+
+            ListReportSet.Add(ListCol);
+
+
+
+
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
+            {
+                try
+                {
+                   
+                        Guid clientInformationSheetID = Guid.NewGuid();
+                        if (cp.BaseProgramme.Id == programme.Id)
+                        {
+                            clientInformationSheetID = cp.InformationSheet.Id;
+
+                        }
+                        ListReportSet.Add(await CreateRevenueListReport(null, cp, clientInformationSheetID, true, false, ListCol));
+
+                        if (cp.SubClientProgrammes.Any())
+                        {
+                            foreach (var subclient in cp.SubClientProgrammes)
+                            {
+                                ListReportSet.Add(await CreateRevenueListReport(cp, subclient, clientInformationSheetID, false, true, ListCol));
+                            }
+                        }
+                  
+
+                }
+                catch (Exception ex)
+                { }
+            }
+            return ListReportSet;
+        }
+
+        public async Task<List<string>> CreateRevenueListReport(ClientProgramme supercp, ClientProgramme cp, Guid clientInformationSheetID, Boolean IsprincipalAdvisor, Boolean isSubClient,List<String> ListCol)
+        {
+            ClientInformationSheet sheet = null;
+            List<String> ListReport = new List<String>(new String[ListCol.Count]);
+            //ListReport = new List<String>();
+
+            Organisation organisation = cp.InformationSheet.Owner;
+           
+            if (isSubClient)
+            {
+                ListReport.Insert(ListCol.IndexOf("Insured"), supercp.InformationSheet.Owner.Name);
+
+                //ListReport.Add(supercp.InformationSheet.Owner.Name);
+            }
+            else
+
+            {
+                ListReport.Insert(ListCol.IndexOf("Insured"), cp.InformationSheet.Owner.Name);
+
+                //ListReport.Add(cp.InformationSheet.Owner.Name);
+            }
+            ListReport.Insert(ListCol.IndexOf("Status"), cp.InformationSheet.Status);
+            ListReport.Insert(ListCol.IndexOf("Reference Id"), cp.InformationSheet.ReferenceId);
+            ListReport.Insert(ListCol.IndexOf("Email"), organisation.Email);
+
+            //ListReport.Add(cp.InformationSheet.Status);
+            //ListReport.Add(cp.InformationSheet.ReferenceId);
+            //ListReport.Add((cp.InformationSheet.IsChange).ToString());
+
+
+            //ListReport.Add(organisation.Email);
+
+               sheet = cp.InformationSheet;
+            if (sheet.RevenueData != null)
+            {
+                foreach (var territory in sheet.RevenueData.Territories)
+                {
+                    if (territory.Selected)
+                    {
+                        ListReport.Insert(ListCol.IndexOf(territory.Location), territory.Percentage.ToString("N0"));
+                    }
+                    else
+                    {
+                        ListReport.Insert(ListCol.IndexOf(territory.Location), "0");
+
+                    }
+                }
+
+                ListReport.Insert(ListCol.IndexOf("LastFinancialYearTotal"), (sheet.RevenueData.LastFinancialYearTotal.ToString("N2") != null ? sheet.RevenueData.LastFinancialYearTotal.ToString("N2") : "null"));
+                ListReport.Insert(ListCol.IndexOf("CurrentYearTotal"), (sheet.RevenueData.CurrentYearTotal.ToString("N2") != null ? sheet.RevenueData.CurrentYearTotal.ToString("N2") : "null"));
+
+                ListReport.Insert(ListCol.IndexOf("NextFinancialYearTotal"), (sheet.RevenueData.NextFinancialYearTotal.ToString("N2") != null ? sheet.RevenueData.NextFinancialYearTotal.ToString("N2") : "null"));
+
+                foreach (var activity in sheet.RevenueData.Activities)
+                {
+                    //ListReport.Add(activity.Description.Trim());
+                    if (activity.Selected)
+                    {
+                        ListReport.Insert(ListCol.IndexOf(activity.Description), activity.Percentage.ToString("N0"));
+                    }
+                    else
+                    {
+                        ListReport.Insert(ListCol.IndexOf(activity.Description), "0");
+
+                    }
+
+                }
+            }
+            return ListReport;
+
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> GetReportView(IFormCollection formCollection , string IsReport)
         {
@@ -1287,6 +1427,9 @@ namespace DealEngine.WebUI.Controllers
 
                     Lreportset = await GetAAAReportSet(ProgrammeId, queryselect);
 
+                }else if (queryselect == "RevenueActivity")
+                {
+                        Lreportset = await GetRevenueReportSet(ProgrammeId, queryselect);
                 }
                 else
                 {
