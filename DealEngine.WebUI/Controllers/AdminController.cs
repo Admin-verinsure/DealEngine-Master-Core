@@ -742,7 +742,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
-
+                model.Programme = await _programmeService.GetAllProgrammes();
 
                 foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
                 {

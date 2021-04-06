@@ -41,10 +41,10 @@ namespace DealEngine.WebUI.Models
             set;
         }
 
-        public List<ProgrammeItem> ProgrammeItem { get; set; }
-
+        public List<Domain.Entities.Programme> Programme { get; set; }
         //public virtual bool ProgrammeIsFmc { get; set; }
 
         //public virtual bool ProgrammeIsFanz { get; set; }
     }
+
 }
