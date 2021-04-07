@@ -125,7 +125,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     var unit = (PersonnelUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Personnel");
                     if(unit != null)
                     {
-                        if (!bolnonpmimember && unit.IsCurrentMembership)
+                        if (!bolnonpmimember && unit.IsCurrentMembershipPMINZ)
                         {
                             bolnonpmimember = true;
                         }
