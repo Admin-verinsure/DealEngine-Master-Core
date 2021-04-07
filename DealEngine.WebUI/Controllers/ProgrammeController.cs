@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SystemDocument = DealEngine.Domain.Entities.Document;
+using UpdateType = DealEngine.Domain.Entities.UpdateType;
+
 //using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace DealEngine.WebUI.Controllers
@@ -45,7 +47,7 @@ namespace DealEngine.WebUI.Controllers
         IImportService _importService;
         IClaimService _claimService;
         ISerializerationService _serializerationService;
-
+        IUpdateTypeService _updateTypeServices;
         public ProgrammeController(
             ISerializerationService serializerationService,
             IClaimService claimService,
@@ -68,7 +70,8 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IMapper mapper,
             IHttpClientService httpClientService,
-            IEGlobalSubmissionService eGlobalSubmissionService
+            IEGlobalSubmissionService eGlobalSubmissionService,
+                    IUpdateTypeService updateTypeService
             )
             : base(userRepository)
         {
@@ -94,6 +97,7 @@ namespace DealEngine.WebUI.Controllers
             _mapper = mapper;
             _httpClientService = httpClientService;
             _eGlobalSubmissionService = eGlobalSubmissionService;
+            _updateTypeServices = updateTypeService;
         }
 
         [HttpGet]
@@ -774,6 +778,65 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Title = "Programme Email Template ";
                 return View(model);
             }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateType()
+        {
+            User user = null;
+            UpdateTypesViewModel model = new UpdateTypesViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
+                var updateTypeModel = new List<UpdateTypesViewModel>();
+                model.Programme = await _programmeService.GetAllProgrammes();
+                model.CurrentUserType = "Client";
+                if (user.PrimaryOrganisation.IsBroker)
+                {
+                    model.CurrentUserType = "Broker";
+                }
+                if (user.PrimaryOrganisation.IsInsurer)
+                {
+                    model.CurrentUserType = "Insurer";
+                }
+                if (user.PrimaryOrganisation.IsTC)
+                {
+                    model.CurrentUserType = "TC";
+                }
+                if (user.PrimaryOrganisation.IsProgrammeManager)
+                {
+                    model.CurrentUserType = "ProgrammeManager";
+                }
+
+
+                foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
+                {
+                    updateTypeModel.Add(new UpdateTypesViewModel
+                    {
+                        Id = updateType.Id,
+                        NameType = updateType.TypeName,
+                        ValueType = updateType.TypeValue,
+                        TypeIsBroker = updateType.TypeIsBroker,
+                        TypeIsClient = updateType.TypeIsClient,
+                        TypeIsInsurer = updateType.TypeIsInsurer,
+                        TypeIsTc = updateType.TypeIsTc
+                        //ProgrammeIsFanz = updateType.ProgrammeIsFanz,
+                        //ProgrammeIsFmc = updateType.ProgrammeIsFmc
+                    });
+
+
+                }
+                model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
+                return View(model);
+            }
+
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);

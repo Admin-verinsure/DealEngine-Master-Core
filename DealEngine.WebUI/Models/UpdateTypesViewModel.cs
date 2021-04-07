@@ -42,6 +42,7 @@ namespace DealEngine.WebUI.Models
         }
 
         public List<Domain.Entities.Programme> Programme { get; set; }
+        public string CurrentUserType { get; internal set; }
         //public virtual bool ProgrammeIsFmc { get; set; }
 
         //public virtual bool ProgrammeIsFanz { get; set; }

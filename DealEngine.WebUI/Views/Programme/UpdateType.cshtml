@@ -1,4 +1,4 @@
-﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
+﻿@model DealEngine.WebUI.Models.UpdateTypesViewModel
 <!-- MAIN CONTENT -->
 <div id="content" class="container">
 
@@ -6,8 +6,8 @@
         <h1 class="page-title txt-color-blueDark">
             <!-- PAGE HEADER -->
             <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet-1</a>
-                > Programme Email Templates-1
+                <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
+                > Assign Programme To Update Types
             </span>
         </h1>
     </div>
@@ -21,179 +21,95 @@
         <div class="card">
             <div class="card-header">
                 <span class="widget-icon">
-                    <h2><i class="fa fa--envelope"></i>Programme Email Templates </h2>
+                    <h2><i class="fa fa--envelope"></i>Programme Update Type Templates </h2>
                 </span>
             </div>
             <div class="card-body">
-                <form class="client-form">
-                    <!-- content goes here -->
-                    <table class="table table-bordered table-striped ">
+                <div class="container">
+                    <form method="POST" action="~/Home/IssueUIS" novalidate>
+                        @*<input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>*@
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>
+                                    This page lists of Update Types. Please select the Update Type to assign this particular programme.
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="container">
+                                    <thread>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" id="select-all" aria-label="checkbox button for following text input">
 
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" width="30%">Email Template</th>
-                                <th scope="col" width="70%">Description</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
+                                                Update Type Name
+                                            </th>
+                                            <th>
+                                                Update Type Value
+                                            </th>
+                                            @*<th>
+                                                Issued Date
+                                            </th>*@
+                                        </tr>
+                                    </thread>
+                                    <tbody>
 
-                        <tr>
-                            <td align="left" style="word-wrap: break-word">
-                                Scheme Email
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients from the "Send Emails" page. This template can be used to send messages to all clients in a programme.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = Model.Id, type = "SendSchemeEmail", description = "Scheme Email -- Sent to clients from the 'Send Emails' page. This template can be used to send messages to all clients in a programme." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
+                                        @if (Model.CurrentUserType == "TC")
+                                        {
+                                            @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsTc))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    @*<input type="checkbox" aria-label="checkbox button for following text input" name="@clientProg.Owner.Email" value="@updateType.Id">*@
+                                                                    <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.NameType" value="@updateType.Id">
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control" aria-label="Text input with radio button" value="@updateType.NameType" readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" value="@updateType.ValueType" readonly>
+                                                    </td>
+                                                    @*<td>
+                        <input type="text" class="dateInput form-control" value="@clientProg.IssueDate" readonly>
+                    </td>*@
+                                                    @*<td>
+                        <input type="text" class="dateInput form-control" value="@Model.IsSubUIS" name="IsSubUIS" readonly>
+                    </td>*@
+                                                </tr>
+                                            }
 
-                        <tr>
-                            <td align="left">
-                                Information Sheet Instruction
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients when a information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the "Resend Information Sheet Instructions" option. Login details are automatically resent with this email (as separate email).
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetInstruction", description = "Information Sheet Instruction -- Sent to clients when a information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the 'Resend Information Sheet Instructions' option. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
+                                        }
 
-                        <tr>
-                            <td align="left">
-                                Sub Information Sheet Instruction
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients when a sub information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the "Resend Information Sheet Instructions" option. Login details are automatically resent with this email (as separate email).
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendSubInformationSheetInstruction", description = "Information Sheet Instruction -- Sent to clients when a information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the 'Resend Information Sheet Instructions' option. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Sub Information Sheet Completion
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to client when all sub information sheets are complete
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendSubInformationSheetCompletion", description = "Sent to client when all sub information sheets are complete" }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Information Sheet Reminder
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients who have been issued a proposal but not yet submitted when using the "Send Reminders" page. Login details are automatically resent with this email (as separate email).
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetReminder", description = "Information Sheet Reminder -- Sent to clients who have been issued a proposal but not yet submitted when using the 'Send Reminders' page. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Information Sheet Instructions For Renewals
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients who are being renewed from the previous Programme when a information sheet is issued - instead of the Default Information Sheet Instructions email. This email is optional, and cannot be sent to non-renewing clients. If not set, the main Information Sheet Instructions email template will be used for all clients.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetRenewalInstruction", description = "Sent to clients who are being renewed from the previous Programme when a information sheet is issued - instead of the Default Information Sheet Instructions email. This email is optional, and cannot be sent to non-renewing clients. If not set, the main Information Sheet Instructions email template will be used for all clients." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Agreement Policy Documents Covering Text
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients with Agreement documents attached. This is used when sending agreement documents from the "Send Policy Documents", and when sending/resending a specific member's Agreement documents from the Agreement details page.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendPolicyDocuments", description = "Agreement Policy Documents Covering Text -- Sent to clients with Agreement documents attached. This is used when sending agreement documents from the 'Send Policy Documents', and when sending/resending a specific member's Agreement documents from the Agreement details page." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Agreement Quote Documents Covering Text
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients with Agreement Quote documents attached. This is used when sending Agreement Quote documents from the "Send Quotes", and when sending/resending a specific client's Quote documents.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendQuoteDocuments", description = "Agreement Quote Documents Covering Text -- Sent to clients with Agreement Quote documents attached. This is used when sending Agreement Quote documents from the 'Send Quotes', and when sending/resending a specific client's Quote documents." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Agreement Online Acceptance Instructions
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients when a agreemnt is issued to them online which they can log on and view/accept. Login details are automatically resent with this email (as separate email).
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAgreementOnlineAcceptanceInstructions", description = "Agreement Online Acceptance Instructions -- Sent to clients when a agreemnt is issued to them online which they can log on and view/accept. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Agreement Policy Documents Resend Covering Text
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients with Agreement documents attached. This is used only when sending Agreement documents from the "Resend Agreement Documents", and includes only the Agreement documents specified by the user.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "ResendPolicyDocuments", description = "Agreement Policy Documents Resend Covering Text -- Sent to clients with Agreement documents attached. This is used only when sending Agreement documents from the 'Resend Agreement Documents', and includes only the Agreement documents specified by the user." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Agreement Acceptance Confirmation
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent when a client accepts their agreement online (i.e. confirmation only). Does not include any agreement documents as attachments.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAgreementAcceptanceConfirmation", description = "Agreement Acceptance Confirmation -- Sent when a client accepts their agreement online (i.e. confirmation only). Does not include any agreement documents as attachments." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td align="left">
-                                Online Payment Instructions
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients when a agreement is issued to them for payment online which they can log on and view the agreement/make the payment. Login details are automatically resent with this email (as separate email).
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendOnlinePaymentInstructions", description = "Online Payment Instructions -- Sent to clients when a agreement is issued to them for payment online which they can log on and view the agreement/make the payment. Login details are automatically resent with this email (as separate email)." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="left">
-                                User Information Sheet PDF Report
-                            </td>
-                            <td align="left" style="word-wrap: break-word">
-                                Sent to clients after the Report has been generated and triggered by either Send Report to Programme Recipient or Send Report to Insured.
-                            </td>
-                            <td>
-                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendPDFReport", description = "PDF Report -- Sent to clients after the Report has been generated and triggered by either Send Report to Programme Recipient or Send Report to Insured." }, new { @class = "btn btn-success btn-sm" })
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                                        </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary btn-xs" type="submit">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section pagespecific {
+    <script type="text/javascript">
+
+
+        $('#select-all').on('click', function () {
+            debugger;
+            // Get all rows with search applied
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]').prop('checked', this.checked);
+
+
+        });
+
+    </script>
+
+}
