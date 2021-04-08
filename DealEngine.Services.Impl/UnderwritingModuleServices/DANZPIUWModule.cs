@@ -52,7 +52,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientAgreementReferrals.Count == 0)
             {
                 foreach (var clientagreementreferralrule in agreement.ClientAgreementRules.Where(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null))
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber));
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber, clientagreementreferralrule.DoNotCheckForRenew));
             }
             else
             {
@@ -294,28 +294,55 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolcustomendorsementrenew = false;
             string strretrodate = "";
 
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
-                        {
-                            strretrodate = preRenewOrRefData.PIRetro;
-                        }
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.PIRetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                bolcustomendorsementrenew = true;
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Related or Associated Entities & Family Members" && renewendorsement.Name != "Non Imputation" &&
+                            renewendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && renewendorsement.Name != "Design & Construct" &&
+                            renewendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && renewendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
+                            renewendorsement.Name != "Quantity Surveying Exclusion" && renewendorsement.Name != "Project Managers Endorsement" &&
+                            renewendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
                         {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
                             bolcustomendorsementrenew = true;
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
                         }
                     }
                 }
+                
             }
 
 
@@ -570,6 +597,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     }
 
                 }
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+                        if (changeendorsement.DateDeleted == null &&
+                            changeendorsement.Name != "Related or Associated Entities & Family Members" && changeendorsement.Name != "Non Imputation" &&
+                            changeendorsement.Name != "Leaky Building Write-Back 2013 Endorsement" && changeendorsement.Name != "Design & Construct" &&
+                            changeendorsement.Name != "DANZ Licensed Building Practitioners Complaints Endorsement" && changeendorsement.Name != "Pre Purchase Inspections and Building Surveying Exclusion" &&
+                            changeendorsement.Name != "Quantity Surveying Exclusion" && changeendorsement.Name != "Project Managers Endorsement" &&
+                            changeendorsement.Name != "Leaky Building Write-Back Endorsement – Optional Extension Higher sub limits")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                            bolcustomendorsementrenew = true;
+                        }
+                    }
+                }
             }
 
 
@@ -581,7 +629,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //High Fee Income
             uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
             //Negative Turnover
-            uwrfnegativefeeincome(underwritingUser, agreement, feeincome, rates);
+            //uwrfnegativefeeincome(underwritingUser, agreement, feeincome, rates);
             //Substancial Business Changes
             uwrfsubstancialbusinesschanges(underwritingUser, agreement);
             //Staff Dishonesty
@@ -598,7 +646,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Custom Endorsement renew
             uwrfcustomendorsementrenew(underwritingUser, agreement, bolcustomendorsementrenew);
             //Not a renewal of an existing policy
-            uwrfnotrenewal(underwritingUser, agreement);
+            //uwrfnotrenewal(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -773,7 +821,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").DoNotCheckForRenew));
             }
             else
             {
@@ -784,7 +833,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfoperatesoutsideofnz" && cref.DateDeleted == null).Status = "";
+                }
             }
+
+            
+            
         }
 
         void uwrfsitelicensecategory3(User underwritingUser, ClientAgreement agreement, bool bolsitelicensecategory3)
@@ -796,7 +854,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsitelicensecategory3").DoNotCheckForRenew));
             }
             else
             {
@@ -807,7 +866,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsitelicensecategory3" && cref.DateDeleted == null).Status = "";
+                }
             }
+         
         }
 
         void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
@@ -819,7 +885,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").DoNotCheckForRenew));
             }
             else
             {
@@ -835,7 +902,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
                     }
                 }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "";
+                }
             }
+            
         }
 
         void uwrfhighfeeincome(User underwritingUser, ClientAgreement agreement, decimal feeincome, IDictionary<string, decimal> rates)
@@ -847,7 +921,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").DoNotCheckForRenew));
             }
             else
             {
@@ -857,6 +932,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "Pending";
                     }
+                  
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -870,7 +952,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnegativefeeincome").DoNotCheckForRenew));
             }
             else
             {
@@ -880,6 +963,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnegativefeeincome" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -893,7 +982,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfsubstancialbusinesschanges").DoNotCheckForRenew));
             }
             else
             {
@@ -903,6 +993,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfsubstancialbusinesschanges" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -916,7 +1012,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfstaffdishonesty").DoNotCheckForRenew));
             }
             else
             {
@@ -926,6 +1023,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfstaffdishonesty" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -939,7 +1042,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotdanzmember").DoNotCheckForRenew));
             }
             else
             {
@@ -949,6 +1053,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotdanzmember" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -962,7 +1072,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfexcludedactivities").DoNotCheckForRenew));
             }
             else
             {
@@ -972,6 +1083,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfexcludedactivities" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -985,7 +1102,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfover10perap").DoNotCheckForRenew));
             }
             else
             {
@@ -995,6 +1113,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfover10perap" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -1008,7 +1132,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfcustomendorsementrenew").DoNotCheckForRenew));
             }
             else
             {
@@ -1018,6 +1143,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcustomendorsementrenew" && cref.DateDeleted == null).Status = "";
                 }
             }
         }
@@ -1031,7 +1162,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewal").DoNotCheckForRenew));
             }
             else
             {
@@ -1041,6 +1173,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status = "Pending";
                     }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                    && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewal" && cref.DateDeleted == null).Status = "";
                 }
             }
         }

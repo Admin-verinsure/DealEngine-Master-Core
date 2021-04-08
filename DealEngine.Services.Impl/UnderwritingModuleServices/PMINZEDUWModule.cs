@@ -47,7 +47,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientAgreementReferrals.Count == 0)
             {
                 foreach (var clientagreementreferralrule in agreement.ClientAgreementRules.Where(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null))
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber));
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber, clientagreementreferralrule.DoNotCheckForRenew));
             }
             else
             {
@@ -67,27 +67,49 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
             string strretrodate = "";
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.EDRetro))
-                        {
-                            strretrodate = preRenewOrRefData.EDRetro;
-                        }
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.EDRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.EDRetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "ED")
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "ED")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "ED"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+
+                        if (renewendorsement.DateDeleted == null)
                         {
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
                         }
                     }
                 }
+
+
             }
 
             int TermLimit500k = 500000;
@@ -132,6 +154,22 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                     }
 
+                }
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+
+                        if (changeendorsement.DateDeleted == null)
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
+                    }
                 }
             }
 
@@ -247,13 +285,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").OrderNumber));
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").DoNotCheckForRenew));
             }
             else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
+                if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                    if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
                     {
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.CoveredOptions").First().Value == "2" ||
                             (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.CoveredOptions").First().Value == "1" &&
@@ -262,6 +301,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
                         }
+                    }
+
+                    if (agreement.ClientInformationSheet.IsRenewawl
+                                && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).DoNotCheckForRenew)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "";
                     }
                 }
             }

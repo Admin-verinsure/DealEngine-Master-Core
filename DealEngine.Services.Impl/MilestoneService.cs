@@ -310,11 +310,18 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task CreateRenewNotificationTask(User user, ClientProgramme renewFromProgrammeBase, Organisation renewClientOrg)
+        public async Task CreateRenewNotificationTask(User user, ClientProgramme renewFromProgrammeBase, Organisation renewClientOrg, Programme currentProgramm)
         {
-            string URL = "/Programme/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString();
+            string URL = "/Home/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString() +
+                "&ProgrammeId=" + currentProgramm.Id.ToString();
             var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
 
+            DateTime taskduedate = DateTime.Now.AddDays(7);
+            if (renewFromProgrammeBase != null)
+            {
+                taskduedate = renewFromProgrammeBase.Agreements.First().ExpiryDate.AddDays(14);
+            }
+            
             UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
 
             if (renewOrgContactUserTask == null)
@@ -323,12 +330,38 @@ namespace DealEngine.Services.Impl
                 {
                     URL = URL,
                     Body = renewOrgContactUser.FirstName + " please click here to renew " + renewFromProgrammeBase.BaseProgramme.NamedPartyUnitName + " insurance",
-                    IsActive = true
+                    IsActive = true,
+                    DueDate = taskduedate
                 };
 
                 renewOrgContactUser.UserTasks.Add(renewOrgContactUserTask);
 
                 await _userService.Update(renewOrgContactUser);
+            }
+        }
+
+        public async Task CreateRenewTask(User user, ClientProgramme renewFromProgrammeBase, Organisation renewClientOrg, Programme currentProgramm)
+        {
+            string URL = "/Home/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString() + 
+                "&ProgrammeId=" + currentProgramm.Id.ToString();
+            var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
+
+            // Remove the old Task
+            UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
+
+            if (renewOrgContactUserTask != null)
+            {
+                if (user == renewOrgContactUser)
+                {
+                    renewOrgContactUserTask.Complete(renewOrgContactUser);
+                }
+                else
+                {
+                    //User does not match
+                }
+
+                renewOrgContactUser.UserTasks.Remove(renewOrgContactUserTask);
+
             }
         }
 

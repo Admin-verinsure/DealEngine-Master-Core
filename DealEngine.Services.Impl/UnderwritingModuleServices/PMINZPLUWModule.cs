@@ -47,7 +47,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientAgreementReferrals.Count == 0)
             {
                 foreach (var clientagreementreferralrule in agreement.ClientAgreementRules.Where(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null))
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber));
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber, clientagreementreferralrule.DoNotCheckForRenew));
             }
             else
             {
@@ -67,27 +67,50 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
             string strretrodate = "";
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
-                        {
-                            strretrodate = preRenewOrRefData.GLRetro;
-                        }
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.GLRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.GLRetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "GL")
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "GL")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PL"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
                     {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+
+                        if (renewendorsement.DateDeleted == null && renewendorsement.Name != "Automatic Policy Extension 3.12 – Punitive or Exemplary Damages")
                         {
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
                         }
                     }
                 }
+
+
             }
 
             int TermLimit2mil = 2000000;
@@ -181,6 +204,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                     }
 
+                }
+
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+
+                        if (changeendorsement.DateDeleted == null && changeendorsement.Name != "Automatic Policy Extension 3.12 – Punitive or Exemplary Damages")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
+                    }
                 }
             }
 

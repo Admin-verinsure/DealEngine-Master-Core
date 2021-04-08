@@ -41,6 +41,8 @@ namespace DealEngine.Domain.Entities
 		public virtual User SubmittedBy { get; set; }
         public virtual DateTime UnlockDate { get; set; }
         public virtual User UnlockedBy { get; set; }
+        public virtual ClientInformationSheet RenewFromInformationSheet { get; set; }
+        
         [JsonIgnore]
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; set; }
 
