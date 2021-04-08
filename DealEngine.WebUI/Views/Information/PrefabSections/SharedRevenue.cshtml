@@ -103,7 +103,8 @@
                                 <label for="activities">Select Activites</label>
                             </div>
                             <div class="col-8">
-                                <select id="activities" name="RevenueDataViewModel.Activities" multiple class="chosen-select form-control b" form="RevenueDataViewModel" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
+                               
+                                <select id="activities" name="RevenueDataViewModel.Activities" multiple class="chosen-select" form="RevenueDataViewModel" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
                                     @foreach (var option in Model.RevenueDataViewModel.Activities)
                                     {
                                         <option selected="@option.Selected" value="@option.AnzsciCode">@option.Description.Trim()</option>
