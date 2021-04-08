@@ -22,6 +22,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<MaterialDamage> MaterialDamages { get; set; }        
         public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
         public virtual IList<Location> Locations { get; set; }
+        public virtual IList<Job> Jobs { get; set; }
         public virtual IList<WaterLocation> WaterLocations { get; set; }
         public virtual IList<Boat> Boats { get; protected set; }
         public virtual IList<Organisation> Organisation { get; set; }
@@ -63,6 +64,7 @@ namespace DealEngine.Domain.Entities
             Answers = new List<ClientInformationAnswer> ();
 			Vehicles = new List<Vehicle> ();
 			Locations = new List<Location> ();
+            Jobs = new List<Job>();
             WaterLocations = new List<WaterLocation>();
             Buildings = new List<Building>();
             Boats = new List<Boat>();
@@ -143,6 +145,11 @@ namespace DealEngine.Domain.Entities
         public virtual void AddLocation(Location location)
         {
             Locations.Add(location);
+        }
+
+        public virtual void AddJob(Job Job)
+        {
+            Jobs.Add(Job);
         }
 
 

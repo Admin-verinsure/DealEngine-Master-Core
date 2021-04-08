@@ -71,6 +71,11 @@ namespace DealEngine.WebUI.Models
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetBooleanSelectOptions();
                 }
+                if (Programme.NamedPartyUnitName == "IT Contractors Programme")
+                {
+                    InsuranceAttributes = GetIndividualInsured();
+                    IndividualInsuredUnit = new IndividualInsuredUnit(null, null, null, null);
+                }
                 if (Programme.NamedPartyUnitName == "CEAS Programme" || Programme.NamedPartyUnitName == "NZACS Programme")
                 {
                     InsuranceAttributes = GetPrincipalTypes();
@@ -82,6 +87,7 @@ namespace DealEngine.WebUI.Models
                     HasIsADNZmemberOptions = GetStandardSelectOptions();
                     HasIsOtherdirectorshipOptions = GetStandardSelectOptions();
                 }
+                
                 if (Programme.NamedPartyUnitName == "NZPI Programme")
                 {
                     InsuranceAttributes = GetContractorTypes();
@@ -364,6 +370,7 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
+
         private IList<SelectListItem> GetPrincipalTypes()
         {
             var _Types = new List<SelectListItem>();
@@ -509,6 +516,7 @@ namespace DealEngine.WebUI.Models
                         Text = "Major Share Holder (Not being a PM)",
                         Value = "Major Share Holder"
                     }
+                    
                 };
             return _Types;
         }      
@@ -746,6 +754,24 @@ namespace DealEngine.WebUI.Models
             return _Types;
 
         }
+        private IList<SelectListItem> GetIndividualInsured()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                new SelectListItem
+                {
+                    Text = "-- Select --",
+                    Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Individual",
+                    Value = "Individual"
+                }
+            };
+            return _Types;
+        }
+
         [JsonIgnore]
         public Domain.Entities.Programme Programme { get; set; }
         public Guid ID { get; set; }
@@ -756,6 +782,8 @@ namespace DealEngine.WebUI.Models
         [JsonIgnore]
         public IList<SelectListItem> InsuranceAttributes { get; set; }
         [Display(Name = "Organisation Type")]
+        [JsonIgnore]
+        public IList<SelectListItem> Individuals { get; set; }
         [JsonIgnore]
         public IList<SelectListItem> OrganisationTypes { get; set; }
         [JsonIgnore]
@@ -810,6 +838,7 @@ namespace DealEngine.WebUI.Models
         public InterestedPartyUnit InterestedPartyUnit { get; set; }
         public PlannerUnit PlannerUnit { get; set; }
         public MarinaUnit MarinaUnit { get; set; }
+        public IndividualInsuredUnit IndividualInsuredUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
     }
 }
