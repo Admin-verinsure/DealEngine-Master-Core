@@ -786,7 +786,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateType()
+        public async Task<IActionResult> UpdateType(Guid ProgrammeId)
         {
             User user = null;
             UpdateTypesViewModel model = new UpdateTypesViewModel();
@@ -796,6 +796,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
+                //model.ProgrammeId = ProgrammeId;
+                model.Id = ProgrammeId;
                 model.Programme = await _programmeService.GetAllProgrammes();
                 model.CurrentUserType = "Client";
                 if (user.PrimaryOrganisation.IsBroker)
@@ -843,6 +845,73 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateType(IFormCollection formCollection)
+        {
+            User user = null;
+
+            // string email = null;
+            //Programme UpdateTypes = null;
+
+            try
+            {
+                Programme programme = null;
+               UpdateType updateType = null;
+                Programme UpdateTypes = null;
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    programme.UpdateTypes.Clear();
+                    await uow.Commit();
+                }
+
+                var updateTypes = new List<UpdateType>();
+
+                foreach (var key in formCollection.Keys)
+                {
+                
+                   var keyCheck = key;
+                    if (keyCheck != "__RequestVerificationToken")
+                   {
+                        updateType = await _updateTypeServices.GetUpdateType(Guid.Parse(formCollection[key]));
+                        if (updateType != null)
+                       {
+                            //updateTypes.Add(updateType);
+                            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                programme.UpdateTypes.Add(updateType);
+
+                               // programme.UpdateTypes = updateTypes;
+                                await uow.Commit();
+                            }
+
+                        }
+                    }
+                }
+
+
+                // await _updateTypeServices.Update(updateType);
+
+                 return RedirectToAction("UpdateType", new { ProgrammeId = programme.Id });
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> TermSheetTemplate(Guid Id)

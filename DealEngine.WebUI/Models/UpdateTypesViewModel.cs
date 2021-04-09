@@ -11,7 +11,6 @@ namespace DealEngine.WebUI.Models
     public class UpdateTypesViewModel : BaseViewModel
     {
         public UpdateTypesViewModel() { }
-
         public string ValueType { get; set; }
         public string NameType { get; set; }
         public object DateDeleted { get; internal set; }
@@ -43,6 +42,8 @@ namespace DealEngine.WebUI.Models
 
         public List<Domain.Entities.Programme> Programme { get; set; }
         public string CurrentUserType { get; internal set; }
+        public string ProgrammeId { get;  set; }
+
         //public virtual bool ProgrammeIsFmc { get; set; }
 
         //public virtual bool ProgrammeIsFanz { get; set; }

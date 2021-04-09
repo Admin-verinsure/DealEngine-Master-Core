@@ -83,6 +83,11 @@
                                 <td><a class="btn btn-success btn-sm" href="/Organisation/ManageOrganisations?Id=@Model.Id"><i class="fa fa-search"></i> View</a></td>
                             </tr>
                         }
+                        <tr>
+                            <td>Manage Update Type</td>
+                            <td>Assign programme</td>
+                            <td><a class="btn btn-success btn-sm" href="@Url.Action("UpdateType", "Programme", new { ProgrammeId = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                        </tr>
                         @if (User.HasClaim("ViewMotor", "ViewMotor"))
                         {
                             <tr>
@@ -144,11 +149,7 @@
                             <td>Images Management</td>
                             <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                         </tr>
-                        <tr>
-                            <td>Manage Update Type</td>
-                            <td>Assign programme</td>
-                            <td><a class="btn btn-success btn-sm" href="@Url.Action("UpdateType", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
-                        </tr>
+
                     </tbody>
                 </table>
             </div>

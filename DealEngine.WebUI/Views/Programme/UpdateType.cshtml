@@ -26,8 +26,8 @@
             </div>
             <div class="card-body">
                 <div class="container">
-                    <form method="POST" action="~/Home/IssueUIS" novalidate>
-                        @*<input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>*@
+                    <form method="POST" action="~/Programme/UpdateType" novalidate>
+                        <input type="text" class="form-control" value="@Model.Id" id="programmeId" name="ProgrammeId" hidden>
                         <div class="card">
                             <div class="card-header">
                                 <h5>
@@ -63,7 +63,17 @@
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
                                                                     @*<input type="checkbox" aria-label="checkbox button for following text input" name="@clientProg.Owner.Email" value="@updateType.Id">*@
-                                                                    <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.NameType" value="@updateType.Id">
+                                                                    @if (updateType.Programme != null)
+                                                                    {
+
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id" checked>
+                                                                        <p>if</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id">
+                                                                        <p>else</p>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                             <input type="text" class="form-control" aria-label="Text input with radio button" value="@updateType.NameType" readonly>

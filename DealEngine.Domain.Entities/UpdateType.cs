@@ -33,7 +33,7 @@ namespace DealEngine.Domain.Entities
             TypeIsBroker = typeIsBroker;
             //ProgrammeIsFanz = programmeIsFanz;
             //ProgrammeIsFmc = programmeIsFmc;
-            //UpdatetypeProgrammes = new List<Programme>();
+           //programmes = new List<Programme>();
 
 
 
