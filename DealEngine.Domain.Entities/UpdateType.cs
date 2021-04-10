@@ -11,7 +11,7 @@ namespace DealEngine.Domain.Entities
     [JsonObject]
     public class UpdateType : EntityBase, IAggregateRoot
     {
-        protected UpdateType() : base(null) { }
+        public UpdateType() : base(null) { }
 
         //public UpdateType(User createdBy, string typeName, string typeValue, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient, bool programmeIsFanz, bool programmeIsFmc)
         //    : base(createdBy)

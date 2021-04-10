@@ -11,10 +11,8 @@ namespace DealEngine.Services.Interfaces
     {
         Task<List<UpdateType>> GetAllUpdateTypes();
         Task AddUpdateType(User createdBy,string typeName, string typeValue, bool typeIsTc, bool typeIsBroker, bool typeIsInsurer, bool typeIsClient);
-        //Task AddUpdateType(Guid updateTypeId, Guid programmeId);
 
         Task<UpdateType> GetUpdateType(Guid updateTypeId);
-        //Task Update(UpdateType updateType);
 
     }
 }

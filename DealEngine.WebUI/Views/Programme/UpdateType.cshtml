@@ -1,4 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.UpdateTypesViewModel
+
+@*@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel*@
 <!-- MAIN CONTENT -->
 <div id="content" class="container">
 
@@ -47,8 +49,8 @@
                                                 Update Type Value
                                             </th>
                                             @*<th>
-                                                Issued Date
-                                            </th>*@
+                                                    Issued Date
+                                                </th>*@
                                         </tr>
                                     </thread>
                                     <tbody>
@@ -62,17 +64,13 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
-                                                                    @*<input type="checkbox" aria-label="checkbox button for following text input" name="@clientProg.Owner.Email" value="@updateType.Id">*@
-                                                                    @if (updateType.Programme != null)
+                                                                    @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
                                                                     {
-
                                                                         <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id" checked>
-                                                                        <p>if</p>
                                                                     }
                                                                     else
                                                                     {
                                                                         <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id">
-                                                                        <p>else</p>
                                                                     }
                                                                 </div>
                                                             </div>
@@ -82,18 +80,13 @@
                                                     <td>
                                                         <input type="text" class="form-control" value="@updateType.ValueType" readonly>
                                                     </td>
-                                                    @*<td>
-                        <input type="text" class="dateInput form-control" value="@clientProg.IssueDate" readonly>
-                    </td>*@
-                                                    @*<td>
-                        <input type="text" class="dateInput form-control" value="@Model.IsSubUIS" name="IsSubUIS" readonly>
-                    </td>*@
+
                                                 </tr>
                                             }
 
                                         }
 
-                                        </tbody>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="card-footer">

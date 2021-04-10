@@ -16,7 +16,10 @@ namespace DealEngine.WebUI.Models
         public object DateDeleted { get; internal set; }
         public Guid Id { get; set; }
         public List<UpdateTypesViewModel> UpdateTypes { get; set; }
-        public List<UpdateTypesViewModel> updateType { get; set; }
+        public List<string> SelectedUpdateTypes { get; set; }
+        //public List<UpdateType> UpdateTypes { get; set; }
+
+        //  public List<UpdateTypesViewModel> updateType { get; set; }
 
 
         public virtual bool TypeIsTc
@@ -43,10 +46,6 @@ namespace DealEngine.WebUI.Models
         public List<Domain.Entities.Programme> Programme { get; set; }
         public string CurrentUserType { get; internal set; }
         public string ProgrammeId { get;  set; }
-
-        //public virtual bool ProgrammeIsFmc { get; set; }
-
-        //public virtual bool ProgrammeIsFanz { get; set; }
     }
 
 }

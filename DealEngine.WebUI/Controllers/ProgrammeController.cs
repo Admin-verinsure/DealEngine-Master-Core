@@ -796,9 +796,15 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
-                //model.ProgrammeId = ProgrammeId;
+
+
+
                 model.Id = ProgrammeId;
-                model.Programme = await _programmeService.GetAllProgrammes();
+               Programme Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+               
+
+
+
                 model.CurrentUserType = "Client";
                 if (user.PrimaryOrganisation.IsBroker)
                 {
@@ -818,6 +824,12 @@ namespace DealEngine.WebUI.Controllers
                 }
 
 
+                foreach (var updateType in Programme.UpdateTypes)
+                {
+                    model.SelectedUpdateTypes.Add(updateType.TypeValue);
+
+                }
+
                 foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
                 {
                     updateTypeModel.Add(new UpdateTypesViewModel
@@ -829,13 +841,14 @@ namespace DealEngine.WebUI.Controllers
                         TypeIsClient = updateType.TypeIsClient,
                         TypeIsInsurer = updateType.TypeIsInsurer,
                         TypeIsTc = updateType.TypeIsTc
-                        //ProgrammeIsFanz = updateType.ProgrammeIsFanz,
-                        //ProgrammeIsFmc = updateType.ProgrammeIsFmc
                     });
 
 
                 }
                 model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
+
+
+
                 return View(model);
             }
 
@@ -852,9 +865,6 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> UpdateType(IFormCollection formCollection)
         {
             User user = null;
-
-            // string email = null;
-            //Programme UpdateTypes = null;
 
             try
             {
