@@ -656,6 +656,19 @@ namespace DealEngine.WebUI.Controllers
 
 
                 }
+                model.SelectedUpdateTypes = new List<string>();
+
+                foreach (var updateType in programme.UpdateTypes)
+                {
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (model.SelectedUpdateTypes != null)
+                        {
+                            model.SelectedUpdateTypes.Add(updateType.TypeValue);
+                        }
+                        await uow.Commit();
+                    }
+                }
                 model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
                 return View(model);
             }

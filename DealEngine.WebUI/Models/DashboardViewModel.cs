@@ -146,6 +146,7 @@ namespace DealEngine.WebUI.Models
             UpdateType = updateType;
             updateTypes = new List<UpdateType>();
 
+
         }
         private void BuildDeals(List<ClientInformationSheet> sheets)
         {
@@ -175,6 +176,7 @@ namespace DealEngine.WebUI.Models
 				});
 			}
 		}
+		public List<string> SelectedUpdateTypes { get; set; }
 		public IList<string> Languages { get; set; }
 		public IList<DealItem> Deals { get; set; }
 		public IList<UpdateType> updateTypes { get; set; }

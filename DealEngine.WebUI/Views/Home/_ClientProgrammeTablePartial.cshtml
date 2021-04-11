@@ -227,7 +227,10 @@
 
                                         @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsBroker))
                                         {
-                                            <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                            {
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
                                         }
                                     }
                                     @if (Model.CurrentUserIsInsurer == "True")
@@ -235,26 +238,32 @@
 
                                         @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsInsurer))
                                         {
-                                            <option value="@updateType.ValueType"> @updateType.NameType</option>
-                                        }
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
                                     }
+                                }
 
-                                    @if (Model.CurrentUserIsTC == "True")
+                                @if (Model.CurrentUserIsTC == "True")
+                                {
+
+                                    @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsTc))
                                     {
-
-                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsTc))
+                                        @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
                                         {
                                             <option value="@updateType.ValueType"> @updateType.NameType</option>
                                         }
                                     }
-                                    @if (Model.CurrentUserIsProgrammeManager == "True")
-                                    {
+                                }
+                                @if (Model.CurrentUserIsProgrammeManager == "True")
+                                {
 
-                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsClient))
-                                        {
-                                            <option value="@updateType.ValueType"> @updateType.NameType</option>
-                                        }
+                                    @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsClient))
+                                    {
+                                        <option value="@updateType.ValueType"> @updateType.NameType</option>
                                     }
+                                }
 
                                 }
                             </select>
