@@ -1256,9 +1256,7 @@ namespace DealEngine.WebUI.Controllers
         {
             Programme programme = await _programmeService.GetProgrammeById(programmeId);
             List<List<string>> ListReportSet = new List<List<string>>();
-            //List<String> ListReport = new List<String>();
             List<String> ListCol = new List<String>();
-
 
             ListCol.Add("Insured");
             ListCol.Add("Status");
@@ -1279,15 +1277,7 @@ namespace DealEngine.WebUI.Controllers
                 ListCol.Add(template.Description.Trim());
 
             }
-
-
-
-            //ListReport.Add("Advisor Names");
-
             ListReportSet.Add(ListCol);
-
-
-
 
             foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
             {
@@ -1309,7 +1299,6 @@ namespace DealEngine.WebUI.Controllers
                                 ListReportSet.Add(await CreateRevenueListReport(cp, subclient, clientInformationSheetID, false, true, ListCol));
                             }
                         }
-                  
 
                 }
                 catch (Exception ex)
@@ -1322,34 +1311,22 @@ namespace DealEngine.WebUI.Controllers
         {
             ClientInformationSheet sheet = null;
             List<String> ListReport = new List<String>(new String[ListCol.Count]);
-            //ListReport = new List<String>();
-
             Organisation organisation = cp.InformationSheet.Owner;
            
             if (isSubClient)
             {
                 ListReport.Insert(ListCol.IndexOf("Insured"), supercp.InformationSheet.Owner.Name);
-
-                //ListReport.Add(supercp.InformationSheet.Owner.Name);
             }
             else
 
             {
                 ListReport.Insert(ListCol.IndexOf("Insured"), cp.InformationSheet.Owner.Name);
-
-                //ListReport.Add(cp.InformationSheet.Owner.Name);
             }
             ListReport.Insert(ListCol.IndexOf("Status"), cp.InformationSheet.Status);
             ListReport.Insert(ListCol.IndexOf("Reference Id"), cp.InformationSheet.ReferenceId);
             ListReport.Insert(ListCol.IndexOf("Email"), organisation.Email);
-
-            //ListReport.Add(cp.InformationSheet.Status);
-            //ListReport.Add(cp.InformationSheet.ReferenceId);
-            //ListReport.Add((cp.InformationSheet.IsChange).ToString());
-
-
-            //ListReport.Add(organisation.Email);
-
+              
+          
                sheet = cp.InformationSheet;
             if (sheet.RevenueData != null)
             {
@@ -1373,14 +1350,16 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (var activity in sheet.RevenueData.Activities)
                 {
-                    //ListReport.Add(activity.Description.Trim());
                     if (activity.Selected)
                     {
-                        ListReport.Insert(ListCol.IndexOf(activity.Description), activity.Percentage.ToString("N0"));
+                        //ListReport.Insert(ListCol.IndexOf(activity.Description), activity.Percentage.ToString("N0"));
+                        ListReport[ListCol.IndexOf(activity.Description)] = activity.Percentage.ToString("N0");
                     }
                     else
                     {
-                        ListReport.Insert(ListCol.IndexOf(activity.Description), "0");
+                        ListReport[ListCol.IndexOf(activity.Description)] = "0";
+
+                        //ListReport.Insert(ListCol.IndexOf(activity.Description), "0");
 
                     }
 
@@ -1488,7 +1467,7 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 
-                if (IsReport != "True")
+                if (IsReport != "True" && queryselect != "RevenueActivity")
                 {
                     return View(table);
                 }
