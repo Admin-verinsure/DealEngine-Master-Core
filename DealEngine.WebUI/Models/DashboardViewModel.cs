@@ -185,6 +185,7 @@ namespace DealEngine.WebUI.Models
 		public string CurrentUserIsInsurer { get; set; }
 		public string CurrentUserIsTC { get; set; }
 		public string CurrentUserIsProgrammeManager { get; set; }
+		//public string CurrentUserIsClient { get; set; }
 		public bool IsSubclientEnabled { get; set; }
 		public OrganisationViewModel OrganisationViewModel { get; set; }
 		public UpdateTypesViewModel updateTypesViewModel { get; set; }
