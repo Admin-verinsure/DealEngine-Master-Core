@@ -86,6 +86,102 @@
 
                                         }
 
+
+                                        @if (Model.CurrentUserType == "Client")
+                                        {
+                                            @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsClient))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id" checked>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id">
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control" aria-label="Text input with radio button" value="@updateType.NameType" readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" value="@updateType.ValueType" readonly>
+                                                    </td>
+
+                                                </tr>
+                                            }
+
+                                        }
+
+
+                                        @if (Model.CurrentUserType == "Broker")
+                                        {
+                                            @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsBroker))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id" checked>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id">
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control" aria-label="Text input with radio button" value="@updateType.NameType" readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" value="@updateType.ValueType" readonly>
+                                                    </td>
+
+                                                </tr>
+                                            }
+
+                                        }
+
+
+                                        @if (Model.CurrentUserType == "Insurer")
+                                        {
+                                            @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsInsurer))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id" checked>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="checkbox" aria-label="checkbox button for following text input" name="@updateType.Id" value="@updateType.Id">
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control" aria-label="Text input with radio button" value="@updateType.NameType" readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" value="@updateType.ValueType" readonly>
+                                                    </td>
+
+                                                </tr>
+                                            }
+
+                                        }
+
                                     </tbody>
                                 </table>
                             </div>

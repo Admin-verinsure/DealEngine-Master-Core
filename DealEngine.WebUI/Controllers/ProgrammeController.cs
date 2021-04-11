@@ -823,12 +823,21 @@ namespace DealEngine.WebUI.Controllers
                     model.CurrentUserType = "ProgrammeManager";
                 }
 
+                // model.SelectedUpdateTypes.Add("test");
+                model.SelectedUpdateTypes = new List<string>();
 
                 foreach (var updateType in Programme.UpdateTypes)
                 {
-                    model.SelectedUpdateTypes.Add(updateType.TypeValue);
-
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (model.SelectedUpdateTypes != null)
+                        { 
+                            model.SelectedUpdateTypes.Add(updateType.TypeValue);
+                        }
+                        await uow.Commit();
+                    }
                 }
+
 
                 foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
                 {

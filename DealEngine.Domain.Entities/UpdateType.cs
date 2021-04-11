@@ -40,6 +40,8 @@ namespace DealEngine.Domain.Entities
         }
 
         [JsonIgnore]
+
+
         
         public virtual string TypeName
         {
