@@ -256,7 +256,7 @@
                                             }
                                         }
                                     }
-                                    @if (Model.CurrentUserIsProgrammeManager == "True")
+                                    @if (Model.CurrentUserIsClient == "True")
                                     {
 
                                         @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsClient))

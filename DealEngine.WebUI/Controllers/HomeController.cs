@@ -593,14 +593,14 @@ namespace DealEngine.WebUI.Controllers
             {
                 model.CurrentUserIsProgrammeManager = "False";
             }
-            //if (user.PrimaryOrganisation.IsClient)
-            //{
-            //    model.CurrentUserIsClient = "True";
-            //}
-            //else
-            //{
-            //    model.CurrentUserIsClient = "False";
-            //}
+            if (user.PrimaryOrganisation.IsClient)
+            {
+                model.CurrentUserIsClient = "True";
+            }
+            else
+            {
+                model.CurrentUserIsClient = "False";
+            }
 
             return model;
         }
