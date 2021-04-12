@@ -69,11 +69,13 @@ namespace DealEngine.Domain.Entities
         public virtual bool EnableCLReport { get; set; }
         public virtual bool EnableCyberReport { get; set; }
         public virtual bool EnableFAPReport { get; set; }
+        public virtual bool EnableRevenueActivity { get; set; }
         public virtual string NamedPartyUnitName { get; set; }
         public virtual Programme RenewFromProgramme { get; set; }
         public virtual bool RenewWithOutRevenue { get; set; }
         public virtual bool DisplayGSTInclusive { get; set; }
         public virtual bool DisplayGSTExclusive { get; set; }
+        
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)

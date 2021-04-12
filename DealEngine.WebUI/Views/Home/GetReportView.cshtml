@@ -67,38 +67,33 @@
     </div>
 </div>
 
-<div class="modal overlay" id="GetReportModal1" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p><img src="/img/loading.gif" /> Getting Report. SDPlease wait...</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script type="text/javascript">
-       $(window).on("load", function () {
-           $("#AddReportModal").hide();
+    $(window).on("load", function () {
+        $("#AddReportModal").hide();
 
-
-       });
+        setTimeout(function(){
+    $('#ads').modal('hide')
+    }, 10000);})
+    });
 
     $("#ReportView").click(function () {
-                debugger;
+        debugger;
 
         getReport();
         $("#GetReportModal").hide();
-            
-        });
-    
+
+    });
+   
+
     function getReport() {
         debugger;
 
         $("#GetReportModal").show();
         $('#IsReport').val("True");
         $('#ReportForm').submit();
-           
+        debugger;
+                $("#GetReportModal").hide();
 
     };
 
@@ -108,20 +103,20 @@
 
       //          var TableData = new Array();
       //         $('#ReportAnalysis tr').each(function (row, tr) {
-      //             TableData = TableData + $(tr).find('td:eq(0)').text() + "-" + $(tr).find('td:eq(1)').text() + ",";                    
+      //             TableData = TableData + $(tr).find('td:eq(0)').text() + "-" + $(tr).find('td:eq(1)').text() + ",";
       //         });
-      //         var postData = { values: TableData };                
-               
+      //         var postData = { values: TableData };
+
       //         $.ajax({
       //             url: "/Home/ExportExcel",
       //             type : "POST",
       //             data : postData,
-                  
+
       //             success: function (data) {
       //                              alert("44444");
 
       //                 // perform your save call here
- 
+
       //                 if (data.status == "Success") {
       //                     $("#AddReportModal").delay(5000).fadeOut(1000);
       //                 } else {
@@ -129,7 +124,7 @@
       //                 }
       //             },
       //             error: function () {
-      //                 //alert("An error has occured!!!");					   
+      //                 //alert("An error has occured!!!");
       //             }
       //         });
 

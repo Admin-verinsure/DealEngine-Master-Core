@@ -25,32 +25,40 @@
                     <tbody>
                         <tr>
 
-                                <td>
-                                    <select class="form-control b" id="ClientProg" name="queryselect">
-                                        <option selected="selected" value="">-- Select --</option>
-                                        @foreach (var product in Model.programme.Products)
+                            <td>
+                                <select class="form-control b" id="ClientProg" name="queryselect">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    @foreach (var product in Model.programme.Products)
+                                    {
+                                        <option value=@product.UnderwritingModuleCode.Substring(@product.UnderwritingModuleCode.IndexOf("_")+1)>@product.Name  Premium report</option>
+
+                                    }
+
+                                    @{
+                                        if (Model.programme.EnableFAPReport)
                                         {
-                                            <option value=@product.UnderwritingModuleCode.Substring(@product.UnderwritingModuleCode.IndexOf("_")+1)>@product.Name  Premium report</option>
+                                            <option value="FAP">FAP Report</option>
 
                                         }
 
-                                        @{
-                                            if (Model.programme.EnableFAPReport)
-                                            {
-                                                <option value="FAP">FAP Report</option>
-
-                                            }
+                                    }
+                                    @{
+                                        if (Model.programme.EnableRevenueActivity)
+                                        {
+                                            <option value="RevenueActivity">RevenueActivity Report</option>
 
                                         }
-                                    @*<option value="RevenueActivity">RevenueActivity Report</option>*@
+
+                                    }
 
 
-                                    </select>
 
-                                </td>
+                                </select>
+
+                            </td>
 
 
-                            </tr>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -71,12 +79,40 @@
     </div>
 </div>
 
+<div class="modal overlay" id="RevenueReportModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p><img src="/img/loading.gif" /> This report has a large number of columns and is not suitable for viewing on screen.  It will download automatically once generated.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
-        debugger;
         $("#submit").click(function () {
-            $("#AddReportModal").show();
-            
+                    debugger;
+            var selectedreport = $("#ClientProg option:selected").text();
+
+            if (selectedreport == "RevenueActivity Report") {
+               $("#RevenueReportModal").show();
+            } else {
+                $("#AddReportModal").show();
+            }
+
+            $('#ReportForm').submit();
+
+            setTimeout(function () {
+
+                $('#RevenueReportModal').hide();
+            }, 40000);
         });
+
+       
+      
     })
+
+
+
 </script>
