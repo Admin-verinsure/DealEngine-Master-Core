@@ -17,9 +17,7 @@ namespace DealEngine.WebUI.Models
         public Guid Id { get; set; }
         public List<UpdateTypesViewModel> UpdateTypes { get; set; }
 
-        //public List<UpdateType> SelectedUpdateTypes { get; set; }
         public List<string> SelectedUpdateTypes { get; set; }
-        //public List<UpdateType> UpdateTypes { get; set; }
 
         public virtual bool TypeIsTc
         {

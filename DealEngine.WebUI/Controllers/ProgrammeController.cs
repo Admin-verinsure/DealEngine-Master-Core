@@ -823,7 +823,6 @@ namespace DealEngine.WebUI.Controllers
                     model.CurrentUserType = "ProgrammeManager";
                 }
 
-                // model.SelectedUpdateTypes.Add("test");
                 model.SelectedUpdateTypes = new List<string>();
 
                 foreach (var updateType in Programme.UpdateTypes)
@@ -901,7 +900,6 @@ namespace DealEngine.WebUI.Controllers
                         updateType = await _updateTypeServices.GetUpdateType(Guid.Parse(formCollection[key]));
                         if (updateType != null)
                        {
-                            //updateTypes.Add(updateType);
                             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                             {
                                 programme.UpdateTypes.Add(updateType);

@@ -58,26 +58,7 @@
 
        
 
-        //get_selected_checkboxes_array();
-
-        //function get_selected_checkboxes_array() {
-        //    var ch_list = Array();
-        //    var ch_id = Array();
-        //    $("input:checkbox[name=chkboxProgramme]:checked").each(function ()
-        //    {
-        //        ch_list.push($(this).val());
-        //        //console.log(ch_list);// get on
-
-        //        //ch_id.push($(this).id());
-        //        //console.log($(this)[0]);// get checkbox html ?? get id
-        //        console.log($(this).children);// get 
-
-        //    });
-           // return ch_list;
-       // }
-
         var id = $("#UpdateTypeId").val();
-        //console.log("id=" + id);
         var postData = {
             "Id": id,
             "NameType": nameType,
@@ -86,8 +67,6 @@
             "TypeIsBroker": Broker,
             "TypeIsInsurer": Insurer,
             "TypeIsClient": Client,
-           // "ProgrammeIsFanz": FANZ,
-            //"ProgrammeIsFmc": FMC
         };
         $.ajax({
             type: "Post",
@@ -118,8 +97,6 @@
         var client = $(e.relatedTarget).data('subClient');
         var insurer = $(e.relatedTarget).data('subInsurer');
         var tc = $(e.relatedTarget).data('subTc');
-        //var Fmc = $(e.relatedTarget).data('subFmc');
-        //var Fanz = $(e.relatedTarget).data('subFanz');
         var UpdateTypeId = $(e.relatedTarget).data('subId');
 
         $(e.currentTarget).find('input[name="Id"]').val(UpdateTypeId);
@@ -129,8 +106,6 @@
         $(e.currentTarget).find('input[name="broker"]').val(broker);
         $(e.currentTarget).find('input[name="insurer"]').val(insurer);
         $(e.currentTarget).find('input[name="client"]').val(client);
-        //$(e.currentTarget).find('input[name="fmc"]').val(Fmc);
-        //$(e.currentTarget).find('input[name="faNZ"]').val(Fanz);
 
         if (client == "True") {
            // document.getElementById("client").checked = "true";
@@ -150,17 +125,6 @@
             $("#tc").removeAttr('checked');
         }
 
-      
-
-        //if (Fanz == "True") {
-        //    document.getElementById('faNZ').checked = "checked";
-        //}
-        //if (Fmc == "True") {
-        //    document.getElementById('fmc').checked = "checked";
-        //}
-        //if (Fmc == "False") {
-        //    $("#fmc").removeAttr('checked');
-        //}
 
     });
     //modal clear data on cancle
