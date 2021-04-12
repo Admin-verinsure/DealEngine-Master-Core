@@ -233,6 +233,7 @@ namespace DealEngine.Domain.Entities
         //public virtual IList<AuditHistory> AuditHistory { get; set; }
         [Display(Name = "Date of Company Incorporation")]
         public virtual DateTime? DateofIncorportation { get; set; }
+        public virtual IList<Programme> Programmes { get; set; }
 
         #endregion
 
