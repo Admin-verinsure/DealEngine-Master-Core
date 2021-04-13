@@ -472,6 +472,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public IEnumerable<InsuranceRoleViewModel> InsuranceRoles { get; set; }
         public string ProductName { get; set; }
         public string ProgrammeName { get; set; }
+        public string ProgrammeNamedPartyName { get; set; }
         public string Status { get; set; }
         public string PaymentMethod { get; set; }
         public DateTime CreatedDate { get; set; }

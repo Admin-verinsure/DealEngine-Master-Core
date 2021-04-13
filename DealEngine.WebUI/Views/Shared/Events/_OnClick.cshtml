@@ -21,6 +21,22 @@
         }
     }
 
+    function UnhideEdit(tabId) {
+                debugger;
+
+        var ele = document.getElementById(tabId);
+        ele.classList.remove('hidden');
+
+    }
+
+     function HideEdit(tabId) {
+                debugger;
+         var ele = document.getElementById(tabId);
+
+        ele.classList.add('hidden');
+
+     }
+
     function EditOrganisation() {
         debugger;
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
@@ -66,6 +82,7 @@
     }
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
+        debugger;
         var addTabHTML = document.getElementById(AddTabId);
         var editTabHTML = document.getElementById(EditTabId);
         var form = document.getElementById(addTabHTML.firstElementChild.id);
@@ -111,6 +128,7 @@
     }
 
     function Cancel(Form, Tab) {
+        debugger;
         document.getElementById(Form).reset();
         SetCurrentTab(Tab);
     }
@@ -156,6 +174,7 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        debugger;
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
             var form = document.getElementById(editTabHTML.firstElementChild.id);
@@ -270,6 +289,74 @@
         document.getElementById("suburbdetails").value = Suburb;
         document.getElementById("postcodedetails").value = Postcode;
         SetCurrentTab("locationtab2");
+    }
+
+    function AddJob() {
+        debugger;
+        var form = document.getElementById("JobViewModel");
+        var formValid = TableFormValidation(form , "job");
+        if (formValid) {
+            sessionStorage.setItem('accordianTrigger', 'Job');
+            $.ajax({
+                url: '@Url.Action("AddJob", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function EditJob(Id, JobDescription, ContractorEmail, FirstName, LastName, JobNumber, IssueDate, StartDate, EndDate, CertRequiredBy, RAClientNamedParty) {
+        debugger;
+        event.preventDefault();
+        CloneForm("jobtab3", "jobtab2", "JobAddButton", "JobCancelButton");
+        document.getElementById("JobId").value = Id;
+        document.getElementById("jobdescription").value = JobDescription;
+        document.getElementById("contractoremail").value = ContractorEmail;
+        document.getElementById("firstname").value = FirstName;
+        document.getElementById("lastname").value = LastName; 
+        document.getElementById("jobnumber").value = JobNumber;
+        var test = IssueDate.split(' ')[0];
+        var date = Date.parse(test);
+        var sanitised = sanitiseDate(test);
+
+        //console.log(IssueDate);
+        //console.log(StartDate);
+        //console.log(EndDate);
+        //console.log(CertRequiredByDate);
+        
+        document.getElementById("issuedate").value = sanitiseDate(IssueDate.split(' ')[0]);
+        document.getElementById("startdate").value = sanitiseDate(StartDate.split(' ')[0]);
+        document.getElementById("enddate").value = sanitiseDate(EndDate.split(' ')[0]);
+        document.getElementById("certrequiredby").value = sanitiseDate(CertRequiredBy.split(' ')[0]);
+        document.getElementById("raclient").value = RAClientNamedParty;
+        SetCurrentTab("jobtab2");
+    }
+
+    function RemoveJob(Id) {
+        debugger;
+        sessionStorage.setItem('accordianTrigger', 'Job');
+        var postData = { JobId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveJob", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
     }
 
     function AddProject(SectionName) {
@@ -519,6 +606,23 @@
             }
         }
         return query_string;
+    }
+
+    function sanitiseDate(date) {
+        var sanitised = "";
+        var parts = date.split('/');
+        for (i = 0; i < parts.length; i++) {
+            if (parts[i].length == 1) {
+                parts[i] = '0' + parts[i];
+            }
+            if (i == parts.length - 1) {
+                sanitised += parts[i];
+            } else {
+                sanitised += parts[i] + ' / ';
+            }
+            
+        }
+        return sanitised;
     }
 
 

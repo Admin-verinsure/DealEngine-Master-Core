@@ -986,16 +986,14 @@ namespace DealEngine.WebUI.Controllers
                 Programme programme = await _programmeService.GetProgramme(Id);
                 model.Id = Id;
 
-                foreach (var programmeProduct in programme.Products)
-                {
-                    var product = await _productService.GetProductById(programmeProduct.Id);
+               
+                    var product = await _productService.GetProductById(productId);
 
                     foreach (var rule in product.Rules)
                     {
                         rules.Add(rule);
                     }
-                }
-
+               
                 model.Rules = rules;
                 model.ProductId = productId;
 
@@ -1053,7 +1051,7 @@ namespace DealEngine.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ManageRules(Guid Id)
+        public async Task<IActionResult> ManageRules(Guid Id,string RuleType)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
@@ -1081,6 +1079,7 @@ namespace DealEngine.WebUI.Controllers
                 model.Product = product;
 
                 ViewBag.Title = "Add/Edit Programme Email Template";
+                ViewBag.RuleType = RuleType;
 
                 return View("ProgrammeRules", model);
             }
@@ -1274,6 +1273,55 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> getselectedParty(Guid informationId, string title)
+        {
+            List<string> userEmail = new List<string>();
+            PartyUserViewModel model = new PartyUserViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(informationId);
+                IList<User> users = null;
+
+                if (title == "Manage UIS Issue Notification Users")
+                {
+                    users = programme.UISIssueNotifyUsers;
+                }
+                else if (title == "Manage UIS Submission Notification Users")
+                {
+                    users = programme.UISSubmissionNotifyUsers;
+                }
+                else if (title == "Manage Agreement Refer Notification Users")
+                {
+                    users = programme.AgreementReferNotifyUsers;
+                }
+                else if (title == "Manage Agreement Issue Notification Users")
+                {
+                    users = programme.AgreementIssueNotifyUsers;
+                }
+                else if (title == "Manage Agreement Bound Notification Users")
+                {
+                    users = programme.AgreementBoundNotifyUsers;
+                }
+
+
+
+                foreach (var selecteduser in users)
+                {
+                    userEmail.Add(selecteduser.Email);
+                }
+
+                return Json(userEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 
         [HttpPost]
@@ -1288,7 +1336,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(informationId);
                 Organisation organisation = await _organisationService.GetOrganisation(selectedParty);
-
+               
                 if ("organisation" != null)
                 {
                     var userList = await _userService.GetAllUserByOrganisation(organisation);
@@ -1418,10 +1466,11 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
                 model.Id = Id;
-                model.Name = Title;
                 model.Programme = programme;
                 model = new ProgrammeInfoViewModel(null, programme, null);
                 List<SelectListItem> usrlist = new List<SelectListItem>();
+                model.Name = Title;
+
                 //foreach(var org in programme.ClientProgrammes)
                 //{
 
@@ -1516,6 +1565,11 @@ namespace DealEngine.WebUI.Controllers
                             emailtemplatename = "Information Sheet Instruction";
                             break;
                         }
+                    case "SendInformationSheetInstructionRenew":
+                        {
+                            emailtemplatename = "Information Sheet Instruction for Renew";
+                            break;
+                        }
                     case "SendSubInformationSheetInstruction":
                         {
                             emailtemplatename = "SubInformation Sheet Instruction";
@@ -1569,6 +1623,16 @@ namespace DealEngine.WebUI.Controllers
                     case "SendPDFReport":
                         {
                             emailtemplatename = "PDF Report";
+                            break;
+                        }
+                    case "SendAdviceAdvisorRemoval":
+                        {
+                            emailtemplatename = "Advice Of Removal Of An Advisor From Policy";
+                            break;
+                        }
+                    case "SendAdviceAdvisorAddition":
+                        {
+                            emailtemplatename = "Advice Of Addition Of An Advisor From Policy";
                             break;
                         }
                     default:

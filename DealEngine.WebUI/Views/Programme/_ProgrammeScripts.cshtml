@@ -347,8 +347,10 @@
 
      function getseletedorgUser() {
         debugger;
-        var InformationId = $('#Id').val();
-        var postdata = { informationId: InformationId};
+         var InformationId = $('#Id').val();
+                 var Title= $('#Name').val();
+
+        var postdata = { informationId: InformationId , title : Title};
          $.ajax({
              url: '@Url.Action("getselectedParty", "Programme")',
              type: "Post",
@@ -392,8 +394,9 @@
                 };
 
                 $.each(data, function (i, item) {
+                    debugger;
                     $('#div1').append("<div class=\"input-group\"><div class=\"input-group-prepend\"> " +
-                        "<div class=\"input-group-text\"><input type=\"checkbox\" name=\"selectedEmail\" value=\"" + item.email + "\"> " +
+                        "<div class=\"input-group-text\"><input type=\"checkbox\" name=\"selectedEmail\"  value=" + item.email + "> " +
                         "</div ></div > <input type=\"text\" class=\"form-control\" name=\"PartyOrg\" value=" + item.name + ">" +
                             "</div ></div >");
                 });

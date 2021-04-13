@@ -63,6 +63,16 @@ namespace DealEngine.Services.Impl
             return await _clientProgrammeRepository.GetByIdAsync(id);
         }
 
+        public async Task<ClientProgramme> GetClientProgrammeChangeForRenew(Guid id)
+        {
+            ClientProgramme clientProgramme = await GetClientProgramme(id);
+
+            ClientProgramme clientProgrammeChangeForRenew = _clientProgrammeRepository.FindAll().Where(cp => cp.Owner == clientProgramme.Owner &&
+            cp.InformationSheet != null && cp.DateDeleted == null && cp.BaseProgramme == clientProgramme.BaseProgramme && cp.InformationSheet.NextInformationSheet == null).FirstOrDefault();
+
+            return clientProgrammeChangeForRenew;
+        }
+
         public async Task<List<ClientProgramme>> GetClientProgrammesByProgramme(Guid programmeId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programmeId).ToListAsync();
@@ -72,6 +82,12 @@ namespace DealEngine.Services.Impl
         public async Task<List<ClientProgramme>> GetClientProgrammesByOwner(Guid ownerOrganisationId)
         {
             var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId && cp.InformationSheet != null && cp.DateDeleted == null).ToListAsync();
+            return list;
+        }
+
+        public async Task<List<ClientProgramme>> GetClientProgrammesByOwnerByProgramme(Guid ownerOrganisationId, Guid programmeId)
+        {
+            var list = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programmeId && cp.Owner.Id == ownerOrganisationId && cp.InformationSheet != null && cp.DateDeleted == null).ToListAsync();
             return list;
         }
 
@@ -87,6 +103,27 @@ namespace DealEngine.Services.Impl
                 if (isBaseClass)
                 {
                     if (client.DateDeleted == null)
+                    {
+                        clientList.Add(client);
+                    }
+                }
+            }
+
+            return clientList;
+        }
+
+        public async Task<List<ClientProgramme>> GetRenewBaseClientProgrammesForProgramme(Guid programmeId)
+        {
+            Programme programme = await GetProgramme(programmeId);
+            var clientList = new List<ClientProgramme>();
+            if (programme == null)
+                return null;
+            foreach (var client in programme.ClientProgrammes)
+            {
+                var isBaseClass = await IsBaseClass(client);
+                if (isBaseClass)
+                {
+                    if (client.DateDeleted == null && !client.InformationSheet.IsChange)
                     {
                         clientList.Add(client);
                     }
@@ -447,7 +484,9 @@ namespace DealEngine.Services.Impl
             ClientInformationSheet newClientInformationSheet = new ClientInformationSheet(createdBy, oldClientProgramme.Owner, null);
             newClientInformationSheet = cloneMapper.Map<ClientInformationSheet>(oldClientProgramme.InformationSheet);
             newClientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
+            //Set for change
             newClientInformationSheet.IsChange = true;
+            newClientInformationSheet.IsRenewawl = false;
             newClientInformationSheet.Status = "Not Started";
             newClientInformationSheet.DateCreated = DateTime.UtcNow;
             newClientInformationSheet.UnlockDate = DateTime.MinValue;
@@ -497,6 +536,155 @@ namespace DealEngine.Services.Impl
                 newClientInformationSheet.RevenueData = null;
                 RevenueData newRevenueData = oldClientProgramme.InformationSheet.RevenueData.CloneForNewSheet(newClientInformationSheet);
                 newClientInformationSheet.RevenueData = newRevenueData;
+            }
+            if (oldClientProgramme.InformationSheet.RoleData != null)
+            {
+                newClientInformationSheet.RoleData = null;
+                RoleData newRoleData = oldClientProgramme.InformationSheet.RoleData.CloneForNewSheet(newClientInformationSheet);
+                newClientInformationSheet.RoleData = newRoleData;
+            }
+            if (oldClientProgramme.InformationSheet.Answers != null)
+            {
+                newClientInformationSheet.Answers.Clear();
+                foreach (ClientInformationAnswer answer in oldClientProgramme.InformationSheet.Answers)
+                {
+                    ClientInformationAnswer newClientInformationAnswer = answer.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Answers.Add(newClientInformationAnswer);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.BusinessInterruptions != null)
+            {
+                newClientInformationSheet.BusinessInterruptions.Clear();
+                foreach (BusinessInterruption businessInterruption in oldClientProgramme.InformationSheet.BusinessInterruptions)
+                {
+                    BusinessInterruption newBusinessInterruption = businessInterruption.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.BusinessInterruptions.Add(newBusinessInterruption);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.MaterialDamages != null)
+            {
+                newClientInformationSheet.MaterialDamages.Clear();
+                foreach (MaterialDamage materialDamage in oldClientProgramme.InformationSheet.MaterialDamages)
+                {
+                    MaterialDamage newMaterialDamage = materialDamage.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.MaterialDamages.Add(newMaterialDamage);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.BusinessContracts != null)
+            {
+                newClientInformationSheet.BusinessContracts.Clear();
+                foreach (BusinessContract businessContract in oldClientProgramme.InformationSheet.BusinessContracts)
+                {
+                    BusinessContract newBusinessContract = businessContract.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.BusinessContracts.Add(newBusinessContract);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.ResearchHouses != null)
+            {
+                newClientInformationSheet.ResearchHouses.Clear();
+                foreach (ResearchHouse researchHouse in oldClientProgramme.InformationSheet.ResearchHouses)
+                {
+                    ResearchHouse newResearchHouse = researchHouse.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.ResearchHouses.Add(newResearchHouse);
+                }
+            }
+            //if (oldClientProgramme.InformationSheet.SubClientInformationSheets != null)
+            //{
+            //    newClientInformationSheet.SubClientInformationSheets.Clear();
+            //    foreach (SubClientInformationSheet subClientInformationSheet in oldClientProgramme.InformationSheet.SubClientInformationSheets)
+            //    {
+            //        SubClientInformationSheet newSubClientInformationSheet = subClientInformationSheet.CloneForNewSheet(newClientInformationSheet);
+            //        newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
+            //    }
+            //}
+
+            await Update(newClientProgramme);
+            return newClientProgramme;
+        }
+
+        public async Task<ClientProgramme> CloneForRenew(User createdBy, Guid renewFromProgrammeBaseId, Guid currentProgrammeId)
+        {
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+
+            Programme currentProgramme = await GetProgramme(currentProgrammeId);
+
+            ClientProgramme oldClientProgramme = null;
+            oldClientProgramme = await GetClientProgramme(renewFromProgrammeBaseId);
+
+            if (oldClientProgramme.InformationSheet.NextInformationSheet != null)
+            {
+                oldClientProgramme = await GetClientProgrammeChangeForRenew(renewFromProgrammeBaseId);
+            }
+
+            ClientInformationSheet newClientInformationSheet = new ClientInformationSheet(createdBy, oldClientProgramme.Owner, null);
+            newClientInformationSheet = cloneMapper.Map<ClientInformationSheet>(oldClientProgramme.InformationSheet);
+            newClientInformationSheet.ReferenceId = await _referenceService.GetLatestReferenceId();
+            //Set for renew
+            newClientInformationSheet.IsRenewawl = true;
+            newClientInformationSheet.IsChange = false;
+            newClientInformationSheet.Status = "Not Started";
+            newClientInformationSheet.DateCreated = DateTime.UtcNow;
+            newClientInformationSheet.UnlockDate = DateTime.MinValue;
+            newClientInformationSheet.RenewFromInformationSheet = oldClientProgramme.InformationSheet;
+            await _referenceRepository.AddAsync(new Reference(newClientInformationSheet.Id, newClientInformationSheet.ReferenceId));
+
+            ClientProgramme newClientProgramme = new ClientProgramme(createdBy, oldClientProgramme.Owner, oldClientProgramme.BaseProgramme);
+            newClientProgramme.BrokerContactUser = oldClientProgramme.BaseProgramme.BrokerContactUser;
+            newClientProgramme.RenewFromClientProgramme = oldClientProgramme;
+            newClientProgramme.InformationSheet = newClientInformationSheet;
+            newClientProgramme.InformationSheet.Programme = newClientProgramme;
+            newClientProgramme.BaseProgramme = currentProgramme;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalBranchCode))
+                newClientProgramme.EGlobalBranchCode = oldClientProgramme.EGlobalBranchCode;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalClientNumber))
+                newClientProgramme.EGlobalClientNumber = oldClientProgramme.EGlobalClientNumber;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalClientStatus))
+                newClientProgramme.EGlobalClientStatus = oldClientProgramme.EGlobalClientStatus;
+            newClientProgramme.HasEGlobalCustomDescription = oldClientProgramme.HasEGlobalCustomDescription;
+            if (!string.IsNullOrEmpty(oldClientProgramme.EGlobalCustomDescription))
+                newClientProgramme.EGlobalCustomDescription = oldClientProgramme.EGlobalCustomDescription;
+            if (!string.IsNullOrEmpty(oldClientProgramme.ClientProgrammeMembershipNumber))
+                newClientProgramme.ClientProgrammeMembershipNumber = oldClientProgramme.ClientProgrammeMembershipNumber;
+            if (!string.IsNullOrEmpty(oldClientProgramme.Tier))
+                newClientProgramme.Tier = oldClientProgramme.Tier;
+
+            if (oldClientProgramme.InformationSheet.Vehicles != null)
+            {
+                newClientInformationSheet.Vehicles.Clear();
+                foreach (Vehicle vehicle in oldClientProgramme.InformationSheet.Vehicles)
+                {
+                    Vehicle newVehicle = vehicle.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Vehicles.Add(newVehicle);
+                }
+            }
+            if (oldClientProgramme.InformationSheet.Boats != null)
+            {
+                newClientInformationSheet.Boats.Clear();
+                foreach (Boat boat in oldClientProgramme.InformationSheet.Boats)
+                {
+                    Boat newBoat = boat.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.Boats.Add(newBoat);
+                }
+            }
+            //Do not renew revenue data, so create a new empty revenue data
+            if (currentProgramme.RenewWithOutRevenue)
+            {
+                newClientInformationSheet.RevenueData = null;
+                RevenueData newRevenueData = new RevenueData(newClientInformationSheet, createdBy);
+                newClientInformationSheet.RevenueData = newRevenueData;
+            } else
+            {
+                if (oldClientProgramme.InformationSheet.RevenueData != null)
+                {
+                    newClientInformationSheet.RevenueData = null;
+                    RevenueData newRevenueData = oldClientProgramme.InformationSheet.RevenueData.CloneForNewSheet(newClientInformationSheet);
+                    newClientInformationSheet.RevenueData = newRevenueData;
+                }
             }
             if (oldClientProgramme.InformationSheet.RoleData != null)
             {

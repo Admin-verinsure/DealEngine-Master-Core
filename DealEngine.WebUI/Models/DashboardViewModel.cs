@@ -194,8 +194,13 @@ namespace DealEngine.WebUI.Models
 		public Domain.Entities.UpdateType UpdateType { get; internal set; }
 
 		public ChangeReason ChangeReason { get; set; }
+
         public List<UpdateTypesViewModel> UpdateTypes { get; internal set; }
-    }
+   
+		public bool IsRenewFromProgramme { get; set; }
+
+	}
+
 
 	public class TaskItem : BaseViewModel
 	{

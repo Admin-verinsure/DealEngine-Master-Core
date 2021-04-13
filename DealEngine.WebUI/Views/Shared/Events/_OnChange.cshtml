@@ -37,7 +37,6 @@
     });
 
     function OnChange(Id, Name) {
-        debugger;
         var obj = document.getElementById(Id);
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
@@ -116,7 +115,6 @@
     }
 
     function DefaultRule(Value, Name) {
-        debugger;
         if (Value === "1") {
             ShowElement(Name);
         } else {
@@ -299,6 +297,7 @@
                 var month = datefix.substring(4, 6);
                 var day = datefix.substring(6, 8);
                 var newDate = new Date(year, month - 1, day);
+                debugger;
                 $('#AddBoatEffectiveDate').datepicker('option', 'minDate', newDate);
                 $('#BoatEffectiveDate').datepicker('option', 'minDate', newDate);
                 $('#AddEffectiveDate').datepicker('option', 'minDate', newDate);
@@ -314,6 +313,10 @@
                 document.getElementById("EffectiveDate").value = Value;
                 document.getElementById("MotorEffectiveDate").value = Value;
                 document.getElementById("TrailerEffectiveDateModal").value = Value;
+                //document.getElementById("issuedate").value = Value;
+                //document.getElementById("startdate").value = Value;
+                //document.getElementById("enddate").value = Value;
+                //document.getElementById("certrequiredby").value = Value;
             }
             if (Rule === "OtherOptions") {
                 if (obj.multiple) {
@@ -416,7 +419,8 @@
             Value == "Contractor" ||
             Value == "Planner" ||
             Value == "Skipper" ||
-            Value == "Mentored Advisor") {
+            Value == "Mentored Advisor" || 
+            Value == "Individual") {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
@@ -663,7 +667,6 @@
     }
 
     function HideElement(id) {
-        debugger;
         var element = document.getElementById(id);
         if (element != null) {
             element.hidden = true;

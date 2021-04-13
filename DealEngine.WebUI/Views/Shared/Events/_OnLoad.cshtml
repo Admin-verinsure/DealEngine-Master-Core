@@ -5,13 +5,34 @@
     var currMonth = d.getMonth();
     var currYear = d.getFullYear();
     var currDate = d.getDate();
-
+    var todaydate = new Date(currYear, currMonth, currDate);
     if (currMonth < 8) {
         currMonth = 8;
         var startDate = new Date(currYear, currMonth, 1);
     } else {
         var startDate = new Date(currYear, currMonth, currDate);
+    };
+
+    var mm = d.getMonth()+1; //January is 0 so need to add 1 to make it 1!
+    if(currDate<10){
+        currDate='0'+currDate
+    } 
+    if(mm<10){
+       mm='0'+mm
+      } 
+
+    d = currYear + '-' + mm + '-' + currDate;
+    if (document.getElementById("dateselected") != null) {
+    document.getElementById("dateselected").setAttribute("min", d);
     }
+
+    //var currentDate = document.getElementsByClassName("dateInput form-control");
+    //console.log(currentDate);
+    //if (document.getElementsByClassName("dateInput form-control") != null) {
+
+    //    document.getElementsByClassName("dateInput form-control")[0].setAttribute("max", d);
+    //}
+
 
     $('#FAPCoverStartDate').datepicker({
         dateFormat: "dd/mm/yy",
@@ -50,6 +71,12 @@
     $('#RemoveVehicleCeaseEffectiveDate').datepicker({
         dateFormat: "yy-mm-dd",
     });
+    $('#issuedate').datepicker();
+    $('#startdate').datepicker();
+    $('#enddate').datepicker();
+    $('#certrequiredby').datepicker();
+    
+
 
     function LocationTableRefreshAPI(streetVal, suburbVal, postCodeVal, cityVal, countryVal, cmonValue, locationTypeValue, locationId) {
         var editbuttonstring = "<button class=\"btn btn-success btn - sm\" onclick=\"EditLocation('" + locationId + "', '" + locationTypeValue + "', '" + cmonValue + "', '" + streetVal + "', '" + cityVal + "', '" + countryVal + "', '" + suburbVal + "', '" + postCodeVal + "')\"><i class=\"fa fa-edit\"></i> Edit</button>";
