@@ -948,6 +948,7 @@ namespace DealEngine.WebUI.Controllers
             ListReport.Add("Is Change");
             ListReport.Add("Reference Id");
             ListReport.Add("Email");
+            ListReport.Add("Agreement Status");
             //ListReport.Add("Advisor Names");
             ListReport.Add("Limit");
             ListReport.Add("Excess");
@@ -1009,6 +1010,8 @@ namespace DealEngine.WebUI.Controllers
                     var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == reportName && ter.Bound == true);
                     if (term != null)
                     {
+                        ListReport.Add(agreement.Status);
+
                         ListReport.Add(term.TermLimit.ToString());
                         ListReport.Add(term.Excess.ToString("N0"));
                         ListReport.Add(term.Premium.ToString("N2"));
@@ -1016,13 +1019,7 @@ namespace DealEngine.WebUI.Controllers
 
                         break;
                     }
-                    //else
-                    //{
-                    //    ListReport.Add("0");
-                    //    ListReport.Add("0");
-                    //    ListReport.Add("0");
-                    //    break;
-                    //}
+                  
                 }
             }
             else
