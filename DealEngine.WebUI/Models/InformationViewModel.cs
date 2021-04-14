@@ -49,6 +49,8 @@ namespace DealEngine.WebUI.Models
         public string ProgNamedPartyName { get; set; }
         public string SectionView { get; set; }
         public String[][] LimitsSelected { get; set; }
+        public List<string> selectedUpdateType { get; set; }
+
         public List<InformationSection> Section { get; set; }
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
@@ -123,7 +125,6 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<SelectListItem> Options { get; set; }
 
         public IList<InformationItem> ConditionalList { get; set; }
-
         public string Value { get; set; }
         public Rule Rule { get; set; }
 
