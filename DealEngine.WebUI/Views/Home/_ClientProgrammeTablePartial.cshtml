@@ -219,33 +219,63 @@
                         <td>
                             <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
                                 <option selected="selected" value="">-- Select here --</option>
-                                <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
-                                <option Value="TC_newCoverable">Add New Coverable</option>
-                                <option Value="TC_amendExcess">Amend Excess</option>
-                                <option Value="TC_amendLiabilityLimit">Amend Liability Limit</option>
-                                <option Value="TC_amendLocation">Amend Location</option>
-                                <option Value="TC_amendAssetSumInsured">Amend Asset Sum Insured</option>
-                                <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
-                                <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
-                                <option Value="TC_amendAddInsured">Amend or Add Insured</option>
-                                <option Value="TC_deleteInsured">DeleteInsured</option>
-                                <option Value="TC_amendAddNamedParty">Amend or Add NamedParty</option>
-                                <option Value="TC_deleteNamedParty">deleteNamedParty</option>
-                                <option Value="TC_amendAddEmployees">Amend or Add Employees</option>
-                                <option Value="TC_amendAddCI">Amend or Add Co-insurer</option>
-                                <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
-                                <option Value="TC_changeOfBroker">Change of Broker</option>
-                                <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
-                                <option Value="TC_changeOfActivity">Change of Activity</option>
-                                <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
-                                <option Value="TC_other">Other Amendment</option>
-                                <option Value="TC_amendOneTimeEvents">One Time Event</option>
-                            </select>
+
+                                @if (Model.UpdateTypes != null)
+                                {
+                                    @if (Model.CurrentUserIsBroker == "True")
+                                    {
+
+                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsBroker))
+                                        {
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                            {
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
+                                        }
+                                    }
+                                    @if (Model.CurrentUserIsInsurer == "True")
+                                    {
+
+                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsInsurer))
+                                        {
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                            {
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
+                                        }
+                                    }
+
+                                    @if (Model.CurrentUserIsTC == "True")
+                                    {
+
+                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsTc))
+                                        {
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                            {
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
+                                        }
+                                    }
+                                    @if (Model.CurrentUserIsClient == "True")
+                                    {
+
+                                        @foreach (var updateType in Model.UpdateTypes.Where(t => t.TypeIsClient))
+                                        {
+                                            @if (Model.SelectedUpdateTypes.Contains(updateType.ValueType))
+                                            {
+                                                <option value="@updateType.ValueType"> @updateType.NameType</option>
+                                            }
+                                         }
+                                     }
+
+                                    }
+                                </select>
                         </td>
                         <td>
                             <p class="validationContainer" id="validateChangeType"></p>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <label for="Reason" class="required">Reason</label>
@@ -269,17 +299,20 @@
                             <p class="validationContainer" id="validateChangeReason"></p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <label for="ReasonDesc" class="required">Reason Description</label>
-                        </td>
-                        <td>
-                            @Html.TextAreaFor(m => m.ChangeReason.Description, new { @class = "form-control", @required = "" })
-                        </td>
-                        <td>
-                            <p class="validationContainer" id="validateDescription"></p>
-                        </td>
-                    </tr>
+                    @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                    {
+                        <tr>
+                            <td>
+                                <label for="ReasonDesc" class="required">Reason Description</label>
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(m => m.ChangeReason.Description, new { @class = "form-control", @required = "" })
+                            </td>
+                            <td>
+                                <p class="validationContainer" id="validateDescription"></p>
+                            </td>
+                        </tr>
+                    }
                     <tr>
                         <td>
                             <label for="EffectiveDate" class="required">Effective Date</label>
