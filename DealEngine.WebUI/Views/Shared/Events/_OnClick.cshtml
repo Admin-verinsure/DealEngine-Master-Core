@@ -219,6 +219,29 @@
                 });
         }
     }
+    function AddUpdateType() {
+        console.log("AddUpdateType console");
+        var form = document.getElementById("updateTypeViewModel");
+        var formValid = TableFormValidation(form , "Update Type");
+        if (formValid) {
+           // sessionStorage.setItem('accordianTrigger', 'Location');
+            $.ajax({
+                url: '@Url.Action("AddUpdateType", "Admin")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+    
 
     function RemoveLocation(Id) {
         sessionStorage.setItem('accordianTrigger', 'Location');

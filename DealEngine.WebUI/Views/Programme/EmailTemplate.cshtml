@@ -203,6 +203,28 @@
                                 @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendPDFReport", description = "PDF Report -- Sent to clients after the Report has been generated and triggered by either Send Report to Programme Recipient or Send Report to Insured." }, new { @class = "btn btn-success btn-sm" })
                             </td>
                         </tr>
+                        <tr>
+                            <td align="left">
+                                Advice Of Removal Of An Advisor From Policy
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Sent to original policy owner to advice that an advisor has been removed.
+                            </td>
+                            <td>
+                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAdviceAdvisorRemoval", description = "Sent to original policy owner to advice that an advisor has been removed." }, new { @class = "btn btn-success btn-sm" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                Advice Of Addition Of An Advisor From Policy
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Sent to advisor and new policy owner to advice that an advisor has been added.
+                            </td>
+                            <td>
+                                @Html.ActionLink("View", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAdviceAdvisorAddition", description = "Sent to advisor and new policy owner to advice that an advisor has been added." }, new { @class = "btn btn-success btn-sm" })
+                            </td>
+                        </tr>
                     </table>
                 </form>
             </div>

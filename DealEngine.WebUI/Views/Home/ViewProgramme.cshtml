@@ -30,6 +30,7 @@
                 </li>
             }
 
+
             <li class="nav-item">
                 <a class="btn btn-primary btn-sm" href="~/Home/IssueReminder?ProgrammeId=@Model.Programme.Id"><i class="fa fa-pencil"></i>Issue Reminder</a>
             </li>
@@ -44,6 +45,14 @@
                 <a asp-controller="Home" asp-action="ReportView" asp-route-ProgrammeId="@Model.Programme.Id" class="btn btn-primary btn-sm" style="color:white">View Report </a>
             </li>
         }
+         @*for NTU*@
+        @*@if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsTC == "True")
+        {
+
+            <li class="nav-item">
+                <a onclick="location.href='@Url.Action("NTUcreate", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="NTUcreate"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Create NTU </a>
+            </li>
+        }*@
         else if (Model.CurrentUserIsProgrammeManager == "True")
         {
             <li class="nav-item">

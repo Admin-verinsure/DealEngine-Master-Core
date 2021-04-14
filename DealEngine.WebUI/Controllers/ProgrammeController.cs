@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SystemDocument = DealEngine.Domain.Entities.Document;
+using UpdateType = DealEngine.Domain.Entities.UpdateType;
+
 //using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace DealEngine.WebUI.Controllers
@@ -45,7 +47,7 @@ namespace DealEngine.WebUI.Controllers
         IImportService _importService;
         IClaimService _claimService;
         ISerializerationService _serializerationService;
-
+        IUpdateTypeService _updateTypeServices;
         public ProgrammeController(
             ISerializerationService serializerationService,
             IClaimService claimService,
@@ -68,7 +70,8 @@ namespace DealEngine.WebUI.Controllers
             IEmailService emailService,
             IMapper mapper,
             IHttpClientService httpClientService,
-            IEGlobalSubmissionService eGlobalSubmissionService
+            IEGlobalSubmissionService eGlobalSubmissionService,
+                    IUpdateTypeService updateTypeService
             )
             : base(userRepository)
         {
@@ -94,6 +97,7 @@ namespace DealEngine.WebUI.Controllers
             _mapper = mapper;
             _httpClientService = httpClientService;
             _eGlobalSubmissionService = eGlobalSubmissionService;
+            _updateTypeServices = updateTypeService;
         }
 
         [HttpGet]
@@ -782,6 +786,151 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> UpdateType(Guid ProgrammeId)
+        {
+            User user = null;
+            UpdateTypesViewModel model = new UpdateTypesViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
+                var updateTypeModel = new List<UpdateTypesViewModel>();
+
+
+
+                model.Id = ProgrammeId;
+               Programme Programme = await _programmeService.GetProgrammeById(ProgrammeId);
+               
+
+
+
+                model.CurrentUserType = "Client";
+                if (user.PrimaryOrganisation.IsBroker)
+                {
+                    model.CurrentUserType = "Broker";
+                }
+                if (user.PrimaryOrganisation.IsInsurer)
+                {
+                    model.CurrentUserType = "Insurer";
+                }
+                if (user.PrimaryOrganisation.IsTC)
+                {
+                    model.CurrentUserType = "TC";
+                }
+                if (user.PrimaryOrganisation.IsProgrammeManager)
+                {
+                    model.CurrentUserType = "ProgrammeManager";
+                }
+
+                model.SelectedUpdateTypes = new List<string>();
+
+                foreach (var updateType in Programme.UpdateTypes)
+                {
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (model.SelectedUpdateTypes != null)
+                        { 
+                            model.SelectedUpdateTypes.Add(updateType.TypeValue);
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+
+                foreach (var updateType in dbUpdatemodelTypes.Where(t => t.DateDeleted == null))
+                {
+                    updateTypeModel.Add(new UpdateTypesViewModel
+                    {
+                        Id = updateType.Id,
+                        NameType = updateType.TypeName,
+                        ValueType = updateType.TypeValue,
+                        TypeIsBroker = updateType.TypeIsBroker,
+                        TypeIsClient = updateType.TypeIsClient,
+                        TypeIsInsurer = updateType.TypeIsInsurer,
+                        TypeIsTc = updateType.TypeIsTc
+                    });
+
+
+                }
+                model.UpdateTypes = updateTypeModel.OrderBy(acat => acat.UpdateTypes).ToList();
+
+
+
+                return View(model);
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateType(IFormCollection formCollection)
+        {
+            User user = null;
+
+            try
+            {
+                Programme programme = null;
+               UpdateType updateType = null;
+                Programme UpdateTypes = null;
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    programme.UpdateTypes.Clear();
+                    await uow.Commit();
+                }
+
+                var updateTypes = new List<UpdateType>();
+
+                foreach (var key in formCollection.Keys)
+                {
+                
+                   var keyCheck = key;
+                    if (keyCheck != "__RequestVerificationToken")
+                   {
+                        updateType = await _updateTypeServices.GetUpdateType(Guid.Parse(formCollection[key]));
+                        if (updateType != null)
+                       {
+                            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                programme.UpdateTypes.Add(updateType);
+
+                               // programme.UpdateTypes = updateTypes;
+                                await uow.Commit();
+                            }
+
+                        }
+                    }
+                }
+
+
+                // await _updateTypeServices.Update(updateType);
+
+                 return RedirectToAction("UpdateType", new { ProgrammeId = programme.Id });
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+
+
+
+
+        [HttpGet]
         public async Task<IActionResult> TermSheetTemplate(Guid Id)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -940,6 +1089,8 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> EditProgramme(Guid Id)
@@ -1472,6 +1623,16 @@ namespace DealEngine.WebUI.Controllers
                     case "SendPDFReport":
                         {
                             emailtemplatename = "PDF Report";
+                            break;
+                        }
+                    case "SendAdviceAdvisorRemoval":
+                        {
+                            emailtemplatename = "Advice Of Removal Of An Advisor From Policy";
+                            break;
+                        }
+                    case "SendAdviceAdvisorAddition":
+                        {
+                            emailtemplatename = "Advice Of Addition Of An Advisor From Policy";
                             break;
                         }
                     default:
