@@ -1654,6 +1654,8 @@ namespace DealEngine.WebUI.Controllers
                     model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                     model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                     model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
+                    model.AdditionalCertFee = agreement.AdditionalCertFee.ToString("C", UserCulture);
+                    model.PlacementFee = agreement.PlacementFee.ToString("C", UserCulture);
                     model.CurrencySymbol = "fa fa-dollar";
                     model.ClientInformationSheet = sheet;
                     if (sheet.Programme.BaseProgramme.UsesEGlobal &&

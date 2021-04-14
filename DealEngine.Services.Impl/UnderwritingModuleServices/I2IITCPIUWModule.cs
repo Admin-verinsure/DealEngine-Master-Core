@@ -97,7 +97,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            
+            //set agreement fees
+            agreement.PlacementFee = product.DefaultPlacementFee;
+            agreement.AdditionalCertFee = product.DefaultAdditionalCertFee;
+
             int TermExcess = 5000;
 
             int TermLimit = 2000000;
@@ -160,9 +163,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = "Policy Inception";
-            agreement.TerritoryLimit = "Worldwide";
-            agreement.Jurisdiction = "Australia and New Zealand";
+            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
             if (!String.IsNullOrEmpty(strretrodate))
             {

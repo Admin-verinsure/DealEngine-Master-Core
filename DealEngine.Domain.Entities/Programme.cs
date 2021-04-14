@@ -75,7 +75,9 @@ namespace DealEngine.Domain.Entities
         public virtual bool RenewWithOutRevenue { get; set; }
         public virtual bool DisplayGSTInclusive { get; set; }
         public virtual bool DisplayGSTExclusive { get; set; }
-        
+        public virtual bool ProgHidePlacementFee { get; set; }
+        public virtual bool ProgHideAdditionalCertFee { get; set; }
+
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)

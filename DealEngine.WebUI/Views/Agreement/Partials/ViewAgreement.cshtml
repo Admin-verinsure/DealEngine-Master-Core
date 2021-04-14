@@ -489,6 +489,28 @@ else
                             </td>
                         </tr>
                     }
+                    @if (!Model.ClientInformationSheet.Programme.BaseProgramme.ProgHidePlacementFee)
+                    {
+                        <tr>
+                            <td width="260" height="40">
+                                <strong>@Html.DisplayNameFor(m => m.PlacementFee):</strong>
+                            </td>
+                            <td width="350" height="40">
+                                @Model.PlacementFee
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.ClientInformationSheet.Programme.BaseProgramme.ProgHideAdditionalCertFee)
+                    {
+                        <tr>
+                            <td width="260" height="40">
+                                <strong>@Html.DisplayNameFor(m => m.AdditionalCertFee):</strong>
+                            </td>
+                            <td width="350" height="40">
+                                @Model.AdditionalCertFee
+                            </td>
+                        </tr>
+                    }
                     @if (Model.ClientInformationSheet.Programme.BaseProgramme.DisplayGSTInclusive)
                     {
                         <tr>
