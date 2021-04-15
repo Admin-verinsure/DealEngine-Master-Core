@@ -224,6 +224,9 @@ namespace DealEngine.Domain.Entities
         {
 
         }
+        [Display(Name = "Phone")]
+        public virtual string Phone { get; set; }
+
     }
 
 }
