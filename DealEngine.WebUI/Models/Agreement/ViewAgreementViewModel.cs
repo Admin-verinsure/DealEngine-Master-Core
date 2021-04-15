@@ -510,13 +510,15 @@ namespace DealEngine.WebUI.Models.Agreement
         public IList<BoatViewModel> Boats { get; set; }
         public List<EditTermsViewModel> BVTerms { get; internal set; }
         public List<EditTermsViewModel> MVTerms { get; internal set; }
-        public List<EditTermsViewModel> PLTerms { get; internal set; }
-        public List<EditTermsViewModel> EDTerms { get; internal set; }
-        public List<EditTermsViewModel> PITerms { get; internal set; }
-        public List<EditTermsViewModel> ELTerms { get; internal set; }
-        public List<EditTermsViewModel> CLTerms { get; internal set; }
-        public List<EditTermsViewModel> SLTerms { get; internal set; }
-        public List<EditTermsViewModel> DOTerms { get; internal set; }
+        //public List<EditTermsViewModel> PLTerms { get; internal set; }
+        //public List<EditTermsViewModel> EDTerms { get; internal set; }
+        //public List<EditTermsViewModel> PITerms { get; internal set; }
+        //public List<EditTermsViewModel> ELTerms { get; internal set; }
+        //public List<EditTermsViewModel> CLTerms { get; internal set; }
+        //public List<EditTermsViewModel> SLTerms { get; internal set; }
+        //public List<EditTermsViewModel> DOTerms { get; internal set; }
+        public List<EditTermsViewModel> SubtypeTerms { get; internal set; }
+        
         public List<EditTermsCancelViewModel> BVTermsCan { get; internal set; }
         public List<EditTermsCancelViewModel> MVTermsCan { get; internal set; }
         public List<ClientAgreementReferral> Referrals { get; set; }
@@ -554,6 +556,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public decimal BasePremium { get; set; }
         public IList<SelectListItem> PaymentMethodOptions { get; set; }
         public IList<SelectListItem> PaymentFrequencyOptions { get; set; }
+        public string ProductCode { get; set; }
+
     }
 
     public class InsuranceInclusion
