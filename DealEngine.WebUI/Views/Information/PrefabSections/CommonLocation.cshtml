@@ -1,8 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-@if (Model.selectedUpdateType.Contains("TC_amendLocation"))
-{
-    <div id="CommonLocation" class="container-fluid" style="display:block;">
+    <div id="CommonLocation" class="container-fluid  " style="">
+
         <input id="LocationId" name="LocationViewModel.LocationId" hidden form="LocationViewModel" />
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="tab1">
@@ -220,7 +219,3 @@
             </div>
         </div>
     </div>
-
-
-}
-

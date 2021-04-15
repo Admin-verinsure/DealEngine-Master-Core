@@ -274,3 +274,23 @@
         width: 100%;
     }
 </style>
+
+@*@section pagespecific {
+    <link href="~/jqueryui/jquery-ui.css" rel="stylesheet" />
+    <script src="~/jquery/jquery.min.js"></script>
+    <script src="~/jqueryui/jquery-ui.js"></script>
+    <script>
+
+        $(window).on("load", function () {
+            debugger;
+            var slectedUpdateType = @Model.selectedUpdateType;
+            if (slectedUpdateType == "TC_amendLocation") {
+                $("#CommonLocation").trigger("click");
+
+            }
+        });
+
+
+    </script>
+
+}*@

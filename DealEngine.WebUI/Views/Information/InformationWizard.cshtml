@@ -1055,7 +1055,18 @@
             else {
                 $('#advisoryModal').modal('hide');
             }
-        }
+    }
+
+    /*for active pannel based on update type*/
+     $(window).on("load", function () {
+            debugger;
+            var slectedUpdateType ="@Model.selectedUpdateType.First()";
+            if (slectedUpdateType == "TC_amendLocation") {
+                $("#Location").trigger("click");
+
+            }
+        });
+
 </script>
 
 }

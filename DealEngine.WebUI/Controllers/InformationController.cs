@@ -811,7 +811,12 @@ namespace DealEngine.WebUI.Controllers
 
                 model.Claims = claims;
 
-                //var UpdateTypesViewModel = new List<UpdateTypesViewModel>();
+                //if(updateType == "")
+                if(string.IsNullOrWhiteSpace(updateType))
+                {
+                    updateType = "common_you";
+                }
+               
                 model.selectedUpdateType = new List<string>();
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
