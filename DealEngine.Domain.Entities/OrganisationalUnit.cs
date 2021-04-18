@@ -220,6 +220,20 @@ namespace DealEngine.Domain.Entities
         public virtual WaterLocation WaterLocation { get; set; }
     }
 
+    public class IndividualInsuredUnit : OrganisationalUnit
+    {
+        public IndividualInsuredUnit() { }
+
+        public IndividualInsuredUnit(User User, string Name, string Type, IFormCollection Collection)
+        : base(User, Name, Type, Collection)
+        {
+
+        }
+        [Display(Name = "Phone")]
+        public virtual string Phone { get; set; }
+
+    }
+
 }
 
 

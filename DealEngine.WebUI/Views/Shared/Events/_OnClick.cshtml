@@ -42,7 +42,7 @@
         CloneForm("OrganisationTab3", "OrganisationTab2", "OrganisationSubmitBtn", "OrganisationClearButton");
     }
 
-    function RemoveOrganisation(organisationId, AccordionId) {        
+    function RemoveOrganisation(organisationId, AccordionId) {
         var programmeId = document.getElementById("Programme_Id").value;
         var clientInformationId = document.getElementById("AnswerSheetId").value;
         sessionStorage.setItem('accordianTrigger', AccordionId);
@@ -79,7 +79,7 @@
                 debugger;
             }
         });
-    }    
+    }
 
     function CloneForm(AddTabId, EditTabId, AddButtonId, CancelButtonId) {
         debugger;
@@ -92,14 +92,14 @@
         form = document.getElementById(editTabHTML.firstElementChild.id);
         addTabHTML.innerHTML = "";
         document.getElementById(AddButtonId).innerText = "Update";
-        document.getElementById(CancelButtonId).innerText = "Cancel Update";        
+        document.getElementById(CancelButtonId).innerText = "Cancel Update";
         SetCurrentTab(EditTabId);
         var lists = form.getElementsByClassName("chosen-select");
-        if (lists != null) {     
+        if (lists != null) {
             for (i = 0; i < lists.length; i++) {
                 var chosenList = document.getElementById(lists[i].id);
                 chosenList.nextElementSibling.remove();
-            }            
+            }
             $(".chosen-select").chosen({ width: "95%" });
 
         }
@@ -174,21 +174,22 @@
     }
 
     function ResetForm(AddTabId, EditTabId, Object, AddButtonId, CancelButtonId) {
+        debugger;
         var editTabHTML = document.getElementById(EditTabId);
         if (editTabHTML.firstElementChild.tagName == "FORM") {
             var form = document.getElementById(editTabHTML.firstElementChild.id);
             var obj = $("#" + form.id).clone();
-            $("#" + AddTabId).append(obj);                       
+            $("#" + AddTabId).append(obj);
             editTabHTML.innerHTML = "";
             editTabHTML.appendChild(CreateEditLabel(Object));
             var addTabHTML = document.getElementById(AddTabId);
-            form = document.getElementById(addTabHTML.firstElementChild.id);       
+            form = document.getElementById(addTabHTML.firstElementChild.id);
             var lists = form.getElementsByClassName("chosen-select");
             if (lists != null) {
                 for (i = 0; i < lists.length; i++) {
                     var chosenList = document.getElementById(lists[i].id);
                     chosenList.nextElementSibling.remove();
-                } 
+                }
                 $(".chosen-select").chosen({ width: "95%" });
             }
         }
@@ -218,6 +219,29 @@
                 });
         }
     }
+    function AddUpdateType() {
+        console.log("AddUpdateType console");
+        var form = document.getElementById("updateTypeViewModel");
+        var formValid = TableFormValidation(form , "Update Type");
+        if (formValid) {
+           // sessionStorage.setItem('accordianTrigger', 'Location');
+            $.ajax({
+                url: '@Url.Action("AddUpdateType", "Admin")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+    
 
     function RemoveLocation(Id) {
         sessionStorage.setItem('accordianTrigger', 'Location');
@@ -265,6 +289,74 @@
         document.getElementById("suburbdetails").value = Suburb;
         document.getElementById("postcodedetails").value = Postcode;
         SetCurrentTab("locationtab2");
+    }
+
+    function AddJob() {
+        debugger;
+        var form = document.getElementById("JobViewModel");
+        var formValid = TableFormValidation(form , "job");
+        if (formValid) {
+            sessionStorage.setItem('accordianTrigger', 'Job');
+            $.ajax({
+                url: '@Url.Action("AddJob", "Services")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true }),
+                async: false
+            })
+                .done(function () {
+                    //Save the session and reload
+                    form.reset();
+                    location.reload();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                });
+        }
+    }
+
+    function EditJob(Id, JobDescription, ContractorEmail, FirstName, LastName, JobNumber, IssueDate, StartDate, EndDate, CertRequiredBy, RAClientNamedParty) {
+        debugger;
+        event.preventDefault();
+        CloneForm("jobtab3", "jobtab2", "JobAddButton", "JobCancelButton");
+        document.getElementById("JobId").value = Id;
+        document.getElementById("jobdescription").value = JobDescription;
+        document.getElementById("contractoremail").value = ContractorEmail;
+        document.getElementById("firstname").value = FirstName;
+        document.getElementById("lastname").value = LastName; 
+        document.getElementById("jobnumber").value = JobNumber;
+        var test = IssueDate.split(' ')[0];
+        var date = Date.parse(test);
+        var sanitised = sanitiseDate(test);
+
+        //console.log(IssueDate);
+        //console.log(StartDate);
+        //console.log(EndDate);
+        //console.log(CertRequiredByDate);
+        
+        document.getElementById("issuedate").value = sanitiseDate(IssueDate.split(' ')[0]);
+        document.getElementById("startdate").value = sanitiseDate(StartDate.split(' ')[0]);
+        document.getElementById("enddate").value = sanitiseDate(EndDate.split(' ')[0]);
+        document.getElementById("certrequiredby").value = sanitiseDate(CertRequiredBy.split(' ')[0]);
+        document.getElementById("raclient").value = RAClientNamedParty;
+        SetCurrentTab("jobtab2");
+    }
+
+    function RemoveJob(Id) {
+        debugger;
+        sessionStorage.setItem('accordianTrigger', 'Job');
+        var postData = { JobId: Id };
+        $.ajax({
+            url: '@Url.Action("RemoveJob", "Services")',
+            type: "POST",
+            data: postData
+        })
+            .done(function () {
+                //Save the session and reload
+                location.reload();
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
     }
 
     function AddProject(SectionName) {
@@ -514,6 +606,23 @@
             }
         }
         return query_string;
+    }
+
+    function sanitiseDate(date) {
+        var sanitised = "";
+        var parts = date.split('/');
+        for (i = 0; i < parts.length; i++) {
+            if (parts[i].length == 1) {
+                parts[i] = '0' + parts[i];
+            }
+            if (i == parts.length - 1) {
+                sanitised += parts[i];
+            } else {
+                sanitised += parts[i] + ' / ';
+            }
+            
+        }
+        return sanitised;
     }
 
 

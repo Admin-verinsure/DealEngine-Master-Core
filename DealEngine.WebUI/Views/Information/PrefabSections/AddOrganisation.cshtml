@@ -169,6 +169,11 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName, new { @id = "PersonnelUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/DANZ_AddOrganisation", Model)
                 }
+                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.IndividualInsuredUnit.GetType().AssemblyQualifiedName, new { @id = "IndividualInsuredUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/I2I_AddOrganisation", Model)
+                }
                 else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "CEAS Programme")
                 {
                     @Html.Hidden("Unit", Model.OrganisationViewModel.PrincipalUnit.GetType().AssemblyQualifiedName, new { @id = "PrincipalUnit" })
@@ -197,7 +202,7 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/FMC_AddOrganisation", Model)
                 }
-                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
+                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
                     Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                 {
 

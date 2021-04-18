@@ -32,6 +32,7 @@ namespace DealEngine.WebUI.Controllers
         IClientAgreementService _clientAgreementService;
         IOrganisationalUnitService _organisationalUnitService;
         ILocationService _locationService;
+        IJobService _jobService;
         IMapperSession<WaterLocation> _waterLocationRepository;
         IMapperSession<Boat> _boatRepository;
         IMapperSession<Vehicle> _vehicleRepository;
@@ -73,6 +74,7 @@ namespace DealEngine.WebUI.Controllers
             IClientInformationService clientInformationService,
             IOrganisationalUnitService organisationalUnitService,
             ILocationService locationService,
+            IJobService jobService,
             IMapperSession<WaterLocation> waterLocationRepository,
             IMapperSession<Vehicle> vehicleRepository,
             IMapperSession<Building> buildingRepository,
@@ -106,6 +108,7 @@ namespace DealEngine.WebUI.Controllers
             _organisationalUnitService = organisationalUnitService;
             _vehicleService = vehicleService;
             _locationService = locationService;
+            _jobService = jobService;
             _waterLocationRepository = waterLocationRepository;
             _boatRepository = boatRepository;
             _organisationService = organisationService;
@@ -1128,6 +1131,89 @@ namespace DealEngine.WebUI.Controllers
                 Location location = await _locationService.GetLocationById(Guid.Parse(locationId));
                 location.Removed = false;
                 await _locationService.UpdateLocation(location);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddJob(IFormCollection collection)
+        {
+            User user = null;
+            try
+            {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
+                user = await CurrentUser();
+                Job job = null;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+                var jobForm = collection.Keys.Where(s => s.StartsWith("JobViewModel", StringComparison.CurrentCulture));
+                var id = collection["JobViewModel.JobId"];
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    job = new Job(user);
+                }
+                else
+                {
+                    job = await _jobService.GetJobById(Guid.Parse(id));
+                }
+                var type = job.GetType();
+                foreach (var keyField in jobForm)
+                {
+                    if (keyField != "JobViewModel.JobId")
+                    {
+                        var propertyName = keyField.Split('.').ToList();
+                        var property = type.GetProperty(propertyName.LastOrDefault());
+                        if (propertyName[1] == "IssueDate" ||
+                            propertyName[1] == "StartDate" ||
+                            propertyName[1] == "EndDate" || 
+                            propertyName[1] == "CertRequiredBy")
+                        {
+                            property.SetValue(job, DateTime.Parse(collection[keyField].ToString()));
+                        }
+                        else
+                        {
+                            property.SetValue(job, collection[keyField].ToString());
+                        }
+                        
+                    }
+                }
+
+                if (sheet.Jobs.Contains(job))
+                {
+                    await _jobService.UpdateJob(job);
+                }
+                else
+                {
+                    sheet.Jobs.Add(job);
+                    await _clientInformationService.UpdateInformation(sheet);
+                }
+
+                return new JsonResult(job.Id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveJob(string jobId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                Job job = await _jobService.GetJobById(Guid.Parse(jobId));
+                job.Removed = true;
+                await _jobService.UpdateJob(job);
 
                 return Ok();
             }

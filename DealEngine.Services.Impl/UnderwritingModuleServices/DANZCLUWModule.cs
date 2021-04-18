@@ -66,29 +66,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int coverperiodindaysforchange = 0;
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
-            string strretrodate = "";
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    if (preRenewOrRefData.DataType == "preterm")
-                    {
-                        if (!string.IsNullOrEmpty(preRenewOrRefData.CLRetro))
-                        {
-                            strretrodate = preRenewOrRefData.CLRetro;
-                        }
+            
+            //if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            //{
+            //    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+            //    {
+            //        if (preRenewOrRefData.DataType == "preterm")
+            //        {
+            //            if (!string.IsNullOrEmpty(preRenewOrRefData.CLRetro))
+            //            {
+            //                strretrodate = preRenewOrRefData.CLRetro;
+            //            }
 
-                    }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "CL")
-                    {
-                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
-                        {
-                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-                        }
-                    }
-                }
-            }
+            //        }
+            //        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "CL")
+            //        {
+            //            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
+            //            {
+            //                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+            //                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            //            }
+            //        }
+            //    }
+            //}
 
             int TermLimit100k = 100000;
             decimal TermPremium100k = rates["cl100klimitpremium"];
@@ -154,6 +154,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            string strretrodate = "";
+            if (agreement.ClientInformationSheet.IsRenewawl && agreement.ClientInformationSheet.RenewFromInformationSheet != null)
+            {
+                var renewFromAgreement = agreement.ClientInformationSheet.RenewFromInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+
+                if (renewFromAgreement != null)
+                {
+                    strretrodate = renewFromAgreement.RetroactiveDate;
+
+                    foreach (var renewendorsement in renewFromAgreement.ClientAgreementEndorsements)
+                    {
+
+                        if (renewendorsement.DateDeleted == null &&
+                            renewendorsement.Name != "Data Recovery and Business Interruption Exclusion (DRB)" && renewendorsement.Name != "Unencrypted Portable Media Exclusion (UPM)")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, renewendorsement.Name, renewendorsement.Type, product, renewendorsement.Value, renewendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
+                    }
+                }
+
+                
+            }
+
             ClientAgreementTerm termcl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
             termcl100klimitoption.TermLimit = TermLimit100k;
             termcl100klimitoption.Premium = TermPremium100k;
@@ -190,6 +215,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                     }
 
+                }
+
+                if (PreviousAgreement != null)
+                {
+                    strretrodate = PreviousAgreement.RetroactiveDate;
+
+                    foreach (var changeendorsement in PreviousAgreement.ClientAgreementEndorsements)
+                    {
+
+                        if (changeendorsement.DateDeleted == null &&
+                            changeendorsement.Name != "Data Recovery and Business Interruption Exclusion (DRB)" && changeendorsement.Name != "Unencrypted Portable Media Exclusion (UPM)")
+                        {
+                            ClientAgreementEndorsement newclientendorsement =
+                                new ClientAgreementEndorsement(underwritingUser, changeendorsement.Name, changeendorsement.Type, product, changeendorsement.Value, changeendorsement.OrderNumber, agreement);
+                            agreement.ClientAgreementEndorsements.Add(newclientendorsement);
+                        }
+                    }
                 }
             }
 

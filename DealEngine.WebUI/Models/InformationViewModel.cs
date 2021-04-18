@@ -28,6 +28,7 @@ namespace DealEngine.WebUI.Models
             RevenueDataViewModel = new RevenueDataViewModel(clientInformationSheet.Programme.BaseProgramme);
             RoleDataViewModel = new RoleDataViewModel(clientInformationSheet.Programme.BaseProgramme);
             LocationViewModel = new LocationViewModel(clientInformationSheet);
+            JobViewModel = new JobViewModel(clientInformationSheet);
             ProjectViewModel = new ProjectViewModel(clientInformationSheet);
             ResearchHouseViewModel = new ResearchHouseViewModel(clientInformationSheet);
             OrganisationViewModel = new OrganisationViewModel(clientInformationSheet, OrgUser);
@@ -52,6 +53,12 @@ namespace DealEngine.WebUI.Models
         public List<string> ListSection { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
         public LocationViewModel LocationViewModel { get; set; }
+
+        //public AdminViewModel AdminViewModel { get; set; }
+        public UpdateTypesViewModel UpdateTypesViewModel { get; set; }
+
+        public JobViewModel JobViewModel { get; set; }
+
         public List<BoatUse> BoatUsesList { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
@@ -684,6 +691,10 @@ namespace DealEngine.WebUI.Models
             HasHarmProvOptions = GetSelectListOptions();
             HasIndependentsPIOptions = GetSelectListOptions();
             HasIndependentsBoundOptions = GetSelectListOptions();
+            HasMedicalServicesOptions = GetSelectListOptions();
+            HasNavigationIndustryOptions = GetSelectListOptions();
+            HasNetworkSecurityOptions = GetSelectListOptions();
+            HasTradingIndustryOptions = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetCEASMembershipSelectListOptions()
@@ -907,6 +918,10 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasHarmProvOptions { get; set; }
         public IList<SelectListItem> HasIndependentsPIOptions { get; set; }
         public IList<SelectListItem> HasIndependentsBoundOptions { get; set; }
+        public IList<SelectListItem> HasMedicalServicesOptions { get; set; }
+        public IList<SelectListItem> HasNavigationIndustryOptions { get; set; }
+        public IList<SelectListItem> HasNetworkSecurityOptions { get; set; }
+        public IList<SelectListItem> HasTradingIndustryOptions { get; set; }
 
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
@@ -934,6 +949,11 @@ namespace DealEngine.WebUI.Models
         public string IncludedDesignDetails { get; set; }
         public string EngineerDetails { get; set; }
         public string ContractingServicesDetails { get; set; }
+        public string MedicalServicesDetails { get; set; }
+        public string NavigationIndustryDetails { get; set; }
+        public string NetworkSecurityDetails { get; set; }
+        public string TradingIndustryDetails { get; set; }
+        
         public int CoverAmount { get; set; }
         public int PercentFees { get; set; }
         public decimal RevenueInsuredContractors { get; set; }
