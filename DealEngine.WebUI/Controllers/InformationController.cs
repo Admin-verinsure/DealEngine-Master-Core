@@ -1217,13 +1217,13 @@ namespace DealEngine.WebUI.Controllers
             User createdBy = null;
             if (formCollection != null)
             {
-                var reason = formCollection["Reason"];
+                var changeType = formCollection["ChangeType"];
 
-                if (reason == "TC_AdminUpdate – move advisor")
+                if (changeType == "TC_AdminUpdateMoveAdvisor")
                 {
                     createdBy = await CurrentUser();
                     ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
-                    // Usually changeReason is saved by linking to the newProgramme and saving, but in this instance we aren't creating a newProgramme yet...
+                    // Usually changeReason is saved by linking to the newProgramme and saving, but in this instance we aren't creating a newProgramme...
                     await _changeProcessService.Add(changeReason);
 
                     return Redirect("/Information/MoveAdvisors/" + Guid.Parse(formCollection["DealId"]));
@@ -1310,6 +1310,8 @@ namespace DealEngine.WebUI.Controllers
 
             // Attach the Advisors
             await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+
+            // Send the emails after the work is done, but should test above 
 
             return RedirectToAction("Index", "Home");
         }
