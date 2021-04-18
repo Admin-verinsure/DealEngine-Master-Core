@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
 using DocumentFormat.OpenXml.Bibliography;
 using DealEngine.WebUI.Models.Information;
+using NHibernate.Linq;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -59,7 +60,7 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<WaterLocation> _waterLocation;
         ISubsystemService _subsystemService;
         IChangeProcessService _changeProcessService;
-
+        IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
 
         public InformationController(
             ISubsystemService subsystemService,
@@ -99,6 +100,7 @@ namespace DealEngine.WebUI.Controllers
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IMapperSession<WaterLocation> waterLocation,
             IChangeProcessService changeProcessService,
+            IMapperSession<OrganisationalUnit> organisationalUnitRepository,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
@@ -143,11 +145,9 @@ namespace DealEngine.WebUI.Controllers
             _emailService = emailService;
             _clientProgrammeRepository = clientProgrammeRepository;
             _changeProcessService = changeProcessService;
+            _organisationalUnitRepository = organisationalUnitRepository;
             //_generatePdf = generatePdf;
-
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetProgrammeSections(Guid informationTemplateID)
@@ -1247,11 +1247,71 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<ViewResult> MoveAdvisors(Guid id)
         {
-            ClientProgramme programme = await _clientProgrammeRepository.GetByIdAsync(id);
-            IList<Organisation> advisors = programme.InformationSheet.Organisation;
-            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, advisors);
+            ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(id);
+            Programme programme = clientProgramme.BaseProgramme;
+
+            IList<Organisation> organisations = clientProgramme.InformationSheet.Organisation;
+            IList<Organisation> advisors = new List<Organisation>();
+            IList<ClientProgramme> allClientProgrammes = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programme.Id).ToListAsync();
+
+            foreach (Organisation org in organisations)
+            {
+                var principleAdvisorUnit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && (u.DateDeleted == null));
+                if (principleAdvisorUnit != null)
+                {
+                    advisors.Add(org);
+                }
+            }
+
+            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, advisors, allClientProgrammes);
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MoveAdvisors(IFormCollection collection)
+        {
+            IList<string> advisors = collection["MoveAdvisorsViewModel.AdvisorToMove"].ToList<string>();
+
+            string newFAPKey = collection["MoveAdvisorsViewModel.NewFAP"];
+            Guid.TryParse(newFAPKey, out Guid newIsTheFAPOrganisationId);
+            string ownerandCPIds = collection["MoveAdvisorsViewModel.TargetOwner"];
+            string[] ownerandCPIdsArray = ownerandCPIds.Split(' ');
+            //Guid.TryParse(ownerandCPIdsArray[0], out Guid targetOwnerId); not used
+            Guid.TryParse(ownerandCPIdsArray[1], out Guid targetClientProgrammeId);
+            string sourceClientProgrammeStr = collection["MoveAdvisorsViewModel.SourceClientProgrammeId"];
+            Guid.TryParse(sourceClientProgrammeStr, out Guid sourceClientProgrammeId);
+
+            ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(targetClientProgrammeId);
+            ClientProgramme sourceClientProgramme = await _clientProgrammeRepository.GetByIdAsync(sourceClientProgrammeId);
+
+            if (collection.ContainsKey("MoveAdvisorsViewModel.ExtraFAP")) { // Won't always hence checking
+                IList<string> extraFAPs = collection["MoveAdvisorsViewModel.ExtraFAP"].ToList<string>();
+                foreach (var extraFAP in extraFAPs)
+                {
+                    Guid.TryParse(extraFAP, out Guid extraFAPOrgId);
+                    if (extraFAPOrgId != newIsTheFAPOrganisationId)
+                    {
+                        Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
+                        OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
+                        extraFAPOU.isTheFAP = false;
+                        await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+                    }
+                }
+            }
+           
+            if (newFAPKey != null)
+            {
+                Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
+                OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
+                newIsTheFAPOrganisationUnit.isTheFAP = true;
+                await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+            }
+
+            // Attach the Advisors
+            await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

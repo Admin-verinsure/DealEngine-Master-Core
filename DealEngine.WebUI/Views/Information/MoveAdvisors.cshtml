@@ -1,128 +1,60 @@
 ﻿@model DealEngine.WebUI.Models.Information.MoveAdvisorsViewModel
-@{
-    ViewData["Title"] = "Move Advisors";
-}
+
+@{ ViewData["Title"] = "Move Advisors"; }
 
 <div id="content" class="container">
-    <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/Home/Index">Dashboard</a>
-                > Move ADVISORS TEST TEST MAKE SURE THAT BS4 CARD AND MULTISELECT IS SAME
-            </span>
-        </h1>
-    </div>
-
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
-
-    <div class="row">
-        <table>
-             <tr>
-                  <td><b>ID:</b></td>
-                  <td>@Model.id
-                  </td>
-             </tr>
-        </table>
-    </div>
-    <div id="content" class="container">
-    <div class="row">
-        <div class="col-sm-6" style="margin-top:30px;">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Select Advisors</h5>
-                    <form>
-                          <div class="form-group">
-                            <label for="exampleFormControlSelect2">Example multiple select</label>
-                            <select multiple class="form-control" id="exampleFormControlSelect2">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                            </select>
-                          </div>
-                    </form>
-                    <p class="card-text" style="margin-top:30px;">Placeholder</p>
-                    @*<div class="form-group">
-                        <select class="form-control" Id="MarinaId" onchange="GetMarina(this.id)">
-                            <option selected="selected" value="">Add New</option>
-                            @foreach (var marina in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Marina")).ToList())
-                            {
-                                <option value="@marina.Id">@marina.Name</option>
-                            }
-                        </select>
-                        <form method="POST" action="~/Organisation/PostMarina" novalidate style="margin-top:30px;">
-                            @Html.HiddenFor(m=>m.Organisation.Id, new { @id= "Marina.Id" })                            
-                            <div class="form-group">
-                                <label class="label">Name</label>
-                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Marina.Name" })
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="label">Email</label>
-                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Marina.Email" })
-                            </div>                            
-                            <div class="form-group">
-                                <label class="label">Marina Name</label>
-                                @Html.TextBoxFor(m => m.MarinaUnit.WaterLocation.MarinaName, new { @class = "form-control", @id = "WaterLocation.MarinaName" })
-                            </div>
-                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
-                        </form>
-                    </div>*@
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-header">
+            Move Advisors from @Model.id
+            <input style="display:none" name="MoveAdvisorsViewModel.SourceClientProgrammeId" form="MoveAdvisorsViewModel" value="@Model.id" />
         </div>
-        <div class="col-sm-6" style="margin-top:30px;">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Select Whatever we are moving it to </h5>
-                    <p class="card-text" style="margin-top:30px;">if we want to seperate the two forms</p>
-                    @*<div class="form-group">
-                        <select class="form-control" Id="FinancialId" onchange="GetInstitute(this.id)">
-                            <option selected="selected" value="">Add New</option>
-                            @foreach (var Financial in Model.Organisations.Where(o => o.InsuranceAttributes.Any(i => i.Name == "Financial")).ToList())
-                            {
-                                <option value="@Financial.Id">@Financial.Name</option>
-                            }
-                        </select>
-                        <form method="POST" action="~/Organisation/PostInstitute" novalidate style="margin-top:30px;">
-                            @Html.HiddenFor(m => m.Organisation.Id, new { @id = "Institute.Id" })
-                            <div class="form-group">
-                                <label class="label">Institute Name</label>
-                                @Html.TextBoxFor(m => m.Organisation.Name, new { @class = "form-control", @id = "Institute.Name" })
-                            </div>
-                            <div class="form-group">
-                                <label class="label">Email</label>
-                                @Html.TextBoxFor(m => m.Organisation.Email, new { @class = "form-control", @id = "Institute.Email" })
-                            </div>
-                            <div class="form-group">
-                                <label class="label">Common Name</label>
-                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.CommonName, new { @class = "form-control", @id = "Location.CommonName" })
-                            </div>
-                            <div class="form-group">
-                                <label class="label">Street Name</label>
-                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Street, new { @class = "form-control", @id = "Location.Street" })
-                            </div>
-                            <div class="form-group">
-                                <label class="label">Suburb Name</label>
-                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.Suburb, new { @class = "form-control", @id = "Location.Suburb" })
-                            </div>
-                            <div class="form-group">
-                                <label class="label">City Name</label>
-                                @Html.TextBoxFor(m => m.InterestedPartyUnit.Location.City, new { @class = "form-control", @id = "Location.City" })
-                            </div>
-                            <button class="btn btn-primary btn-xs" type="submit">Update</button>
-                        </form>
-                    </div>*@
+        <div class="card-body">
+            @using (Html.BeginForm("MoveAdvisors", "Information", FormMethod.Post, new { @id = "MoveAdvisorsViewModel" }))
+            {
+                <div class="form-group">
+                    <label>Select Advisors to move</label>
+                    @foreach (var advisor in Model.Advisors)
+                    {
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input name="MoveAdvisorsViewModel.AdvisorToMove" form="MoveAdvisorsViewModel" type="checkbox" class="form-check-input" value="@advisor.Value">@advisor.Text
+                            </label>
+                        </div>
+                     }
                 </div>
-            </div>
+                <div class="form-group">
+                    <label>Select Target Owner</label>
+                    <select id="ownerSelect" name="MoveAdvisorsViewModel.TargetOwner" form="MoveAdvisorsViewModel" class="form-control">
+                        @foreach (var owner in Model.UniqueOwners)
+                        {
+                            <option value="@owner.Value">@owner.Text</option>
+                        }
+                    </select>
+                </div>
+                <div id="currentFAP" class="form-group" style="display:none">
+                    <label>Current isTheFAP for Target Owner's Policy.</label>
+                    <select id="selectedFAP" name="MoveAdvisorsViewModel.TargetOwnerFAP" form="MoveAdvisorsViewModel" class="form-control">
+                    </select>
+                </div> 
+                <div class="form-group" style="display:none">
+                    <label></label>
+                    <select id="multipleFAPOrgs" form="MoveAdvisorsViewModel" class="form-control">
+                    </select>
+                </div>    
+                <div id="FAPLicenseHolderSelect" class="form-group" style="display:none">
+                    <label>There is no Organisation/Advisor on the Target Owner's Policy that is currently set as the FAP License Holder, please Select an Organisation from the Target Owner's Policy that you'd like to set as the FAP License Holder.</label>
+                    <select id="selectedNoFAP" name="MoveAdvisorsViewModel.NewFAP" form="MoveAdvisorsViewModel" class="form-control">
+                    </select>
+                </div>
+                <div id="noFAPLicenseNumberSection" style="display:none">
+                    <label>There is no Organisation/Advisor on the Target Owner's Policy that currently has a FAP License Number, please go back and update one of the Organisations for the Target Owner's Policy so that it can be selected as the FAP License Holder. Following that you can repeat this process and Select it as the FAP License Holder.</label>
+                </div>
+                <div id="SubmitMoveAdvisors"class="form-group" style="display:none">
+                    <button class="btn btn-success" type="submit">Move Advisors</button>
+                </div>
+             }
         </div>
     </div>
-</div>
 </div>
 
 
@@ -130,6 +62,129 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $("#ownerSelect").change(function () {
+
+                var ownerId = $("#ownerSelect").val();
+                var ownerIdClientProgrammeId = ownerId.split(" ");
+
+                var ownerId = ownerIdClientProgrammeId[0];
+                var clientProgrammeId = ownerIdClientProgrammeId[1];
+
+                var postData = {
+                    'clientProgrammeId': clientProgrammeId,
+                };
+
+                $.ajax({
+                    url: '@Url.Action("GetFAPOrgsByClientProgrammeId", "Organisation")',
+                    type: "Post",
+                    data: postData,
+                })
+                    .done(function (data) {
+                        var numOrgs = 0;
+                        var organisations = JSON.parse(data);
+
+                        numOrgs = Object.keys(organisations).length;
+                        if (numOrgs == 0) {
+                            OwnerSelectedNoFAP(clientProgrammeId);
+                        }
+                        else if (numOrgs == 1) {
+                            OwnerSelected(organisations);
+                        }
+                        else {
+                            MultipleisTheFAPOrgsExist(organisations);
+                        }
+                    })
+                    .fail(function () {
+                        alert("error");
+                    });
+
+            });
+
+            $("#selectedFAP").change(function () {
+                var selectedFAP = $('#selectedFAP');
+                if (selectedFAP.is(':disabled')) {
+                    return;
+                }
+                else {
+                    var organisations = new Array();
+                    $('#selectedFAP option').each(function () {
+                        organisations.push($(this).val());
+                    });
+                    PopulateExtraFAPOrgs(organisations);                  
+                }
+            });
+
+            function OwnerSelected(organisations) {
+                $('#currentFAP').show();
+                PopulateFAPOrgs(organisations);
+                $('#selectedFAP').prop('disabled', true);
+                $('#SubmitMoveAdvisors').show();
+                return;
+            }
+
+            function OwnerSelectedNoFAP(clientProgrammeId) {
+                $('#FAPLicenseHolderSelect').show();
+                GetFAPLicenseNumOrgsByClientProgrammeId(clientProgrammeId);
+                return;
+            }
+
+            function MultipleisTheFAPOrgsExist(organisations) {
+                PopulateFAPOrgs(organisations);
+                $('#currentFAP').show();
+                $('#SubmitMoveAdvisors').show();
+                return;
+            }
+
+            function GetFAPLicenseNumOrgsByClientProgrammeId(clientProgrammeId) {
+                var postData = {
+                    'clientProgrammeId': clientProgrammeId,
+                };
+                $.ajax({
+                    url: '@Url.Action("GetFAPLicenseNumOrgsByClientProgrammeId", "Organisation")',
+                    type: "Post",
+                    data: postData,
+                })
+                    .done(function (data) {
+                        var numOrgs = 0;
+                        var organisations = JSON.parse(data);
+                        numOrgs = Object.keys(organisations).length;
+
+                        if (numOrgs == 0) {
+                            $('#noFAPLicenseNumberSection').show();
+                        }
+                        else {
+                            $('#noFAPLicenseNumberSection').hide();
+                            PopulateNoFAPOrgs(organisations);
+                        }
+                    })
+                    .fail(function () {
+                        alert("error");
+                    });
+            }
+
+            function PopulateFAPOrgs(organisations) {
+                for (var orgId in organisations) {
+                    $('#selectedFAP').append($('<option value=\"' + organisations[orgId].Id + '">' + organisations[orgId].Name + '</option>'));
+                }
+                $('#SubmitMoveAdvisors').show();
+                return;
+            }
+
+            function PopulateNoFAPOrgs(organisations) {
+                for (var orgId in organisations) {
+                    $('#selectedNoFAP').append($('<option value=\"' + organisations[orgId].Id + '">' + organisations[orgId].Name + '</option>'));
+                }
+                $('#SubmitMoveAdvisors').show();
+                return;
+            }
+        
+            function PopulateExtraFAPOrgs(organisations) {
+                for (var i = 0; i < organisations.length; i++) {
+                    $('#multipleFAPOrgs').append($('<input name="MoveAdvisorsViewModel.ExtraFAP" value="' + organisations[i] + '" form="MoveAdvisorsViewModel">' + organisations[i] + '</input>'));
+                }
+                return;
+            }
         });
     </script>
 }

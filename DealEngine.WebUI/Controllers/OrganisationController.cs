@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DealEngine.Infrastructure.FluentNHibernate;
+using System.Linq.Dynamic;
+using NHibernate.Linq;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -156,6 +159,112 @@ namespace DealEngine.WebUI.Controllers
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetFAPOrgsByClientProgrammeId(Guid clientProgrammeId)
+        {
+            User currentUser = await CurrentUser();
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(clientProgrammeId);           
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
+
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+
+            IList<Organisation> organisations = lastInformationSheet.Organisation;
+
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+
+            try
+            {
+                foreach (Organisation org in organisations)
+                {
+                    var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
+                    if (isTheFAP == null)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        JsonObjects.Add(org.Id.ToString(), org);
+                    }
+                }
+               
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return Json(ex.Message);
+            }
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> GetAllisTheFAPOrgs(Guid clientProgrammeId)
+        //{
+        //    User currentUser = await CurrentUser();
+        //    ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(clientProgrammeId);
+
+            
+        //    Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+
+        //    IList<OrganisationalUnit> allisTheFAPOUs = await _organisationalUnitRepository.FindAll().Where(ou => ou.isTheFAP == true).ToListAsync();
+        //    IList<Guid> allisTheFAPOrgsIds = new List<Guid>();
+
+        //    foreach (var unit in allisTheFAPOUs)
+        //    {
+        //        allisTheFAPOrgsIds.Add(unit.organisation_id);
+        //    }
+        //    foreach (var FAPOrgId in allisTheFAPOrgsIds)
+        //    {
+        //        var org = await _organisationRepository.GetByIdAsync(FAPOrgId);
+        //        JsonObjects.Add(org.Id.ToString(), org);
+        //    }
+
+        //    var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+        //    return Json(jsonObj);
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> GetFAPLicenseNumOrgsByClientProgrammeId(Guid clientProgrammeId)
+        {
+            User currentUser = await CurrentUser();
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(clientProgrammeId);
+            IList<Organisation> organisations = new List<Organisation>();
+            Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
+
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+
+            try
+            {
+                foreach (Organisation org in lastInformationSheet.Organisation)
+                {
+                    var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    if (orgHasFAPLicenseNumber == null)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        JsonObjects.Add(org.Id.ToString(), org);
+                    }
+                }
+
+                var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
+                return Json(jsonObj);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
                 return Json(ex.Message);
             }
         }

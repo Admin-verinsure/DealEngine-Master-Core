@@ -24,7 +24,7 @@ namespace DealEngine.Services.Impl
         ICloneService _cloneService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<Reference> _referenceRepository;
-
+        IMapperSession<ClientInformationSheet> _clientInformationRepository;
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<Programme> programmeRepository,
@@ -32,7 +32,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
             IMapperSession<Reference> referenceRepository,
-            ICloneService cloneService
+            ICloneService cloneService,
+            IMapperSession<ClientInformationSheet> clientInformationRepository
             )
         {
             _organisationRepository = organisationRepository;
@@ -42,7 +43,8 @@ namespace DealEngine.Services.Impl
             _clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
             _referenceRepository = referenceRepository;
-        }
+            _clientInformationRepository = clientInformationRepository;
+    }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
         {
@@ -775,7 +777,7 @@ namespace DealEngine.Services.Impl
         {
             if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
             {
-                if(AttachOrganisationId != Guid.Empty)
+                if (AttachOrganisationId != Guid.Empty)
                 {
                     var Organisation = await _organisationRepository.GetByIdAsync(AttachOrganisationId);
                     Organisation.Removed = false;
@@ -796,10 +798,57 @@ namespace DealEngine.Services.Impl
                                 clientProgramme.InformationSheet.Organisation.Add(Organisation);
                                 await Update(clientProgramme);
                             }
-                        }                        
+                        }
                     }
-                }                
+                }
             }
+        }
+
+        public async Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme)
+        {
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
+            ClientInformationSheet sourceClientProgrammeLastInformationSheet = sourceClientProgramme.InformationSheet;
+
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+            while (sourceClientProgrammeLastInformationSheet.NextInformationSheet != null)
+            {
+                sourceClientProgrammeLastInformationSheet = sourceClientProgrammeLastInformationSheet.NextInformationSheet;
+            }
+
+            if (clientProgramme != null && advisors != null)
+            {
+                foreach (var advisor in advisors)
+                {
+                    Guid.TryParse(advisor, out Guid AdvisorOrganisationId);
+
+                    if (AdvisorOrganisationId != Guid.Empty)
+                    {
+                        var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
+                        if (Organisation != null)
+                        {
+                            {
+                                if (!lastInformationSheet.Organisation.Contains(Organisation))
+                                {
+                                    lastInformationSheet.Organisation.Add(Organisation);
+                                }
+                                if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
+                                {
+                                    sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Ray's Email Stuff, just make sure you don't let the UpdateAsync's run please self. :)
+
+            await _clientInformationRepository.UpdateAsync(lastInformationSheet);
+            await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
+
         }
     }
 }

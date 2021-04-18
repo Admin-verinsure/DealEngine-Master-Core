@@ -33,6 +33,9 @@ namespace DealEngine.Domain.Entities
         public virtual string EserviceProducerCode { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
         public virtual string HPFBranchCode { get; set; }
+        public virtual string FAPLicenseNumber { get; set; }
+        public virtual bool isTheFAP { get; set; }
+        public virtual Guid organisation_id { get; set; }
     }
 
     public class AdvisorUnit : OrganisationalUnit
@@ -70,6 +73,8 @@ namespace DealEngine.Domain.Entities
         public virtual IList<string> Associations { get; set; }
         [Display(Name = "If Other is specified, please describe")]
         public virtual string OtherInformation { get; set; }
+        // Craig asked for this, but we never finished what its to be used for
+        public virtual string FSP { get; set; }
     }
 
     public class PersonnelUnit : OrganisationalUnit
