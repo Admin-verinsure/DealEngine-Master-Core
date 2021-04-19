@@ -1175,7 +1175,7 @@ namespace DealEngine.WebUI.Controllers
                             propertyName[1] == "EndDate" || 
                             propertyName[1] == "CertRequiredBy")
                         {
-                            property.SetValue(job, DateTime.Parse(collection[keyField].ToString()));
+                            property.SetValue(job, DateTime.Parse(collection[keyField].ToString(),System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")));
                         }
                         else
                         {

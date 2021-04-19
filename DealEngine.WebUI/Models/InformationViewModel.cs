@@ -1295,9 +1295,23 @@ namespace DealEngine.WebUI.Models
             {
                 PolicyDate = DateTime.Now;
             }
+            if (PolicyStartDate == DateTime.MinValue)
+            {
+                PolicyStartDate = DateTime.Now;
+            }
+            if (PolicyEndDate == DateTime.MinValue)
+            {
+                PolicyEndDate = DateTime.Now;
+            }
         }
         [Display(Name = "Policy Date")]
         public DateTime PolicyDate { get; set; }
+
+        [Display(Name = "Policy Start Date")]
+        public DateTime PolicyStartDate { get; set; }
+
+        [Display(Name = "Policy End Date")]
+        public DateTime PolicyEndDate { get; set; }
 
     }
 }
