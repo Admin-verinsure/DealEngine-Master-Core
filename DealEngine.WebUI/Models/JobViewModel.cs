@@ -11,6 +11,22 @@ namespace DealEngine.WebUI.Models
         public JobViewModel(ClientInformationSheet ClientInformationSheet)
         {
             Jobs = GetJobs(ClientInformationSheet);
+            if (IssueDate == DateTime.MinValue)
+            {
+                IssueDate = DateTime.Now;
+            }
+            if (StartDate == DateTime.MinValue)
+            {
+                StartDate = DateTime.Now;
+            }
+            if (EndDate == DateTime.MinValue)
+            {
+                EndDate = DateTime.Now;
+            }
+            if (CertRequiredBy == DateTime.MinValue)
+            {
+                CertRequiredBy = DateTime.Now;
+            }
         }
 
         private IList<Job> GetJobs(ClientInformationSheet ClientInformationSheet)

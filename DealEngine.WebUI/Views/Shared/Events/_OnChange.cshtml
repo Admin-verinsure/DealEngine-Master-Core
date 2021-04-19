@@ -292,6 +292,7 @@
                 });
             }
             if (Rule === "DefaultEffectiveDate") {
+                debugger;
                 var datefix = Value.replaceAll('-', '');
                 var year = datefix.substring(0, 4);
                 var month = datefix.substring(4, 6);
@@ -313,10 +314,39 @@
                 document.getElementById("EffectiveDate").value = Value;
                 document.getElementById("MotorEffectiveDate").value = Value;
                 document.getElementById("TrailerEffectiveDateModal").value = Value;
-                //document.getElementById("issuedate").value = Value;
-                //document.getElementById("startdate").value = Value;
-                //document.getElementById("enddate").value = Value;
-                //document.getElementById("certrequiredby").value = Value;
+                document.getElementsByClassName("commonjobdate").value = Value;
+
+                
+               
+            }
+            if (Rule === "PolicyStartDate") {
+                debugger;
+                var datefix = Value.replaceAll('-', '');
+                 var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var selecteddate = new Date(year, month, day);
+                var maxyear = selecteddate.getFullYear() + 1;
+                var maxDate = new Date();
+                  maxDate = maxyear + '-' + month + '-' + day;
+
+              
+                debugger;
+                document.getElementById("i2iPolicyEndDate").value = Value;
+                document.getElementById("i2iPolicyEndDate").setAttribute("max", maxDate);
+                document.getElementById("i2iPolicyEndDate").setAttribute("min", Value);
+
+               
+            } if (Rule === "PolicyEndDate") {
+                debugger;
+                var datefix = Value.replaceAll('-', '');
+                var year = datefix.substring(0, 4);
+                var month = datefix.substring(4, 6);
+                var day = datefix.substring(6, 8);
+                var newYear = new Date(year, month - 1, day).getFullYear() + 3;
+              
+                document.getElementById("PolicyEndDate").value = newYear;
+               
             }
             if (Rule === "OtherOptions") {
                 if (obj.multiple) {
