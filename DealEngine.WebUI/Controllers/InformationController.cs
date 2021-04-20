@@ -61,6 +61,7 @@ namespace DealEngine.WebUI.Controllers
         ISubsystemService _subsystemService;
         IChangeProcessService _changeProcessService;
         IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
+        IMapperSession<Organisation> _organisationRepository;
 
         public InformationController(
             ISubsystemService subsystemService,
@@ -101,6 +102,7 @@ namespace DealEngine.WebUI.Controllers
             IMapperSession<WaterLocation> waterLocation,
             IChangeProcessService changeProcessService,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository,
+            IMapperSession<Organisation> organisationRepository,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
@@ -146,6 +148,7 @@ namespace DealEngine.WebUI.Controllers
             _clientProgrammeRepository = clientProgrammeRepository;
             _changeProcessService = changeProcessService;
             _organisationalUnitRepository = organisationalUnitRepository;
+            _organisationRepository = organisationRepository;
             //_generatePdf = generatePdf;
         }
 
@@ -1249,8 +1252,14 @@ namespace DealEngine.WebUI.Controllers
         {
             ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(id);
             Programme programme = clientProgramme.BaseProgramme;
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
 
-            IList<Organisation> organisations = clientProgramme.InformationSheet.Organisation;
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+
+            IList<Organisation> organisations = lastInformationSheet.Organisation;
             IList<Organisation> advisors = new List<Organisation>();
             IList<ClientProgramme> allClientProgrammes = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programme.Id).ToListAsync();
 
@@ -1277,7 +1286,7 @@ namespace DealEngine.WebUI.Controllers
             Guid.TryParse(newFAPKey, out Guid newIsTheFAPOrganisationId);
             string ownerandCPIds = collection["MoveAdvisorsViewModel.TargetOwner"];
             string[] ownerandCPIdsArray = ownerandCPIds.Split(' ');
-            //Guid.TryParse(ownerandCPIdsArray[0], out Guid targetOwnerId); not used
+            //Guid.TryParse(ownerandCPIdsArray[0], out Guid targetOwnerId); // not used
             Guid.TryParse(ownerandCPIdsArray[1], out Guid targetClientProgrammeId);
             string sourceClientProgrammeStr = collection["MoveAdvisorsViewModel.SourceClientProgrammeId"];
             Guid.TryParse(sourceClientProgrammeStr, out Guid sourceClientProgrammeId);
@@ -1285,33 +1294,119 @@ namespace DealEngine.WebUI.Controllers
             ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(targetClientProgrammeId);
             ClientProgramme sourceClientProgramme = await _clientProgrammeRepository.GetByIdAsync(sourceClientProgrammeId);
 
-            if (collection.ContainsKey("MoveAdvisorsViewModel.ExtraFAP")) { // Won't always hence checking
-                IList<string> extraFAPs = collection["MoveAdvisorsViewModel.ExtraFAP"].ToList<string>();
-                foreach (var extraFAP in extraFAPs)
-                {
-                    Guid.TryParse(extraFAP, out Guid extraFAPOrgId);
-                    if (extraFAPOrgId != newIsTheFAPOrganisationId)
-                    {
-                        Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
-                        OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
-                        extraFAPOU.isTheFAP = false;
-                        await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
-                    }
-                }
-            }
+            //if (collection.ContainsKey("MoveAdvisorsViewModel.ExtraFAP")) {
+            //    IList<string> extraFAPs = collection["MoveAdvisorsViewModel.ExtraFAP"].ToList<string>();
+            //    foreach (var extraFAP in extraFAPs)
+            //    {
+            //        Guid.TryParse(extraFAP, out Guid extraFAPOrgId);
+            //        if (extraFAPOrgId != newIsTheFAPOrganisationId)
+            //        {
+            //            Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
+            //            OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
+            //            extraFAPOU.isTheFAP = false;
+            //            //await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+            //        }
+            //    }
+            //}
            
-            if (newFAPKey != null)
-            {
-                Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
-                OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
-                newIsTheFAPOrganisationUnit.isTheFAP = true;
-                await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
-            }
+            //if (newFAPKey != null)
+            //{
+            //    Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
+            //    OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
+            //    newIsTheFAPOrganisationUnit.isTheFAP = true;
+            //    //await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+            //}
 
             // Attach the Advisors
-            await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+            //await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+            
+            /* Notes
+            Send 3 emails
+            1 To Old Owner       Advice of removal of an advisor from policy 
+            1 To New Owner       Advice of addition of an advisor from policy
+            1 To Advisor         Advice of addition of an advisor from policy
+            
+            Add EmailTemplate MoveAdvisorsPrevOwn to TripleAAA Programme
+            INSERT INTO public."EmailTemplate"(id, name, type, subject, datecreated, lastmodifiedon, programme_id, createdby_id, lastmodifiedby_id, body)
+            VALUES('ac4c6e02-213f-449a-84bf-3e52826651f7', 'Advise Previous Owner', 'MoveAdvisorsPrevOwn', 'Advise Previous Owner', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'bbcd7ef3-64c3-4759-9144-49cac816f425', '0146e6dd-0435-4c2a-aaf4-86e985a8fed1','0146e6dd-0435-4c2a-aaf4-86e985a8fed1','Dear PREVOWNER, The following Advisors have been removed from your Policy ADVISORLIST.');
+            Add EmailTemplate MoveAdvisorsNewOwn to TripleAAA Programme
+            INSERT INTO public."EmailTemplate"(id, name, type, subject, datecreated, lastmodifiedon, programme_id, createdby_id, lastmodifiedby_id, body)
+            VALUES('8a28efa7-52d6-4a77-8c47-4015460b724b', 'Advise New Owner', 'MoveAdvisorsNewOwn', 'Advise New Owner', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'bbcd7ef3-64c3-4759-9144-49cac816f425', '0146e6dd-0435-4c2a-aaf4-86e985a8fed1','0146e6dd-0435-4c2a-aaf4-86e985a8fed1','Dear NEXTOWNER, The following Advisors have been added to your Policy ADVISORLIST.');
+            Add EmailTemplate MoveAdvisorsAdvisor to TripleAAA Programme
+            INSERT INTO public."EmailTemplate"(id, name, type, subject, datecreated, lastmodifiedon, programme_id, createdby_id, lastmodifiedby_id, body)
+            VALUES('91722c3c-2ae3-473f-ac29-1d9354de54b5', 'Advise Advisor', 'MoveAdvisorsAdvisor', 'Advise Advisor', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'bbcd7ef3-64c3-4759-9144-49cac816f425', '0146e6dd-0435-4c2a-aaf4-86e985a8fed1','0146e6dd-0435-4c2a-aaf4-86e985a8fed1','Dear ADVISOR, you have been Added to the following Policy: CLIENTINFORMATIONSHEETREFERENCEID.');
+            */
 
-            // Send the emails after the work is done, but should test above 
+            Programme programme = sourceClientProgramme.BaseProgramme;
+
+            EmailTemplate moveAdvisorsPrevOwner = programme.EmailTemplates.FirstOrDefault(et => et.Type == "MoveAdvisorsPrevOwn");
+            EmailTemplate moveAdvisorsNewOwner = programme.EmailTemplates.FirstOrDefault(et => et.Type == "MoveAdvisorsNewOwn");
+            EmailTemplate moveAdvisorsAdvisor = programme.EmailTemplates.FirstOrDefault(et => et.Type == "MoveAdvisorsAdvisor");
+            IList<string> advisorNames = new List<string>();
+
+            var testrecipient = "nathan@techcertain.com";
+
+            ClientInformationSheet lastSheetTargetProgramme = clientProgramme.InformationSheet;
+
+            while (lastSheetTargetProgramme.NextInformationSheet != null)
+            {
+                lastSheetTargetProgramme = lastSheetTargetProgramme.NextInformationSheet;
+            }
+
+            if (moveAdvisorsPrevOwner != null && moveAdvisorsNewOwner != null && moveAdvisorsAdvisor != null)
+            {
+                foreach (string advisorId in advisors)
+                {
+                    Guid.TryParse(advisorId, out Guid AdvisorOrganisationId);
+
+                    if (AdvisorOrganisationId != Guid.Empty)
+                    {
+                        var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
+                        if (Organisation != null)
+                        {
+                            advisorNames.Add(Organisation.Name);
+                            moveAdvisorsAdvisor.Subject = Organisation.Name + " you have been Added to the following Policy: " + lastSheetTargetProgramme.ReferenceId;
+                            var moveAdvisorsAdvisorBody = moveAdvisorsAdvisor.Body;        // Default Body (providing broker doesn't change template) =  "Dear ADVISOR, You have been added to CLIENTINFORMATIONSHEETREFERENCEID.";
+                            moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("ADVISOR", Organisation.Name);
+                            moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("CLIENTINFORMATIONSHEETREFERENCEID", lastSheetTargetProgramme.ReferenceId);
+                            moveAdvisorsAdvisor.Body = moveAdvisorsAdvisorBody;
+                            var moveAdvisorsAdvisorRecipient = Organisation.Email;
+                            await _emailService.SendEmailViaEmailTemplate(testrecipient, moveAdvisorsAdvisor, null, null, null);
+                        }
+                    }
+                }
+
+                // Prep Advisor List for the emails to owners.
+                string advisorNamesString = "";
+                string last = advisorNames.Last();
+                foreach (string name in advisorNames)
+                {
+                    if (name.Equals(last))
+                    {
+                        advisorNamesString += name;
+                    }
+                    else
+                    {
+                        advisorNamesString = advisorNamesString + name + ", ";
+                    }                   
+                }
+
+                moveAdvisorsPrevOwner.Subject = sourceClientProgramme.Owner.Name + " advisors  have been removed from your Policy";
+                var moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwner.Body;     // Default Body (providing broker doesn't change template) = "Dear PREVOWNER, The following Advisors have been removed from your Policy ADVISORLIST.";
+                moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("PREVOWNER", sourceClientProgramme.Owner.Name);
+                moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("ADVISORLIST", advisorNamesString);
+                moveAdvisorsPrevOwner.Body = moveAdvisorsPrevOwnerBody;
+                var moveAdvisorsPrevOwnerRecipient = sourceClientProgramme.Owner.Email;
+                await _emailService.SendEmailViaEmailTemplate(testrecipient, moveAdvisorsPrevOwner, null, null, null);
+
+                moveAdvisorsNewOwner.Subject = clientProgramme.Owner.Name + " advisors have been added to your Policy";
+                var moveAdvisorsNewOwnerBody = moveAdvisorsNewOwner.Body;       // Default Body (providing broker doesn't change template) = "Dear NEXTOWNER, The following Advisors have been added to your Policy ADVISORLIST.";
+                moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("NEXTOWNER", clientProgramme.Owner.Name);
+                moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("ADVISORLIST", advisorNamesString);
+                moveAdvisorsNewOwner.Body = moveAdvisorsNewOwnerBody;
+                var moveAdvisorsNewOwnerRecipient = clientProgramme.Owner.Email;
+                await _emailService.SendEmailViaEmailTemplate(testrecipient, moveAdvisorsNewOwner, null, null, null);
+            }
 
             return RedirectToAction("Index", "Home");
         }

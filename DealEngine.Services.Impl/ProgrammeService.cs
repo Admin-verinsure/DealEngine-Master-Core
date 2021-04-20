@@ -837,14 +837,31 @@ namespace DealEngine.Services.Impl
                                 if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
                                 {
                                     sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
+
+                                    // Every time we remove/attach we wil create this object
+
+                                    // Organisation.OrganisationEventLog
+
+                                    // OrganisationEventLog.Id
+                                    // OrganisationEventLog.EventName (MoveAdvisor organisation.name from sheet.referenceId to sheet.referenceId??)
+                                    // OrganisationEventLog.OrganisationId
+                                    // OrganisationEventLog.OldClientProgrammeId
+                                    // OrganisationEventLog.NewClientProgrammeId
+                                    // OrganisationEventLog.EventDate (now)
+
+                                    // This "Event" Data will be displayed 
+                                    // Moved 
+                                    // Populate
+                                    // Object will be used for: 
+                                    // Display historic data on NamedParties panel
+                                    // When ClientProgrammeId = OrganisationEventLog.OldClientProgrammeId
+
                                 }
                             }
                         }
                     }
                 }
             }
-
-            // Ray's Email Stuff, just make sure you don't let the UpdateAsync's run please self. :)
 
             await _clientInformationRepository.UpdateAsync(lastInformationSheet);
             await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
