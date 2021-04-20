@@ -146,8 +146,8 @@ namespace DealEngine.WebUI.Controllers
                     {
                         JsonObjects.Add("Organisation", organisation);
                         JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
-                        var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
-                        return Json(jsonObj);
+                       // var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
+                        return Json(JsonObjects);
                     }
                 }
                 return NoContent();
