@@ -25,6 +25,7 @@ namespace DealEngine.Services.Impl
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<Reference> _referenceRepository;
         IMapperSession<ClientInformationSheet> _clientInformationRepository;
+        IMapperSession<OrganisationEvent> _organisationEventRepository;
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<Programme> programmeRepository,
@@ -33,7 +34,8 @@ namespace DealEngine.Services.Impl
             IReferenceService referenceService,
             IMapperSession<Reference> referenceRepository,
             ICloneService cloneService,
-            IMapperSession<ClientInformationSheet> clientInformationRepository
+            IMapperSession<ClientInformationSheet> clientInformationRepository,
+            IMapperSession<OrganisationEvent> organisationEventRepository
             )
         {
             _organisationRepository = organisationRepository;
@@ -44,6 +46,7 @@ namespace DealEngine.Services.Impl
             _referenceService = referenceService;
             _referenceRepository = referenceRepository;
             _clientInformationRepository = clientInformationRepository;
+            _organisationEventRepository = organisationEventRepository;
     }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
@@ -804,7 +807,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme)
+        public async Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme, User user)
         {
             ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
             ClientInformationSheet sourceClientProgrammeLastInformationSheet = sourceClientProgramme.InformationSheet;
@@ -833,29 +836,24 @@ namespace DealEngine.Services.Impl
                                 if (!lastInformationSheet.Organisation.Contains(Organisation))
                                 {
                                     lastInformationSheet.Organisation.Add(Organisation);
+
+                                    OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
+                                    moveAdvisorAddEvent.OrganisationId = Organisation.Id;
+                                    moveAdvisorAddEvent.OldClientProgrammeId = sourceClientProgramme.Id;
+                                    moveAdvisorAddEvent.NewClientProgrammeId = clientProgramme.Id;
+                                    moveAdvisorAddEvent.EventDate = DateTime.Now;
+                                    await _organisationEventRepository.AddAsync(moveAdvisorAddEvent);
                                 }
                                 if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
                                 {
                                     sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
 
-                                    // Every time we remove/attach we wil create this object
-
-                                    // Organisation.OrganisationEventLog
-
-                                    // OrganisationEventLog.Id
-                                    // OrganisationEventLog.EventName (MoveAdvisor organisation.name from sheet.referenceId to sheet.referenceId??)
-                                    // OrganisationEventLog.OrganisationId
-                                    // OrganisationEventLog.OldClientProgrammeId
-                                    // OrganisationEventLog.NewClientProgrammeId
-                                    // OrganisationEventLog.EventDate (now)
-
-                                    // This "Event" Data will be displayed 
-                                    // Moved 
-                                    // Populate
-                                    // Object will be used for: 
-                                    // Display historic data on NamedParties panel
-                                    // When ClientProgrammeId = OrganisationEventLog.OldClientProgrammeId
-
+                                    OrganisationEvent moveAdvisorRemoveEvent = new OrganisationEvent(user, "Removed " + Organisation.Name + " from Reference Id: " + sourceClientProgrammeLastInformationSheet.ReferenceId);
+                                    moveAdvisorRemoveEvent.OrganisationId = Organisation.Id;
+                                    moveAdvisorRemoveEvent.OldClientProgrammeId = sourceClientProgramme.Id;
+                                    moveAdvisorRemoveEvent.NewClientProgrammeId = clientProgramme.Id;
+                                    moveAdvisorRemoveEvent.EventDate = DateTime.Now;
+                                    await _organisationEventRepository.AddAsync(moveAdvisorRemoveEvent);
                                 }
                             }
                         }

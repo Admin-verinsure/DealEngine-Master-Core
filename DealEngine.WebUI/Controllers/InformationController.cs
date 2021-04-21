@@ -1332,7 +1332,7 @@ namespace DealEngine.WebUI.Controllers
                     await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
                 }
                 // Attach the Advisors
-                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user);
             }
             catch (Exception ex)
             {
