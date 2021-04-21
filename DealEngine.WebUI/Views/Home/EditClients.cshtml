@@ -72,13 +72,15 @@
             debugger;
             var organisationId = document.getElementById('OrganisationId');
             var id = organisationId.options[organisationId.selectedIndex].value;
+            var progid = Model.Programme.id;
             $("#loadModal").show();
             $.ajax({
                 type: 'Post',
                 url: '@Url.Action("GetClient", "Services")',
-                data: { Id: id }
+                data: { Id: id ,ProgId: progid}
             })
-            .done(function (data) {
+                .done(function (data) {
+                    debugger;
                 var OutPut = JSON.parse(data);
                 PopulateView(OutPut);
                 $("#loadModal").hide();         
