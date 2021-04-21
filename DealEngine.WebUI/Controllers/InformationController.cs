@@ -1289,6 +1289,7 @@ namespace DealEngine.WebUI.Controllers
             //Guid.TryParse(ownerandCPIdsArray[0], out Guid targetOwnerId); // not used
             Guid.TryParse(ownerandCPIdsArray[1], out Guid targetClientProgrammeId);
             string sourceClientProgrammeStr = collection["MoveAdvisorsViewModel.SourceClientProgrammeId"];
+            string targetOwnerFAP = collection["MoveAdvisorsViewModel.TargetOwnerFAP"];
             Guid.TryParse(sourceClientProgrammeStr, out Guid sourceClientProgrammeId);
             ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(targetClientProgrammeId);
             ClientProgramme sourceClientProgramme = await _clientProgrammeRepository.GetByIdAsync(sourceClientProgrammeId);
@@ -1296,7 +1297,7 @@ namespace DealEngine.WebUI.Controllers
             EmailTemplate moveAdvisorsPrevOwner = programme.EmailTemplates.FirstOrDefault(et => et.Name == "Advice Of Removal Of An Advisor From Policy");
             EmailTemplate moveAdvisorsNewOwner = programme.EmailTemplates.FirstOrDefault(et => et.Name == "Advice Of Addition Of An Advisor From Policy");
 
-            // Fix Extra isTheFAPs and set current isTheFAP
+            // Fix Extra isTheFAPs and set current isTheFAP (Use case 0 & 2)
             try
             {
                 if (collection.ContainsKey("MoveAdvisorsViewModel.ExtraFAP"))
@@ -1320,6 +1321,15 @@ namespace DealEngine.WebUI.Controllers
                     OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
                     newIsTheFAPOrganisationUnit.isTheFAP = true;
                     //await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+                }
+
+                else if (newFAPKey == null && targetOwnerFAP != null)
+                {
+                    Guid.TryParse(targetOwnerFAP, out Guid targetOwnerFAPId);
+                    Organisation targetFAPO = await _organisationService.GetOrganisation(targetOwnerFAPId);
+                    OrganisationalUnit targetFAPOU = targetFAPO.OrganisationalUnits.FirstOrDefault();
+                    targetFAPOU.isTheFAP = true;
+                    //await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
                 }
                 // Attach the Advisors
                 //await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
