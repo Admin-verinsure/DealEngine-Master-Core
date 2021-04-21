@@ -1311,7 +1311,7 @@ namespace DealEngine.WebUI.Controllers
                             Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
                             OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
                             extraFAPOU.isTheFAP = false;
-                            //await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+                            await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
                         }
                     }
                 }
@@ -1320,7 +1320,7 @@ namespace DealEngine.WebUI.Controllers
                     Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
                     OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
                     newIsTheFAPOrganisationUnit.isTheFAP = true;
-                    //await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+                    await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
                 }
 
                 else if (newFAPKey == null && targetOwnerFAP != null)
@@ -1329,10 +1329,10 @@ namespace DealEngine.WebUI.Controllers
                     Organisation targetFAPO = await _organisationService.GetOrganisation(targetOwnerFAPId);
                     OrganisationalUnit targetFAPOU = targetFAPO.OrganisationalUnits.FirstOrDefault();
                     targetFAPOU.isTheFAP = true;
-                    //await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+                    await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
                 }
                 // Attach the Advisors
-                //await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
             }
             catch (Exception ex)
             {
