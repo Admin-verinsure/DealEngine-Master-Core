@@ -10,7 +10,6 @@
                     @*@Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, "{0:yyyy-MM-dd}", new { @class = "dateInput form-control", @id = "formdate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })*@
                     @Html.TextBoxFor(m => m.GeneralViewModel.PolicyStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @id = "i2ipolicystartdate", @type = "date", @data_rule = "PolicyStartDate", onfocus = "(this.type='date')", onblur = "(this.type='text')", onchange = "OnChange(this.id, this.name)", @required = "" })
 
-                    @*@Html.TextBoxFor(m => m.GeneralViewModel.PolicyStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control i2ipolicystartdate", @type = "date", @id = "hasPolicyStartDate", onblur = "(this.type='text')", onchange = "OnChange(this.id, this.name)", @required = "" })*@
 
                 </div>
             </div>
