@@ -327,27 +327,46 @@
                 var day = datefix.substring(6, 8);
                 var selecteddate = new Date(year, month, day);
                 var maxyear = selecteddate.getFullYear() + 1;
+                var minday = new Date();
+                
                 var maxDate = new Date();
-                  maxDate = maxyear + '-' + month + '-' + day;
-
-              
+                maxDate = maxyear + '-' + month + '-' + day;
+                var minmonth = minday.getMonth();
+                   minmonth=  minmonth < 10 ? '0' + minmonth : '' + minmonth;
+                var minyr = minday.getFullYear();
+                var mindate = minday.getDate();
+                var mindate = minyr+'-' + minmonth + '-' + mindate;
+                if (Value == '') {
+                    document.getElementById("i2ipolicystartdate").value = Value;
+                    document.getElementById("i2iPolicyEndDate").value = Value;
+                    
+                } 
+                    document.getElementById("i2ipolicystartdate").setAttribute("min", mindate);
+                    document.getElementById("i2iPolicyEndDate").setAttribute("max", maxDate);
+                    document.getElementById("i2iPolicyEndDate").setAttribute("min", Value);
                 debugger;
-                document.getElementById("i2iPolicyEndDate").value = Value;
-                document.getElementById("i2iPolicyEndDate").setAttribute("max", maxDate);
-                document.getElementById("i2iPolicyEndDate").setAttribute("min", Value);
+                
 
                
-            } if (Rule === "PolicyEndDate") {
-                debugger;
-                var datefix = Value.replaceAll('-', '');
-                var year = datefix.substring(0, 4);
-                var month = datefix.substring(4, 6);
-                var day = datefix.substring(6, 8);
-                var newYear = new Date(year, month - 1, day).getFullYear() + 3;
-              
-                document.getElementById("PolicyEndDate").value = newYear;
+            } 
+            //   if (Rule === "PolicyEndDate") {
+            //    debugger;
+            //    var datefix = Value.replaceAll('-', '');
+            //    var year = datefix.substring(0, 4);
+            //    var month = datefix.substring(4, 6);
+            //    var day = datefix.substring(6, 8);
+            //       var newYear = new Date(year, month - 1, day).getFullYear() + 3;
+            //    if (Value == '') {
+            //        document.getElementById("i2ipolicystartdate").value = Value;
+            //        document.getElementById("i2iPolicyEndDate").value = Value;
+                    
+            //    } 
+            //    if (Value == '') {
+            //        var startdateval = document.getElementById("PolicyEndDate").value(); 
+            //    }
+            //    document.getElementById("PolicyEndDate").value = newYear;
                
-            }
+            //}
             if (Rule === "OtherOptions") {
                 if (obj.multiple) {
                     for (var i = 0; i < obj.selectedOptions.length; i++) {

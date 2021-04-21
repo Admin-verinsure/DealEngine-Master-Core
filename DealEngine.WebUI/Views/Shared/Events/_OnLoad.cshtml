@@ -20,33 +20,13 @@
     if(mm<10){
        mm='0'+mm
       } 
-    debugger;
-    d = currYear + '-' + mm + '-' + currDate; if (document.getElementById("dateselected") != null) {
+    d = currYear + '-' + mm + '-' + currDate;
+    if (document.getElementById("dateselected") != null) {
     document.getElementById("dateselected").setAttribute("min", d);
     }
-   
 
-
-    $('.commonjobdate').datepicker().datepicker('setDate', new Date());
-    $('.i2ipolicystartdate').datepicker({
-        minDate: '-30',
-    }).datepicker('setDate', new Date());
 
     
-    //$('#issuedate').datepicker();
-    //$('#startdate').datepicker();
-    //$('#enddate').datepicker();
-    //$('#certrequiredby').datepicker();
-
-
-
-    //var currentDate = document.getElementsByClassName("dateInput form-control");
-    //console.log(currentDate);
-    //if (document.getElementsByClassName("dateInput form-control") != null) {
-
-    //    document.getElementsByClassName("dateInput form-control")[0].setAttribute("max", d);
-    //}
-
 
     $('#FAPCoverStartDate').datepicker({
         dateFormat: "dd/mm/yy",
@@ -147,6 +127,7 @@
     }
 
     function PopulateView(Output) {        
+        debugger;
         for (obj in Output) {
             var modelObj = Output[obj];
             for (var Field in modelObj) {

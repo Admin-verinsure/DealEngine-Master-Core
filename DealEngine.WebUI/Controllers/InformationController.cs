@@ -1332,7 +1332,7 @@ namespace DealEngine.WebUI.Controllers
                     await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
                 }
                 // Attach the Advisors
-                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme);
+                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user);
             }
             catch (Exception ex)
             {
@@ -1611,6 +1611,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //send out agreement online acceptance instruction email
                     await _emailService.SendEmailViaEmailTemplate(clientAgreement.ClientInformationSheet.Programme.Owner.Email, emailTemplate, null, null, null);
+                    //send out login instruction email
+                    await _emailService.SendSystemEmailLogin(clientAgreement.ClientInformationSheet.Programme.Owner.Email);
                     clientAgreement.SentOnlineAcceptance = true;
                     await _clientAgreementService.UpdateClientAgreement(clientAgreement);
                 }
