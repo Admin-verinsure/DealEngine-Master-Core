@@ -54,7 +54,9 @@ namespace DealEngine.WebUI.Models
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
-                    
+                    HasIsFAPOptions = GetBooleanSelectOptions();
+
+
                 }
                 if (Programme.NamedPartyUnitName == "DANZ Programme" || Programme.NamedPartyUnitName == "PMINZ Programme")
                 {
@@ -685,6 +687,11 @@ namespace DealEngine.WebUI.Models
                     Value = "Nominated Representative"
                 },
                 new SelectListItem
+                    {
+                        Text = "Administration",
+                        Value = "Administration"
+                    },
+                new SelectListItem
                 {
                     Text = "Other Consulting Business",
                     Value = "Other Consulting Business"
@@ -744,6 +751,11 @@ namespace DealEngine.WebUI.Models
                 {
                     Text = "Mentored Advisor",
                     Value = "Mentored Advisor"
+                },
+                new SelectListItem
+                {
+                        Text = "Administration",
+                        Value = "Administration"
                 },
                 new SelectListItem
                 {
@@ -840,6 +852,8 @@ namespace DealEngine.WebUI.Models
         public MarinaUnit MarinaUnit { get; set; }
         public IndividualInsuredUnit IndividualInsuredUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
+        public IList<SelectListItem> HasIsFAPOptions { get; set; }
+
     }
 }
 
