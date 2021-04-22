@@ -35,7 +35,7 @@ namespace DealEngine.Domain.Entities
         public virtual string HPFBranchCode { get; set; }
         public virtual string FAPLicenseNumber { get; set; }
         public virtual bool isTheFAP { get; set; }
-        public virtual Guid organisation_id { get; set; }
+        //public virtual Guid organisation_id { get; set; }
     }
 
     public class AdvisorUnit : OrganisationalUnit
