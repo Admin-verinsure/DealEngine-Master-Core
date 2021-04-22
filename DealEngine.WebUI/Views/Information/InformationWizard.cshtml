@@ -1058,24 +1058,48 @@
     }
 
     /*for active pannel based on update type*/
-     $(window).on("load", function () {
-            debugger;
+    // $(window).on("load", function () {
+    $(document).ready(function () {
+
+         debugger;
+
             var slectedUpdateType ="@Model.selectedUpdateType.First()";
-            if (slectedUpdateType == "TC_amendLocation") {
-                $("#Location").trigger("click");
-
+         if (slectedUpdateType == "TC_add_edit_remove_location") {
+               // $("#Location").trigger("click");
+             //$("[id='Location']").trigger("click");
+             var test1 = document.getElementById("Location");
+             console.log(test1);
+             document.getElementById("Location").click();
          }
-         if (slectedUpdateType == "TC_deleteVessel") {
-             $("#Vessel").trigger("click");
+         if (slectedUpdateType == "TC_add_edit_remove_Vessel") {
+             var test5 = document.getElementById("Vessel");
+             console.log(test5);
+             document.getElementById("Vessel").click();
          }
-         //if (slectedUpdateType == "TC_AddVessel") {
-         //    $("#ui-id-35").trigger("click");
-         //    $("#boatTabs3").removeAttr("style");
-         //}
-         //if (slectedUpdateType == "TC_amendInsuredPerson") {
-         //    $("#AddOrganisation").trigger("click");
-         //}
+      
+         if (slectedUpdateType == "TC_amendInsuredPerson") {
+             var test6 = document.getElementById("Insured Details / Named Parties");
+             console.log(test6);
+             document.getElementById("Insured Details / Named Parties").click();
+         }
 
+         if (slectedUpdateType == "TC_addNotification") {
+             var test2 = document.getElementById("New Notification");
+             console.log(test2);
+             document.getElementById("New Notification").click();
+         }
+        
+         if (slectedUpdateType == "TC_addEditDeleteRegTrailer") {
+             var test3 = document.getElementById("Registered Trailer");
+             console.log(test3);
+             document.getElementById("Registered Trailer").click();
+         }
+ 
+         if (slectedUpdateType == "TC_addEditDeleteNonRegTrailer") {
+             var test4 = document.getElementById("Non Registered Trailer");
+             console.log(test4);
+             document.getElementById("Non Registered Trailer").click();
+         }
         });
 
 </script>
