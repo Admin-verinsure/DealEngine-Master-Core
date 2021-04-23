@@ -1063,42 +1063,40 @@
 
          debugger;
 
-            var slectedUpdateType ="@Model.selectedUpdateType.First()";
+        var slectedUpdateType = "@Model.selectedUpdateType.First()";
+    
          if (slectedUpdateType == "TC_add_edit_remove_location") {
                // $("#Location").trigger("click");
              //$("[id='Location']").trigger("click");
-             var test1 = document.getElementById("Location");
-             console.log(test1);
-             document.getElementById("Location").click();
+            // var test1 = document.getElementById("Location");
+             //document.getElementById("Location").click();
+             var test1 = document.querySelectorAll('[data-newId="CommonLocation"]');
+             test1[0].click();
          }
          if (slectedUpdateType == "TC_add_edit_remove_Vessel") {
-             var test5 = document.getElementById("Vessel");
-             console.log(test5);
-             document.getElementById("Vessel").click();
+             var test1 = document.querySelectorAll('[data-newId="MarshCoastGuardBoat"]');
+             test1[0].click();
          }
       
          if (slectedUpdateType == "TC_amendInsuredPerson") {
-             var test6 = document.getElementById("Insured Details / Named Parties");
-             console.log(test6);
-             document.getElementById("Insured Details / Named Parties").click();
+             var test1 = document.querySelectorAll('[data-newId="AddOrganisation"]');
+             test1[0].click();
+             
          }
 
          if (slectedUpdateType == "TC_addNotification") {
-             var test2 = document.getElementById("New Notification");
-             console.log(test2);
-             document.getElementById("New Notification").click();
+             var test1 = document.querySelectorAll('[data-newId="MarshCoastGuardBoat4"]');
+             test1[0].click();
          }
         
          if (slectedUpdateType == "TC_addEditDeleteRegTrailer") {
-             var test3 = document.getElementById("Registered Trailer");
-             console.log(test3);
-             document.getElementById("Registered Trailer").click();
+             var test1 = document.querySelectorAll('[data-newId="MarshCoastGuardBoat0"]');
+             test1[0].click();
          }
  
          if (slectedUpdateType == "TC_addEditDeleteNonRegTrailer") {
-             var test4 = document.getElementById("Non Registered Trailer");
-             console.log(test4);
-             document.getElementById("Non Registered Trailer").click();
+             var test1 = document.querySelectorAll('[data-newId="MarshCoastGuardBoat1"]');
+             test1[0].click();
          }
         });
 
