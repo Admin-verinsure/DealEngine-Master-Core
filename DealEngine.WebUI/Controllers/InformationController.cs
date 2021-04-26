@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Linq.Dynamic;
 using DocumentFormat.OpenXml.Bibliography;
+using DealEngine.WebUI.Models.Information;
+using NHibernate.Linq;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -57,7 +59,9 @@ namespace DealEngine.WebUI.Controllers
         IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IMapperSession<WaterLocation> _waterLocation;
         ISubsystemService _subsystemService;
-
+        IChangeProcessService _changeProcessService;
+        IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
+        IMapperSession<Organisation> _organisationRepository;
 
         public InformationController(
             ISubsystemService subsystemService,
@@ -96,6 +100,9 @@ namespace DealEngine.WebUI.Controllers
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IMapperSession<WaterLocation> waterLocation,
+            IChangeProcessService changeProcessService,
+            IMapperSession<OrganisationalUnit> organisationalUnitRepository,
+            IMapperSession<Organisation> organisationRepository,
             //IGeneratePdf generatePdf,
 
             IMapper mapper
@@ -139,11 +146,11 @@ namespace DealEngine.WebUI.Controllers
             _mapper = mapper;
             _emailService = emailService;
             _clientProgrammeRepository = clientProgrammeRepository;
+            _changeProcessService = changeProcessService;
+            _organisationalUnitRepository = organisationalUnitRepository;
+            _organisationRepository = organisationRepository;
             //_generatePdf = generatePdf;
-
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetProgrammeSections(Guid informationTemplateID)
@@ -1231,7 +1238,21 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> UpdateInformation(IFormCollection formCollection)
         {
             User createdBy = null;
+            if (formCollection != null)
+            {
+                var changeType = formCollection["ChangeType"];
 
+                if (changeType == "TC_AdminUpdateMoveAdvisor")
+                {
+                    createdBy = await CurrentUser();
+                    ChangeReason changeReason = new ChangeReason(createdBy, formCollection);
+                    // Usually changeReason is saved by linking to the newProgramme and saving, but in this instance we aren't creating a newProgramme...
+                    await _changeProcessService.Add(changeReason);
+
+                    return Redirect("/Information/MoveAdvisors/" + Guid.Parse(formCollection["DealId"]));
+                }            
+            }
+        
             try
             {
                 createdBy = await CurrentUser();
@@ -1249,6 +1270,179 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, createdBy, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<ViewResult> MoveAdvisors(Guid id)
+        {
+            ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(id);
+            Programme programme = clientProgramme.BaseProgramme;
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
+
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+
+            IList<Organisation> organisations = lastInformationSheet.Organisation;
+            IList<Organisation> advisors = new List<Organisation>();
+            IList<ClientProgramme> allClientProgrammes = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programme.Id).ToListAsync();
+
+            foreach (Organisation org in organisations)
+            {
+                var principleAdvisorUnit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && (u.DateDeleted == null));
+                if (principleAdvisorUnit != null)
+                {
+                    advisors.Add(org);
+                }
+            }
+
+            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, advisors, allClientProgrammes);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MoveAdvisors(IFormCollection collection)
+        {
+            User user = await CurrentUser();
+            IList<string> advisors = collection["MoveAdvisorsViewModel.AdvisorToMove"].ToList<string>();
+            string newFAPKey = collection["MoveAdvisorsViewModel.NewFAP"];
+            Guid.TryParse(newFAPKey, out Guid newIsTheFAPOrganisationId);
+            string ownerandCPIds = collection["MoveAdvisorsViewModel.TargetOwner"];
+            string[] ownerandCPIdsArray = ownerandCPIds.Split(' ');
+            //Guid.TryParse(ownerandCPIdsArray[0], out Guid targetOwnerId); // not used
+            Guid.TryParse(ownerandCPIdsArray[1], out Guid targetClientProgrammeId);
+            string sourceClientProgrammeStr = collection["MoveAdvisorsViewModel.SourceClientProgrammeId"];
+            string targetOwnerFAP = collection["MoveAdvisorsViewModel.TargetOwnerFAP"];
+            Guid.TryParse(sourceClientProgrammeStr, out Guid sourceClientProgrammeId);
+            ClientProgramme clientProgramme = await _clientProgrammeRepository.GetByIdAsync(targetClientProgrammeId);
+            ClientProgramme sourceClientProgramme = await _clientProgrammeRepository.GetByIdAsync(sourceClientProgrammeId);
+            Programme programme = sourceClientProgramme.BaseProgramme;
+            EmailTemplate moveAdvisorsPrevOwner = programme.EmailTemplates.FirstOrDefault(et => et.Name == "Advice Of Removal Of An Advisor From Policy");
+            EmailTemplate moveAdvisorsNewOwner = programme.EmailTemplates.FirstOrDefault(et => et.Name == "Advice Of Addition Of An Advisor From Policy");
+
+            // Fix Extra isTheFAPs and set current isTheFAP (Use case 0 & 2)
+            try
+            {
+                if (collection.ContainsKey("MoveAdvisorsViewModel.ExtraFAP"))
+                {
+                    IList<string> extraFAPs = collection["MoveAdvisorsViewModel.ExtraFAP"].ToList<string>();
+                    foreach (var extraFAP in extraFAPs)
+                    {
+                        Guid.TryParse(extraFAP, out Guid extraFAPOrgId);
+                        if (extraFAPOrgId != newIsTheFAPOrganisationId)
+                        {
+                            Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
+                            OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
+                            extraFAPOU.isTheFAP = false;
+                            await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+                        }
+                    }
+                }
+                if (newFAPKey != null)
+                {
+                    Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
+                    OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
+                    newIsTheFAPOrganisationUnit.isTheFAP = true;
+                    await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+                }
+
+                else if (newFAPKey == null && targetOwnerFAP != null)
+                {
+                    Guid.TryParse(targetOwnerFAP, out Guid targetOwnerFAPId);
+                    Organisation targetFAPO = await _organisationService.GetOrganisation(targetOwnerFAPId);
+                    OrganisationalUnit targetFAPOU = targetFAPO.OrganisationalUnits.FirstOrDefault();
+                    targetFAPOU.isTheFAP = true;
+                    await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
+                }
+                // Attach the Advisors
+                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+            #region Old Email Templates code
+            //EmailTemplate moveAdvisorsAdvisor = programme.EmailTemplates.FirstOrDefault(et => et.Type == "MoveAdvisorsAdvisor");
+            //IList<string> advisorNames = new List<string>();
+            //ClientInformationSheet lastSheetTargetProgramme = clientProgramme.InformationSheet;
+            //while (lastSheetTargetProgramme.NextInformationSheet != null)
+            //{
+            //    lastSheetTargetProgramme = lastSheetTargetProgramme.NextInformationSheet;
+            //}
+            #endregion
+            
+            // Send the Emails
+            try
+            {
+                if (moveAdvisorsPrevOwner != null && moveAdvisorsNewOwner != null)
+                {
+                    foreach (string advisorId in advisors)
+                    {
+                        Guid.TryParse(advisorId, out Guid AdvisorOrganisationId);
+
+                        if (AdvisorOrganisationId != Guid.Empty)
+                        {
+                            var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
+                            if (Organisation != null)
+                            {
+                                #region Old Email Templates code
+                                //advisorNames.Add(Organisation.Name);
+                                //moveAdvisorsAdvisor.Subject = Organisation.Name + " you have been Added to the following Policy: " + lastSheetTargetProgramme.ReferenceId;
+                                //var moveAdvisorsAdvisorBody = moveAdvisorsAdvisor.Body;     // Default Body (providing broker doesn't change template) =  "Dear ADVISOR, You have been added to CLIENTINFORMATIONSHEETREFERENCEID.";
+                                //moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("ADVISOR", Organisation.Name);
+                                //moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("CLIENTINFORMATIONSHEETREFERENCEID", lastSheetTargetProgramme.ReferenceId);
+                                //moveAdvisorsAdvisor.Body = moveAdvisorsAdvisorBody;
+                                #endregion
+                                var moveAdvisorsAdvisorRecipient = Organisation.Email;
+                                await _emailService.SendEmailViaEmailTemplate(moveAdvisorsAdvisorRecipient, moveAdvisorsNewOwner, null, null, null);
+                            }
+                        }
+                    }
+
+                    #region Old Email Templates code
+                    //// Prep Advisor List for the emails to owners.
+                    //string advisorNamesString = "";
+                    //string last = advisorNames.Last();
+                    //foreach (string name in advisorNames)
+                    //{
+                    //    if (name.Equals(last))
+                    //    {
+                    //        advisorNamesString += name;
+                    //    }
+                    //    else
+                    //    {
+                    //        advisorNamesString = advisorNamesString + name + ", ";
+                    //    }                   
+                    //}
+                    //moveAdvisorsPrevOwner.Subject = sourceClientProgramme.Owner.Name + " advisors  have been removed from your Policy";
+                    //var moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwner.Body;     // Default Body (providing broker doesn't change template) = "Dear PREVOWNER, The following Advisors have been removed from your Policy ADVISORLIST.";
+                    //moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("PREVOWNER", sourceClientProgramme.Owner.Name);
+                    //moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("ADVISORLIST", advisorNamesString);
+                    //moveAdvisorsPrevOwner.Body = moveAdvisorsPrevOwnerBody;
+                    #endregion
+                    var moveAdvisorsPrevOwnerRecipient = sourceClientProgramme.Owner.Email;
+                    await _emailService.SendEmailViaEmailTemplate(moveAdvisorsPrevOwnerRecipient, moveAdvisorsPrevOwner, null, null, null);
+
+                    #region Old Email Templates code
+                    //moveAdvisorsNewOwner.Subject = clientProgramme.Owner.Name + " advisors have been added to your Policy";
+                    //var moveAdvisorsNewOwnerBody = moveAdvisorsNewOwner.Body;       // Default Body (providing broker doesn't change template) = "Dear NEXTOWNER, The following Advisors have been added to your Policy ADVISORLIST.";
+                    //moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("NEXTOWNER", clientProgramme.Owner.Name);
+                    //moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("ADVISORLIST", advisorNamesString);
+                    //moveAdvisorsNewOwner.Body = moveAdvisorsNewOwnerBody;
+                    #endregion
+                    var moveAdvisorsNewOwnerRecipient = clientProgramme.Owner.Email;
+                    await _emailService.SendEmailViaEmailTemplate(moveAdvisorsNewOwnerRecipient, moveAdvisorsNewOwner, null, null, null);
+                } 
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -1442,6 +1636,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //send out agreement online acceptance instruction email
                     await _emailService.SendEmailViaEmailTemplate(clientAgreement.ClientInformationSheet.Programme.Owner.Email, emailTemplate, null, null, null);
+                    //send out login instruction email
+                    await _emailService.SendSystemEmailLogin(clientAgreement.ClientInformationSheet.Programme.Owner.Email);
                     clientAgreement.SentOnlineAcceptance = true;
                     await _clientAgreementService.UpdateClientAgreement(clientAgreement);
                 }

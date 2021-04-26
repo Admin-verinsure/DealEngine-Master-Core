@@ -24,7 +24,8 @@ namespace DealEngine.Services.Impl
         ICloneService _cloneService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<Reference> _referenceRepository;
-
+        IMapperSession<ClientInformationSheet> _clientInformationRepository;
+        IMapperSession<OrganisationEvent> _organisationEventRepository;
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<Programme> programmeRepository,
@@ -32,7 +33,9 @@ namespace DealEngine.Services.Impl
             IMapperSession<ClientProgramme> clientProgrammeRepository,
             IReferenceService referenceService,
             IMapperSession<Reference> referenceRepository,
-            ICloneService cloneService
+            ICloneService cloneService,
+            IMapperSession<ClientInformationSheet> clientInformationRepository,
+            IMapperSession<OrganisationEvent> organisationEventRepository
             )
         {
             _organisationRepository = organisationRepository;
@@ -42,7 +45,9 @@ namespace DealEngine.Services.Impl
             _clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
             _referenceRepository = referenceRepository;
-        }
+            _clientInformationRepository = clientInformationRepository;
+            _organisationEventRepository = organisationEventRepository;
+    }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
         {
@@ -775,7 +780,7 @@ namespace DealEngine.Services.Impl
         {
             if (Guid.TryParse(collection["RemovedOrganisation.Id"], out Guid AttachOrganisationId))
             {
-                if(AttachOrganisationId != Guid.Empty)
+                if (AttachOrganisationId != Guid.Empty)
                 {
                     var Organisation = await _organisationRepository.GetByIdAsync(AttachOrganisationId);
                     Organisation.Removed = false;
@@ -796,10 +801,69 @@ namespace DealEngine.Services.Impl
                                 clientProgramme.InformationSheet.Organisation.Add(Organisation);
                                 await Update(clientProgramme);
                             }
-                        }                        
+                        }
                     }
-                }                
+                }
             }
+        }
+
+        public async Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme, User user)
+        {
+            ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
+            ClientInformationSheet sourceClientProgrammeLastInformationSheet = sourceClientProgramme.InformationSheet;
+
+            while (lastInformationSheet.NextInformationSheet != null)
+            {
+                lastInformationSheet = lastInformationSheet.NextInformationSheet;
+            }
+            while (sourceClientProgrammeLastInformationSheet.NextInformationSheet != null)
+            {
+                sourceClientProgrammeLastInformationSheet = sourceClientProgrammeLastInformationSheet.NextInformationSheet;
+            }
+
+            if (clientProgramme != null && advisors != null)
+            {
+                foreach (var advisor in advisors)
+                {
+                    Guid.TryParse(advisor, out Guid AdvisorOrganisationId);
+
+                    if (AdvisorOrganisationId != Guid.Empty)
+                    {
+                        var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
+                        if (Organisation != null)
+                        {
+                            {
+                                if (!lastInformationSheet.Organisation.Contains(Organisation))
+                                {
+                                    lastInformationSheet.Organisation.Add(Organisation);
+
+                                    OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
+                                    moveAdvisorAddEvent.OrganisationId = Organisation.Id;
+                                    moveAdvisorAddEvent.OldClientProgrammeId = sourceClientProgramme.Id;
+                                    moveAdvisorAddEvent.NewClientProgrammeId = clientProgramme.Id;
+                                    moveAdvisorAddEvent.EventDate = DateTime.Now;
+                                    await _organisationEventRepository.AddAsync(moveAdvisorAddEvent);
+                                }
+                                if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
+                                {
+                                    sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
+
+                                    OrganisationEvent moveAdvisorRemoveEvent = new OrganisationEvent(user, "Removed " + Organisation.Name + " from Reference Id: " + sourceClientProgrammeLastInformationSheet.ReferenceId);
+                                    moveAdvisorRemoveEvent.OrganisationId = Organisation.Id;
+                                    moveAdvisorRemoveEvent.OldClientProgrammeId = sourceClientProgramme.Id;
+                                    moveAdvisorRemoveEvent.NewClientProgrammeId = clientProgramme.Id;
+                                    moveAdvisorRemoveEvent.EventDate = DateTime.Now;
+                                    await _organisationEventRepository.AddAsync(moveAdvisorRemoveEvent);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            await _clientInformationRepository.UpdateAsync(lastInformationSheet);
+            await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
+
         }
     }
 }

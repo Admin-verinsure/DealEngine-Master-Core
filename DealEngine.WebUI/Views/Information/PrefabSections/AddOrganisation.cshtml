@@ -169,7 +169,7 @@
                     @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName, new { @id = "PersonnelUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/DANZ_AddOrganisation", Model)
                 }
-                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "IT Contractors Programme")
+                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")
                 {
                     @Html.Hidden("Unit", Model.OrganisationViewModel.IndividualInsuredUnit.GetType().AssemblyQualifiedName, new { @id = "IndividualInsuredUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/I2I_AddOrganisation", Model)

@@ -1220,8 +1220,210 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> EditTerms(Guid id)
+        //{
+        //    User user = null;
+        //    ViewAgreementViewModel model = new ViewAgreementViewModel();
+        //    try
+        //    {
+        //        ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+        //        ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
+        //        model.ClientAgreementId = id;
+        //        model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+        //        foreach (var terms in agreement.ClientAgreementTerms)
+        //        {
+        //            if (terms.BoatTerms.Where(bvt => bvt.DateDeleted == null).Count() > 0)
+        //            {
+        //                var boats = new List<EditTermsViewModel>();
+        //                foreach (var boat in terms.BoatTerms)
+        //                {
+        //                    boats.Add(new EditTermsViewModel
+        //                    {
+        //                        VesselId = boat.Id,
+        //                        BoatName = boat.BoatName,
+        //                        BoatMake = boat.BoatMake,
+        //                        BoatModel = boat.BoatModel,
+        //                        TermLimit = boat.TermLimit,
+        //                        Excess = Convert.ToInt32(boat.Excess),
+        //                        Premium = boat.Premium,
+        //                        FSL = boat.FSL
+        //                    });
+        //                }
+        //                model.BVTerms = boats;
+        //            }
+
+        //            if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+        //            {
+        //                var motors = new List<EditTermsViewModel>();
+        //                foreach (var motor in terms.MotorTerms)
+        //                {
+        //                    motors.Add(new EditTermsViewModel
+        //                    {
+        //                        VesselId = motor.Id,
+        //                        Registration = motor.Registration,
+        //                        Make = motor.Make,
+        //                        Model = motor.Model,
+        //                        TermLimit = motor.TermLimit,
+        //                        Excess = Convert.ToInt32(motor.Excess),
+        //                        Premium = motor.Premium,
+        //                        FSL = motor.FSL
+        //                    });
+        //                }
+        //                model.MVTerms = motors;
+        //            }
+
+        //            if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+        //            {
+        //                var motors = new List<EditTermsViewModel>();
+        //                foreach (var motor in terms.MotorTerms)
+        //                {
+        //                    motors.Add(new EditTermsViewModel
+        //                    {
+        //                        VesselId = motor.Id,
+        //                        Registration = motor.Registration,
+        //                        Make = motor.Make,
+        //                        Model = motor.Model,
+        //                        TermLimit = motor.TermLimit,
+        //                        Excess = Convert.ToInt32(motor.Excess),
+        //                        Premium = motor.Premium,
+        //                        FSL = motor.FSL
+        //                    });
+        //                }
+        //                model.MVTerms = motors;
+        //            }
+        //        }
+        //        var plterms = new List<EditTermsViewModel>();
+        //        var edterms = new List<EditTermsViewModel>();
+        //        var piterms = new List<EditTermsViewModel>();
+        //        var elterms = new List<EditTermsViewModel>();
+        //        var clterms = new List<EditTermsViewModel>();
+        //        var slterms = new List<EditTermsViewModel>();
+        //        var doterms = new List<EditTermsViewModel>();
+
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null))
+        //        {
+        //            plterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
+        //        {
+        //            edterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+
+
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PI" && t.DateDeleted == null))
+        //        {
+        //            piterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+
+
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "EL" && t.DateDeleted == null))
+        //        {
+        //            elterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+
+
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "CL" && t.DateDeleted == null))
+        //        {
+        //            clterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+
+
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "SL" && t.DateDeleted == null))
+        //        {
+        //            slterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+
+
+        //        }
+        //        foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "DO" && t.DateDeleted == null))
+        //        {
+        //            doterms.Add(new EditTermsViewModel
+        //            {
+        //                TermId = plterm.Id,
+        //                TermType = plterm.SubTermType,
+        //                TermLimit = plterm.TermLimit,
+        //                Excess = Convert.ToInt32(plterm.Excess),
+        //                Premium = plterm.Premium,
+        //                BasePremium = plterm.BasePremium,
+        //                PremiumDiffer = plterm.PremiumDiffer
+        //            });
+        //        }
+        //        model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.EDTerms = edterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.PITerms = piterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.ELTerms = elterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.CLTerms = clterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.SLTerms = slterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        model.DOTerms = doterms.OrderBy(acat => acat.TermLimit).ToList();
+        //        ViewBag.Title = "Edit Terms ";
+
+        //        return View("EditTerms", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
+
+
+
         [HttpGet]
-        public async Task<IActionResult> EditTerms(Guid id)
+        public async Task<IActionResult> EditTerms(Guid id , String productname = null)
         {
             User user = null;
             ViewAgreementViewModel model = new ViewAgreementViewModel();
@@ -1293,122 +1495,31 @@ namespace DealEngine.WebUI.Controllers
                         model.MVTerms = motors;
                     }
                 }
-                var plterms = new List<EditTermsViewModel>();
-                var edterms = new List<EditTermsViewModel>();
-                var piterms = new List<EditTermsViewModel>();
-                var elterms = new List<EditTermsViewModel>();
-                var clterms = new List<EditTermsViewModel>();
-                var slterms = new List<EditTermsViewModel>();
-                var doterms = new List<EditTermsViewModel>();
+                var subtypeterms = new List<EditTermsViewModel>();
+               
 
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null))
+                foreach (var subtypeterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == productname && t.DateDeleted == null))
                 {
-                    plterms.Add(new EditTermsViewModel
+                    subtypeterms.Add(new EditTermsViewModel
                     {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
+                        TermId = subtypeterm.Id,
+                        TermType = subtypeterm.SubTermType,
+                        TermLimit = subtypeterm.TermLimit,
+                        Excess = Convert.ToInt32(subtypeterm.Excess),
+                        Premium = subtypeterm.Premium,
+                        BasePremium = subtypeterm.BasePremium,
+                        PremiumDiffer = subtypeterm.PremiumDiffer
                     });
                 }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
-                {
-                    edterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-
-
-                }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PI" && t.DateDeleted == null))
-                {
-                    piterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-
-
-                }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "EL" && t.DateDeleted == null))
-                {
-                    elterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-
-
-                }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "CL" && t.DateDeleted == null))
-                {
-                    clterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-
-
-                }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "SL" && t.DateDeleted == null))
-                {
-                    slterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-
-
-                }
-                foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "DO" && t.DateDeleted == null))
-                {
-                    doterms.Add(new EditTermsViewModel
-                    {
-                        TermId = plterm.Id,
-                        TermType = plterm.SubTermType,
-                        TermLimit = plterm.TermLimit,
-                        Excess = Convert.ToInt32(plterm.Excess),
-                        Premium = plterm.Premium,
-                        BasePremium = plterm.BasePremium,
-                        PremiumDiffer = plterm.PremiumDiffer
-                    });
-                }
-                model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.EDTerms = edterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.PITerms = piterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.ELTerms = elterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.CLTerms = clterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.SLTerms = slterms.OrderBy(acat => acat.TermLimit).ToList();
-                model.DOTerms = doterms.OrderBy(acat => acat.TermLimit).ToList();
+               
+                model.SubtypeTerms = subtypeterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.ProductName = productname;
+                //model.EDTerms = edterms.OrderBy(acat => acat.TermLimit).ToList();
+                //model.PITerms = piterms.OrderBy(acat => acat.TermLimit).ToList();
+                //model.ELTerms = elterms.OrderBy(acat => acat.TermLimit).ToList();
+                //model.CLTerms = clterms.OrderBy(acat => acat.TermLimit).ToList();
+                //model.SLTerms = slterms.OrderBy(acat => acat.TermLimit).ToList();
+                //model.DOTerms = doterms.OrderBy(acat => acat.TermLimit).ToList();
                 ViewBag.Title = "Edit Terms ";
 
                 return View("EditTerms", model);
@@ -1629,6 +1740,7 @@ namespace DealEngine.WebUI.Controllers
                     model.ProgrammeId = agreement.ClientInformationSheet.Programme.BaseProgramme.Id;
                     model.InsuranceRoles = insuranceRoles;
                     model.ProductName = agreement.Product.Name;
+                    model.ProductCode = agreement.Product.UnderwritingModuleCode.Substring(agreement.Product.UnderwritingModuleCode.IndexOf("_") + 1);
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
                     model.IsOptionalProduct = agreement.Product.IsOptionalProduct;
                     model.Status = agreement.Status;
@@ -1654,6 +1766,8 @@ namespace DealEngine.WebUI.Controllers
                     model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                     model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                     model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
+                    model.AdditionalCertFee = agreement.AdditionalCertFee.ToString("C", UserCulture);
+                    model.PlacementFee = agreement.PlacementFee.ToString("C", UserCulture);
                     model.CurrencySymbol = "fa fa-dollar";
                     model.ClientInformationSheet = sheet;
                     if (sheet.Programme.BaseProgramme.UsesEGlobal &&

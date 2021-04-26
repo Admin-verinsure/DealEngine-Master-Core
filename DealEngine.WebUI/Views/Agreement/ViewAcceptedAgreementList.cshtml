@@ -89,7 +89,9 @@
 
                                 }
                                 <li class="nav-item">
-                                    <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
+                                    <a href="@Url.Action("EditTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode  })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
+
+                                   @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
                                 </li>
 
                                 @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
@@ -203,7 +205,9 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                     <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Policy Endorsements </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
+                                    <a href="@Url.Action("EditTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
+
+                                    @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
                                 </li>
                                 @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
                                 {

@@ -44,44 +44,30 @@
                 <tbody>
                     @foreach (var job in Model.JobViewModel.Jobs.Where(l => l.Removed == false).ToList())
                     {
-                    <tr id="@job.Id">
-                        <td>
-                            <button class="btn btn-success btn-sm" onclick="EditJob('@job.Id', '@job.JobDescription', '@job.ContractorEmail', '@job.FirstName', '@job.LastName', '@job.JobNumber', '@job.IssueDate', '@job.StartDate', '@job.EndDate', '@job.CertRequiredBy', '@job.RACLientNamedParty')"><i class="fa fa-edit"></i> Edit</button>
-                        </td>
-                        <td>
-                            @job.JobDescription
-                        </td>
-                        <td>
-                            @job.ContractorEmail
-                        </td>
-                        <td>
-                            @job.FirstName
-                        </td>
-                        <td>
-                            @job.LastName
-                        </td>
-                        <td>
-                            @job.JobNumber
-                        </td>
-                        <td>
-                            @job.IssueDate
-                        </td>
-                        <td>
-                            @job.StartDate
-                        </td>
-                        <td>
-                            @job.EndDate
-                        </td>
-                        <td>
-                            @job.CertRequiredBy
-                        </td>
-                        <td>
-                            @job.RACLientNamedParty
-                        </td>
-                        <td>
-                            <button onclick="RemoveJob('@job.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
-                        </td>
-                    </tr>
+                        <tr id="@job.Id">
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="EditJob('@job.Id', '@job.JobDescription', '@job.ContractorEmail', '@job.FirstName', '@job.LastName', '@job.JobNumber', '@job.IssueDate', '@job.StartDate', '@job.EndDate', '@job.CertRequiredBy', '@job.RACLientNamedParty')"><i class="fa fa-edit"></i> Edit</button>
+                            </td>
+                            <td>
+                                @job.JobDescription
+                            </td>
+                            <td>
+                                @job.ContractorEmail
+                            </td>
+                            <td>
+                                @job.FirstName
+                            </td>
+                            <td>
+                                @job.LastName
+                            </td>
+                            <td>
+                                @job.JobNumber
+                            </td>
+                          
+                            <td>
+                                <button onclick="RemoveJob('@job.Id')" type="button" class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -275,7 +261,7 @@
                             </td>
                             <td>
                                 @job.RACLientNamedParty
-                            </td> 
+                            </td>
                         </tr>
                     }
                 </tbody>

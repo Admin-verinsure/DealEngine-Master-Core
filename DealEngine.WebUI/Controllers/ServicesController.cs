@@ -131,24 +131,29 @@ namespace DealEngine.WebUI.Controllers
         #region Vehicle
 
         [HttpPost]
-        public async Task<IActionResult> GetClient(IFormCollection Collection)
+        public async Task<IActionResult> GetClient(IFormCollection Collection , Guid ProgId)
         {
             User user = null;
             try
             {
                 Guid.TryParse(Collection["Id"], out Guid OrganisationId);
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
-                Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
+                //EditClientsViewModel EditClientsViewModel = new EditClientsViewModel();
+                Programme programme = await _programmeService.GetProgrammeById(ProgId);
+                EditClientsViewModel model = new EditClientsViewModel(programme);
+               
+
+                     Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
                 if (organisation != null)
                 {
                     var ClientProgrammes = await _programmeService.GetClientProgrammesByOwner(organisation.Id);
                     if (ClientProgrammes.Any())
                     {
-                        JsonObjects.Add("Organisation", organisation);
-                        JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
-                        var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
-                        return Json(jsonObj);
-                    }
+                        model.ClientProgramme = ClientProgrammes.FirstOrDefault();
+                        model.Organisation = organisation;
+                      
+                        return Json(model);
+                    } 
                 }
                 return NoContent();
             }
@@ -1175,7 +1180,7 @@ namespace DealEngine.WebUI.Controllers
                             propertyName[1] == "EndDate" || 
                             propertyName[1] == "CertRequiredBy")
                         {
-                            property.SetValue(job, DateTime.Parse(collection[keyField].ToString()));
+                            property.SetValue(job, DateTime.Parse(collection[keyField].ToString(),System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")));
                         }
                         else
                         {

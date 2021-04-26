@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class I2IITCPLUWModule : IUnderwritingModule
+    public class I2IITCSLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public I2IITCPLUWModule()
+        public I2IITCSLUWModule()
         {
-            Name = "I2IITC_PL";
+            Name = "I2IITC_SL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -33,15 +33,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm plterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm slterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null))
                 {
-                    plterm.Delete(underwritingUser);
+                    slterm.Delete(underwritingUser);
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "plpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "slpremium250k", "slpremium500k");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -100,7 +100,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         }
 
                     }
-                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PL")
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "SL")
                     {
                         if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
                         {
@@ -117,23 +117,40 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermExcess = 500;
 
-            int TermLimit = 2000000;
-            decimal TermPremium = 0M;
-            decimal TermBrokerage = 0M;
+            int TermLimit250k = 250000;
+            decimal TermPremium250k = rates["slpremium250k"];
+            decimal TermBrokerage250k = 0M;
             //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
-            TermPremium = TermPremium / coverperiodindays * agreementperiodindays;
-            TermBrokerage = TermPremium * agreement.Brokerage / 100;
+            TermPremium250k = TermPremium250k / coverperiodindays * agreementperiodindays;
+            TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
-            ClientAgreementTerm term2millimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit, TermExcess);
-            term2millimitexcesspremiumoption.TermLimit = TermLimit;
-            term2millimitexcesspremiumoption.Premium = TermPremium;
-            term2millimitexcesspremiumoption.BasePremium = TermPremium;
-            term2millimitexcesspremiumoption.Excess = TermExcess;
-            term2millimitexcesspremiumoption.BrokerageRate = agreement.Brokerage;
-            term2millimitexcesspremiumoption.Brokerage = TermBrokerage;
-            term2millimitexcesspremiumoption.DateDeleted = null;
-            term2millimitexcesspremiumoption.DeletedBy = null;
+            ClientAgreementTerm term250klimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit250k, TermExcess);
+            term250klimitexcesspremiumoption.TermLimit = TermLimit250k;
+            term250klimitexcesspremiumoption.Premium = TermPremium250k;
+            term250klimitexcesspremiumoption.BasePremium = TermPremium250k;
+            term250klimitexcesspremiumoption.Excess = TermExcess;
+            term250klimitexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term250klimitexcesspremiumoption.Brokerage = TermBrokerage250k;
+            term250klimitexcesspremiumoption.DateDeleted = null;
+            term250klimitexcesspremiumoption.DeletedBy = null;
 
+
+            int TermLimit500k = 500000;
+            decimal TermPremium500k = rates["slpremium500k"];
+            decimal TermBrokerage500k = 0M;
+            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
+            TermPremium500k = TermPremium500k / coverperiodindays * agreementperiodindays;
+            TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
+
+            ClientAgreementTerm term500klimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit500k, TermExcess);
+            term500klimitexcesspremiumoption.TermLimit = TermLimit500k;
+            term500klimitexcesspremiumoption.Premium = TermPremium500k;
+            term500klimitexcesspremiumoption.BasePremium = TermPremium500k;
+            term500klimitexcesspremiumoption.Excess = TermExcess;
+            term500klimitexcesspremiumoption.BrokerageRate = agreement.Brokerage;
+            term500klimitexcesspremiumoption.Brokerage = TermBrokerage500k;
+            term500klimitexcesspremiumoption.DateDeleted = null;
+            term500klimitexcesspremiumoption.DeletedBy = null;
 
             ////Change policy premium claculation
             //if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
@@ -188,7 +205,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.InsuredName = informationSheet.Owner.Name;
 
-            string auditLogDetail = "I2I ITC PL UW created/modified";
+            string auditLogDetail = "I2I ITC SL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -277,3 +294,4 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
     }
 }
+

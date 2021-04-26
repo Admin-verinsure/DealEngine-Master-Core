@@ -71,7 +71,7 @@ namespace DealEngine.WebUI.Models
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetBooleanSelectOptions();
                 }
-                if (Programme.NamedPartyUnitName == "IT Contractors Programme")
+                if (Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")
                 {
                     InsuranceAttributes = GetIndividualInsured();
                     IndividualInsuredUnit = new IndividualInsuredUnit(null, null, null, null);
