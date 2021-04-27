@@ -120,8 +120,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit250k = 250000;
             decimal TermPremium250k = rates["slpremium250k"];
             decimal TermBrokerage250k = 0M;
-            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
-            TermPremium250k = TermPremium250k / coverperiodindays * agreementperiodindays;
+            
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
 
             ClientAgreementTerm term250klimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit250k, TermExcess);
@@ -138,8 +137,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit500k = 500000;
             decimal TermPremium500k = rates["slpremium500k"];
             decimal TermBrokerage500k = 0M;
-            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
-            TermPremium500k = TermPremium500k / coverperiodindays * agreementperiodindays;
+            
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
 
             ClientAgreementTerm term500klimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit500k, TermExcess);
