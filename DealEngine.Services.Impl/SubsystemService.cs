@@ -146,11 +146,11 @@ namespace DealEngine.Services.Impl
                 }
 
                 //send out sub UIS invitation email
-                if (subClientSheet.Status == "Not Started")
-                {
-                    await _emailService.SendSystemEmailLogin(org.Email);
-                    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
-                }
+                //if (subClientSheet.Status == "Not Started")
+                //{
+                //    await _emailService.SendSystemEmailLogin(org.Email);
+                //    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                //}
 
             }
             catch(Exception ex)

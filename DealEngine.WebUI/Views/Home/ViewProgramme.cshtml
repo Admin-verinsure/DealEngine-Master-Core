@@ -90,8 +90,10 @@
         <div class="modal-body">
             <form id="ProdForm" method="post" action="~/Information/UpdateInformation">
                 <input class="form-control" hidden type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
+
                 <table class="table table-striped">
                     <tr>
+                       
                         <td>
                             <label for="changeType" class="required">Update Type</label>
                         </td>
@@ -167,7 +169,7 @@
                 <div class="modal-footer">
                     @*<button id="next" type="button" class="btn btn-success btn-sm" onclick="validationCheck();" data-dismiss="modal" data-toggle="tab">Submit</button>*@
                     <button class="btn btn-primary btn-xs" id="ReportView"> Update</button>
-                   
+
                     @*<a href="#" class="btn btn-primary btn-xs" type="" id="btnChangeSubmit">Update</a>*@
                 </div>
             </form>
@@ -318,6 +320,7 @@
             $('.modal').css({ "width": "50%", "margin-left": "25%" });
             var dealId = $(e.relatedTarget).data('dealitem-id');
             $(e.currentTarget).find('input[name="DealId"]').val(dealId);
+             $(e.currentTarget).find('input[name="ProgrammeId"]').val("@Model.Programme.Id");
         });
 
           $('#myUnlockModal').on('show.bs.modal', function (e) {

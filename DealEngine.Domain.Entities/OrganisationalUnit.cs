@@ -40,7 +40,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Is FAP?")]
         public virtual bool isTheFAP { get; set; }
 
-        public virtual Guid organisation_id { get; set; }
+        //public virtual Guid organisation_id { get; set; }
     }
 
     public class AdvisorUnit : OrganisationalUnit

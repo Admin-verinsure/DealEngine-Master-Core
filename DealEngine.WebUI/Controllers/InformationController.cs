@@ -1261,7 +1261,7 @@ namespace DealEngine.WebUI.Controllers
 
             IList<Organisation> organisations = lastInformationSheet.Organisation;
             IList<Organisation> advisors = new List<Organisation>();
-            IList<ClientProgramme> allClientProgrammes = await _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programme.Id).ToListAsync();
+            IList<ClientProgramme> allClientProgrammes = programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.Status == "Bound").ToList();
 
             foreach (Organisation org in organisations)
             {
@@ -1611,6 +1611,8 @@ namespace DealEngine.WebUI.Controllers
                 {
                     //send out agreement online acceptance instruction email
                     await _emailService.SendEmailViaEmailTemplate(clientAgreement.ClientInformationSheet.Programme.Owner.Email, emailTemplate, null, null, null);
+                    //send out login instruction email
+                    await _emailService.SendSystemEmailLogin(clientAgreement.ClientInformationSheet.Programme.Owner.Email);
                     clientAgreement.SentOnlineAcceptance = true;
                     await _clientAgreementService.UpdateClientAgreement(clientAgreement);
                 }

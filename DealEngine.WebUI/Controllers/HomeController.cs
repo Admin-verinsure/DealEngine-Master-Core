@@ -1779,6 +1779,8 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
                             }
+                            //send out login instruction email
+                            await _emailService.SendSystemEmailLogin(email);
 
                             //send out uis issue notification email
                             //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);

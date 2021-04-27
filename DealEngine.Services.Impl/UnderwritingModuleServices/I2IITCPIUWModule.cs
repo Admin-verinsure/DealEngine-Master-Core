@@ -55,6 +55,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     clientagreementreferral.Status = "";
             }
 
+            //inception date rule to use policy start and end date from UIS
+            if (!informationSheet.IsChange)
+            {
+                if (informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyStartDate").Any())
+                {
+                    agreement.InceptionDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyStartDate").First().Value);
+                    agreement.ExpiryDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyStartDate").First().Value).AddYears(1);
+                }
+                if (informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyEndDate").Any())
+                {
+                    agreement.ExpiryDate = Convert.ToDateTime(informationSheet.Answers.Where(sa => sa.ItemName == "GeneralViewModel.PolicyEndDate").First().Value);
+                }
+            }
+                        
+
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 

@@ -40,32 +40,43 @@ namespace DealEngine.WebUI.Models.Information
             var owners = new List<KeyValuePair<Guid, List<string>>>();
             UniqueOwners = new List<SelectListItem>();
             SubClientProgramme forTypeComparison = new SubClientProgramme();
-
-            foreach (ClientProgramme clientProgramme in clientProgrammes)
+            var count = 0;
+            try
             {
-                if (Object.ReferenceEquals(clientProgramme.GetType(), forTypeComparison.GetType()))
-                {
-                    continue;
-                }
-                else
-                {
-                    List<string> ownerKeyInfo = new List<string>();
-                    ownerKeyInfo.Add(clientProgramme.Owner.Name);
-                    ownerKeyInfo.Add(clientProgramme.Id.ToString());
 
-                    KeyValuePair<Guid, List<string>> pair = new KeyValuePair<Guid, List<string>>(clientProgramme.Owner.Id, ownerKeyInfo);
+                foreach (ClientProgramme clientProgramme in clientProgrammes)
+                {
 
-                    if (owners.Contains(pair))
+                    count++;
+                    if (Object.ReferenceEquals(clientProgramme.GetType(), forTypeComparison.GetType()))
                     {
-                        break;
+                        continue;
                     }
                     else
                     {
-                        owners.Add(pair);
+                       
+                        List<string> ownerKeyInfo = new List<string>();
+                        ownerKeyInfo.Add(clientProgramme.Owner.Name);
+                        ownerKeyInfo.Add(clientProgramme.Id.ToString());
+
+                        KeyValuePair<Guid, List<string>> pair = new KeyValuePair<Guid, List<string>>(clientProgramme.Owner.Id, ownerKeyInfo);
+
+                        if (owners.Contains(pair))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            owners.Add(pair);
+                        }
                     }
                 }
             }
-            
+            catch (Exception ex)
+            {
+                throw new Exception("num of organisation processed.===="+count);
+
+            }
             foreach (var owner in owners)
             {
                 UniqueOwners.Add(new SelectListItem()

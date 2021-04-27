@@ -26,6 +26,8 @@ namespace DealEngine.Services.Impl
         IMapperSession<Reference> _referenceRepository;
         IMapperSession<ClientInformationSheet> _clientInformationRepository;
         IMapperSession<OrganisationEvent> _organisationEventRepository;
+        IUserService _userService;
+
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<Programme> programmeRepository,
@@ -35,6 +37,7 @@ namespace DealEngine.Services.Impl
             IMapperSession<Reference> referenceRepository,
             ICloneService cloneService,
             IMapperSession<ClientInformationSheet> clientInformationRepository,
+            IUserService userService,
             IMapperSession<OrganisationEvent> organisationEventRepository
             )
         {
@@ -47,7 +50,8 @@ namespace DealEngine.Services.Impl
             _referenceRepository = referenceRepository;
             _clientInformationRepository = clientInformationRepository;
             _organisationEventRepository = organisationEventRepository;
-    }
+            _userService = userService;
+        }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
         {
@@ -811,6 +815,7 @@ namespace DealEngine.Services.Impl
         {
             ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
             ClientInformationSheet sourceClientProgrammeLastInformationSheet = sourceClientProgramme.InformationSheet;
+            int intnumberofadvisors = 0;
 
             while (lastInformationSheet.NextInformationSheet != null)
             {
@@ -835,6 +840,51 @@ namespace DealEngine.Services.Impl
                             {
                                 if (!lastInformationSheet.Organisation.Contains(Organisation))
                                 {
+                                    var principleadvisorunit = (AdvisorUnit)Organisation.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+
+                                    if (principleadvisorunit != null)
+                                    {
+                                        principleadvisorunit.IsPrincipalAdvisor = false;
+                                    }
+                                    //advisor.isprin
+                                    //    //var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
+                                    //    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
+                                    //    if (User != null) //&& User.Email != collection["RemovedOrganisation.Email"]
+                                    //    {
+                                    //        User.ispri
+                                    //        await _userService.Update(User);
+                                    //    }
+                                       
+                                   
+                                    if (lastInformationSheet.Status == "Submitted")
+                                    {
+                                        lastInformationSheet.Status = "Started";
+                                        
+
+                                    }
+                                    else if (clientProgramme.InformationSheet.Status == "Bound")
+                                    {
+                                        Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
+                                        changeDefaults.Add("ChangeType", "Administrative Update Move Advisor");
+                                        changeDefaults.Add("Reason", "Change in cover requirements");
+                                        changeDefaults.Add("ReasonDesc", "Move Advisor");
+                                        changeDefaults.Add("ClientProgrammeID", clientProgramme.Id.ToString());
+                                        clientProgramme = await CloneForUpdate(user, null, changeDefaults);
+                                    }
+
+                                    if (Organisation.Id != Guid.Empty)
+                                    {
+                                        var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
+                                        if (User != null) //&& User.Email != collection["RemovedOrganisation.Email"]
+                                        {
+                                            User.PrimaryOrganisation = Organisation;
+                                            await _userService.Update(User);
+                                           
+                                        }
+                                      
+                                    }
+
+
                                     lastInformationSheet.Organisation.Add(Organisation);
 
                                     OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
@@ -861,6 +911,22 @@ namespace DealEngine.Services.Impl
                 }
             }
 
+            foreach (var uisorg in sourceClientProgrammeLastInformationSheet.Organisation)
+            {
+                var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+
+                if (principleadvisorunit != null)
+                {
+                    if (uisorg.DateDeleted == null && !uisorg.Removed)
+                    {
+                        intnumberofadvisors += 1;
+                    }
+                }
+            }
+            if(intnumberofadvisors == 0)
+            {
+                sourceClientProgrammeLastInformationSheet.Status = "Ceased";
+            }
             await _clientInformationRepository.UpdateAsync(lastInformationSheet);
             await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
 
