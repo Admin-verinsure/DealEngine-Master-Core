@@ -770,7 +770,8 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditInformation(Guid id)
+        // public async Task<IActionResult> EditInformation(Guid id)
+        public async Task<IActionResult> EditInformation(Guid id, string updateType)
         {
             User user = null;
 
@@ -814,8 +815,27 @@ namespace DealEngine.WebUI.Controllers
                     claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
                 }               
 
+
                 model.Claims = claims;
-                
+
+                //if(updateType == "")
+                if(string.IsNullOrWhiteSpace(updateType))
+                {
+                    updateType = "common_you";
+                }
+               
+                model.selectedUpdateType = new List<string>();
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if (model.selectedUpdateType != null)
+                    {
+                        //const string v = "TC_amendLocation";
+                        model.selectedUpdateType.Add(updateType);
+                    }
+                    await uow.Commit();
+                }
+                //model.UpdateTypesViewModel.ValueType = "TC_amendLocation";
 
                 return View("InformationWizard", model);
             }
@@ -1238,7 +1258,12 @@ namespace DealEngine.WebUI.Controllers
                 createdBy = await CurrentUser();
                 ClientProgramme CloneProgramme = await _programmeService.CloneForUpdate(createdBy, formCollection, null);
 
-                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+                var updateType = formCollection["ChangeType"];
+
+                return (RedirectToAction("EditInformation", new { id = CloneProgramme.Id, updateType = updateType }));
+
+
+                //return Redirect("/Information/EditInformation/" + CloneProgramme.Id );
             }
             catch (Exception ex)
             {
