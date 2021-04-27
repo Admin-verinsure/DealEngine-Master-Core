@@ -189,6 +189,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                                 advisorhasnocrmid = true;
                             }
                         }
+                        if (agreement.ClientInformationSheet.IsChange && uisorg.OrgBeenMoved && uisorg.DateDeleted == null)
+                        {
+                            intnumberofadvisors -= 1;
+                        }
                     }
                 }                                    
             }
