@@ -881,7 +881,7 @@ namespace DealEngine.Services.Impl
                                             await _userService.Update(User);
                                            
                                         }
-                                      
+                                        Organisation.OrgBeenMoved = true;
                                     }
 
 
