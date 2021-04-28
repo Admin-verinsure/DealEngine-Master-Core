@@ -23,7 +23,7 @@
                      }
                 </div>
                 <div class="form-group">
-                    <label>Select Target Owner</label>
+                    <label>Select Target Owner (If the client is not in the list below, then they likely have an open change or unbound policy)</label>
                     <select id="ownerSelect" name="MoveAdvisorsViewModel.TargetOwner" form="MoveAdvisorsViewModel" class="form-control">
                         @foreach (var owner in Model.UniqueOwners)
                         {
@@ -46,7 +46,7 @@
                     <select id="selectedNoFAP" name="MoveAdvisorsViewModel.NewFAP" form="MoveAdvisorsViewModel" class="form-control">
                     </select>
                 </div>
-                <div id="noFAPLicenseNumberSection" style="display:none">
+                <div id="noFAPLicenseNumberSection" style="display:none; color:red">
                     <label>There is no Organisation/Advisor on the Target Owner's Policy that currently has a FAP License Number, please go back and update one of the Organisations for the Target Owner's Policy so that it can be selected as the FAP License Holder. Following that you can repeat this process and Select it as the FAP License Holder.</label>
                 </div>
                 <div id="SubmitMoveAdvisors"class="form-group" style="display:none">
@@ -81,6 +81,8 @@
                     data: postData,
                 })
                     .done(function (data) {
+
+                        debugger;
                         var numOrgs = 0;
                         var organisations = JSON.parse(data);
 
@@ -127,6 +129,7 @@
 
             function OwnerSelectedNoFAP(clientProgrammeId) {
                 $('#FAPLicenseHolderSelect').show();
+
                 GetFAPLicenseNumOrgsByClientProgrammeId(clientProgrammeId);
                 return;
             }
@@ -154,6 +157,8 @@
                         numOrgs = Object.keys(organisations).length;
 
                         if (numOrgs == 0) {
+                           $('#FAPLicenseHolderSelect').hide();
+
                             $('#noFAPLicenseNumberSection').show();
                         }
                         else {
