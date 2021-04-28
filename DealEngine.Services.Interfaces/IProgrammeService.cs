@@ -46,7 +46,7 @@ namespace DealEngine.Services.Interfaces
         Task<Programme> PostProgramme(User user, User brokerUser, Programme jsonProgramme, Programme programme);
         Task AttachOrganisationToClientProgramme(IFormCollection collection, ClientProgramme clientProgramme);
         Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme, User user);
-
+        Task<List<ClientAgreement>> CloneAgreementsForUpdate(User createdBy, Guid oldProgrammeId, Guid currentProgrammeId);
         Task<ClientProgramme> CloneForRenew(User createdBy, Guid renewFromProgrammeBaseId, Guid currentProgrammeId);
     }
 }

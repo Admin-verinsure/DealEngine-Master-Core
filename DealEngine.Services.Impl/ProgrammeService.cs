@@ -13,6 +13,7 @@ using NHibernate.Util;
 using FluentNHibernate.Utils;
 using ServiceStack;
 
+
 namespace DealEngine.Services.Impl
 {
     public class ProgrammeService : IProgrammeService
@@ -27,6 +28,7 @@ namespace DealEngine.Services.Impl
         IMapperSession<ClientInformationSheet> _clientInformationRepository;
         IMapperSession<OrganisationEvent> _organisationEventRepository;
         IUserService _userService;
+        IClientAgreementService _clientAgreementService;
 
         public ProgrammeService(
             IMapperSession<Organisation> organisationRepository,
@@ -38,7 +40,8 @@ namespace DealEngine.Services.Impl
             ICloneService cloneService,
             IMapperSession<ClientInformationSheet> clientInformationRepository,
             IUserService userService,
-            IMapperSession<OrganisationEvent> organisationEventRepository
+            IMapperSession<OrganisationEvent> organisationEventRepository,
+            IClientAgreementService clientAgreementService
             )
         {
             _organisationRepository = organisationRepository;
@@ -51,6 +54,7 @@ namespace DealEngine.Services.Impl
             _clientInformationRepository = clientInformationRepository;
             _organisationEventRepository = organisationEventRepository;
             _userService = userService;
+            _clientAgreementService = clientAgreementService;
         }
 
         public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
@@ -760,6 +764,150 @@ namespace DealEngine.Services.Impl
             return newClientProgramme;
         }
 
+        public async Task<List<ClientAgreement>> CloneAgreementsForUpdate(User createdBy, Guid oldProgrammeId, Guid currentProgrammeId)
+        {
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(_cloneService.GetCloneProfile());
+            });
+
+            var cloneMapper = mapperConfiguration.CreateMapper();
+
+            ClientProgramme currentProgramme = await GetClientProgramme(currentProgrammeId);
+
+            ClientProgramme oldClientProgramme = null;
+            oldClientProgramme = await GetClientProgramme(oldProgrammeId);
+
+            //Clone ClientAgreement
+            foreach (var oldclientagreement in oldClientProgramme.Agreements.Where(oldcagreement => oldcagreement.DateDeleted == null))
+            {
+                if (oldclientagreement != null)
+                {
+                    var newreference = await _referenceService.GetLatestReferenceId();
+                    ClientAgreement newclientAgreement = new ClientAgreement(createdBy, oldclientagreement.InsuredName, oldclientagreement.InceptionDate, oldclientagreement.ExpiryDate,
+                        oldclientagreement.Brokerage, oldclientagreement.BrokerFee, currentProgramme.InformationSheet, oldclientagreement.Product, newreference);
+                    newclientAgreement.QuoteDate = DateTime.UtcNow;
+                    newclientAgreement.ProfessionalBusiness = oldclientagreement.ProfessionalBusiness;
+                    newclientAgreement.Jurisdiction = oldclientagreement.Jurisdiction;
+                    newclientAgreement.TerritoryLimit = oldclientagreement.TerritoryLimit;
+                    newclientAgreement.RetroactiveDate = oldclientagreement.RetroactiveDate;
+                    newclientAgreement.MasterAgreement = oldclientagreement.MasterAgreement;
+                    newclientAgreement.PlacementFee = oldclientagreement.PlacementFee;
+                    newclientAgreement.AdditionalCertFee = oldclientagreement.AdditionalCertFee;
+                    newclientAgreement.PolicyNumber = oldclientagreement.PolicyNumber;
+                    newclientAgreement.Status = "Bound";
+                    newclientAgreement.BoundDate = DateTime.UtcNow;
+                    newclientAgreement.BindByUserID = createdBy;
+
+                    currentProgramme.Agreements.Add(newclientAgreement);
+
+                    //Clone ClientAgreementTerm
+                    foreach (var oldclientagreementterm in oldclientagreement.ClientAgreementTerms.Where(oldcagreementterm => oldcagreementterm.DateDeleted == null))
+                    {
+                        if (oldclientagreementterm != null)
+                        {
+                            ClientAgreementTerm newclientAgreementterm = new ClientAgreementTerm(createdBy, oldclientagreementterm.TermLimit, oldclientagreementterm.Excess, oldclientagreementterm.Premium,
+                                oldclientagreementterm.FSL, oldclientagreementterm.BrokerageRate, oldclientagreementterm.Brokerage, newclientAgreement, oldclientagreementterm.SubTermType);
+                            newclientAgreementterm.AggregateLimit = oldclientagreementterm.AggregateLimit;
+                            newclientAgreementterm.HigherExcess = oldclientagreementterm.HigherExcess;
+                            newclientAgreementterm.DefaultTerm = oldclientagreementterm.DefaultTerm;
+                            newclientAgreementterm.Bound = oldclientagreementterm.Bound;
+                            newclientAgreementterm.NDBrokerage = oldclientagreementterm.NDBrokerage;
+                            newclientAgreementterm.NDBrokerageRate = oldclientagreementterm.NDBrokerageRate;
+                            newclientAgreementterm.ReferralLoading = oldclientagreementterm.ReferralLoading;
+                            newclientAgreementterm.ReferralLoadingAmount = oldclientagreementterm.ReferralLoadingAmount;
+                            newclientAgreementterm.ND = oldclientagreementterm.ND;
+                            newclientAgreementterm.EQC = oldclientagreementterm.EQC;
+                            newclientAgreementterm.TermLimitPre = oldclientagreementterm.TermLimitPre;
+                            newclientAgreementterm.TermLimitDiffer = oldclientagreementterm.TermLimitDiffer;
+                            newclientAgreementterm.AggregateLimitDiffer = oldclientagreementterm.AggregateLimitDiffer;
+                            newclientAgreementterm.AggregateLimitPre = oldclientagreementterm.AggregateLimitPre;
+                            newclientAgreementterm.ExcessDiffer = oldclientagreementterm.ExcessDiffer;
+                            newclientAgreementterm.ExcessPre = oldclientagreementterm.ExcessPre;
+                            newclientAgreementterm.HigherExcessDiffer = oldclientagreementterm.HigherExcessDiffer;
+                            newclientAgreementterm.HigherExcessPre = oldclientagreementterm.HigherExcessPre;
+                            newclientAgreementterm.PremiumDiffer = oldclientagreementterm.PremiumDiffer;
+                            newclientAgreementterm.PremiumPre = oldclientagreementterm.PremiumPre;
+                            newclientAgreementterm.BurnerPremium = oldclientagreementterm.BurnerPremium;
+                            newclientAgreementterm.BurnerPremiumDiffer = oldclientagreementterm.BurnerPremiumDiffer;
+                            newclientAgreementterm.BurnerPremiumPre = oldclientagreementterm.BurnerPremiumPre;
+                            newclientAgreementterm.NDBrokerageDiffer = oldclientagreementterm.NDBrokerageDiffer;
+                            newclientAgreementterm.NDDiffer = oldclientagreementterm.NDDiffer;
+                            newclientAgreementterm.NDBrokeragePre = oldclientagreementterm.NDBrokeragePre;
+                            newclientAgreementterm.NDPre = oldclientagreementterm.NDPre;
+                            newclientAgreementterm.FSLDiffer = oldclientagreementterm.FSLDiffer;
+                            newclientAgreementterm.FSLPre = oldclientagreementterm.FSLPre;
+                            newclientAgreementterm.EQCDiffer = oldclientagreementterm.EQCDiffer;
+                            newclientAgreementterm.EQCPre = oldclientagreementterm.EQCPre;
+                            newclientAgreementterm.MergeCode = oldclientagreementterm.MergeCode;
+                            newclientAgreementterm.SubCoverString = oldclientagreementterm.SubCoverString;
+                            newclientAgreementterm.RiskCode = oldclientagreementterm.RiskCode;
+                            newclientAgreementterm.AuthorisationNotes = oldclientagreementterm.AuthorisationNotes;
+                            newclientAgreementterm.BasePremium = oldclientagreementterm.BasePremium;
+                            newclientAgreementterm.FAPPremium = oldclientagreementterm.FAPPremium;
+                            newclientAgreementterm.DateCreated = DateTime.UtcNow;
+
+                            newclientAgreement.ClientAgreementTerms.Add(newclientAgreementterm);
+                        }
+                    }
+
+                    //Clone ClientAgreementRules
+                    foreach (var oldclientagreementrule in oldclientagreement.ClientAgreementRules.Where(oldcagreementrule => oldcagreementrule.DateDeleted == null))
+                    {
+                        if (oldclientagreementrule != null)
+                        {
+                            ClientAgreementRule newclientAgreementrule = new ClientAgreementRule(createdBy, oldclientagreementrule.Rule, oldclientagreementrule.Name, oldclientagreementrule.Description,
+                                oldclientagreementrule.Product, oldclientagreementrule.Value, oldclientagreementrule.OrderNumber, oldclientagreementrule.RuleCategory, oldclientagreementrule.RuleRoleType,
+                                oldclientagreementrule.IsPublic, newclientAgreement, oldclientagreementrule.DoNotCheckForRenew);
+                            newclientAgreementrule.DateCreated = DateTime.UtcNow;
+
+                            newclientAgreement.ClientAgreementRules.Add(newclientAgreementrule);
+                        }
+                    }
+
+                    //Clone ClientAgreementEndorsements
+                    foreach (var oldclientagreementendorsement in oldclientagreement.ClientAgreementEndorsements.Where(oldcagreementendorsement => oldcagreementendorsement.DateDeleted == null))
+                    {
+                        if (oldclientagreementendorsement != null)
+                        {
+                            ClientAgreementEndorsement newclientAgreementendorsement = new ClientAgreementEndorsement(createdBy, oldclientagreementendorsement.Name, oldclientagreementendorsement.Type, 
+                                oldclientagreementendorsement.Product, oldclientagreementendorsement.Value, oldclientagreementendorsement.OrderNumber, newclientAgreement);
+                            newclientAgreementendorsement.DateCreated = DateTime.UtcNow;
+                            newclientAgreementendorsement.Removed = oldclientagreementendorsement.Removed;
+
+                            newclientAgreement.ClientAgreementEndorsements.Add(newclientAgreementendorsement);
+                        }
+                    }
+
+                    //Clone ClientAgreementReferrals
+                    foreach (var oldclientagreementreferral in oldclientagreement.ClientAgreementReferrals.Where(oldcagreementreferral => oldcagreementreferral.DateDeleted == null))
+                    {
+                        if (oldclientagreementreferral != null)
+                        {
+                            ClientAgreementReferral newclientAgreementreferral = new ClientAgreementReferral(createdBy, newclientAgreement, oldclientagreementreferral.Name, oldclientagreementreferral.Description, 
+                                oldclientagreementreferral.Status, oldclientagreementreferral.ActionName, oldclientagreementreferral.OrderNumber, oldclientagreementreferral.DoNotCheckForRenew);
+                            newclientAgreementreferral.DateCreated = DateTime.UtcNow;
+                            newclientAgreementreferral.Authorised = oldclientagreementreferral.Authorised;
+                            newclientAgreementreferral.AuthorisedBy = oldclientagreementreferral.AuthorisedBy;
+                            newclientAgreementreferral.AuthorisedComment = oldclientagreementreferral.AuthorisedComment;
+
+                            newclientAgreement.ClientAgreementReferrals.Add(newclientAgreementreferral);
+                        }
+                    }
+
+                    currentProgramme.InformationSheet.Status = "Bound";
+                    currentProgramme.InformationSheet.SubmittedBy = createdBy;
+                    await _clientAgreementService.UpdateClientAgreement(newclientAgreement);
+
+                    await _referenceService.CreateClientAgreementReference(newreference, newclientAgreement.Id);
+                }
+             
+            }
+
+            await Update(currentProgramme);
+            return null;
+        }
+
         public Task DeveloperTool()
         {
             throw new NotImplementedException();
@@ -815,6 +963,7 @@ namespace DealEngine.Services.Impl
         {
             ClientInformationSheet lastInformationSheet = clientProgramme.InformationSheet;
             ClientInformationSheet sourceClientProgrammeLastInformationSheet = sourceClientProgramme.InformationSheet;
+            ClientProgramme oldtargetclientprogramme = clientProgramme;
             int intnumberofadvisors = 0;
 
             while (lastInformationSheet.NextInformationSheet != null)
@@ -828,6 +977,16 @@ namespace DealEngine.Services.Impl
 
             if (clientProgramme != null && advisors != null)
             {
+                if (clientProgramme.InformationSheet.Status == "Bound")
+                {
+                    Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
+                    changeDefaults.Add("ChangeType", "Administrative Update Move Advisor");
+                    changeDefaults.Add("Reason", "Change in cover requirements");
+                    changeDefaults.Add("ReasonDesc", "Move Advisor");
+                    changeDefaults.Add("ClientProgrammeID", clientProgramme.Id.ToString());
+                    clientProgramme = await CloneForUpdate(user, null, changeDefaults);
+                }
+
                 foreach (var advisor in advisors)
                 {
                     Guid.TryParse(advisor, out Guid AdvisorOrganisationId);
@@ -846,31 +1005,6 @@ namespace DealEngine.Services.Impl
                                     {
                                         principleadvisorunit.IsPrincipalAdvisor = false;
                                     }
-                                    //advisor.isprin
-                                    //    //var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
-                                    //    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
-                                    //    if (User != null) //&& User.Email != collection["RemovedOrganisation.Email"]
-                                    //    {
-                                    //        User.ispri
-                                    //        await _userService.Update(User);
-                                    //    }
-                                       
-                                   
-                                    if (lastInformationSheet.Status == "Submitted")
-                                    {
-                                        lastInformationSheet.Status = "Started";
-                                        
-
-                                    }
-                                    else if (clientProgramme.InformationSheet.Status == "Bound")
-                                    {
-                                        Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
-                                        changeDefaults.Add("ChangeType", "Administrative Update Move Advisor");
-                                        changeDefaults.Add("Reason", "Change in cover requirements");
-                                        changeDefaults.Add("ReasonDesc", "Move Advisor");
-                                        changeDefaults.Add("ClientProgrammeID", clientProgramme.Id.ToString());
-                                        clientProgramme = await CloneForUpdate(user, null, changeDefaults);
-                                    }
 
                                     if (Organisation.Id != Guid.Empty)
                                     {
@@ -884,20 +1018,26 @@ namespace DealEngine.Services.Impl
                                         Organisation.OrgBeenMoved = true;
                                     }
 
-
+                                    //add advisor org
                                     clientProgramme.InformationSheet.Organisation.Add(Organisation);
 
+                                    //Create OrganisationEvent log
                                     OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
                                     moveAdvisorAddEvent.OrganisationId = Organisation.Id;
                                     moveAdvisorAddEvent.OldClientProgrammeId = sourceClientProgramme.Id;
                                     moveAdvisorAddEvent.NewClientProgrammeId = clientProgramme.Id;
                                     moveAdvisorAddEvent.EventDate = DateTime.Now;
                                     await _organisationEventRepository.AddAsync(moveAdvisorAddEvent);
+
+                                    
+
                                 }
                                 if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
                                 {
+                                    //remove advisor org
                                     sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
 
+                                    //Create OrganisationEvent log
                                     OrganisationEvent moveAdvisorRemoveEvent = new OrganisationEvent(user, "Removed " + Organisation.Name + " from Reference Id: " + sourceClientProgrammeLastInformationSheet.ReferenceId);
                                     moveAdvisorRemoveEvent.OrganisationId = Organisation.Id;
                                     moveAdvisorRemoveEvent.OldClientProgrammeId = sourceClientProgramme.Id;
@@ -909,24 +1049,27 @@ namespace DealEngine.Services.Impl
                         }
                     }
                 }
-            }
 
-            foreach (var uisorg in sourceClientProgrammeLastInformationSheet.Organisation)
-            {
-                var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+                await CloneAgreementsForUpdate(user, oldtargetclientprogramme.Id, clientProgramme.Id);
 
-                if (principleadvisorunit != null)
+                foreach (var uisorg in sourceClientProgrammeLastInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed)
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+
+                    if (principleadvisorunit != null)
                     {
-                        intnumberofadvisors += 1;
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
+                        {
+                            intnumberofadvisors += 1;
+                        }
                     }
                 }
+                if (intnumberofadvisors == 0)
+                {
+                    sourceClientProgrammeLastInformationSheet.Status = "Ceased";
+                }
             }
-            if(intnumberofadvisors == 0)
-            {
-                sourceClientProgrammeLastInformationSheet.Status = "Ceased";
-            }
+            
             await _clientInformationRepository.UpdateAsync(lastInformationSheet);
             await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
 
