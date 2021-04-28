@@ -885,7 +885,7 @@ namespace DealEngine.Services.Impl
                                     }
 
 
-                                    lastInformationSheet.Organisation.Add(Organisation);
+                                    clientProgramme.InformationSheet.Organisation.Add(Organisation);
 
                                     OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
                                     moveAdvisorAddEvent.OrganisationId = Organisation.Id;
