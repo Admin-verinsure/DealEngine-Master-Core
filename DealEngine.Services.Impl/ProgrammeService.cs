@@ -13,6 +13,7 @@ using NHibernate.Util;
 using FluentNHibernate.Utils;
 using ServiceStack;
 
+
 namespace DealEngine.Services.Impl
 {
     public class ProgrammeService : IProgrammeService
@@ -793,11 +794,12 @@ namespace DealEngine.Services.Impl
                     newclientAgreement.MasterAgreement = oldclientagreement.MasterAgreement;
                     newclientAgreement.PlacementFee = oldclientagreement.PlacementFee;
                     newclientAgreement.AdditionalCertFee = oldclientagreement.AdditionalCertFee;
-                    newclientAgreement.Status = oldclientagreement.Status;
+                    newclientAgreement.PolicyNumber = oldclientagreement.PolicyNumber;
+                    newclientAgreement.Status = "Bound";
+                    newclientAgreement.BoundDate = DateTime.UtcNow;
+                    newclientAgreement.BindByUserID = createdBy;
 
                     currentProgramme.Agreements.Add(newclientAgreement);
-
-                    await _referenceService.CreateClientAgreementReference(newreference, newclientAgreement.Id);
 
                     //Clone ClientAgreementTerm
                     foreach (var oldclientagreementterm in oldclientagreement.ClientAgreementTerms.Where(oldcagreementterm => oldcagreementterm.DateDeleted == null))
@@ -893,8 +895,11 @@ namespace DealEngine.Services.Impl
                         }
                     }
 
-
+                    currentProgramme.InformationSheet.Status = "Bound";
+                    currentProgramme.InformationSheet.SubmittedBy = createdBy;
                     await _clientAgreementService.UpdateClientAgreement(newclientAgreement);
+
+                    await _referenceService.CreateClientAgreementReference(newreference, newclientAgreement.Id);
                 }
              
             }
@@ -972,6 +977,16 @@ namespace DealEngine.Services.Impl
 
             if (clientProgramme != null && advisors != null)
             {
+                if (clientProgramme.InformationSheet.Status == "Bound")
+                {
+                    Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
+                    changeDefaults.Add("ChangeType", "Administrative Update Move Advisor");
+                    changeDefaults.Add("Reason", "Change in cover requirements");
+                    changeDefaults.Add("ReasonDesc", "Move Advisor");
+                    changeDefaults.Add("ClientProgrammeID", clientProgramme.Id.ToString());
+                    clientProgramme = await CloneForUpdate(user, null, changeDefaults);
+                }
+
                 foreach (var advisor in advisors)
                 {
                     Guid.TryParse(advisor, out Guid AdvisorOrganisationId);
@@ -990,31 +1005,6 @@ namespace DealEngine.Services.Impl
                                     {
                                         principleadvisorunit.IsPrincipalAdvisor = false;
                                     }
-                                    //advisor.isprin
-                                    //    //var Organisation = await _organisationService.GetOrganisation(AttachOrganisationId);
-                                    //    var User = await _userService.GetUserPrimaryOrganisationOrEmail(Organisation);
-                                    //    if (User != null) //&& User.Email != collection["RemovedOrganisation.Email"]
-                                    //    {
-                                    //        User.ispri
-                                    //        await _userService.Update(User);
-                                    //    }
-                                       
-                                   
-                                    if (lastInformationSheet.Status == "Submitted")
-                                    {
-                                        lastInformationSheet.Status = "Started";
-                                        
-
-                                    }
-                                    else if (clientProgramme.InformationSheet.Status == "Bound")
-                                    {
-                                        Dictionary<string, string> changeDefaults = new Dictionary<string, string>();
-                                        changeDefaults.Add("ChangeType", "Administrative Update Move Advisor");
-                                        changeDefaults.Add("Reason", "Change in cover requirements");
-                                        changeDefaults.Add("ReasonDesc", "Move Advisor");
-                                        changeDefaults.Add("ClientProgrammeID", clientProgramme.Id.ToString());
-                                        clientProgramme = await CloneForUpdate(user, null, changeDefaults);
-                                    }
 
                                     if (Organisation.Id != Guid.Empty)
                                     {
@@ -1028,9 +1018,10 @@ namespace DealEngine.Services.Impl
                                         Organisation.OrgBeenMoved = true;
                                     }
 
-
+                                    //add advisor org
                                     clientProgramme.InformationSheet.Organisation.Add(Organisation);
 
+                                    //Create OrganisationEvent log
                                     OrganisationEvent moveAdvisorAddEvent = new OrganisationEvent(user, "Added " + Organisation.Name + " to Reference Id: " + lastInformationSheet.ReferenceId);
                                     moveAdvisorAddEvent.OrganisationId = Organisation.Id;
                                     moveAdvisorAddEvent.OldClientProgrammeId = sourceClientProgramme.Id;
@@ -1038,13 +1029,15 @@ namespace DealEngine.Services.Impl
                                     moveAdvisorAddEvent.EventDate = DateTime.Now;
                                     await _organisationEventRepository.AddAsync(moveAdvisorAddEvent);
 
-                                    await CloneAgreementsForUpdate(user, oldtargetclientprogramme.Id, clientProgramme.Id);
+                                    
 
                                 }
                                 if (sourceClientProgrammeLastInformationSheet.Organisation.Contains(Organisation))
                                 {
+                                    //remove advisor org
                                     sourceClientProgrammeLastInformationSheet.Organisation.Remove(Organisation);
 
+                                    //Create OrganisationEvent log
                                     OrganisationEvent moveAdvisorRemoveEvent = new OrganisationEvent(user, "Removed " + Organisation.Name + " from Reference Id: " + sourceClientProgrammeLastInformationSheet.ReferenceId);
                                     moveAdvisorRemoveEvent.OrganisationId = Organisation.Id;
                                     moveAdvisorRemoveEvent.OldClientProgrammeId = sourceClientProgramme.Id;
@@ -1056,24 +1049,27 @@ namespace DealEngine.Services.Impl
                         }
                     }
                 }
-            }
 
-            foreach (var uisorg in sourceClientProgrammeLastInformationSheet.Organisation)
-            {
-                var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+                await CloneAgreementsForUpdate(user, oldtargetclientprogramme.Id, clientProgramme.Id);
 
-                if (principleadvisorunit != null)
+                foreach (var uisorg in sourceClientProgrammeLastInformationSheet.Organisation)
                 {
-                    if (uisorg.DateDeleted == null && !uisorg.Removed)
+                    var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => (u.Name == "Advisor") && u.DateDeleted == null);
+
+                    if (principleadvisorunit != null)
                     {
-                        intnumberofadvisors += 1;
+                        if (uisorg.DateDeleted == null && !uisorg.Removed)
+                        {
+                            intnumberofadvisors += 1;
+                        }
                     }
                 }
+                if (intnumberofadvisors == 0)
+                {
+                    sourceClientProgrammeLastInformationSheet.Status = "Ceased";
+                }
             }
-            if(intnumberofadvisors == 0)
-            {
-                sourceClientProgrammeLastInformationSheet.Status = "Ceased";
-            }
+            
             await _clientInformationRepository.UpdateAsync(lastInformationSheet);
             await _clientInformationRepository.UpdateAsync(sourceClientProgrammeLastInformationSheet);
 
