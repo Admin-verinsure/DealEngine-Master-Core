@@ -46,13 +46,13 @@
             </li>
         }
          @*for NTU*@
-        @*@if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsTC == "True")
+        @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsTC == "True" || Model.CurrentUserIsInsurer == "True")
         {
 
             <li class="nav-item">
-                <a onclick="location.href='@Url.Action("NTUcreate", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="NTUcreate"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Create NTU </a>
+                <a onclick="location.href='@Url.Action("NTUcreate", "Home",new { ProgrammeId=@Model.Programme.Id ,actionname="NTUcreate"})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> NTU UIS </a>
             </li>
-        }*@
+        }
         else if (Model.CurrentUserIsProgrammeManager == "True")
         {
             <li class="nav-item">
