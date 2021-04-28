@@ -1297,7 +1297,7 @@ namespace DealEngine.WebUI.Controllers
                 }
             }
 
-            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, advisors, allClientProgrammes);
+            MoveAdvisorsViewModel model = new MoveAdvisorsViewModel(id, clientProgramme.Owner.Name, advisors, allClientProgrammes);
 
             return View(model);
         }
