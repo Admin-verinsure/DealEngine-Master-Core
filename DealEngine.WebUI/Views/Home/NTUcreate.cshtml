@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                    This page lists the clients from this programme. Please select the client and update status from start to NTU. 
+                    This page lists the clients from this programme. Please select the client update status with Not Taken Up. 
                 </h5>
             </div>
             <div class="card-body">
@@ -15,7 +15,7 @@
                         <tr>
                             <th>
                                 <input type="checkbox" id="select-all" aria-label="checkbox button for following text input">
-                                Name
+                                Client Name
                             </th>
                            <th>
                                 Status
@@ -35,7 +35,7 @@
                                             </div>
                                         </div>
                      
-                                        <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name" readonly>
+                                        <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name ( Reference: @client.InformationSheet.ReferenceId )" readonly>
                                     </div>
                                 </td>
                               

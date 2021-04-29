@@ -723,7 +723,7 @@ namespace DealEngine.WebUI.Controllers
                 //List<ClientInformationSheet> clientInformationSheets = await _clientInformationService.GetSubInformationSheetFor(programme.Id);
                 foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    if (client.DateDeleted == null && client.InformationSheet.Status == "Started" && client.InformationSheet.Status != "Bound")
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Submitted" || client.InformationSheet.Status == "Not Started" ) && client.InformationSheet.Status != "Bound")
                     {
                         clientProgrammes.Add(client);
                     }
@@ -771,7 +771,7 @@ namespace DealEngine.WebUI.Controllers
                         //await _clientAgreementService.UpdateClientAgreement(Guid.Parse(formCollection["ClientId"]);
                         //var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection["InformationSheetId"]));
                         //informationSheet.Status = formCollection["InformationSheetId"];
-                        informationSheet.Status = "Not Taken Up";
+                        informationSheet.Status = "Not Taken Up By Broker";
 
                         //var keyCheck = key;
                         //if (keyCheck != "__RequestVerificationToken")
