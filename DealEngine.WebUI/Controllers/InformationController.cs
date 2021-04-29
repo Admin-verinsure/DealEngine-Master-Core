@@ -1339,12 +1339,12 @@ namespace DealEngine.WebUI.Controllers
                         {
                             Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
 
-                            List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)extraFAPO.OrganisationalUnits.Where(u => u.Name == "Advisor");
+                            //List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)extraFAPO.OrganisationalUnits.Where(u => u.Name == "Advisor");
 
                             //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                            foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
+                            foreach (AdvisorUnit Advisorunit in extraFAPO.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                             {
-                                if (Advisorunit.isTheFAP)
+                                if (Advisorunit.isTheFAP)  
                                 {
                                     Advisorunit.isTheFAP = false;
                                 }
@@ -1360,11 +1360,11 @@ namespace DealEngine.WebUI.Controllers
                     Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
                     //OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
 
-                    AdvisorUnit FapAdvisorUnit = (AdvisorUnit)newIsTheFAPOrganisation.OrganisationalUnits.Where(u => u.Name == "Advisor").FirstOrDefault();
+                    List<OrganisationalUnit> FapAdvisorUnit = (List<OrganisationalUnit>)newIsTheFAPOrganisation.OrganisationalUnits.Where(u => u.Name == "Advisor");
 
                     //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    
-                        FapAdvisorUnit.isTheFAP = true;
+                    //var fapadvisor = FapAdvisorUnit.fir
+                    //    FapAdvisorUnit.isTheFAP = true;
                       
                     //newIsTheFAPOrganisationUnit.isTheFAP = true;
                     await _organisationRepository.UpdateAsync(newIsTheFAPOrganisation);
