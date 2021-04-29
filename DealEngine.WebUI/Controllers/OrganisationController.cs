@@ -183,19 +183,29 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (Organisation org in organisations)
                 {
-                    List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor" );
+                    //List<OrganisationalUnit> ListAdvisorunit = (List<OrganisationalUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor" );
 
                     //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
+                    foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                     {
-                        if (Advisorunit.isTheFAP)
+                        if (Advisorunit.isTheFAP == true)
                         {
-                            continue;
+                            JsonObjects.Add(org.Id.ToString(), org);
+
                         }
                         else
                         {
-                            JsonObjects.Add(org.Id.ToString(), org);
+                            continue;
                         }
+
+                        //if (isTheFAP == null)
+                        //{
+                        //    continue;
+                        //}
+                        //else
+                        //{
+                        //    JsonObjects.Add(org.Id.ToString(), org);
+                        //}
 
                     }
 
@@ -260,10 +270,9 @@ namespace DealEngine.WebUI.Controllers
                 foreach (Organisation org in lastInformationSheet.Organisation)
                 {
 
-                    List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor");
 
                     //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
+                    foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                     {
                         if (Advisorunit.FAPLicenseNumber == null)
                         {
