@@ -34,12 +34,6 @@ namespace DealEngine.Domain.Entities
         public virtual string EbixDepartmentCode { get; set; }
         public virtual string HPFBranchCode { get; set; }
 
-        [Display(Name = "FAP License number")]
-        public virtual string FAPLicenseNumber { get; set; }
-
-        [Display(Name = "Is FAP?")]
-        public virtual bool isTheFAP { get; set; }
-
         //public virtual Guid organisation_id { get; set; }
     }
 
@@ -80,6 +74,13 @@ namespace DealEngine.Domain.Entities
         public virtual string OtherInformation { get; set; }
         // Craig asked for this, but we never finished what its to be used for
         public virtual string FSP { get; set; }
+
+        [Display(Name = "FAP License number")]
+        public virtual string FAPLicenseNumber { get; set; }
+
+        [Display(Name = "Is FAP?")]
+        public virtual bool isTheFAP { get; set; }
+
     }
 
     public class PersonnelUnit : OrganisationalUnit
