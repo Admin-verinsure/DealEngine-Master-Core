@@ -158,6 +158,8 @@ namespace DealEngine.Services.Impl
             var user = await _userService.GetUserByEmail(recipent);
             List<KeyValuePair<string, string>> mergeFields;
 
+            
+
             if (clientInformationSheet != null)
             {
                 if (clientAgreement != null)
@@ -174,6 +176,14 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
             }
+
+            var insuredUser = _userService.GetApplicationUserByEmail(recipent);
+            if (insuredUser != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[First Name]]", insuredUser.Result.FirstName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[Last Name]]", insuredUser.Result.LastName));
+            }
+
             string systememailsubject = emailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)
@@ -1117,11 +1127,14 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredEmail]]", insuredOrg.Email));
+
             }
             if(uISIssuer != null)
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
+
+
             }
             if(clientInformationSheet != null)
             {

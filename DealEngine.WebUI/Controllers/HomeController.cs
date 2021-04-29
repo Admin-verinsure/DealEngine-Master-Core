@@ -1773,13 +1773,30 @@ namespace DealEngine.WebUI.Controllers
             ClientProgramme renewFromProgrammeBase = await _programmeService.GetClientProgramme(renewFromProgrammeBaseId);
             Organisation renewClientOrg = await _organisationService.GetOrganisation(OrganisationId);
 
-            //Complete the renew notification task
-            await _milestoneService.CreateRenewTask(user, renewFromProgrammeBase, renewClientOrg, currentProgramme);
+            //Check if the old task has been completed
+            string URL = "/Home/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString() +
+                "&ProgrammeId=" + ProgrammeId.ToString();
+            var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
 
-            //Create a renew
-            ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
+            // Remove the old Task
+            UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
 
-            return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+            if (renewOrgContactUserTask != null && !renewOrgContactUserTask.Completed)
+            {
+
+                //Complete the renew notification task
+                await _milestoneService.CreateRenewTask(user, renewFromProgrammeBase, renewClientOrg, currentProgramme);
+
+                //Create a renew
+                ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
+
+                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+            } else
+            {
+
+                return RedirectToAction("Error404", "Error");
+            }
+                      
 
         }
 
