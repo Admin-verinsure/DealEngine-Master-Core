@@ -706,113 +706,80 @@ namespace DealEngine.WebUI.Controllers
         }
 
         /*for NTU*/
-        //[HttpGet]
-        //public async Task<IActionResult> NTUcreate(string ProgrammeId, string actionname)
-        //{
-        //    User user = null;
-        //    try
-        //    {
-        //        user = await CurrentUser();
+        [HttpGet]
+        public async Task<IActionResult> NTUcreate(string ProgrammeId, string actionname)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                NTUcreateViewModel model = new NTUcreateViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Submitted" || client.InformationSheet.Status == "Not Started" ) && client.InformationSheet.Status != "Bound")
+                    {
+                        clientProgrammes.Add(client);
+                    }
+                }
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
+                if (actionname == "NTUcreate")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    return View("EditClient", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
-        //        //IssueUISViewModel model = new IssueUISViewModel();
-        //        NTUcreateViewModel model = new NTUcreateViewModel();
-        //        var clientProgrammes = new List<ClientProgramme>();
-        //        Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-        //        List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
-        //        List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
-        //        //List<ClientInformationSheet> clientInformationSheets = await _clientInformationService.GetSubInformationSheetFor(programme.Id);
-        //        foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
-        //        {
-        //            if (client.DateDeleted == null && client.InformationSheet.Status == "Started" && client.InformationSheet.Status != "Bound")
-        //            {
-        //                clientProgrammes.Add(client);
-        //            }
-        //        }
-        //        model.ClientProgrammes = clientProgrammes;
-        //        model.ProgrammeId = ProgrammeId;
-        //        //model.IsSubUIS = "false";
-        //        if (actionname == "NTUcreate")
-        //        {
-        //            return View(model);
-        //        }
-        //        else
-        //        {
-        //            return View("EditClient", model);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
+        [HttpPost]
+        public async Task<IActionResult> NTUcreate(IFormCollection formCollection)
+        {
+            User user = null;
+            Programme programme = null;
 
-        //[HttpPost]
-        //public async Task<IActionResult> NTUcreate(IFormCollection formCollection)
-        //{
-        //    User user = null;
-        //    Programme programme = null;
-        //    string email = null;
+            try
+            {
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                foreach (var key in formCollection.Keys)
+                {
+                    var keyCheck = key;
+                    if (keyCheck != "__RequestVerificationToken" && keyCheck != "Status")
+                    { 
+                    var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection[key]));
 
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
-        //       // var isSubUis = formCollection["IsSubUIS"];
-        //        foreach (var key in formCollection.Keys)
-        //        {
+                    if (informationSheet != null)
+                    {
+                        informationSheet.Status = "Not Taken Up By Broker";
+                        await _customerInformationService.UpdateInformation(informationSheet);
+                    }
+               
+                    }
 
-        //            //email = key;
-        //            var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection["InformationSheetId"]));
-        //            if(informationSheet != null)
-        //            {
-        //                //await _clientAgreementService.UpdateClientAgreement(Guid.Parse(formCollection["ClientId"]);
-        //                //var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection["InformationSheetId"]));
-        //                //informationSheet.Status = formCollection["InformationSheetId"];
-        //                informationSheet.Status = "Not Taken Up";
-        //                await _customerInformationService.UpdateInformation(informationSheet);
+                }
 
-        //            }
-        //            //if (correctEmail != null)
-        //            //{
-        //            //    if (programme.ProgEnableEmail)
-        //            //    {
-        //            //        var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
+                //return await RedirectToLocal();
+                return Redirect("/Home/ViewProgramme/" + formCollection["ProgrammeId"]);
 
-        //            //        clientProgramme.IssueDate = DateTime.Now;
-        //            //await _programmeService.Update(clientProgramme);
-        //            //        //send out login instruction email
-        //            //        await _emailService.SendSystemEmailLogin(email);
-        //            //        //send out information sheet instruction email
-        //            //        EmailTemplate emailTemplate = null;
-
-        //            //        if (isSubUis.Contains("true"))
-        //            //        {
-        //            //            emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction");
-        //            //        }
-        //            //        else
-        //            //        {
-        //            //            emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-        //            //        }
-        //            //        if (emailTemplate != null)
-        //            //        {
-        //            //            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-        //            //        }
-        //            //        //send out uis issue notification email
-        //            //        //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
-        //            //    }
-        //            //}
-
-        //        }
-
-        //        return await RedirectToLocal();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 
 
@@ -1806,13 +1773,31 @@ namespace DealEngine.WebUI.Controllers
             ClientProgramme renewFromProgrammeBase = await _programmeService.GetClientProgramme(renewFromProgrammeBaseId);
             Organisation renewClientOrg = await _organisationService.GetOrganisation(OrganisationId);
 
-            //Complete the renew notification task
-            await _milestoneService.CreateRenewTask(user, renewFromProgrammeBase, renewClientOrg, currentProgramme);
+            //Check if the old task has been completed
+            string URL = "/Home/RenewNotification/?renewfromprogrammebaseid=" + renewFromProgrammeBase.Id.ToString() + "&OrganisationId=" + renewClientOrg.Id.ToString() +
+                "&ProgrammeId=" + ProgrammeId.ToString();
+            var renewOrgContactUser = await _userService.GetUserPrimaryOrganisationOrEmail(renewClientOrg);
 
-            //Create a renew
-            ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
+            // Remove the old Task
+            UserTask renewOrgContactUserTask = renewOrgContactUser.UserTasks.FirstOrDefault(t => t.URL == URL && t.IsActive == true);
 
-            return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+            if (renewOrgContactUserTask != null && !renewOrgContactUserTask.Completed)
+            {
+
+                //Complete the renew notification task
+                await _milestoneService.CreateRenewTask(user, renewFromProgrammeBase, renewClientOrg, currentProgramme);
+
+                //Create a renew
+                ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
+
+                return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+            } else
+            {
+
+                return RedirectToAction("Error404", "Error");
+            }
+                      
+
         }
 
         [HttpGet]

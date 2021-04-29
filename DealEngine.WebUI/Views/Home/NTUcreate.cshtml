@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                    This page lists the clients from this programme. Please select the client and update status from start to NTU. 
+                    This page lists the clients from this programme. Please select the client update status with Not Taken Up. 
                 </h5>
             </div>
             <div class="card-body">
@@ -15,12 +15,11 @@
                         <tr>
                             <th>
                                 <input type="checkbox" id="select-all" aria-label="checkbox button for following text input">
-
-                                Name
+                                Client Name
                             </th>
-                            @*<th>
-                                Issued Date
-                            </th>*@
+                           <th>
+                                Status
+                            </th>
                         </tr>
                     </thread>
                     <tbody>
@@ -32,17 +31,14 @@
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
-                                                <input type="checkbox" aria-label="checkbox button for following text input" name="InformationSheetId" value="@client.InformationSheet.Id" readonly>
+                                                <input type="checkbox" aria-label="checkbox button for following text input" name="@client.InformationSheet.Id" value="@client.InformationSheet.Id" readonly>
                                             </div>
                                         </div>
                      
-                                        <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name" readonly>
+                                        <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name ( Reference: @client.InformationSheet.ReferenceId )" readonly>
                                     </div>
                                 </td>
                               
-                                @*<td>
-                                    <input type="text" class="dateInput form-control" value="@client.Owner.issue" readonly>
-                                </td>*@
                                 <td>
                                     <input type="text" class="form-control" value="@client.InformationSheet.Status" name="Status" readonly>
                                 </td>
