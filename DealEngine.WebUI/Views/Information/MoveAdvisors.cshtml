@@ -157,8 +157,10 @@
                         numOrgs = Object.keys(organisations).length;
 
                         if (numOrgs == 0) {
-                           $('#FAPLicenseHolderSelect').hide();
-
+                            $('#FAPLicenseHolderSelect').hide();
+                            $('#selectedFAP').val = "";
+                             $('#currentFAP').hide();
+                            
                             $('#noFAPLicenseNumberSection').show();
                         }
                         else {
@@ -193,6 +195,8 @@
                 for (var i = 0; i < organisations.length; i++) {
                     $('#multipleFAPOrgs').append($('<input name="MoveAdvisorsViewModel.ExtraFAP" value="' + organisations[i] + '" form="MoveAdvisorsViewModel">' + organisations[i] + '</input>'));
                 }
+                 $('#noFAPLicenseNumberSection').hide();
+
                 return;
             }
         });
