@@ -54,7 +54,7 @@ namespace DealEngine.WebUI.Models
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
-                    HasIsFAPOptions = GetBooleanSelectOptions();
+                    HasIsFAPOptions = GetStandardSelectOptions();
 
 
                 }
