@@ -1338,27 +1338,52 @@ namespace DealEngine.WebUI.Controllers
                         if (extraFAPOrgId != newIsTheFAPOrganisationId)
                         {
                             Organisation extraFAPO = await _organisationService.GetOrganisation(extraFAPOrgId);
-                            OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
-                            extraFAPOU.isTheFAP = false;
-                            await _organisationalUnitRepository.UpdateAsync(extraFAPOU);
+
+                            List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)extraFAPO.OrganisationalUnits.Where(u => u.Name == "Advisor");
+
+                            //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                            foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
+                            {
+                                if (Advisorunit.isTheFAP)
+                                {
+                                    Advisorunit.isTheFAP = false;
+                                }
+                            }
+                            //    OrganisationalUnit extraFAPOU = extraFAPO.OrganisationalUnits.FirstOrDefault();
+                            //extraFAPOU.isTheFAP = false;
+                            await _organisationRepository.UpdateAsync(extraFAPO);
                         }
                     }
                 }
                 if (newFAPKey != null)
                 {
                     Organisation newIsTheFAPOrganisation = await _organisationService.GetOrganisation(newIsTheFAPOrganisationId);
-                    OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
-                    newIsTheFAPOrganisationUnit.isTheFAP = true;
-                    await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
+                    //OrganisationalUnit newIsTheFAPOrganisationUnit = newIsTheFAPOrganisation.OrganisationalUnits.FirstOrDefault();
+
+                    AdvisorUnit FapAdvisorUnit = (AdvisorUnit)newIsTheFAPOrganisation.OrganisationalUnits.Where(u => u.Name == "Advisor").FirstOrDefault();
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    
+                        FapAdvisorUnit.isTheFAP = true;
+                      
+                    //newIsTheFAPOrganisationUnit.isTheFAP = true;
+                    await _organisationRepository.UpdateAsync(newIsTheFAPOrganisation);
+
+                    //await _organisationalUnitRepository.UpdateAsync(newIsTheFAPOrganisationUnit);
                 }
 
                 else if (newFAPKey == null && targetOwnerFAP != null)
                 {
                     Guid.TryParse(targetOwnerFAP, out Guid targetOwnerFAPId);
                     Organisation targetFAPO = await _organisationService.GetOrganisation(targetOwnerFAPId);
-                    OrganisationalUnit targetFAPOU = targetFAPO.OrganisationalUnits.FirstOrDefault();
-                    targetFAPOU.isTheFAP = true;
-                    await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
+                    AdvisorUnit FapAdvisorUnit = (AdvisorUnit)targetFAPO.OrganisationalUnits.Where(u => u.Name == "Advisor").FirstOrDefault();
+
+                        FapAdvisorUnit.isTheFAP = true;
+                    await _organisationRepository.UpdateAsync(targetFAPO);
+
+                    //OrganisationalUnit targetFAPOU = targetFAPO.OrganisationalUnits.FirstOrDefault();
+                    //targetFAPOU.isTheFAP = true;
+                    //await _organisationalUnitRepository.UpdateAsync(targetFAPOU);
                 }
                 // Attach the Advisors
                 await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user);

@@ -183,15 +183,26 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (Organisation org in organisations)
                 {
-                    var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
-                    if (isTheFAP == null)
+                    List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor" );
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
                     {
-                        continue;
+                        if (Advisorunit.isTheFAP)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            JsonObjects.Add(org.Id.ToString(), org);
+                        }
+
                     }
-                    else
-                    {
-                        JsonObjects.Add(org.Id.ToString(), org);
-                    }
+
+                        //if (Advisorunit.FAPLicenseNumber == null)
+
+                        //var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
+                   
                 }
                
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
@@ -248,15 +259,28 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (Organisation org in lastInformationSheet.Organisation)
                 {
-                    var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    if (orgHasFAPLicenseNumber == null)
+
+                    List<AdvisorUnit> ListAdvisorunit = (List<AdvisorUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor");
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    foreach (AdvisorUnit Advisorunit in ListAdvisorunit)
                     {
-                        continue;
+                        if (Advisorunit.FAPLicenseNumber == null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            JsonObjects.Add(org.Id.ToString(), org);
+                        }
+
                     }
-                    else
-                    {
-                        JsonObjects.Add(org.Id.ToString(), org);
-                    }
+
+
+                    //var Advisorunit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                   
                 }
 
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
