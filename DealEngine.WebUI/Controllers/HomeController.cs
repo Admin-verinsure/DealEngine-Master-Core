@@ -713,14 +713,11 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-
-                //IssueUISViewModel model = new IssueUISViewModel();
                 NTUcreateViewModel model = new NTUcreateViewModel();
                 var clientProgrammes = new List<ClientProgramme>();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
                 List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
                 List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
-                //List<ClientInformationSheet> clientInformationSheets = await _clientInformationService.GetSubInformationSheetFor(programme.Id);
                 foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Submitted" || client.InformationSheet.Status == "Not Started" ) && client.InformationSheet.Status != "Bound")
@@ -730,7 +727,6 @@ namespace DealEngine.WebUI.Controllers
                 }
                 model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
-                //model.IsSubUIS = "false";
                 if (actionname == "NTUcreate")
                 {
                     return View(model);
@@ -752,7 +748,6 @@ namespace DealEngine.WebUI.Controllers
         {
             User user = null;
             Programme programme = null;
-            //string email = null;
 
             try
             {
@@ -763,58 +758,21 @@ namespace DealEngine.WebUI.Controllers
                     var keyCheck = key;
                     if (keyCheck != "__RequestVerificationToken" && keyCheck != "Status")
                     { 
-                        //var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection["InformationSheetId"]));
                     var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection[key]));
 
                     if (informationSheet != null)
                     {
-                        //await _clientAgreementService.UpdateClientAgreement(Guid.Parse(formCollection["ClientId"]);
-                        //var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection["InformationSheetId"]));
-                        //informationSheet.Status = formCollection["InformationSheetId"];
                         informationSheet.Status = "Not Taken Up By Broker";
-
-                        //var keyCheck = key;
-                        //if (keyCheck != "__RequestVerificationToken")
-                        //{
                         await _customerInformationService.UpdateInformation(informationSheet);
-
-                        //}
-
                     }
-                    //if (correctEmail != null)
-                    //{
-                    //    if (programme.ProgEnableEmail)
-                    //    {
-                    //        var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(formCollection[key]));
-
-                    //        clientProgramme.IssueDate = DateTime.Now;
-                    //await _programmeService.Update(clientProgramme);
-                    //        //send out login instruction email
-                    //        await _emailService.SendSystemEmailLogin(email);
-                    //        //send out information sheet instruction email
-                    //        EmailTemplate emailTemplate = null;
-
-                    //        if (isSubUis.Contains("true"))
-                    //        {
-                    //            emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendSubInformationSheetInstruction");
-                    //        }
-                    //        else
-                    //        {
-                    //            emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                    //        }
-                    //        if (emailTemplate != null)
-                    //        {
-                    //            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-                    //        }
-                    //        //send out uis issue notification email
-                    //        //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
-                    //    }
-                    //}
+               
                     }
 
                 }
 
-                return await RedirectToLocal();
+                //return await RedirectToLocal();
+                return Redirect("/Home/ViewProgramme/" + formCollection["ProgrammeId"]);
+
             }
             catch (Exception ex)
             {
@@ -1822,6 +1780,7 @@ namespace DealEngine.WebUI.Controllers
             ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromProgrammeBase.Id, currentProgramme.Id);
 
             return Redirect("/Information/EditInformation/" + CloneProgramme.Id);
+
         }
 
         [HttpGet]
