@@ -271,10 +271,13 @@ namespace DealEngine.WebUI.Controllers
                 {
 
 
-                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
+                    var ListAdvisorunit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+
+                    //foreach (var Advisorunit in ListAdvisorunit)
+                    //{
+                    if (ListAdvisorunit!= null && ListAdvisorunit.isTheFAP == true)
                     {
-                        if (Advisorunit.FAPLicenseNumber == null)
+                        if (ListAdvisorunit.FAPLicenseNumber == null)
                         {
                             continue;
                         }
@@ -282,8 +285,13 @@ namespace DealEngine.WebUI.Controllers
                         {
                             JsonObjects.Add(org.Id.ToString(), org);
                         }
-
                     }
+                    else
+                    {
+                        continue;
+                    }
+
+                   // }
 
 
                     //var Advisorunit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
