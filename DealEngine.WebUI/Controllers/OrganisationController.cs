@@ -183,15 +183,36 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (Organisation org in organisations)
                 {
-                    var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
-                    if (isTheFAP == null)
+                    //List<OrganisationalUnit> ListAdvisorunit = (List<OrganisationalUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor" );
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                     {
-                        continue;
+                        if (Advisorunit.isTheFAP == true)
+                        {
+                            JsonObjects.Add(org.Id.ToString(), org);
+
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        //if (isTheFAP == null)
+                        //{
+                        //    continue;
+                        //}
+                        //else
+                        //{
+                        //    JsonObjects.Add(org.Id.ToString(), org);
+                        //}
+
                     }
-                    else
-                    {
-                        JsonObjects.Add(org.Id.ToString(), org);
-                    }
+
+                        //if (Advisorunit.FAPLicenseNumber == null)
+
+                        //var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
+                   
                 }
                
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
@@ -248,15 +269,27 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (Organisation org in lastInformationSheet.Organisation)
                 {
-                    var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
-                    if (orgHasFAPLicenseNumber == null)
+
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                    foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                     {
-                        continue;
+                        if (Advisorunit.FAPLicenseNumber == null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            JsonObjects.Add(org.Id.ToString(), org);
+                        }
+
                     }
-                    else
-                    {
-                        JsonObjects.Add(org.Id.ToString(), org);
-                    }
+
+
+                    //var Advisorunit = (AdvisorUnit)org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+
+                    //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+                   
                 }
 
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);

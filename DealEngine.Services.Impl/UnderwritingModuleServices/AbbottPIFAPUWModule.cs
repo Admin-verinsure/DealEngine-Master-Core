@@ -108,6 +108,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             intnumberofadvisors += 1;
                         }
+                        if (agreement.ClientInformationSheet.IsChange && uisorg.OrgBeenMoved && uisorg.DateDeleted == null)
+                        {
+                            intnumberofadvisors -= 1;
+                        }
                     }
                 }
             }

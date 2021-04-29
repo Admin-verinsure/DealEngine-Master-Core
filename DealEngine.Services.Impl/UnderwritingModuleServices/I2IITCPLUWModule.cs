@@ -120,8 +120,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit = 2000000;
             decimal TermPremium = 0M;
             decimal TermBrokerage = 0M;
-            //Enable pre-rate premium (turned on after implementing change, any remaining policy and new policy will use be pre-rated)
-            TermPremium = TermPremium / coverperiodindays * agreementperiodindays;
+            
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimitexcesspremiumoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit, TermExcess);

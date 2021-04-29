@@ -15,9 +15,10 @@ namespace DealEngine.WebUI.Models.Information
         public IList<SelectListItem> Advisors { get; set; }
         public IList<SelectListItem> UniqueOwners { get; set; }
 
-        public MoveAdvisorsViewModel(Guid clientProgrammeId, IList<Domain.Entities.Organisation> advisors, IList<ClientProgramme> clientProgrammes) 
+        public MoveAdvisorsViewModel(Guid clientProgrammeId,String clientProgrammename, IList<Domain.Entities.Organisation> advisors, IList<ClientProgramme> clientProgrammes) 
         {
             id = clientProgrammeId;
+            SourceClientProgrammeName = clientProgrammename;
             PopulateAdvisorList(advisors);
             PopulateUniqueOwnersList(clientProgrammes);
         }
@@ -40,37 +41,49 @@ namespace DealEngine.WebUI.Models.Information
             var owners = new List<KeyValuePair<Guid, List<string>>>();
             UniqueOwners = new List<SelectListItem>();
             SubClientProgramme forTypeComparison = new SubClientProgramme();
-
-            foreach (ClientProgramme clientProgramme in clientProgrammes)
+            var count = 0;
+            try
             {
-                if (Object.ReferenceEquals(clientProgramme.GetType(), forTypeComparison.GetType()))
+                foreach (ClientProgramme clientProgramme in clientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null && o.InformationSheet.Status == "Bound"))
                 {
-                    continue;
-                }
-                else
-                {
-                    List<string> ownerKeyInfo = new List<string>();
-                    ownerKeyInfo.Add(clientProgramme.Owner.Name);
-                    ownerKeyInfo.Add(clientProgramme.Id.ToString());
 
-                    KeyValuePair<Guid, List<string>> pair = new KeyValuePair<Guid, List<string>>(clientProgramme.Owner.Id, ownerKeyInfo);
-
-                    if (owners.Contains(pair))
+                    count++;
+                    if (Object.ReferenceEquals(clientProgramme.GetType(), forTypeComparison.GetType()))
                     {
-                        break;
+                        continue;
                     }
                     else
                     {
-                        owners.Add(pair);
+                       
+                        List<string> ownerKeyInfo = new List<string>();
+                        ownerKeyInfo.Add(clientProgramme.Owner.Name);
+                        ownerKeyInfo.Add(clientProgramme.Id.ToString());
+                        ownerKeyInfo.Add(clientProgramme.InformationSheet.ReferenceId.ToString());
+
+
+                        KeyValuePair<Guid, List<string>> pair = new KeyValuePair<Guid, List<string>>(clientProgramme.Owner.Id, ownerKeyInfo);
+
+                        if (owners.Contains(pair))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            owners.Add(pair);
+                        }
                     }
                 }
             }
-            
+            catch (Exception ex)
+            {
+                throw new Exception("num of organisation processed.===="+count);
+
+            }
             foreach (var owner in owners)
             {
                 UniqueOwners.Add(new SelectListItem()
                 {
-                    Text = owner.Value.ElementAt(0),
+                    Text = owner.Value.ElementAt(0) + " Reference: "+owner.Value.ElementAt(2),
                     Value = owner.Key.ToString() + " " + owner.Value.ElementAt(1)
                 });
             }
@@ -83,5 +96,6 @@ namespace DealEngine.WebUI.Models.Information
         public string AdvisorToMove { get; set; }
         public string ExtraFAP { get; set; }
         public string SourceClientProgrammeId { get; set; }
+        public string SourceClientProgrammeName{ get; set; }
     }
 }
