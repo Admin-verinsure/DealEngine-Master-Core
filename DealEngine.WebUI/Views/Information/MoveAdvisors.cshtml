@@ -23,7 +23,7 @@
                      }
                 </div>
                 <div class="form-group">
-                    <label>Select Target Owner ("Move Advisor" only works with BOUND policies. The Target POLICY owner will not appear in the list if there is an open update in progress. To get the target policy to appear please complete the update and BIND the un-completed update.)</label>
+                    <label>Select Target Owner (If the client is not in the list below, then they likely have an open change or unbound policy)</label>
                     <select id="ownerSelect" name="MoveAdvisorsViewModel.TargetOwner" form="MoveAdvisorsViewModel" class="form-control">
                         @foreach (var owner in Model.UniqueOwners)
                         {
@@ -108,6 +108,7 @@
                 debugger;
                 var selectedFAP = $('#selectedFAP');
                 if (selectedFAP.is(':disabled')) {
+                   $('#noFAPLicenseNumberSection').hide();
                     return;
                 }
                 else {
