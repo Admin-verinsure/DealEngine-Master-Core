@@ -1360,6 +1360,7 @@ namespace DealEngine.WebUI.Controllers
                 if (clientProgramme.InformationSheet.NextInformationSheet != null)
                 {
                     clientProgramme.InformationSheet.NextInformationSheet.Status = "Bound";
+                    await _clientInformationService.UpdateInformation(clientProgramme.InformationSheet.NextInformationSheet);
 
                     foreach (ClientAgreement newclientAgreement in clientProgramme.InformationSheet.NextInformationSheet.Programme.Agreements.Where(nca => nca.DateDeleted == null))
                     {
