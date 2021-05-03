@@ -91,7 +91,7 @@
     }
 
     function SelectValidation(obj, value) {
-
+        debugger;
         if (!obj.multiple) {
             if (value != "0") {
                 obj.classList.add("is-valid");
@@ -759,6 +759,7 @@
     }
 
     function OptionOnChange(Element) {
+        debugger;
         for (var i = 0; i < Element.options.length; i++) {
             DefaultRule("2", Element.options[i].value);
         }

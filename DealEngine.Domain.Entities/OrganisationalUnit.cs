@@ -32,6 +32,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Name { get; set; }
         public virtual string EserviceProducerCode { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
+
         public virtual string HPFBranchCode { get; set; }
 
         //public virtual Guid organisation_id { get; set; }
@@ -240,6 +241,34 @@ namespace DealEngine.Domain.Entities
 
     }
 
+
+    public class AdministratorUnit : OrganisationalUnit
+    {
+        public AdministratorUnit() { }
+        public AdministratorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+
+        }
+
+        [Display(Name = "Are you a member of NZPI")]
+        public virtual bool IsNZPIAMember { get; set; }
+
+        [Display(Name = "Street")]
+        public virtual string Street { get; set; }
+
+        [Display(Name = "Suburb")]
+        public virtual string Suburb { get; set; }
+
+        [Display(Name = "PostCode")]
+        public virtual string PostCode { get; set; }
+
+        [Display(Name = "Country")]
+        public virtual string Country { get; set; }
+       
+
+
+    }
 }
 
 

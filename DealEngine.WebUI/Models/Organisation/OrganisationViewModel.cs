@@ -686,11 +686,11 @@ namespace DealEngine.WebUI.Models
                     Text = "Nominated Representative",
                     Value = "Nominated Representative"
                 },
-                new SelectListItem
-                    {
-                        Text = "Administration",
-                        Value = "Administration"
-                    },
+                //new SelectListItem
+                //    {
+                //        Text = "Administration",
+                //        Value = "Administration"
+                //    },
                 new SelectListItem
                 {
                     Text = "Other Consulting Business",
@@ -713,12 +713,12 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Advisor",
                         Value = "Advisor"
-                    },
-                new SelectListItem
-                    {
-                        Text = "Administration",
-                        Value = "Administration"
-                    },
+                  },
+                //new SelectListItem
+                //    {
+                //        Text = "Administration",
+                //        Value = "Administration"
+                //    },
                 new SelectListItem
                 {
                     Text = "Nominated Representative",
@@ -752,11 +752,11 @@ namespace DealEngine.WebUI.Models
                     Text = "Mentored Advisor",
                     Value = "Mentored Advisor"
                 },
-                new SelectListItem
-                {
-                        Text = "Administration",
-                        Value = "Administration"
-                },
+                //new SelectListItem
+                //{
+                //        Text = "Administration",
+                //        Value = "Administration"
+                //},
                 new SelectListItem
                 {
                     Text = "Other Consulting Business",
