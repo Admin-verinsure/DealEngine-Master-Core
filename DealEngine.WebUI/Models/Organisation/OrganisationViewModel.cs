@@ -55,6 +55,7 @@ namespace DealEngine.WebUI.Models
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
                     HasIsFAPOptions = GetStandardSelectOptions();
+                    AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
 
 
                 }
@@ -686,11 +687,11 @@ namespace DealEngine.WebUI.Models
                     Text = "Nominated Representative",
                     Value = "Nominated Representative"
                 },
-                //new SelectListItem
-                //    {
-                //        Text = "Administration",
-                //        Value = "Administration"
-                //    },
+                new SelectListItem
+                    {
+                        Text = "Administrator",
+                        Value = "Administrator"
+                    },
                 new SelectListItem
                 {
                     Text = "Other Consulting Business",
@@ -714,11 +715,11 @@ namespace DealEngine.WebUI.Models
                         Text = "Advisor",
                         Value = "Advisor"
                   },
-                //new SelectListItem
-                //    {
-                //        Text = "Administration",
-                //        Value = "Administration"
-                //    },
+                new SelectListItem
+                    {
+                        Text = "Administrator",
+                        Value = "Administrator"
+                    },
                 new SelectListItem
                 {
                     Text = "Nominated Representative",
@@ -735,6 +736,7 @@ namespace DealEngine.WebUI.Models
         }
         private IList<SelectListItem> GetAdvisorTypes3()
         {
+            
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
                 new SelectListItem
@@ -752,11 +754,11 @@ namespace DealEngine.WebUI.Models
                     Text = "Mentored Advisor",
                     Value = "Mentored Advisor"
                 },
-                //new SelectListItem
-                //{
-                //        Text = "Administration",
-                //        Value = "Administration"
-                //},
+                new SelectListItem
+                {
+                        Text = "Administrator",
+                        Value = "Administrator"
+                },
                 new SelectListItem
                 {
                     Text = "Other Consulting Business",
@@ -853,6 +855,9 @@ namespace DealEngine.WebUI.Models
         public IndividualInsuredUnit IndividualInsuredUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
         public IList<SelectListItem> HasIsFAPOptions { get; set; }
+
+        public AdministratorUnit AdministratorUnit { get; set; }
+
 
     }
 }

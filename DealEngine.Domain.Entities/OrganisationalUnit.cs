@@ -251,8 +251,6 @@ namespace DealEngine.Domain.Entities
 
         }
 
-        [Display(Name = "Are you a member of NZPI")]
-        public virtual bool IsNZPIAMember { get; set; }
 
         [Display(Name = "Street")]
         public virtual string Street { get; set; }
@@ -265,7 +263,9 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Country")]
         public virtual string Country { get; set; }
-       
+
+        [Display(Name = "Phone Number")]
+        public virtual string PhoneNumber { get; set; }
 
 
     }

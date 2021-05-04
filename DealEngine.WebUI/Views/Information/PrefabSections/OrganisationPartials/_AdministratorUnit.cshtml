@@ -1,0 +1,29 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+
+    <div class="form-group col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "form-control", @id = "AdministratorUnit.Street", @required = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "form-control", @id = "AdministratorUnit.Suburb", @required = "", @onchange = "OnChange(this.id, this.name)" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "form-control", @id = "AdministratorUnit.PostCode", @required = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "form-control", @id = "AdministratorUnit.Country", @required = "", @onchange = "OnChange(this.id, this.name)" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "label required" })
+            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "form-control", @id = "AdministratorUnit.PhoneNumber", @type = "number", @required = "", @onchange = "OnChange(this.id, this.name)" })
+        </div>
+
+    </div>
+   

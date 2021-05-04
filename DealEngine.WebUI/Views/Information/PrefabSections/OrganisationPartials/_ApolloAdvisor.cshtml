@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<div class="form-group col-md-6">
+<div class="form-group col-md-6 AdvisorUnit">
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.Qualifications, new { @class = "label required" })
         @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Qualifications, new { @class = "form-control", @id = "AdvisorUnit.Qualifications", @required = "", @onchange = "OnChange(this.id, this.name)" })
@@ -29,7 +29,7 @@
         @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.Experience, new { @class = "form-control", @id = "AdvisorUnit.Experience", @required = "", @onchange = "OnChange(this.id, this.name)" })
     </div>
 </div>
-<div class="form-group col-md-6">
+<div class="form-group col-md-6 AdvisorUnit">
     <div class="form-group">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.RegisteredStatus, new { @class = "label required" })
         <select id="AdvisorUnit.RegisteredStatus" name="OrganisationViewModel.AdvisorUnit.RegisteredStatus" class="custom-select" onchange="OnChange(this.id, this.name)" required>
@@ -47,7 +47,7 @@
     </div>
     <div class="form-group" id="HideCommencement">
         @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "form-control", @id = "AdvisorUnit.DateofCommencement", @type = "date", @onchange = "OnChange(this.id, this.name)", @data_rule = "ValidateDateOfCommencement", @placeholder = "Date of Commencement", @required="" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.DateofCommencement, new { @class = "form-control", @id = "AdvisorUnit.DateofCommencement", @type = "date", @onchange = "OnChange(this.id, this.name)", @data_rule = "ValidateDateOfCommencement", @placeholder = "Date of Commencement", @required = "" })
         <div id="InvalidOrganisationEmail" class="invalid-feedback">Date is out of bounds</div>
     </div>
     <div class="form-group" id="HidePrincipal">
@@ -71,6 +71,31 @@
     </div>
 </div>
 
+<div class="form-group col-md-6" id="HideAdministrator">
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "form-control", @id = "AdministratorUnit.Street", @required = "" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "form-control", @id = "AdministratorUnit.Suburb", @required = "", @onchange = "OnChange(this.id, this.name)" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "form-control", @id = "AdministratorUnit.PostCode", @required = "" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "form-control", @id = "AdministratorUnit.Country", @required = "", @onchange = "OnChange(this.id, this.name)" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "form-control", @id = "AdministratorUnit.PhoneNumber", @type = "number", @required = "", @onchange = "OnChange(this.id, this.name)" })
+    </div>
+
+</div>
 
 
 
