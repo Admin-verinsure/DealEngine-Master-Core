@@ -80,18 +80,21 @@
                                 @if (User.IsInRole("TCUser"))
                                 {
                                     @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                     (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                                     {
-                                        <li class="nav-item">
-                                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
-                                        </li>
+                                        @if (item.ClientInformationSheet.NextInformationSheet == null) //hide this if there is an open update uis
+                                        {
+                                            <li class="nav-item">
+                                                <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
+                                            </li>
+                                        }
                                     }
 
                                 }
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode  })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
 
-                                   @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
+                                    @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
                                 </li>
 
                                 @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
@@ -121,34 +124,39 @@
                                         <a href="~/Agreement/BindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Bind Policy </a>
                                     </li>
                                 }
-                                @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
+                                @if (item.ClientInformationSheet.NextInformationSheet == null) //hide this if there is an open update uis
+                                {
+                                    @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
 item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Policy</a>
-                                    </li>
-                                }
-                                @if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Policy </a>
-                                    </li>
-                                }
-                                @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced" || item.Status == "Cancel Pending"))
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Policy </a>
-                                    </li>
-
-                                    @if (item.ProgrammeNamedPartyName == "NZFSG Programme")
                                     {
                                         <li class="nav-item">
-                                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
+                                            <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Policy</a>
                                         </li>
                                     }
+                                    @if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Policy </a>
+                                        </li>
+                                    }
+                                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced" || item.Status == "Cancel Pending"))
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Policy </a>
+                                        </li>
 
+                                        @if (item.ProgrammeNamedPartyName == "NZFSG Programme")
+                                        {
+                                            <li class="nav-item">
+                                                <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
+                                            </li>
+                                        }
+                                    }
                                 }
+
+
+
 
                                 @if (ViewBag.IsPDFgenerated == "True" && ViewBag.Ispdfenable == "True")
                                 {
@@ -230,30 +238,34 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                         </li>
                                     }
                                 }
-                                @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
+
+                                @if (item.ClientInformationSheet.NextInformationSheet == null) //hide this if there is an open update uis
+                                {
+                                    @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
 item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Policy </a>
-                                    </li>
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Policy </a>
+                                        </li>
 
-                                }
-                                @if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Policy </a>
-                                    </li>
-                                }
-                                @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                                    }
+                                    @if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Policy </a>
+                                        </li>
+                                    }
+                                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
 (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Policy </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
-                                    </li>
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Policy </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="~/Agreement/UnbindAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Unbind This Policy </a>
+                                        </li>
 
+                                    }
                                 }
                                 @if (@item.Status == "Bound and pending payment")
                                 {

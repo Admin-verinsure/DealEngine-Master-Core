@@ -876,7 +876,12 @@ namespace DealEngine.WebUI.Controllers
                 {
                     if (client.DateDeleted == null && client.InformationSheet != null)
                     {
-                        clientProgrammes.Add(client);
+                        //filter out the renewal clientprogramme already created
+                        List<ClientProgramme> currentClientProgrammes = await _programmeService.GetClientProgrammesByOwnerByProgramme(client.Owner.Id, programme.Id);
+                        if (currentClientProgrammes.Count == 0)
+                        {
+                            clientProgrammes.Add(client);
+                        }
                     }
                 }
                 model.ClientProgrammes = clientProgrammes;
