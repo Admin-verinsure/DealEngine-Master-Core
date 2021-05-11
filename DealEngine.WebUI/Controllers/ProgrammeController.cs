@@ -495,9 +495,12 @@ namespace DealEngine.WebUI.Controllers
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
-                //used for eglobal request and response log 
-                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
-
+                //used for eglobal request and response log
+                if (programme.BaseProgramme.ProgEnableEmail)
+                {
+                    await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+                }
+                
                 EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
                 eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
@@ -670,7 +673,10 @@ namespace DealEngine.WebUI.Controllers
             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
             //used for eglobal request and response log 
-            await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+            if (originalEglobalsubmission.EGlobalSubmissionClientProgramme.BaseProgramme.ProgEnableEmail)
+            {
+                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+            }
 
             EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
@@ -1686,7 +1692,7 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     clientProgramme.PaymentType = model["PaymentType"];
                     await _programmeService.Update(clientProgramme);
-                    if (clientProgramme.PaymentType == "Hunter Premium Funding")
+                    if (clientProgramme.PaymentType == "Hunter Premium Funding" && clientProgramme.BaseProgramme.ProgEnableEmail)
                     {
                         await _emailService.EmailHunterPremiumFunding(clientProgramme);
                     }
@@ -1715,7 +1721,10 @@ namespace DealEngine.WebUI.Controllers
                     ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(Id);
                     clientProgramme.PaymentFrequency = model["PaymentFrequency"];
                     await _programmeService.Update(clientProgramme);
-                    await _emailService.EmailPaymentFrequency(clientProgramme);
+                    if (clientProgramme.BaseProgramme.ProgEnableEmail)
+                    {
+                        await _emailService.EmailPaymentFrequency(clientProgramme);
+                    }
                 }
 
                 return Json(true);

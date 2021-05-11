@@ -667,7 +667,10 @@ namespace DealEngine.WebUI.Controllers
                         Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
                         var Programme = await _programmeService.GetProgramme(ProgrammeId);
                         await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme, organisation);
-                        await _emailService.RemoveOrganisationUserEmail(organisationUser, Programme.BrokerContactUser, clientInformationSheet);
+                        if (Programme.ProgEnableEmail)
+                        {
+                            await _emailService.RemoveOrganisationUserEmail(organisationUser, Programme.BrokerContactUser, clientInformationSheet);
+                        }
                     }
                     else
                     {
