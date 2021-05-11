@@ -147,6 +147,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            agreement.InsuredName = informationSheet.Owner.Name;
 
             string auditLogDetail = "CEAS DO UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

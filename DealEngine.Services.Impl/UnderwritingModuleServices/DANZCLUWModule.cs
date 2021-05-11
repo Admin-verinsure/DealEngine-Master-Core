@@ -262,6 +262,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.RetroactiveDate = strretrodate;
             }
 
+            agreement.InsuredName = informationSheet.Owner.Name;
+
             string auditLogDetail = "DANZ CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);

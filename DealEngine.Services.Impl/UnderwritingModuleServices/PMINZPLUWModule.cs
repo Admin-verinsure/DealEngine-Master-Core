@@ -242,6 +242,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
 
+            agreement.InsuredName = informationSheet.Owner.Name;
+
             string auditLogDetail = "PMINZ PL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);

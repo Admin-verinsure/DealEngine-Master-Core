@@ -1181,7 +1181,10 @@ namespace DealEngine.WebUI.Controllers
                         if (sheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
                             await GenerateUWM(user, sheet, sheet.ReferenceId);
-                            await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            if (sheet.Programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            }
                             //sheet = baseSheet;
                         }
                     }
