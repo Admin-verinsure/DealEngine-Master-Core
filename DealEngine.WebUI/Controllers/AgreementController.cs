@@ -3269,9 +3269,12 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
 
             string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
-            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.Name == "TechCertain Ltd.")
+            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation != null)
             {
-                submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+                if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.IsTC)
+                {
+                    submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+                }
             }
 
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"

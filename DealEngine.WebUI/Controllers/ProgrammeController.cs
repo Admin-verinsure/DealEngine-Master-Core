@@ -179,7 +179,7 @@ namespace DealEngine.WebUI.Controllers
                 
                 var clientProgrammeList = await _programmeService.GetClientProgrammesForProgramme(Id);
                 model = new ProgrammeInfoViewModel(null, clientProgrammeList.FirstOrDefault().BaseProgramme, null);
-                foreach (var programme in clientProgrammeList)
+                foreach (var programme in clientProgrammeList.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker"))
                 {
                     Ownerlist.Add(programme.Owner);
                     clientProgrammes.Add(programme);

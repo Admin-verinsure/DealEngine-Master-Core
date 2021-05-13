@@ -1,12 +1,12 @@
-﻿@model NTUcreateViewModel
+﻿@model RestoreNTUViewModel
 
 <div class="container">
-    <form method="POST" action="~/Home/NTUcreate" novalidate>
+    <form method="POST" action="~/Home/RestoreNTU" novalidate>
         <input type="text" class="form-control" value="@Model.ProgrammeId" id="programmeId" name="ProgrammeId" hidden>
         <div class="card">
             <div class="card-header">
                 <h5>
-                    This page lists the clients from this programme. Please select the client update status with Not Taken Up. 
+                    This page lists the Not Taken Up By Broker UIS from this programme. Please select the client to restore status.
                 </h5>
             </div>
             <div class="card-body">
@@ -17,14 +17,13 @@
                                 <input type="checkbox" id="select-all" aria-label="checkbox button for following text input">
                                 Client Name
                             </th>
-                           <th>
+                            <th>
                                 Status
                             </th>
                         </tr>
                     </thread>
                     <tbody>
                         @foreach (var client in Model.ClientProgrammes)
-                        @*@foreach (var clientInformationSheet in Model.ClientInformationSheets.Where(t => t.Status == "Started"))*@
                         {
                             <tr>
                                 <td>
@@ -34,11 +33,11 @@
                                                 <input type="checkbox" aria-label="checkbox button for following text input" name="@client.InformationSheet.Id" value="@client.InformationSheet.Id" readonly>
                                             </div>
                                         </div>
-                     
+
                                         <input type="text" class="form-control" aria-label="Text input with radio button" value="@client.Owner.Name ( Reference: @client.InformationSheet.ReferenceId )" readonly>
                                     </div>
                                 </td>
-                              
+
                                 <td>
                                     <input type="text" class="form-control" value="@client.InformationSheet.Status" name="Status" readonly>
                                 </td>
@@ -48,7 +47,7 @@
                 </table>
             </div>
             <div class="card-footer">
-                <button class="btn btn-primary btn-xs" type="submit">NTU UIS</button>
+                <button class="btn btn-primary btn-xs" type="submit">Restore UIS</button>
             </div>
         </div>
     </form>
