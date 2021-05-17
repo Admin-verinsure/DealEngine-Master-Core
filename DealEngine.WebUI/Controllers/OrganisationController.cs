@@ -636,6 +636,35 @@ namespace DealEngine.WebUI.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemoveIsTheFAPS(IFormCollection collection)
+        {
+            User currentUser = await CurrentUser();
+            Guid Id = Guid.Parse(collection["ClientInformationSheet.Id"]);
+            //string Name = "Advisor";
+            ClientInformationSheet Sheet = await _clientInformationService.GetInformation(Id);
+            foreach (var organisation in Sheet.Organisation)
+            {
+                var advisorUnit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == "Advisor");
+                if (advisorUnit != null)
+                {
+                    advisorUnit.isTheFAP = false;
+                }
+
+                var administratorUnit = (AdministratorUnit)organisation.OrganisationalUnits.FirstOrDefault(i => i.Name == "Administrator");
+                if (administratorUnit != null)
+                {
+                    administratorUnit.isAdministratorTheFAP = false;
+                }
+
+                organisation.isOrganisationTheFAP = false;
+
+                await _organisationService.Update(organisation);
+            }
+
+            return Ok();
+        }
+
         public async Task<IActionResult> SetPrimary(Guid id)
         {
             User user = null;

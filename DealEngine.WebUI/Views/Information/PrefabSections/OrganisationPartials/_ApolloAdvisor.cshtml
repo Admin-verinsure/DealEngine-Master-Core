@@ -72,6 +72,7 @@
 
 </div>
 
+
 <div class="form-group col-md-6 HideAdministrator" id="HideAdministrator">
 
     <div class="form-group">
@@ -100,7 +101,7 @@
     <div class="form-group">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP, new { @class = "label required" })
-            <select id="AdministratorUnit.isAdministratorTheFAP" name="OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP"  class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="AdministratorUnit.isAdministratorTheFAP" name="OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP" data-rule="IsTheFap"  class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">

@@ -270,7 +270,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPAdministratorLicenseNumber { get; set; }
 
-        [Display(Name = "Is Administrator FAP?")]
+        [Display(Name = "Is FAP?")]
         public virtual bool isAdministratorTheFAP { get; set; }
 
     }

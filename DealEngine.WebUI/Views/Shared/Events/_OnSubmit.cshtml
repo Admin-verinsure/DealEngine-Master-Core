@@ -262,8 +262,8 @@
             if (selectElement != null &&  selectElement.value == "true") {
                 if (document.getElementById("AdministratorUnit.FAPAdministratorLicenseNumber").value == "")
                 {
-                    window.alert("Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.");
-                     throw "Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.";
+                    window.alert("Please enter a FAP License number.");
+                     throw "Please enter a FAP License number.";
                 }
             }
         }
@@ -273,8 +273,8 @@
             if (selectElement != null && selectElement.value == "true") {
                 if (document.getElementById("AdvisorUnit.FAPLicenseNumber").value == "")
                 {
-                    window.alert("Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.");
-                     throw "Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.";
+                 window.alert("Please enter a FAP License number.");
+                    throw "Please enter a FAP License number.";
                 }
             }
         }
@@ -284,9 +284,10 @@
             if (selectElement != null && selectElement.value == "true") {
                 if (document.getElementById("Organisation.OrganisationFAPLicenseNumber").value == "")
                 {
-                    window.alert("Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.");
-                     throw "Please enter a FAP License number for the organisation or advisor that you've set as the FAP in the Insured Details / Named Parties panel.";
+                    window.alert("Please enter a FAP License number.");
+                    throw "Please enter a FAP License number.";
                 }
+
             }
         //  document.getElementsByName("Unit").value="AdministratorUnit"
 
@@ -305,6 +306,14 @@
                                 RemoveAdvisors = true;
                             }
                         }
+
+                         if (dataRule == "IsTheFap") {
+                            if (element[element.selectedIndex].value == "true") {
+                                RemoveIsTheFAPS = true;
+                            }
+                        }
+
+                        
                         if (dataRule == "RetirementDateValidation") {
                             if (element[element.selectedIndex].value == "true") {
                                 if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
@@ -338,6 +347,18 @@
                 if (RemoveAdvisors) {
                     $.ajax({
                         url: '@Url.Action("RemovePrincipalAdvisors", "Organisation")',
+                        type: "POST",
+                        async: false,
+                        data: $("#" + form.id).serialize(),
+                        error: function (request, error) {
+                            debugger;
+                        }
+                    });
+                }
+
+                 if (RemoveIsTheFAPS) {
+                    $.ajax({
+                        url: '@Url.Action("RemoveIsTheFAPS", "Organisation")',
                         type: "POST",
                         async: false,
                         data: $("#" + form.id).serialize(),
