@@ -79,7 +79,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is FAP?")]
+        [Display(Name = "Is Advisor FAP?")]
         public virtual bool isTheFAP { get; set; }
 
     }
@@ -267,6 +267,11 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Phone Number")]
         public virtual string PhoneNumber { get; set; }
 
+        [Display(Name = "FAP License number")]
+        public virtual string FAPAdministratorLicenseNumber { get; set; }
+
+        [Display(Name = "Is Administrator FAP?")]
+        public virtual bool isAdministratorTheFAP { get; set; }
 
     }
 }

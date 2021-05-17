@@ -121,6 +121,20 @@
         }
     }
 
+    function DefaultFAPRule(Value, Name) {
+        debugger;
+        var element = document.getElementById("AdministratorUnit.isAdministratorTheFAP");
+        if (Value == "1" && element != null) {
+
+             // document.querySelectorAll("[class =" + Name).forEach(function(el) {
+                  //el.setAttribute("required");
+                 document.getElementById("AdministratorUnit.isAdministratorTheFAP").required = true; 
+              //});
+
+        }
+
+    }
+
     function TriggerHandler(obj, Name, Value, Rule, DataItem) {
         try {
             //all rules go here
@@ -160,6 +174,14 @@
                 }
                 DefaultRule(Value, Name);
             }
+            //if (Rule === "FAPRule") {
+            //    //if (Value == "false") {
+            //    //    Value = "true";
+            //    //} else {
+            //    //    Value = "true";
+            //    //}
+            //    DefaultFAPRule(Value, Name);
+            //}
             if (Rule === "OptionOnChange") {
                 OptionOnChange(obj)
                 Name = obj.options[obj.selectedIndex].value;
@@ -489,7 +511,7 @@
                 AdvisorOnChange();
             }
 
-            
+
 
             if (Value == "Contractor") {
                 ContractorOnChange();
@@ -524,23 +546,35 @@
     }
 
     function AdministratorOnChange() {
-         var IsContractorUnit = document.getElementById("HideAdministrator");
-        if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = false;
+         var IsHideAdministrator = document.getElementById("HideAdministrator");
+        if (IsHideAdministrator != null) {
+
+             document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+                 el.style.display = 'unset';
+             });
         }
-         for (var i = 0; i < List.options.length; i++) {
-                if (List.options[i].text == "Private") {
-                    List.options[i].selected = true;
-                    document.getElementById("Private").hidden = true;
-                }
-            }
+
+        document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'none';
+        });
+
+
+
+        // var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
+        //if (IsAdvisorUnit != null) {
+        //    IsAdvisorUnit.hidden = true;
+        //}
 
     }
 
     function AdvisorUnitOnChange() {
         var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
         if (IsAdvisorUnit != null) {
-            IsAdvisorUnit.hidden = false;
+
+              document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'unset';
+        });
+            //IsAdvisorUnit.hidden = false;
         }
     }
 
@@ -573,7 +607,9 @@
         }
          var IsContractorUnit = document.getElementById("HideAdministrator");
         if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = true;
+           document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+                 el.style.display = 'none';
+        });
         }
 
     }
@@ -600,11 +636,16 @@
 
          var IsContractorUnit = document.getElementById("HideAdministrator");
         if (IsContractorUnit != null) {
-            IsContractorUnit.hidden = true;
+
+             document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+              el.style.display = 'none';
+             });
         }
          var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
         if (IsAdvisorUnit != null) {
-            IsAdvisorUnit.hidden = true;
+          document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'none';
+          });
         }
     }
 

@@ -186,9 +186,15 @@ namespace DealEngine.WebUI.Controllers
                     //List<OrganisationalUnit> ListAdvisorunit = (List<OrganisationalUnit>)org.OrganisationalUnits.Where(u => u.Name == "Advisor" );
 
                     //var orgHasFAPLicenseNumber = org.OrganisationalUnits.FirstOrDefault(ou => ou.FAPLicenseNumber != null);
+
+                    if (org.isOrganisationTheFAP)
+                    {
+                        JsonObjects.Add(org.Id.ToString(), org);
+
+                    }
                     foreach (AdvisorUnit Advisorunit in org.OrganisationalUnits.Where(u => u.Name == "Advisor"))
                     {
-                        if (Advisorunit.isTheFAP == true)
+                        if (Advisorunit.isTheFAP)
                         {
                             JsonObjects.Add(org.Id.ToString(), org);
 
@@ -198,21 +204,26 @@ namespace DealEngine.WebUI.Controllers
                             continue;
                         }
 
-                        //if (isTheFAP == null)
-                        //{
-                        //    continue;
-                        //}
-                        //else
-                        //{
-                        //    JsonObjects.Add(org.Id.ToString(), org);
-                        //}
+                    }
+
+                    foreach (AdministratorUnit administratorUnit in org.OrganisationalUnits.Where(u => u.Name == "Administrator"))
+                    {
+                        if (administratorUnit.isAdministratorTheFAP)
+                        {
+                            JsonObjects.Add(org.Id.ToString(), org);
+
+                        }
+                        else
+                        {
+                            continue;
+                        }
 
                     }
 
-                        //if (Advisorunit.FAPLicenseNumber == null)
+                    //if (Advisorunit.FAPLicenseNumber == null)
 
-                        //var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
-                   
+                    //var isTheFAP = org.OrganisationalUnits.FirstOrDefault(u => (u.isTheFAP == true) && (u.DateDeleted == null));
+
                 }
                
                 var jsonObj = await _serialiserService.GetSerializedObject(JsonObjects);
@@ -275,7 +286,7 @@ namespace DealEngine.WebUI.Controllers
 
                     //foreach (var Advisorunit in ListAdvisorunit)
                     //{
-                    if (ListAdvisorunit!= null && ListAdvisorunit.isTheFAP == true)
+                    if (ListAdvisorunit!= null && ListAdvisorunit.isTheFAP)
                     {
                         if (ListAdvisorunit.FAPLicenseNumber == null)
                         {
@@ -333,6 +344,9 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 await _organisationService.PostOrganisation(collection, organisation);
+
+               
+                 
 
                 if (!Sheet.Organisation.Contains(organisation))
                     Sheet.Organisation.Add(organisation);

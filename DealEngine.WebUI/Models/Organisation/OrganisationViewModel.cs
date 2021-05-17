@@ -25,6 +25,8 @@ namespace DealEngine.WebUI.Models
                     Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+                    AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+
                     if (Programme.NamedPartyUnitName == "NZFSG Programme") 
                     { 
                         InsuranceAttributes = GetAdvisorTypes1(); 
@@ -54,8 +56,7 @@ namespace DealEngine.WebUI.Models
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
-                    HasIsFAPOptions = GetStandardSelectOptions();
-                    AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+                    HasIsFAPOptions = GetBooleanSelectOptions();
 
 
                 }

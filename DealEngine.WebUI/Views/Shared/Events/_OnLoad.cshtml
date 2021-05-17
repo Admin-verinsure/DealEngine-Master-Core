@@ -164,10 +164,17 @@
                         if (Field === "InsuranceAttributes") {
                             var Id = Type + ".InsuranceAttribute";
                             Value = OutPut[obj][Field]["0"]["Name"];
+                            if (Value == "Administrator") {
+                                Unit = "AdministratorUnit";
+                                PopulateOrganisationalUnit(OutPut, Unit);
+                            } else {
+                                PopulateOrganisationalUnit(OutPut, Unit[0].id);
+                            }
                             Element = document.getElementById(Id);
-                            PopulateOrganisationalUnit(OutPut, Unit[0].id);
                         }
                     }
+                   
+
 
                     if (model.hasOwnProperty("OrganisationType")) {
                         if (Field === "OrganisationType") {
@@ -242,6 +249,13 @@
         var TradingName = document.getElementById("NoTradingName");
         if (TradingName != null) {
             document.getElementById("TradingName").hidden = false;
+        }
+
+      var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
+        if (IsAdvisorUnit != null) {
+             document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'none';
+              });
         }
     }
 
