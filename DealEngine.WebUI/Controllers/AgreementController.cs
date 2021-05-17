@@ -362,7 +362,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                     await uow.Commit();
                 }
-                if (model.Content != null)
+                if (model.Content != null && agreement.ClientInformationSheet.Programme.BaseProgramme.ProgEnableEmail)
                 {
                     await _emailService.IssueToBrokerSendEmail(model.issuetobrokerto, model.Content, agreement.ClientInformationSheet, agreement, user);
                 }
@@ -968,7 +968,10 @@ namespace DealEngine.WebUI.Controllers
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
                 //used for eglobal request and response log 
-                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.ProgEnableEmail)
+                {
+                    await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+                }
 
                 EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
@@ -3002,8 +3005,8 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
 
-                                if (programme.BaseProgramme.ProgEnableEmail)
-                                {
+                                //if (programme.BaseProgramme.ProgEnableEmail) //code change for allowing send out policy docs to both insured and broker regardless of the enable email settings
+                                //{
                                     //send out policy document email
                                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
                                     if (emailTemplate != null)
@@ -3026,7 +3029,7 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                         }
                                     }
-                                }
+                                //}
 
                             }
 
@@ -3266,9 +3269,12 @@ namespace DealEngine.WebUI.Controllers
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
 
             string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
-            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.Name == "TechCertain Ltd.")
+            if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation != null)
             {
-                submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+                if (clientprogramme.InformationSheet.SubmittedBy.PrimaryOrganisation.IsTC)
+                {
+                    submittedBy = clientprogramme.InformationSheet.Programme.BrokerContactUser.FullName;
+                }
             }
 
             htmlToPdfConv.PageHeaderHtml = "<p style='padding-top: 60px'>"
@@ -3596,9 +3602,12 @@ namespace DealEngine.WebUI.Controllers
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
-                //used for eglobal request and response log 
-                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
-
+                //used for eglobal request and response log
+                if (programme.BaseProgramme.ProgEnableEmail)
+                {
+                    await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+                }
+                
                 EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
                 eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
@@ -3752,8 +3761,11 @@ namespace DealEngine.WebUI.Controllers
                             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
                             //used for eglobal request and response log 
-                            await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
-
+                            if (programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                await _emailService.EGlobalLogEmail("marshevents@proposalonline.com", transactionreferenceid.ToString(), xmlPayload, byteResponse);
+                            }
+                                
                             EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
 
                             eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
@@ -3876,9 +3888,12 @@ namespace DealEngine.WebUI.Controllers
                     Data data = await _dataService.Add(user);
                     data = await _dataService.Update(data, Id, BindType);
                     await _dataService.ToJson(data, "Not yet implemented - just pass in empty string is fine.", Id);
-                    await _emailService.SendDataEmail("staff@techcertain.com", data);
-                    await _emailService.SendDataEmail("Warren.J.Blomquist@marsh.com", data);
-
+                    if (programme.BaseProgramme.ProgEnableEmail)
+                    {
+                        await _emailService.SendDataEmail("staff@techcertain.com", data);
+                        await _emailService.SendDataEmail("Warren.J.Blomquist@marsh.com", data);
+                    }
+                        
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (programme.InformationSheet.Status != status)

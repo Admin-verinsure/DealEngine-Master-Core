@@ -428,7 +428,7 @@ namespace DealEngine.WebUI.Controllers
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsProgrammeManager)
             {
                 Boolean Issubclientsubmitted = false;
-                foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (ClientProgramme client in clientList.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.InformationSheet != null)
                     {                       
@@ -510,7 +510,7 @@ namespace DealEngine.WebUI.Controllers
             else
             {
                 clientList = await _programmeService.GetClientProgrammesByOwnerByProgramme(user.PrimaryOrganisation.Id, programme.Id);
-                foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (ClientProgramme client in clientList.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     string status = client.InformationSheet.Status;
                     string referenceId = client.InformationSheet.ReferenceId;
@@ -782,7 +782,74 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> RestoreNTU(string ProgrammeId, string actionname)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                RestoreNTUViewModel model = new RestoreNTUViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+                List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+                List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
+                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    if (client.DateDeleted == null && client.InformationSheet.Status == "Not Taken Up By Broker")
+                    {
+                        clientProgrammes.Add(client);
+                    }
+                }
+                model.ClientProgrammes = clientProgrammes;
+                model.ProgrammeId = ProgrammeId;
 
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreNTU(IFormCollection formCollection)
+        {
+            User user = null;
+            Programme programme = null;
+
+            try
+            {
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                foreach (var key in formCollection.Keys)
+                {
+                    var keyCheck = key;
+                    if (keyCheck != "__RequestVerificationToken" && keyCheck != "Status")
+                    {
+                        var informationSheet = await _clientInformationService.GetInformation(Guid.Parse(formCollection[key]));
+
+                        if (informationSheet != null)
+                        {
+                            informationSheet.Status = "Not Started";
+                            await _customerInformationService.UpdateInformation(informationSheet);
+                        }
+
+                    }
+
+                }
+
+                //return await RedirectToLocal();
+                return Redirect("/Home/ViewProgramme/" + formCollection["ProgrammeId"]);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 
 
@@ -800,7 +867,7 @@ namespace DealEngine.WebUI.Controllers
                 List<ClientProgramme> mainClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
                 List<ClientProgramme> subClientProgrammes = await _programmeService.GetSubClientProgrammesForProgramme(programme.Id);
 
-                foreach (var client in mainClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (var client in mainClientProgrammes.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && client.InformationSheet.Status != "Bound")
                     {
@@ -872,11 +939,16 @@ namespace DealEngine.WebUI.Controllers
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
                 List<ClientProgramme> renewClientProgrammes = await _programmeService.GetRenewBaseClientProgrammesForProgramme(programme.RenewFromProgramme.Id);
 
-                foreach (var client in renewClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (var client in renewClientProgrammes.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && client.InformationSheet != null)
                     {
-                        clientProgrammes.Add(client);
+                        //filter out the renewal clientprogramme already created
+                        List<ClientProgramme> currentClientProgrammes = await _programmeService.GetClientProgrammesByOwnerByProgramme(client.Owner.Id, programme.Id);
+                        if (currentClientProgrammes.Count == 0)
+                        {
+                            clientProgrammes.Add(client);
+                        }
                     }
                 }
                 model.ClientProgrammes = clientProgrammes;
@@ -903,7 +975,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgrammes = new List<ClientProgramme>();
                 Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
 
-                foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (var client in programme.ClientProgrammes.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     if (client.DateDeleted == null && (client.InformationSheet.Status == "Started" || client.InformationSheet.Status == "Not Started"))
                     {

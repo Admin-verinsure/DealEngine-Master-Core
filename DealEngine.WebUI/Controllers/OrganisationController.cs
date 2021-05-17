@@ -544,7 +544,7 @@ namespace DealEngine.WebUI.Controllers
             var selectedClientProgrammes = new List<ClientProgramme>();
             
             // Add Change ClientProgrammes
-            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == true).ToList())
+            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null && p.InformationSheet.Status != "Not Taken Up By Broker").Where(p => p.InformationSheet.IsChange == true).ToList())
             {
                 bool isClientProgrammeNotSub = await _programmeService.IsBaseClass(clientProgramme);
                 if (isClientProgrammeNotSub)
@@ -553,7 +553,7 @@ namespace DealEngine.WebUI.Controllers
                 }
             }
             // Add Original ClientProgrammes
-            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null).Where(p => p.InformationSheet.IsChange == false).Where(p => p.InformationSheet.NextInformationSheet == null).ToList())
+            foreach (var clientProgramme in allClientProgrammes.Where(p => p.DateDeleted == null && p.InformationSheet.Status != "Not Taken Up By Broker").Where(p => p.InformationSheet.IsChange == false).Where(p => p.InformationSheet.NextInformationSheet == null).ToList())
             {
                 bool isClientProgrammeNotSub = await _programmeService.IsBaseClass(clientProgramme);
                 if (isClientProgrammeNotSub)
@@ -681,7 +681,10 @@ namespace DealEngine.WebUI.Controllers
                         Guid.TryParse(collection["ProgrammeId"].ToString(), out Guid ProgrammeId);
                         var Programme = await _programmeService.GetProgramme(ProgrammeId);
                         await _milestoneService.CreateJoinOrganisationTask(user, organisationUser, Programme, organisation);
-                        await _emailService.RemoveOrganisationUserEmail(organisationUser, Programme.BrokerContactUser, clientInformationSheet);
+                        if (Programme.ProgEnableEmail)
+                        {
+                            await _emailService.RemoveOrganisationUserEmail(organisationUser, Programme.BrokerContactUser, clientInformationSheet);
+                        }
                     }
                     else
                     {

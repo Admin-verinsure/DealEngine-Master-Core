@@ -146,10 +146,13 @@ namespace DealEngine.Services.Impl
                 }
 
                 //send out sub UIS invitation email
-                if (subClientSheet.Status == "Not Started")
+                if (subClientSheet.Status == "Not Started" && subClientSheet.Programme.BaseProgramme.ProgEnableEmail)
                 {
-                    await _emailService.SendSystemEmailLogin(org.Email);
-                    await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                    if (!org.OrgBeenMoved) //dont send out email for moved advisors
+                    {
+                        await _emailService.SendSystemEmailLogin(org.Email);
+                        await _emailService.SendSystemEmailAllSubUISInstruction(org, subClientSheet.Programme.BaseProgramme, subClientSheet);
+                    }
                 }
 
             }

@@ -1181,7 +1181,10 @@ namespace DealEngine.WebUI.Controllers
                         if (sheet.SubClientInformationSheets.Where(c => c.Status != "Submitted").ToList().Count == 0)
                         {
                             await GenerateUWM(user, sheet, sheet.ReferenceId);
-                            await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            if (sheet.Programme.BaseProgramme.ProgEnableEmail)
+                            {
+                                await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                            }
                             //sheet = baseSheet;
                         }
                     }
@@ -1477,78 +1480,37 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-            #region Old Email Templates code
-            //EmailTemplate moveAdvisorsAdvisor = programme.EmailTemplates.FirstOrDefault(et => et.Type == "MoveAdvisorsAdvisor");
-            //IList<string> advisorNames = new List<string>();
-            //ClientInformationSheet lastSheetTargetProgramme = clientProgramme.InformationSheet;
-            //while (lastSheetTargetProgramme.NextInformationSheet != null)
-            //{
-            //    lastSheetTargetProgramme = lastSheetTargetProgramme.NextInformationSheet;
-            //}
-            #endregion
-            
+
             // Send the Emails
             try
             {
-                if (moveAdvisorsPrevOwner != null && moveAdvisorsNewOwner != null)
+                if (clientProgramme.InformationSheet.NextInformationSheet.Programme.BaseProgramme.ProgEnableEmail)
                 {
-                    foreach (string advisorId in advisors)
+                    if (moveAdvisorsPrevOwner != null && moveAdvisorsNewOwner != null)
                     {
-                        Guid.TryParse(advisorId, out Guid AdvisorOrganisationId);
-
-                        if (AdvisorOrganisationId != Guid.Empty)
+                        foreach (string advisorId in advisors)
                         {
-                            var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
-                            if (Organisation != null)
+                            Guid.TryParse(advisorId, out Guid AdvisorOrganisationId);
+
+                            if (AdvisorOrganisationId != Guid.Empty)
                             {
-                                #region Old Email Templates code
-                                //advisorNames.Add(Organisation.Name);
-                                //moveAdvisorsAdvisor.Subject = Organisation.Name + " you have been Added to the following Policy: " + lastSheetTargetProgramme.ReferenceId;
-                                //var moveAdvisorsAdvisorBody = moveAdvisorsAdvisor.Body;     // Default Body (providing broker doesn't change template) =  "Dear ADVISOR, You have been added to CLIENTINFORMATIONSHEETREFERENCEID.";
-                                //moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("ADVISOR", Organisation.Name);
-                                //moveAdvisorsAdvisorBody = moveAdvisorsAdvisorBody.Replace("CLIENTINFORMATIONSHEETREFERENCEID", lastSheetTargetProgramme.ReferenceId);
-                                //moveAdvisorsAdvisor.Body = moveAdvisorsAdvisorBody;
-                                #endregion
-                                var moveAdvisorsAdvisorRecipient = Organisation.Email;
-                                await _emailService.SendEmailViaEmailTemplate(moveAdvisorsAdvisorRecipient, moveAdvisorsNewOwner, null, null, null);
+                                var Organisation = await _organisationRepository.GetByIdAsync(AdvisorOrganisationId);
+                                if (Organisation != null)
+                                {
+                                    var moveAdvisorsAdvisorRecipient = Organisation.Email;
+                                    await _emailService.SendEmailViaEmailTemplate(moveAdvisorsAdvisorRecipient, moveAdvisorsNewOwner, null, null, null);
+                                }
                             }
                         }
+
+                        var moveAdvisorsPrevOwnerRecipient = sourceClientProgramme.Owner.Email;
+                        await _emailService.SendEmailViaEmailTemplate(moveAdvisorsPrevOwnerRecipient, moveAdvisorsPrevOwner, null, null, null);
+
+                        var moveAdvisorsNewOwnerRecipient = clientProgramme.Owner.Email;
+                        await _emailService.SendEmailViaEmailTemplate(moveAdvisorsNewOwnerRecipient, moveAdvisorsNewOwner, null, null, null);
                     }
-
-                    #region Old Email Templates code
-                    //// Prep Advisor List for the emails to owners.
-                    //string advisorNamesString = "";
-                    //string last = advisorNames.Last();
-                    //foreach (string name in advisorNames)
-                    //{
-                    //    if (name.Equals(last))
-                    //    {
-                    //        advisorNamesString += name;
-                    //    }
-                    //    else
-                    //    {
-                    //        advisorNamesString = advisorNamesString + name + ", ";
-                    //    }                   
-                    //}
-                    //moveAdvisorsPrevOwner.Subject = sourceClientProgramme.Owner.Name + " advisors  have been removed from your Policy";
-                    //var moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwner.Body;     // Default Body (providing broker doesn't change template) = "Dear PREVOWNER, The following Advisors have been removed from your Policy ADVISORLIST.";
-                    //moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("PREVOWNER", sourceClientProgramme.Owner.Name);
-                    //moveAdvisorsPrevOwnerBody = moveAdvisorsPrevOwnerBody.Replace("ADVISORLIST", advisorNamesString);
-                    //moveAdvisorsPrevOwner.Body = moveAdvisorsPrevOwnerBody;
-                    #endregion
-                    var moveAdvisorsPrevOwnerRecipient = sourceClientProgramme.Owner.Email;
-                    await _emailService.SendEmailViaEmailTemplate(moveAdvisorsPrevOwnerRecipient, moveAdvisorsPrevOwner, null, null, null);
-
-                    #region Old Email Templates code
-                    //moveAdvisorsNewOwner.Subject = clientProgramme.Owner.Name + " advisors have been added to your Policy";
-                    //var moveAdvisorsNewOwnerBody = moveAdvisorsNewOwner.Body;       // Default Body (providing broker doesn't change template) = "Dear NEXTOWNER, The following Advisors have been added to your Policy ADVISORLIST.";
-                    //moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("NEXTOWNER", clientProgramme.Owner.Name);
-                    //moveAdvisorsNewOwnerBody = moveAdvisorsNewOwnerBody.Replace("ADVISORLIST", advisorNamesString);
-                    //moveAdvisorsNewOwner.Body = moveAdvisorsNewOwnerBody;
-                    #endregion
-                    var moveAdvisorsNewOwnerRecipient = clientProgramme.Owner.Email;
-                    await _emailService.SendEmailViaEmailTemplate(moveAdvisorsNewOwnerRecipient, moveAdvisorsNewOwner, null, null, null);
-                } 
+                }
+                 
             }
             catch (Exception ex)
             {
