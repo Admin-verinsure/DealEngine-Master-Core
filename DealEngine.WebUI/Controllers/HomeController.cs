@@ -1177,6 +1177,8 @@ namespace DealEngine.WebUI.Controllers
                             clientInformationSheetID = cp.InformationSheet.Id;
 
                         }
+                             List<String> reportlistcount = await CreatePremiumLimitReport(cp, clientInformationSheetID, true, false, reportName);
+                        if (reportlistcount.Count >0)
                         ListReportSet.Add(await CreatePremiumLimitReport( cp, clientInformationSheetID, true, false, reportName));
 
                 }
@@ -1192,24 +1194,17 @@ namespace DealEngine.WebUI.Controllers
             List<String> ListReport = new List<String>();
 
 
-            ListReport = new List<String>();
+            
 
             Organisation organisation = cp.InformationSheet.Owner;
             ////adding collumns to ListReport
 
+            //ListReport.Add(cp.InformationSheet.Owner.Name);
+            //ListReport.Add((cp.InformationSheet.IsChange).ToString());
+            //ListReport.Add(cp.InformationSheet.ReferenceId);
 
-            ListReport.Add(cp.InformationSheet.Owner.Name);
-            ListReport.Add((cp.InformationSheet.IsChange).ToString());
-
-
-
-            //ListReport.Add(cp.InformationSheet.Status);
-            ListReport.Add(cp.InformationSheet.ReferenceId);
-
-
-            ListReport.Add(organisation.Email);
+            //ListReport.Add(organisation.Email);
             User user = await _userService.GetApplicationUserByEmail(organisation.Email);
-           
 
             if (cp.Agreements.Count > 0)
             {
@@ -1218,8 +1213,13 @@ namespace DealEngine.WebUI.Controllers
                     var term = agreement.ClientAgreementTerms.FirstOrDefault(ter => ter.SubTermType == reportName && ter.Bound == true);
                     if (term != null)
                     {
-                        ListReport.Add(agreement.Status);
+                        ListReport = new List<String>();
+                        ListReport.Add(cp.InformationSheet.Owner.Name);
+                        ListReport.Add((cp.InformationSheet.IsChange).ToString());
+                        ListReport.Add(cp.InformationSheet.ReferenceId);
 
+                        ListReport.Add(organisation.Email);
+                        ListReport.Add(agreement.Status);
                         ListReport.Add(term.TermLimit.ToString());
                         ListReport.Add(term.Excess.ToString("N0"));
                         ListReport.Add(term.Premium.ToString("N2"));
@@ -1229,13 +1229,16 @@ namespace DealEngine.WebUI.Controllers
                     }
                   
                 }
+               
             }
-            else
-            {
-                ListReport.Add("0");
-                ListReport.Add("0");
-                ListReport.Add("0");
-            }
+            //else
+            //{
+            //    ListReport.Add("0");
+            //    ListReport.Add("0");
+            //    ListReport.Add("0");
+            //    ListReport.Add("0");
+
+            //}
 
 
             return ListReport;
