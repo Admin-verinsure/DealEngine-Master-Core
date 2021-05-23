@@ -91,7 +91,6 @@
     }
 
     function SelectValidation(obj, value) {
-
         if (!obj.multiple) {
             if (value != "0") {
                 obj.classList.add("is-valid");
@@ -120,6 +119,20 @@
         } else {
             HideElement(Name);
         }
+    }
+
+    function DefaultFAPRule(Value, Name) {
+        debugger;
+        var element = document.getElementById("AdministratorUnit.isAdministratorTheFAP");
+        if (Value == "1" && element != null) {
+
+             // document.querySelectorAll("[class =" + Name).forEach(function(el) {
+                  //el.setAttribute("required");
+                 document.getElementById("AdministratorUnit.isAdministratorTheFAP").required = true; 
+              //});
+
+        }
+
     }
 
     function TriggerHandler(obj, Name, Value, Rule, DataItem) {
@@ -161,6 +174,14 @@
                 }
                 DefaultRule(Value, Name);
             }
+            //if (Rule === "FAPRule") {
+            //    //if (Value == "false") {
+            //    //    Value = "true";
+            //    //} else {
+            //    //    Value = "true";
+            //    //}
+            //    DefaultFAPRule(Value, Name);
+            //}
             if (Rule === "OptionOnChange") {
                 OptionOnChange(obj)
                 Name = obj.options[obj.selectedIndex].value;
@@ -316,8 +337,8 @@
                 document.getElementById("TrailerEffectiveDateModal").value = Value;
                 document.getElementsByClassName("commonjobdate").value = Value;
 
-                
-               
+
+
             }
             if (Rule === "PolicyStartDate") {
                 debugger;
@@ -328,7 +349,7 @@
                 var selecteddate = new Date(year, month, day);
                 var maxyear = selecteddate.getFullYear() + 1;
                 var minday = new Date();
-                
+
                 var maxDate = new Date();
                 maxDate = maxyear + '-' + month + '-' + day;
                 var minmonth = minday.getMonth();
@@ -339,16 +360,16 @@
                 if (Value == '') {
                     document.getElementById("i2ipolicystartdate").value = Value;
                     document.getElementById("i2iPolicyEndDate").value = Value;
-                    
-                } 
+
+                }
                     document.getElementById("i2ipolicystartdate").setAttribute("min", mindate);
                     document.getElementById("i2iPolicyEndDate").setAttribute("max", maxDate);
                     document.getElementById("i2iPolicyEndDate").setAttribute("min", Value);
                 debugger;
-                
 
-               
-            } 
+
+
+            }
             //   if (Rule === "PolicyEndDate") {
             //    debugger;
             //    var datefix = Value.replaceAll('-', '');
@@ -359,13 +380,13 @@
             //    if (Value == '') {
             //        document.getElementById("i2ipolicystartdate").value = Value;
             //        document.getElementById("i2iPolicyEndDate").value = Value;
-                    
-            //    } 
+
+            //    }
             //    if (Value == '') {
-            //        var startdateval = document.getElementById("PolicyEndDate").value(); 
+            //        var startdateval = document.getElementById("PolicyEndDate").value();
             //    }
             //    document.getElementById("PolicyEndDate").value = newYear;
-               
+
             //}
             if (Rule === "OtherOptions") {
                 if (obj.multiple) {
@@ -468,8 +489,9 @@
             Value == "Contractor" ||
             Value == "Planner" ||
             Value == "Skipper" ||
-            Value == "Mentored Advisor" || 
-            Value == "Individual") {
+            Value == "Mentored Advisor" ||
+            Value == "Individual" ||
+            Value == "Administrator" ) {
             //readonly Organisation Type personal
 
             if (Value == "Administration") {
@@ -480,10 +502,16 @@
                 AdvisorOnChange();
 
             }
+             if (Value == "Advisor") {
+                AdvisorUnitOnChange();
+
+            }
 
             if (Value == "Nominated Representative") {
                 AdvisorOnChange();
             }
+
+
 
             if (Value == "Contractor") {
                 ContractorOnChange();
@@ -495,6 +523,10 @@
                     document.getElementById("Private").hidden = false;
                 }
             }
+
+            if (Value == "Administrator") {
+                AdministratorOnChange();
+             }
 
             List.disabled = true;
         } else {
@@ -513,6 +545,39 @@
         DefaultRule("1", Value);
     }
 
+    function AdministratorOnChange() {
+         var IsHideAdministrator = document.getElementById("HideAdministrator");
+        if (IsHideAdministrator != null) {
+
+             document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+                 el.style.display = 'unset';
+             });
+        }
+
+        document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'none';
+        });
+
+
+
+        // var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
+        //if (IsAdvisorUnit != null) {
+        //    IsAdvisorUnit.hidden = true;
+        //}
+
+    }
+
+    function AdvisorUnitOnChange() {
+        var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
+        if (IsAdvisorUnit != null) {
+
+              document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'unset';
+        });
+            //IsAdvisorUnit.hidden = false;
+        }
+    }
+
     function ContractorOnChange() {
         var IsContractorUnit = document.getElementById("HideContractor");
         if (IsContractorUnit != null) {
@@ -526,6 +591,7 @@
     }
 
     function AdvisorOnChange() {
+        debugger;
         var IsTripleAApproval = document.getElementById("HideTripleAApproval");
         if (IsTripleAApproval != null) {
             IsTripleAApproval.hidden = true;
@@ -538,6 +604,12 @@
         var IsPrincipal = document.getElementById("HidePrincipal");
         if (IsPrincipal != null) {
             IsPrincipal.hidden = true;
+        }
+         var IsContractorUnit = document.getElementById("HideAdministrator");
+        if (IsContractorUnit != null) {
+           document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+                 el.style.display = 'none';
+        });
         }
 
     }
@@ -560,6 +632,20 @@
         var IsCommencement = document.getElementById("HideCommencement");
         if (IsCommencement != null) {
             IsCommencement.hidden = true;
+        }
+
+         var IsContractorUnit = document.getElementById("HideAdministrator");
+        if (IsContractorUnit != null) {
+
+             document.querySelectorAll('.HideAdministrator').forEach(function(el) {
+              el.style.display = 'none';
+             });
+        }
+         var IsAdvisorUnit = document.getElementsByClassName("AdvisorUnit");
+        if (IsAdvisorUnit != null) {
+          document.querySelectorAll('.AdvisorUnit').forEach(function(el) {
+                 el.style.display = 'none';
+          });
         }
     }
 
@@ -759,6 +845,7 @@
     }
 
     function OptionOnChange(Element) {
+        debugger;
         for (var i = 0; i < Element.options.length; i++) {
             DefaultRule("2", Element.options[i].value);
         }

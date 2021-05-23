@@ -178,6 +178,8 @@
 
     function UnitValidationOnSubmit(Programme) {
         var Unit = document.getElementsByName("Unit");
+
+
         if (Unit != null) {
             if (Unit.length > 0) {
                 if (Unit[0].id == "AdvisorUnit" ||
@@ -247,8 +249,52 @@
     function OnOrganisationSubmit(FormId, AccordionId) {
         var PostAjax = true;
         var RemoveAdvisors = false;
+        var RemoveIsTheFAPS = false;
+
         var form = document.getElementById(FormId);
         var ErrorMessage = "";
+        debugger;
+        var selectElement = document.getElementById('Organisation.InsuranceAttribute');
+                      
+        var output = selectElement.value;
+        debugger;
+        if (output == "Administrator") {
+            debugger;
+            var selectElement = document.getElementById('AdministratorUnit.isAdministratorTheFAP');
+            if (selectElement != null &&  selectElement.value == "true") {
+                if (document.getElementById("AdministratorUnit.FAPAdministratorLicenseNumber").value == "")
+                {
+                    window.alert("Please enter a FAP License number.");
+                     throw "Please enter a FAP License number.";
+                }
+            }
+        }
+         if (output == "Advisor") {
+            debugger;
+            var selectElement = document.getElementById('AdvisorUnit.isTheFAP');
+            if (selectElement != null && selectElement.value == "true") {
+                if (document.getElementById("AdvisorUnit.FAPLicenseNumber").value == "")
+                {
+                 window.alert("Please enter a FAP License number.");
+                    throw "Please enter a FAP License number.";
+                }
+            }
+        }
+
+
+         var selectElement = document.getElementById('Organisation.isOrganisationTheFAP');
+            if (selectElement != null && selectElement.value == "true") {
+                if (document.getElementById("Organisation.OrganisationFAPLicenseNumber").value == "")
+                {
+                    window.alert("Please enter a FAP License number.");
+                    throw "Please enter a FAP License number.";
+                }
+
+            }
+        //  document.getElementsByName("Unit").value="AdministratorUnit"
+
+           
+        
 
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
@@ -262,6 +308,14 @@
                                 RemoveAdvisors = true;
                             }
                         }
+
+                         if (dataRule == "IsTheFap") {
+                            if (element[element.selectedIndex].value == "true") {
+                                RemoveIsTheFAPS = true;
+                            }
+                        }
+
+                        
                         if (dataRule == "RetirementDateValidation") {
                             if (element[element.selectedIndex].value == "true") {
                                 if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
@@ -303,6 +357,19 @@
                         }
                     });
                 }
+
+                 if (RemoveIsTheFAPS) {
+                    $.ajax({
+                        url: '@Url.Action("RemoveIsTheFAPS", "Organisation")',
+                        type: "POST",
+                        async: false,
+                        data: $("#" + form.id).serialize(),
+                        error: function (request, error) {
+                            debugger;
+                        }
+                    });
+                }
+                var serializeddata = $("#" + form.id).serialize();
                 $.ajax({
                     url: '@Url.Action("AddOrganisation", "Organisation")',
                     type: "POST",

@@ -109,8 +109,8 @@ namespace DealEngine.Services.Impl
                 await UpdateOrganisationUnit(organisation, collection);
                 await UpdateInsuranceAttribute(organisation, collection);
             }
-
-            await Update(organisation);
+            ///we are not updating org in ldap now
+            //await Update(organisation);
         }
 
         private async Task UpdateInsuranceAttribute(Organisation organisation, IFormCollection collection)
@@ -128,7 +128,17 @@ namespace DealEngine.Services.Impl
 
         private async Task UpdateOrganisationUnit(Organisation organisation, IFormCollection collection)
         {
-            var UnitName = collection["Unit"].ToString();
+            var InsuranceAttribute = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
+            var UnitName = "";
+            if (InsuranceAttribute == "Administrator")
+            {
+                 UnitName = collection["AdministratorUnit"].ToString();
+            }
+            else
+            {
+                 UnitName = collection["Unit"].ToString();
+
+            }
             string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             Type UnitType = Type.GetType(UnitName);
             try
@@ -192,6 +202,13 @@ namespace DealEngine.Services.Impl
                 {
                     organisation.Name = jsonOrganisation.Name;
                 }
+            }
+            var isfap = collection["OrganisationViewModel.Organisation.isTheFAP"];
+            if (isfap == "true")
+            {
+                organisation.isOrganisationTheFAP = true;
+
+                organisation.OrganisationFAPLicenseNumber = collection["OrganisationViewModel.Organisation.FAPLicenseNumber"];
             }
 
             if (!string.IsNullOrWhiteSpace(OrganisationType))
@@ -310,7 +327,7 @@ namespace DealEngine.Services.Impl
                     if(!User.Organisations.Any(o=>o.InsuranceAttributes.Any(i=>i.Name == Type)))
                         User.Organisations.Add(foundOrg);
 
-                    if(User.PrimaryOrganisation == null)
+                    if(Type != "Administrator" && User.PrimaryOrganisation == null)
                     {
                         User.SetPrimaryOrganisation(foundOrg);
                     }
@@ -356,6 +373,12 @@ namespace DealEngine.Services.Impl
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
                     OrganisationalUnits.Add(new AdvisorUnit(User, Type, OrganisationTypeName, collection));
+                }
+                if (Type == "Administrator"
+                  )
+                {
+                    OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
+                    OrganisationalUnits.Add(new AdministratorUnit(User, Type, OrganisationTypeName, collection));
                 }
                 if (Type == "Personnel")
                 {

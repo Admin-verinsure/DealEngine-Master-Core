@@ -52,6 +52,35 @@
                 {
                     @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label" })
                     @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })
+
+
+                    <div class="form-group">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationTheFAP, new { @class = "label required" })
+                            <select id="Organisation.isOrganisationTheFAP" name="OrganisationViewModel.Organisation.isOrganisationTheFAP" data-rule="IsTheFap"  class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">
+                                        @option.Text
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "label required" })
+                                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "form-control", @id = "Organisation.OrganisationFAPLicenseNumber"})
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    @*@Html.LabelFor(m => m.OrganisationViewModel.Organisation.isTheFAP, new { @class = "label" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.isTheFAP, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })*@
+
                 }
             </div>
         }
@@ -85,12 +114,12 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"
                Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
 {
 
-    <div class="form-group row">
+    <div class="form-group AdvisorUnit row">
 
         <div class="form-group col-md-6">
             <div class="form-group">
                 @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.isTheFAP, new { @class = "label required" })
-                <select id="AdvisorUnit.isTheFAP" name="OrganisationViewModel.AdvisorUnit.isTheFAP" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                <select id="AdvisorUnit.isTheFAP" name="OrganisationViewModel.AdvisorUnit.isTheFAP" data-rule="IsTheFap"  class="custom-select" onchange="OnChange(this.id, this.name)" required>
                     @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
                     {
                         <option selected="@option.Selected" value="@option.Value">
@@ -101,10 +130,10 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"
             </div>
         </div>
         <div class="form-group col-md-6">
-            <div id="OrganisationViewModel.AdvisorUnit.isTheFAP" hidden>
+            <div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.FAPLicenseNumber, new { @class = "label required" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.FAPLicenseNumber, new { @class = "form-control", @id = "AdvisorUnit.FAPLicenseNumber", @required = "" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.FAPLicenseNumber, new { @class = "form-control", @id = "AdvisorUnit.FAPLicenseNumber" })
                 </div>
 
             </div>

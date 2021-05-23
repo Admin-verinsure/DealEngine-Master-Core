@@ -205,9 +205,13 @@
                 else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
                     Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                 {
+                    @Html.Hidden("AdministratorUnit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/Apollo_AddOrganisation", Model)
+
+                    @*@Html.Hidden("Unit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
+                @await Html.PartialAsync("PrefabSections/OrganisationPartials/Apollo_AddOrganisation", Model)*@
                 }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>

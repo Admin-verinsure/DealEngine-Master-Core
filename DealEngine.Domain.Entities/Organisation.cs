@@ -99,6 +99,14 @@ namespace DealEngine.Domain.Entities
         public virtual string Name { get; set; }
         [Display(Name = "Trading Name")]
         public virtual string TradingName { get; set; }
+
+
+        [Display(Name = "FAP License number")]
+        public virtual string OrganisationFAPLicenseNumber { get; set; }
+
+        [Display(Name = "Is FAP?")]
+        public virtual bool isOrganisationTheFAP { get; set; }
+
         public virtual OrganisationType OrganisationType { get; set; }
         public virtual bool Removed { get; set; }
         // public virtual string Othercompanyname { get; set; }

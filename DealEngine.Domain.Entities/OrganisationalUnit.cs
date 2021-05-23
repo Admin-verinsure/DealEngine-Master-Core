@@ -32,6 +32,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Name { get; set; }
         public virtual string EserviceProducerCode { get; set; }
         public virtual string EbixDepartmentCode { get; set; }
+
         public virtual string HPFBranchCode { get; set; }
 
         //public virtual Guid organisation_id { get; set; }
@@ -78,7 +79,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is FAP?")]
+        [Display(Name = "Is Advisor FAP?")]
         public virtual bool isTheFAP { get; set; }
 
     }
@@ -240,6 +241,39 @@ namespace DealEngine.Domain.Entities
 
     }
 
+
+    public class AdministratorUnit : OrganisationalUnit
+    {
+        public AdministratorUnit() { }
+        public AdministratorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+
+        }
+
+
+        [Display(Name = "Street")]
+        public virtual string Street { get; set; }
+
+        [Display(Name = "Suburb")]
+        public virtual string Suburb { get; set; }
+
+        [Display(Name = "PostCode")]
+        public virtual string PostCode { get; set; }
+
+        [Display(Name = "Country")]
+        public virtual string Country { get; set; }
+
+        [Display(Name = "Phone Number")]
+        public virtual string PhoneNumber { get; set; }
+
+        [Display(Name = "FAP License number")]
+        public virtual string FAPAdministratorLicenseNumber { get; set; }
+
+        [Display(Name = "Is FAP?")]
+        public virtual bool isAdministratorTheFAP { get; set; }
+
+    }
 }
 
 

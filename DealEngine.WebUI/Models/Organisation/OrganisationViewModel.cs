@@ -25,6 +25,8 @@ namespace DealEngine.WebUI.Models
                     Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+                    AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+
                     if (Programme.NamedPartyUnitName == "NZFSG Programme") 
                     { 
                         InsuranceAttributes = GetAdvisorTypes1(); 
@@ -54,7 +56,7 @@ namespace DealEngine.WebUI.Models
                     OrganisationTypes = GetOrganisationTypes();
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
-                    HasIsFAPOptions = GetStandardSelectOptions();
+                    HasIsFAPOptions = GetBooleanSelectOptions();
 
 
                 }
@@ -688,8 +690,8 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                     {
-                        Text = "Administration",
-                        Value = "Administration"
+                        Text = "Administrator",
+                        Value = "Administrator"
                     },
                 new SelectListItem
                 {
@@ -713,11 +715,11 @@ namespace DealEngine.WebUI.Models
                     {
                         Text = "Advisor",
                         Value = "Advisor"
-                    },
+                  },
                 new SelectListItem
                     {
-                        Text = "Administration",
-                        Value = "Administration"
+                        Text = "Administrator",
+                        Value = "Administrator"
                     },
                 new SelectListItem
                 {
@@ -735,6 +737,7 @@ namespace DealEngine.WebUI.Models
         }
         private IList<SelectListItem> GetAdvisorTypes3()
         {
+            
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
                 new SelectListItem
@@ -754,8 +757,8 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                        Text = "Administration",
-                        Value = "Administration"
+                        Text = "Administrator",
+                        Value = "Administrator"
                 },
                 new SelectListItem
                 {
@@ -853,6 +856,9 @@ namespace DealEngine.WebUI.Models
         public IndividualInsuredUnit IndividualInsuredUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
         public IList<SelectListItem> HasIsFAPOptions { get; set; }
+
+        public AdministratorUnit AdministratorUnit { get; set; }
+
 
     }
 }
