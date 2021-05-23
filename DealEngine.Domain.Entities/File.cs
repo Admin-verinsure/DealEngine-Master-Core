@@ -18,7 +18,18 @@ namespace DealEngine.Domain.Entities
 	public class Document : File
 	{
 		public virtual string Description { get; set; }
-		public virtual int DocumentType { get; set; } //Wording = 0, Certificate = 1, Schedule = 2, Email = 3, Payment Confirmation = 4, EGlobal Invoice = 5, Advisory = 6, Premium Advice= 7, Apollo Invoice = 8, FullProposal Report Pdf = 99
+		public virtual int DocumentType { get; set; }
+		//Wording = 0
+		//Certificate = 1
+		//Schedule = 2
+		//Payment Confirmation = 3
+		//Eglobal Invoice = 4
+		//Advisory = 5
+		//Sub-Certificate = 6
+		//Premium Advice= 7
+		//Apollo Invoice = 8
+		//Job-Certificate = 9
+		//FullProposal Report Pdf = 99
 		public virtual bool IsPublic { get; protected set; }
 		public virtual byte [] Contents { get; set; }
 		public virtual Organisation OwnerOrganisation { get; set; }

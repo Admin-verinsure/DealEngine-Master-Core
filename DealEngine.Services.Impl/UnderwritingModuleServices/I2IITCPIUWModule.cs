@@ -82,9 +82,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
 
-            //string strProfessionalBusiness = "";
+            string strProfessionalBusiness = "Your Business: As per endorsement";
 
-            //agreement.ProfessionalBusiness = strProfessionalBusiness;
+            agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             decimal decOther = 0M;
             bool bolworkoutsidenz = false;
