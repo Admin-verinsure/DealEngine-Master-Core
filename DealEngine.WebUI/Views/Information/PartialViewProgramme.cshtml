@@ -90,6 +90,32 @@
             $(tr).addClass("hidden");
             $(tr).hide();
 
+             var formgrp = document.getElementsByClassName("form-control");
+            $(formgrp).disabled = true;
+            debugger;
+            
+             $("div *").attr('disabled', 'disabled');
+            $(".btn-sm").removeAttr('disabled');
+            //$(".btn-success").attr('disabled', 'disabled');
+            $('form').children('input[type=submit]').prop('disabled', true);
+            
+            //$("button[type='submit']").attr('disabled', 'disabled');
+            //$('.form-control').find('input, textarea, button, select').attr('disabled','disabled');
+            //$('.form-control *').prop('disabled', true);
+
+//            $("div *").disable();
+//            var el = document.getElementById('example'),
+//    all = el.getElementsByTagName('input'),
+//    i;
+//for (i = 0; i < all.length; i++) {
+//    all[i].disabled = true;
+//}
+
+            $("button[type^=submit]").each(function (index) {
+                $(this).hide();
+             });
+
+
              if ("@Model.Status" == "Submitted") {
                 debugger;
 
@@ -111,7 +137,11 @@
 }
 
 <script>
-    
+  //  input[type="submit"]{
+  //display:none;
+  //  }
+
+
 textarea {
   width: 300px;
   height: 1500px;

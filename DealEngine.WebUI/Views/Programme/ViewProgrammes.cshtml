@@ -26,7 +26,7 @@
                                     @foreach (var programme in Model.Programmes)
                                     {
                                         <tr>
-                                            <td>@programme.Name</td>
+                                            <td>@programme.NamedPartyUnitName</td>
                                             <td>@programme.Owner.Name</td>
                                             <td>
                                                 <a class="btn btn-primary btn-xs" href="/Programme/EditProgramme/@(programme.Id)">View</a>

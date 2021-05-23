@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-6 AdvisorUnit">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.MyCRMId, new { @class = "label required" })
             @Html.TextBoxFor(m => m.OrganisationViewModel.AdvisorUnit.MyCRMId, new { @class = "form-control", @id = "AdvisorUnit.MyCRMId", onchange = "OnChange(this.id, this.name)", @required = "" })
@@ -25,7 +25,7 @@
             </select>
         </div>
     </div>
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-6 AdvisorUnit">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased)
             <select id="AdvisorUnit.IsRetiredorDeceased" name="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" data-rule="RetirementDateValidation"  class="custom-select" onchange="OnChange(this.id, this.name)" required>

@@ -12,7 +12,7 @@
             {
                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
             }
-        </select>
+        </select> 
     </div>
     <div id="OrganisationViewModel.AdvisorUnit.IsRetiredorDeceased" hidden>
         <div class="form-group">
@@ -71,60 +71,4 @@
     </div>
 
 </div>
-
-
-    <div class="form-group col-md-6 HideAdministrator" id="HideAdministrator">
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Street, new { @class = "form-control", @id = "AdministratorUnit.Street", @required = "" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Suburb, new { @class = "form-control", @id = "AdministratorUnit.Suburb", @required = "", @onchange = "OnChange(this.id, this.name)" })
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PostCode, new { @class = "form-control", @id = "AdministratorUnit.PostCode", @required = "" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.Country, new { @class = "form-control", @id = "AdministratorUnit.Country", @required = "", @onchange = "OnChange(this.id, this.name)" })
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "label required" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.PhoneNumber, new { @class = "form-control", @id = "AdministratorUnit.PhoneNumber", @type = "number", @required = "", @onchange = "OnChange(this.id, this.name)" })
-        </div>
-
-        <div class="form-group">
-            <div class="form-group">
-                @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP, new { @class = "label required" })
-                <select id="AdministratorUnit.isAdministratorTheFAP" name="OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">
-                            @option.Text
-                        </option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            @*<div id="OrganisationViewModel.AdministratorUnit.isAdministratorTheFAP">*@
-            <div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.OrganisationViewModel.AdministratorUnit.FAPAdministratorLicenseNumber, new { @class = "label required" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.AdministratorUnit.FAPAdministratorLicenseNumber, new { @class = "form-control", @id = "AdministratorUnit.FAPAdministratorLicenseNumber" })
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-
 
