@@ -684,7 +684,7 @@ namespace DealEngine.Services.Impl
                     newClientInformationSheet.Boats.Add(newBoat);
                 }
             }
-            //Do not renew revenue data, so create a new empty revenue data
+            //Renew revenue data based on the programme config, so create a new empty revenue data
             if (currentProgramme.RenewWithOutRevenue)
             {
                 newClientInformationSheet.RevenueData = null;
@@ -759,6 +759,13 @@ namespace DealEngine.Services.Impl
             //        newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
             //    }
             //}
+            if (newClientInformationSheet.Organisation != null)
+            {
+                foreach (Organisation org in newClientInformationSheet.Organisation)
+                {
+                    org.OrgBeenMoved = false;
+                }
+            }
 
             await Update(newClientProgramme);
             return newClientProgramme;

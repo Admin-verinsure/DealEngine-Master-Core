@@ -55,7 +55,7 @@ namespace DealEngine.Domain.Entities
         public virtual string WordingDownloadURLAlternative { get; set; }
         public virtual decimal DefaultPlacementFee { get; set; }
         public virtual decimal DefaultAdditionalCertFee { get; set; }
-
+        public virtual string ProductPolicyNumberPrefixString { get; set; }
         protected Product() : base(null) { }
 
         protected Product(User createdBy)

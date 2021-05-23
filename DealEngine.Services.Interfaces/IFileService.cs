@@ -25,7 +25,7 @@ namespace DealEngine.Services.Interfaces
 
 		Task<Image> GetImage (string imageName);
 
-        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
+        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation, Job job) where T : Document;
 
 		Task<Document> ConvertHTMLToPDF(Document document);
 

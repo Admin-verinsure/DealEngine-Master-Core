@@ -165,7 +165,7 @@ namespace DealEngine.Services.Impl
 			return await _imageRepository.FindAll().FirstOrDefaultAsync(i => i.Name == imageName);
 		}
 
-		public async Task<T> RenderDocument<T>(User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformationSheet) where T : Document
+		public async Task<T> RenderDocument<T>(User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformationSheet, Job job) where T : Document
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 

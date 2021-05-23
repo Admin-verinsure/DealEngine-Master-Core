@@ -1403,7 +1403,7 @@ namespace DealEngine.WebUI.Controllers
                                                 if (newclientAgreement.Product.IsOptionalProductBasedSub &&
                                                     newclientAgreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == newclientAgreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                 {
-                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null);
+                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null, null);
                                                     renderedDoc.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
                                                     newclientAgreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
@@ -1412,7 +1412,7 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else if (template.DocumentType == 7)
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null);
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null, null);
                                                 renderedDoc.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
                                                 newclientAgreement.Documents.Add(renderedDoc);
                                                 //documents.Add(renderedDoc);
@@ -1421,7 +1421,7 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else if (template.DocumentType == 8)
                                             {
-                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, newclientAgreement, null);
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, newclientAgreement, null, null);
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                 renderedDoc.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
@@ -1431,7 +1431,7 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null);
+                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, null, null);
                                                 renderedDoc.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
                                                 newclientAgreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -1449,7 +1449,7 @@ namespace DealEngine.WebUI.Controllers
                                                 {
                                                     if (subSystemClient.Answers.Where(sa => sa.ItemName == newclientAgreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                     {
-                                                        SystemDocument renderedDocSub = await _fileService.RenderDocument(user, template, newclientAgreement, subSystemClient);
+                                                        SystemDocument renderedDocSub = await _fileService.RenderDocument(user, template, newclientAgreement, subSystemClient, null);
                                                         renderedDocSub.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
                                                         newclientAgreement.Documents.Add(renderedDocSub);
                                                         documents.Add(renderedDocSub);
@@ -1458,7 +1458,7 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                                 else
                                                 {
-                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, subSystemClient);
+                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, newclientAgreement, subSystemClient, null);
                                                     renderedDoc.OwnerOrganisation = newclientAgreement.ClientInformationSheet.Owner;
                                                     newclientAgreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
