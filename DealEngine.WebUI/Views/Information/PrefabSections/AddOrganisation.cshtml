@@ -156,6 +156,8 @@
                 @Html.HiddenFor(m => m.ClientInformationSheet.Id)
                 @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG Programme")
                 {
+                    @Html.Hidden("AdministratorUnit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
+
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)
                 }
@@ -186,6 +188,7 @@
                 }
                 else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "TripleA Programme")
                 {
+                    @Html.Hidden("AdministratorUnit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/TripleA_AddOrganisation", Model)
