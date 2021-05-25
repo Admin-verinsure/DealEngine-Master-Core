@@ -46,10 +46,7 @@ namespace DealEngine.WebUI.Controllers
             _iproductService = iproductService;
             _hostingEnv = hostingEnv;
             _appSettingService = appSettingService;
-
         }
-
-
         [HttpGet]
         public async Task<ViewResult> ManageImage()
         {
@@ -58,34 +55,33 @@ namespace DealEngine.WebUI.Controllers
             ImageViewModel model = new ImageViewModel();
             model.Item = list;
             model.Products = list2;
-
+            model.OS = _appSettingService.OS; // no clue why, but this comes back as Windows_NT for some reason even though set to Windows in appsettings.json
+            model.BaseURL = _appSettingService.domainQueryString;
             return View(model);
         }
-
         [HttpGet]
-
         public async Task<IActionResult> GetAllImages()
         {
             var model = await _ckimageService.GetAllImages();
             return View(model);
         }
-
+        [HttpGet]
         public async Task<IActionResult> CKGetAllImages()
         {
             var model = await _ckimageService.GetAllImages();
             return Json(model);
         }
-
-
         [HttpPost]
         public async Task<IActionResult> Upload(ImageViewModel model)
         {
+            string CKImageFolderPath = _appSettingService.CKImagePath;
+
             var user = await CurrentUser();
             if (model != null)
             {                
                 if (model.Image != null )
                 {
-
+                    #region
                     // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace have done differently below where you just don't create a new record if one already exists with that filename
 
                     // string path = Path.Combine(_hostingEnv.WebRootPath, "Image", model.Image.FileName);
@@ -98,9 +94,11 @@ namespace DealEngine.WebUI.Controllers
                     //}
                     // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
                     // list = await _ckimageService.GetAllImages();
-
+                    #endregion
+                    
                     var contentType = model.Image.ContentType;
-                    var extension = "";                   
+                    var extension = "";    
+                    
                     if (contentType == "image/jpeg")
                     {
                         extension = ".jpg";
@@ -118,8 +116,12 @@ namespace DealEngine.WebUI.Controllers
                         model.Name = model.Image.FileName;
                         extension = "";
                     }
+
+                    var thumbnailFilename = "_" + model.Name + extension;
                     var filename = model.Name + extension;
-                    string path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
+
+                    var imageThumbnailPath = Path.Combine(CKImageFolderPath, thumbnailFilename);
+                    var imagePath = Path.Combine(CKImageFolderPath, filename);
 
                     try //save thumbnail
                     {
@@ -128,7 +130,7 @@ namespace DealEngine.WebUI.Controllers
 
                         if (thumbnail != null)
                         {
-                            thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
+                            thumbnail.Save(imageThumbnailPath, thumbnail.RawFormat);
                         }
                         else
                         {
@@ -143,19 +145,20 @@ namespace DealEngine.WebUI.Controllers
 
                     try //save Image
                     {
-                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        using (var fileStream = new FileStream(imagePath, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
                         }
-                        //save Record of Image
+                        // save Record of Image, due to SECURITY need to use relative paths not full Path
+                        // Issue here where the relative path would be \\ or / depending on if Windows or Linux
+
                         CKImage newCKImage = new CKImage
                         {
                             Name = filename,
                             Path = filename,
-                            ThumbPath = "_" + filename
+                            ThumbPath = thumbnailFilename
                         };
-
-                        // check if there is a record with this filename already if there is then take action?
+                        //check if there is a record with this filename already if there is then take action?
                         CKImage dupe = await _ckimageService.GetCKImage(model.Image.FileName);
                         if (dupe != null && dupe.Path == newCKImage.Path)
                         {
@@ -166,20 +169,16 @@ namespace DealEngine.WebUI.Controllers
                         {
                             await _ckimageRepository.AddAsync(newCKImage);
                         }
-
                     }
-
                     catch (Exception Ex)
                     {
                         Console.WriteLine(Ex.ToString());
                     }
-
                 }
                 return Redirect("~/Image/ManageImage");          
             }
             return Redirect("~/Image/ManageImage");
         }
-
         [HttpPost]
         public async Task<IActionResult> CKUpload()
         { 
@@ -207,7 +206,7 @@ namespace DealEngine.WebUI.Controllers
             if (file != null && file.Length > 0)
             {
                 var name = file.FileName;
-                var path = Path.Combine(_hostingEnv.WebRootPath, "Image", name);
+                var path = Path.Combine(_hostingEnv.WebRootPath, "ckeditor/ckeditor5-techcertain", name);
                 var url = "https://" + _appSettingService.domainQueryString + "/Image/" + name;
                 var json = Json(new { url });
 
@@ -218,7 +217,7 @@ namespace DealEngine.WebUI.Controllers
                     System.Drawing.Image thumbnail = GetReducedImage(100, 100, stream);
                     if (thumbnail != null)
                     {
-                        thumbnail.Save("wwwroot/Image/_" + name, thumbnail.RawFormat);
+                        thumbnail.Save("wwwroot/ckeditor/_" + name, thumbnail.RawFormat);
                     }
                     else
                     {
@@ -269,7 +268,6 @@ namespace DealEngine.WebUI.Controllers
 
             return BadRequest();
         }
-
         [HttpPost]
         public async Task<IActionResult> UploadDoc(ImageViewModel model)
         {
@@ -339,7 +337,6 @@ namespace DealEngine.WebUI.Controllers
             }
             return Redirect("~/Image/ManageImage");
         }
-
         [HttpPost]
        public IActionResult Delete()
       {

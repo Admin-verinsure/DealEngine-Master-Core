@@ -43,6 +43,22 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public string CKImagePath
+        {
+            get
+            {
+                return _configuration.GetValue<string>("CKImageFolderPath");
+            }
+        }
+
+        public string OS
+        {
+            get
+            {
+                return _configuration.GetValue<string>("OS");
+            }
+        }
+
         public string MarshRSACredentials
         {
             get

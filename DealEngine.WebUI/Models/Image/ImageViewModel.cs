@@ -26,5 +26,8 @@ namespace DealEngine.WebUI.Models.Image
 
         public string Product { get; set; }
 
+        public string OS { get; set; }
+        public string BaseURL { get; set; }
+
     }
 }
