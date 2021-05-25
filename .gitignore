@@ -10,22 +10,11 @@
 [Oo]bj/
 [Bb]in/
 *.cache
-/TechCertain.2015.Rebuild/TechCertain.Web.UI/tracelogs
-/TechCertain.2015.Rebuild/.vs/
-/TechCertain.2015.Rebuild/TechCertain.Web.UI/Web.config
-/TechCertain.2015.Rebuild/bootstrap-datetimepicker
 sqlite3
 *.dtbcache
-/.vs/techcertain2015rebuildcore/config
-/.vs/techcertain2019core/config
-/TechCertain.WebUI/Views/UI - contains examples
 /web.config
 /packages
-/TechCertain.WebUI/appsettings.json
-TechCertain.WebUI/wwwroot/images/
 .vscode
-/DealEngine.WebUI/appsettingsnathan.json
-DealEngine.WebUI/wwwroot/images/
 /.vs/DealEngine/DesignTimeBuild/.dtbcache.v2
 .vs/DealEngine/config/applicationhost.config
 /.vs/DealEngine/config/applicationhost.config
@@ -33,5 +22,6 @@ DealEngine.WebUI/wwwroot/images/
 /.vs/DealEngine/v16/TestStore/0/testlog.manifest
 /DealEngine.WebUI/wwwroot/Data/5f4f9a19-c948-425a-b306-c7f5cba56d86
 /DealEngine.WebUI/wwwroot/Documents
+/DealEngine.WebUI/appsettings.json
 /DealEngine.WebUI/wwwroot/Image/*
 !/DealEngine.WebUI/wwwroot/Image/.gitkeep
