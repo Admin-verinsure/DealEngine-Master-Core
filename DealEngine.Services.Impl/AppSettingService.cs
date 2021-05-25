@@ -51,14 +51,6 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public string OS
-        {
-            get
-            {
-                return _configuration.GetValue<string>("OS");
-            }
-        }
-
         public string MarshRSACredentials
         {
             get

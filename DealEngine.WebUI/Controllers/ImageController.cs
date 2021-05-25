@@ -55,8 +55,7 @@ namespace DealEngine.WebUI.Controllers
             ImageViewModel model = new ImageViewModel();
             model.Item = list;
             model.Products = list2;
-            model.OS = _appSettingService.OS; // no clue why, but this comes back as Windows_NT for some reason even though set to Windows in appsettings.json
-            model.BaseURL = _appSettingService.domainQueryString;
+
             return View(model);
         }
         [HttpGet]
@@ -79,26 +78,12 @@ namespace DealEngine.WebUI.Controllers
             var user = await CurrentUser();
             if (model != null)
             {                
-                if (model.Image != null )
-                {
-                    #region
-                    // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace have done differently below where you just don't create a new record if one already exists with that filename
-
-                    // string path = Path.Combine(_hostingEnv.WebRootPath, "Image", model.Image.FileName);
-                    // CKImage dupe = new CKImage();
-                    // var list = await _ckimageService.GetAllImages();
-                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
-                    //if (System.IO.File.Exists(path) & dupe != null)
-                    //{
-                    //    await _ckimageService.Delete(dupe);
-                    //}
-                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
-                    // list = await _ckimageService.GetAllImages();
-                    #endregion
-                    
+                if (model.Image != null)
+                { 
                     var contentType = model.Image.ContentType;
-                    var extension = "";    
-                    
+
+                    #region Extension related
+                    var extension = "";                        
                     if (contentType == "image/jpeg")
                     {
                         extension = ".jpg";
@@ -111,6 +96,8 @@ namespace DealEngine.WebUI.Controllers
                     {
                         throw new FileFormatException("Invalid File Type");
                     }
+                    #endregion
+
                     if (model.Name == null || model.Name.Length < 1)
                     {
                         model.Name = model.Image.FileName;
@@ -119,11 +106,11 @@ namespace DealEngine.WebUI.Controllers
 
                     var thumbnailFilename = "_" + model.Name + extension;
                     var filename = model.Name + extension;
-
                     var imageThumbnailPath = Path.Combine(CKImageFolderPath, thumbnailFilename);
                     var imagePath = Path.Combine(CKImageFolderPath, filename);
 
-                    try //save thumbnail
+                    // Save Thumbnail Locally
+                    try
                     {
                         Stream stream = model.Image.OpenReadStream();
                         System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
@@ -143,14 +130,13 @@ namespace DealEngine.WebUI.Controllers
                         await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                     }
 
-                    try //save Image
-                    {
+                    // Save Image Locally
+                    try
+                    { 
                         using (var fileStream = new FileStream(imagePath, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
                         }
-                        // save Record of Image, due to SECURITY need to use relative paths not full Path
-                        // Issue here where the relative path would be \\ or / depending on if Windows or Linux
 
                         CKImage newCKImage = new CKImage
                         {
@@ -158,12 +144,11 @@ namespace DealEngine.WebUI.Controllers
                             Path = filename,
                             ThumbPath = thumbnailFilename
                         };
-                        //check if there is a record with this filename already if there is then take action?
+
                         CKImage dupe = await _ckimageService.GetCKImage(model.Image.FileName);
                         if (dupe != null && dupe.Path == newCKImage.Path)
                         {
-                            // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
-                            // I.e change user, change last modified
+                            // DO NOTHING (its a duplicate)
                         }
                         else
                         {
@@ -190,7 +175,6 @@ namespace DealEngine.WebUI.Controllers
             {
                 return BadRequest();
             }
-
             else if (fileCount == 1)
             {
                 foreach (var x in files)
@@ -205,9 +189,15 @@ namespace DealEngine.WebUI.Controllers
 
             if (file != null && file.Length > 0)
             {
-                var name = file.FileName;
-                var path = Path.Combine(_hostingEnv.WebRootPath, "ckeditor/ckeditor5-techcertain", name);
-                var url = "https://" + _appSettingService.domainQueryString + "/Image/" + name;
+                string CKImageFolderPath = _appSettingService.CKImagePath;
+
+                var thumbnailFilename = "_" + file.FileName;
+                var filename = file.FileName;
+
+                var imageThumbnailPath = Path.Combine(CKImageFolderPath, thumbnailFilename);
+                var imagePath = Path.Combine(CKImageFolderPath, filename);
+
+                var url = "https://" + _appSettingService.domainQueryString + "/Image/" + filename;
                 var json = Json(new { url });
 
                 try
@@ -217,7 +207,7 @@ namespace DealEngine.WebUI.Controllers
                     System.Drawing.Image thumbnail = GetReducedImage(100, 100, stream);
                     if (thumbnail != null)
                     {
-                        thumbnail.Save("wwwroot/ckeditor/_" + name, thumbnail.RawFormat);
+                        thumbnail.Save(imageThumbnailPath, thumbnail.RawFormat);
                     }
                     else
                     {
@@ -231,23 +221,22 @@ namespace DealEngine.WebUI.Controllers
                 }
                 try
                 {
-                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    using (var fileStream = new FileStream(imagePath, FileMode.Create))
                     {
-                        // Save the Image
                         await file.CopyToAsync(fileStream);
                     }
-                    // Save Record of Image
+
                     CKImage newCKImage = new CKImage
                     {
-                        Name = name,
-                        Path = name,
-                        ThumbPath = "_" + name
+                        Name = filename,
+                        Path = filename,
+                        ThumbPath = thumbnailFilename
                     };
 
-                    CKImage dupe = await _ckimageService.GetCKImage(file.FileName);
+                    CKImage dupe = await _ckimageService.GetCKImage(filename);
                     if (dupe != null && dupe.Path == newCKImage.Path)
                     {
-                        // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                        // DO NOTHING (its a duplicate)
                     }
                     else
                     {
@@ -339,13 +328,9 @@ namespace DealEngine.WebUI.Controllers
         }
         [HttpPost]
        public IActionResult Delete()
-      {
-            // Delete the file
-            // Delete the db record
-            //_ckimageRepository.AddAsync(newCKImage);           
+       {      
             return View("~/Views/Image/ManageImage.cshtml");
-        }
-
+       }
 
         public System.Drawing.Image GetReducedImage(int Width, int Height, Stream resourceImage)
         {

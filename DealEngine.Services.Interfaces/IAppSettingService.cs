@@ -11,7 +11,6 @@ namespace DealEngine.Services.Interfaces
         string IntermediatePassword { get; }
         string domainQueryString { get; }
         string CKImagePath { get; }
-        string OS { get; }
         string RequireRSA { get; }
         string GetMarineInsuranceSpecialistEmail { get; }
         string GetCompanyTitle { get; }
