@@ -80,15 +80,15 @@
 
 @section pagespecific {
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/lib/popper.js/umd/popper.js"></script>
     <script src="~/ckeditor/ckeditor5-techcertain/build/ckeditor.js"></script>
+    <script src="~/ckeditor/ckeditor5-techcertain/build/selectimportimg.js"></script>
+    <script src="~/ckeditor/ckeditor5-techcertain/build/sendemailtemplates.js"></script>
     <link href="~/css/ckeditor.css" rel="stylesheet" />
-    <script src="~/js/ckeditorPlugin.js"></script>
 
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         function SaveEmailTemplate() {
-
+            debugger;
             var body = window.editor.getData();
 			var bodyElement = $("#@Html.IdFor(m => m.Body)");
             bodyElement.text(bodyElement.text(body).html());
@@ -99,7 +99,7 @@
 			    data: $("#update-form").serialize() // serializes the form's elements.
 			})
 	        .done(function (json) {
-				debugger
+                debugger// do nothing (was debugger without a semi-colon...?)
 	        })
 	        .fail(function (err, ajaxOptions, thrownError) {
                 debugger;
@@ -109,7 +109,7 @@
 	        });
         };
 
-    </script>
+    </script>*@
 
 }
 
