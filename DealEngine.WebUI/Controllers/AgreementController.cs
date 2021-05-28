@@ -2705,7 +2705,7 @@ namespace DealEngine.WebUI.Controllers
                                         else
                                         {
                                             //render docs except invoice
-                                            if (template.DocumentType != 4 && template.DocumentType != 6)
+                                            if (template.DocumentType != 4 && template.DocumentType != 6 && template.DocumentType != 9)
                                             {
                                                 if (template.Name == "TripleA Individual TL Certificate")
                                                 {

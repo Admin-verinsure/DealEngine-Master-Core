@@ -27,7 +27,7 @@ namespace DealEngine.Domain.Entities
 		//Advisory = 5
 		//Sub-Certificate = 6
 		//Premium Advice= 7
-		//Apollo Invoice = 8
+		//Invoice (pdf apollo)= 8
 		//Job-Certificate = 9
 		//FullProposal Report Pdf = 99
 		public virtual bool IsPublic { get; protected set; }

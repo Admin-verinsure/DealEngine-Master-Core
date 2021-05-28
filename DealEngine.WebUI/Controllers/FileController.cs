@@ -632,6 +632,11 @@ namespace DealEngine.WebUI.Controllers
                                     documentType = "Premium Advice";
                                     break;
                                 }
+                            case 9:
+                                {
+                                    documentType = "Job-Certificate";
+                                    break;
+                                }
                             case 99:
                                 {
                                     documentType = "Full Proposal Report";

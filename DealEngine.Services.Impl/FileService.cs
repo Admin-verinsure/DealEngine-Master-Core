@@ -317,7 +317,26 @@ namespace DealEngine.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[InsuredPostCode]]", ""),
                agreement.ClientInformationSheet.Locations.FirstOrDefault().Postcode));
             }
-            
+
+            //render job cert job detail
+            if (job != null)
+            {
+                string jobdetail = "";
+                jobdetail = "<strong>Job Detail</strong>" +
+                 "<br />" + "Job Description:                   " + job.JobDescription +
+                 "<br />" + "Job Number:                         " + job.JobNumber +
+                 "<br />" + "Start Date:                             " + job.StartDate.ToString("dd/MM/yyyy") +
+                 "<br />" + "End Date:                               " + job.EndDate.ToString("dd/MM/yyyy") +
+                 "<br />" + "RA Client Named Party:      " + job.RACLientNamedParty;
+
+                mergeFields.Add(new KeyValuePair<string, string>("[[JobDetail]]", jobdetail));
+
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[JobDetail]]", ""));
+            }
+
             //MV Details
             if (agreement.ClientAgreementTerms.Any (cat => cat.SubTermType == "MV")) {
 				int intMVNumberOfUnits = 0;
