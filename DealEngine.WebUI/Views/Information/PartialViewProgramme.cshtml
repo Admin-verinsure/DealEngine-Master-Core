@@ -53,67 +53,42 @@
 
 @section pagespecific {
     <script>
-        $(window).on("load", function () {
-            debugger;
 
-            //$('a link').css({"color": "green" });
+         $(window).on("load", function () {
+
+             setTimeout(function(){
+
+                if ("@Model.Status" == "Submitted" || "@Model.Status" == "Bound") {
+                debugger;
+        
+                 $("select").attr("disabled", "disabled");
+                 $("input").attr("disabled", "disabled");
+                 $(".btn-success").attr("disabled", "disabled");
+                 //$("button").attr("disabled", "disabled");
+                 $(".fa-edit").attr("disabled", "disabled");
+                 $(".btn-sm").removeAttr('disabled');
+                 $(".btn-danger").attr("disabled", "disabled");
+                 $(".text-light").attr("disabled", "disabled");
+                 $('.updateBoat').attr("disabled", "disabled");
+                 $('.AddClearBoat').attr("disabled", "disabled");
+                 $('.updateBoat').attr("hidden",true);
+                 $('.AddClearBoat').prop('hidden', true);
+                 $('.btn-primary').attr("hidden",true);
+                      
+
+                //$("#PIViewModel :input").prop("disabled", true);
+
+                 }
+             }, 2000);
+         });
+
+
+
+
+        @*$(window).on("load", function () {
+            debugger;;
 
             $('#proposalcreate-form li').css({ "color": "green" });
-
-
-            if (document.getElementById("fieldset") != null) {
-                document.getElementById("fieldset").disabled = true;
-            }
-
-            //$('#boatForm :input').prop('disabled', 'disabled');
-            var updatebutton = document.getElementById("update");
-            $(updatebutton).addClass("hidden");
-            $(updatebutton).hide();
-
-            var trashbutton = document.getElementsByClassName("glyphicon glyphicon-trash");
-            $(trashbutton).addClass("hidden");
-            $(trashbutton).hide();
-
-            var tbutton = document.getElementsByClassName(" btn-danger");
-            $(tbutton).addClass("hidden");
-            $(tbutton).hide();
-
-            var trash = document.getElementById("trash");
-            $(trash).addClass("hidden");
-            $(trash).hide();
-
-            var t = document.getElementById("span");
-            $(t).addClass("hidden");
-            $(t).hide();
-
-            var tr = document.getElementsByName("update");
-            $(tr).addClass("hidden");
-            $(tr).hide();
-
-             var formgrp = document.getElementsByClassName("form-control");
-            $(formgrp).disabled = true;
-            debugger;
-            
-             $("div *").attr('disabled', 'disabled');
-            $(".btn-sm").removeAttr('disabled');
-            //$(".btn-success").attr('disabled', 'disabled');
-            $('form').children('input[type=submit]').prop('disabled', true);
-            
-            //$("button[type='submit']").attr('disabled', 'disabled');
-            //$('.form-control').find('input, textarea, button, select').attr('disabled','disabled');
-            //$('.form-control *').prop('disabled', true);
-
-//            $("div *").disable();
-//            var el = document.getElementById('example'),
-//    all = el.getElementsByTagName('input'),
-//    i;
-//for (i = 0; i < all.length; i++) {
-//    all[i].disabled = true;
-//}
-
-            $("button[type^=submit]").each(function (index) {
-                $(this).hide();
-             });
 
 
              if ("@Model.Status" == "Submitted") {
@@ -122,13 +97,20 @@
                  $('#updateBoat').addClass("hidden");
                  $('#ClearBoat').addClass("hidden");
                  $("select").attr("disabled", "disabled");
+                 $("input").attr("disabled", "disabled");
+                 //$(".btn-danger").attr("disabled", "disabled");
+                 //$(".btn-success").attr("disabled", "disabled");
+                 $("button").attr("disabled", "disabled");
+                 //$(".fa-edit").attr("disabled", "disabled");
+                                  $(".btn-sm").removeAttr('disabled');
+
                 //$("#PIViewModel :input").prop("disabled", true);
 
              }
 
            
 
-        });
+        });*@
     </script>
 
     @*@await Html.PartialAsync("_PrefabScripts")*@
@@ -136,7 +118,7 @@
 
 }
 
-<script>
+@*<script>
   //  input[type="submit"]{
   //display:none;
   //  }
@@ -146,4 +128,4 @@ textarea {
   width: 300px;
   height: 1500px;
 }
-</script>
+</script>*@

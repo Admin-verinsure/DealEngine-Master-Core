@@ -136,10 +136,13 @@
     function ResetOrganisation() {
         var form = document.getElementById("organisationViewModel");
         form.reset();
-        document.getElementById("HideOrganisationType").hidden = false;
-        document.getElementById("HideInsuranceAttribute").hidden = false;
-        document.getElementById("Private").hidden = true;
-        document.getElementById("Else").hidden = true;
+        if (document.getElementById("HideOrganisationType") != null && document.getElementById("HideInsuranceAttribute") != null) {
+            document.getElementById("HideOrganisationType").hidden = false;
+            document.getElementById("HideInsuranceAttribute").hidden = false;
+            document.getElementById("Private").hidden = true;
+            document.getElementById("Else").hidden = true;
+        }
+
         for (var i = 0; i < form.length; i++) {
             if (form[i].type != "hidden"
                 && form[i].tagName != "SELECT") {

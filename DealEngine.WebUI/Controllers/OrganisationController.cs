@@ -68,7 +68,7 @@ namespace DealEngine.WebUI.Controllers
             
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
+                var addr = new System.Net.Mail.MailAddress(email.Trim());
                 ValidBackEndEmail = addr.Address == email;
 
                 if (organisation != null)

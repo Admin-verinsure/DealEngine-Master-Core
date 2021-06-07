@@ -111,7 +111,10 @@
                             {
                                 <td>
                                     @{
-                                        var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor" || o.Name == "Administration");
+                                        var gghg = organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+                                        var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor");
+
+                                        //var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(o => o.Name == "Advisor" || o.Name == "Administration");
                                     }
                                     @if (unit != null)
                                     {

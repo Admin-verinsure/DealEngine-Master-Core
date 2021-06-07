@@ -413,6 +413,10 @@ namespace DealEngine.WebUI.Models
             IsInsuredClaimOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             HaveAnyEmployeeYN = GetSelectListOptions();
+            IssuingFundtransferYN = GetSelectListOptions();
+            ReconcilingStatementsYN = GetSelectListOptions();
+            AmendingFundsYN = GetSelectListOptions();
+
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -443,6 +447,9 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
         public IList<SelectListItem> IsInsuredClaimOptions { get; set; }
         public IList<SelectListItem> HaveAnyEmployeeYN { get; set; }
+        public IList<SelectListItem> IssuingFundtransferYN { get; set; }
+        public IList<SelectListItem> ReconcilingStatementsYN { get; set; }
+        public IList<SelectListItem> AmendingFundsYN { get; set; }
 
         public int CoverAmount { get; set; }
         public string DateLapsed { get; set; }
@@ -696,6 +703,10 @@ namespace DealEngine.WebUI.Models
             HasNavigationIndustryOptions = GetSelectListOptions();
             HasNetworkSecurityOptions = GetSelectListOptions();
             HasTradingIndustryOptions = GetSelectListOptions();
+            HasPartyMembers = GetPartyMembersOptions();
+            HasOtherPIinsurances = GetSelectListOptions();
+            HasClassOfLicense = GetClassOfLicenseOptions();
+
         }
 
         private IList<SelectListItem> GetCEASMembershipSelectListOptions()
@@ -813,6 +824,61 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
+
+        private IList<SelectListItem> GetPartyMembersOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Steadfast", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "Advisor Net", Value = "2"
+                }, 
+                new SelectListItem
+                {
+                    Text = "NZ Broker", Value = "3"
+                },
+                 new SelectListItem
+                {
+                    Text = "2 or More of the Above", Value = "4"
+                },
+                 new SelectListItem
+                {
+                    Text = "None of the Above", Value = "5"
+                }
+            };
+        }
+
+        private IList<SelectListItem> GetClassOfLicenseOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Class 1 - Single Advisor Only", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = " Class 2 - More that one advisor", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "Class 3 - Any others", Value = "3"
+                }
+            };
+        }
+
         private IList<SelectListItem> GetSometimesSelectListOptions()
         {
             return new List<SelectListItem>()
@@ -923,6 +989,10 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasNavigationIndustryOptions { get; set; }
         public IList<SelectListItem> HasNetworkSecurityOptions { get; set; }
         public IList<SelectListItem> HasTradingIndustryOptions { get; set; }
+        public IList<SelectListItem> HasPartyMembers { get; set; }
+        public IList<SelectListItem> HasOtherPIinsurances { get; set; }
+        public IList<SelectListItem> HasClassOfLicense { get; set; }
+
 
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
@@ -985,6 +1055,7 @@ namespace DealEngine.WebUI.Models
             HasProcecutionOptions = GetSelectListOptions();
             HasObligationOptions = GetSelectListOptions();
             HasDebtsOptions = GetSelectListOptions();
+            HasOtherDAOOptions = GetSelectListOptions();
             HasExistingPolicyOptions = GetSelectListOptions();
             FormDate = DateTime.Now;
         }
@@ -1000,6 +1071,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasObligationOptions { get; set; }
         public IList<SelectListItem> HasDebtsOptions { get; set; }
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
+        public IList<SelectListItem> HasOtherDAOOptions { get; set; }
+
         
 
         public int ShareholderTotal { get; set; }

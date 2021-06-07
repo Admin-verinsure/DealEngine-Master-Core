@@ -57,6 +57,8 @@ namespace DealEngine.WebUI.Models
                     HasPrincipalOptions = GetBooleanSelectOptions();
                     HasIsTripleAApprovalOptions = GetBooleanSelectOptions();
                     HasIsFAPOptions = GetBooleanSelectOptions();
+                    HasInterposedPersonOptions = GetBooleanSelectOptions();
+
 
 
                 }
@@ -856,7 +858,7 @@ namespace DealEngine.WebUI.Models
         public IndividualInsuredUnit IndividualInsuredUnit { get; set; }
         public IList<Domain.Entities.Organisation> PublicOrganisations { get; set; }
         public IList<SelectListItem> HasIsFAPOptions { get; set; }
-
+        public IList<SelectListItem> HasInterposedPersonOptions { get; set; }
         public AdministratorUnit AdministratorUnit { get; set; }
 
 

@@ -189,6 +189,7 @@ namespace DealEngine.Services.Impl
         {
             var jsonOrganisation = (Organisation) await _serializerationService.GetDeserializedObject(typeof(Organisation), collection);
             var OrganisationType = collection["OrganisationViewModel.OrganisationType"];
+            string TypeName = collection["OrganisationViewModel.InsuranceAttribute"].ToString();
             var user = await UpdateOrganisationUser(collection, organisation);
             organisation = _mapper.Map(jsonOrganisation, organisation);
 
@@ -201,6 +202,11 @@ namespace DealEngine.Services.Impl
                 else
                 {
                     organisation.Name = jsonOrganisation.Name;
+                }
+
+                if ((user.FirstName + " " + user.LastName) != organisation.Name && TypeName == "Advisor")
+                {
+                    organisation.Name = user.FirstName + " " + user.LastName;
                 }
             }
             var isfap = collection["OrganisationViewModel.Organisation.isTheFAP"];
@@ -324,7 +330,7 @@ namespace DealEngine.Services.Impl
                 foundOrg = CreateNewOrganisation(Creator, Email, OrganisationName, OrganisationType, OrganisationalUnits, InsuranceAttribute);
                 if (User != null)
                 {
-                    if(!User.Organisations.Any(o=>o.InsuranceAttributes.Any(i=>i.Name == Type)))
+                    if(!User.Organisations.Any(o=>o.InsuranceAttributes.Any(i=>i.Name == Type) && o.Name == OrganisationName))
                         User.Organisations.Add(foundOrg);
 
                     if(Type != "Administrator" && User.PrimaryOrganisation == null)
