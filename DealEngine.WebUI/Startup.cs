@@ -56,7 +56,8 @@ namespace DealEngine.WebUI
                 // options.AccessDeniedPath = "/Identity/Account/AccessDenied";     not implemented
                 options.Cookie.Name = "DealEngine";
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(40);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.LoginPath = "/Account/Login";
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;

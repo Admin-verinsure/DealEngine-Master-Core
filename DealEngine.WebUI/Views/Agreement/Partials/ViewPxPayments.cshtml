@@ -12,7 +12,7 @@
         var premium = item.TotalPremium.Substring(1);
         totalPremiums += double.Parse(premium);
     }
-    premiumsGSTBrokerFee = Math.Round((double.Parse(brokerageFee) + totalPremiums) * (1.15f) * (1.02f), 2);
+    premiumsGSTBrokerFee = Math.Round((double.Parse(brokerageFee) + totalPremiums) * (1.15f) * (1.013f), 2);
 
 }
 
