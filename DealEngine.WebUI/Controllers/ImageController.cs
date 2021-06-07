@@ -46,10 +46,7 @@ namespace DealEngine.WebUI.Controllers
             _iproductService = iproductService;
             _hostingEnv = hostingEnv;
             _appSettingService = appSettingService;
-
         }
-
-
         [HttpGet]
         public async Task<ViewResult> ManageImage()
         {
@@ -61,46 +58,32 @@ namespace DealEngine.WebUI.Controllers
 
             return View(model);
         }
-
         [HttpGet]
-
         public async Task<IActionResult> GetAllImages()
         {
             var model = await _ckimageService.GetAllImages();
             return View(model);
         }
-
+        [HttpGet]
         public async Task<IActionResult> CKGetAllImages()
         {
             var model = await _ckimageService.GetAllImages();
             return Json(model);
         }
-
-
         [HttpPost]
         public async Task<IActionResult> Upload(ImageViewModel model)
         {
+            string CKImageFolderPath = _appSettingService.CKImagePath;
+
             var user = await CurrentUser();
             if (model != null)
             {                
-                if (model.Image != null )
-                {
-
-                    // Duplicate case WIP (Delete doesn't work for some reason) logic is just to delete the record for old one and replace have done differently below where you just don't create a new record if one already exists with that filename
-
-                    // string path = Path.Combine(_hostingEnv.WebRootPath, "Image", model.Image.FileName);
-                    // CKImage dupe = new CKImage();
-                    // var list = await _ckimageService.GetAllImages();
-                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
-                    //if (System.IO.File.Exists(path) & dupe != null)
-                    //{
-                    //    await _ckimageService.Delete(dupe);
-                    //}
-                    // dupe = await _ckimageService.GetCKImage(model.Image.FileName);
-                    // list = await _ckimageService.GetAllImages();
-
+                if (model.Image != null)
+                { 
                     var contentType = model.Image.ContentType;
-                    var extension = "";                   
+
+                    #region Extension related
+                    var extension = "";                        
                     if (contentType == "image/jpeg")
                     {
                         extension = ".jpg";
@@ -113,22 +96,28 @@ namespace DealEngine.WebUI.Controllers
                     {
                         throw new FileFormatException("Invalid File Type");
                     }
+                    #endregion
+
                     if (model.Name == null || model.Name.Length < 1)
                     {
                         model.Name = model.Image.FileName;
                         extension = "";
                     }
-                    var filename = model.Name + extension;
-                    string path = Path.Combine(_hostingEnv.WebRootPath, "Image", filename);
 
-                    try //save thumbnail
+                    var thumbnailFilename = "_" + model.Name + extension;
+                    var filename = model.Name + extension;
+                    var imageThumbnailPath = Path.Combine(CKImageFolderPath, thumbnailFilename);
+                    var imagePath = Path.Combine(CKImageFolderPath, filename);
+
+                    // Save Thumbnail Locally
+                    try
                     {
                         Stream stream = model.Image.OpenReadStream();
                         System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
 
                         if (thumbnail != null)
                         {
-                            thumbnail.Save("wwwroot/Image/_" + filename, thumbnail.RawFormat);
+                            thumbnail.Save(imageThumbnailPath, thumbnail.RawFormat);
                         }
                         else
                         {
@@ -141,45 +130,40 @@ namespace DealEngine.WebUI.Controllers
                         await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                     }
 
-                    try //save Image
-                    {
-                        using (var fileStream = new FileStream(path, FileMode.Create))
+                    // Save Image Locally
+                    try
+                    { 
+                        using (var fileStream = new FileStream(imagePath, FileMode.Create))
                         {
                             await model.Image.CopyToAsync(fileStream);
                         }
-                        //save Record of Image
+
                         CKImage newCKImage = new CKImage
                         {
                             Name = filename,
                             Path = filename,
-                            ThumbPath = "_" + filename
+                            ThumbPath = thumbnailFilename
                         };
 
-                        // check if there is a record with this filename already if there is then take action?
                         CKImage dupe = await _ckimageService.GetCKImage(model.Image.FileName);
                         if (dupe != null && dupe.Path == newCKImage.Path)
                         {
-                            // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
-                            // I.e change user, change last modified
+                            // DO NOTHING (its a duplicate)
                         }
                         else
                         {
                             await _ckimageRepository.AddAsync(newCKImage);
                         }
-
                     }
-
                     catch (Exception Ex)
                     {
                         Console.WriteLine(Ex.ToString());
                     }
-
                 }
                 return Redirect("~/Image/ManageImage");          
             }
             return Redirect("~/Image/ManageImage");
         }
-
         [HttpPost]
         public async Task<IActionResult> CKUpload()
         { 
@@ -191,7 +175,6 @@ namespace DealEngine.WebUI.Controllers
             {
                 return BadRequest();
             }
-
             else if (fileCount == 1)
             {
                 foreach (var x in files)
@@ -206,9 +189,15 @@ namespace DealEngine.WebUI.Controllers
 
             if (file != null && file.Length > 0)
             {
-                var name = file.FileName;
-                var path = Path.Combine(_hostingEnv.WebRootPath, "Image", name);
-                var url = "https://" + _appSettingService.domainQueryString + "/Image/" + name;
+                string CKImageFolderPath = _appSettingService.CKImagePath;
+
+                var thumbnailFilename = "_" + file.FileName;
+                var filename = file.FileName;
+
+                var imageThumbnailPath = Path.Combine(CKImageFolderPath, thumbnailFilename);
+                var imagePath = Path.Combine(CKImageFolderPath, filename);
+
+                var url = "https://" + _appSettingService.domainQueryString + "/Image/" + filename;
                 var json = Json(new { url });
 
                 try
@@ -218,7 +207,7 @@ namespace DealEngine.WebUI.Controllers
                     System.Drawing.Image thumbnail = GetReducedImage(100, 100, stream);
                     if (thumbnail != null)
                     {
-                        thumbnail.Save("wwwroot/Image/_" + name, thumbnail.RawFormat);
+                        thumbnail.Save(imageThumbnailPath, thumbnail.RawFormat);
                     }
                     else
                     {
@@ -232,23 +221,22 @@ namespace DealEngine.WebUI.Controllers
                 }
                 try
                 {
-                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    using (var fileStream = new FileStream(imagePath, FileMode.Create))
                     {
-                        // Save the Image
                         await file.CopyToAsync(fileStream);
                     }
-                    // Save Record of Image
+
                     CKImage newCKImage = new CKImage
                     {
-                        Name = name,
-                        Path = name,
-                        ThumbPath = "_" + name
+                        Name = filename,
+                        Path = filename,
+                        ThumbPath = thumbnailFilename
                     };
 
-                    CKImage dupe = await _ckimageService.GetCKImage(file.FileName);
+                    CKImage dupe = await _ckimageService.GetCKImage(filename);
                     if (dupe != null && dupe.Path == newCKImage.Path)
                     {
-                        // You can either update the old one here (currently object attributes are bare bones so updating doesn't do much)
+                        // DO NOTHING (its a duplicate)
                     }
                     else
                     {
@@ -269,7 +257,6 @@ namespace DealEngine.WebUI.Controllers
 
             return BadRequest();
         }
-
         [HttpPost]
         public async Task<IActionResult> UploadDoc(ImageViewModel model)
         {
@@ -339,16 +326,11 @@ namespace DealEngine.WebUI.Controllers
             }
             return Redirect("~/Image/ManageImage");
         }
-
         [HttpPost]
        public IActionResult Delete()
-      {
-            // Delete the file
-            // Delete the db record
-            //_ckimageRepository.AddAsync(newCKImage);           
+       {      
             return View("~/Views/Image/ManageImage.cshtml");
-        }
-
+       }
 
         public System.Drawing.Image GetReducedImage(int Width, int Height, Stream resourceImage)
         {
