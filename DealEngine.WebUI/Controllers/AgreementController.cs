@@ -3447,7 +3447,7 @@ namespace DealEngine.WebUI.Controllers
                 //var active = _httpClientService.GetEglobalStatus().Result;
 
                 //Hardcoded variables
-                decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+                decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.013m;
                 Merchant merchant = await _merchantService.GetMerchant(programme.BaseProgramme.Id);
                 Payment payment = await _paymentService.GetPayment(programme.Id);
                 if (payment == null)
@@ -3527,7 +3527,7 @@ namespace DealEngine.WebUI.Controllers
                 //var active = _httpClientService.GetEglobalStatus().Result;
 
                 //Hardcoded variables
-                decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+                decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.013m;
                 Merchant merchant = await _merchantService.GetMerchant(programme.BaseProgramme.Id);
                 Payment payment = await _paymentService.GetPayment(programme.Id);
                 if (payment == null)

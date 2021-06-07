@@ -105,13 +105,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
-            int TermLimit500k = 500000;
-            decimal TermPremium500k = 0m;
-            decimal TermBrokerage500k = 0m;
-
-            TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
-
-            int TermExcess = 0;
+            
 
             decimal decDOTotalAssets = 0m;
             decimal decDOTotalLiabilities = 0m;
@@ -140,10 +134,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 decDOAftertaxProfitOrLoss = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AfterTaxNumber").First().Value);
             }
 
-            //Return terms based on the limit options
-
-            TermExcess = 2500;
-
             ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
             if (cAEDOInsExcl != null)
             {
@@ -159,6 +149,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            //2020 policy term
+            int TermLimit500k = 500000;
+            decimal TermPremium500k = 0m;
+            decimal TermBrokerage500k = 0m;
+            TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
+            int TermExcess = 0;
+            TermExcess = 2500;
+
             ClientAgreementTerm termdo500klimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit500k, TermExcess);
             termdo500klimitoption.TermLimit = TermLimit500k;
             termdo500klimitoption.Premium = TermPremium500k;
@@ -173,6 +171,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 termdo500klimitoption.Bound = true;
             }
+
 
             //Referral points per agreement
             //D&O Issues
