@@ -176,7 +176,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "1")
                 {
                     TermPremium = rates["pltermpremiumclass1noemp"];
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
                         Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 1)
                     {
                         TermPremium = rates["pltermpremiumclass1"];
@@ -287,7 +287,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 else
                 {
-                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }

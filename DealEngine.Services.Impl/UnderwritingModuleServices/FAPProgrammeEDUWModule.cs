@@ -161,9 +161,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
-
             
-
             int TermLimit = 0;
             decimal TermPremium = 0M;
             decimal TermBrokerage = 0M;
@@ -172,14 +170,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermExcess = rates["edtermexcess"];
             TermPremium = rates["edtermpremium"];
             //Check employee number to calculate the additional premium
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLIOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.CoveredOptions").First().Value == "2")
             {
                 TermExcess = rates["edtermexcesshigher"];
             }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLIOptions").First().Value == "1" &&
                 Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 4)
             {
                 TermPremium += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 4) * rates["edtermaddionalpremiumperempover4"];
@@ -283,7 +281,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 else
                 {
-                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }

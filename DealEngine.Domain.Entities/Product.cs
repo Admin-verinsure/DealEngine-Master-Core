@@ -56,6 +56,7 @@ namespace DealEngine.Domain.Entities
         public virtual decimal DefaultPlacementFee { get; set; }
         public virtual decimal DefaultAdditionalCertFee { get; set; }
         public virtual string ProductPolicyNumberPrefixString { get; set; }
+        public virtual bool IsOptionalProductWithoutSelectOption { get; set; }
         protected Product() : base(null) { }
 
         protected Product(User createdBy)

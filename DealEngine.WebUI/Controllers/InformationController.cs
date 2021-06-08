@@ -702,10 +702,10 @@ namespace DealEngine.WebUI.Controllers
 
                 String[][] OptionItems = new String[clientProgramme.Agreements.Count][];
                 var chosenoption = 0;
-                foreach (var agreement in clientProgramme.Agreements)
+                foreach (var agreement in clientProgramme.Agreements.Where(a => a.DateDeleted == null))
                 {
                     chosenoption = 0;
-                    foreach (var term in agreement.ClientAgreementTerms)
+                    foreach (var term in agreement.ClientAgreementTerms.Where(at => at.DateDeleted == null))
                     {
 
                         OptionItem = new String[2];
