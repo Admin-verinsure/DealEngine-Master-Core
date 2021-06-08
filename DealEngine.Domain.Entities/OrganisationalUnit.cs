@@ -82,6 +82,9 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Is Advisor FAP?")]
         public virtual bool isTheFAP { get; set; }
 
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isInterposedPerson { get; set; }
+
     }
 
     public class PersonnelUnit : OrganisationalUnit
@@ -272,6 +275,9 @@ namespace DealEngine.Domain.Entities
 
         [Display(Name = "Is FAP?")]
         public virtual bool isAdministratorTheFAP { get; set; }
+
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isAdministratorInterposedPerson { get; set; }
 
     }
 }
