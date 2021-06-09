@@ -361,7 +361,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             else
             {
 
-                if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                if ((agreement.Product.IsOptionalProduct || agreement.Product.IsOptionalProductWithoutSelectOption) && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                 {
                     if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
                     {

@@ -154,18 +154,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermExcess = rates["cltermexcess"];
 
             decimal feeincome = 0M;
-            if (agreement.ClientInformationSheet.RevenueData != null)
+            if (agreement.ClientInformationSheet.RevenueData != null) //CL using current year fee income
             {
-                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0 && agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal < rates["cltermmaxfeeincome"])
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0 && agreement.ClientInformationSheet.RevenueData.CurrentYearTotal < rates["cltermmaxfeeincome"])
                 {
                     TermPremium = rates["cltermpremium"];
-                    feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                    feeincome = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                 }
-                //if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0 && agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal < rates["cltermmaxfeeincome"])
-                //{
-                //    TermPremium = rates["cltermpremium"];
-                //    feeincome = agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
-                //}
             }
 
             TermPremium = (TermPremium + extpremium) * agreementperiodindays / coverperiodindays;

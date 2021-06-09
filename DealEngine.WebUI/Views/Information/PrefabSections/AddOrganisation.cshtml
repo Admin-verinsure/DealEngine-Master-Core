@@ -219,6 +219,11 @@
                     @*@Html.Hidden("Unit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
                 @await Html.PartialAsync("PrefabSections/OrganisationPartials/Apollo_AddOrganisation", Model)*@
                 }
+                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG ML Programme")
+                {
+                    @Html.Hidden("Unit", Model.OrganisationViewModel.IndividualInsuredUnit.GetType().AssemblyQualifiedName, new { @id = "IndividualInsuredUnit" })
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/I2I_AddOrganisation", Model)
+                }
                 <div class="form-group">
                     <button class="btn btn-success" type="submit" id="OrganisationSubmitBtn" onclick="OnOrganisationSubmit('organisationViewModel', 'Insured Details / Named Parties')">Add</button>
                     <button class="btn btn-danger" id="OrganisationClearButton" onclick="ResetOrganisation('organisationViewModel')"> Clear</button>

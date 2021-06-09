@@ -236,6 +236,7 @@ namespace DealEngine.Services.Impl
                 new FAPProgrammeSLUWModule(),
                 new NZFSGCLUWModule2021(),
                 new NZFSGDOUWModule2021(),
+                new MLProgrammePLUWModule(),
 
             };
             return modules;
