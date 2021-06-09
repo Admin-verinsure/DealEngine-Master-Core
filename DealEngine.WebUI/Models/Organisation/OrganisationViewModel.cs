@@ -861,6 +861,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasInterposedPersonOptions { get; set; }
         public AdministratorUnit AdministratorUnit { get; set; }
 
+        public DirectorUnit DirectorUnit { get; set; }
 
     }
 }

@@ -79,7 +79,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is Advisor FAP?")]
+        [Display(Name = "Is FAP?")]
         public virtual bool isTheFAP { get; set; }
 
         [Display(Name = "Are you intending to apply for interposed person arrangements?")]
@@ -279,6 +279,21 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Are you intending to apply for interposed person arrangements?")]
         public virtual bool isAdministratorInterposedPerson { get; set; }
 
+    }
+
+    public class DirectorUnit : OrganisationalUnit
+    {
+        public DirectorUnit() { }
+        public DirectorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+        }
+        public virtual bool IsRetiredorDeceased { get; set; }
+        [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
+     
+      public virtual DateTime? DateofRetirement { get; set; }
+        [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateofDeceased { get; set; }
     }
 }
 
