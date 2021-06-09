@@ -82,6 +82,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal feeincomenextyear = 0M;
             decimal feeincome = 0M;
             decimal decInv = 0M;
+            decimal decFG = 0M;
             decimal decOther = 0M;
 
             decimal decMBCategoryPercentage = 0M;
@@ -189,7 +190,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         else if (uISActivity.AnzsciCode == "CUS0027") //Referred Fire and General (i.e. Tower, Aon)
                         {
                             if (uISActivity.Percentage > 0)
+                            {
                                 decLHFGCategoryPercentage += uISActivity.Percentage;
+                                decFG += uISActivity.Percentage;
+                            }
                         }
                         else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
                         {
@@ -197,6 +201,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             {
                                 decLHFGCategoryPercentage += uISActivity.Percentage;
                                 strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
+                                decFG += uISActivity.Percentage;
                             }
                         }
                         else if (uISActivity.AnzsciCode == "CUS0029") //Other
@@ -217,26 +222,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 feeincome = feeincomelastyear;
             }
-
-            //Check class information
-            int intclasscategory = 0;
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").Any())
-            {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "1")
-                {
-                    intclasscategory = 1;
-                }
-                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "2")
-                {
-                    intclasscategory = 2;
-                }
-                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "3")
-                {
-                    intclasscategory = 3;
-                }
-            }
-
-
 
             //int intnumberofadvisors = 0;
             //if (agreement.ClientInformationSheet.Organisation.Count > 0)
@@ -317,24 +302,22 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-
-            decimal decOtherInvetmentPerc = 0m;
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.HasClientFundsOptions").First().Value == "1")
-            {
-                var sss = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds");
-
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds").Any())
-                {
-                    decOtherInvetmentPerc = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "IPViewModel.OtherFunds").First().Value);
-                }
-            }
-
             //Check class information
+            int intclasscategory = 0;
             bool bolclass3referral = false;
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").Any())
             {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "3")
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "1")
                 {
+                    intclasscategory = 1;
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "2")
+                {
+                    intclasscategory = 2;
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "3")
+                {
+                    intclasscategory = 3;
                     bolclass3referral = true;
                 }
             }
@@ -364,7 +347,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             //Check No Employees information
             bool bolnoemployeesreferral = false;
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
                         Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) == 0)
             {
                 bolnoemployeesreferral = true;
@@ -384,7 +367,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             if (uisorg.DateDeleted == null && !uisorg.Removed)
                             {
-                                if (!bolauthorisedbodiesreferral) // && advisorunit.newquestion
+                                if (!bolauthorisedbodiesreferral && advisorunit.isTheFAP) // && advisorunit.isinter
                                 {
                                     bolauthorisedbodiesreferral = true;
                                 }
@@ -576,7 +559,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfnoemployees(underwritingUser, agreement, bolnoemployeesreferral);
             //Authorised Bodies
             uwrfauthorisedbodies(underwritingUser, agreement, bolauthorisedbodiesreferral);
-
+            //Referred Fire and General Activity
+            uwrffgactivity(underwritingUser, agreement, decFG, feeincome);
 
             //Update agreement Status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -630,7 +614,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 else
                 {
-                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }
@@ -706,7 +692,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * decMBCategoryPercentage * rates["1millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["1millimitpremiumratemb"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiummbclass1"];
@@ -720,7 +706,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * decMBCategoryPercentage * rates["2millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["2millimitpremiumratemb"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiummbclass1"];
@@ -734,7 +720,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * decMBCategoryPercentage * rates["3millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["3millimitpremiumratemb"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiummbclass1"];
@@ -748,7 +734,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * decMBCategoryPercentage * rates["4millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["4millimitpremiumratemb"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiummbclass1"];
@@ -762,7 +748,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * decMBCategoryPercentage * rates["5millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["5millimitpremiumratemb"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiummbclass1"];
@@ -786,7 +772,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * decSLHCategoryPercentage * rates["1millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["1millimitpremiumrateslh"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiumslhclass1"];
@@ -800,7 +786,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * decSLHCategoryPercentage * rates["2millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["2millimitpremiumrateslh"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiumslhclass1"];
@@ -814,7 +800,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * decSLHCategoryPercentage * rates["3millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["3millimitpremiumrateslh"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiumslhclass1"];
@@ -828,7 +814,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * decSLHCategoryPercentage * rates["4millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["4millimitpremiumrateslh"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiumslhclass1"];
@@ -842,7 +828,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * decSLHCategoryPercentage * rates["5millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["5millimitpremiumrateslh"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiumslhclass1"];
@@ -866,7 +852,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * decLHFGCategoryPercentage * rates["1millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["1millimitpremiumratelhfg"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiumlhfgclass1"];
@@ -880,7 +866,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * decLHFGCategoryPercentage * rates["2millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["2millimitpremiumratelhfg"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiumlhfgclass1"];
@@ -894,7 +880,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * decLHFGCategoryPercentage * rates["3millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["3millimitpremiumratelhfg"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiumlhfgclass1"];
@@ -908,7 +894,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * decLHFGCategoryPercentage * rates["4millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["4millimitpremiumratelhfg"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiumlhfgclass1"];
@@ -922,7 +908,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * decLHFGCategoryPercentage * rates["5millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["5millimitpremiumratelhfg"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiumlhfgclass1"];
@@ -946,7 +932,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * decInvProdCategoryPercentage * rates["1millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["1millimitpremiumrateinv"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiuminvclass1"];
@@ -960,7 +946,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * decInvProdCategoryPercentage * rates["2millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["2millimitpremiumrateinv"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiuminvclass1"];
@@ -974,7 +960,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * decInvProdCategoryPercentage * rates["3millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["3millimitpremiumrateinv"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiuminvclass1"];
@@ -988,7 +974,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * decInvProdCategoryPercentage * rates["4millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["4millimitpremiumrateinv"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiuminvclass1"];
@@ -1002,7 +988,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * decInvProdCategoryPercentage * rates["5millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["5millimitpremiumrateinv"] / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiuminvclass1"];
@@ -1272,6 +1258,37 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
         }
+
+        void uwrffgactivity(User underwritingUser, ClientAgreement agreement, decimal decFG, decimal feeincome)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivity" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrffgactivity").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivity" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (decFG > 5 || (decFG * feeincome) > 125000)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivity" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivity" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrffgactivity" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
+
 
     }
 }

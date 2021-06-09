@@ -142,10 +142,17 @@ namespace DealEngine.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 if (model.CurrentUserType == "Client")
                 {
-                    var clientProgList = _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id).Result.GroupBy(bp => bp.BaseProgramme.Name).Select(bp => bp.FirstOrDefault());
-                    foreach (var clientProgramme in clientProgList)
+                    foreach (var clientorg in user.Organisations)
                     {
-                        programmeList.Add(clientProgramme.BaseProgramme);
+                        var clientProgList = _programmeService.GetClientProgrammesByOwner(clientorg.Id).Result.GroupBy(bp => bp.BaseProgramme.Name).Select(bp => bp.FirstOrDefault());
+                        if (clientProgList.Any())
+                        {
+                            foreach (var clientProgramme in clientProgList)
+                            {
+                                programmeList.Add(clientProgramme.BaseProgramme);
+                            }
+                        }
+                        
                     }
                 }
                 else
@@ -509,7 +516,19 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {
-                clientList = await _programmeService.GetClientProgrammesByOwnerByProgramme(user.PrimaryOrganisation.Id, programme.Id);
+                foreach (var clientorg in user.Organisations)
+                {
+                    var clientProgList = await _programmeService.GetClientProgrammesByOwnerByProgramme(clientorg.Id, programme.Id);
+                    if (clientProgList.Any())
+                    {
+                        clientList = clientProgList;
+                        //foreach (var clientpro in clientProgList)
+                        //{
+                        //    clientList.Add(clientpro);
+                        //}
+                    }
+                }
+                //clientList = await _programmeService.GetClientProgrammesByOwnerByProgramme(user.PrimaryOrganisation.Id, programme.Id);
                 foreach (ClientProgramme client in clientList.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker").OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
                     string status = client.InformationSheet.Status;
@@ -645,11 +664,17 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
-                var clientList = await _programmeService.GetClientProgrammesByOwner(user.PrimaryOrganisation.Id);
-                if (!clientList.Any())
+                
+                IList<ClientProgramme> clientList = new List<ClientProgramme>();
+                foreach (var clientorg in user.Organisations)
                 {
-                    clientList = await _programmeService.GetClientProgrammesForProgramme(id);
+                    clientList = await _programmeService.GetClientProgrammesByOwner(clientorg.Id);
+                    if (!clientList.Any())
+                    {
+                        clientList = await _programmeService.GetClientProgrammesForProgramme(id);
+                    }
                 }
+
                 //ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 ProgrammeItem model = new ProgrammeItem(programme);
 

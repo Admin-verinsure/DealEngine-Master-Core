@@ -80,6 +80,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool ProgHidePlacementFee { get; set; }
         public virtual bool ProgHideAdditionalCertFee { get; set; }
         public virtual int RenewGracePriodInDays { get; set; }
+        public virtual int NewGracePriodInDays { get; set; }
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)

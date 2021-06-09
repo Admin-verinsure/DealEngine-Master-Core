@@ -263,7 +263,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 else
                 {
-                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }

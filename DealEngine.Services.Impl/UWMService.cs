@@ -58,7 +58,7 @@ namespace DealEngine.Services.Impl
                     {
                         var val = sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value;
 
-                        if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
+                        if ((product.IsOptionalProduct || product.IsOptionalProductWithoutSelectOption) && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
                         {
                             if (product.IsOptionalProductBasedSub)
                             {
@@ -227,6 +227,16 @@ namespace DealEngine.Services.Impl
                 new I2IITCPIUWModule(),
                 new I2IITCPLUWModule(),
                 new I2IITCSLUWModule(),
+                new FAPProgrammePIUWModule(),
+                new FAPProgrammePLUWModule(),
+                new FAPProgrammeELUWModule(),
+                new FAPProgrammeEDUWModule(),
+                new FAPProgrammeFIDUWModule(),
+                new FAPProgrammeLPDUWModule(),
+                new FAPProgrammeSLUWModule(),
+                new NZFSGCLUWModule2021(),
+                new NZFSGDOUWModule2021(),
+                new MLProgrammePLUWModule(),
 
             };
             return modules;

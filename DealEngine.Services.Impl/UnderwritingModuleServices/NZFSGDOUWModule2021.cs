@@ -193,7 +193,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "1")
                 {
                     TermPremium = rates["dotermpremiumclass1noemp"];
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HasEPLOptions").First().Value == "1" &&
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
                         Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) > 1)
                     {
                         TermPremium = rates["dotermpremiumclass1"];
@@ -226,7 +226,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
                 var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.Where(a => a.DateDeleted == null).
-                    FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "LPD"));
+                    FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "DO"));
                 foreach (var term in PreviousAgreement.ClientAgreementTerms)
                 {
                     if (term.Bound)
@@ -311,7 +311,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
                 else
                 {
-                    if (DateTime.UtcNow > product.DefaultInceptionDate)
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }

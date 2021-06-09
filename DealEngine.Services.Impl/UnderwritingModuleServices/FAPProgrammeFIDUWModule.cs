@@ -254,9 +254,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 //Inception date rule (turned on after implementing change, any remaining policy and new policy will use submission date as inception date)
                 if (informationSheet.IsRenewawl)
                 {
-                    int renewalgraceperiodindays = 0;
-                    renewalgraceperiodindays = programme.BaseProgramme.RenewGracePriodInDays;
-                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(renewalgraceperiodindays))
+                    int newalgraceperiodindays = 0;
+                    newalgraceperiodindays = programme.BaseProgramme.NewGracePriodInDays;
+                    if (DateTime.UtcNow > product.DefaultInceptionDate.AddDays(newalgraceperiodindays))
                     {
                         inceptionDate = DateTime.UtcNow;
                     }
