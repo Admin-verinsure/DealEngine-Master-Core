@@ -82,11 +82,6 @@ namespace DealEngine.WebUI.Models
                     InsuranceAttributes = GetIndividualInsured();
                     IndividualInsuredUnit = new IndividualInsuredUnit(null, null, null, null);
                 }
-                if (Programme.NamedPartyUnitName == "NZFSG ML Programme")
-                {
-                    InsuranceAttributes = GetIndividualInsured();
-                    IndividualInsuredUnit = new IndividualInsuredUnit(null, null, null, null);
-                }
                 if (Programme.NamedPartyUnitName == "CEAS Programme" || Programme.NamedPartyUnitName == "NZACS Programme")
                 {
                     InsuranceAttributes = GetPrincipalTypes();
