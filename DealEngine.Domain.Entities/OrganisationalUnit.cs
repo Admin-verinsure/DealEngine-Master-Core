@@ -288,12 +288,12 @@ namespace DealEngine.Domain.Entities
             : base(User, Name, Type, Collection)
         {
         }
-        public virtual bool IsRetiredorDeceased { get; set; }
+        public virtual bool IsDirectorRetiredorDeceased { get; set; }
         [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
      
-      public virtual DateTime? DateofRetirement { get; set; }
+      public virtual DateTime? DirectorDateofRetirement { get; set; }
         [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
-        public virtual DateTime? DateofDeceased { get; set; }
+        public virtual DateTime? DirectorDateofDeceased { get; set; }
     }
 }
 

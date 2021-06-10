@@ -316,10 +316,19 @@
                         }
 
                         
-                        if (dataRule == "RetirementDateValidation") {
+                        if (dataRule == "RetirementDateValidation" && output == "Advisor") {
                             if (element[element.selectedIndex].value == "true") {
                                 if (document.getElementById("AdvisorUnit.DateofRetirement").value == ""
                                     && document.getElementById("AdvisorUnit.DateofDeceased").value == "") {
+                                    throw "If this person has retired or deceased, then please complete either 'Date of Retirement' or 'Date of Deceased'";
+                                }
+                            }
+                        }
+                         
+                        if (dataRule == "RetirementDateValidation" && output == "Director") {
+                            if (element[element.selectedIndex].value == "true") {
+                                if (document.getElementById("DirectorUnit.DirectorDateofRetirement").value == ""
+                                    && document.getElementById("DirectorUnit.DirectorDateofDeceased").value == "") {
                                     throw "If this person has retired or deceased, then please complete either 'Date of Retirement' or 'Date of Deceased'";
                                 }
                             }

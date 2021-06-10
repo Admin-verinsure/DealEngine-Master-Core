@@ -162,13 +162,12 @@
                     @Html.Hidden("AdministratorUnit", Model.OrganisationViewModel.AdministratorUnit.GetType().AssemblyQualifiedName, new { @id = "AdministratorUnit" })
 
                     @Html.Hidden("Unit", Model.OrganisationViewModel.AdvisorUnit.GetType().AssemblyQualifiedName, new { @id = "AdvisorUnit" })
-                    @*@await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)*@
-                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_ML_AddOrganisation", Model)
+                    @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_AddOrganisation", Model)
 
                 }
-                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG_ML Programme")
+                else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG ML Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.PersonnelUnit.GetType().AssemblyQualifiedName, new { @id = "PersonnelUnit" })
+                    @Html.Hidden("DirectorUnit", Model.OrganisationViewModel.DirectorUnit.GetType().AssemblyQualifiedName, new { @id = "DirectorUnit" })
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZFSG_ML_AddOrganisation", Model)
                 }
                 else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "PMINZ Programme")

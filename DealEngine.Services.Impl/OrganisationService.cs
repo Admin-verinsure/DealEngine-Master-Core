@@ -134,6 +134,10 @@ namespace DealEngine.Services.Impl
             {
                  UnitName = collection["AdministratorUnit"].ToString();
             }
+            else if(InsuranceAttribute == "Director")
+            {
+                UnitName = collection["DirectorUnit"].ToString();
+            }
             else
             {
                  UnitName = collection["Unit"].ToString();

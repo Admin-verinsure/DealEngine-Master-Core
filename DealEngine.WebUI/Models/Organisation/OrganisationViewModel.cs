@@ -77,6 +77,16 @@ namespace DealEngine.WebUI.Models
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetBooleanSelectOptions();
                 }
+
+                if (Programme.NamedPartyUnitName == "NZFSG ML Programme")
+                {
+                    DirectorUnit = new DirectorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+
+                    InsuranceAttributes = GetAdvisorTypes4();
+                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
+
+
+                }
                 if (Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")
                 {
                     InsuranceAttributes = GetIndividualInsured();
@@ -670,6 +680,24 @@ namespace DealEngine.WebUI.Models
                     }
                 };
             return _Types;
+        }
+        private IList<SelectListItem> GetAdvisorTypes4()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Director",
+                        Value = "Director"
+                    }
+            };
+            return _Types;
+
         }
         private IList<SelectListItem> GetAdvisorTypes1()
         {
