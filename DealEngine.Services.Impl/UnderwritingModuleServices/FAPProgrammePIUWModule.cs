@@ -369,7 +369,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             {
                                 if (!bolauthorisedbodiesreferral) // && advisorunit.isTheFAP && advisorunit.isinter
                                 {
-                                    bolauthorisedbodiesreferral = true;
+                                    bolauthorisedbodiesreferral = false;
                                 }
                             }
                         }
