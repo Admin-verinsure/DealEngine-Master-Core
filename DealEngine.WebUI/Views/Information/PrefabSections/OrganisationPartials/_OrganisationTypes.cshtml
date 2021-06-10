@@ -84,9 +84,8 @@
                         <div class="form-group">
 
                             <div>
-                                <label class="label required">
-                                    Are you intending to apply for interposed person arrangements?
-                                </label> 
+                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationInterposedPerson, new { @class = "label required" })
+
                             </div>
 
                             <select id="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" name="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" class="custom-select" onchange="OnChange(this.id, this.name)" required>
@@ -100,7 +99,7 @@
                         </div>
                     </div>
                     @*@Html.LabelFor(m => m.OrganisationViewModel.Organisation.isTheFAP, new { @class = "label" })
-            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.isTheFAP, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })*@
+                        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.isTheFAP, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })*@
 
                 }
             </div>
@@ -126,8 +125,49 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"
                 }
             }
         </div>
-    }
-</div>
+
+        <div class="form-group  col-md-6">
+            <div>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "label required" })
+            </div>
+
+            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "form-control", @id = "Organisation.OrganisationFAPLicenseNumber" })
+
+        </div>
+
+        <div class="form-group  col-md-6">
+            <div>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationTheFAP, new { @class = "label required" })
+            </div>
+
+            <select id="Organisation.isOrganisationTheFAP" name="OrganisationViewModel.Organisation.isOrganisationTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+
+            <div id="OrganisationViewModel.Organisation.isOrganisationTheFAP" class="form-group  col-md-6" hidden>
+
+                <div>
+                    @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationInterposedPerson, new { @class = "label required" })
+
+                </div>
+
+                <select id="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" name="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in @Model.OrganisationViewModel.HasInterposedPersonOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">
+                            @option.Text
+                        </option>
+                    }
+                </select>
+            </div>
+            }
+        </div>
 
 @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "TripleA Programme"
  || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" ||
@@ -154,7 +194,7 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"
     <div class="form-group col-md-6">
         <div class="form-group">
             @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.isTheFAP, new { @class = "label required" })
-            <select id="AdvisorUnit.isTheFAP" name="OrganisationViewModel.AdvisorUnit.isTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+            <select id="OrganisationViewModel.AdvisorUnit.isTheFAP" name="OrganisationViewModel.AdvisorUnit.isTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                 @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
                 {
                     <option selected="@option.Selected" value="@option.Value">
@@ -165,13 +205,12 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"
         </div>
     </div>
 
-        <div id="OrganisationViewModel.AdvisorUnit.isTheFAP" class="form-group" hidden>
+        <div id="OrganisationViewModel.AdvisorUnit.isTheFAP" class="form-group col-md-6" hidden>
             <div class="form-group">
 
                 <div>
-                    <label class="label required">
-                        Are you intending to apply for interposed person arrangements?
-                    </label>
+                    @Html.LabelFor(m => m.OrganisationViewModel.AdvisorUnit.isInterposedPerson, new { @class = "label required" })
+
                 </div>
 
                 <select id="AdvisorUnit.isInterposedPerson" name="OrganisationViewModel.AdvisorUnit.isInterposedPerson" class="custom-select" onchange="OnChange(this.id, this.name)" required>

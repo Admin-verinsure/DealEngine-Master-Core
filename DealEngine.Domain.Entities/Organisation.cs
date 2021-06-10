@@ -107,6 +107,9 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Is FAP?")]
         public virtual bool isOrganisationTheFAP { get; set; }
 
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isOrganisationInterposedPerson { get; set; }
+
         public virtual OrganisationType OrganisationType { get; set; }
         public virtual bool Removed { get; set; }
         // public virtual string Othercompanyname { get; set; }
