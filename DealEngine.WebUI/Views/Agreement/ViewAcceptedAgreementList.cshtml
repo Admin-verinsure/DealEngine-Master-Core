@@ -381,9 +381,9 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
         };
 
          $(window).on("load", function () {
-            if ("@ViewBag.Sheetstatus" != "Started") {
+            @*if ("@ViewBag.Sheetstatus" != "Started") {
 
-                @*var progId = "@ViewBag.Id";
+                var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
                 var postData = { ProgrammeId: progId };
 
