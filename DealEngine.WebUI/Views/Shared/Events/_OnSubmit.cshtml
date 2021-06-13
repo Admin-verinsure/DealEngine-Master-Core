@@ -327,8 +327,8 @@
                          
                         if (dataRule == "RetirementDateValidation" && output == "Director") {
                             if (element[element.selectedIndex].value == "true") {
-                                if (document.getElementById("DirectorUnit.DirectorDateofRetirement").value == ""
-                                    && document.getElementById("DirectorUnit.DirectorDateofDeceased").value == "") {
+                                if (document.getElementById("DirectorUnit.DateofRetirement").value == ""
+                                    && document.getElementById("DirectorUnit.DateofDeceased").value == "") {
                                     throw "If this person has retired or deceased, then please complete either 'Date of Retirement' or 'Date of Deceased'";
                                 }
                             }

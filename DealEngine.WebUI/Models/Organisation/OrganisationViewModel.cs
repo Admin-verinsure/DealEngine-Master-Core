@@ -84,7 +84,7 @@ namespace DealEngine.WebUI.Models
 
                     InsuranceAttributes = GetAdvisorTypes4();
                     HasRetiredorDeceasedOptions = GetStandardSelectOptions();
-
+                    OrganisationTypes = GetOrganisationTypes();
 
                 }
                 if (Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")

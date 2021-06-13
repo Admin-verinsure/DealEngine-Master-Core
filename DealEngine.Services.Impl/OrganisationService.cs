@@ -378,7 +378,8 @@ namespace DealEngine.Services.Impl
                     Type == "Nominated Representative" ||
                     Type == "Administration" ||
                     Type == "Other Consulting Business" ||
-                    Type == "Mentored Advisor"
+                    Type == "Mentored Advisor" ||
+                    Type == "Director"
                     )
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
