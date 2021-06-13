@@ -355,21 +355,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             //Check Authorised Bodies information
             bool bolauthorisedbodiesreferral = false;
-            if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-                {
-                    if (!uisorg.Removed)
-                    {
-                        var advisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
 
-                        if (advisorunit != null)
+            if (agreement.ClientInformationSheet.Owner.isOrganisationTheFAP && agreement.ClientInformationSheet.Owner.isOrganisationInterposedPerson)
+            {
+                bolauthorisedbodiesreferral = true;
+            }
+            else
+            {
+                if (agreement.ClientInformationSheet.Organisation.Count > 0)
+                {
+                    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                    {
+                        if (!uisorg.Removed)
                         {
-                            if (uisorg.DateDeleted == null && !uisorg.Removed)
+                            var advisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
+
+                            if (advisorunit != null)
                             {
-                                if (!bolauthorisedbodiesreferral) // && advisorunit.isTheFAP && advisorunit.isinter
+                                if (uisorg.DateDeleted == null && !uisorg.Removed)
                                 {
-                                    bolauthorisedbodiesreferral = false;
+                                    if (!bolauthorisedbodiesreferral && advisorunit.isTheFAP && advisorunit.isInterposedPerson)
+                                    {
+                                        bolauthorisedbodiesreferral = true;
+                                    }
                                 }
                             }
                         }
