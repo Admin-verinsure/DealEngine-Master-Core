@@ -383,16 +383,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0M;
+            decimal TermBasePremium1mil = 0M;
             decimal TermBrokerage1mil = 0M;
 
             TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium1mil = TermPremium1mil;
             TermPremium1mil = TermPremium1mil * agreementperiodindays / coverperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
             term1millimitpremiumoption.TermLimit = TermLimit1mil;
             term1millimitpremiumoption.Premium = TermPremium1mil;
-            term1millimitpremiumoption.BasePremium = TermPremium1mil;
+            term1millimitpremiumoption.BasePremium = TermBasePremium1mil;
             term1millimitpremiumoption.Excess = TermExcess;
             term1millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term1millimitpremiumoption.Brokerage = TermBrokerage1mil;
@@ -401,16 +403,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0M;
+            decimal TermBasePremium2mil = 0M;
             decimal TermBrokerage2mil = 0M;
 
             TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium2mil = TermPremium2mil;
             TermPremium2mil = TermPremium2mil * agreementperiodindays / coverperiodindays;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
             term2millimitpremiumoption.Premium = TermPremium2mil;
-            term2millimitpremiumoption.BasePremium = TermPremium2mil;
+            term2millimitpremiumoption.BasePremium = TermBasePremium2mil;
             term2millimitpremiumoption.Excess = TermExcess;
             term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
@@ -419,16 +423,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit3mil = 3000000;
             decimal TermPremium3mil = 0M;
+            decimal TermBasePremium3mil = 0M;
             decimal TermBrokerage3mil = 0M;
 
             TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium3mil = TermPremium3mil;
             TermPremium3mil = TermPremium3mil * agreementperiodindays / coverperiodindays;
             TermBrokerage3mil = TermPremium3mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
             term3millimitpremiumoption.Premium = TermPremium3mil;
-            term3millimitpremiumoption.BasePremium = TermPremium3mil;
+            term3millimitpremiumoption.BasePremium = TermBasePremium3mil;
             term3millimitpremiumoption.Excess = TermExcess;
             term3millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term3millimitpremiumoption.Brokerage = TermBrokerage3mil;
@@ -437,16 +443,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit4mil = 4000000;
             decimal TermPremium4mil = 0M;
+            decimal TermBasePremium4mil = 0M;
             decimal TermBrokerage4mil = 0M;
 
             TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium4mil = TermPremium4mil;
             TermPremium4mil = TermPremium4mil * agreementperiodindays / coverperiodindays;
             TermBrokerage4mil = TermPremium4mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term4millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, TermExcess);
             term4millimitpremiumoption.TermLimit = TermLimit4mil;
             term4millimitpremiumoption.Premium = TermPremium4mil;
-            term4millimitpremiumoption.BasePremium = TermPremium4mil;
+            term4millimitpremiumoption.BasePremium = TermBasePremium4mil;
             term4millimitpremiumoption.Excess = TermExcess;
             term4millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term4millimitpremiumoption.Brokerage = TermBrokerage4mil;
@@ -455,16 +463,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = 0M;
+            decimal TermBasePremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
 
             TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium5mil = TermPremium5mil;
             TermPremium5mil = TermPremium5mil * agreementperiodindays / coverperiodindays;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
             term5millimitpremiumoption.Premium = TermPremium5mil;
-            term5millimitpremiumoption.BasePremium = TermPremium5mil;
+            term5millimitpremiumoption.BasePremium = TermBasePremium5mil;
             term5millimitpremiumoption.Excess = TermExcess;
             term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;

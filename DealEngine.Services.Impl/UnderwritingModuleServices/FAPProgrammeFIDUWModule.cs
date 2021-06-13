@@ -164,17 +164,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["fidtermlimit"]);
             TermExcess = rates["fidtermexcess"];
-            TermPremium = rates["fidtermpremium"] * agreementperiodindays / coverperiodindays;
+            TermPremium = rates["fidtermpremium"];
+            TermBasePremium = TermPremium;
+            TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termfidtermoption = GetAgreementTerm(underwritingUser, agreement, "FID", TermLimit, TermExcess);
             termfidtermoption.TermLimit = TermLimit;
             termfidtermoption.Premium = TermPremium;
-            termfidtermoption.BasePremium = TermPremium;
+            termfidtermoption.BasePremium = TermBasePremium;
             termfidtermoption.Excess = TermExcess;
             termfidtermoption.BrokerageRate = agreement.Brokerage;
             termfidtermoption.Brokerage = TermBrokerage;

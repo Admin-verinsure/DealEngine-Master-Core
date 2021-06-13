@@ -148,6 +148,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["cltermlimit"]);
@@ -163,13 +164,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            TermPremium = (TermPremium + extpremium) * agreementperiodindays / coverperiodindays;
+            TermBasePremium = TermPremium;
+            TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcltermoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit, TermExcess);
             termcltermoption.TermLimit = TermLimit;
             termcltermoption.Premium = TermPremium;
-            termcltermoption.BasePremium = TermPremium;
+            termcltermoption.BasePremium = TermBasePremium;
             termcltermoption.Excess = TermExcess;
             termcltermoption.BrokerageRate = agreement.Brokerage;
             termcltermoption.Brokerage = TermBrokerage;

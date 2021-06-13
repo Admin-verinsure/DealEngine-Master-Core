@@ -163,6 +163,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermExtensionPremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
@@ -200,19 +201,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
             {
                 TermExtensionPremium = rates["slamlextensionpremium"];
+
+                //work out 5% of PI $1mil option premium whichever is the greater 
+                var PIAgreement = agreement.ClientInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                if (PIAgreement != null)
+                {
+                    foreach (var term in PIAgreement.ClientAgreementTerms)
+                    {
+                        if (term.TermLimit == 1000000 && term.DateDeleted == null)
+                        {
+                            TermExtensionPremium = (TermExtensionPremium > (term.Premium * 0.05M)) ? TermExtensionPremium : (term.Premium * 0.05M);
+                        }
+                    }
+
+                }
             }
             if (!bolclass2referral && !bolclass3referral)
             {
                 TermPremium += TermExtensionPremium;
             }
 
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termsltermoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit, TermExcess);
             termsltermoption.TermLimit = TermLimit;
             termsltermoption.Premium = TermPremium;
-            termsltermoption.BasePremium = TermPremium;
+            termsltermoption.BasePremium = TermBasePremium;
             termsltermoption.Excess = TermExcess;
             termsltermoption.BrokerageRate = agreement.Brokerage;
             termsltermoption.Brokerage = TermBrokerage;

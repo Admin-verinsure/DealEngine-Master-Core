@@ -164,17 +164,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["lpdtermlimit"]);
             TermExcess = rates["lpdtermexcess"];
-            TermPremium = rates["lpdtermpremium"] * agreementperiodindays / coverperiodindays;
+            TermPremium = rates["lpdtermpremium"];
+            TermBasePremium = TermPremium;
+            TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termlpdtermoption = GetAgreementTerm(underwritingUser, agreement, "LPD", TermLimit, TermExcess);
             termlpdtermoption.TermLimit = TermLimit;
             termlpdtermoption.Premium = TermPremium;
-            termlpdtermoption.BasePremium = TermPremium;
+            termlpdtermoption.BasePremium = TermBasePremium;
             termlpdtermoption.Excess = TermExcess;
             termlpdtermoption.BrokerageRate = agreement.Brokerage;
             termlpdtermoption.Brokerage = TermBrokerage;

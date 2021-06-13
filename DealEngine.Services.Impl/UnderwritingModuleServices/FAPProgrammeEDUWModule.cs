@@ -165,6 +165,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["edtermlimit"]);
@@ -184,13 +185,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 TermPremium += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) - 4) * rates["edtermaddionalpremiumperempover4"];
             }
 
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termedtermoption = GetAgreementTerm(underwritingUser, agreement, "ED", TermLimit, TermExcess);
             termedtermoption.TermLimit = TermLimit;
             termedtermoption.Premium = TermPremium;
-            termedtermoption.BasePremium = TermPremium;
+            termedtermoption.BasePremium = TermBasePremium;
             termedtermoption.Excess = TermExcess;
             termedtermoption.BrokerageRate = agreement.Brokerage;
             termedtermoption.Brokerage = TermBrokerage;

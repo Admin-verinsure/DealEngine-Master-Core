@@ -181,15 +181,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermExcess = 0M;
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
 
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termlimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIRO", TermLimit, TermExcess);
             termlimitpremiumoption.TermLimit = TermLimit;
             termlimitpremiumoption.Premium = TermPremium;
-            termlimitpremiumoption.BasePremium = TermPremium;
+            termlimitpremiumoption.BasePremium = TermBasePremium;
             termlimitpremiumoption.Excess = TermExcess;
             termlimitpremiumoption.BrokerageRate = agreement.Brokerage;
             termlimitpremiumoption.Brokerage = TermBrokerage;
@@ -210,7 +212,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             PreviousBoundPremium = term.BasePremium;
                         }
-                        termlimitpremiumoption.PremiumDiffer = (TermPremium - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termlimitpremiumoption.PremiumDiffer = (TermBasePremium - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
                         termlimitpremiumoption.PremiumPre = PreviousBoundPremium;
                         if (termlimitpremiumoption.TermLimit == term.TermLimit && termlimitpremiumoption.Excess == term.Excess)
                         {
