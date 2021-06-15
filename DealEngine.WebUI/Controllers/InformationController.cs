@@ -1639,7 +1639,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     foreach (var Institute in DefaultInstitutes)
                     {
-                        InterestedPartyUnit unit = (InterestedPartyUnit)Institute.OrganisationalUnits.FirstOrDefault();
+                        InterestedPartyUnit unit = (InterestedPartyUnit)Institute.OrganisationalUnits.FirstOrDefault(i => i.Name == "Financial");
                         if (!model.ClientInformationSheet.Locations.Contains(unit.Location))
                         {
                             //model.ClientInformationSheet.Locations.Add(unit.Location);
