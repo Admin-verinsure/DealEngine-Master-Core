@@ -295,13 +295,13 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NZFSGImportUsers()
+        public async Task<IActionResult> NZFSGImportPIUsers()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServiceIndividuals(user);
+                await _importService.ImportNZFSGServicePI(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -313,13 +313,31 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NZFSGImportPrincipals()
+        public async Task<IActionResult> NZFSGImportMLUsers()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServicePrincipals(user);
+                await _importService.ImportNZFSGServiceML(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportROUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceRO(user);
 
                 return RedirectToAction("Index", "Home");
             }

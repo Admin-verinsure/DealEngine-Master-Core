@@ -146,10 +146,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 auditLogDetail = "Abbott PI UW created/modified";
             } else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme") 
             {
-                //Additional professional business added based on selected business activities
-                strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "Worldwide";
+                strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "NZFSG PI UW created/modified";
 
@@ -174,8 +173,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         }
                         else if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
                         {
-                            if (uISActivity.Percentage > 0)
-                                strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+                            
                         }
                         else if (uISActivity.AnzsciCode == "CUS0024") //Kiwisaver
                         {
@@ -200,7 +198,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             if (uISActivity.Percentage > 0)
                             {
                                 decLHFGCategoryPercentage += uISActivity.Percentage;
-                                strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
                                 decFG += uISActivity.Percentage;
                             }
                         }
@@ -223,29 +220,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 feeincome = feeincomelastyear;
             }
 
-            //int intnumberofadvisors = 0;
-            //if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            //{
-            //    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-            //    {
-            //        if (!uisorg.Removed)
-            //        {
-            //            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
-
-            //            if (principleadvisorunit != null)
-            //            {
-            //                if (uisorg.DateDeleted == null && !uisorg.Removed)
-            //                {
-            //                    intnumberofadvisors += 1;
-            //                }
-            //                if (agreement.ClientInformationSheet.IsChange && uisorg.OrgBeenMoved && uisorg.DateDeleted == null)
-            //                {
-            //                    intnumberofadvisors -= 1;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
 
             //Update retro date and endorsement based on the pre-renewal data or renewal agreement
             bool bolcustomendorsementrenew = false;

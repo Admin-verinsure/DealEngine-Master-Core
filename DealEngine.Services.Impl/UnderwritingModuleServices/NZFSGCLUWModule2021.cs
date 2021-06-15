@@ -92,25 +92,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
-            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
-
-            if (agreement.ClientInformationSheet.RevenueData != null)
-            {
-                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                {
-                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
-
-                    }
-                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
-                    }
-                }
-            }
+            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             //Endorsements and extension
