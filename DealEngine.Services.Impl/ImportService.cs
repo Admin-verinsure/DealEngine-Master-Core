@@ -831,14 +831,14 @@ namespace DealEngine.Services.Impl
                             } else if (user != null && organisation == null)
                             {
                                 //Create a new org and create a new clientprogramme and UIS
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -933,14 +933,14 @@ namespace DealEngine.Services.Impl
                             else if (user != null && organisation == null)
                             {
                                 //Create a new org and create a new clientprogramme and UIS
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -984,14 +984,14 @@ namespace DealEngine.Services.Impl
                                 user.Address = "";
                                 user.Phone = "12345";
 
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -1151,14 +1151,14 @@ namespace DealEngine.Services.Impl
                             else if (user != null && organisation == null)
                             {
                                 //Create a new org and create a new clientprogramme and UIS
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -1253,14 +1253,14 @@ namespace DealEngine.Services.Impl
                             else if (user != null && organisation == null)
                             {
                                 //Create a new org and create a new clientprogramme and UIS
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -1303,15 +1303,15 @@ namespace DealEngine.Services.Impl
                                 user.Email = email;
                                 user.Address = "";
                                 user.Phone = "12345";
-
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
-                                }
-
+                                
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }
@@ -1399,14 +1399,14 @@ namespace DealEngine.Services.Impl
 
                             if (user != null)
                             {
-                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-                                if (organisationType == null)
-                                {
-                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
-                                }
-
                                 if (organisation == null)
                                 {
+                                    var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                                    if (organisationType == null)
+                                    {
+                                        organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
+                                    }
+
                                     organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
                                     await _organisationService.CreateNewOrganisation(organisation);
                                 }

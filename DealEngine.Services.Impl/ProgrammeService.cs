@@ -237,7 +237,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<List<Programme>> GetAllProgrammes()
         {
-            return await _programmeRepository.FindAll().OrderBy(p => p.Name).ToListAsync();
+            return await _programmeRepository.FindAll().Where(p => p.DateDeleted == null).OrderBy(p => p.Name).ToListAsync();
         }
 
         public async Task<Programme> GetProgrammeById(Guid ProgrammeId)
