@@ -779,6 +779,264 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task ImportNZFSGServicePINewCompany(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "piuploadnewcompany.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("624399aa-6366-4165-a470-289fead38563"); //NZFSG PI FAP Programme ID
+            Guid renewFromProgrammeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //NZFSG Programme 2020 ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string orgname;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    orgname = "";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                        {
+                            email = parts[1];
+                            orgname = parts[0];
+
+                            organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user != null && organisation != null)
+                            {
+                                ClientProgramme renewFromClientProgrammeBase = await _programmeService.GetOriginalClientProgrammeByOwnerByProgramme(organisation.Id, renewFromProgrammeID);
+                                if (renewFromClientProgrammeBase != null)
+                                {
+                                    //Create a renew clientprogramme and UIS
+                                    ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromClientProgrammeBase.Id, programmeID);
+                                }
+                            } else if (user != null && organisation == null)
+                            {
+                                //Create a new org and create a new clientprogramme and UIS
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                await _userService.Update(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportNZFSGServicePINewAll(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "piuploadnewall.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("624399aa-6366-4165-a470-289fead38563"); //NZFSG PI FAP Programme ID
+            Guid renewFromProgrammeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //NZFSG Programme 2020 ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string orgname;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    orgname = "";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                        {
+                            email = parts[1];
+                            orgname = parts[0];
+
+                            organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user != null && organisation != null)
+                            {
+                                ClientProgramme renewFromClientProgrammeBase = await _programmeService.GetOriginalClientProgrammeByOwnerByProgramme(organisation.Id, renewFromProgrammeID);
+                                if (renewFromClientProgrammeBase != null)
+                                {
+                                    //Create a renew clientprogramme and UIS
+                                    ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromClientProgrammeBase.Id, programmeID);
+                                }
+                            }
+                            else if (user != null && organisation == null)
+                            {
+                                //Create a new org and create a new clientprogramme and UIS
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                await _userService.Update(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                            else if (user == null && organisation == null)
+                            {
+                                //Create a new org, a new user and create a new clientprogramme and UIS
+                                Random rand = new Random();
+                                string username = parts[2].Trim() + "_" + parts[3].Trim() + rand.Next(100);
+                                user = new User(currentUser, Guid.NewGuid(), username);
+                                user.FirstName = parts[2];
+                                user.LastName = parts[3];
+                                user.FullName = parts[2].Trim() + " " + parts[3].Trim();
+                                user.Email = email;
+                                user.Address = "";
+                                user.Phone = "12345";
+
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+                                user.SetPrimaryOrganisation(organisation);
+
+                                await _userService.ApplicationCreateUser(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
         public async Task ImportNZFSGServiceML(User CreatedUser)
         {
             //addresses need to be on one line            
@@ -828,6 +1086,265 @@ namespace DealEngine.Services.Impl
                                     //Create a renew
                                     ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromClientProgrammeBase.Id, programmeID);
                                 }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportNZFSGServiceMLNewCompany(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "mluploadnewcompany.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("4fec62eb-f1dd-478e-92df-9b5647249e4c"); //NZFSG ML Programme ID
+            Guid renewFromProgrammeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //NZFSG Programme 2020 ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string orgname;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    orgname = "";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                        {
+                            email = parts[1];
+                            orgname = parts[0];
+
+                            organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user != null && organisation != null)
+                            {
+                                ClientProgramme renewFromClientProgrammeBase = await _programmeService.GetOriginalClientProgrammeByOwnerByProgramme(organisation.Id, renewFromProgrammeID);
+                                if (renewFromClientProgrammeBase != null)
+                                {
+                                    //Create a renew clientprogramme and UIS
+                                    ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromClientProgrammeBase.Id, programmeID);
+                                }
+                            }
+                            else if (user != null && organisation == null)
+                            {
+                                //Create a new org and create a new clientprogramme and UIS
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                await _userService.Update(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportNZFSGServiceMLNewAll(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "mluploadnewall.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("4fec62eb-f1dd-478e-92df-9b5647249e4c"); //NZFSG ML Programme ID
+            Guid renewFromProgrammeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //NZFSG Programme 2020 ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string orgname;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    orgname = "";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                        {
+                            email = parts[1];
+                            orgname = parts[0];
+
+                            organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user != null && organisation != null)
+                            {
+                                ClientProgramme renewFromClientProgrammeBase = await _programmeService.GetOriginalClientProgrammeByOwnerByProgramme(organisation.Id, renewFromProgrammeID);
+                                if (renewFromClientProgrammeBase != null)
+                                {
+                                    //Create a renew clientprogramme and UIS
+                                    ClientProgramme CloneProgramme = await _programmeService.CloneForRenew(user, renewFromClientProgrammeBase.Id, programmeID);
+                                }
+                            }
+                            else if (user != null && organisation == null)
+                            {
+                                //Create a new org and create a new clientprogramme and UIS
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                await _userService.Update(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                            else if (user == null && organisation == null)
+                            {
+                                //Create a new org, a new user and create a new clientprogramme and UIS
+                                Random rand = new Random();
+                                string username = parts[2].Trim() + "_" + parts[3].Trim() + rand.Next(100);
+                                user = new User(currentUser, Guid.NewGuid(), username);
+                                user.FirstName = parts[2];
+                                user.LastName = parts[3];
+                                user.FullName = parts[2].Trim() + " " + parts[3].Trim();
+                                user.Email = email;
+                                user.Address = "";
+                                user.Phone = "12345";
+
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                if (organisationType == null)
+                                {
+                                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Corporation – Limited liability");
+                                }
+
+                                if (organisation == null)
+                                {
+                                    organisation = new Organisation(currentUser, Guid.NewGuid(), orgname, organisationType, email);
+                                    await _organisationService.CreateNewOrganisation(organisation);
+                                }
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+                                user.SetPrimaryOrganisation(organisation);
+
+                                await _userService.ApplicationCreateUser(user);
+
+                                var programme = await _programmeService.GetProgramme(programmeID);
+                                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                                var reference = await _referenceService.GetLatestReferenceId();
+                                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                                await _referenceService.CreateClientInformationReference(sheet);
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                                    try
+                                    {
+                                        await uow.Commit();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+
+
                             }
                         }
 

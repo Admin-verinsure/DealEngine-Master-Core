@@ -93,7 +93,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Apollo LPD UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
                 strProfessionalBusiness = "";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");

@@ -313,6 +313,42 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> NZFSGImportPIUsersNewCompany()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServicePINewCompany(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportPIUsersNewAll()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServicePINewAll(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> NZFSGImportMLUsers()
         {
             User user = null;

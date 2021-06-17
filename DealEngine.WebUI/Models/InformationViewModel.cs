@@ -706,6 +706,7 @@ namespace DealEngine.WebUI.Models
             HasPartyMembers = GetPartyMembersOptions();
             HasOtherPIinsurances = GetSelectListOptions();
             HasClassOfLicense = GetClassOfLicenseOptions();
+            TrustAdvisorStatus = GetSelectListOptions();
 
         }
 
@@ -992,7 +993,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasPartyMembers { get; set; }
         public IList<SelectListItem> HasOtherPIinsurances { get; set; }
         public IList<SelectListItem> HasClassOfLicense { get; set; }
-
+        public IList<SelectListItem> TrustAdvisorStatus { get; set; }
 
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
