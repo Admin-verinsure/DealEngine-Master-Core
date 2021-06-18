@@ -146,10 +146,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 auditLogDetail = "Abbott PI UW created/modified";
             } else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme") 
             {
-                //Additional professional business added based on selected business activities
-                strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "Worldwide";
+                strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "NZFSG PI UW created/modified";
 
@@ -174,8 +173,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         }
                         else if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
                         {
-                            if (uISActivity.Percentage > 0)
-                                strProfessionalBusiness += "  Advice in relation to Financial Planning.";
+                            
                         }
                         else if (uISActivity.AnzsciCode == "CUS0024") //Kiwisaver
                         {
@@ -200,7 +198,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             if (uISActivity.Percentage > 0)
                             {
                                 decLHFGCategoryPercentage += uISActivity.Percentage;
-                                strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
                                 decFG += uISActivity.Percentage;
                             }
                         }
@@ -223,29 +220,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 feeincome = feeincomelastyear;
             }
 
-            //int intnumberofadvisors = 0;
-            //if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            //{
-            //    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-            //    {
-            //        if (!uisorg.Removed)
-            //        {
-            //            var principleadvisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
-
-            //            if (principleadvisorunit != null)
-            //            {
-            //                if (uisorg.DateDeleted == null && !uisorg.Removed)
-            //                {
-            //                    intnumberofadvisors += 1;
-            //                }
-            //                if (agreement.ClientInformationSheet.IsChange && uisorg.OrgBeenMoved && uisorg.DateDeleted == null)
-            //                {
-            //                    intnumberofadvisors -= 1;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
 
             //Update retro date and endorsement based on the pre-renewal data or renewal agreement
             bool bolcustomendorsementrenew = false;
@@ -355,21 +329,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             //Check Authorised Bodies information
             bool bolauthorisedbodiesreferral = false;
-            if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            {
-                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-                {
-                    if (!uisorg.Removed)
-                    {
-                        var advisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
 
-                        if (advisorunit != null)
+            if (agreement.ClientInformationSheet.Owner.isOrganisationTheFAP && agreement.ClientInformationSheet.Owner.isOrganisationInterposedPerson)
+            {
+                bolauthorisedbodiesreferral = true;
+            }
+            else
+            {
+                if (agreement.ClientInformationSheet.Organisation.Count > 0)
+                {
+                    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                    {
+                        if (!uisorg.Removed)
                         {
-                            if (uisorg.DateDeleted == null && !uisorg.Removed)
+                            var advisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
+
+                            if (advisorunit != null)
                             {
-                                if (!bolauthorisedbodiesreferral) // && advisorunit.isTheFAP && advisorunit.isinter
+                                if (uisorg.DateDeleted == null && !uisorg.Removed)
                                 {
-                                    bolauthorisedbodiesreferral = false;
+                                    if (!bolauthorisedbodiesreferral && advisorunit.isTheFAP && advisorunit.isInterposedPerson)
+                                    {
+                                        bolauthorisedbodiesreferral = true;
+                                    }
                                 }
                             }
                         }
@@ -383,16 +365,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0M;
+            decimal TermBasePremium1mil = 0M;
             decimal TermBrokerage1mil = 0M;
 
             TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium1mil = TermPremium1mil;
             TermPremium1mil = TermPremium1mil * agreementperiodindays / coverperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
             term1millimitpremiumoption.TermLimit = TermLimit1mil;
             term1millimitpremiumoption.Premium = TermPremium1mil;
-            term1millimitpremiumoption.BasePremium = TermPremium1mil;
+            term1millimitpremiumoption.BasePremium = TermBasePremium1mil;
             term1millimitpremiumoption.Excess = TermExcess;
             term1millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term1millimitpremiumoption.Brokerage = TermBrokerage1mil;
@@ -401,16 +385,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0M;
+            decimal TermBasePremium2mil = 0M;
             decimal TermBrokerage2mil = 0M;
 
             TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium2mil = TermPremium2mil;
             TermPremium2mil = TermPremium2mil * agreementperiodindays / coverperiodindays;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
             term2millimitpremiumoption.Premium = TermPremium2mil;
-            term2millimitpremiumoption.BasePremium = TermPremium2mil;
+            term2millimitpremiumoption.BasePremium = TermBasePremium2mil;
             term2millimitpremiumoption.Excess = TermExcess;
             term2millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term2millimitpremiumoption.Brokerage = TermBrokerage2mil;
@@ -419,16 +405,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit3mil = 3000000;
             decimal TermPremium3mil = 0M;
+            decimal TermBasePremium3mil = 0M;
             decimal TermBrokerage3mil = 0M;
 
             TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium3mil = TermPremium3mil;
             TermPremium3mil = TermPremium3mil * agreementperiodindays / coverperiodindays;
             TermBrokerage3mil = TermPremium3mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
             term3millimitpremiumoption.Premium = TermPremium3mil;
-            term3millimitpremiumoption.BasePremium = TermPremium3mil;
+            term3millimitpremiumoption.BasePremium = TermBasePremium3mil;
             term3millimitpremiumoption.Excess = TermExcess;
             term3millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term3millimitpremiumoption.Brokerage = TermBrokerage3mil;
@@ -437,16 +425,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit4mil = 4000000;
             decimal TermPremium4mil = 0M;
+            decimal TermBasePremium4mil = 0M;
             decimal TermBrokerage4mil = 0M;
 
             TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium4mil = TermPremium4mil;
             TermPremium4mil = TermPremium4mil * agreementperiodindays / coverperiodindays;
             TermBrokerage4mil = TermPremium4mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term4millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, TermExcess);
             term4millimitpremiumoption.TermLimit = TermLimit4mil;
             term4millimitpremiumoption.Premium = TermPremium4mil;
-            term4millimitpremiumoption.BasePremium = TermPremium4mil;
+            term4millimitpremiumoption.BasePremium = TermBasePremium4mil;
             term4millimitpremiumoption.Excess = TermExcess;
             term4millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term4millimitpremiumoption.Brokerage = TermBrokerage4mil;
@@ -455,16 +445,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = 0M;
+            decimal TermBasePremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
 
             TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermBasePremium5mil = TermPremium5mil;
             TermPremium5mil = TermPremium5mil * agreementperiodindays / coverperiodindays;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
             term5millimitpremiumoption.Premium = TermPremium5mil;
-            term5millimitpremiumoption.BasePremium = TermPremium5mil;
+            term5millimitpremiumoption.BasePremium = TermBasePremium5mil;
             term5millimitpremiumoption.Excess = TermExcess;
             term5millimitpremiumoption.BrokerageRate = agreement.Brokerage;
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;

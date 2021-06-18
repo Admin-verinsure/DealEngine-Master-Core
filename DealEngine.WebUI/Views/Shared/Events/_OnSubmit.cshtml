@@ -178,12 +178,14 @@
 
     function UnitValidationOnSubmit(Programme) {
         var Unit = document.getElementsByName("Unit");
+       var directorUnit = document.getElementsByName("DirectorUnit");
 
 
         if (Unit != null) {
             if (Unit.length > 0) {
                 if (Unit[0].id == "AdvisorUnit" ||
-                    Unit[0].id == "PlannerUnit"
+                    Unit[0].id == "PlannerUnit"||
+                    Unit[0].id == "DirectorUnit"
                 ) {
                     var pAdvisor = document.getElementById("IsPrincipal");
                     if (pAdvisor == null) {
@@ -244,6 +246,32 @@
             window.alert("Please update email for: " + InvalidEmail.value);
             throw "InvalidEmail Named Parties";
         }
+
+
+        if (directorUnit != null) {
+            if (directorUnit.length > 0) {
+                if (directorUnit[0].id == "DirectorUnit") {
+                    if (Programme == "NZFSG ML Programme") {
+                        var TradingName = document.getElementById("NoTradingName");
+                        if (TradingName != null) {
+                            if (TradingName.value === "True") {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                $("#more").trigger("click");
+                                window.alert("Please add 'Trading Name' for 'Owner' in Named Parties");
+                                $("[id='Insured Details / Named Parties']").trigger("click");
+                                throw "no trading name";
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+
+
     }
 
     function OnOrganisationSubmit(FormId, AccordionId) {

@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pitermexcess");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pirotermlimit", "pirotermexcess", "pirotermpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -111,10 +111,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Run Off Programme")
             {
-                //Additional professional business added based on selected business activities
-                strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "Worldwide";
+                strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "NZFSG PI UW created/modified";
                 
@@ -175,21 +174,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            
-
 
             decimal TermExcess = 0M;
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
 
+            TermLimit = Convert.ToInt32(rates["pirotermlimit"]);
+            TermExcess = rates["pirotermexcess"];
+            TermPremium = rates["pirotermpremium"];
+
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termlimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PIRO", TermLimit, TermExcess);
             termlimitpremiumoption.TermLimit = TermLimit;
             termlimitpremiumoption.Premium = TermPremium;
-            termlimitpremiumoption.BasePremium = TermPremium;
+            termlimitpremiumoption.BasePremium = TermBasePremium;
             termlimitpremiumoption.Excess = TermExcess;
             termlimitpremiumoption.BrokerageRate = agreement.Brokerage;
             termlimitpremiumoption.Brokerage = TermBrokerage;
@@ -210,7 +213,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             PreviousBoundPremium = term.BasePremium;
                         }
-                        termlimitpremiumoption.PremiumDiffer = (TermPremium - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
+                        termlimitpremiumoption.PremiumDiffer = (TermBasePremium - PreviousBoundPremium) * coverperiodindaysforchange / agreementperiodindays;
                         termlimitpremiumoption.PremiumPre = PreviousBoundPremium;
                         if (termlimitpremiumoption.TermLimit == term.TermLimit && termlimitpremiumoption.Excess == term.Excess)
                         {
@@ -229,8 +232,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Referral points per agreement
             //Claims / Insurance History
             uwrfpriorinsurance(underwritingUser, agreement);
-            
-
 
             //Update agreement Status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)

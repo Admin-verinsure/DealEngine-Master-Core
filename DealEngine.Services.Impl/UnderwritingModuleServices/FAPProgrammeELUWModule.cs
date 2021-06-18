@@ -112,30 +112,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" || 
                 agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
             {
-                //Additional professional business added based on selected business activities
-                strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
                 strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "NZFSG EL UW created/modified";
-
-                if (agreement.ClientInformationSheet.RevenueData != null)
-                {
-                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                    {
-                        if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-                        {
-                            if (uISActivity.Percentage > 0)
-                                strProfessionalBusiness += "  Advice in relation to Financial Planning.";
-
-                        }
-                        else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-                        {
-                            if (uISActivity.Percentage > 0)
-                                strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
-                        }
-                    }
-                }
             }
 
             //renewal data (retro date and endorsements)
@@ -164,17 +145,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["eltermlimit"]);
             TermExcess = rates["eltermexcess"];
-            TermPremium = rates["eltermpremium"] * agreementperiodindays / coverperiodindays;
+            TermPremium = rates["eltermpremium"];
+            TermBasePremium = TermPremium;
+            TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termeltermoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit, TermExcess);
             termeltermoption.TermLimit = TermLimit;
             termeltermoption.Premium = TermPremium;
-            termeltermoption.BasePremium = TermPremium;
+            termeltermoption.BasePremium = TermBasePremium;
             termeltermoption.Excess = TermExcess;
             termeltermoption.BrokerageRate = agreement.Brokerage;
             termeltermoption.Brokerage = TermBrokerage;

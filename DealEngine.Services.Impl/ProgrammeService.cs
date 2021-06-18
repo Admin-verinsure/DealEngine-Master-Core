@@ -104,6 +104,12 @@ namespace DealEngine.Services.Impl
             return list;
         }
 
+        public async Task<ClientProgramme> GetOriginalClientProgrammeByOwnerByProgramme(Guid ownerOrganisationId, Guid programmeId)
+        {
+            ClientProgramme originalClientProgramme = _clientProgrammeRepository.FindAll().Where(cp => cp.BaseProgramme.Id == programmeId && cp.Owner.Id == ownerOrganisationId && cp.InformationSheet != null && cp.DateDeleted == null && cp.InformationSheet.PreviousInformationSheet == null).FirstOrDefault();
+            return originalClientProgramme;
+        }
+
         public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
         {
             Programme programme = await GetProgramme(programmeId);
@@ -759,6 +765,7 @@ namespace DealEngine.Services.Impl
             //        newClientInformationSheet.SubClientInformationSheets.Add(newSubClientInformationSheet);
             //    }
             //}
+            //Renew named parties based on the programme config
             if (newClientInformationSheet.Organisation != null)
             {
                 foreach (Organisation org in newClientInformationSheet.Organisation)

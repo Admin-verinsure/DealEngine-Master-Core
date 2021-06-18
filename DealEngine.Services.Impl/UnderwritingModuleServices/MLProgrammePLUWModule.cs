@@ -111,11 +111,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Abbott PL UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" ||
-                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
             {
-                //Additional professional business added based on selected business activities
-                strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
                 strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
@@ -193,6 +191,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["pltermlimit"]);
@@ -221,13 +220,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termpltermoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit, TermExcess);
             termpltermoption.TermLimit = TermLimit;
             termpltermoption.Premium = TermPremium;
-            termpltermoption.BasePremium = TermPremium;
+            termpltermoption.BasePremium = TermBasePremium;
             termpltermoption.Excess = TermExcess;
             termpltermoption.BrokerageRate = agreement.Brokerage;
             termpltermoption.Brokerage = TermBrokerage;
