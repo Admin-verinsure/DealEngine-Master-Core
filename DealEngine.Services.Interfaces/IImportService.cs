@@ -25,7 +25,11 @@ namespace DealEngine.Services.Interfaces
         Task ImportDANZServicePersonnel(User user);
         Task ImportDANZServiceClaims(User user);
         Task ImportNZFSGServicePI(User user);
+        Task ImportNZFSGServicePINewCompany(User user);
+        Task ImportNZFSGServicePINewAll(User user);
         Task ImportNZFSGServiceML(User user);
+        Task ImportNZFSGServiceMLNewCompany(User user);
+        Task ImportNZFSGServiceMLNewAll(User user);
         Task ImportNZFSGServiceRO(User user);
         Task ImportAAAServiceIndividuals(User user);
         Task ImportNZPIImportOwners(User user);

@@ -123,7 +123,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolcustomendorsementrenew = false;
             string strretrodate = "";
 
-            if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme") //for FANZ as a new programme in 2021, turn off at next renewal
+            if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme") //for FANZ as a new programme in 2021, turn off at next renewal
             {
                 if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
                 {
