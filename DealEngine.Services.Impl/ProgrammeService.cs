@@ -237,7 +237,7 @@ namespace DealEngine.Services.Impl
 
         public async Task<List<Programme>> GetAllProgrammes()
         {
-            return await _programmeRepository.FindAll().OrderBy(p => p.Name).ToListAsync();
+            return await _programmeRepository.FindAll().Where(p => p.DateDeleted == null).OrderBy(p => p.Name).ToListAsync();
         }
 
         public async Task<Programme> GetProgrammeById(Guid ProgrammeId)
@@ -653,7 +653,7 @@ namespace DealEngine.Services.Impl
             await _referenceRepository.AddAsync(new Reference(newClientInformationSheet.Id, newClientInformationSheet.ReferenceId));
 
             ClientProgramme newClientProgramme = new ClientProgramme(createdBy, oldClientProgramme.Owner, oldClientProgramme.BaseProgramme);
-            newClientProgramme.BrokerContactUser = oldClientProgramme.BaseProgramme.BrokerContactUser;
+            newClientProgramme.BrokerContactUser = currentProgramme.BrokerContactUser;
             newClientProgramme.RenewFromClientProgramme = oldClientProgramme;
             newClientProgramme.InformationSheet = newClientInformationSheet;
             newClientProgramme.InformationSheet.Programme = newClientProgramme;

@@ -125,12 +125,14 @@
                         $(prevbutton).hide();
                     }
                 }
+                $('#getAgreementModal').show();
                 $.ajax({
                     url: '@Url.Action("SubmitInformation", "Information")',
                     type: "POST",
                     data: $("#tab_1 :input").serialize({ json: true })
                 })
-                .done(function (url) {
+                    .done(function (url) {
+                    $('#getAgreementModal').hide();
                     $("#agreementView").load(url, function () {
                     });
                 })

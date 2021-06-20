@@ -94,10 +94,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
-                strProfessionalBusiness = "";
-                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "";
-                strJurisdiction = "";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
+                retrodate = "Unlimited excluding known claims or circumstances";
+                strTerritoryLimit = "New Zealand";
+                strJurisdiction = "New Zealand";
                 auditLogDetail = "FANZ SL UW created/modified";
             }
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")

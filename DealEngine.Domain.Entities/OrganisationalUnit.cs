@@ -50,7 +50,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Qualifications { get; set; }
         [Display(Name = "Insurance experience and positions held")]
         public virtual string Experience { get; set; }
-        [Display(Name = "This Person has retired or deceased ?")]
+        [Display(Name = "Is this person retired or deceased?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
         public virtual bool IsTripleAApproval { get; set; }
@@ -142,7 +142,7 @@ namespace DealEngine.Domain.Entities
         }
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
-        [Display(Name = "This Person has retired or deceased ?")]
+        [Display(Name = "Is this person retired or deceased?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Qualifications")]
         public virtual string Qualifications { get; set; }
@@ -288,8 +288,10 @@ namespace DealEngine.Domain.Entities
             : base(User, Name, Type, Collection)
         {
         }
+
+        [Display(Name = "Is this person retired or deceased?")]
         public virtual bool IsRetiredorDeceased { get; set; }
-        [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
+        [Display(Name = "Select to confirm you have received approval from the TripleA directors Association for this director to be included under the TripleA PI scheme")]
      
         public virtual DateTime? DateofRetirement { get; set; }
         [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
