@@ -133,7 +133,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             } else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
                 strProfessionalBusiness = "";
-                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+                retrodate = "Unlimited excluding known claims or circumstances";
                 strTerritoryLimit = "";
                 strJurisdiction = "";
                 auditLogDetail = "FANZ PI UW created/modified";
@@ -359,6 +359,52 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            //Calculate premium option
+            int option = 0;
+            decimal investmentfeeincome = 0M;
+            decimal remainingfeeincome = 0M;
+
+            var values = new List<decimal> { decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage };
+            decimal maxactivitypercentage = values.Max();
+
+            if (maxactivitypercentage == decInvProdCategoryPercentage)
+            {
+                if (maxactivitypercentage != decLHFGCategoryPercentage && maxactivitypercentage != decSLHCategoryPercentage && maxactivitypercentage != decMBCategoryPercentage)
+                {
+                    option = 4; //Investment
+                }
+                else if (decLHFGCategoryPercentage > 0)
+                {
+                    option = 5; //Highest investment percentage equal with L&H <5% F&G
+                    investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
+                    remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
+                }
+                else if (decLHFGCategoryPercentage > 0)
+                {
+                    option = 6; //Highest investment percentage equal with Standard L&H
+                    investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
+                    remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
+                }
+                else if (decLHFGCategoryPercentage > 0)
+                {
+                    option = 7; //Highest investment percentage equal with Mortgage broking
+                    investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
+                    remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
+                }
+            }
+            else if (maxactivitypercentage == decLHFGCategoryPercentage)
+            {
+                option = 3; //L&H <5% F&G
+            }
+            else if (maxactivitypercentage == decSLHCategoryPercentage)
+            {
+                option = 2; //Standard L&H
+            }
+            else if (maxactivitypercentage == decMBCategoryPercentage)
+            {
+                option = 1; //Mortgage broking
+            }
+
 
             decimal TermExcess = 0M;
             TermExcess = rates["pitermexcess"];
@@ -368,7 +414,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium1mil = 0M;
             decimal TermBrokerage1mil = 0M;
 
-            TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
             TermBasePremium1mil = TermPremium1mil;
             TermPremium1mil = TermPremium1mil * agreementperiodindays / coverperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
@@ -388,7 +434,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium2mil = 0M;
             decimal TermBrokerage2mil = 0M;
 
-            TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
             TermBasePremium2mil = TermPremium2mil;
             TermPremium2mil = TermPremium2mil * agreementperiodindays / coverperiodindays;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
@@ -408,7 +454,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium3mil = 0M;
             decimal TermBrokerage3mil = 0M;
 
-            TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
             TermBasePremium3mil = TermPremium3mil;
             TermPremium3mil = TermPremium3mil * agreementperiodindays / coverperiodindays;
             TermBrokerage3mil = TermPremium3mil * agreement.Brokerage / 100;
@@ -428,7 +474,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium4mil = 0M;
             decimal TermBrokerage4mil = 0M;
 
-            TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
             TermBasePremium4mil = TermPremium4mil;
             TermPremium4mil = TermPremium4mil * agreementperiodindays / coverperiodindays;
             TermBrokerage4mil = TermPremium4mil * agreement.Brokerage / 100;
@@ -448,7 +494,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium5mil = 0M;
             decimal TermBrokerage5mil = 0M;
 
-            TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
             TermBasePremium5mil = TermPremium5mil;
             TermPremium5mil = TermPremium5mil * agreementperiodindays / coverperiodindays;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
@@ -671,14 +717,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremium(IDictionary<string, decimal> rates, int termlimit, int intclasscategory, decimal feeincome, decimal decMBCategoryPercentage, decimal decSLHCategoryPercentage, decimal decLHFGCategoryPercentage, decimal decInvProdCategoryPercentage)
+        decimal GetPremium(IDictionary<string, decimal> rates, int termlimit, int intclasscategory, decimal feeincome, int option, decimal investmentfeeincome, decimal remainingfeeincome, decimal decMBCategoryPercentage, decimal decSLHCategoryPercentage, decimal decLHFGCategoryPercentage, decimal decInvProdCategoryPercentage)
         {
             decimal premium = 0M;
             decimal minimumpremium = 0M;
 
             if (intclasscategory == 1 || intclasscategory == 2)
             {
-                if (decMBCategoryPercentage > decSLHCategoryPercentage && decMBCategoryPercentage > decLHFGCategoryPercentage && decMBCategoryPercentage > decInvProdCategoryPercentage) //Mortgage broking
+
+                if (option == 1) //Mortgage broking
                 {
                     switch (termlimit)
                     {
@@ -758,7 +805,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                     }
                 }
-                else if (decSLHCategoryPercentage > decMBCategoryPercentage && decSLHCategoryPercentage > decLHFGCategoryPercentage && decSLHCategoryPercentage > decInvProdCategoryPercentage) //Standard L&H
+                else if (option == 2) //Standard L&H
                 {
                     switch (termlimit)
                     {
@@ -838,7 +885,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                     }
                 }
-                else if (decLHFGCategoryPercentage > decMBCategoryPercentage && decLHFGCategoryPercentage > decSLHCategoryPercentage && decLHFGCategoryPercentage > decInvProdCategoryPercentage) //L&H <5% F&G
+                else if (option == 3) //L&H <5% F&G
                 {
                     switch (termlimit)
                     {
@@ -918,7 +965,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                     }
                 }
-                else if (decInvProdCategoryPercentage > decMBCategoryPercentage && decInvProdCategoryPercentage > decSLHCategoryPercentage && decInvProdCategoryPercentage > decLHFGCategoryPercentage) //Investment
+                else if (option == 4) //Investment
                 {
                     switch (termlimit)
                     {
@@ -998,12 +1045,251 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                     }
                 }
+                else if (option == 5) //Highest investment percentage equal with L&H <5% F&G
+                {
+                    switch (termlimit)
+                    {
+                        case 1000000:
+                            {
+                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratelhfg"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvlass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratelhfg"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 3000000:
+                            {
+                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratelhfg"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 4000000:
+                            {
+                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratelhfg"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratelhfg"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                else if (option == 6) //Highest investment percentage equal with Standard L&H
+                {
+                    switch (termlimit)
+                    {
+                        case 1000000:
+                            {
+                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumrateslh"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumrateslh"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 3000000:
+                            {
+                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumrateslh"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 4000000:
+                            {
+                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumrateslh"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumrateslh"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                else if (option == 7) //Highest investment percentage equal with Mortgage broking
+                {
+                    switch (termlimit)
+                    {
+                        case 1000000:
+                            {
+                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratemb"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["1millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 2000000:
+                            {
+                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratemb"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["2millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 3000000:
+                            {
+                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratemb"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["3millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 4000000:
+                            {
+                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratemb"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["4millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        case 5000000:
+                            {
+                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratemb"] / 100;
+                                if (intclasscategory == 1)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass1"];
+                                }
+                                else if (intclasscategory == 2)
+                                {
+                                    minimumpremium = rates["5millimitminimumpremiuminvclass2"];
+                                }
+                                premium = (premium > minimumpremium) ? premium : minimumpremium;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
 
             }
 
             return premium;
         }
-
 
 
         void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)

@@ -472,10 +472,10 @@ namespace DealEngine.WebUI.Models
             HasConfidencialOptions = GetSelectListOptions();
             HasBreachesOptions = GetSelectListOptions();
             HasKnowledgeOptions = GetSelectListOptions();
-            HasOptionalCLEOptions = GetSelectListOptions();
+            HasOptionalCLEOptions = GetSelectListOptions1();
             HasProceduresOptions = GetSelectListOptions();
             HasApprovedVendorsOptions = GetSelectListOptions();
-            HasExistingPolicyOptions = GetSelectListOptions();
+            HasExistingPolicyOptions = GetSelectListOptionsCyberRenew();
             HasLocationOptions = GetSelectListOptions();
             HasOptionalUltraOptions = GetSelectListOptions();
         }
@@ -509,6 +509,24 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 { Text = "No", Value = "2" }
+            };
+        }
+        private IList<SelectListItem> GetSelectListOptionsCyberRenew()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" },
+                new SelectListItem
+                { Text = "Never had Cyber", Value = "3" }
             };
         }
         public IList<SelectListItem> HasCLIOptions { get; set; }

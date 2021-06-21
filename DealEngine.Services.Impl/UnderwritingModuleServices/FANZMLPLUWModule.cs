@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DealEngine.Services.Impl.UnderwritingModuleServices
 {
-    public class FAPProgrammePLUWModule : IUnderwritingModule
+    public class FANZMLPLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public FAPProgrammePLUWModule()
+        public FANZMLPLUWModule()
         {
-            Name = "FAPProgramme_PL";
+            Name = "FANZ_MLPL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -67,6 +67,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             coverperiodindaysforchange = (agreement.ExpiryDate - DateTime.UtcNow).Days;
 
 
+            decimal decOther = 0M;
+
             //Programme specific term
 
             //Default Professional Business, Retroactive Date, TerritoryLimit, Jurisdiction, AuditLog Detail
@@ -95,10 +97,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
-                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
-                retrodate = "Unlimited excluding known claims or circumstances";
-                strTerritoryLimit = "New Zealand";
-                strJurisdiction = "New Zealand";
+                strProfessionalBusiness = "";
+                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+                strTerritoryLimit = "";
+                strJurisdiction = "";
                 auditLogDetail = "FANZ PL UW created/modified";
             }
             else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
@@ -109,13 +111,26 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Abbott PL UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
             {
                 strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
                 retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
                 strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "NZFSG PL UW created/modified";
+
+                if (agreement.ClientInformationSheet.RevenueData != null)
+                {
+                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                    {
+                        if (uISActivity.AnzsciCode == "CUS0081") //Other
+                        {
+                            if (uISActivity.Percentage > 0)
+                                decOther = uISActivity.Percentage;
+                        }
+                    }
+                }
+
             }
 
             //renewal data (retro date and endorsements)
@@ -141,8 +156,39 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
 
             }
-            
-            
+
+            //Check Cluster Groups information
+            bool bolclustergroupsreferral = false;
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPartyMembers").Any())
+            {
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPartyMembers").First().Value == "1" ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPartyMembers").First().Value == "2" ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPartyMembers").First().Value == "3" ||
+                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasPartyMembers").First().Value == "4")
+                {
+                    bolclustergroupsreferral = true;
+                }
+            }
+
+            //Check Dual Insurance information
+            bool boldualinsurancereferral = false;
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasOtherPIinsurances").Any())
+            {
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasOtherPIinsurances").First().Value == "1")
+                {
+                    boldualinsurancereferral = true;
+                }
+            }
+
+            //Check No Employees information
+            bool bolnoemployeesreferral = false;
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
+                        Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) == 0)
+            {
+                bolnoemployeesreferral = true;
+            }
+
+
             int TermLimit = 0;
             decimal TermPremium = 0M;
             decimal TermBasePremium = 0M;
@@ -163,10 +209,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         TermPremium = rates["pltermpremiumclass1"];
                     }
-                } else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "2")
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "2")
                 {
                     TermPremium = rates["pltermpremiumclass2"];
-                } else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "3")
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.HasClassOfLicense").First().Value == "3")
                 {
                     bolclass3referral = true;
                 }
@@ -217,6 +265,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Referral points per agreement
             //Class 3 referral
             uwrfclass3(underwritingUser, agreement, bolclass3referral);
+            //Claims / Insurance History
+            uwrfpriorinsurance(underwritingUser, agreement);
+            //Cluster Groups
+            uwrfclustergroups(underwritingUser, agreement, bolclustergroupsreferral);
+            //Dual Insurance
+            uwrfdualinsurance(underwritingUser, agreement, boldualinsurancereferral);
+            //Other Activity
+            uwrfotheractivity(underwritingUser, agreement, decOther);
+            //No Employees
+            uwrfnoemployees(underwritingUser, agreement, bolnoemployeesreferral);
 
             //Update agreement Status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -334,6 +392,161 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
+
+        void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasDamageLossOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasWithdrawnOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasRefusedOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasStatutoryOffenceOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "ClaimsHistoryViewModel.HasLiquidationOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.ClaimNotifications.Where(acscn => acscn.DateDeleted == null && !acscn.Removed && (acscn.ClaimStatus == "Settled" || acscn.ClaimStatus == "Precautionary notification only" || acscn.ClaimStatus == "Part Settled")).Count() > 0)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
+
+        void uwrfdualinsurance(User underwritingUser, ClientAgreement agreement, bool boldualinsurancereferral)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdualinsurance" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfdualinsurance").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdualinsurance" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (boldualinsurancereferral) //Dual Insurance referral
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdualinsurance" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdualinsurance" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfdualinsurance" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
+
+        void uwrfclustergroups(User underwritingUser, ClientAgreement agreement, bool bolclustergroupsreferral)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclustergroups" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfclustergroups").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclustergroups" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (bolclustergroupsreferral) //Cluster Groups referral
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclustergroups" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclustergroups" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclustergroups" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
+
+        void uwrfotheractivity(User underwritingUser, ClientAgreement agreement, decimal decOther)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotheractivity").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (decOther > 0)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheractivity" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
+
+        void uwrfnoemployees(User underwritingUser, ClientAgreement agreement, bool bolnoemployeesreferral)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (bolnoemployeesreferral) //No Employees referral
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status = "";
+                }
+            }
+        }
 
         void uwrfclass3(User underwritingUser, ClientAgreement agreement, bool bolclass3referral)
         {

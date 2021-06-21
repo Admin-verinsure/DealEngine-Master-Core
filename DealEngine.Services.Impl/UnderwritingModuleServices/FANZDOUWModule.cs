@@ -180,7 +180,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            string retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
+            string retrodate = "Unlimited excluding known claims or circumstances";
             agreement.TerritoryLimit = "Worldwide";
             agreement.Jurisdiction = "New Zealand";
             agreement.RetroactiveDate = retrodate;
