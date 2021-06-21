@@ -2940,7 +2940,7 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                             }
                                             // else if TripleA Base Premium Advice
-                                            else if (template.DocumentType == 7)
+                                            else if (false && template.DocumentType == 7)
                                             {
                                                 SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -2950,7 +2950,7 @@ namespace DealEngine.WebUI.Controllers
                                                 await _fileService.UploadFile(renderedDoc);
                                             }
                                             // else if Apollo Invoice
-                                            else if (template.DocumentType == 8)
+                                            else if (true || template.DocumentType == 8)
                                             {
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
 
@@ -3999,11 +3999,11 @@ namespace DealEngine.WebUI.Controllers
                         agreeDocList = agreement.GetDocuments();
                         foreach (Document doc in agreeDocList)
                         {
-                            if ((!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
+                            if (false && (!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
-                            else if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
+                            else if (false && doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
