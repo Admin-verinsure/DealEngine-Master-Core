@@ -319,14 +319,14 @@ deploy_mnzconnect:
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh -o StrictHostKeyChecking=no ubuntu@"$mnzconnect.com" './DE-DeployPrep.sh'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLmnzconnect.com" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$mnzconnect.com:/home/ubuntu/projects/dealengine
-  - ssh ubuntu@"$mnzconnect.com" './DE-DeployFin.sh'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@"$URLmnzconnect.com":/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLmnzconnect.com" './DE-DeployFin.sh'
 
   environment:
     name: mnzconnect
-    url: mnzconnect.com
+    url: https://$URLmnzconnect.com
   when: manual
   dependencies:
     - build
