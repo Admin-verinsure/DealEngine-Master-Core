@@ -288,25 +288,9 @@ namespace DealEngine.Services.Impl
             //email.ReplyTo();
             if (documents != null)
             {
-                foreach (SystemDocument document in documents)
-                {
-                    email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
-                }
                 var documentsList = await ToAttachments(documents);
                 email.Attachments(documentsList.ToArray());
             }
-
-            //if (documents != null)
-            //{
-
-            //    foreach (Attachment attachment in attachments)
-            //    {
-            //        _mailMessage.Attachments.Add(attachment);
-            //    }
-            //    email.Attachments(new Attachment(new MemoryStream(document.Contents), "InformationSheetReport.pdf"));
-            //}
-            //email.Send();
-
             email.Send();
         }
 

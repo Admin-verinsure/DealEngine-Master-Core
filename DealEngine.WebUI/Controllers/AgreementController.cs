@@ -2723,9 +2723,8 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                                 else if (template.DocumentType == 7)
                                                 {
-                                                    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
-                                                    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    //SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     //documents.Add(renderedDoc);
@@ -4027,6 +4026,9 @@ namespace DealEngine.WebUI.Controllers
                             if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
+                            } else if (doc.DocumentType == 7)
+                            {
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
                             else
                             {
