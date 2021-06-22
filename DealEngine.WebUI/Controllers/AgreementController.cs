@@ -2939,6 +2939,7 @@ namespace DealEngine.WebUI.Controllers
                                                     agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                 {
                                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    renderedDoc.FileRendered = true;
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
@@ -2950,7 +2951,7 @@ namespace DealEngine.WebUI.Controllers
                                             {
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 //documents.Add(renderedDoc);
@@ -2963,6 +2964,7 @@ namespace DealEngine.WebUI.Controllers
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -2972,7 +2974,7 @@ namespace DealEngine.WebUI.Controllers
                                             {
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -2984,7 +2986,7 @@ namespace DealEngine.WebUI.Controllers
                                         {
                                             SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
                                             SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                            renderedDoc.FileRendered = true;
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                             agreement.Documents.Add(renderedDoc);
                                             //documents.Add(renderedDoc);
@@ -3003,7 +3005,7 @@ namespace DealEngine.WebUI.Controllers
                                         {
                                             SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
                                             SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                            renderedDoc.FileRendered = true;
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                             agreement.Documents.Add(renderedDoc);
                                             documents.Add(renderedDoc);
@@ -3021,7 +3023,7 @@ namespace DealEngine.WebUI.Controllers
                                                 {
                                                     SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
                                                     SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                                    renderedDoc.FileRendered = true;
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
@@ -3032,7 +3034,7 @@ namespace DealEngine.WebUI.Controllers
                                             {
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
-
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -3354,7 +3356,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+           //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
