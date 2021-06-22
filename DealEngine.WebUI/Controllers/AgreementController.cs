@@ -2712,7 +2712,9 @@ namespace DealEngine.WebUI.Controllers
                                                     if (agreement.Product.IsOptionalProductBasedSub &&
                                                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                     {
-                                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                        SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                        SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+
                                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                         agreement.Documents.Add(renderedDoc);
                                                         documents.Add(renderedDoc);
@@ -2722,6 +2724,7 @@ namespace DealEngine.WebUI.Controllers
                                                 else if (template.DocumentType == 7)
                                                 {
                                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    //SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     //documents.Add(renderedDoc);
@@ -2740,9 +2743,11 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                                 else
                                                 {
-                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                                    agreement.Documents.Add(renderedDoc);
+                                                    agreement.Documents.Add(renderedDoc1);
                                                     documents.Add(renderedDoc);
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
@@ -2933,6 +2938,7 @@ namespace DealEngine.WebUI.Controllers
                                                     agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                 {
                                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                    renderedDoc.FileRendered = true;
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
@@ -2940,9 +2946,11 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                             }
                                             // else if TripleA Base Premium Advice
-                                            else if (template.DocumentType == 7)
+                                            else if ( template.DocumentType == 7)
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 //documents.Add(renderedDoc);
@@ -2955,6 +2963,7 @@ namespace DealEngine.WebUI.Controllers
                                                 SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
 
                                                 SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -2962,7 +2971,9 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -2972,7 +2983,9 @@ namespace DealEngine.WebUI.Controllers
                                         // else if TripleA Base Premium Advice
                                         else if (template.DocumentType == 7)
                                         {
-                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                            SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                            SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                            renderedDoc.FileRendered = true;
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                             agreement.Documents.Add(renderedDoc);
                                             //documents.Add(renderedDoc);
@@ -2989,7 +3002,9 @@ namespace DealEngine.WebUI.Controllers
                                         //}
                                         else
                                         {
-                                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                            SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                            SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                            renderedDoc.FileRendered = true;
                                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                             agreement.Documents.Add(renderedDoc);
                                             documents.Add(renderedDoc);
@@ -3005,7 +3020,9 @@ namespace DealEngine.WebUI.Controllers
                                             {
                                                 if (subSystemClient.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                                                 {
-                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
+                                                    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
+                                                    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                    renderedDoc.FileRendered = true;
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                     agreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
@@ -3014,7 +3031,9 @@ namespace DealEngine.WebUI.Controllers
                                             }
                                             else
                                             {
-                                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
+                                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
+                                                SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                                renderedDoc.FileRendered = true;
                                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                                 agreement.Documents.Add(renderedDoc);
                                                 documents.Add(renderedDoc);
@@ -3331,12 +3350,18 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(renderedDoc.Contents);
+            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
@@ -3347,7 +3372,7 @@ namespace DealEngine.WebUI.Controllers
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, invoicename, "application/pdf", 99);
+            Document document = new Document(user, invoicename, "application/pdf", renderedDoc.DocumentType);
             document.Contents = pdfBytes;
             return document;
         }
@@ -3999,21 +4024,29 @@ namespace DealEngine.WebUI.Controllers
                         agreeDocList = agreement.GetDocuments();
                         foreach (Document doc in agreeDocList)
                         {
-                            if ((!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
-                            {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
-                            }
-                            else if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
+                            //if ((!doc.Name.EqualsIgnoreCase("Information Sheet Report") && doc.DocumentType != 8))
+                            //{
+                            //    model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
+                            //}
+                            //else 
+                            if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
                                 model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
+                            } else if (doc.DocumentType == 7)
+                            {
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
                             else
                             {
                                 ViewBag.IsPDFgenerated = "" + agreement.IsPDFgenerated;
                                 ViewBag.IsReportSend = "" + agreement.IsFullProposalDocSend;
+                                if (programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" || programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme" ||
+                                          programme.BaseProgramme.NamedPartyUnitName == "NZFSG Run Off Programme" )
+                                {
 
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetPDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
+                                    model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=" + doc.Name, ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
 
+                                }
                             }
                         }
                     }
@@ -4210,7 +4243,8 @@ namespace DealEngine.WebUI.Controllers
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     renderedDoc.RenderToPDF = template.RenderToPDF;
-                                    if (renderedDoc.RenderToPDF == true)
+                                    if (answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" || answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme" ||
+                                         answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Run Off Programme")
                                     {
                                         renderedDoc = await _fileService.FormatCKHTMLforConversion(renderedDoc);
                                         renderedDoc = await _fileService.ConvertHTMLToPDF(renderedDoc);

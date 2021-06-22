@@ -198,8 +198,16 @@ namespace DealEngine.Services.Impl
 			email.UseHtmlBody (true);
             if(documents != null)
             {
-                var documentsList = await ToAttachments(documents);
-                email.Attachments(documentsList.ToArray());
+                foreach (SystemDocument document in documents)
+                {
+                    if(document.ContentType == "application/pdf")
+                    {
+                        email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
+                    }
+                }
+                //var documentsList = await ToAttachments(documents);
+                //email.Attachments(documentsList.ToArray());
+                //_mailMessage.Attachments.Add(attachment);
                 email.Send();
             }
             else
