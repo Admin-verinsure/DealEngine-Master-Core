@@ -1505,7 +1505,7 @@ namespace DealEngine.Services.Impl
 
                         decimal widthPercent = decimal.Parse(width);
                         widthPercent = decimal.Divide(widthPercent, 100);
-                        decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
+                        decimal pixelWidth = 100 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
                         int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
                         string pixelWidthStr = pixelWidthZeroDP.ToString();
 
