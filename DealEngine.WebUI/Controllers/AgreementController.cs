@@ -3353,7 +3353,7 @@ namespace DealEngine.WebUI.Controllers
 
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, invoicename, "application/pdf", 99);
+            Document document = new Document(user, invoicename, "application/pdf", renderedDoc.DocumentType);
             document.Contents = pdfBytes;
             return document;
         }
