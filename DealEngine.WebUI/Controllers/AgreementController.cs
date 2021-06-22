@@ -2747,7 +2747,7 @@ namespace DealEngine.WebUI.Controllers
                                                     SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
 
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                                    agreement.Documents.Add(renderedDoc);
+                                                    agreement.Documents.Add(renderedDoc1);
                                                     documents.Add(renderedDoc);
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
@@ -3350,6 +3350,12 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(renderedDoc.Contents);
+            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
