@@ -76,12 +76,19 @@ namespace DealEngine.WebUI.Controllers
 
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
+            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
+
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+          // htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;
@@ -117,7 +124,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+          // htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
 
             string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
