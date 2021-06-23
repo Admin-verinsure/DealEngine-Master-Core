@@ -2734,7 +2734,7 @@ namespace DealEngine.WebUI.Controllers
                                                     SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
 
                                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                                    agreement.Documents.Add(renderedDoc1);
+                                                    agreement.Documents.Add(renderedDoc);
                                                     documents.Add(renderedDoc);
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
