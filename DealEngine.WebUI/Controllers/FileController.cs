@@ -77,7 +77,7 @@ namespace DealEngine.WebUI.Controllers
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
             //html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
-            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width=\"100px\" height=\"100px\"}</style></head>");
+            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width: 80px; height:80px}</style></head>");
            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
@@ -120,7 +120,7 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(doc.Contents);
-            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width=\"100px\" height=\"100px\"}</style></head>");
+            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width: 80px; height:80px}</style></head>");
 
             var htmlToPdfConv = new HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
