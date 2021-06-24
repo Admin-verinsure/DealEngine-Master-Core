@@ -88,7 +88,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
                 {
-                    if (uISActivity.AnzsciCode == "CUS0081") //Other
+                    if (uISActivity.AnzsciCode == "CUSFANZ21") //Other
                     {
                         if (uISActivity.Percentage > 0)
                             decOther = uISActivity.Percentage;
@@ -226,7 +226,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Dual Insurance
             uwrfdualinsurance(underwritingUser, agreement, boldualinsurancereferral);
             //Other Activity
-            uwrfotheractivity(underwritingUser, agreement, decOther);
+            //uwrfotheractivity(underwritingUser, agreement, decOther);
             //High Fee Income
             uwrfhighfeeincome(underwritingUser, agreement, feeincome);
 

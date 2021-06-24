@@ -2748,6 +2748,16 @@ namespace DealEngine.WebUI.Controllers
                                                     documents.Add(renderedDoc);
                                                     await _fileService.UploadFile(renderedDoc);
                                                 }
+                                                else
+                                                {
+                                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+
+                                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                    agreement.Documents.Add(renderedDoc);
+                                                    documents.Add(renderedDoc);
+                                                    await _fileService.UploadFile(renderedDoc);
+
+                                                }
 
                                             }
 
@@ -2820,6 +2830,7 @@ namespace DealEngine.WebUI.Controllers
                                                 }
                                             }
                                         }
+
 
                                         //send out premium advice
                                         if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
