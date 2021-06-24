@@ -200,28 +200,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolcustomendorsementrenew = false;
             string strretrodate = "";
 
-            if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme") //for FANZ as a new programme in 2021, turn off at next renewal
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
             {
-                if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
                 {
-                    foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                    if (preRenewOrRefData.DataType == "preterm")
                     {
-                        if (preRenewOrRefData.DataType == "preterm")
+                        if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
                         {
-                            if (!string.IsNullOrEmpty(preRenewOrRefData.PIRetro))
-                            {
-                                strretrodate = preRenewOrRefData.PIRetro;
-                            }
-
+                            strretrodate = preRenewOrRefData.PIRetro;
                         }
-                        if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+
+                    }
+                    if (preRenewOrRefData.DataType == "preendorsement" && preRenewOrRefData.EndorsementProduct == "PI")
+                    {
+                        if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
                         {
-                            if (agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == preRenewOrRefData.EndorsementTitle) == null)
-                            {
-                                bolcustomendorsementrenew = true;
-                                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
-                                agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-                            }
+                            bolcustomendorsementrenew = true;
+                            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, preRenewOrRefData.EndorsementTitle, "Exclusion", product, preRenewOrRefData.EndorsementText, 130, agreement);
+                            agreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
                         }
                     }
                 }
@@ -245,6 +242,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     intclasscategory = 3;
                     bolclass3referral = true;
                 }
+            }
+            if (intclasscategory == 0)
+            {
+                bolclass3referral = true;
             }
 
             //Check Cluster Groups information
@@ -300,13 +301,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
                     remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
                 }
-                else if (decLHFGCategoryPercentage > 0)
+                else if (decSLHCategoryPercentage > 0)
                 {
                     option = 6; //Highest investment percentage equal with Standard L&H
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
                     remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
                 }
-                else if (decLHFGCategoryPercentage > 0)
+                else if (decMBCategoryPercentage > 0)
                 {
                     option = 7; //Highest investment percentage equal with Mortgage broking
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
@@ -342,31 +343,19 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium1mil25kexcess = 0M;
             decimal TermBrokerage1mil25kexcess = 0M;
 
-            TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
-            TermBasePremium1mil = TermPremium1mil;
-
             if (boladvisortruststatus)
             {
                 StandardTermExcess = 2500;
-                TermPremium1mil10kexcess = TermPremium1mil * (100 - rates["10kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium1mil10kexcess = TermPremium1mil10kexcess;
-                TermPremium1mil25kexcess = TermPremium1mil * (100 - rates["25kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium1mil25kexcess = TermPremium1mil25kexcess;
-            } else
+            }
+            else
             {
                 StandardTermExcess = 5000;
-                TermPremium1mil10kexcess = TermPremium1mil * (100 - rates["10kexcessdiscountrate"]) / 100;
-                TermBasePremium1mil10kexcess = TermPremium1mil10kexcess;
-                TermPremium1mil25kexcess = TermPremium1mil * (100 - rates["25kexcessdiscountrate"]) / 100;
-                TermBasePremium1mil25kexcess = TermPremium1mil25kexcess;
             }
 
+            TermPremium1mil = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, StandardTermExcess, boladvisortruststatus);
+            TermBasePremium1mil = TermPremium1mil;
             TermPremium1mil = TermPremium1mil * agreementperiodindays / coverperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
-            TermPremium1mil10kexcess = TermPremium1mil10kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage1mil10kexcess = TermPremium1mil10kexcess * agreement.Brokerage / 100;
-            TermPremium1mil25kexcess = TermPremium1mil25kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage1mil25kexcess = TermPremium1mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, StandardTermExcess);
             term1millimitpremiumoption.TermLimit = TermLimit1mil;
@@ -378,6 +367,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term1millimitpremiumoption.DateDeleted = null;
             term1millimitpremiumoption.DeletedBy = null;
 
+            TermPremium1mil10kexcess = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess10k, boladvisortruststatus);
+            TermBasePremium1mil10kexcess = TermPremium1mil10kexcess;
+            TermPremium1mil10kexcess = TermPremium1mil10kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage1mil10kexcess = TermPremium1mil10kexcess * agreement.Brokerage / 100;
+
             ClientAgreementTerm term1millimitpremium10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess10k);
             term1millimitpremium10kexcessoption.TermLimit = TermLimit1mil;
             term1millimitpremium10kexcessoption.Premium = TermPremium1mil10kexcess;
@@ -387,6 +381,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term1millimitpremium10kexcessoption.Brokerage = TermBrokerage1mil10kexcess;
             term1millimitpremium10kexcessoption.DateDeleted = null;
             term1millimitpremium10kexcessoption.DeletedBy = null;
+
+            TermPremium1mil25kexcess = GetPremium(rates, TermLimit1mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess25k, boladvisortruststatus);
+            TermBasePremium1mil25kexcess = TermPremium1mil25kexcess;
+            TermPremium1mil25kexcess = TermPremium1mil25kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage1mil25kexcess = TermPremium1mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term1millimitpremium25kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess25k);
             term1millimitpremium25kexcessoption.TermLimit = TermLimit1mil;
@@ -410,32 +409,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium2mil25kexcess = 0M;
             decimal TermBrokerage2mil25kexcess = 0M;
 
-            TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium2mil = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, StandardTermExcess, boladvisortruststatus);
             TermBasePremium2mil = TermPremium2mil;
-
-            if (boladvisortruststatus)
-            {
-                StandardTermExcess = 5000;
-                TermPremium2mil10kexcess = TermPremium2mil * (100 - rates["10kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium2mil10kexcess = TermPremium2mil10kexcess;
-                TermPremium2mil25kexcess = TermPremium2mil * (100 - rates["25kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium2mil25kexcess = TermPremium2mil25kexcess;
-            }
-            else
-            {
-                StandardTermExcess = 5000;
-                TermPremium2mil10kexcess = TermPremium2mil * (100 - rates["10kexcessdiscountrate"]) / 100;
-                TermBasePremium2mil10kexcess = TermPremium2mil10kexcess;
-                TermPremium2mil25kexcess = TermPremium2mil * (100 - rates["25kexcessdiscountrate"]) / 100;
-                TermBasePremium2mil25kexcess = TermPremium2mil25kexcess;
-            }
-
             TermPremium2mil = TermPremium2mil * agreementperiodindays / coverperiodindays;
             TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
-            TermPremium2mil10kexcess = TermPremium2mil10kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage2mil10kexcess = TermPremium2mil10kexcess * agreement.Brokerage / 100;
-            TermPremium2mil25kexcess = TermPremium2mil25kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage2mil25kexcess = TermPremium2mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, StandardTermExcess);
             term2millimitpremiumoption.TermLimit = TermLimit2mil;
@@ -447,6 +424,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimitpremiumoption.DateDeleted = null;
             term2millimitpremiumoption.DeletedBy = null;
 
+            TermPremium2mil10kexcess = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess10k, boladvisortruststatus);
+            TermBasePremium2mil10kexcess = TermPremium2mil10kexcess;
+            TermPremium2mil10kexcess = TermPremium2mil10kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage2mil10kexcess = TermPremium2mil10kexcess * agreement.Brokerage / 100;
+
             ClientAgreementTerm term2millimitpremium10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess10k);
             term2millimitpremium10kexcessoption.TermLimit = TermLimit2mil;
             term2millimitpremium10kexcessoption.Premium = TermPremium2mil10kexcess;
@@ -456,6 +438,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimitpremium10kexcessoption.Brokerage = TermBrokerage2mil10kexcess;
             term2millimitpremium10kexcessoption.DateDeleted = null;
             term2millimitpremium10kexcessoption.DeletedBy = null;
+
+            TermPremium2mil25kexcess = GetPremium(rates, TermLimit2mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess25k, boladvisortruststatus);
+            TermBasePremium2mil25kexcess = TermPremium2mil25kexcess;
+            TermPremium2mil25kexcess = TermPremium2mil25kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage2mil25kexcess = TermPremium2mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term2millimitpremium25kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess25k);
             term2millimitpremium25kexcessoption.TermLimit = TermLimit2mil;
@@ -479,32 +466,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium3mil25kexcess = 0M;
             decimal TermBrokerage3mil25kexcess = 0M;
 
-            TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium3mil = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, StandardTermExcess, boladvisortruststatus);
             TermBasePremium3mil = TermPremium3mil;
-
-            if (boladvisortruststatus)
-            {
-                StandardTermExcess = 5000;
-                TermPremium3mil10kexcess = TermPremium3mil * (100 - rates["10kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium3mil10kexcess = TermPremium3mil10kexcess;
-                TermPremium3mil25kexcess = TermPremium3mil * (100 - rates["25kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium3mil25kexcess = TermPremium3mil25kexcess;
-            }
-            else
-            {
-                StandardTermExcess = 5000;
-                TermPremium3mil10kexcess = TermPremium3mil * (100 - rates["10kexcessdiscountrate"]) / 100;
-                TermBasePremium3mil10kexcess = TermPremium3mil10kexcess;
-                TermPremium3mil25kexcess = TermPremium3mil * (100 - rates["25kexcessdiscountrate"]) / 100;
-                TermBasePremium3mil25kexcess = TermPremium3mil25kexcess;
-            }
-
             TermPremium3mil = TermPremium3mil * agreementperiodindays / coverperiodindays;
             TermBrokerage3mil = TermPremium3mil * agreement.Brokerage / 100;
-            TermPremium3mil10kexcess = TermPremium3mil10kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage3mil10kexcess = TermPremium3mil10kexcess * agreement.Brokerage / 100;
-            TermPremium3mil25kexcess = TermPremium3mil25kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage3mil25kexcess = TermPremium3mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, StandardTermExcess);
             term3millimitpremiumoption.TermLimit = TermLimit3mil;
@@ -516,6 +481,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term3millimitpremiumoption.DateDeleted = null;
             term3millimitpremiumoption.DeletedBy = null;
 
+            TermPremium3mil10kexcess = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess10k, boladvisortruststatus);
+            TermBasePremium3mil10kexcess = TermPremium3mil10kexcess;
+            TermPremium3mil10kexcess = TermPremium3mil10kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage3mil10kexcess = TermPremium3mil10kexcess * agreement.Brokerage / 100;
+
             ClientAgreementTerm term3millimitpremium10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess10k);
             term3millimitpremium10kexcessoption.TermLimit = TermLimit3mil;
             term3millimitpremium10kexcessoption.Premium = TermPremium3mil10kexcess;
@@ -525,6 +495,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term3millimitpremium10kexcessoption.Brokerage = TermBrokerage3mil10kexcess;
             term3millimitpremium10kexcessoption.DateDeleted = null;
             term3millimitpremium10kexcessoption.DeletedBy = null;
+
+            TermPremium3mil25kexcess = GetPremium(rates, TermLimit3mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess25k, boladvisortruststatus);
+            TermBasePremium3mil25kexcess = TermPremium3mil25kexcess;
+            TermPremium3mil25kexcess = TermPremium3mil25kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage3mil25kexcess = TermPremium3mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term3millimitpremium25kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess25k);
             term3millimitpremium25kexcessoption.TermLimit = TermLimit3mil;
@@ -548,32 +523,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium4mil25kexcess = 0M;
             decimal TermBrokerage4mil25kexcess = 0M;
 
-            TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium4mil = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, StandardTermExcess, boladvisortruststatus);
             TermBasePremium4mil = TermPremium4mil;
-
-            if (boladvisortruststatus)
-            {
-                StandardTermExcess = 5000;
-                TermPremium4mil10kexcess = TermPremium4mil * (100 - rates["10kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium4mil10kexcess = TermPremium4mil10kexcess;
-                TermPremium4mil25kexcess = TermPremium4mil * (100 - rates["25kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium4mil25kexcess = TermPremium4mil25kexcess;
-            }
-            else
-            {
-                StandardTermExcess = 5000;
-                TermPremium4mil10kexcess = TermPremium4mil * (100 - rates["10kexcessdiscountrate"]) / 100;
-                TermBasePremium4mil10kexcess = TermPremium4mil10kexcess;
-                TermPremium4mil25kexcess = TermPremium4mil * (100 - rates["25kexcessdiscountrate"]) / 100;
-                TermBasePremium4mil25kexcess = TermPremium4mil25kexcess;
-            }
-
             TermPremium4mil = TermPremium4mil * agreementperiodindays / coverperiodindays;
             TermBrokerage4mil = TermPremium4mil * agreement.Brokerage / 100;
-            TermPremium4mil10kexcess = TermPremium4mil10kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage4mil10kexcess = TermPremium4mil10kexcess * agreement.Brokerage / 100;
-            TermPremium4mil25kexcess = TermPremium4mil25kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage4mil25kexcess = TermPremium4mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term4millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, StandardTermExcess);
             term4millimitpremiumoption.TermLimit = TermLimit4mil;
@@ -585,6 +538,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term4millimitpremiumoption.DateDeleted = null;
             term4millimitpremiumoption.DeletedBy = null;
 
+            TermPremium4mil10kexcess = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess10k, boladvisortruststatus);
+            TermBasePremium4mil10kexcess = TermPremium4mil10kexcess;
+            TermPremium4mil10kexcess = TermPremium4mil10kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage4mil10kexcess = TermPremium4mil10kexcess * agreement.Brokerage / 100;
+
             ClientAgreementTerm term4millimitpremium10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, TermExcess10k);
             term4millimitpremium10kexcessoption.TermLimit = TermLimit4mil;
             term4millimitpremium10kexcessoption.Premium = TermPremium4mil10kexcess;
@@ -594,6 +552,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term4millimitpremium10kexcessoption.Brokerage = TermBrokerage4mil10kexcess;
             term4millimitpremium10kexcessoption.DateDeleted = null;
             term4millimitpremium10kexcessoption.DeletedBy = null;
+
+            TermPremium4mil25kexcess = GetPremium(rates, TermLimit4mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess25k, boladvisortruststatus);
+            TermBasePremium4mil25kexcess = TermPremium4mil25kexcess;
+            TermPremium4mil25kexcess = TermPremium4mil25kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage4mil25kexcess = TermPremium4mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term4millimitpremium25kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, TermExcess25k);
             term4millimitpremium25kexcessoption.TermLimit = TermLimit4mil;
@@ -617,32 +580,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium5mil25kexcess = 0M;
             decimal TermBrokerage5mil25kexcess = 0M;
 
-            TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage);
+            TermPremium5mil = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, StandardTermExcess, boladvisortruststatus);
             TermBasePremium5mil = TermPremium5mil;
-
-            if (boladvisortruststatus)
-            {
-                StandardTermExcess = 5000;
-                TermPremium5mil10kexcess = TermPremium5mil * (100 - rates["10kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium5mil10kexcess = TermPremium5mil10kexcess;
-                TermPremium5mil25kexcess = TermPremium5mil * (100 - rates["25kexcessdiscountrateadvisortruststatus"]) / 100;
-                TermBasePremium5mil25kexcess = TermPremium5mil25kexcess;
-            }
-            else
-            {
-                StandardTermExcess = 5000;
-                TermPremium5mil10kexcess = TermPremium5mil * (100 - rates["10kexcessdiscountrate"]) / 100;
-                TermBasePremium5mil10kexcess = TermPremium5mil10kexcess;
-                TermPremium5mil25kexcess = TermPremium5mil * (100 - rates["25kexcessdiscountrate"]) / 100;
-                TermBasePremium5mil25kexcess = TermPremium5mil25kexcess;
-            }
-
             TermPremium5mil = TermPremium5mil * agreementperiodindays / coverperiodindays;
             TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
-            TermPremium5mil10kexcess = TermPremium5mil10kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage5mil10kexcess = TermPremium5mil10kexcess * agreement.Brokerage / 100;
-            TermPremium5mil25kexcess = TermPremium5mil25kexcess * agreementperiodindays / coverperiodindays;
-            TermBrokerage5mil25kexcess = TermPremium5mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimitpremiumoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, StandardTermExcess);
             term5millimitpremiumoption.TermLimit = TermLimit5mil;
@@ -654,6 +595,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
 
+            TermPremium5mil10kexcess = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess10k, boladvisortruststatus);
+            TermBasePremium5mil10kexcess = TermPremium5mil10kexcess;
+            TermPremium5mil10kexcess = TermPremium5mil10kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage5mil10kexcess = TermPremium5mil10kexcess * agreement.Brokerage / 100;
+
             ClientAgreementTerm term5millimitpremium10kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess10k);
             term5millimitpremium10kexcessoption.TermLimit = TermLimit5mil;
             term5millimitpremium10kexcessoption.Premium = TermPremium5mil10kexcess;
@@ -663,6 +609,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremium10kexcessoption.Brokerage = TermBrokerage5mil10kexcess;
             term5millimitpremium10kexcessoption.DateDeleted = null;
             term5millimitpremium10kexcessoption.DeletedBy = null;
+
+            TermPremium5mil25kexcess = GetPremium(rates, TermLimit5mil, intclasscategory, feeincome, option, investmentfeeincome, remainingfeeincome, decMBCategoryPercentage, decSLHCategoryPercentage, decLHFGCategoryPercentage, decInvProdCategoryPercentage, TermExcess25k, boladvisortruststatus);
+            TermBasePremium5mil25kexcess = TermPremium5mil25kexcess;
+            TermPremium5mil25kexcess = TermPremium5mil25kexcess * agreementperiodindays / coverperiodindays;
+            TermBrokerage5mil25kexcess = TermPremium5mil25kexcess * agreement.Brokerage / 100;
 
             ClientAgreementTerm term5millimitpremium25kexcessoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess25k);
             term5millimitpremium25kexcessoption.TermLimit = TermLimit5mil;
@@ -879,13 +830,74 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
         }
 
 
-        decimal GetPremium(IDictionary<string, decimal> rates, int termlimit, int intclasscategory, decimal feeincome, int option, decimal investmentfeeincome, decimal remainingfeeincome, decimal decMBCategoryPercentage, decimal decSLHCategoryPercentage, decimal decLHFGCategoryPercentage, decimal decInvProdCategoryPercentage)
+        decimal GetPremium(IDictionary<string, decimal> rates, int termlimit, int intclasscategory, decimal feeincome, int option, decimal investmentfeeincome, decimal remainingfeeincome, decimal decMBCategoryPercentage, decimal decSLHCategoryPercentage, decimal decLHFGCategoryPercentage, decimal decInvProdCategoryPercentage, decimal TermExcess, bool boladvisortruststatus)
         {
             decimal premium = 0M;
             decimal minimumpremium = 0M;
+            decimal discountrate = 0M;
 
             if (intclasscategory == 1 || intclasscategory == 2)
             {
+                if (boladvisortruststatus)
+                {
+                    switch (TermExcess)
+                    {
+                        case 2500:
+                            {
+                                discountrate = 0M;
+                                break;
+                            }
+                        case 5000:
+                            {
+                                discountrate = 0M;
+                                break;
+                            }
+                        case 10000:
+                            {
+                                discountrate = rates["10kexcessdiscountrateadvisortruststatus"];
+                                break;
+                            }
+                        case 25000:
+                            {
+                                discountrate = rates["25kexcessdiscountrateadvisortruststatus"];
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                else
+                {
+                    switch (TermExcess)
+                    {
+                        case 2500:
+                            {
+                                discountrate = 0M;
+                                break;
+                            }
+                        case 5000:
+                            {
+                                discountrate = 0M;
+                                break;
+                            }
+                        case 10000:
+                            {
+                                discountrate = rates["10kexcessdiscountrate"];
+                                break;
+                            }
+                        case 25000:
+                            {
+                                discountrate = rates["25kexcessdiscountrate"];
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
 
                 if (option == 1) //Mortgage broking
                 {
@@ -893,7 +905,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * rates["1millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["1millimitpremiumratemb"] / 100 * (100 - discountrate) /100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiummbclass1"];
@@ -907,7 +919,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * rates["2millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["2millimitpremiumratemb"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiummbclass1"];
@@ -921,7 +933,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * rates["3millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["3millimitpremiumratemb"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiummbclass1"];
@@ -935,7 +947,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * rates["4millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["4millimitpremiumratemb"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiummbclass1"];
@@ -949,7 +961,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * rates["5millimitpremiumratemb"] / 100;
+                                premium = feeincome * rates["5millimitpremiumratemb"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiummbclass1"];
@@ -973,7 +985,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * rates["1millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["1millimitpremiumrateslh"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiumslhclass1"];
@@ -987,7 +999,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * rates["2millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["2millimitpremiumrateslh"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiumslhclass1"];
@@ -1001,7 +1013,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * rates["3millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["3millimitpremiumrateslh"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiumslhclass1"];
@@ -1015,7 +1027,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * rates["4millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["4millimitpremiumrateslh"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiumslhclass1"];
@@ -1029,7 +1041,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * rates["5millimitpremiumrateslh"] / 100;
+                                premium = feeincome * rates["5millimitpremiumrateslh"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiumslhclass1"];
@@ -1053,7 +1065,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * rates["1millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["1millimitpremiumratelhfg"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiumlhfgclass1"];
@@ -1067,7 +1079,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * rates["2millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["2millimitpremiumratelhfg"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiumlhfgclass1"];
@@ -1081,7 +1093,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * rates["3millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["3millimitpremiumratelhfg"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiumlhfgclass1"];
@@ -1095,7 +1107,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * rates["4millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["4millimitpremiumratelhfg"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiumlhfgclass1"];
@@ -1109,7 +1121,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * rates["5millimitpremiumratelhfg"] / 100;
+                                premium = feeincome * rates["5millimitpremiumratelhfg"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiumlhfgclass1"];
@@ -1133,7 +1145,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = feeincome * rates["1millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["1millimitpremiumrateinv"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiuminvclass1"];
@@ -1147,7 +1159,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = feeincome * rates["2millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["2millimitpremiumrateinv"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiuminvclass1"];
@@ -1161,7 +1173,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = feeincome * rates["3millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["3millimitpremiumrateinv"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiuminvclass1"];
@@ -1175,7 +1187,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = feeincome * rates["4millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["4millimitpremiumrateinv"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiuminvclass1"];
@@ -1189,7 +1201,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = feeincome * rates["5millimitpremiumrateinv"] / 100;
+                                premium = feeincome * rates["5millimitpremiumrateinv"] / 100 * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiuminvclass1"];
@@ -1213,7 +1225,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratelhfg"] / 100;
+                                premium = (investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratelhfg"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiuminvclass1"];
@@ -1227,7 +1239,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratelhfg"] / 100;
+                                premium = (investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratelhfg"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiuminvclass1"];
@@ -1241,7 +1253,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratelhfg"] / 100;
+                                premium = (investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratelhfg"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiuminvclass1"];
@@ -1255,7 +1267,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratelhfg"] / 100;
+                                premium = (investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratelhfg"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiuminvclass1"];
@@ -1269,7 +1281,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratelhfg"] / 100;
+                                premium = (investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratelhfg"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiuminvclass1"];
@@ -1293,7 +1305,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumrateslh"] / 100;
+                                premium = (investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumrateslh"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiuminvclass1"];
@@ -1307,7 +1319,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumrateslh"] / 100;
+                                premium = (investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumrateslh"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiuminvclass1"];
@@ -1321,7 +1333,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumrateslh"] / 100;
+                                premium = (investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumrateslh"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiuminvclass1"];
@@ -1335,7 +1347,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumrateslh"] / 100;
+                                premium = (investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumrateslh"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiuminvclass1"];
@@ -1349,7 +1361,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumrateslh"] / 100;
+                                premium = (investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumrateslh"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiuminvclass1"];
@@ -1373,7 +1385,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         case 1000000:
                             {
-                                premium = investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratemb"] / 100;
+                                premium = (investmentfeeincome * rates["1millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["1millimitpremiumratemb"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["1millimitminimumpremiuminvclass1"];
@@ -1387,7 +1399,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 2000000:
                             {
-                                premium = investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratemb"] / 100;
+                                premium = (investmentfeeincome * rates["2millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["2millimitpremiumratemb"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["2millimitminimumpremiuminvclass1"];
@@ -1401,7 +1413,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 3000000:
                             {
-                                premium = investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratemb"] / 100;
+                                premium = (investmentfeeincome * rates["3millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["3millimitpremiumratemb"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["3millimitminimumpremiuminvclass1"];
@@ -1415,7 +1427,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 4000000:
                             {
-                                premium = investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratemb"] / 100;
+                                premium = (investmentfeeincome * rates["4millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["4millimitpremiumratemb"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["4millimitminimumpremiuminvclass1"];
@@ -1429,7 +1441,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                             }
                         case 5000000:
                             {
-                                premium = investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratemb"] / 100;
+                                premium = (investmentfeeincome * rates["5millimitpremiumrateinv"] / 100 + remainingfeeincome * rates["5millimitpremiumratemb"] / 100) * (100 - discountrate) / 100;
                                 if (intclasscategory == 1)
                                 {
                                     minimumpremium = rates["5millimitminimumpremiuminvclass1"];
@@ -1451,6 +1463,66 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
             return premium;
+        }
+
+        decimal GetPremiumOtherExcess(IDictionary<string, decimal> rates, decimal TermPremium1mil, int intclasscategory, int option, decimal TermExcess, bool boladvisortruststatus)
+        {
+            decimal excesspremium = 0M;
+            decimal excessminimumpremium = 0M;
+            decimal discountrate = 0M;
+
+            if (intclasscategory == 1 || intclasscategory == 2)
+            {
+                if (boladvisortruststatus)
+                {
+                    switch (TermExcess)
+                    {
+                        case 10000:
+                            {
+                                discountrate = rates["10kexcessdiscountrateadvisortruststatus"];
+                                break;
+                            }
+                        case 25000:
+                            {
+                                discountrate = rates["25kexcessdiscountrateadvisortruststatus"];
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+                else
+                {
+                    switch (TermExcess)
+                    {
+                        case 10000:
+                            {
+                                discountrate = rates["10kexcessdiscountrate"];
+                                break;
+                            }
+                        case 25000:
+                            {
+                                discountrate = rates["25kexcessdiscountrate"];
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not calculate premium for PI"));
+                            }
+                    }
+                }
+
+                if (option == 1) //Mortgage broking
+                {
+                    
+                }
+
+
+            }
+
+            return excesspremium;
         }
 
         void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)

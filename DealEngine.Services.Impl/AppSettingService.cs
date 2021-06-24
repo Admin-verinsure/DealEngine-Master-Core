@@ -11,6 +11,14 @@ namespace DealEngine.Services.Impl
             _configuration = configuration;
         }
 
+        public string IsLinuxEnv
+        {
+            get
+            {
+                return _configuration.GetValue<string>("IsLinuxEnv");
+            }
+        }
+
         public string CarJamEndpoint
         {
             get
@@ -56,6 +64,14 @@ namespace DealEngine.Services.Impl
             get
             {
                 return _configuration.GetValue<string>("MarshRSACredentials");
+            }
+        }
+
+        public string MarshRSAEndPoint
+        {
+            get
+            {
+                return _configuration.GetValue<string>("MarshRSAEndPoint");
             }
         }
 

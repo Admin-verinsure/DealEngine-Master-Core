@@ -638,13 +638,13 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
 
-                String[][] OptionItems = new String[clientProgramme.Agreements.Count][];
+                String[][] OptionItems = new String[clientProgramme.Agreements.Where(ag => ag.DateDeleted == null).Count()][];
                 var count = 0;
-                foreach (var agreement in clientProgramme.Agreements)
+                foreach (var agreement in clientProgramme.Agreements.Where(ag => ag.DateDeleted == null))
                 {
                     //count = 0;
                     boundval = false;
-                    foreach (var selectterm in agreement.ClientAgreementTerms)
+                    foreach (var selectterm in agreement.ClientAgreementTerms.Where(agt => agt.DateDeleted == null))
                     {
 
                         if (selectterm.Bound)
@@ -664,7 +664,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         var term = agreement.ClientAgreementTerms.FirstOrDefault(o => o.Bound = true);
                         if (term == null)
-                            term = agreement.ClientAgreementTerms.OrderByDescending(o => o.TermLimit).FirstOrDefault();
+                            term = agreement.ClientAgreementTerms.OrderBy(o => o.TermLimit).ThenBy(o => o.Excess).FirstOrDefault();
 
                         OptionItem = new String[2];
 
@@ -1531,6 +1531,8 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(renderedDoc.Contents);
+            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width: 120px; height:120px}</style></head>");
+
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,

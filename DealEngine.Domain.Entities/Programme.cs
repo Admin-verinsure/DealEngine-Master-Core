@@ -83,6 +83,8 @@ namespace DealEngine.Domain.Entities
         public virtual int NewGracePriodInDays { get; set; }
         public virtual bool ProgEnableProgEmailCC { get; set; }
         public virtual string ProgEmailCCRecipent { get; set; }
+        public virtual bool IsPdfDoc{ get; set; }
+
         protected Programme() : this(null) { }
 
         public Programme(User createdBy) : base(createdBy)
