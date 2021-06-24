@@ -58,7 +58,7 @@ namespace DealEngine.Domain.Entities
         public virtual string RegisteredStatus { get; set; }
         [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
-        [Display(Name = "Is a Principal Advisor?")]
+        [Display(Name = "Is this individual the FAP’s Principal Adviser?")]
         public virtual bool IsPrincipalAdvisor { get; set; }
         [Display(Name = "Date of Retirement(Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
@@ -79,7 +79,7 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is FAP?")]
+        [Display(Name = "Is this person, entity or company the FAP licence holder for this policy?")]
         public virtual bool isTheFAP { get; set; }
 
         [Display(Name = "Are you intending to apply for interposed person arrangements?")]
