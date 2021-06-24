@@ -243,6 +243,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     bolclass3referral = true;
                 }
             }
+            if (intclasscategory == 0)
+            {
+                bolclass3referral = true;
+            }
 
             //Check Cluster Groups information
             bool bolclustergroupsreferral = false;

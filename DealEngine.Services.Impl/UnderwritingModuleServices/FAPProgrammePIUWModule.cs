@@ -259,6 +259,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     bolclass3referral = true;
                 }
             }
+            if (intclasscategory == 0)
+            {
+                bolclass3referral = true;
+            }
 
             //Check Cluster Groups information
             bool bolclustergroupsreferral = false;
@@ -343,13 +347,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
                     remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
                 }
-                else if (decLHFGCategoryPercentage > 0)
+                else if (decSLHCategoryPercentage > 0)
                 {
                     option = 6; //Highest investment percentage equal with Standard L&H
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
                     remainingfeeincome = (100 - decInvProdCategoryPercentage) * feeincome / 100;
                 }
-                else if (decLHFGCategoryPercentage > 0)
+                else if (decMBCategoryPercentage > 0)
                 {
                     option = 7; //Highest investment percentage equal with Mortgage broking
                     investmentfeeincome = decInvProdCategoryPercentage * feeincome / 100;
