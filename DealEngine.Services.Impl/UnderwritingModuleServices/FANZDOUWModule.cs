@@ -180,7 +180,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //D&O Issues
             uwrdoissue(underwritingUser, agreement);
             //Class 2 referral
-            uwrfclass2(underwritingUser, agreement, bolclass2referral);
+            //uwrfclass2(underwritingUser, agreement, bolclass2referral);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
