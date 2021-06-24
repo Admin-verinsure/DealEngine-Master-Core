@@ -92,7 +92,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Apollo SL UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
             {
                 strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
                 retrodate = "Unlimited excluding known claims or circumstances";
@@ -184,19 +185,23 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 TermExtensionPremium = rates["slamlextensionpremium"];
 
-                //work out 5% of PI $1mil option premium whichever is the greater 
-                var PIAgreement = agreement.ClientInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
-                if (PIAgreement != null)
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
                 {
-                    foreach (var term in PIAgreement.ClientAgreementTerms)
+                    //work out 5% of PI $1mil option premium whichever is the greater 
+                    var PIAgreement = agreement.ClientInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
+                    if (PIAgreement != null)
                     {
-                        if (term.TermLimit == 1000000 && term.DateDeleted == null)
+                        foreach (var term in PIAgreement.ClientAgreementTerms)
                         {
-                            TermExtensionPremium = (TermExtensionPremium > (term.Premium * 0.05M)) ? TermExtensionPremium : (term.Premium * 0.05M);
+                            if (term.TermLimit == 1000000 && term.DateDeleted == null)
+                            {
+                                TermExtensionPremium = (TermExtensionPremium > (term.Premium * 0.05M)) ? TermExtensionPremium : (term.Premium * 0.05M);
+                            }
                         }
                     }
-
                 }
+                
             }
             if (!bolclass2referral && !bolclass3referral)
             {

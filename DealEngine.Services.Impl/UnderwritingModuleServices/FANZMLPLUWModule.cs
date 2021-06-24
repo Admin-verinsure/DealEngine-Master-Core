@@ -68,69 +68,32 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
 
             decimal decOther = 0M;
+            decimal feeincome = 0M;
 
             //Programme specific term
 
             //Default Professional Business, Retroactive Date, TerritoryLimit, Jurisdiction, AuditLog Detail
-            string strProfessionalBusiness = "";
-            string retrodate = "";
-            string strTerritoryLimit = "";
-            string strJurisdiction = "";
-            string auditLogDetail = "";
+            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
+            string retrodate = "Unlimited excluding known claims or circumstances";
+            string strTerritoryLimit = "New Zealand";
+            string strJurisdiction = "New Zealand";
+            string auditLogDetail = "FANZ PL UW created/modified";
 
-            if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "TripleA Programme")
+            if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                strProfessionalBusiness = "Life and general advisers of any insurance or assurance company and/or intermediaries, agents or consultants in the sale or negotiation of any financial product or the provision of any financial advice including mortgage advice and financial services educational workshops.";
-                retrodate = "Unlimited excluding known claims or circumstances";
-                strTerritoryLimit = "Australia and New Zealand";
-                strJurisdiction = "Australia and New Zealand";
-                auditLogDetail = "TripleA PL UW created/modified";
-
-            }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Apollo Programme")
-            {
-                strProfessionalBusiness = "General Insurance Brokers, Life Agents, Investment Advisers, Financial Planning and Mortgage Broking, Consultants and Advisers in the sale of any financial product including referrals to other financial product providers.";
-                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "New Zealand";
-                strJurisdiction = "New Zealand";
-                auditLogDetail = "Apollo PL UW created/modified";
-            }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
-            {
-                strProfessionalBusiness = "";
-                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "";
-                strJurisdiction = "";
-                auditLogDetail = "FANZ PL UW created/modified";
-            }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
-            {
-                strProfessionalBusiness = "Sales & Promotion of Life, Investment & General Insurance products, Financial planning & Mortgage Brokering Services";
-                retrodate = "N/A";
-                strTerritoryLimit = "New Zealand";
-                strJurisdiction = "New Zealand";
-                auditLogDetail = "Abbott PL UW created/modified";
-            }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
-            {
-                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
-                retrodate = agreement.InceptionDate.ToString("dd/MM/yyyy");
-                strTerritoryLimit = "New Zealand";
-                strJurisdiction = "New Zealand";
-                auditLogDetail = "NZFSG PL UW created/modified";
-
-                if (agreement.ClientInformationSheet.RevenueData != null)
+                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0)
                 {
-                    foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                    {
-                        if (uISActivity.AnzsciCode == "CUS0081") //Other
-                        {
-                            if (uISActivity.Percentage > 0)
-                                decOther = uISActivity.Percentage;
-                        }
-                    }
+                    feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }
 
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "CUS0081") //Other
+                    {
+                        if (uISActivity.Percentage > 0)
+                            decOther = uISActivity.Percentage;
+                    }
+                }
             }
 
             //renewal data (retro date and endorsements)
@@ -179,15 +142,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     boldualinsurancereferral = true;
                 }
             }
-
-            //Check No Employees information
-            bool bolnoemployeesreferral = false;
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.HaveAnyEmployeeYN").First().Value == "1" &&
-                        Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "EPLViewModel.TotalEmployees").First().Value) == 0)
-            {
-                bolnoemployeesreferral = true;
-            }
-
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
@@ -273,8 +227,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             uwrfdualinsurance(underwritingUser, agreement, boldualinsurancereferral);
             //Other Activity
             uwrfotheractivity(underwritingUser, agreement, decOther);
-            //No Employees
-            uwrfnoemployees(underwritingUser, agreement, bolnoemployeesreferral);
+            //High Fee Income
+            uwrfhighfeeincome(underwritingUser, agreement, feeincome);
 
             //Update agreement Status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -518,36 +472,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
-        void uwrfnoemployees(User underwritingUser, ClientAgreement agreement, bool bolnoemployeesreferral)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").OrderNumber,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnoemployees").DoNotCheckForRenew));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (bolnoemployeesreferral) //No Employees referral
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-
-                if (agreement.ClientInformationSheet.IsRenewawl
-                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).DoNotCheckForRenew)
-                {
-                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnoemployees" && cref.DateDeleted == null).Status = "";
-                }
-            }
-        }
-
         void uwrfclass3(User underwritingUser, ClientAgreement agreement, bool bolclass3referral)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclass3" && cref.DateDeleted == null) == null)
@@ -578,7 +502,36 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
         }
 
+        void uwrfhighfeeincome(User underwritingUser, ClientAgreement agreement, decimal feeincome)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").OrderNumber,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").DoNotCheckForRenew));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (feeincome > 2500000)
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
 
+                if (agreement.ClientInformationSheet.IsRenewawl
+                            && agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).DoNotCheckForRenew)
+                {
+                    agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null).Status = "";
+                }
+
+            }
+        }
 
     }
 }
