@@ -725,7 +725,36 @@ namespace DealEngine.WebUI.Models
             HasOtherPIinsurances = GetSelectListOptions();
             HasClassOfLicense = GetClassOfLicenseOptions();
             TrustAdvisorStatus = GetSelectListOptions();
+            HaveAnyRunOffinsurance = GetSelectListOptions();
+            YearCover = GetRunOffYearCoverSelectListOptions();
 
+        }
+
+        private IList<SelectListItem> GetRunOffYearCoverSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "1 year", Value = "1"
+                },
+                new SelectListItem
+                {
+                    Text = "2 years", Value = "2"
+                },
+                new SelectListItem
+                {
+                    Text = "3 years", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "4 years", Value = "4"
+                }
+            };
         }
 
         private IList<SelectListItem> GetCEASMembershipSelectListOptions()
@@ -1012,6 +1041,8 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasOtherPIinsurances { get; set; }
         public IList<SelectListItem> HasClassOfLicense { get; set; }
         public IList<SelectListItem> TrustAdvisorStatus { get; set; }
+        public IList<SelectListItem> HaveAnyRunOffinsurance { get; set; }
+        public IList<SelectListItem> YearCover { get; set; }
 
         public string ProcedureManagedDetails { get; set; }
         public string BusinessChangesDetails { get; set; }        
