@@ -1113,6 +1113,28 @@ namespace DealEngine.WebUI.Controllers
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
                         await _clientInformationService.SaveAnswersFor(sheet, collection, user);
+
+                        if (sheet.Programme.BaseProgramme.ProgEnableRequireNoCover)
+                        {
+                            foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber))
+                            {
+                                if (product.IsMasterProduct)
+                                {
+                                    if (sheet.Answers.Where(sa => sa.ItemName == product.NoCoverRequiredAnswer).Any())
+                                    {
+                                        if (sheet.Answers.Where(sa => sa.ItemName == product.NoCoverRequiredAnswer).First().Value != "1")
+                                        {
+                                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                                            {
+                                                sheet.Status = "Not Taken Up";
+                                                await uow.Commit();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }                        
+
                         await GenerateUWM(user, sheet, reference);
                     }
 
