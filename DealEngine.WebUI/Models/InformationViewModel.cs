@@ -753,7 +753,20 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                 {
                     Text = "4 years", Value = "4"
+                },
+                new SelectListItem
+                {
+                    Text = "5 years", Value = "5"
+                },
+                new SelectListItem
+                {
+                    Text = "6 years", Value = "6"
+                },
+                new SelectListItem
+                {
+                    Text = "7 years", Value = "7"
                 }
+
             };
         }
 
@@ -918,7 +931,7 @@ namespace DealEngine.WebUI.Models
                 },
                 new SelectListItem
                 {
-                    Text = " Class 2 - More that one advisor", Value = "2"
+                    Text = " Class 2 - More than one advisor", Value = "2"
                 },
                 new SelectListItem
                 {

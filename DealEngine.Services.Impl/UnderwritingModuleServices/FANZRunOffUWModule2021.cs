@@ -42,7 +42,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
 
             IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pirotermlimit", "pirotermexcess", "pirotermpremium", "piroterm1yearrate", 
-                "piroterm2yearrate", "piroterm3yearrate", "piroterm4yearrate");
+                "piroterm2yearrate", "piroterm3yearrate", "piroterm4yearrate", "pirotermminimumpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -138,20 +138,29 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "2")
                 {
                     intyearcover = 2;
-                    bolyearcoverreferral = true;
                 }
                 else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "3")
                 {
                     intyearcover = 3;
-                    bolyearcoverreferral = true;
                 }
                 else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "4")
                 {
                     intyearcover = 4;
-                    bolyearcoverreferral = true;
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "5")
+                {
+                    intyearcover = 5;
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "6")
+                {
+                    intyearcover = 6;
+                }
+                else if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.YearCover").First().Value == "7")
+                {
+                    intyearcover = 7;
                 }
             }
-            if (intyearcover == 0)
+            if (intyearcover != 1)
             {
                 bolyearcoverreferral = true;
             }
@@ -159,6 +168,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermExcess = 0M;
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermMinimumPremium = 0M;
             decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal decyear1premium = 0M;
@@ -169,6 +179,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermLimit = Convert.ToInt32(rates["pirotermlimit"]);
             TermExcess = rates["pirotermexcess"];
             TermPremium = rates["pirotermpremium"];
+            TermMinimumPremium = rates["pirotermminimumpremium"];
 
             if (intrenewalpitermlimit > 0)
                 TermLimit = intrenewalpitermlimit;
@@ -197,7 +208,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     TermPremium = decyear1premium + decyear2premium + decyear3premium + decyear4premium;
                 }
             }
-                
+            TermPremium = (TermPremium > TermMinimumPremium) ? TermPremium : TermMinimumPremium;
 
             TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
