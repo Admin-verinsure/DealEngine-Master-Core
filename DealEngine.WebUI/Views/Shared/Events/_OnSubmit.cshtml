@@ -269,7 +269,30 @@
             }
         }
 
+        if (Programme == "Apollo Programme" || Programme != "Abbott Financial Advisor Liability Programme" || Programme == "Financial Advice NZ Financial Advice Provider Liability Programme" ) {
+            debugger;
+            var clientInformationSheet = document.getElementById("AnswerSheetId").value;
+           $.ajax({
+               url: '@Url.Action("IfFapExist", "Organisation")',
+               type: "POST",
+               async: false,
+              data: { clientInformationSheet: clientInformationSheet},
+               success: function (Data) {
+                   debugger;
+                   if (Data == false) {
+                       $("#IsFapOrg").val("false");
+                       var hh = document.getElementById("IsFapOrg").value
+                       
+                   } else {
+                       $("#IsFapOrg").val("true");
+                       var hhd = document.getElementById("IsFapOrg").value
 
+
+                   }
+               }
+           });
+   
+        }
 
 
     }
@@ -321,8 +344,7 @@
             }
         //  document.getElementsByName("Unit").value="AdministratorUnit"
 
-           
-        
+       
 
         if (FormId === "organisationViewModel") {
             for (var i = 0; i < form.length; i++) {
@@ -361,6 +383,14 @@
                                 }
                             }
                         }
+                            
+                            var NoTradingNameValidation = document.getElementById("NoTradingNameValidation");
+                             var TradingName = document.getElementById("Organisation.TradingName");
+                  
+                        if (NoTradingNameValidation != null && NoTradingNameValidation.value == "True") {
+                            TradingName.classList.remove("is-invalid");
+                            TradingName.classList.add("is-valid");
+                         }
                         var IsHidden = IsElementHidden(element);
                         if (element.classList.contains("is-invalid") && (IsHidden != true)) {
                             PostAjax = false;

@@ -195,20 +195,21 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 if (intyearcover == 1)
                 {
                     TermPremium = decyear1premium;
-                } else if (intyearcover == 2)
-                {
-                    TermPremium = decyear1premium + decyear2premium;
-                }
-                else if (intyearcover == 3)
-                {
-                    TermPremium = decyear1premium + decyear2premium + decyear3premium;
-                }
-                else if (intyearcover == 4)
-                {
-                    TermPremium = decyear1premium + decyear2premium + decyear3premium + decyear4premium;
-                }
+                    TermPremium = (TermPremium > TermMinimumPremium) ? TermPremium : TermMinimumPremium;
+                } 
+                //else if (intyearcover == 2)
+                //{
+                //    TermPremium = decyear1premium + decyear2premium;
+                //}
+                //else if (intyearcover == 3)
+                //{
+                //    TermPremium = decyear1premium + decyear2premium + decyear3premium;
+                //}
+                //else if (intyearcover == 4)
+                //{
+                //    TermPremium = decyear1premium + decyear2premium + decyear3premium + decyear4premium;
+                //}
             }
-            TermPremium = (TermPremium > TermMinimumPremium) ? TermPremium : TermMinimumPremium;
 
             TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;

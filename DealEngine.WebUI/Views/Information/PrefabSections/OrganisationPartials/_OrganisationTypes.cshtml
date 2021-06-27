@@ -1,5 +1,8 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
+@section pagespecific {
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+}
 <div class="form-group row">
     <div class="form-group col-md-6">
         <div class="form-group" id="HideOrganisationType">
@@ -107,26 +110,34 @@
     </div>
     @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG Programme" ||
 Model.OrganisationViewModel.Programme.NamedPartyUnitName == "TripleA Programme" ||
-Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme"||
+Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme" ||
 Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme"
 )
     {
-        <div class="form-group col-md-6" id="TradingName" hidden>
-            @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
-            {
-                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
-                @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
-                {
-                    @Html.Hidden("NoTradingName", true)
-                }
-                else
-                {
-                    @Html.Hidden("NoTradingName", false)
-                }
+<div class="form-group col-md-6" id="TradingName" hidden>
+    @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+    {
+        @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+        @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
+        {
+            @Html.Hidden("NoTradingName", true)
+        }
+        else
+        {
+            @Html.Hidden("NoTradingName", false)
+        }
+        @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+        {
+            @Html.Hidden("NoTradingNameValidation", true)
+        }
+        else
+        {
+            @Html.Hidden("NoTradingNameValidation", false)
 
-            }
-        </div>
+        }
+    }
+</div>
 
         <div class="form-group  col-md-6">
             <div>
@@ -173,9 +184,9 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
 
 @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "TripleA Programme"
 
-       || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" ||
-              Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
-              Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+      || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" ||
+             Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
+             Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
 {
 
     <div class="form-group AdvisorUnit">
@@ -234,7 +245,9 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
                        data-placement="bottom"
                        data-container="body"
                        data-toggle="popover"
-                       data-content="An arrangement where a financial advice provider engages individuals (financial advisers and/or nominated representatives) indirectly through one or more other entities (the ‘interposed persons’) to give advice on its behalf"></i>
+                       data-content="An arrangement where a financial advice provider engages individuals (financial advisers and/or nominated representatives) indirectly through one or more other entities (the ‘interposed persons’) to give advice on its behalf">
+
+                    </i>
 
 
                 </div>
@@ -257,7 +270,7 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
 
 
 
-@if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG ML Programme")
+@if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG ML Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
 {
     <div class="form-group col-md-6" id="TradingName" hidden>
         @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
@@ -277,10 +290,4 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
 
 
 
-}
-
-
-
-@section pagespecific {
-    <script src="~/lib/popper.js/umd/popper.js"></script>
 }
