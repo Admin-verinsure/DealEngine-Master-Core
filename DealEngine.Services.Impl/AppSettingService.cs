@@ -66,6 +66,13 @@ namespace DealEngine.Services.Impl
                 return _configuration.GetValue<string>("MarshRSACredentials");
             }
         }
+        public string MarshRSAOrgName
+        {
+            get
+            {
+                return _configuration.GetValue<string>("MarshRSAOrgName");
+            }
+        }
 
         public string MarshRSAEndPoint
         {
