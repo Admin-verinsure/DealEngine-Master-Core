@@ -239,7 +239,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //D&O Issues
             uwrdoissue(underwritingUser, agreement, decDOTotalAssets, decDOTotalLiabilities, decDOCurrentAssets, decDOCurrentLiabilities, decDOAftertaxProfitOrLoss);
             //Class 2 referral
-            uwrfclass2(underwritingUser, agreement, bolclass2referral);
+            //uwrfclass2(underwritingUser, agreement, bolclass2referral);
             //Class 3 referral
             uwrfclass3(underwritingUser, agreement, bolclass3referral);
             //Asset Size

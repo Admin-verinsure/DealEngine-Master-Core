@@ -1726,7 +1726,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.progid = clientProgramme.Id;
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
                 currencyFormat.CurrencyNegativePattern = 2;
-
+               
                 // List Agreement Parties
                 insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(apa => apa.DateDeleted == null).OrderBy(apa => apa.Product.OrderNumber))
@@ -1809,6 +1809,14 @@ namespace DealEngine.WebUI.Controllers
 
                     return PartialView("_ViewStopAgreementMessage", model);
                 }
+
+                if (clientProgramme.InformationSheet.Status == "Not Taken Up")
+                {
+                    model = new ViewAgreementViewModel();
+                    model.InformationSheetStatus = "Not Taken Up";
+                    return PartialView("_ViewNTUedAgreement", model);
+                }
+
                 //To do: check the other status later
                 if (clientProgramme.BaseProgramme.HasSubsystemEnabled && clientProgramme.InformationSheet.Status != "Bound")
                 {
