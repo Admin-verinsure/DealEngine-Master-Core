@@ -281,6 +281,12 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task<ClientProgramme> GetClientProgrammebyOwnerName(String ProgName , String OwnerName)
+        {
+            return await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner.Name == OwnerName && c.BaseProgramme.Name == ProgName);
+
+        }
+
         public async Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID)
         {
             return await _clientProgrammeRepository.GetByIdAsync(clientProgrammeID);

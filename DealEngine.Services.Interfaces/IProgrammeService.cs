@@ -49,6 +49,8 @@ namespace DealEngine.Services.Interfaces
         Task MoveAdvisorsToClientProgramme(IList<string> advisors, ClientProgramme clientProgramme, ClientProgramme sourceClientProgramme, User user);
         Task<List<ClientAgreement>> CloneAgreementsForUpdate(User createdBy, Guid oldProgrammeId, Guid currentProgrammeId);
         Task<ClientProgramme> CloneForRenew(User createdBy, Guid renewFromProgrammeBaseId, Guid currentProgrammeId);
+        Task<ClientProgramme> GetClientProgrammebyOwnerName(String Programmename , String OwnerName);
+
     }
 }
 

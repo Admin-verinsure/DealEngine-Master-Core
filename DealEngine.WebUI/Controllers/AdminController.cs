@@ -175,7 +175,26 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportFanzImportOwners(user);
+                await _importService.ImportFanzOwners(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> FANZImportAdvisors()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFanzAdvisors(user);
 
                 return RedirectToAction("Index", "Home");
             }
