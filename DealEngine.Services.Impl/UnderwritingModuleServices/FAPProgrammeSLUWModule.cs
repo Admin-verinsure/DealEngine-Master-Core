@@ -151,6 +151,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
+            ClientAgreementEndorsement cAESLAmlExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Anti-money laundering extension");
+            if (cAESLAmlExcl != null)
+            {
+                cAESLAmlExcl.DateDeleted = DateTime.UtcNow;
+                cAESLAmlExcl.DeletedBy = underwritingUser;
+            }
+
             int TermLimit = 0;
             decimal TermPremium = 0M;
             decimal TermBasePremium = 0M;
@@ -191,6 +198,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
             {
                 TermExtensionPremium = rates["slamlextensionpremium"];
+
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+                {
+                    if (cAESLAmlExcl != null)
+                    {
+                        cAESLAmlExcl.DateDeleted = null;
+                        cAESLAmlExcl.DeletedBy = null;
+                    }
+                }
 
                 if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" ||
                 agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
