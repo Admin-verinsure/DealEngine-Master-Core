@@ -5,7 +5,7 @@ using DealEngine.Domain.Entities;
 namespace DealEngine.Services.Interfaces
 {
     public interface IImportService
-    { 
+    {
         Task ImportAOEServiceIndividuals(User user);
         Task ImportAOEServicePrincipals(User user);
         Task ImportAOEServiceContract(User user);
@@ -44,7 +44,11 @@ namespace DealEngine.Services.Interfaces
         Task ImportAbbottServicePreRenewData(User user);
         Task ImportFanzOwners(User user);
         Task ImportFanzAdvisors(User user);
-
+        Task ImportFANZImportML(User user);
+        Task ImportFANZImportRO(User user);
+        Task ImportFANZPIPreRenewData(User user);
+        Task ImportFANZMLPreRenewData(User user);
+        Task ImportFANZROPreRenewData(User user);
 
     }
 }

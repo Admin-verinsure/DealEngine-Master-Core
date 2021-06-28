@@ -271,6 +271,16 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task AddPreRenewOrRefDataByMembershipAndProgramme(PreRenewOrRefData preRenewOrRefData, Programme programme)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == preRenewOrRefData.RefField && c.BaseProgramme == programme);
+            if (clientProgramme != null)
+            {
+                clientProgramme.InformationSheet.PreRenewOrRefDatas.Add(preRenewOrRefData);
+                await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+            }
+        }
+
         public async Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData)
         {
             var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == preRenewOrRefData.RefField);
