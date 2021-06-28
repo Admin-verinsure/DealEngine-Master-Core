@@ -110,7 +110,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Programme specific term
 
             //Default Professional Business, Retroactive Date, TerritoryLimit, Jurisdiction, AuditLog Detail
-            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
+            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking ";
             string retrodate = "Unlimited excluding known claims or circumstances";
             string strTerritoryLimit = "New Zealand";
             string strJurisdiction = "New Zealand";

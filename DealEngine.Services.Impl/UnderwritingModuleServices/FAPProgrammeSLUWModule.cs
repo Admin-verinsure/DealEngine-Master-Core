@@ -92,10 +92,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Apollo SL UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" ||
-                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
-                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking ";
+                retrodate = "Unlimited excluding known claims or circumstances";
+                strTerritoryLimit = "New Zealand";
+                strJurisdiction = "New Zealand";
+                auditLogDetail = "FANZ SL UW created/modified";
+            }
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+            {
+                strProfessionalBusiness = "Provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking ";
                 retrodate = "Unlimited excluding known claims or circumstances";
                 strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
