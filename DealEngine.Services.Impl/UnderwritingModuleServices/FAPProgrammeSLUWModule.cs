@@ -92,10 +92,17 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 strJurisdiction = "New Zealand";
                 auditLogDetail = "Apollo SL UW created/modified";
             }
-            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" ||
-                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
             {
-                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking (Please note Fire & General broking cover is restricted to insureds who derive income below -5% of total Turnover or $125,000 whichever is the lesser from this activity).";
+                strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking ";
+                retrodate = "Unlimited excluding known claims or circumstances";
+                strTerritoryLimit = "New Zealand";
+                strJurisdiction = "New Zealand";
+                auditLogDetail = "FANZ SL UW created/modified";
+            }
+            else if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+            {
+                strProfessionalBusiness = "Provision of Life & Health Insurance, Investment Advice, Mortgage Broking, Financial Planning and Fire & General Broking ";
                 retrodate = "Unlimited excluding known claims or circumstances";
                 strTerritoryLimit = "New Zealand";
                 strJurisdiction = "New Zealand";
@@ -144,6 +151,13 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
+            ClientAgreementEndorsement cAESLAmlExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Anti-money laundering extension");
+            if (cAESLAmlExcl != null)
+            {
+                cAESLAmlExcl.DateDeleted = DateTime.UtcNow;
+                cAESLAmlExcl.DeletedBy = underwritingUser;
+            }
+
             int TermLimit = 0;
             decimal TermPremium = 0M;
             decimal TermBasePremium = 0M;
@@ -184,6 +198,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "SLViewModel.HasAMLCFTExtensionOptions").First().Value == "1")
             {
                 TermExtensionPremium = rates["slamlextensionpremium"];
+
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+                {
+                    if (cAESLAmlExcl != null)
+                    {
+                        cAESLAmlExcl.DateDeleted = null;
+                        cAESLAmlExcl.DeletedBy = null;
+                    }
+                }
 
                 if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" ||
                 agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme")
