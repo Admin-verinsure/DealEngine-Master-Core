@@ -44,7 +44,10 @@ namespace DealEngine.Services.Interfaces
         Task ImportAbbottServicePreRenewData(User user);
         Task ImportFanzImportOwners(User user);
         Task ImportFANZImportML(User user);
+        Task ImportFANZImportRO(User user);
+        Task ImportFANZPIPreRenewData(User user);
         Task ImportFANZMLPreRenewData(User user);
+        Task ImportFANZROPreRenewData(User user);
 
     }
 }

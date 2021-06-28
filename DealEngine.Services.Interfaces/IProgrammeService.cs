@@ -30,6 +30,7 @@ namespace DealEngine.Services.Interfaces
         Task AddClaimNotificationByMembership(ClaimNotification claimNotification);
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData);
+        Task AddPreRenewOrRefDataByMembershipAndProgramme(PreRenewOrRefData preRenewOrRefData, Programme programme);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
         Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);
         Task<bool> HasProgrammebyMembership(string membershipNumber);
