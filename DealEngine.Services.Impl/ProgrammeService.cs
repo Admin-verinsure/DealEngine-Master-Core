@@ -271,6 +271,16 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task AddPreRenewOrRefDataByMembershipAndProgramme(PreRenewOrRefData preRenewOrRefData, Programme programme)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == preRenewOrRefData.RefField && c.BaseProgramme == programme);
+            if (clientProgramme != null)
+            {
+                clientProgramme.InformationSheet.PreRenewOrRefDatas.Add(preRenewOrRefData);
+                await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+            }
+        }
+
         public async Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData)
         {
             var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == preRenewOrRefData.RefField);
@@ -279,6 +289,12 @@ namespace DealEngine.Services.Impl
                 clientProgramme.InformationSheet.PreRenewOrRefDatas.Add(preRenewOrRefData);
                 await _clientProgrammeRepository.UpdateAsync(clientProgramme);
             }
+        }
+
+        public async Task<ClientProgramme> GetClientProgrammebyOwnerName(String ProgName , String OwnerName)
+        {
+            return await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.Owner.Name == OwnerName && c.BaseProgramme.Name == ProgName);
+
         }
 
         public async Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID)
