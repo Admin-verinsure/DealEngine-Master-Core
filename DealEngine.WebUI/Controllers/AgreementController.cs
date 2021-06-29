@@ -3372,6 +3372,9 @@ namespace DealEngine.WebUI.Controllers
             html = html.Replace("”", "&quot");
             html = html.Replace(" – ", "--");
             html = html.Replace("&nbsp;", " ");
+            html = html.Replace("’", "&#146");
+            html = html.Replace("‘", "&#39");
+
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
                _appSettingService.NRecoUserName,

@@ -296,6 +296,24 @@ namespace DealEngine.Services.Impl
                                     mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
                                 }
                             }
+
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0)
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                            }
+                            else
+                            {
+                                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1")
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension Included"));
+                                }
+                                else
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                                }
+                            }
                         }
                     } 
                 }
@@ -1171,6 +1189,24 @@ namespace DealEngine.Services.Impl
                             }
                         }
 
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                            }
+                        }
+
                         //Extension With Ultra Option
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
@@ -1373,6 +1409,11 @@ namespace DealEngine.Services.Impl
             //html = html.Replace("”", "&quot");
             //html = html.Replace(" – ", "--");
             //html = html.Replace("&nbsp;", " ");
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
+            html = html.Replace("'", "&#39");
             User user = null; 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
