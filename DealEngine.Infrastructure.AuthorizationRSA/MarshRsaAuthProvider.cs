@@ -590,7 +590,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">
             <wsse:UsernameToken wsu:Id=""UsernameToken-1d15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">
                 <wsse:Username>MarshNZSOAPUser</wsse:Username>
-                <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">Password@123456</wsse:Password>
+                <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>
             </wsse:UsernameToken>
         </wsse:Security>
     </soap:Header>
