@@ -1409,6 +1409,11 @@ namespace DealEngine.Services.Impl
             //html = html.Replace("”", "&quot");
             //html = html.Replace(" – ", "--");
             //html = html.Replace("&nbsp;", " ");
+            html = html.Replace("“", "&quot");
+            html = html.Replace("”", "&quot");
+            html = html.Replace(" – ", "--");
+            html = html.Replace("&nbsp;", " ");
+            html = html.Replace("'", "&#39");
             User user = null; 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
