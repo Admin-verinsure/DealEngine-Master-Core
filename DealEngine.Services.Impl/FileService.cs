@@ -1417,7 +1417,7 @@ namespace DealEngine.Services.Impl
             User user = null; 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+           // htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
 
             var margins = new PageMargins();
@@ -1431,7 +1431,7 @@ namespace DealEngine.Services.Impl
 
 
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, doc.Name, "application/pdf", doc.DocumentType);
+            Document document = new Document(user, doc.Name+".pdf", "application/pdf", doc.DocumentType);
             document.Contents = pdfBytes;
 
             //var output = htmlToPdfConv.GeneratePdf(html);
