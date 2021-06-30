@@ -1431,7 +1431,7 @@ namespace DealEngine.Services.Impl
 
 
             var pdfBytes = htmlToPdfConv.GeneratePdf(html);
-            Document document = new Document(user, doc.Name, "application/pdf", doc.DocumentType);
+            Document document = new Document(user, doc.Name+".pdf", "application/pdf", doc.DocumentType);
             document.Contents = pdfBytes;
 
             //var output = htmlToPdfConv.GeneratePdf(html);
