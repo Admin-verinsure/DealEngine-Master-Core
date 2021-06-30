@@ -446,7 +446,7 @@ namespace DealEngine.WebUI.Controllers
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
-                    MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
+                    MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService, _appSettingService);
                     MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
                     rsaUser.DevicePrint = viewModel.DevicePrint;
                     rsaUser.Email = user.Email;
@@ -518,7 +518,7 @@ namespace DealEngine.WebUI.Controllers
 		{
             if (ModelState.IsValid)
             {                
-                MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
+                MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService, _appSettingService);
                 string username = viewModel.UserName;
                 MarshRsaUser rsaUser = rsaAuth.GetRsaUser(username);                
                 rsaUser.DevicePrint = viewModel.DevicePrint;
