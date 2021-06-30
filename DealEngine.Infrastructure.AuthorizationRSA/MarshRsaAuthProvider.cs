@@ -24,16 +24,19 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		ILogger _logger;
         IHttpClientService _httpClientService;
         IEmailService _emailService;
+        IAppSettingService _appSettingService;
 
         public MarshRsaAuthProvider (
             ILogger logger, 
             IHttpClientService httpClientService,
-            IEmailService emailService
+            IEmailService emailService,
+            IAppSettingService appSettingService
             )
 		{
 			_logger = logger;
             _httpClientService = httpClientService;
             _emailService = emailService;
+            _appSettingService = appSettingService;
         }
 
 		public MarshRsaUser GetRsaUser(string email)
@@ -261,7 +264,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
             xml = xml.Replace(REPLACESTRING, ACTUALSTRING);
 
-            var stringPayLoad = GetSoapEnvelopeHeaderString() + xml.Remove(0, 21) + GetSoapEnvelopeFooterString();
+            //var stringPayLoad = GetSoapEnvelopeHeaderString() + xml.Remove(0, 21) + GetSoapEnvelopeFooterString();
+            var stringPayLoad = GetSoapEnvelopeHeaderString1stPart() + _appSettingService.MarshRSACredentials + GetSoapEnvelopeHeaderString2ndPart() + xml.Remove(0, 21) + GetSoapEnvelopeFooterString();
 
             return stringPayLoad;
         }
@@ -582,8 +586,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         #endregion
 
         #region
-		string GetSoapEnvelopeHeaderString()
-		{
+        string GetSoapEnvelopeHeaderString()
+        {
             //staging:MarNZ0sa$0Cap16us, production: Password@123456
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
     <soap:Header>
@@ -595,9 +599,29 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         </wsse:Security>
     </soap:Header>
     <soap:Body>";
+        }
+        string GetSoapEnvelopeHeaderString1stPart()
+		{
+            //staging:MarNZ0sa$0Cap16us, production: Password@123456
+            return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+    <soap:Header>
+        <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">
+            <wsse:UsernameToken wsu:Id=""UsernameToken-1d15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">
+                <wsse:Username>MarshNZSOAPUser</wsse:Username>
+                <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">";
 		}
 
-		string GetSoapEnvelopeFooterString()
+        string GetSoapEnvelopeHeaderString2ndPart()
+        {
+            //staging:MarNZ0sa$0Cap16us, production: Password@123456
+            return @"</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soap:Header>
+    <soap:Body>";
+        }
+
+        string GetSoapEnvelopeFooterString()
 		{
 			return @"</soap:Body></soap:Envelope>";
 		}
