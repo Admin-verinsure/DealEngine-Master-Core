@@ -208,10 +208,9 @@ namespace DealEngine.Services.Impl
                     {
                         var documentsList = await ToAttachments(documents);
                         email.Attachments(documentsList.ToArray());
-                        email.Send();
                     }
-            
                 }
+                email.Send();
             }
             else
             {

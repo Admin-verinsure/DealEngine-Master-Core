@@ -1417,7 +1417,7 @@ namespace DealEngine.Services.Impl
             User user = null; 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
-           // htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
 
             var margins = new PageMargins();

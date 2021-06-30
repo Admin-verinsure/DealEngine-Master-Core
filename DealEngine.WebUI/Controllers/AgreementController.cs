@@ -3320,7 +3320,7 @@ namespace DealEngine.WebUI.Controllers
               _appSettingService.NRecoUserName,
               _appSettingService.NRecoLicense
             );            // for Linux/OS-X: "wkhtmltopdf"
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;          // for Linux/OS-X: "wkhtmltopdf"
 
             string submittedBy = clientprogramme.InformationSheet.SubmittedBy.FullName;
@@ -3380,7 +3380,7 @@ namespace DealEngine.WebUI.Controllers
                _appSettingService.NRecoUserName,
                _appSettingService.NRecoLicense
            );            // for Linux/OS-X: "wkhtmltopdf"
-           htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+           //htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
             var margins = new PageMargins();
             margins.Bottom = 10;

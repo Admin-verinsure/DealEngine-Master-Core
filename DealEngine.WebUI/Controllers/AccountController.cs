@@ -382,7 +382,7 @@ namespace DealEngine.WebUI.Controllers
 			catch (UserImportException ex)
 			{
                 await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);                
-				await _emailService.ContactSupport (_emailService.DefaultSender, "DealEngine 2019 - User Import Error", ex.Message);
+				await _emailService.ContactSupport (_emailService.DefaultSender, "DealEngine - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. DealEngine has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}
