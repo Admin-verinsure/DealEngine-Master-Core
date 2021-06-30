@@ -118,7 +118,7 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
 			string errorMessage = @"We have sent you an email to the email address we have recorded in the system, that email address is different from the one you supplied. 
 				Please check the other email addresses you may have used. If you cannot locate our email, 
-				please email support@techcertain.com with your contact details, we can re-establish your account with your broker.";
+				please go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket with your contact details, we can re-establish your account with your broker.";
 			try
 			{
 				if (!string.IsNullOrWhiteSpace (viewModel.Email))
@@ -375,7 +375,7 @@ namespace DealEngine.WebUI.Controllers
 */
                 else // ANY OTHER LDAP CODE https://ldapwiki.com/wiki/LDAP%20Result%20Codes 
                 {
-                    ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
+                    ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket.");
                     return View(viewModel);
                 }
             }
@@ -383,7 +383,7 @@ namespace DealEngine.WebUI.Controllers
 			{
                 await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);                
 				await _emailService.ContactSupport (_emailService.DefaultSender, "DealEngine 2019 - User Import Error", ex.Message);
-				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
+				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. DealEngine has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}
 			catch(Exception ex)
@@ -500,7 +500,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
+                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket.");
                 return View(viewModel);
             }
             catch (Exception ex)

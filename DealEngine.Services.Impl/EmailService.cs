@@ -112,7 +112,7 @@ namespace DealEngine.Services.Impl
 
 			// hard code the body for now, should be stored in the db
 			string body = "<p>Hi There,</p>";
-			body += "<p>We've recently had someone request a password reset for your Proposalonline account. " +
+			body += "<p>We've recently had someone request a password reset for your DealEngine account. " +
 				"If this was you, please click the following link to reset your password.<br/>";
 			body += "<p>If you didn't request a password reset, please ignore and delete this email.</p>";
 			body += string.Format("<a href='{0}/Account/ChangePassword/{1}'>Reset my password.</a>", originDomain, resetToken);
@@ -120,9 +120,9 @@ namespace DealEngine.Services.Impl
 			body += "<p>This link will expire in 24 hours for security reasons.</p>";
 			body += string.Format("{0}/Account/ChangePassword/{1}", originDomain, resetToken);
 			body += string.Format("<p>Your username is <em>{0}</em></p>", user.UserName);
-			body += "<p>Thanks<br/>- The Proposalonline Team</p>";
-			body += "<p>Proposalonline is technology of DealEngine Group Limited who provide technical support.</p>";
-			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
+			body += "<p>Thanks<br/>- The DealEngine Team</p>";
+			body += "<p>DealEngine is technology of DealEngine Group Limited who provide technical support.</p>";
+			body += string.Format("<p>DealEngine login: {0}<br/>For any technical issue please go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket.</p>", originDomain);
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
