@@ -204,11 +204,14 @@ namespace DealEngine.Services.Impl
                     {
                         email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
                     }
+                    else
+                    {
+                        var documentsList = await ToAttachments(documents);
+                        email.Attachments(documentsList.ToArray());
+                        email.Send();
+                    }
+            
                 }
-                //var documentsList = await ToAttachments(documents);
-                //email.Attachments(documentsList.ToArray());
-                //_mailMessage.Attachments.Add(attachment);
-                email.Send();
             }
             else
             {
