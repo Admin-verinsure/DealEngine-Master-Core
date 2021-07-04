@@ -1214,9 +1214,9 @@ namespace DealEngine.WebUI.Controllers
                     if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                     {
                         //sheet owner is null
-                        await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //    await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                         //send out information sheet submission notification email
-                        await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //    await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                         //send out agreement refer notification email
                         foreach (ClientAgreement agreement in clientProgramme.Agreements)
                         {
