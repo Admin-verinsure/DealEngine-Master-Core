@@ -47,9 +47,7 @@ namespace DealEngine.WebUI.Controllers
         // IUpdateTypeService _updateTypeService;
         IUpdateTypeService _updateTypeServices;
         public AdminController(
-                    //
-
-        IUpdateTypeService updateTypeService,
+            IUpdateTypeService updateTypeService,
             IOrganisationService organisationService,
             ISerializerationService serializerationService,
             IMilestoneService milestoneService,
