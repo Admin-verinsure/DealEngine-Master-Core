@@ -149,10 +149,12 @@ namespace DealEngine.WebUI.Controllers
                         {
                             foreach (var clientProgramme in clientProgList)
                             {
-                                programmeList.Add(clientProgramme.BaseProgramme);
+                                if (clientProgramme.InformationSheet.Status != "Not Taken Up By Broker")
+                                {
+                                    programmeList.Add(clientProgramme.BaseProgramme);
+                                }
                             }
                         }
-                        
                     }
                 }
                 else
