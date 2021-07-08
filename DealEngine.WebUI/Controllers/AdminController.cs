@@ -1171,6 +1171,16 @@ namespace DealEngine.WebUI.Controllers
                             systememailtemplatename = "Create Other Marina Notification Email";
                             break;
                         }
+                    case "OneTimePasswordEmail":
+                        {
+                            systememailtemplatename = "One Time Password Email";
+                            break;
+                        }
+                    case "RSANotificationEmail":
+                        {
+                            systememailtemplatename = "RSA Notification Email";
+                            break;
+                        }
                     default:
                         {
                             throw new Exception(string.Format("Invalid System Email Template Type for ", model.SystemEmailType));

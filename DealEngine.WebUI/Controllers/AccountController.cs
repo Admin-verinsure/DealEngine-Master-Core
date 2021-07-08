@@ -531,8 +531,10 @@ namespace DealEngine.WebUI.Controllers
                 rsaUser.CurrentSessionId = viewModel.SessionId;
                 rsaUser.CurrentTransactionId = viewModel.TransactionId;
                 var user = await _userService.GetUser(viewModel.UserName);
-                bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService, username);                
-                if (isAuthenticated)
+                //bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService, username);                
+                //if (isAuthenticated)
+                string authenticatedStatus = await rsaAuth.AuthenticateStatus(rsaUser, _userService, username);
+                if (authenticatedStatus == "SUCCESS")
                 {
                     var result = await DealEngineIdentityUserLogin(user, viewModel.Password);
                     if (!result.Succeeded)
@@ -552,9 +554,18 @@ namespace DealEngine.WebUI.Controllers
                     }
                     return RedirectToAction("Index", "Home");
                 }
-                else
+                else if (authenticatedStatus == "FAIL")
                 {
-                    ViewBag.AccountLocked = "Your Login has failed - Marsh has been notified and will be in contact with you shortly";
+                    return Redirect("~/Account/OTPFailMessage");
+                    await Logout();                    
+                }
+                else if (authenticatedStatus == "LOCKOUT")
+                {
+                    ViewBag.AccountLocked = "Unfortunately the account that you are trying to access has been locked and will require assistance from the Marsh IT Support team to be reset. The support team have been notified and Marsh will be in contact with you to let you know when this has been resolved.";
+
+                    //email the notification
+                    _emailService.RsaNotificationEmail("NZAPPsupport.CAeater@mmc.com", username+ "@mnzconnect.com");
+
                     await Logout();
                 }                
             }
@@ -562,8 +573,15 @@ namespace DealEngine.WebUI.Controllers
             return View ();
 		}
 
-		// GET: /account/error
-		[HttpGet]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> OTPFailMessage()
+        {
+            return View();
+        }
+
+        // GET: /account/error
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Error()
         {
