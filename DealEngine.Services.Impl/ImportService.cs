@@ -718,6 +718,97 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+        
+              public async Task NZFSGImportPInewUsers(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "MLPrincipalList.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("62ee21a0-802f-4c22-a46d-d677c212ba92"); //NZFSG PI FAP Programme ID
+            //Guid renewFromProgrammeID = Guid.Parse("a073a11f-c0e2-4ef6-b7c9-2b3db04a6017"); //NZFSG Programme 2020 ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            string orgname;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    orgname = "";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                        {
+                            email = parts[4];
+                            orgname = parts[0];
+
+                            organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (organisation == null)
+                            {
+                                ClientProgramme ClientProgrammeBase = await _programmeService.GetClientProgrammebyId(Guid.Parse("a69e2609-b95d-44f8-aef5-503d1497549f"));
+                                if (ClientProgrammeBase != null)
+                                {
+                                    var unit = (AdvisorUnit)organisation.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+                                    if (unit == null)
+                                    {
+                                        OrganisationType advisorType = new OrganisationType("Person - Individual");
+                                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Advisor");
+                                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
+                                        AdvisorUnit AdvisorUnit = new AdvisorUnit(currentUser, "Advisor", "Person - Individual", null)
+                                        {
+                                            IsPrincipalAdvisor = true
+                                        };
+                                        Organisation Advisor = new Organisation(currentUser, Guid.NewGuid())
+                                        {
+                                            OrganisationType = advisorType,
+                                            Email = user.Email,
+                                            Name = user.FullName
+                                        };
+
+                                        Advisor.InsuranceAttributes.Add(advisorAttribute);
+                                        Advisor.OrganisationalUnits.Add(defaultUnit);
+                                        Advisor.OrganisationalUnits.Add(AdvisorUnit);
+                                        var sheet = await _clientInformationService.GetInformation(Guid.Parse("a69e2609-b95d-44f8-aef5-503d1497549f"));
+                                        sheet.Organisation.Add(Advisor);
+                                    }
+                                    //Create a renew
+                                }
+                            }
+                            else
+                            {
+                                if (organisation != null)
+                                {
+                                    var sheet = await _clientInformationService.GetInformation(Guid.Parse("a69e2609-b95d-44f8-aef5-503d1497549f"));
+                                    sheet.Organisation.Add(organisation);
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
         public async Task ImportNZFSGServicePI(User CreatedUser)
         {
             //addresses need to be on one line            
