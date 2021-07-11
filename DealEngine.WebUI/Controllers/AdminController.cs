@@ -47,9 +47,7 @@ namespace DealEngine.WebUI.Controllers
         // IUpdateTypeService _updateTypeService;
         IUpdateTypeService _updateTypeServices;
         public AdminController(
-                    //
-
-        IUpdateTypeService updateTypeService,
+            IUpdateTypeService updateTypeService,
             IOrganisationService organisationService,
             ISerializerationService serializerationService,
             IMilestoneService milestoneService,
@@ -1188,6 +1186,16 @@ namespace DealEngine.WebUI.Controllers
                     case "OtherMarinaTCNotifyEmail":
                         {
                             systememailtemplatename = "Create Other Marina Notification Email";
+                            break;
+                        }
+                    case "OneTimePasswordEmail":
+                        {
+                            systememailtemplatename = "One Time Password Email";
+                            break;
+                        }
+                    case "RSANotificationEmail":
+                        {
+                            systememailtemplatename = "RSA Notification Email";
                             break;
                         }
                     default:

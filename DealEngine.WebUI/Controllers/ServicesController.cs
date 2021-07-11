@@ -3682,6 +3682,14 @@ namespace DealEngine.WebUI.Controllers
                     sheet.Programme.ClientProgrammeMembershipNumber = membershipNumber;
                 }
 
+                if (user != null && organisation != null)
+                {
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+
+                    await _userService.Update(user);
+                }
+
                 await _clientInformationService.UpdateInformation(sheet);
 
                 return RedirectPermanent("../Home/Index");
