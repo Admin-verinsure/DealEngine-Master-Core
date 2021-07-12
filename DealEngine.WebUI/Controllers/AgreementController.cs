@@ -1743,7 +1743,16 @@ namespace DealEngine.WebUI.Controllers
                     model.ProgrammeId = agreement.ClientInformationSheet.Programme.BaseProgramme.Id;
                     model.InsuranceRoles = insuranceRoles;
                     model.ProductName = agreement.Product.Name;
-                    model.ProductCode = agreement.Product.UnderwritingModuleCode.Substring(agreement.Product.UnderwritingModuleCode.IndexOf("_") + 1);
+                    var prodcodesubtring = agreement.Product.UnderwritingModuleCode.Substring(agreement.Product.UnderwritingModuleCode.IndexOf("_") + 1);
+                    var hjg = prodcodesubtring.IndexOf("_");
+                    if (hjg > 0)
+                    {
+                        model.ProductCode = prodcodesubtring.Substring(0, prodcodesubtring.IndexOf("_"));
+                    }
+                    else
+                    {
+                        model.ProductCode = prodcodesubtring;
+                    }
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
                     model.IsOptionalProduct = agreement.Product.IsOptionalProduct;
                     model.Status = agreement.Status;
