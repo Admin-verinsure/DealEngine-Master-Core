@@ -134,6 +134,10 @@ namespace DealEngine.Services.Impl
             {
                  UnitName = collection["AdministratorUnit"].ToString();
             }
+            else if(InsuranceAttribute == "Director")
+            {
+                UnitName = collection["DirectorUnit"].ToString();
+            }
             else
             {
                  UnitName = collection["Unit"].ToString();
@@ -257,7 +261,15 @@ namespace DealEngine.Services.Impl
             return await _organisationRepository.FindAll().Where(o => o.Email == email).ToListAsync();
         }
 
-
+        public async Task<Organisation> GetOrganisationByEmailAndName(string organisationEmail, string organisationName)
+        {
+            var list = await GetAllOrganisationsByEmailAndName(organisationEmail, organisationName);
+            return list.OrderByDescending(i => i.DateCreated).FirstOrDefault();
+        }
+        public async Task<List<Organisation>> GetAllOrganisationsByEmailAndName(string email, string name)
+        {
+            return await _organisationRepository.FindAll().Where(o => o.Email == email && o.Name == name).ToListAsync();
+        }
 
         public async Task<List<Organisation>> GetNZFSGSubsystemAdvisors(ClientInformationSheet sheet)
         {
@@ -374,7 +386,8 @@ namespace DealEngine.Services.Impl
                     Type == "Nominated Representative" ||
                     Type == "Administration" ||
                     Type == "Other Consulting Business" ||
-                    Type == "Mentored Advisor"
+                    Type == "Mentored Advisor" ||
+                    Type == "Director"
                     )
                 {
                     OrganisationalUnits.Add(new OrganisationalUnit(User, "Person - Individual", OrganisationTypeName, collection));
@@ -492,7 +505,7 @@ namespace DealEngine.Services.Impl
             var FinancialList = await GetFinancialInstitutes();
             foreach (var Financial in FinancialList)
             {
-                var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.FirstOrDefault();
+                var unit = (InterestedPartyUnit)Financial.OrganisationalUnits.Where(i => i.Name == "Financial").FirstOrDefault();
                 if (unit != null)
                 {
                     if (unit.Location != null)

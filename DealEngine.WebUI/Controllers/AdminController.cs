@@ -47,9 +47,7 @@ namespace DealEngine.WebUI.Controllers
         // IUpdateTypeService _updateTypeService;
         IUpdateTypeService _updateTypeServices;
         public AdminController(
-                    //
-
-        IUpdateTypeService updateTypeService,
+            IUpdateTypeService updateTypeService,
             IOrganisationService organisationService,
             ISerializerationService serializerationService,
             IMilestoneService milestoneService,
@@ -168,6 +166,122 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> FANZImportOwners()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFanzOwners(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> FANZImportAdvisors()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFanzAdvisors(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        public async Task<IActionResult> FANZImportML()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFANZImportML(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        public async Task<IActionResult> FANZImportRO()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFANZImportRO(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        public async Task<IActionResult> FANZPIPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFANZPIPreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        public async Task<IActionResult> FANZMLPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFANZMLPreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        public async Task<IActionResult> FANZROPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportFANZROPreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> NZPIImportPlanners()
         {
@@ -295,13 +409,30 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NZFSGImportUsers()
+        public async Task<IActionResult> NZFSGImportPIUsers()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServiceIndividuals(user);
+                await _importService.ImportNZFSGServicePI(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportPInewUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.NZFSGImportPInewUsers(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -313,13 +444,103 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NZFSGImportPrincipals()
+        public async Task<IActionResult> NZFSGImportPIUsersNewCompany()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportNZFSGServicePrincipals(user);
+                await _importService.ImportNZFSGServicePINewCompany(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportPIUsersNewAll()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServicePINewAll(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportMLUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceML(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportMLUsersNewCompany()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceMLNewCompany(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportMLUsersNewAll()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceMLNewAll(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NZFSGImportROUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportNZFSGServiceRO(user);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -965,6 +1186,16 @@ namespace DealEngine.WebUI.Controllers
                     case "OtherMarinaTCNotifyEmail":
                         {
                             systememailtemplatename = "Create Other Marina Notification Email";
+                            break;
+                        }
+                    case "OneTimePasswordEmail":
+                        {
+                            systememailtemplatename = "One Time Password Email";
+                            break;
+                        }
+                    case "RSANotificationEmail":
+                        {
+                            systememailtemplatename = "RSA Notification Email";
                             break;
                         }
                     default:

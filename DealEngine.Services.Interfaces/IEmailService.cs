@@ -18,6 +18,7 @@ namespace DealEngine.Services.Interfaces
         string ReplyToEmail { get; }
         Task SendPasswordResetEmail(string recipent, Guid resetToken, string originDomain);
         Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement);
+        Task SendEmailViaEmailTemplateWithCC(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string cCRecipent);
         Task SendPremiumAdviceEmail(string recipent, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string recipentcc);
         Task MarshPleaseCallMe(string sender, string subject, string body);
         Task MarshRsaOneTimePassword(string sender, string subject);
@@ -46,6 +47,7 @@ namespace DealEngine.Services.Interfaces
         Task EGlobalLogEmail(string recipient, string transactionreferenceid, string requestXML, string responseXML);
         Task JoinOrganisationEmail(User organisationUser);
         Task RemoveOrganisationUserEmail(User removedUser, User brokerContactUser, ClientInformationSheet sheet);
+        Task RsaNotificationEmail(string recipient, string rsausername);
     }
 }
 

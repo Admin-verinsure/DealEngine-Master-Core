@@ -112,7 +112,7 @@ namespace DealEngine.Services.Impl
 
 			// hard code the body for now, should be stored in the db
 			string body = "<p>Hi There,</p>";
-			body += "<p>We've recently had someone request a password reset for your Proposalonline account. " +
+			body += "<p>We've recently had someone request a password reset for your DealEngine account. " +
 				"If this was you, please click the following link to reset your password.<br/>";
 			body += "<p>If you didn't request a password reset, please ignore and delete this email.</p>";
 			body += string.Format("<a href='{0}/Account/ChangePassword/{1}'>Reset my password.</a>", originDomain, resetToken);
@@ -120,9 +120,9 @@ namespace DealEngine.Services.Impl
 			body += "<p>This link will expire in 24 hours for security reasons.</p>";
 			body += string.Format("{0}/Account/ChangePassword/{1}", originDomain, resetToken);
 			body += string.Format("<p>Your username is <em>{0}</em></p>", user.UserName);
-			body += "<p>Thanks<br/>- The Proposalonline Team</p>";
-			body += "<p>Proposalonline is technology of DealEngine Group Limited who provide technical support.</p>";
-			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
+			body += "<p>Thanks<br/>- The DealEngine Team</p>";
+			body += "<p>DealEngine is technology of DealEngine Group Limited who provide technical support.</p>";
+			body += string.Format("<p>DealEngine login: {0}<br/>For any technical issue please go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket.</p>", originDomain);
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
@@ -157,8 +157,7 @@ namespace DealEngine.Services.Impl
         {
             var user = await _userService.GetUserByEmail(recipent);
             List<KeyValuePair<string, string>> mergeFields;
-
-            
+          
 
             if (clientInformationSheet != null)
             {
@@ -198,6 +197,72 @@ namespace DealEngine.Services.Impl
 			email.WithBody (systememailbody);
 			email.UseHtmlBody (true);
             if(documents != null)
+            {
+                foreach (SystemDocument document in documents)
+                {
+                    if(document.ContentType == "application/pdf")
+                    {
+                        email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
+                    }
+                    else
+                    {
+                        var documentsList = await ToAttachments(documents);
+                        email.Attachments(documentsList.ToArray());
+                    }
+                }
+                email.Send();
+            }
+            else
+            {
+                email.Send();
+            }
+        }
+
+        public async Task SendEmailViaEmailTemplateWithCC(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement, string cCRecipent)
+        {
+            var user = await _userService.GetUserByEmail(recipent);
+            List<KeyValuePair<string, string>> mergeFields;
+
+
+            if (clientInformationSheet != null)
+            {
+                if (clientAgreement != null)
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, clientAgreement);
+                }
+                else
+                {
+                    mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet, null);
+                }
+
+            }
+            else
+            {
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
+            }
+
+            var insuredUser = _userService.GetApplicationUserByEmail(recipent);
+            if (insuredUser != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[First Name]]", insuredUser.Result.FirstName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[Last Name]]", insuredUser.Result.LastName));
+            }
+
+            string systememailsubject = emailTemplate.Subject;
+            string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {
+                systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
+            email.From(DefaultSender);
+            email.WithSubject(systememailsubject);
+            email.WithBody(systememailbody);
+            email.CC(cCRecipent);
+            email.UseHtmlBody(true);
+            if (documents != null)
             {
                 var documentsList = await ToAttachments(documents);
                 email.Attachments(documentsList.ToArray());
@@ -370,13 +435,62 @@ namespace DealEngine.Services.Impl
 
         public async Task MarshRsaOneTimePassword(string recipient, string subject)
         {
-            string subjectPrefix = "One Time Password: ";
+            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+            mergeFields.Add(new KeyValuePair<string, string>("[[OTP]]", subject));
 
-            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
-            email.From(DefaultSender);
-            email.WithSubject(subjectPrefix + subject);            
-            email.UseHtmlBody(true);
-            email.Send();
+            SystemEmail oneTimePasswordEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("OneTimePasswordEmail");
+
+            if (oneTimePasswordEmailTemplate != null)
+            {
+                string systememailsubject = oneTimePasswordEmailTemplate.Subject;
+                string systememailbody = System.Net.WebUtility.HtmlDecode(oneTimePasswordEmailTemplate.Body);
+               
+                foreach (KeyValuePair<string, string> field in mergeFields)
+                {
+                    systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                    systememailbody = systememailbody.Replace(field.Key, field.Value);
+                }
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+                systememail.From(DefaultSender);
+                systememail.WithSubject(systememailsubject);
+                systememail.WithBody(systememailbody);
+                systememail.UseHtmlBody(true);
+                systememail.Send();
+            }         
+
+            //string subjectPrefix = "One Time Password: ";
+
+            //EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            //email.From(DefaultSender);
+            //email.WithSubject(subjectPrefix + subject);            
+            //email.UseHtmlBody(true);
+            //email.Send();
+        }
+
+        public async Task RsaNotificationEmail(string recipient, string rsausername)
+        {
+            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+            mergeFields.Add(new KeyValuePair<string, string>("[[RSAUsername]]", rsausername));
+
+            SystemEmail rSANotificationEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("RSANotificationEmail");
+
+            if (rSANotificationEmailTemplate != null)
+            {
+                string systememailsubject = rSANotificationEmailTemplate.Subject;
+                string systememailbody = System.Net.WebUtility.HtmlDecode(rSANotificationEmailTemplate.Body);
+
+                foreach (KeyValuePair<string, string> field in mergeFields)
+                {
+                    systememailsubject = systememailsubject.Replace(field.Key, field.Value);
+                    systememailbody = systememailbody.Replace(field.Key, field.Value);
+                }
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+                systememail.From(DefaultSender);
+                systememail.WithSubject(systememailsubject);
+                systememail.WithBody(systememailbody);
+                systememail.UseHtmlBody(true);
+                systememail.Send();
+            }
         }
 
         public async Task RsaLogEmail(string recipient, string loginUserUserName, string requestXML, string responseXML)

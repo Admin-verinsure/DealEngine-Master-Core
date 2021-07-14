@@ -296,6 +296,24 @@ namespace DealEngine.Services.Impl
                                     mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL]]", "Extension NOT Included"));
                                 }
                             }
+
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0)
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                            }
+                            else
+                            {
+                                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1")
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension Included"));
+                                }
+                                else
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                                }
+                            }
                         }
                     } 
                 }
@@ -1171,6 +1189,24 @@ namespace DealEngine.Services.Impl
                             }
                         }
 
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0)
+                        {
+                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                        }
+                        else
+                        {
+                            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1")
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension Included"));
+                            }
+                            else
+                            {
+                                mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
+                            }
+                        }
+
                         //Extension With Ultra Option
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
                             agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
@@ -1367,16 +1403,24 @@ namespace DealEngine.Services.Impl
         {
 
             string html = FromBytes(doc.Contents);
-            html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
-            // Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            //html = html.Insert(0, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+            //// Test if the below 4 are even necessary by this function, setting above should make these redundant now
+            //html = html.Replace("“", "&quot");
+            //html = html.Replace("”", "&quot");
+            //html = html.Replace(" – ", "--");
+            //html = html.Replace("&nbsp;", " ");
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
             html = html.Replace(" – ", "--");
             html = html.Replace("&nbsp;", " ");
-            
+            html = html.Replace("'", "&#39");
+            User user = null; 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(_appSettingService.NRecoUserName,_appSettingService.NRecoLicense);
-            htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            if (_appSettingService.IsLinuxEnv == "True")
+            {
+                htmlToPdfConv.WkHtmlToPdfExeName = "wkhtmltopdf";
+            }
             htmlToPdfConv.PdfToolPath = _appSettingService.NRecoPdfToolPath;
 
             var margins = new PageMargins();
@@ -1386,11 +1430,17 @@ namespace DealEngine.Services.Impl
             margins.Right = 25;
             htmlToPdfConv.Margins = margins;
             htmlToPdfConv.PageFooterHtml = "</br>" + $@"page <span class=""page""></span> of <span class=""topage""></span>";
-            
-            var output = htmlToPdfConv.GeneratePdf(html);
-            doc.Contents = output;
 
-            return doc;
+
+
+            var pdfBytes = htmlToPdfConv.GeneratePdf(html);
+            Document document = new Document(user, doc.Name+".pdf", "application/pdf", doc.DocumentType);
+            document.Contents = pdfBytes;
+
+            //var output = htmlToPdfConv.GeneratePdf(html);
+            //doc.Contents = output;
+
+            return document;
         }
         public async Task<Document> FormatCKHTMLforConversion(Document doc)
         {
@@ -1505,7 +1555,7 @@ namespace DealEngine.Services.Impl
 
                         decimal widthPercent = decimal.Parse(width);
                         widthPercent = decimal.Divide(widthPercent, 100);
-                        decimal pixelWidth = 500 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
+                        decimal pixelWidth = 100 * widthPercent; // 500 is pretty much 100% width in the .docx documents so treating 500 as 100% and the ck value to adjust how big it should be
                         int pixelWidthZeroDP = Convert.ToInt32(pixelWidth);
                         string pixelWidthStr = pixelWidthZeroDP.ToString();
 

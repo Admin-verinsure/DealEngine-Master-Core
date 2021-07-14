@@ -1,0 +1,92 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+<form id="PIViewModel" class="is-valid" data-accordianId="General Liability">
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasbusinesschanges" class="label required">
+                    Are any changes to your company or business expected in the next 12 months?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasbusinesschanges" name="PIViewModel.HasBusinessChangesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PIViewModel.HasBusinessChangesOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PIViewModel.HasBusinessChangesOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="businesschangesdetails" class="label required">
+                        You have answered "Yes" above, please provide futher details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextBoxFor(m => m.PIViewModel.BusinessChangesDetails, new { @class = "form-control", @id = "businesschangesdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="haspartymembers" class="label required">
+                    Are you aware of any parties to this policy being a member of :
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="haspartymembers" name="PIViewModel.HasPartyMembers" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
+                    @foreach (var option in Model.PIViewModel.HasPartyMembers)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasotherpiinsurances" class="label required">
+                    Are you aware of any other insurances held for any of the parties to this policy?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasotherpiinsurances" name="PIViewModel.HasOtherPIinsurances" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PIViewModel.HasOtherPIinsurances)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasclassoflicense" class="label required">
+                    What class of license are you intending to apply for?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasclassoflicense" name="PIViewModel.HasClassOfLicense" class="custom-select" onchange="OnChange(this.id, this.name)" data-rule="Reverse" required>
+                    @foreach (var option in Model.PIViewModel.HasClassOfLicense)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+</form>

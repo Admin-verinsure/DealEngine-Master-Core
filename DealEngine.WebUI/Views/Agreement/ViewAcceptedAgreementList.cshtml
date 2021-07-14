@@ -383,7 +383,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
          $(window).on("load", function () {
             if ("@ViewBag.Sheetstatus" != "Started") {
 
-                @*var progId = "@ViewBag.Id";
+                var progId = "@ViewBag.Id";
                 //var progId = $('#ClientProgrammeId').val();
                 var postData = { ProgrammeId: progId };
 
@@ -408,7 +408,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 alert("There was an error while trying to get the Cover Options3.");
                 });
 
-             }*@
+             }
 
               if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "False")
               {
@@ -419,10 +419,10 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
         });
 
 
-        $(window).bind("pageshow", function (event) {
-             window.location.reload();      
+        //$(window).bind("pageshow", function (event) {
+        //     window.location.reload();      
            
-        });
+        //});
 
 
     </script>

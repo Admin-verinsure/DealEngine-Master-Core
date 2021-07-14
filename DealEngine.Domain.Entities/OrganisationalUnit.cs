@@ -50,7 +50,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Qualifications { get; set; }
         [Display(Name = "Insurance experience and positions held")]
         public virtual string Experience { get; set; }
-        [Display(Name = "This Person has retired or deceased ?")]
+        [Display(Name = "Is this person retired or deceased?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Select to confirm you have received approval from the TripleA Advisers Association for this adviser to be included under the TripleA PI scheme")]
         public virtual bool IsTripleAApproval { get; set; }
@@ -58,7 +58,7 @@ namespace DealEngine.Domain.Entities
         public virtual string RegisteredStatus { get; set; }
         [Display(Name = "Duration Of Time as Adviser")]
         public virtual string Duration { get; set; }
-        [Display(Name = "Is a Principal Advisor?")]
+        [Display(Name = "Is this individual the FAP’s Principal Adviser?")]
         public virtual bool IsPrincipalAdvisor { get; set; }
         [Display(Name = "Date of Retirement(Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
@@ -79,8 +79,11 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string FAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is Advisor FAP?")]
+        [Display(Name = "Is this person, entity or company the FAP licence holder for this policy?")]
         public virtual bool isTheFAP { get; set; }
+
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isInterposedPerson { get; set; }
 
     }
 
@@ -139,7 +142,7 @@ namespace DealEngine.Domain.Entities
         }
         [Display(Name = "Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)")]
         public virtual DateTime? DateofRetirement { get; set; }
-        [Display(Name = "This Person has retired or deceased ?")]
+        [Display(Name = "Is this person retired or deceased?")]
         public virtual bool IsRetiredorDeceased { get; set; }
         [Display(Name = "Qualifications")]
         public virtual string Qualifications { get; set; }
@@ -273,6 +276,26 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "Is FAP?")]
         public virtual bool isAdministratorTheFAP { get; set; }
 
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isAdministratorInterposedPerson { get; set; }
+
+    }
+
+    public class DirectorUnit : OrganisationalUnit
+    {
+        public DirectorUnit() { }
+        public DirectorUnit(User User, string Name, string Type, IFormCollection Collection)
+            : base(User, Name, Type, Collection)
+        {
+        }
+
+        [Display(Name = "Is this person retired or deceased?")]
+        public virtual bool IsRetiredorDeceased { get; set; }
+        [Display(Name = "Select to confirm you have received approval from the TripleA directors Association for this director to be included under the TripleA PI scheme")]
+     
+        public virtual DateTime? DateofRetirement { get; set; }
+        [Display(Name = "Date of Deceased (Please Enter either Date of Retirement or Date of Deceased)")]
+        public virtual DateTime? DateofDeceased { get; set; }
     }
 }
 

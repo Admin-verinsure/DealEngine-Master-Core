@@ -114,25 +114,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
-            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
-
-            if (agreement.ClientInformationSheet.RevenueData != null)
-            {
-                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                {
-                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
-
-                    }
-                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
-                    }
-                }
-            }
+            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
 
@@ -180,6 +162,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["dotermlimit"]);
@@ -209,13 +192,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
+            TermBasePremium = TermPremium;
             TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termdotermoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit, TermExcess);
             termdotermoption.TermLimit = TermLimit;
             termdotermoption.Premium = TermPremium;
-            termdotermoption.BasePremium = TermPremium;
+            termdotermoption.BasePremium = TermBasePremium;
             termdotermoption.Excess = TermExcess;
             termdotermoption.BrokerageRate = agreement.Brokerage;
             termdotermoption.Brokerage = TermBrokerage;
@@ -255,7 +239,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //D&O Issues
             uwrdoissue(underwritingUser, agreement, decDOTotalAssets, decDOTotalLiabilities, decDOCurrentAssets, decDOCurrentLiabilities, decDOAftertaxProfitOrLoss);
             //Class 2 referral
-            uwrfclass2(underwritingUser, agreement, bolclass2referral);
+            //uwrfclass2(underwritingUser, agreement, bolclass2referral);
             //Class 3 referral
             uwrfclass3(underwritingUser, agreement, bolclass3referral);
             //Asset Size

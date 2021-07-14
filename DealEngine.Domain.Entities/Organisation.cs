@@ -104,8 +104,11 @@ namespace DealEngine.Domain.Entities
         [Display(Name = "FAP License number")]
         public virtual string OrganisationFAPLicenseNumber { get; set; }
 
-        [Display(Name = "Is FAP?")]
+        [Display(Name = "Is this person, entity or company the FAP licence holder for this policy?")]
         public virtual bool isOrganisationTheFAP { get; set; }
+
+        [Display(Name = "Are you intending to apply for interposed person arrangements?")]
+        public virtual bool isOrganisationInterposedPerson { get; set; }
 
         public virtual OrganisationType OrganisationType { get; set; }
         public virtual bool Removed { get; set; }

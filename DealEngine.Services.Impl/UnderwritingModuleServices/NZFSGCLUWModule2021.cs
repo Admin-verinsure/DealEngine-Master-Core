@@ -92,25 +92,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
-            string strProfessionalBusiness = "Mortgage broking and life, risk, health and medical insurance broking services. Fire and General referrals, including AON domestic placement services only. Advice in respect of ACC reporting status. Advice in relation to Kiwisaver.  Asset Finance.";
-
-            if (agreement.ClientInformationSheet.RevenueData != null)
-            {
-                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
-                {
-                    if (uISActivity.AnzsciCode == "CUS0023") //Financial Planning
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Financial Planning.";
-
-                    }
-                    else if (uISActivity.AnzsciCode == "CUS0028") //Broking Fire and General (i.e. NZI)
-                    {
-                        if (uISActivity.Percentage > 0)
-                            strProfessionalBusiness += "  Advice in relation to Fire and General Broking.";
-                    }
-                }
-            }
+            string strProfessionalBusiness = "Financial Advice Provider – in the provision of Life & Health Insurance, Mortgage Broking and Fire & General Broking.";
             agreement.ProfessionalBusiness = strProfessionalBusiness;
 
             //Endorsements and extension
@@ -148,33 +130,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int TermLimit = 0;
             decimal TermPremium = 0M;
+            decimal TermBasePremium = 0M;
             decimal TermBrokerage = 0M;
             decimal TermExcess = 0M;
             TermLimit = Convert.ToInt32(rates["cltermlimit"]);
             TermExcess = rates["cltermexcess"];
 
             decimal feeincome = 0M;
-            if (agreement.ClientInformationSheet.RevenueData != null)
+            if (agreement.ClientInformationSheet.RevenueData != null) //CL using current year fee income
             {
-                if (agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal > 0 && agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal < rates["cltermmaxfeeincome"])
+                feeincome = agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal >= 0 && agreement.ClientInformationSheet.RevenueData.CurrentYearTotal < rates["cltermmaxfeeincome"])
                 {
                     TermPremium = rates["cltermpremium"];
-                    feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
                 }
-                //if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0 && agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal < rates["cltermmaxfeeincome"])
-                //{
-                //    TermPremium = rates["cltermpremium"];
-                //    feeincome = agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
-                //}
             }
 
-            TermPremium = (TermPremium + extpremium) * agreementperiodindays / coverperiodindays;
+            TermBasePremium = TermPremium;
+            TermPremium = TermPremium * agreementperiodindays / coverperiodindays;
             TermBrokerage = TermPremium * agreement.Brokerage / 100;
 
             ClientAgreementTerm termcltermoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit, TermExcess);
             termcltermoption.TermLimit = TermLimit;
             termcltermoption.Premium = TermPremium;
-            termcltermoption.BasePremium = TermPremium;
+            termcltermoption.BasePremium = TermBasePremium;
             termcltermoption.Excess = TermExcess;
             termcltermoption.BrokerageRate = agreement.Brokerage;
             termcltermoption.Brokerage = TermBrokerage;
@@ -362,7 +341,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
         void uwrfhighfeeincome(User underwritingUser, ClientAgreement agreement, IDictionary<string, decimal> rates, decimal feeincome)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null) == null)
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfhighfeeincome" && cref.DateDeleted == null) == null)
             {
                 if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome") != null)
                     agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfhighfeeincome").Name,

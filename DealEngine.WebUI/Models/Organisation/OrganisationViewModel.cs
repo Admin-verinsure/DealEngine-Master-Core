@@ -22,7 +22,7 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.NamedPartyUnitName == "NZFSG Programme" || Programme.NamedPartyUnitName == "TripleA Programme" || Programme.NamedPartyUnitName == "Apollo Programme" || 
                     Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
-                    Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
+                    Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
                     AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
@@ -36,7 +36,7 @@ namespace DealEngine.WebUI.Models
                         InsuranceAttributes = GetAdvisorTypes2();
                     }
                     else if (Programme.NamedPartyUnitName == "Apollo Programme" || Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
-                        Programme.NamedPartyUnitName == "Financial Advice New Zealand Inc Programme")
+                        Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
                     {
                         InsuranceAttributes = GetAdvisorTypes3();
                         if(Programme.NamedPartyUnitName == "Apollo Programme") 
@@ -76,6 +76,16 @@ namespace DealEngine.WebUI.Models
                     HasInsuredRequiredOptions = GetStandardSelectOptions();
                     CertTypes = GetCertTypes();
                     HasMajorShareHolder = GetBooleanSelectOptions();
+                }
+
+                if (Programme.NamedPartyUnitName == "NZFSG ML Programme" || Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability ML Programme")
+                {
+                    DirectorUnit = new DirectorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+
+                    InsuranceAttributes = GetAdvisorTypes4();
+                    HasRetiredorDeceasedOptions = GetStandardSelectOptions();
+                    OrganisationTypes = GetOrganisationTypes();
+
                 }
                 if (Programme.NamedPartyUnitName == "Technology Contractors Liability Programme")
                 {
@@ -671,6 +681,24 @@ namespace DealEngine.WebUI.Models
                 };
             return _Types;
         }
+        private IList<SelectListItem> GetAdvisorTypes4()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
+                new SelectListItem
+                    {
+                        Text = "Director",
+                        Value = "Director"
+                    }
+            };
+            return _Types;
+
+        }
         private IList<SelectListItem> GetAdvisorTypes1()
         {
             var _Types = new List<SelectListItem>();
@@ -861,6 +889,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasInterposedPersonOptions { get; set; }
         public AdministratorUnit AdministratorUnit { get; set; }
 
+        public DirectorUnit DirectorUnit { get; set; }
 
     }
 }
