@@ -35,8 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {            
-            WorkingDirectory = "/tmp/";
-            //WorkingDirectory = "C:\\Users\\Public\\";
+            //WorkingDirectory = "/tmp/";
+            WorkingDirectory = "C:\\Users\\Public\\";
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -1261,12 +1261,12 @@ namespace DealEngine.Services.Impl
                             preRenewOrRefData.PIBoundExcess = parts[4];
                         if (!string.IsNullOrEmpty(parts[5]))
                             preRenewOrRefData.PIBoundPremium = parts[5];
-                        if (!string.IsNullOrEmpty(parts[6]))
-                            preRenewOrRefData.EndorsementProduct = parts[6];
-                        if (!string.IsNullOrEmpty(parts[7]))
-                            preRenewOrRefData.EndorsementTitle = parts[7];
-                        if (!string.IsNullOrEmpty(parts[8]))
-                            preRenewOrRefData.EndorsementText = parts[8];
+                        //if (!string.IsNullOrEmpty(parts[6]))
+                        //    preRenewOrRefData.EndorsementProduct = parts[6];
+                        //if (!string.IsNullOrEmpty(parts[7]))
+                        //    preRenewOrRefData.EndorsementTitle = parts[7];
+                        //if (!string.IsNullOrEmpty(parts[8]))
+                        //    preRenewOrRefData.EndorsementText = parts[8];
 
                         await _programmeService.AddPreRenewOrRefDataByMembershipAndProgramme(preRenewOrRefData, programme);
 
@@ -1312,12 +1312,12 @@ namespace DealEngine.Services.Impl
                             preRenewOrRefData.PIBoundExcess = parts[4];
                         if (!string.IsNullOrEmpty(parts[5]))
                             preRenewOrRefData.PIBoundPremium = parts[5];
-                        if (!string.IsNullOrEmpty(parts[6]))
-                            preRenewOrRefData.EndorsementProduct = parts[6];
-                        if (!string.IsNullOrEmpty(parts[7]))
-                            preRenewOrRefData.EndorsementTitle = parts[7];
-                        if (!string.IsNullOrEmpty(parts[8]))
-                            preRenewOrRefData.EndorsementText = parts[8];
+                        //if (!string.IsNullOrEmpty(parts[6]))
+                        //    preRenewOrRefData.EndorsementProduct = parts[6];
+                        //if (!string.IsNullOrEmpty(parts[7]))
+                        //    preRenewOrRefData.EndorsementTitle = parts[7];
+                        //if (!string.IsNullOrEmpty(parts[8]))
+                        //    preRenewOrRefData.EndorsementText = parts[8];
 
                         await _programmeService.AddPreRenewOrRefDataByMembershipAndProgramme(preRenewOrRefData, programme);
 
@@ -2006,7 +2006,7 @@ namespace DealEngine.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
 
-            bool readFirstLine = false;
+            bool readFirstLine = true;
             string line;
             Guid.TryParse("62aea93b-8f7e-4554-b037-bb6726bc3c2d", out Guid ProgrammeId);
             //addresses need to be on one line            

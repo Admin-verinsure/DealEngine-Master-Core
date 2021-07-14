@@ -212,7 +212,9 @@ namespace DealEngine.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
 		{
-			try
+            SingleUseToken st = _authenticationService.GetToken(id);
+            User user = await _userService.GetUserById(st.UserID);
+            try
 			{
                 if (id == Guid.Empty)
 					// if we get here - either invalid guid or invalid token - 404
@@ -222,8 +224,7 @@ namespace DealEngine.WebUI.Controllers
 					ModelState.AddModelError ("passwordConfirm", "Passwords do not match");
 					return View ();
 				}
-                SingleUseToken st = _authenticationService.GetToken(id);
-                User user = await _userService.GetUserById(st.UserID);
+                
                 if (user == null)
                     // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
                     throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
@@ -233,7 +234,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     string username = user.UserName;
 
-                    //change the users password to an intermediate
+                    //change the users password using admin
                     if (_ldapService.ChangePassword(user.UserName, _appSettingService.IntermediatePassword, viewModel.Password))
                     {
                         var deUser = await _userManager.FindByNameAsync(user.UserName);
@@ -275,8 +276,11 @@ namespace DealEngine.WebUI.Controllers
                 ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");				
 			}
 			catch (Exception ex) {
+
+                _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
+
                 await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);
-                ModelState.AddModelError ("passwordConfirm", "There was an error while trying to change your password.");				
+                ModelState.AddModelError ("passwordConfirm", "There was an error while trying to change your password. Please try again with a new password below.");				
 			}
 
 			return View ();
@@ -564,7 +568,7 @@ namespace DealEngine.WebUI.Controllers
                     ViewBag.AccountLocked = "Unfortunately the account that you are trying to access has been locked and will require assistance from the Marsh IT Support team to be reset. The support team have been notified and Marsh will be in contact with you to let you know when this has been resolved.";
 
                     //email the notification
-                    _emailService.RsaNotificationEmail("NZAPPsupport.CAeater@mmc.com", username+ "@mnzconnect.com");
+                    _emailService.RsaNotificationEmail(_appSettingService.MarshRSANotificationEmail, username+ "@mnzconnect.com");
 
                     await Logout();
                 }                
