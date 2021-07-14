@@ -22,6 +22,7 @@ namespace DealEngine.Services.Impl
         IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
         private readonly string WorkingDirectory;
+        IAppSettingService _appSettingService;
 
         public ImportService(
             IOrganisationService organisationService,
@@ -33,10 +34,9 @@ namespace DealEngine.Services.Impl
             IOrganisationTypeService organisationTypeService,
             IInsuranceAttributeService insuranceAttributeService,
             IMapperSession<Organisation> organisationRepository,
-            IBusinessActivityService businessActivityService)
-        {            
-            //WorkingDirectory = "/tmp/";
-            WorkingDirectory = "C:\\Users\\Public\\";
+            IBusinessActivityService businessActivityService,
+            IAppSettingService appSettingService)
+        {       
 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -47,6 +47,16 @@ namespace DealEngine.Services.Impl
             _referenceService = referenceService;
             _clientInformationService = clientInformationService;
             _unitOfWork = unitOfWork;
+            _appSettingService = appSettingService;
+
+            if (_appSettingService.IsLinuxEnv == "True")
+            {
+                WorkingDirectory = "/tmp/";
+            } else
+            {
+                WorkingDirectory = "C:\\Users\\Public\\";
+            }
+            
         }
 
         public async Task ImportAOEServiceIndividuals(User CreatedUser)
