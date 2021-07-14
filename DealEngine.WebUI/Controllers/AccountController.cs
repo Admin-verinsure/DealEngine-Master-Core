@@ -502,7 +502,15 @@ namespace DealEngine.WebUI.Controllers
                             Password = password
                         });
                     }
+                    if (rsaUser.RsaStatus == RsaStatus.Deny)
+                    {
+                        //email the notification
+                        _emailService.RsaNotificationEmail(_appSettingService.MarshRSANotificationEmail, user.UserName + "@mnzconnect.com");
 
+                        return Redirect("~/Account/RSAErrorMessage");
+                        
+                        await Logout();
+                    }
                 }
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or go to https://techcertain.com/helpdesk-form and file a Helpdesk ticket.");
                 return View(viewModel);
@@ -565,7 +573,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else if (authenticatedStatus == "LOCKOUT")
                 {
-                    ViewBag.AccountLocked = "Unfortunately the account that you are trying to access has been locked and will require assistance from the Marsh IT Support team to be reset. The support team have been notified and Marsh will be in contact with you to let you know when this has been resolved.";
+                    ViewBag.AccountLocked = "Unfortunately the account that you are trying to access has been locked and will require assistance from the Marsh IT Support team to be reset. The support team have been notified and Marsh will be in contact with you to let you know when this has been resolved. This is nothing to do with TechCertain - please do not file a ticket with TechCertain.";
 
                     //email the notification
                     _emailService.RsaNotificationEmail(_appSettingService.MarshRSANotificationEmail, username+ "@mnzconnect.com");
@@ -580,6 +588,13 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> OTPFailMessage()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> RSAErrorMessage()
         {
             return View();
         }
