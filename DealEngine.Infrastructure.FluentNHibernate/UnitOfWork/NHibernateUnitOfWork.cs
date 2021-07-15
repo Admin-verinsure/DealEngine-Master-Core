@@ -41,7 +41,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate
             finally
             {
                 CloseTransaction();
-                CloseSession();
+                // CloseSession();
             }
 
         }
@@ -60,14 +60,14 @@ namespace DealEngine.Infrastructure.FluentNHibernate
             }
         }
 
-        public void CloseSession()
-        {
-            if (_session != null)
-            {
-                _session.Close();
-            }
+        //public void CloseSession()
+        //{
+        //    if (_session != null)
+        //    {
+        //        _session.Close();
+        //    }
 
-        }
+        //}
 
 
         public void Dispose() { }
