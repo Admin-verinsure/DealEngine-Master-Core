@@ -160,9 +160,14 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 			if (responseUserStatus == UserStatus.LOCKOUT || responseUserStatus == UserStatus.DELETE)
 			{
-				_logger.LogInformation("Marsh user failed to login");
-				throw new Exception("unable to login user: "+ rsaUser.Username);
-			}
+                //_logger.LogInformation("Marsh user failed to login");
+                //throw new Exception("unable to login user: "+ rsaUser.Username);
+                // Need to save the deviceTokenCookie from analyzeReponse
+                UpdateRsaUserFromResponse(response, rsaUser);
+                rsaUser.RsaStatus = RsaStatus.Deny;
+
+                return rsaUser;
+            }
 			// user not allowed in if we get here.
 
 			return rsaUser;
