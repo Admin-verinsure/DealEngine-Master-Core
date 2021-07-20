@@ -210,19 +210,28 @@ namespace DealEngine.Services.Impl
 
             if (user != null)
             {
-                if(organisation.Id != user.PrimaryOrganisation.Id && organisation.Email == user.Email)
-                {
-                    organisation.Name = user.FirstName + " " + user.LastName;
-                }
-                else
+                //if(organisation.Id != user.PrimaryOrganisation.Id && organisation.Email == user.Email)
+                //{
+                //    organisation.Name = user.FirstName + " " + user.LastName;
+                //}
+                //else
+                //{
+                //    organisation.Name = jsonOrganisation.Name;
+                //}
+                if (jsonOrganisation.Name != "")
                 {
                     organisation.Name = jsonOrganisation.Name;
                 }
 
-                if ((user.FirstName + " " + user.LastName) != organisation.Name && TypeName == "Advisor")
+                if ((user.FirstName + " " + user.LastName) != organisation.Name && jsonOrganisation.Name != "" && TypeName != "")
                 {
                     organisation.Name = user.FirstName + " " + user.LastName;
                 }
+
+                //if ((user.FirstName + " " + user.LastName) != organisation.Name && TypeName == "Advisor")
+                //{
+                //    organisation.Name = user.FirstName + " " + user.LastName;
+                //}
             }
             var isfap = collection["OrganisationViewModel.Organisation.isTheFAP"];
             if (isfap == "true")
