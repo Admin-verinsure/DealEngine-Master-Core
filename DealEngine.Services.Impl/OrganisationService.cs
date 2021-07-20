@@ -178,12 +178,23 @@ namespace DealEngine.Services.Impl
                 User user = await _userService.GetUserById(UserId);
                 if (user != null)
                 {
-                    if (user.Organisations.Contains(organisation))
+                    var bool1 = user.Organisations.Contains(organisation);
+                    foreach (var org in user.Organisations)
                     {
-                        user = _mapper.Map(jsonUser, user);
-                        await _userService.Update(user);
-                        return user;
-                    }                    
+                        if(org.Id == organisation.Id)
+                        {
+                            user = _mapper.Map(jsonUser, user);
+                            await _userService.Update(user);
+                            return user;
+                        }
+
+                    }
+                    //if (user.Organisations.Contains(organisation))
+                    //{
+                    //    user = _mapper.Map(jsonUser, user);
+                    //    await _userService.Update(user);
+                    //    return user;
+                    //}                    
                 }
             }
             return null;
