@@ -702,6 +702,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            ///required for white hat fix for session .following 2 further calls were added to deal with OWASP cookies vulnerability.
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync("Identity.Application");
             HttpContext.Session.Clear();
