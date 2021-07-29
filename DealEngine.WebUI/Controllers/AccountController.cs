@@ -685,12 +685,50 @@ namespace DealEngine.WebUI.Controllers
 
             return View();
         }
-        [HttpGet]
+
+        // POST: /account/coastguardreg
+        [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CoastguardForm(AccountRegistrationModel model)
+        {
+            // Ensure we have a valid viewModel to work with
+            if (!ModelState.IsValid)
+                return View(model);
+
+            return await RedirectToLocal();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            ///required for white hat fix for session .following 2 further calls were added to deal with OWASP cookies vulnerability.
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync("Identity.Application");
+            HttpContext.Session.Clear();
+            HttpContext.Response.Cookies.Delete(".AspNet.Consent");
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+
+            return await RedirectToLocal();
+        }
+
+        void EnsureLoggedOut()
+        {
+            if (User.Identity.IsAuthenticated)
+                Logout();
+        }
+
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Profile(string id)
         {
             var currentUser = await CurrentUser();
             var user = string.IsNullOrWhiteSpace(id) ? currentUser : await _userService.GetUser(id);
+            if (!User.Identity.IsAuthenticated)
+                EnsureLoggedOut();
+
+            // We do not want to use any existing identity information
             if (user == null)
                 return PageNotFound();
 
@@ -727,7 +765,8 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> ProfileEditor()
         {
             var user = await CurrentUser();
@@ -774,7 +813,6 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
         public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
         {
             var user = await CurrentUser();
@@ -836,39 +874,6 @@ namespace DealEngine.WebUI.Controllers
             return Redirect("~/Account/ProfileEditor");
         }
 
-        // POST: /account/coastguardreg
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CoastguardForm(AccountRegistrationModel model)
-        {
-            // Ensure we have a valid viewModel to work with
-            if (!ModelState.IsValid)
-                return View(model);
-
-            return await RedirectToLocal();
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            ///required for white hat fix for session .following 2 further calls were added to deal with OWASP cookies vulnerability.
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignOutAsync("Identity.Application");
-            HttpContext.Session.Clear();
-            HttpContext.Response.Cookies.Delete(".AspNet.Consent");
-            HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
-
-            return await RedirectToLocal();
-        }
-
-        void EnsureLoggedOut()
-        {
-            if (User.Identity.IsAuthenticated)
-                Logout();
-        }
-
-      
         [HttpGet]
         public async Task<IActionResult> ChangeOwnPassword()
         {
