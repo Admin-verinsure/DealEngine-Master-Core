@@ -686,6 +686,7 @@ namespace DealEngine.WebUI.Controllers
             return View();
         }
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Profile(string id)
         {
             var currentUser = await CurrentUser();
@@ -726,6 +727,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ProfileEditor()
         {
             var user = await CurrentUser();
@@ -772,6 +774,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
         {
             var user = await CurrentUser();
