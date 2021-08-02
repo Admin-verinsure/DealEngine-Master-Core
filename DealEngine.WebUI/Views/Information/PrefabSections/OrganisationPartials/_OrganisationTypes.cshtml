@@ -35,7 +35,7 @@
 <div id="Else" class="form-group row" hidden>
     <div class="form-group col-md-6">
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
         @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme")
         {
             <div class="form-group" id="HideDateofIncorportation" hidden>
@@ -54,7 +54,7 @@
                 @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
                 {
                     @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label" })
-                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", placeholder = "If Applicable" })
+                    @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @maxlength = "250", @placeholder = "If Applicable. Max characters is 250. Over 250 will not be stored." })
 
 
                     <div class="form-group">
@@ -118,7 +118,7 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
             @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
             {
                 @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
                 @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
                 {
                     @Html.Hidden("NoTradingName", true)
@@ -265,7 +265,7 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
     @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
     {
         @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
         @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
         {
             @Html.Hidden("NoTradingName", true)
