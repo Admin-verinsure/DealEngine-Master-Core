@@ -726,9 +726,8 @@ namespace DealEngine.WebUI.Controllers
             var currentUser = await CurrentUser();
             var user = string.IsNullOrWhiteSpace(id) ? currentUser : await _userService.GetUser(id);
             if (!User.Identity.IsAuthenticated)
-                //return RedirectToAction("Account", "Login");
-                // return await RedirectToLocal();
-                Logout();
+                return PageNotFound();
+            //Logout();
             // We do not want to use any existing identity information
             if (user == null)
                 return PageNotFound();
