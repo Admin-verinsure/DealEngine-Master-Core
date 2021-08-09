@@ -86,8 +86,8 @@ namespace DealEngine.WebUI
                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(60);
-                options.IOTimeout = TimeSpan.FromMinutes(120);
+                options.IdleTimeout = TimeSpan.FromMinutes(2);
+                options.IOTimeout = TimeSpan.FromMinutes(2);
             });
             services.AddHsts(options =>
             {

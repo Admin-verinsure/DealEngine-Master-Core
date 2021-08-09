@@ -56,49 +56,7 @@
                     @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label" })
                     @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @maxlength = "250", @placeholder = "If Applicable. Max characters is 250. Over 250 will not be stored." })
 
-                    @if (Model.OrganisationViewModel.Programme.IsFAPOrg)
-                    {
-                        <div class="form-group  col-md-6">
-                            <div>
-                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "label required" })
-                            </div>
 
-                            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "form-control", @id = "Organisation.OrganisationFAPLicenseNumber" })
-
-                        </div>
-
-                        <div class="form-group  col-md-6">
-                            <div>
-                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationTheFAP, new { @class = "label required" })
-                            </div>
-
-                            <select id="Organisation.isOrganisationTheFAP" name="OrganisationViewModel.Organisation.isOrganisationTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">
-                                        @option.Text
-                                    </option>
-                                }
-                            </select>
-                        </div>
-
-                        <div id="OrganisationViewModel.Organisation.isOrganisationTheFAP" class="form-group  col-md-6" hidden>
-
-                            <div>
-                                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationInterposedPerson, new { @class = "label required" })
-
-                            </div>
-
-                            <select id="Organisation.isOrganisationInterposedPerson" name="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in @Model.OrganisationViewModel.HasInterposedPersonOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">
-                                        @option.Text
-                                    </option>
-                                }
-                            </select>
-                        </div>
-                    }
                 }
             </div>
 
@@ -112,30 +70,30 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZPI Programme" ||
 Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme"
 )
     {
-<div class="form-group col-md-6" id="TradingName" hidden>
-    @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
-    {
-        @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "If Applicable. Max characters is 250. Over 250 will not be stored." })
-        @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
-        {
-            @Html.Hidden("NoTradingName", true)
-        }
-        else
-        {
-            @Html.Hidden("NoTradingName", false)
-        }
-        @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
-        {
-            @Html.Hidden("NoTradingNameValidation", true)
-        }
-        else
-        {
-            @Html.Hidden("NoTradingNameValidation", false)
+        <div class="form-group col-md-6" id="TradingName" hidden>
+            @if (Model.OrganisationViewModel.Organisation.Id == Model.ClientInformationSheet.Owner.Id)
+            {
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "label required" })
+                @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.TradingName, new { @class = "form-control", @id = "Organisation.TradingName", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "If Applicable. Max characters is 250. Over 250 will not be stored." })
+                @if (string.IsNullOrWhiteSpace(Model.OrganisationViewModel.Organisation.TradingName))
+                {
+                    @Html.Hidden("NoTradingName", true)
+                }
+                else
+                {
+                    @Html.Hidden("NoTradingName", false)
+                }
+                @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+                {
+                    @Html.Hidden("NoTradingNameValidation", true)
+                }
+                else
+                {
+                    @Html.Hidden("NoTradingNameValidation", false)
 
-        }
-    }
-</div>
+                }
+            }
+        </div>
 
 
     }
@@ -143,9 +101,9 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
 
 @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "NZFSG Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "TripleA Programme"
 
-     || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" ||
-            Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
-            Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+   || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" ||
+          Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
+          Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
 {
 
     <div class="form-group AdvisorUnit">
@@ -200,3 +158,50 @@ Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Financial Advice NZ
 
     </div>
 }
+
+<div class="form-group" id="OwnerFap" hidden>
+    @if (Model.OrganisationViewModel.Programme.IsFAPOrg)
+    {
+        <div class="form-group  col-md-6">
+            <div>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "label required" })
+            </div>
+
+            @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.OrganisationFAPLicenseNumber, new { @class = "form-control", @id = "Organisation.OrganisationFAPLicenseNumber" })
+
+        </div>
+
+        <div class="form-group  col-md-6">
+            <div>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationTheFAP, new { @class = "label required" })
+            </div>
+
+            <select id="Organisation.isOrganisationTheFAP" name="OrganisationViewModel.Organisation.isOrganisationTheFAP" data-rule="IsTheFap" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasIsFAPOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div id="OrganisationViewModel.Organisation.isOrganisationTheFAP" class="form-group  col-md-6" hidden>
+
+            <div>
+                @Html.LabelFor(m => m.OrganisationViewModel.Organisation.isOrganisationInterposedPerson, new { @class = "label required" })
+
+            </div>
+
+            <select id="Organisation.isOrganisationInterposedPerson" name="OrganisationViewModel.Organisation.isOrganisationInterposedPerson" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                @foreach (var option in @Model.OrganisationViewModel.HasInterposedPersonOptions)
+                {
+                    <option selected="@option.Selected" value="@option.Value">
+                        @option.Text
+                    </option>
+                }
+            </select>
+        </div>
+    }
+
+</div>

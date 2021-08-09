@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using DealEngine.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Principal;
 #endregion
 
 namespace DealEngine.WebUI.Controllers
@@ -320,6 +321,7 @@ namespace DealEngine.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(AccountLoginModel viewModel)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
@@ -357,7 +359,12 @@ namespace DealEngine.WebUI.Controllers
 
                     }
                     var result = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: true);
-
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        user.IsLoggedout = false;
+                        user.LoggedInTime = DateTime.UtcNow;
+                        await uow.Commit();
+                    }
                     return LocalRedirect("~/Home/Index");
                 }
                 /*
@@ -701,13 +708,28 @@ namespace DealEngine.WebUI.Controllers
 
         public async Task<IActionResult> Logout()
         {
+            var currentUser = await CurrentUser();
+
             await _signInManager.SignOutAsync();
             ///required for white hat fix for session .following 2 further calls were added to deal with OWASP cookies vulnerability.
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync("Identity.Application");
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                currentUser.IsLoggedout = true;
+                currentUser.LoggedOutTime = DateTime.UtcNow;
+                await uow.Commit();
+            }
+           
+            var identity = new System.Security.Principal.GenericIdentity(HttpContext.User.Identity.Name);
+            var principal = new GenericPrincipal(identity, new string[0]);
+
+            var jhgh = User.Identity.IsAuthenticated;
             HttpContext.Session.Clear();
+           
             HttpContext.Response.Cookies.Delete(".AspNet.Consent");
             HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+          //  Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddYears(-1);
 
             return await RedirectToLocal();
         }
@@ -718,17 +740,60 @@ namespace DealEngine.WebUI.Controllers
                 Logout();
         }
 
-        [HttpGet]
-        [ValidateAntiForgeryToken]
+        //[HttpGet]
+        //[ValidateAntiForgeryToken]
 
+        //public async Task<IActionResult> Profile(string id)
+        //{
+        //    var currentUser = await CurrentUser();
+        //    var user = string.IsNullOrWhiteSpace(id) ? currentUser : await _userService.GetUser(id);
+        //    //if (!User.Identity.IsAuthenticated)
+        //    //    return PageNotFound();
+        //    //Logout();
+        //    // We do not want to use any existing identity information
+        //    if (user == null)
+        //        return PageNotFound();
+
+        //    ProfileViewModel model = new ProfileViewModel();
+
+        //    try
+        //    {
+        //        model.FirstName = user.FirstName;
+        //        model.LastName = user.LastName;
+        //        model.Email = user.Email;
+        //        model.Phone = user.Phone;
+        //        model.CurrentUser = currentUser;
+        //        model.DefaultOU = user.DefaultOU;
+        //        model.EmployeeNumber = user.EmployeeNumber;
+        //        model.JobTitle = user.JobTitle;
+        //        model.SalesPersonUserName = user.SalesPersonUserName;
+
+        //        if (user.PrimaryOrganisation != null)
+        //            model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
+        //        //if (user.Organisations.Count() > 0 && user.Organisations.ElementAt(0).OrganisationType.Name != "personal")
+        //        //	model.PrimaryOrganisationName = user.Organisations.ElementAt(0).Name;
+        //        model.Description = user.Description;
+        //        if (user.ProfilePicture != null)
+        //            model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
+
+        //        model.ViewingSelf = string.IsNullOrEmpty(id) || (currentUser.UserName == id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //    }
+
+        //    return View(model);
+        //}
+
+        [HttpGet]
         public async Task<IActionResult> Profile(string id)
         {
             var currentUser = await CurrentUser();
             var user = string.IsNullOrWhiteSpace(id) ? currentUser : await _userService.GetUser(id);
-            if (!User.Identity.IsAuthenticated)
-                return PageNotFound();
-            //Logout();
-            // We do not want to use any existing identity information
+            if (currentUser.IsLoggedout)
+                return Redirect("~/Home/Index");
+
             if (user == null)
                 return PageNotFound();
 
@@ -770,6 +835,10 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> ProfileEditor()
         {
             var user = await CurrentUser();
+
+            if (user.IsLoggedout)
+                return Redirect("~/Home/Index");
+
             if (user == null)
                 return PageNotFound();
 
