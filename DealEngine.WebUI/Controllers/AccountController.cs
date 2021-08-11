@@ -501,6 +501,12 @@ namespace DealEngine.WebUI.Controllers
                             deUser = await _userManager.FindByNameAsync(user.UserName);
                             await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
                         }
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            user.IsLoggedout = false;
+                            user.LoggedInTime = DateTime.UtcNow;
+                            await uow.Commit();
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                     if (rsaUser.RsaStatus == RsaStatus.RequiresOtp)
@@ -576,6 +582,12 @@ namespace DealEngine.WebUI.Controllers
                         await _signInManager.SignOutAsync();
                         deUser = await _userManager.FindByNameAsync(username);
                         await _signInManager.PasswordSignInAsync(deUser, viewModel.Password, true, lockoutOnFailure: false);
+                    }
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        user.IsLoggedout = false;
+                        user.LoggedInTime = DateTime.UtcNow;
+                        await uow.Commit();
                     }
                     return RedirectToAction("Index", "Home");
                 }
