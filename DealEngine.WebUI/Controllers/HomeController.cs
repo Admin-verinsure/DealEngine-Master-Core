@@ -1533,6 +1533,9 @@ namespace DealEngine.WebUI.Controllers
             List<String> ListCol = new List<String>();
 
             ListCol.Add("Insured");
+            ListCol.Add("Advisor");
+            ListCol.Add("Is Principal");
+            ListCol.Add("Is Subclient");
             ListCol.Add("Status");
             ListCol.Add("Reference Id");
             ListCol.Add("Email");
@@ -1553,19 +1556,21 @@ namespace DealEngine.WebUI.Controllers
             }
             ListReportSet.Add(ListCol);
 
-            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null ))
+            foreach (ClientProgramme cp in programme.ClientProgrammes.Where(o => o.InformationSheet.DateDeleted == null && o.InformationSheet.NextInformationSheet == null))
             {
                 try
                 {
-                   
-                        Guid clientInformationSheetID = Guid.NewGuid();
+                    //var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
+                    if(cp.Agreements.Any()) { 
+                    Guid clientInformationSheetID = Guid.NewGuid();
                         if (cp.BaseProgramme.Id == programme.Id)
                         {
                             clientInformationSheetID = cp.InformationSheet.Id;
 
                         }
-                        ListReportSet.Add(await CreateRevenueListReport(null, cp, clientInformationSheetID, true, false, ListCol));
-
+                        
+                            ListReportSet.Add(await CreateRevenueListReport(null, cp, clientInformationSheetID, true, false, ListCol));
+                        
                         if (cp.SubClientProgrammes.Any())
                         {
                             foreach (var subclient in cp.SubClientProgrammes)
@@ -1573,7 +1578,7 @@ namespace DealEngine.WebUI.Controllers
                                 ListReportSet.Add(await CreateRevenueListReport(cp, subclient, clientInformationSheetID, false, true, ListCol));
                             }
                         }
-
+                    }
                 }
                 catch (Exception ex)
                 { }
@@ -1586,25 +1591,58 @@ namespace DealEngine.WebUI.Controllers
             ClientInformationSheet sheet = null;
             List<String> ListReport = new List<String>(new String[ListCol.Count]);
             Organisation organisation = cp.InformationSheet.Owner;
-           
-            if (isSubClient)
-            {
-                ListReport.Insert(ListCol.IndexOf("Insured"), supercp.InformationSheet.Owner.Name);
+            User user = await _userService.GetUserByEmail(organisation.Email);
+            try { 
+            if (isSubClient )
+                {
+                    ListReport.Insert(ListCol.IndexOf("Insured"), supercp.InformationSheet.Owner.Name);
+
+                    if (user != null)
+                    {
+                        ListReport.Insert(ListCol.IndexOf("Advisor"), user.FirstName +" "+ user.LastName);
+
+                    }
+                    else
+                    {
+                        ListReport.Insert(ListCol.IndexOf("Advisor"), "No Advisor");
+
+                    }
+                    ListReport.Insert(ListCol.IndexOf("Is Principal"), "No");
+
+                    ListReport.Insert(ListCol.IndexOf("Is Subclient"), "Yes");
+
+
             }
             else
 
-            {
-                ListReport.Insert(ListCol.IndexOf("Insured"), cp.InformationSheet.Owner.Name);
+                {
+                    ListReport.Insert(ListCol.IndexOf("Insured"), cp.InformationSheet.Owner.Name);
+
+                    if (user != null)
+                    {
+                        ListReport.Insert(ListCol.IndexOf("Advisor"), user.FirstName + " " + user.LastName);
+
+                    }
+                    else
+                    {
+                        ListReport.Insert(ListCol.IndexOf("Advisor"), "No Advisor");
+
+                    }
+                    ListReport.Insert(ListCol.IndexOf("Is Principal"), "Yes");
+
+                    ListReport.Insert(ListCol.IndexOf("Is Subclient"), "No");
+
+
             }
             ListReport.Insert(ListCol.IndexOf("Status"), cp.InformationSheet.Status);
             ListReport.Insert(ListCol.IndexOf("Reference Id"), cp.InformationSheet.ReferenceId);
             ListReport.Insert(ListCol.IndexOf("Email"), organisation.Email);
               
-          
-               sheet = cp.InformationSheet;
+            sheet = cp.InformationSheet;
+
             if (sheet.RevenueData != null)
             {
-                foreach (var territory in sheet.RevenueData.Territories)
+                foreach (var territory in sheet.RevenueData.Territories.OrderByDescending(t => t.Location))
                 {
                     if (territory.Selected)
                     {
@@ -1638,6 +1676,10 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
+            }
+            }
+            catch (Exception ex)
+            {
             }
             return ListReport;
 
@@ -1674,7 +1716,7 @@ namespace DealEngine.WebUI.Controllers
                     Lreportset = await GetNZFGReportSet(ProgrammeId, queryselect);
 
                 }
-                else if ((programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" )&& queryselect == "FAP")
+                else if ((programme.NamedPartyUnitName == "Apollo Programme" || programme.NamedPartyUnitName == "TripleA Programme" || programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" )&& queryselect == "FAP")
                 {
                     ViewBag.Title = "Financial Advice Provider(FAP)";
 

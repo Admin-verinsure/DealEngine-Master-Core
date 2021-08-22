@@ -1757,6 +1757,8 @@ namespace DealEngine.WebUI.Controllers
                     model.IsOptionalProduct = agreement.Product.IsOptionalProduct;
                     model.Status = agreement.Status;
                     model.InformationSheetStatus = sheet.Status;
+                    model.IsExtensionCoverOption = agreement.Product.IsExtensionOption;
+
                     Boolean nextInfoSheet = false;
                     Boolean IsChange = false;
 
@@ -1793,6 +1795,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                     model.PolicyNumber = agreement.PolicyNumber;
                     model.InformationSheetId = sheet.Id;
+                    model.AgreementExtensions = agreement.ClientAgreementTermExtensions;
                     models.Add(model);
                 }
 
