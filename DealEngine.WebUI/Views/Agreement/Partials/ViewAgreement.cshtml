@@ -3,7 +3,7 @@
 
 @Html.HiddenFor(m => m.ClientProgrammeId)
 @Html.HiddenFor(m => m.Sheetstatus)
-@Html.HiddenFor(m => m.IsExtensionCoverOption)
+@Html.HiddenFor(m => m.IsExtentionCoverOption)
 
 @if (Model.Advisory != null)
 {
@@ -440,7 +440,7 @@ else
                 </table>
             </div>
 
-            @if (@Model.IsExtensionCoverOption) { }
+            @if (Model.IsExtentionCoverOption) { 
             <div class="row">
                 <div class="col-3 font-md">
                     <strong>Extension Options</strong>
@@ -451,6 +451,7 @@ else
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="@Model.ProductName Extensiontable">
                     <tr>
                         <th class="text-center" width="5%"></th>
+                        <th class="text-center" width="17%">Extension Name</th>
                         <th class="text-center" width="20%">Limit</th>
                         <th class="text-center" width="20%">Excess</th>
                         <th class="text-center" width="16%">Premium</th>
@@ -460,22 +461,24 @@ else
                     @foreach (var item in Model.ExtensionCoverOptions)
                     {
 
-                        <tr class="clickable-row">
-                            <td>
-                                <input type="radio" name="@Model.ProductName Extensiontable" value="@item.TermId" onchange="extensionselected('@Model.ProductName')">
+                <tr class="clickable-row">
+                    <td>
+                        <input type="radio" name="@Model.ProductName Extensiontable" value="@item.TermId" onchange="extensionselected('@Model.ProductName')">
 
-                            </td>
-
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Inclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Exclusion
-                            </td>
-                            <td class="pt-4-half" id="@Model.ProductCode row">
-                                @item.TotalPremium
-                            </td>
-                        </tr>
+                    </td>
+                    <td class="pt-3-half" width="20%" contenteditable="true">
+                        @item.ExtensionName
+                    </td>
+                    <td class="pt-3-half" width="20%" contenteditable="true">
+                        @item.Inclusion
+                    </td>
+                    <td class="pt-3-half" width="20%" contenteditable="true">
+                        @item.Exclusion
+                    </td>
+                    <td class="pt-4-half" id="@Model.ProductCode row">
+                        @item.TotalPremium
+                    </td>
+                </tr>
 
 
                     }

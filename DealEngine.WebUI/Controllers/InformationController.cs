@@ -563,7 +563,7 @@ namespace DealEngine.WebUI.Controllers
                     foreach (var agreement in clientProgramme.Agreements)
                     {
                         //if (agreement.Product.IsMultipleOption)
-                            if (agreement.Product.IsExtensionOption)
+                            if (agreement.Product.IsExtentionOption)
 
                             {
                                 foreach (var term in agreement.ClientAgreementTermExtensions)

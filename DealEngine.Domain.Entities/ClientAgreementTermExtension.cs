@@ -59,5 +59,10 @@ namespace DealEngine.Domain.Entities
             get;
             protected set;
         }
+        public virtual string ExtentionName
+        {
+            get;
+            set;
+        }
     }
 }

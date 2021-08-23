@@ -182,6 +182,7 @@ namespace DealEngine.WebUI.Models.Agreement
                         Inclusion = "Limit: " + term.TermLimit.ToString("C", userCulture),
                         Exclusion = "Minimum Excess: " + term.Excess.ToString("C", userCulture),
                         TotalPremium = term.Premium.ToString("C", userCulture),
+                        ExtensionName = term.ExtentionName,
                     });
                
                
@@ -584,8 +585,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public string ProductCode { get; set; }
         public IList<ClientAgreementTermExtension> AgreementExtensions { get; set; }
         public IList<ExtensionCoverOptions> ExtensionCoverOptions { get; set; }
-        public bool IsExtensionCoverOption { get; set; }
-
+        public bool IsExtentionCoverOption { get; set; }
+        public bool ExtentionCoverName { get; set; }
     }
 
     public class InsuranceInclusion
@@ -624,8 +625,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public string excess { get; set; }
         public string premium { get; set; }
         public string TotalPremium { get; set; }
-        public string monthlypremium { get; set; }
-        public string Dependableproduct { get; set; }
+        public string ExtensionName { get; set; }
+
     }
 
     public class InsuranceExclusion
