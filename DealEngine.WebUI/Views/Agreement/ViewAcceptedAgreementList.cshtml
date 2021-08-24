@@ -409,6 +409,26 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 });
 
              }
+             debugger;
+                var postData = { ProgrammeId: progId };
+
+                $.ajax({
+                    url: '@Url.Action("GetExtensionCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+                            $(queryselector).attr('checked', true);
+                        }
+                    }
+                }) .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to get the Cover Options.");
+                });
+
 
               if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "False")
               {
@@ -418,13 +438,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
         });
 
-
-        //$(window).bind("pageshow", function (event) {
-        //     window.location.reload();      
-           
-        //});
-
-
+       
     </script>
 
 }
