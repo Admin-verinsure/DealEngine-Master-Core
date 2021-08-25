@@ -2635,6 +2635,26 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> RerenderDocs(string ProgrammeId)
+        {
+            User user = null;
+            ViewAgreementViewModel viewAgreementViewModel = new ViewAgreementViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                viewAgreementViewModel.ProgrammeId = Guid.Parse(ProgrammeId);
+                return View(viewAgreementViewModel);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return View(viewAgreementViewModel);
+            }
+        }
+
+        [HttpGet]
         public async void RerenderAlldocs(string ProgrammeId)
         {
             User user = null;
