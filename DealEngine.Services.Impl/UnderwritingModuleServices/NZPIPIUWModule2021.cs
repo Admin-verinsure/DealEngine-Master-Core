@@ -71,6 +71,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal feeincometotallastandnextyr = 0M;
             decimal feeincomeaverage = 0M;
             decimal decOther = 0M;
+            decimal decLALP = 0M;
             bool bolworkoutsidenz = false;
 
             string strProfessionalBusiness = "Planning / urban design, resource management, local government advice, transport planning, Environmental policy advice, heritage planning, planning commissioner, market research, land management investigations, disputes resolution, master planning, urban design workshops, training, university lecturing.";
@@ -104,9 +105,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         decOther = uISActivity.Percentage;
                     }
-
+                    else if (uISActivity.AnzsciCode == "CUSNZPI01") //Landscape Architecture & Landscape Planning
+                    {
+                        if (uISActivity.Percentage > 0)
+                            decLALP = uISActivity.Percentage;
+                    }
                 }
-
             }
 
             int intnumberofadvisors = 0;
@@ -234,6 +238,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term5millimitpremiumoption.Brokerage = TermBrokerage5mil;
             term5millimitpremiumoption.DateDeleted = null;
             term5millimitpremiumoption.DeletedBy = null;
+
+            //add Landscape Architecture & Landscape Planning extension
+
+            foreach (ClientAgreementTermExtension pitermextension in agreement.ClientAgreementTermExtensions.Where(ctex => ctex.DateDeleted == null))
+            {
+                pitermextension.Delete(underwritingUser);
+            }
+            if (decLALP > 0)
+            {
+                ClientAgreementTermExtension termLALPextension = GetAgreementExtensionTerm(underwritingUser, agreement, 0, 0M, 400, "Landscape Architecture & Landscape Planning");
+                termLALPextension.ExtentionName = "Landscape Architecture & Landscape Planning";
+                termLALPextension.DateDeleted = null;
+                termLALPextension.DeletedBy = null;
+            }
 
 
             //Change policy premium claculation
@@ -410,6 +428,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
+        ClientAgreementTermExtension GetAgreementExtensionTerm(User CurrentUser, ClientAgreement agreement, int limitoption, decimal excessoption, decimal premiumoption, string extensionName)
+        {
+            ClientAgreementTermExtension extensionTerm = agreement.ClientAgreementTermExtensions.FirstOrDefault(tex => tex.DateDeleted != null && tex.ExtentionName == extensionName);
+
+            if (extensionTerm == null)
+            {
+                extensionTerm = new ClientAgreementTermExtension(CurrentUser, limitoption, excessoption, premiumoption, agreement);
+                agreement.ClientAgreementTermExtensions.Add(extensionTerm);
+            }
+
+            return extensionTerm;
+        }
 
         decimal GetPremiumFor(IDictionary<string, decimal> rates, int limitoption, int intnumberofadvisors)
         {
