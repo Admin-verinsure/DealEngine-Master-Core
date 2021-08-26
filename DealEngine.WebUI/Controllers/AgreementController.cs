@@ -4153,6 +4153,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
                 ViewBag.Id = id;
+                ViewBag.ClientProgrammeId = id;
                 ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
                 ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
                 ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
