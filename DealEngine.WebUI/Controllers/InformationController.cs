@@ -579,7 +579,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     foreach (var option in Answers)
                     {
-                        if (option != "None")
+                        if (option != "None" && option != null)
                         {
                             var clientAgreementExtentionTerm = await _clientAgreementExtensionTermService.GetAllClientAgreementExtensionTerm();
                             List<ClientAgreementTermExtension> listClientAgreementExtensionterm = clientAgreementExtentionTerm.Where(cagt => cagt.Id == Guid.Parse(option)).ToList();
@@ -790,7 +790,8 @@ namespace DealEngine.WebUI.Controllers
                         OptionItem = new String[2];
                         if (term.Bound)
                         {
-                            OptionItem[0] = agreement.Product.Name + " Extensiontable";
+                            OptionItem[0] = agreement.Product.Name;
+                            //OptionItem[0] = agreement.Product.Name + " Extensiontable";
                             OptionItem[1] = "" + term.Id;
                             OptionItems[count] = OptionItem;
                             count++;
@@ -801,7 +802,7 @@ namespace DealEngine.WebUI.Controllers
                     if (chosenoption == 0)
                     {
                         OptionItem = new String[2];
-                        OptionItem[0] = agreement.Product.Name + " Extensiontable";
+                        OptionItem[0] = agreement.Product.Name;
                         OptionItem[1] = "None";
                         OptionItems[count] = OptionItem;
                         count++;
