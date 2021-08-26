@@ -881,11 +881,13 @@
          $('input[name=\'' + productname + ' Extensiontable\']').prop('checked', false);
           
     };
-    
+
+
+
      function extensionselected(productname) {
             debugger;
            // var val = $(this).val();
-          var queryselector = "" + "input[name=\'" + productname + "\']:checked";
+        var queryselector = "" + "input[name=\'" + productname + "\']:checked";
             var optionsselected = $(queryselector).val();
             var postData = { SelectedId: optionsselected };
             $('#CalculateModal').show();
