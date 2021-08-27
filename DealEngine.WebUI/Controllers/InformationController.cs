@@ -746,6 +746,7 @@ namespace DealEngine.WebUI.Controllers
             List<ClientAgreementTerm> listClientAgreementerm = new List<ClientAgreementTerm>();
             List<Guid> listClientAgreementermid = new List<Guid>();
             var count = 0;
+
             String[] OptionItem;
             User user = null;
 
