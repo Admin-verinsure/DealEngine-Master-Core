@@ -253,18 +253,27 @@
                 });
 
                     ///For Extention covers
-                    
-					
-					var ExtensionCoverOptions = new Array(proddata.length);
+
+
+                    var ExtensionCoverOptions = new Array(proddata.length);
+                    var countextension = 0; 
+                    debugger;
                 for (var i = 0; i < proddata.length; i++) {
                     var ProdName = proddata[i];
                     var queryselector = "" + "input[name=\'" + ProdName + " Extensiontable\']:checked";
                     var Extensionoptionsselected = $(queryselector).val();
                     rownum = 0;
-                    
-                    ExtensionCoverOptions[i] = Extensionoptionsselected;
-                }
+                    if (Extensionoptionsselected != null) {
+                        countextension++;
+                    }
 
+                    ExtensionCoverOptions[i] = Extensionoptionsselected;
+                    }
+
+                    if (countextension == 0) {
+                           alert("Please select Extension cover options to proceed");
+                        return false;
+                    }
                     debugger;
                     var progId = $('#ClientProgrammeId').val();
                     var postData = { Answers: ExtensionCoverOptions, ProgrammeId: progId };

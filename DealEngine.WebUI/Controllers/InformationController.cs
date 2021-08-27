@@ -562,16 +562,32 @@ namespace DealEngine.WebUI.Controllers
                 {
                     foreach (var agreement in clientProgramme.Agreements)
                     {
-                        //if (agreement.Product.IsMultipleOption)
                             if (agreement.Product.IsExtentionOption)
 
                             {
                                 foreach (var term in agreement.ClientAgreementTermExtensions)
                             {
                                 term.Bound = false;
-                                await uow.Commit();
                             }
                         }
+
+
+                      if (clientProgramme.BaseProgramme.NamedPartyUnitName == "NZPI Programme")
+                      {
+                        ClientAgreementEndorsement cAELPLAIncl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Inclusion");
+                        ClientAgreementEndorsement cAELPLAExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Exclusion");
+
+                        if (cAELPLAIncl != null)
+                        {
+                            cAELPLAIncl.DateDeleted = DateTime.UtcNow;
+                            cAELPLAIncl.DeletedBy = user;
+                        }
+                        if (cAELPLAExcl != null)
+                        {
+                            cAELPLAExcl.DateDeleted = null;
+                            cAELPLAExcl.DeletedBy = null;
+                        }
+                      }
                     }
                 }
 
@@ -581,15 +597,32 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (option != "None" && option != null)
                         {
-                            var clientAgreementExtentionTerm = await _clientAgreementExtensionTermService.GetAllClientAgreementExtensionTerm();
-                            List<ClientAgreementTermExtension> listClientAgreementExtensionterm = clientAgreementExtentionTerm.Where(cagt => cagt.Id == Guid.Parse(option)).ToList();
-                            foreach (var term in listClientAgreementExtensionterm)
+                            ClientAgreementTermExtension clientAgreementExtentionTerm = await _clientAgreementExtensionTermService.GetAgreementExtentionById(Guid.Parse(option));
+                            
+                                clientAgreementExtentionTerm.Bound = true;
+                              
+                            ClientAgreement agreement = clientAgreementExtentionTerm.ClientAgreement;
+                            if (clientProgramme.BaseProgramme.NamedPartyUnitName == "NZPI Programme")
                             {
-                                term.Bound = true;
-                                await uow.Commit();
+                                ClientAgreementEndorsement cAELPLAIncl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Inclusion");
+                                ClientAgreementEndorsement cAELPLAExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Exclusion");
+                                if (cAELPLAIncl != null)
+                                {
+                                    cAELPLAIncl.DateDeleted = null;
+                                    cAELPLAIncl.DeletedBy = null;
+                                }
+                                if (cAELPLAExcl != null)
+                                {
+                                    cAELPLAExcl.DateDeleted = DateTime.UtcNow;
+                                    cAELPLAExcl.DeletedBy = user;
+                                }
                             }
+                            await uow.Commit();
+
                         }
                     }
+
+
                 }
 
                 return Json(true);
