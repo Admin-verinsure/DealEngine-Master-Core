@@ -201,6 +201,20 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
+            ClientAgreementEndorsement cAELPLAIncl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Inclusion");
+            ClientAgreementEndorsement cAELPLAExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Exclusion");
+
+            if (cAELPLAIncl != null)
+            {
+                cAELPLAIncl.DateDeleted = DateTime.UtcNow;
+                cAELPLAIncl.DeletedBy = underwritingUser;
+            }
+            if (cAELPLAExcl != null)
+            {
+                cAELPLAExcl.DateDeleted = DateTime.UtcNow;
+                cAELPLAExcl.DeletedBy = underwritingUser;
+            }
+
             int TermExcess = 0;
             TermExcess = 2000;
 
