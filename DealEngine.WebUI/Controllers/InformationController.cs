@@ -589,6 +589,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                       }
                     }
+                    await uow.Commit();
                 }
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -617,12 +618,12 @@ namespace DealEngine.WebUI.Controllers
                                     cAELPLAExcl.DeletedBy = user;
                                 }
                             }
-                            await uow.Commit();
+                            
 
                         }
                     }
 
-
+                    await uow.Commit();
                 }
 
                 return Json(true);
