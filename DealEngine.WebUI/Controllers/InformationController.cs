@@ -1683,7 +1683,15 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(renderedDoc.Contents);
-            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /></head>"); // Removed here too <style>img { width: 120px;}</style>
+
+            if (renderedDoc.DocumentType == 8) // Apollo Invoice
+            {
+                html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /></head>"); // Removed to fix Image 
+            }
+            else
+            {
+                html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { height:auto; max-width: 300px }</style></head>"); // Ashu old values -> width: 120px; height:120px
+            }
 
             var htmlToPdfConv = new NReco.PdfGenerator.HtmlToPdfConverter();
             htmlToPdfConv.License.SetLicenseKey(
