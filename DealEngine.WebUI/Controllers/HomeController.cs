@@ -1036,6 +1036,11 @@ namespace DealEngine.WebUI.Controllers
                 model.ClientProgrammes = clientProgrammes;
                 model.ProgrammeId = ProgrammeId;
                 model.IsSubUIS = "false";
+                model.IsLinuxEnv = "True";
+                if (_appSettingService.IsLinuxEnv == "False")
+                {
+                    model.IsLinuxEnv = "False";
+                }
 
                 return View(model);
             }
