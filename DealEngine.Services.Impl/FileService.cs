@@ -997,8 +997,18 @@ namespace DealEngine.Services.Impl
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerJobTitle]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.JobTitle));
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerPhone]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Phone));
             mergeFields.Add(new KeyValuePair<string, string>("[[BrokerEmail]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Email));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerAddress]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Address));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
-            if(agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Apollo Programme")
+
+            mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeClassOfInsurance]]", agreement.ClientInformationSheet.Programme.BaseProgramme.ProgMergeClassOfInsurance));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeInsurer]]", agreement.ClientInformationSheet.Programme.BaseProgramme.ProgMergeInsurer));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeInsurerRating]]", agreement.ClientInformationSheet.Programme.BaseProgramme.ProgMergeInsurerRating));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammePolicyNumber]]", agreement.ClientInformationSheet.Programme.BaseProgramme.ProgMergePolicyNumber));
+
+            if (agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Apollo Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Apollo ML Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "Apollo Run Off Programme" ||
+                agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZPI Programme")
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null
                                                                                     ?agreement.ClientInformationSheet.Programme.EGlobalClientNumber
