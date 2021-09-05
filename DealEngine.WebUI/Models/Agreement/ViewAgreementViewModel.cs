@@ -587,6 +587,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public IList<ExtensionCoverOptions> ExtensionCoverOptions { get; set; }
         public bool IsExtentionCoverOption { get; set; }
         public bool ExtentionCoverName { get; set; }
+        public List<EditExtensionTermsViewModel> ExtensionTerms { get; internal set; }
+
     }
 
     public class InsuranceInclusion

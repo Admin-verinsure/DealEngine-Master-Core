@@ -61,6 +61,7 @@ namespace DealEngine.WebUI.Controllers
         IClientAgreementTermCanService _clientAgreementTermCanService;
         IClientAgreementBVTermCanService _clientAgreementBVTermCanService;
         ISerializerationService _serializationService;
+
         //convert to service?
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<SystemDocument> _documentRepository;
@@ -1423,6 +1424,44 @@ namespace DealEngine.WebUI.Controllers
         //    }
         //}
 
+        [HttpGet]
+        public async Task<IActionResult> EditExtensionTerms(Guid id, String productname = null)
+        {
+            User user = null;
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
+                model.ClientAgreementId = id;
+                model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
+                var subtypeterms = new List<EditExtensionTermsViewModel>();
+
+                foreach (ClientAgreementTermExtension subtypeterm in agreement.ClientAgreementTermExtensions.Where(t => t.DateDeleted == null))
+                {
+                    subtypeterms.Add(new EditExtensionTermsViewModel
+                    {
+                        TermId = subtypeterm.Id,
+                        TermLimit = subtypeterm.TermLimit,
+                        Excess = Convert.ToInt32(subtypeterm.Excess),
+                        Premium = subtypeterm.Premium,
+
+                        //BasePremium = subtypeterm.BasePremium,
+                        //PremiumDiffer = subtypeterm.PremiumDiffer
+                    });
+                }
+
+                model.ExtensionTerms = subtypeterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.ProductName = productname;
+                ViewBag.Title = "Edit Extension Terms ";
+
+                return View("EditExtensionTerms", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 
         [HttpGet]
@@ -1571,6 +1610,73 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> DeleteExtensionTerm(EditExtensionTermsViewModel clientAgreemenExtensionTerm)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreemenExtensionTerm.clientAgreementId);
+                ClientAgreementTermExtension term = agreement.ClientAgreementTermExtensions.FirstOrDefault(t => t.Id == clientAgreemenExtensionTerm.TermId && t.DateDeleted == null);
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+
+                    term.DateDeleted = DateTime.UtcNow;
+                    await uow.Commit();
+                }
+
+                return RedirectToAction("EditExtensionTerms", new { id = clientAgreemenExtensionTerm.clientAgreementId });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditExtensionTerm(Guid clientAgreementId, EditExtensionTermsViewModel clientAgreementSubTerm)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
+                if (clientAgreementSubTerm.TermId != Guid.Empty)
+                {
+                    ClientAgreementTermExtension Extensionterm = agreement.ClientAgreementTermExtensions.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.DateDeleted == null);
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        Extensionterm.Premium = clientAgreementSubTerm.Premium;
+                        Extensionterm.TermLimit = clientAgreementSubTerm.TermLimit;
+                        Extensionterm.Excess = clientAgreementSubTerm.Excess;
+                        await uow.Commit();
+                    }
+                }
+                else
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        decimal brokeragerate = agreement.Product.DefaultBrokerage;
+                        decimal Brokerage = clientAgreementSubTerm.Premium * agreement.Product.DefaultBrokerage / 100;
+                        _clientAgreementTermService.AddAgreementExtensionTerm(user, clientAgreementSubTerm.TermLimit, clientAgreementSubTerm.Excess, clientAgreementSubTerm.Premium, agreement);
+                        await uow.Commit();
+                    }
+                }
+                return RedirectToAction("EditExtensionTerms", new { id = clientAgreementId });
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> EditSubTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementSubTerm)
         {
             User user = null;
@@ -1684,6 +1790,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+       
         [HttpPost]
         public async Task<IActionResult> DeleteSubTerm(EditTermsViewModel clientAgreementBVTerm)
         {
@@ -2654,30 +2761,92 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public async void RerenderAlldocs(string ProgrammeId)
+        public async void CommonRenderDocs(Guid ProgrammeId)
         {
             User user = null;
             try
             {
-                user = await CurrentUser();
                 var clientProgrammes = new List<ClientProgramme>();
-                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
-                List<ClientProgramme> ClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.Id);
+                List<ClientProgramme> ClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(ProgrammeId);
                 foreach (var clientProgramme in ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    foreach (ClientAgreement agreement in clientProgramme.Agreements)//not deleted and only bound / bound and incvoiced check different bound status fron domain entity
+                    user = await CurrentUser();
+                    var agreeDocList = new List<Document>();
+                    Document renderedDoc;
+                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
                     {
-                        RenderDocs(agreement, user);
-                    }
-                }
+                        agreeDocList = agreement.GetDocuments();
+                        foreach (Document doc in agreeDocList)
+                        {
+                            // The PDF document will skip rendering so we don't delete the old document here (as re-rending will make new doc) and all others are getting regenerated so we delete the old ones
+                            if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0) && !(doc.DocumentType == 99))
+                            {
+                                doc.Delete(user);
+                            }
+                        }
 
+                        if (agreement.Product.Id == new Guid("bdbdda02-ee4e-44f5-84a8-dd18d17287c1") &&
+                                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "2")
+                        {
+
+                        }
+                        else
+                        {
+
+                            if (!agreement.Product.IsOptionalCombinedProduct)
+                            {
+                                foreach (Document template in agreement.Product.Documents)
+                                {
+                                    if (template.DocumentType == 6)
+                                    {
+                                        foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
+                                        {
+                                            if (agreement.Product.IsOptionalProductBasedSub)
+                                            {
+                                                if (subsheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
+                                                {
+                                                    renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet, null);
+                                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                    agreement.Documents.Add(renderedDoc);
+                                                    await _fileService.UploadFile(renderedDoc);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet, null);
+                                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                                agreement.Documents.Add(renderedDoc);
+                                                await _fileService.UploadFile(renderedDoc);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                        renderedDoc.RenderToPDF = template.RenderToPDF;
+                                        agreement.Documents.Add(renderedDoc);
+                                        await _fileService.UploadFile(renderedDoc);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 //return RedirectToAction("Error500", "Error");
             }
+        }
+            public async Task<IActionResult> RerenderAlldocs(Guid ProgrammeId)
+        {
+            CommonRenderDocs(ProgrammeId);
+            return await RedirectToLocal();
+
         }
 
         public async void RenderDocs(ClientAgreement agreement,User user)
