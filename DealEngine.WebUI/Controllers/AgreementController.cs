@@ -3616,7 +3616,18 @@ namespace DealEngine.WebUI.Controllers
             var docContents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             // DOCX & HTML
             string html = _fileService.FromBytes(renderedDoc.Contents);
-            html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width: 120px; height:120px}</style></head>");
+
+
+            if (renderedDoc.DocumentType == 8) // Apollo Invoice
+            {
+                html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /></head>"); // Removed to fix Image 
+            }
+            else
+            {
+                html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { height:auto; max-width: 300px }</style></head>"); // Ashu old values -> width: 120px; height:120px
+            }
+
+            //html = html.Insert(0, "<head><meta http-equiv=\"content - type\" content=\"text / html; charset = utf - 8\" /><style>img { width: 120px; height:120px}</style></head>");
             // Test if the below 4 are even necessary by this function, setting above should make these redundant now
             html = html.Replace("“", "&quot");
             html = html.Replace("”", "&quot");
