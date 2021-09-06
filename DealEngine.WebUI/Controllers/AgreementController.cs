@@ -4495,7 +4495,7 @@ namespace DealEngine.WebUI.Controllers
 
                         if (!agreement.Product.IsOptionalCombinedProduct)
                         {
-                            foreach (Document template in agreement.Product.Documents)
+                            foreach (Document template in agreement.Product.Documents.Where(apd => apd.DateDeleted == null && apd.DocumentType != 10))
                             {
                                 if (template.DocumentType == 6)
                                 {
@@ -4525,8 +4525,7 @@ namespace DealEngine.WebUI.Controllers
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     renderedDoc.RenderToPDF = template.RenderToPDF;
-                                    if (answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" || answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme" ||
-                                         answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Run Off Programme")
+                                    if (answerSheet.Programme.BaseProgramme.IsPdfDoc)
                                     {
                                         if (renderedDoc.IsTemplate == true)
                                         {

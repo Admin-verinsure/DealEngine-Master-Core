@@ -221,13 +221,12 @@ namespace DealEngine.Services.Impl
                 }
 
                 // loop over terms and set merge feilds
-                foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements)
+                foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements.Where(a => a.DateDeleted == null))
                 {
                     foreach (var term in agreementlist.ClientAgreementTerms)
                     {
                         if (term.Bound)
                         {
-
 
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimitx2_{0}]]", term.SubTermType), (term.TermLimit * 2).ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
@@ -352,16 +351,24 @@ namespace DealEngine.Services.Impl
                         }
                     }
 
-                    foreach (var termExtension in agreementlist.ClientAgreementTermExtensions)
+                    foreach (var termExtension in agreementlist.ClientAgreementTermExtensions.Where(ae => ae.DateDeleted == null))
                     {
-                        if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                        if (termExtension.Bound)
                         {
-                            PremiumTotal += termExtension.PremiumDiffer;
+                            if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                            {
+                                PremiumTotal += termExtension.PremiumDiffer;
+                            }
+                            else
+                            {
+                                PremiumTotal += termExtension.Premium;
+                            }
                         }
-                        else
-                        {
-                            PremiumTotal += termExtension.Premium;
-                        }
+                    }
+
+                    if (agreementlist.Product.DefaultEnableBrokerFee)
+                    {
+                        PremiumTotal += agreementlist.BrokerFee;
                     }
                 }
 
