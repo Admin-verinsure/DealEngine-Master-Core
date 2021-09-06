@@ -2780,7 +2780,7 @@ namespace DealEngine.WebUI.Controllers
 
                                 if (!agreement.Product.IsOptionalCombinedProduct)
                                 {
-                                    foreach (SystemDocument template in agreeTemplateList)
+                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
                                     {
                                         if (template.ContentType == MediaTypeNames.Application.Pdf)
                                         {
@@ -3013,7 +3013,7 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (!agreement.Product.IsOptionalCombinedProduct)
                             {
-                                foreach (SystemDocument template in agreeTemplateList)
+                                foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
                                 {
                                     if (template.ContentType == MediaTypeNames.Application.Pdf)
                                     {
