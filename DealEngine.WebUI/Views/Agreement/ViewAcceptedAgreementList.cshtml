@@ -408,10 +408,11 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 });
 
              }
-              var progId = "@ViewBag.Id";
-                var postData = { ProgrammeId: progId };
 
-               $.ajax({
+              var progId = "@ViewBag.Id";
+              var postData = { ProgrammeId: progId };
+
+                $.ajax({
                     url: '@Url.Action("GetExtensionCoverOptions", "Information")',
                     type: "POST",
                     data: postData
@@ -429,7 +430,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to get the Extension Cover Options.");
                 });
-               
+
 
               if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "False")
               {

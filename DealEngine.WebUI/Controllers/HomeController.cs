@@ -1982,12 +1982,30 @@ namespace DealEngine.WebUI.Controllers
                             //create renew task
                             await _milestoneService.CreateRenewNotificationTask(user, renewfromClientProgramme, renewfromClientProgramme.Owner, programme);
 
+
+                            //get UIS instruction email attachement
+                            Product masterUISProduct = programme.Products.Where(cbpp => cbpp.DateDeleted == null && cbpp.IsMasterProduct).FirstOrDefault();
+                            var UISAttachmentDocuments = new List<SystemDocument>();
+                            if (masterUISProduct != null)
+                            {
+                                var UISAttachmentTemplateList = masterUISProduct.Documents.Where(pd => pd.DateDeleted == null && pd.IsTemplate && pd.DocumentType == 10);
+
+                                foreach (SystemDocument template in UISAttachmentTemplateList)
+                                {
+                                    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, null, renewfromClientProgramme.InformationSheet, null);
+                                    SystemDocument renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                                    renderedDoc.OwnerOrganisation = renewfromClientProgramme.Owner;
+                                    UISAttachmentDocuments.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
+                            }
+
                             //send out renew notification email
                             EmailTemplate emailTemplate = null;
                             emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstructionRenew");
                             if (emailTemplate != null)
                             {
-                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, UISAttachmentDocuments, null, null);
                             }
                             //send out login instruction email
                             await _emailService.SendSystemEmailLogin(email);
