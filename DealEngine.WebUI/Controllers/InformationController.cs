@@ -571,22 +571,16 @@ namespace DealEngine.WebUI.Controllers
                             }
                         }
 
-
                       if (clientProgramme.BaseProgramme.NamedPartyUnitName == "NZPI Programme")
                       {
                         ClientAgreementEndorsement cAELPLAIncl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Inclusion");
-                        ClientAgreementEndorsement cAELPLAExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Exclusion");
 
                         if (cAELPLAIncl != null)
                         {
                             cAELPLAIncl.DateDeleted = DateTime.UtcNow;
                             cAELPLAIncl.DeletedBy = user;
                         }
-                        if (cAELPLAExcl != null)
-                        {
-                            cAELPLAExcl.DateDeleted = null;
-                            cAELPLAExcl.DeletedBy = null;
-                        }
+
                       }
                     }
                     await uow.Commit();
@@ -606,20 +600,13 @@ namespace DealEngine.WebUI.Controllers
                             if (clientProgramme.BaseProgramme.NamedPartyUnitName == "NZPI Programme")
                             {
                                 ClientAgreementEndorsement cAELPLAIncl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Inclusion");
-                                ClientAgreementEndorsement cAELPLAExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Landscape Planning & Landscape Architectural Exclusion");
                                 if (cAELPLAIncl != null)
                                 {
                                     cAELPLAIncl.DateDeleted = null;
                                     cAELPLAIncl.DeletedBy = null;
                                 }
-                                if (cAELPLAExcl != null)
-                                {
-                                    cAELPLAExcl.DateDeleted = DateTime.UtcNow;
-                                    cAELPLAExcl.DeletedBy = user;
-                                }
                             }
                             
-
                         }
                     }
 

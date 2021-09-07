@@ -75,8 +75,22 @@
         $(e.currentTarget).find('input[name="Excess"]').val(subExcess);
         $(e.currentTarget).find('input[name="Premium"]').val(subPremium);
         $(e.currentTarget).find('input[name="PremiumDiffer"]').val(subPremiumDiffer);
-     });
+    });
 
+     $('#ExtensionTermModal').on('show.bs.modal', function (e) {
+        debugger;
+        $('.modal').css('width', '600px');
+        //var action = $(e.relatedTarget).data('type-id');
+        var subSumInsured = $(e.relatedTarget).data('sub-sum');
+        var subPremium = $(e.relatedTarget).data('sub-premium');
+        var subExcess = $(e.relatedTarget).data('sub-excess');
+        var subId = $(e.relatedTarget).data('sub-id');
+        
+        $(e.currentTarget).find('input[name="Id"]').val(subId);
+        $(e.currentTarget).find('input[name="SumInsured"]').val(subSumInsured);
+        $(e.currentTarget).find('input[name="Excess"]').val(subExcess);
+        $(e.currentTarget).find('input[name="Premium"]').val(subPremium);
+     });
 
     $('#LoadModal').on('show.bs.modal', function (e) {
 
@@ -98,7 +112,11 @@
         var termId = $(e.relatedTarget).data('term-id');
         $(e.currentTarget).find('input[name="TermId"]').val(termId);
     });
-
+     $('#ConfirmExtensionTermDelete').on('show.bs.modal', function (e) {
+        $('.modal .modal-body').css('height', 'auto');
+        var termId = $(e.relatedTarget).data('term-id');
+        $(e.currentTarget).find('input[name="TermId"]').val(termId);
+    });
         $("#btnSubmit").click(function () {
             var valid = ValidateVesselTerm();
             if (valid) {
@@ -139,7 +157,17 @@
                 termSubmit();
             }
 
+         });
+
+        $("#btnExtenionTermSubmit").click(function () {
+            debugger;
+            var valid = ValidateExtensionTerm();
+            if (valid) {
+                ExtensiontermSubmit();
+            }
+
         });
+
 
         $("#btnMotorDelete").click(function () {
             var agreement = $("#ClientAgreementId").val();
@@ -181,6 +209,26 @@
             });
            });
 
+
+         $("#btnExtensionTermDelete").click(function () {
+            var agreement = $("#ClientAgreementId").val();
+            var termId = $("#Term_Id").val();
+            var prodData = {
+                "clientAgreementId":agreement,
+                "TermId": termId
+            };
+            $.ajax({
+                type: "Post",
+                data: prodData,
+                url: "/Agreement/DeleteExtensionTerm",
+                success: function () {
+                    $("#ConfirmExtensionTermDelete").modal("hide");
+                    location.reload(true);
+                    alert("Deleted Successfully!");
+
+                }
+            });
+           });
         $("#btnDelete").click(function () {
             var agreement = $("#ClientAgreementId").val();
             var boatId = $("#Boat_Id").val();
@@ -288,7 +336,35 @@
             }
             return validation;
     }
-
+     function ValidateExtensionTerm() {
+            var termExcess = $("#TermExcess").val();
+            var termPremium = $("#TermPremium").val();
+            var termSum = $("#TermSumInsured").val();
+            var validation = true;
+            if (termExcess == "") {
+                $('#validateTermExcess').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateTermExcess').html("");
+            }
+            if (termPremium == "") {
+                $('#validateTermPremium').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateTermPremium').html("");
+            }
+            if (termSum == "") {
+                $('#validateTermSum').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }
+            return validation;
+        }
      function ValidateSubTerm() {
             var termExcess = $("#TermExcess").val();
             var termPremium = $("#TermPremium").val();
@@ -677,6 +753,34 @@
         }
 
     
+    function ExtensiontermSubmit() {
+        debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var SumInsured = $("#TermSumInsured").val().replace("$", " ");
+            var Excess = $("#TermExcess").val().replace("$", " ");
+         var Premium = $("#TermPremium").val().replace("$", " ");
+            var id = $("#TermId").val();
+            var postData = {
+                "TermLimit": SumInsured.replace(/,/g, '').trim(),
+                "Excess": Excess.replace(/,/g, '').trim(),
+                "Premium": Premium.replace(/,/g, '').trim(),
+                "TermId": id,
+                "clientAgreementId": agreement
+
+            };
+            $.ajax({
+                type: "Post",
+                url: "/Agreement/EditExtensionTerm",
+                data: postData,
+                async: true,
+                success: function () {
+                    $("#myModal").modal("hide");
+                    alert("Saved Successfully!");
+                    location.reload(true);
+
+                }
+            });
+    }
      function termSubmit() {
             var agreement = $("#ClientAgreementId").val();
             var termType = $("#TermType").val();

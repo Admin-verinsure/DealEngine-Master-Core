@@ -62,11 +62,11 @@
                                     </li>
                                 }
                                 @*@if (item.ProgrammeNamedPartyName == "NZFSG Programme")
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> Edit Advisors </a>
-                                    </li>
-                                }*@
+            {
+                <li class="nav-item">
+                    <a href="~/Agreement/EditAdvisor/@item.ClientAgreementId" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> Edit Advisors </a>
+                </li>
+            }*@
 
                                 <li class="nav-item">
                                     <a href="~/Agreement/EditAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Dates </a>
@@ -96,7 +96,10 @@
 
                                     @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
                                 </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("EditExtensionTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Extension Limits2 </a>
 
+                                </li>
                                 @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
                                 {
                                     <li class="nav-item">
@@ -208,7 +211,10 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <li class="nav-item">
                                     <a href="@Url.Action("EditTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>
 
-                                    @*<a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Policy Limits </a>*@
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("EditExtensionTerms", "Agreement", new { id = @item.ClientAgreementId, productname = @item.ProductCode })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Extension Limits </a>
+
                                 </li>
                                 @if (item.Status == "Authorised" && item.ClientInformationSheet.Status == "Submitted")
                                 {
@@ -402,8 +408,8 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 });
 
              }
-                //var postData = { ProgrammeId: progId };
-                              @*var postData = { ProgrammeId: "@ViewBag.Id" };
+                var postData = { ProgrammeId: progId };
+                              var postData = { ProgrammeId: "@ViewBag.Id" };
              debugger;
                 $.ajax({
                     url: '@Url.Action("GetExtensionCoverOptions", "Information")',
@@ -422,8 +428,8 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         }
                     }
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("There was an error while trying to get the Cover Options.");
-                });*@
+                alert("There was an error while trying to get the Extension Cover Options.");
+                });
 
 
               if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "False")
