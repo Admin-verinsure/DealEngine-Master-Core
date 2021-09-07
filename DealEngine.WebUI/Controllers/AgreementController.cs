@@ -4313,7 +4313,7 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else if (doc.DocumentType == 8)//.Name.Contains("Invoice"))
                             {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=ApolloInvoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
+                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name + ".pdf", Url = "/File/GetInvoicePDF/" + doc.Id + "?ClientProgrammeId=" + programme.Id + "&invoicename=Invoice", ClientAgreementId = agreement.Id, DocType = doc.DocumentType, RenderToPDF = doc.RenderToPDF });
                             }
                             else if (doc.DocumentType == 7)
                             {
