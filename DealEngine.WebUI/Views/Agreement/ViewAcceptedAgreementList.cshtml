@@ -429,29 +429,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to get the Extension Cover Options.");
                 });
-                //var postData = { ProgrammeId: progId };
-                              @*var postData = { ProgrammeId: "@ViewBag.Id" };
-             debugger;
-                $.ajax({
-                    url: '@Url.Action("GetExtensionCoverOptions", "Information")',
-                    type: "POST",
-                    data: postData
-                }).done(function (data) {
-                    ///bound viewacceptednormal
-                    debugger;
-                    if (data != "") {
-                        for (var item = 0; item < data.length; item++) {
-                            var arr = data[item];
-                            var count = 0;
-                            var queryselector = "" + "input[name=\'" + arr[count] + " Extensiontable\'][value=\'" + arr[count + 1] + "\']";
-                            $(queryselector).attr('checked', true);
-                            //extensionselected(arr[count]);
-                        }
-                    }
-                }) .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("There was an error while trying to get the Cover Options.");
-                });*@
-
+               
 
               if (!("@ViewBag.IsBroker" == "True" || "@ViewBag.IsTC" == "True" || "@ViewBag.IsInsurer" == "True") && "@ViewBag.showDocs" == "False")
               {
