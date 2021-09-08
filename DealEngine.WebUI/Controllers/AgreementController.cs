@@ -2761,7 +2761,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        public async void CommonRenderDocs(Guid ProgrammeId, string Action = null, string status = null, ClientInformationSheet sheet = null)
+        public async void CommonRenderDocs(Guid ProgrammeId, string Action = null, string status = null, ClientInformationSheet sheet = null,bool Rerenderalldocs = false)
         {
             User user = null;
             try
@@ -3007,7 +3007,8 @@ namespace DealEngine.WebUI.Controllers
         }
         public async Task<IActionResult> RerenderAlldocs(Guid ProgrammeId)
         {
-            CommonRenderDocs(ProgrammeId);
+            bool Rerenderalldocs = true;
+            CommonRenderDocs(ProgrammeId,null,null,null, Rerenderalldocs);
             return await RedirectToLocal();
 
         }
