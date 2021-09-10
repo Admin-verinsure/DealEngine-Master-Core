@@ -1509,7 +1509,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 
                 // Attach the Advisors
-                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user);
+                await _programmeService.MoveAdvisorsToClientProgramme(advisors, clientProgramme, sourceClientProgramme, user, targetOwnerFAP);
 
                 //Clone or create sub uis
                 //IList<SubClientProgramme> SubClientProgrammes;
