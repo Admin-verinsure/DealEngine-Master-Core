@@ -408,16 +408,15 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 });
 
              }
-                var postData = { ProgrammeId: progId };
-                              var postData = { ProgrammeId: "@ViewBag.Id" };
-             debugger;
+
+              var progId = "@ViewBag.Id";
+              var postData = { ProgrammeId: progId };
+
                 $.ajax({
                     url: '@Url.Action("GetExtensionCoverOptions", "Information")',
                     type: "POST",
                     data: postData
                 }).done(function (data) {
-                    ///bound viewacceptednormal
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++) {
                             var arr = data[item];
@@ -425,6 +424,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                             var queryselector = "" + "input[name=\'" + arr[count] + " Extensiontable\'][value=\'" + arr[count + 1] + "\']";
                             $(queryselector).attr('checked', true);
                             //extensionselected(arr[count]);
+
                         }
                     }
                 }) .fail(function (jqXHR, textStatus, errorThrown) {
