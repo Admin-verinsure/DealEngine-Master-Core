@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using DealEngine.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SystemDocument = DealEngine.Domain.Entities.Document;
 
 namespace DealEngine.WebUI.Models.Agreement
 {
@@ -510,6 +511,7 @@ namespace DealEngine.WebUI.Models.Agreement
 
         }
 
+      
         public IEnumerable<InsuranceRoleViewModel> InsuranceRoles { get; set; }
         public string ProductName { get; set; }
         public string ProgrammeName { get; set; }
@@ -603,6 +605,9 @@ namespace DealEngine.WebUI.Models.Agreement
         public bool IsExtentionCoverOption { get; set; }
         public bool ExtentionCoverName { get; set; }
         public List<EditExtensionTermsViewModel> ExtensionTerms { get; internal set; }
+        public IList<String> AgreementTemplates { get; set; }
+        public IList<Product> AgreementProducts { get; set; }
+
 
     }
 

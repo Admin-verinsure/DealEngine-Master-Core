@@ -1,16 +1,49 @@
 ﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
 
 <div id="widget-grid" class="container">
-        @Html.HiddenFor(m => m.ProgrammeId)
+    @Html.HiddenFor(m => m.ProgrammeId)
 
-        <ul class="nav">
-           
-            <li class="nav-item">
-                @*<a class="btn btn-success btn-sm" href="~/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"><i class="fa fa-edit"></i> Rerender all documents </a>*@
-                <a class="btn btn-primary btn-sm" href="/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"> Rerender all documents </a>
+    <ul class="nav">
 
-                @*<a onclick="location.href='@Url.Action("RerenderAlldocs", "Agreement",new { ProgrammeId=@Model.ProgrammeId})'" class="btn btn-primary btn-sm" style="color:white"> <i class="fa fa-pencil"></i> Rerender all documents </a>*@
-            </li>
-        </ul>
+        <li class="nav-item">
+            <a class="btn btn-primary btn-sm" href="/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"> Rerender all documents </a>
+        </li>
+
+    </ul>
+    <br />
+
+
+    <ul class="nav">
+        <li>
+            <label>choose per product </label>
+        </li>
+        <li class="nav-item">
+            <select id="AgreemntProductType" name="ProductType" class="custom-select">
+
+                @*<select id="ProductType" name="ProductType" class="form-control input-lg" onselect="PopulateTemplate(this)">*@
+                <option value="" selected="">-- Select --</option>
+
+                @foreach (var agreementproduct in Model.AgreementProducts)
+                {
+                    <option value="@agreementproduct.Id">@agreementproduct.Name</option>
+
+                }
+            </select>
+        </li>
+
+        <li class="nav-item">
+            <select id="AgreemnTemplateType" name="TemplateType" class="form-control input-lg" style="display:none">
+            </select>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary btn-sm" href="/Agreement/RerenderSelected?ProgrammeId=@Model.ProgrammeId"> Rerender selected template </a>
+        </li>
+    </ul>
 
 </div>
+
+
+@section pagespecific {
+
+    @await Html.PartialAsync("_AgreementScripts")
+}
