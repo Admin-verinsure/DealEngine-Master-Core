@@ -1,45 +1,67 @@
 ﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
 
-<div id="widget-grid" class="container">
-    @Html.HiddenFor(m => m.ProgrammeId)
 
-    <ul class="nav">
+@Html.HiddenFor(m => m.ProgrammeId)
 
-        <li class="nav-item">
-            <a class="btn btn-primary btn-sm" href="/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"> Rerender all documents </a>
-        </li>
+<div class="container">
+    <form method="POST" action="~/Services/PostClient" novalidate>
+        <div class="card">
+            <div class="card-header">
+                <div class=" form-group">
+                    <a class="btn btn-primary btn-sm" href="/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"> Rerender all documents </a>
+                </div>
+                <div class="form-group">
+                    <button class="btn-success btn btn-xs" type="button" onclick="GetOwner()">Go</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
 
-    </ul>
-    <br />
+                    <div class="form-group col-md-6">
 
+                        <div class="form-group">
+                            <label class="label">Select Product</label>
+                            <select id="AgreemntProductType" name="ProductType" class="custom-select">
 
-    <ul class="nav">
-        <li>
-            <label>choose per product </label>
-        </li>
-        <li class="nav-item">
-            <select id="AgreemntProductType" name="ProductType" class="custom-select">
+                                @foreach (var agreementproduct in Model.AgreementProducts)
+                                {
+                                    <option value="@agreementproduct.Id">@agreementproduct.Name</option>
 
-                @*<select id="ProductType" name="ProductType" class="form-control input-lg" onselect="PopulateTemplate(this)">*@
-                <option value="" selected="">-- Select --</option>
+                                }
+                            </select>
+                        </div>
 
-                @foreach (var agreementproduct in Model.AgreementProducts)
-                {
-                    <option value="@agreementproduct.Id">@agreementproduct.Name</option>
+                        <div class="form-group AgreemnTemplateTypeSec" style="display:none">
+                            <label class="label">Select Template</label>
+                            <select id="AgreemntTemplateType" name="TemplateType" class="form-control input-lg">
+                            </select>
+                        </div>
+                        <div>
+                            @*<a href='@Url.Action("RerenderSelectedTemplate", "Agreement",new { id = @item.ClientProgrammeId, viewlist="ListView"})' class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> Information for all Products </a>*@
 
-                }
-            </select>
-        </li>
+                            <a class="btn btn-primary btn-sm AgreemnTemplateTypeSec" id="Rerenderselected" onclick='Rerenderselected("AgreemntTemplateType")' href="/Agreement/RerenderSelected?ProgrammeId=@Model.ProgrammeId" style="display:none"> Rerender selected template </a>
 
-        <li class="nav-item">
-            <select id="AgreemnTemplateType" name="TemplateType" class="form-control input-lg" style="display:none">
-            </select>
-        </li>
-        <li class="nav-item">
-            <a class="btn btn-primary btn-sm" href="/Agreement/RerenderSelected?ProgrammeId=@Model.ProgrammeId"> Rerender selected template </a>
-        </li>
-    </ul>
+                        </div>
 
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+
+                @*<button class="btn btn-primary btn-xs" type="submit">Update</button>*@
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal" id="getRerenderModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p><img src="/img/loading.gif" /> Rendering your documents. Please wait...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 

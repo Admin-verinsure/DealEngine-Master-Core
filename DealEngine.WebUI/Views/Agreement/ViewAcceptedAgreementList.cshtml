@@ -283,7 +283,11 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
 
-
+                            <li class="nav-item" id="SendReport">
+                                <a class="btn btn-success btn-sm fullreport" href="~/Agreement/SendFullProposalReport?id=@item.InformationSheetId&sendUser=@true">
+                                    <i class="fa fa-edit"></i> Re-send FullProposal Report
+                                </a>
+                            </li>
 
                         </ul>
                     </div>

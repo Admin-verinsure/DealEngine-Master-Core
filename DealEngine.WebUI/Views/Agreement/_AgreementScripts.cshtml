@@ -858,49 +858,52 @@
                 data: postData,
                 async: true
           }).done(function (data) {
-              var templateselect = $('#AgreemnTemplateType');
-              templateselect.show();
+              var templateselect = $('#AgreemntTemplateType');
+              $('.AgreemnTemplateTypeSec').show();
+
+              $('#AgreemntTemplateType').empty();
               for (var index = 0; index < data.agreementTemplates.length; index++) {
                   templateselect.append('<option value="' + data.agreementTemplates[index] + '">' + data.agreementTemplates[index] + '</option>');
               }
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
-            //debugger;
              alert("There was an error while trying to decline agreement.");
           });
     });
 
 
-    $("#AgreemnTemplateType").on('change', function () {
+
+    function Rerenderselected(typeselected) {
         debugger;
-        var getValue = $(this).val();
+                event.preventDefault();
+        $("#getRerenderModal").show();
+        var selectedtype = document.getElementById(typeselected);
+        var getValue = ""+selectedtype.value;
+
         var progid = $('#ProgrammeId').val();
 
         var postData = {
             "TemplateName": getValue,
             "ProgrammeId": progid
         };
-        
-          $.ajax({
-                url: '@Url.Action("RerenderSelectedTemplate", "Agreement")',
-                type: "POST",
-                data: postData,
-                async: true
-          }).done(function (data) {
-              var templateselect = $('#TemplateType');
-              templateselect.removeClass("Hidden");
-              templateselect.show();
-              var templist = data.agreementTemplates;
-              for (var index = 0; index < data.agreementTemplates.length; index++) {
-                  var hjgh = data.agreementTemplates[index];
-                  templateselect.append('<option value="' + data.agreementTemplates[index] + '">' + data.agreementTemplates[index] + '</option>');
-              }
-           })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-            //debugger;
-             alert("There was an error while trying to decline agreement.");
-          });
-    });
+
+         $.ajax({
+            url: '@Url.Action("RerenderSelectedTemplate", "Agreement")',
+            type: "Post",
+            data: postData,
+            async: true
+        }).done(function (data) {
+            window.location.href = data.url;
+              $("#getRerenderModal").hide();
+        }).fail(function (a, s, d) {
+              $("#getRerenderModal").hide();
+
+              alert("There was an error while trying to decline agreement.");
+
+        });
+
+
+    };
 
 
 
