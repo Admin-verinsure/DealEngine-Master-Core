@@ -168,15 +168,16 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 Guid.TryParse(Collection["Id"], out Guid OrganisationId);
+                Guid.TryParse(Collection["ProgId"], out Guid ProgId);
                 Organisation organisation = await _organisationService.GetOrganisation(OrganisationId);
                 Dictionary<string, object> JsonObjects = new Dictionary<string, object>();
                 if (organisation != null)
                 {
-                    var ClientProgrammes = await _programmeService.GetClientProgrammesByOwner(organisation.Id);
+                    var ClientProgrammes = await _programmeService.GetClientProgrammesByOwnerByProgramme(OrganisationId, ProgId);
                     if (ClientProgrammes.Any())
                     {
                         JsonObjects.Add("Organisation", organisation);
-                        JsonObjects.Add("ClientProgramme", ClientProgrammes.FirstOrDefault());
+                        JsonObjects.Add("ClientProgramme", ClientProgrammes.OrderByDescending(cpobdc => cpobdc.DateCreated).FirstOrDefault());
                         var jsonObj = await _serializerationService.GetSerializedObject(JsonObjects);
                         return Json(jsonObj);
                     }
