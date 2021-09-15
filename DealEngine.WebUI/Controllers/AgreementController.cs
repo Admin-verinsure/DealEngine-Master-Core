@@ -1895,6 +1895,10 @@ namespace DealEngine.WebUI.Controllers
                     {
                         model.ClientNumber = sheet.Programme.EGlobalBranchCode + "-" + sheet.Programme.EGlobalClientNumber;
                     }
+                    else if (!sheet.Programme.BaseProgramme.UsesEGlobal && sheet.Programme.EGlobalClientNumber != null)
+                    {
+                        model.ClientNumber = sheet.Programme.EGlobalClientNumber;
+                    }
                     else
                     {
                         model.ClientNumber = agreement.ClientNumber;
