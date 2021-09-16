@@ -2988,7 +2988,13 @@ namespace DealEngine.WebUI.Controllers
             var documentspremiumadvice = new List<SystemDocument>();
             User user = await CurrentUser();
             try {
-            ClientInformationSheet sheet = agreement.ClientInformationSheet;
+                List<SystemDocument>agreeDocList = agreement.GetDocuments();
+                foreach (Document doc in agreeDocList.Where(doc => doc.Name== template.Name))
+                {
+                        doc.Delete(user);
+                }
+
+                ClientInformationSheet sheet = agreement.ClientInformationSheet;
             if (template.ContentType == MediaTypeNames.Application.Pdf)
             {
                 SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
@@ -3031,16 +3037,16 @@ namespace DealEngine.WebUI.Controllers
                         documents.Add(renderedDoc);
                         await _fileService.UploadFile(renderedDoc);
                     }
-                    else if (programme.BaseProgramme.IsPdfDoc)
-                    {
-                        SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
-                        renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                    //else if (programme.BaseProgramme.IsPdfDoc)
+                    //{
+                    //    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                    //    renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
 
-                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                        agreement.Documents.Add(renderedDoc1);
-                        documents.Add(renderedDoc);
-                        await _fileService.UploadFile(renderedDoc);
-                    }
+                    //    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                    //    agreement.Documents.Add(renderedDoc1);
+                    //    documents.Add(renderedDoc);
+                    //    await _fileService.UploadFile(renderedDoc);
+                    //}
                     else
                     {
                         renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
@@ -3121,15 +3127,16 @@ namespace DealEngine.WebUI.Controllers
             List <ClientProgramme> ClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(ProgrammeId);
             try
             {
-                foreach (ClientProgramme programme in ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (ClientProgramme programme in ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name).Where(cp => cp.Id == Guid.Parse("a7991ca0-1fa4-4c26-9e19-ad41015935ac")))
                 {
                     clientagreements = programme.Agreements.ToList(); ;
                     foreach (ClientAgreement agreement in clientagreements)
                     {
                          agreeTemplateList = agreement.Documents.Where(doc => doc.Name == TemplateName).ToList();
 
+
                         //var templatetype = agreement.Documents.Where(doc => doc.Name == TemplateName);
-                        foreach (SystemDocument templatetypes in agreeTemplateList)
+                        foreach (SystemDocument templatetypes in agreeTemplateList.Where(doc => doc.Id == Guid.Parse("4174b36e-5199-4e46-8203-ada500ac44dd")))
                         {
                              documents = await RerenderTemplate(templatetypes, agreement, programme);
 
@@ -3143,6 +3150,51 @@ namespace DealEngine.WebUI.Controllers
             }
 
           var url = "/Agreement/RerenderDocs/?ProgrammeId=" + ""+ProgrammeId;
+            //return Redirect("/Agreement/RerenderDocs/" + ProgrammeId);
+            return Json(new { url });
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RerenderOtherType(string TemplateName, Guid ProgrammeId)
+        {
+            //SystemDocument template = await _documentRepository.GetByIdAsync(TemplateId);
+            //Programme programme = await _programmeService.GetProgrammeById(ProgrammeId);
+            User user = await CurrentUser();
+            List<Document> documents = null;
+            List<SystemDocument> agreeTemplateList = null;
+            List<ClientAgreement> clientagreements = null;
+            List<ClientProgramme> ClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(ProgrammeId);
+            try
+            {
+                foreach (ClientProgramme programme in ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    clientagreements = programme.Agreements.ToList(); ;
+                    foreach (ClientAgreement agreement in clientagreements)
+                    {
+                        agreeTemplateList = agreement.Documents.Where(doc => doc.Name == TemplateName).ToList();
+
+
+                        //var templatetype = agreement.Documents.Where(doc => doc.Name == TemplateName);
+                        if(programme.BaseProgramme.EnableFullProposalReport)
+                            if (true) { 
+                                foreach (SystemDocument templatetypes in agreeTemplateList.Where(doc => doc.Name == "Information Sheet Report"))
+                            {
+                                documents = await RerenderTemplate(templatetypes, agreement, programme);
+                            }
+                        }
+                        
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
+            var url = "/Agreement/RerenderDocs/?ProgrammeId=" + "" + ProgrammeId;
             //return Redirect("/Agreement/RerenderDocs/" + ProgrammeId);
             return Json(new { url });
 
