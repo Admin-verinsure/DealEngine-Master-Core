@@ -4440,9 +4440,10 @@ namespace DealEngine.WebUI.Controllers
                     else
                     {
 
-                        if (!agreement.Product.IsOptionalCombinedProduct)
+                        if (!agreement.Product.IsOptionalCombinedProduct && agreement.DateDeleted == null &&
+                (agreement.Status == "Bound and pending payment" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced" || agreement.Status == "Bound"))
                         {
-                            foreach (Document template in agreement.Product.Documents)
+                            foreach (Document template in agreement.Product.Documents.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
                             {
                                 if (template.DocumentType == 6)
                                 {
@@ -4472,8 +4473,7 @@ namespace DealEngine.WebUI.Controllers
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     renderedDoc.RenderToPDF = template.RenderToPDF;
-                                    if (answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Programme" || answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG ML Programme" ||
-                                         answerSheet.Programme.BaseProgramme.NamedPartyUnitName == "NZFSG Run Off Programme")
+                                    if (answerSheet.Programme.BaseProgramme.IsPdfDoc)
                                     {
                                         if (renderedDoc.IsTemplate == true)
                                         {
