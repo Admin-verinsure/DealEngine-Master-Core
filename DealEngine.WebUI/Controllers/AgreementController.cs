@@ -2755,8 +2755,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 viewAgreementViewModel.ProgrammeId = Guid.Parse(ProgrammeId);
+                ViewBag.IsTC = user.PrimaryOrganisation.IsTC;
+                ViewBag.IsInsurer = user.PrimaryOrganisation.IsInsurer;
+                ViewBag.IsBroker = user.PrimaryOrganisation.IsBroker;
 
-                if(ClientProgId == null)
+
+                if (ClientProgId == null)
                 {
                     viewAgreementViewModel.ClientProgrammeId = Guid.Empty;
 
