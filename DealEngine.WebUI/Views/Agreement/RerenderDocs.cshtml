@@ -2,7 +2,7 @@
 
 
 @Html.HiddenFor(m => m.ProgrammeId)
-
+@Html.HiddenFor(m => m.ClientProgrammeId)
 <div class="container">
     <form method="POST" action="~/Services/PostClient" novalidate>
         <div class="card">
@@ -11,7 +11,6 @@
                     <a class="btn btn-primary btn-sm">Rerendering document </a>
 
                     <a class="btn-success btn btn-xs" href="/Agreement/RerenderAlldocs?ProgrammeId=@Model.ProgrammeId"> Go </a>
-                    @*<button class="btn-success btn btn-xs" type="button" onclick="GetOwner()">Rerendering document </button>*@
                 </div>
             </div>
             <div class="card-body">
@@ -43,16 +42,7 @@
                             <button class="btn btn-primary btn-sm" type="button">Rerender selected template</button>
                             <button class="btn-success btn btn-xs" type="button" onclick='Rerenderselected("AgreemntTemplateType")'>Go</button>
                             <br />
-                            <select id="AgreemntProductType" name="ProductType" class="custom-select">
-
-                                @foreach (var agreementproduct in Model.AgreementProducts)
-                                {
-                                    <option value="@agreementproduct.Id">@agreementproduct.Name</option>
-
-                                }
-                            </select>
-                            @*<a class="btn btn-primary btn-sm btn-xs" id="Rerenderselected" onclick='Rerenderselected("AgreemntTemplateType")' href="/Agreement/RerenderSelected?ProgrammeId=@Model.ProgrammeId" style="display:none"> Rerender selected template </a>*@
-
+                            
                             <label class="label">Select Template</label>
                             <select id="AgreemntTemplateType" name="TemplateType" class="form-control input-lg">
                             </select>
