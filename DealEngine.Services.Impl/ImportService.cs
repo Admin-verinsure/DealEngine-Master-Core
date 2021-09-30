@@ -2120,8 +2120,8 @@ namespace DealEngine.Services.Impl
                         {
                             email = parts[8];
                             orgname = parts[5];
-                            eglobalnum = parts[3];
-                            membershipnumber = parts[2];
+                            eglobalnum = parts[2];
+                            membershipnumber = parts[1];
                             fname = parts[6];
                             lname = parts[7];
                             organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
@@ -2245,7 +2245,7 @@ namespace DealEngine.Services.Impl
                         {
                             email = parts[8];
                             orgname = parts[5];
-                            eglobalnum = parts[3];
+                            eglobalnum = parts[2];
                             membershipnumber = parts[1];
                             fname = parts[6];
                             lname = parts[7];
@@ -2357,8 +2357,8 @@ namespace DealEngine.Services.Impl
                         {
                             email = parts[8];
                             orgname = parts[5];
-                            eglobalnum = parts[3];
-                            membershipnumber = parts[2];
+                            eglobalnum = parts[2];
+                            membershipnumber = parts[1];
                             fname = parts[6];
                             lname = parts[7];
                             organisation = await _organisationService.GetOrganisationByEmailAndName(email, orgname);
