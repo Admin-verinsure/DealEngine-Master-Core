@@ -3878,7 +3878,7 @@ namespace DealEngine.WebUI.Controllers
                     strrecipentemail = user.Email;
                 }
 
-                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
+                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
