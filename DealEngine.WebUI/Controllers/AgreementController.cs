@@ -3510,7 +3510,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
                 user = await CurrentUser();
                 // TODO - rewrite to save templates on a per programme basis
-                RerenderClientProgrammes(sheet.Programme, "SendPolicyDocuments", null, null, false, sendUser);
+                //RerenderClientProgrammes(sheet.Programme, "SendPolicyDocuments", null, null, false, sendUser);
 
                 ClientProgramme programme = sheet.Programme;
                 foreach (ClientAgreement agreement in programme.Agreements)
