@@ -2925,7 +2925,8 @@ namespace DealEngine.WebUI.Controllers
                                     await uow.Commit().ConfigureAwait(false);
                                 }
                             }
-                            agreement.Status = status;
+                            if (ActionPath != "SendPolicyDocuments")
+                                agreement.Status = status;
 
                         foreach (SystemDocument doc in agreeDocList)
                         {
@@ -3510,6 +3511,73 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 // TODO - rewrite to save templates on a per programme basis
                 RerenderClientProgrammes(sheet.Programme, "SendPolicyDocuments", null, null, false, sendUser);
+
+                ClientProgramme programme = sheet.Programme;
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    if (agreement.ClientAgreementTerms.Where(acagreement => acagreement.DateDeleted == null && acagreement.Bound).Count() > 0)
+                    {
+                        var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
+                        var documents = new List<SystemDocument>();
+                        var documentspremiumadvice = new List<SystemDocument>();
+                        var agreeTemplateList = agreement.Product.Documents;
+                        var agreeDocList = agreement.GetDocuments();
+
+                        foreach (SystemDocument doc in agreeDocList)
+                        {
+                            // The PDF document will skip rendering so we don't delete it here but all others are getting regenerated so we delete the old ones
+                            if (!(doc.Path != null && doc.ContentType == "application/pdf" && doc.DocumentType == 0))
+                            {
+                                doc.Delete(user);
+                            }
+                        }
+
+                        //tripleA DO use case, remove when all client set as company
+                        if (agreement.Product.Id == new Guid("bdbdda02-ee4e-44f5-84a8-dd18d17287c1") &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDAOLIOptions").First().Value == "2")
+                        {
+
+                        }
+                        else
+                        {
+                            if (!agreement.Product.IsOptionalCombinedProduct)
+                            {
+                                foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
+                                {
+                                    var documents1 = new List<SystemDocument>();
+                                    documents1 = await RerenderTemplate(template, agreement, programme);
+                                    documents.AddRange(documents1);
+                                }
+
+                                //send out policy document email
+                                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                                if (emailTemplate != null)
+                                {
+                                    if (sendUser)
+                                    {
+                                        await _emailService.SendEmailViaEmailTemplate(user.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                    }
+                                    else
+                                    {
+                                        await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, agreement.ClientInformationSheet, agreement);
+                                    }
+                                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                                    {
+                                        if (!agreement.IsPolicyDocSend)
+                                        {
+                                            agreement.IsPolicyDocSend = true;
+                                            agreement.DocIssueDate = DateTime.Now;
+                                            await uow.Commit();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -3878,7 +3946,7 @@ namespace DealEngine.WebUI.Controllers
                     strrecipentemail = user.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
+                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }

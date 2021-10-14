@@ -166,7 +166,7 @@ namespace DealEngine.Services.Impl
         {
             var user = await _userService.GetUserByEmail(recipent);
             List<KeyValuePair<string, string>> mergeFields;
-          
+            Programme baseProgramme = null;
 
             if (clientInformationSheet != null)
             {
@@ -183,6 +183,14 @@ namespace DealEngine.Services.Impl
             else
             {
                 mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet, null);
+            }
+            
+            if (clientInformationSheet != null)
+            {
+                baseProgramme = clientInformationSheet.Programme.BaseProgramme;
+            } else if (clientAgreement != null)
+            {
+                baseProgramme = clientAgreement.ClientInformationSheet.Programme.BaseProgramme;
             }
 
             var insuredUser = _userService.GetApplicationUserByEmail(recipent);
@@ -207,18 +215,50 @@ namespace DealEngine.Services.Impl
 			email.UseHtmlBody (true);
             if(documents != null)
             {
+                List<Attachment> attachments = new List<Attachment>();
                 foreach (SystemDocument document in documents)
                 {
-                    if(document.ContentType == "application/pdf")
+                    //if (document.ContentType == "application/pdf")
+                    //{
+                    //    email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
+                    //}
+                    //else
+                    //{
+                    //    var documentsList = await ToAttachments(documents);
+                    //    email.Attachments(documentsList.ToArray());
+                    //}
+                    if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))
                     {
-                        email.Attachments(new Attachment(new MemoryStream(document.Contents), document.Name));
+                        if (baseProgramme != null)
+                        {
+                            if (baseProgramme.IsPdfDoc)
+                            {
+                                //attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
+                                attachments.Add(await ToAttachment(document));
+                            } else
+                            {
+                                attachments.Add(await ToAttachment(document));
+                            }
+                        } else
+                        {
+                            attachments.Add(await ToAttachment(document));
+                        }
+                        
+                    }
+                    else if (document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)
+                    {
+                        attachments.Add(new Attachment(new FileStream(document.Path, FileMode.Open), document.Name, MediaTypeNames.Application.Pdf));
                     }
                     else
                     {
-                        var documentsList = await ToAttachments(documents);
-                        email.Attachments(documentsList.ToArray());
+                        attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                     }
+
                 }
+
+                //var documentsList = await ToAttachments(documents);
+                var documentsList = attachments;
+                email.Attachments(documentsList.ToArray());
                 email.Send();
             }
             else
@@ -1215,6 +1255,7 @@ namespace DealEngine.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
+            {
                 if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))
                 {
                     attachments.Add(await ToAttachment(document));
@@ -1227,6 +1268,7 @@ namespace DealEngine.Services.Impl
                 {
                     attachments.Add(new Attachment(new MemoryStream(document.Contents), document.Name, MediaTypeNames.Application.Pdf));
                 }
+            }
             return attachments;
 		}
 
