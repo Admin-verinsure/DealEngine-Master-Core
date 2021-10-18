@@ -1,28 +1,27 @@
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.FluentNHibernate;
+using DealEngine.Infrastructure.Payment.EGlobalAPI;
+using DealEngine.Infrastructure.Payment.PxpayAPI;
+using DealEngine.Services.Interfaces;
+using DealEngine.WebUI.Helpers;
+using DealEngine.WebUI.Models;
+using DealEngine.WebUI.Models.Agreement;
+using DealEngine.WebUI.Models.Programme;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
+using NReco.PdfGenerator;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using DealEngine.Domain.Entities;
-using DealEngine.Services.Interfaces;
-using SystemDocument = DealEngine.Domain.Entities.Document;
-using Document = DealEngine.Domain.Entities.Document;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using DealEngine.WebUI.Models.Agreement;
-using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Helpers;
-using DealEngine.Infrastructure.Payment.PxpayAPI;
-using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.FluentNHibernate;
-using DealEngine.Infrastructure.Payment.EGlobalAPI;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using System.Net.Mime;
-using Microsoft.Extensions.Logging;
-using ServiceStack;
-using DealEngine.WebUI.Models.Programme;
-using NReco.PdfGenerator;
-using System.Security.AccessControl;
+using System.Threading.Tasks;
+using Document = DealEngine.Domain.Entities.Document;
+using SystemDocument = DealEngine.Domain.Entities.Document;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -2949,7 +2948,7 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
                                 {
-                                    documents = await RerenderTemplate(template, agreement, programme);
+                                    documents.Add(await RerenderTemplate(template, agreement, programme));
                                 }
                                 if (programme.BaseProgramme.ProgEnableEmail && !Rerenderalldocs)
                                 {
@@ -3021,12 +3020,13 @@ namespace DealEngine.WebUI.Controllers
             List<Organisation> Organisations = clientInformationSheet.Organisation.Where(o => o.Id != clientInformationSheet.Owner.Id && o.Removed != true).ToList();
 
             List<SelectListItem> advisororgs = new List<SelectListItem>();
-           
 
+            viewAgreementViewModel.ClientAgreementId = clientInformationSheet.ClientAgreement.Id;
             foreach (Organisation org in Organisations)
             {
                 // var ous = ou.OrganisationalUnits;
-                if (org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor") != null)
+                if (org.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor") != null) 
+
                 {
                     advisororgs.Add(
                                    new SelectListItem()
@@ -3042,25 +3042,57 @@ namespace DealEngine.WebUI.Controllers
             return View(viewAgreementViewModel);
         }
         [HttpPost]
-        public async Task<SystemDocument> RenderCOC(ClientInformationSheet clientInformationSheet, Guid templateid)
+        public async Task<List<SystemDocument>> RenderCOC(string[] arrdata,Guid agreementid)
         {
-            SystemDocument renderedDoc = null;
-            ClientAgreement agreement = clientInformationSheet.ClientAgreement;
-            ViewAgreementViewModel viewAgreementViewModel = new ViewAgreementViewModel();
-            List<Organisation> Organisations = clientInformationSheet.Organisation.Where(o => o.Name == "Advisor" && o.Id != clientInformationSheet.Owner.Id && o.Removed != true).ToList();
-            //var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
-            foreach (Organisation ou in Organisations)
-            {
-               // viewAgreementViewModel.advisorUnit = ou.OrganisationalUnits;
-            }
-
-            return renderedDoc;
-        }
-
-        public async Task<List<SystemDocument>> RerenderTemplate(SystemDocument template, ClientAgreement agreement, ClientProgramme programme)
-        {
+            //SystemDocument renderedDoc = null;
             Document renderedDoc;
             var documents = new List<SystemDocument>();
+            User user = await CurrentUser();
+            List<SystemDocument> templates =  _documentRepository.FindAll().Where(doc => doc.DocumentType == 11).ToList();
+            Organisation  org = null;
+
+            User owner = null;
+            for(var index=0;index<arrdata.Length;index++)
+            {
+                var check = Guid.Parse("" + arrdata[index]);
+                    org = await _organisationService.GetOrganisation(Guid.Parse(""+arrdata[index]));
+                
+                if(org != null)
+                {
+                    owner = await _userService.GetUserByEmail(org.Email);
+
+                }
+                if (owner != null)
+                {
+                    List<ClientInformationSheet> clientInformationSheets = await _customerInformationService.GetAllInformationFor(owner.PrimaryOrganisation);
+                    ClientInformationSheet clientInformationSheet = clientInformationSheets.FirstOrDefault(s => s.SubmittedBy.Email == owner.Email);
+                    ClientAgreement agreement = clientInformationSheet.ClientAgreement;
+                    foreach (var template in templates)
+                    {
+                        renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
+                        documents.Add(renderedDoc);
+                        await _fileService.UploadFile(renderedDoc);
+                    }
+
+                } 
+
+            }
+           // ClientAgreement agreement = clientInformationSheet.ClientAgreement;
+            //ViewAgreementViewModel viewAgreementViewModel = new ViewAgreementViewModel();
+           // List<Organisation> Organisations = clientInformationSheet.Organisation.Where(o => o.Name == "Advisor" && o.Id != clientInformationSheet.Owner.Id && o.Removed != true).ToList();
+            //var unit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor");
+            //foreach (Organisation ou in Organisations)
+            //{
+               // viewAgreementViewModel.advisorUnit = ou.OrganisationalUnits;
+            //}
+
+            return documents;
+        }
+
+        public async Task<SystemDocument> RerenderTemplate(SystemDocument template, ClientAgreement agreement, ClientProgramme programme)
+        {
+            Document renderedDoc;
+            var documents = new SystemDocument();
             var documentspremiumadvice = new List<SystemDocument>();
             User user = await CurrentUser();
             try {
@@ -3077,7 +3109,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
                         agreement.Documents.Add(notRenderedDoc);
-                        documents.Add(notRenderedDoc);
+                        documents=notRenderedDoc;
                     }
                     else
                     {
@@ -3093,7 +3125,8 @@ namespace DealEngine.WebUI.Controllers
 
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
+                                    //documents.Add(renderedDoc);
+                                    documents = renderedDoc;
                                     await _fileService.UploadFile(renderedDoc);
                                 }
                             }
@@ -3112,19 +3145,21 @@ namespace DealEngine.WebUI.Controllers
 
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                 agreement.Documents.Add(renderedDoc);
-                                documents.Add(renderedDoc);
+                                //documents.Add(renderedDoc);
+                                documents = renderedDoc;
+
                                 await _fileService.UploadFile(renderedDoc);
                             }
-                            //else if (programme.BaseProgramme.IsPdfDoc)
-                            //{
-                            //    SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
-                            //    renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+                            else if (programme.BaseProgramme.IsPdfDoc)
+                            {
+                                SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                                renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
 
-                            //    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                            //    agreement.Documents.Add(renderedDoc1);
-                            //    documents.Add(renderedDoc);
-                            //    await _fileService.UploadFile(renderedDoc);
-                            //}
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc1);
+                                documents=renderedDoc;
+                                await _fileService.UploadFile(renderedDoc);
+                            }
                             else
                             {
                                 renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
@@ -3140,7 +3175,7 @@ namespace DealEngine.WebUI.Controllers
                                     }
                                 }
                                 agreement.Documents.Add(renderedDoc);
-                                documents.Add(renderedDoc);
+                                documents = renderedDoc;
                                 await _fileService.UploadFile(renderedDoc);
 
                             }
@@ -3157,7 +3192,7 @@ namespace DealEngine.WebUI.Controllers
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, job);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
+                                    documents = renderedDoc;
                                     await _fileService.UploadFile(renderedDoc);
                                 }
                             }
@@ -3175,7 +3210,7 @@ namespace DealEngine.WebUI.Controllers
                                         SystemDocument renderedDocSub = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
                                         renderedDocSub.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDocSub);
-                                        documents.Add(renderedDocSub);
+                                        documents= renderedDocSub;
                                         await _fileService.UploadFile(renderedDocSub);
                                     }
                                 }
@@ -3184,7 +3219,7 @@ namespace DealEngine.WebUI.Controllers
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
+                                    documents = renderedDoc;
                                     await _fileService.UploadFile(renderedDoc);
                                 }
 
@@ -3228,7 +3263,7 @@ namespace DealEngine.WebUI.Controllers
                         //var templatetype = agreement.Documents.Where(doc => doc.Name == TemplateName);
                         foreach (SystemDocument templatetypes in agreeTemplateList)
                         {
-                             documents = await RerenderTemplate(templatetypes, agreement, programme);
+                             documents.Add(await RerenderTemplate(templatetypes, agreement, programme));
 
                         }
 
@@ -3267,7 +3302,7 @@ namespace DealEngine.WebUI.Controllers
                         //var templatetype = agreement.Documents.Where(doc => doc.Name == TemplateName);
                         foreach (SystemDocument templatetypes in agreeTemplateList)
                         {
-                            documents = await RerenderTemplate(templatetypes, agreement, ClientProgramme);
+                            documents.Add(await RerenderTemplate(templatetypes, agreement, ClientProgramme));
 
                         }
                     }
@@ -3311,7 +3346,7 @@ namespace DealEngine.WebUI.Controllers
                             if (true) { 
                                 foreach (SystemDocument templatetypes in agreeTemplateList.Where(doc => doc.Name == "Information Sheet Report"))
                             {
-                                documents = await RerenderTemplate(templatetypes, agreement, programme);
+                                documents.Add(await RerenderTemplate(templatetypes, agreement, programme));
                             }
                         }
                         
@@ -3416,7 +3451,7 @@ namespace DealEngine.WebUI.Controllers
                                 {
                                     foreach (SystemDocument template in agreeTemplateList)
                                     {
-                                        documents = await RerenderTemplate(template, agreement, programme);
+                                        documents.Add(await RerenderTemplate(template, agreement, programme));
 
                                     }
 

@@ -1358,7 +1358,7 @@ namespace DealEngine.WebUI.Controllers
                             await GenerateUWM(user, sheet, sheet.ReferenceId);
                             if (sheet.Programme.BaseProgramme.ProgEnableEmail)
                             {
-                                await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
+                           await _emailService.SendSystemEmailAllSubUISComplete(sheet.Owner, sheet.Programme.BaseProgramme, sheet);
                             }
                             //sheet = baseSheet;
                         }
@@ -1375,8 +1375,8 @@ namespace DealEngine.WebUI.Controllers
                         {
                             if (agreement.Status == "Referred")
                             {
-                                await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
-                                await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
+                              await _milestoneService.SetMilestoneFor("Agreement Status – Referred", user, sheet);
+                              await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
                             }
                         }
                     }
