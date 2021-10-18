@@ -3549,9 +3549,10 @@ namespace DealEngine.WebUI.Controllers
             {
                 ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
                 user = await CurrentUser();
+                var progid = sheet.Programme.Id;
                 // TODO - rewrite to save templates on a per programme basis
-                RerenderClientProgrammes(sheet.Programme, "SendPolicyDocuments", null, null, false, sendUser);
-                return NoContent();
+                await RerenderClientProgrammes(sheet.Programme, "SendPolicyDocuments", null, null, false, sendUser);
+                return Redirect("/Agreement/ViewAcceptedAgreement/" + progid);
             }
             catch (Exception ex)
             {
