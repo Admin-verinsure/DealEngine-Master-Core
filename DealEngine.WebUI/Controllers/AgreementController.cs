@@ -2909,7 +2909,7 @@ namespace DealEngine.WebUI.Controllers
 
                             using (var uow = _unitOfWork.BeginUnitOfWork())
                             {
-                                if (agreement.Status != status)
+                                if (agreement.Status != status && status != null)
                                 {
                                     agreement.Status = status;
                                     agreement.BoundDate = DateTime.Now;
@@ -3490,7 +3490,7 @@ namespace DealEngine.WebUI.Controllers
                                         if (programme.BaseProgramme.ProgEnableSendPremiumAdvice && !string.IsNullOrEmpty(programme.BaseProgramme.PremiumAdviceRecipent) &&
                                             agreement.Product.ProductEnablePremiumAdvice)
                                         {
-                                            await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
+                                           await _emailService.SendPremiumAdviceEmail(programme.BaseProgramme.PremiumAdviceRecipent, documentspremiumadvice, agreement.ClientInformationSheet, agreement, programme.BaseProgramme.PremiumAdviceRecipentCC);
                                         }
 
                                         //send out agreement bound notification email
