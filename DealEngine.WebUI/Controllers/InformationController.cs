@@ -283,7 +283,7 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
 
                 //build custom models
-                await GetRevenueViewModel(model, sheet.RevenueData);
+                await GetRevenueViewModel(model, sheet.RevenueData, clientProgramme.BaseProgramme.IsRevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
 
                 //build models from answers
@@ -940,7 +940,7 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Not Started", user, sheet);
                 //build custom models
-                await GetRevenueViewModel(model, sheet.RevenueData);
+                await GetRevenueViewModel(model, sheet.RevenueData, clientProgramme.BaseProgramme.IsRevenueData);
                 await GetRoleViewModel(model, sheet.RoleData);
 
                 //build models from answers
@@ -1089,7 +1089,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        private async Task GetRevenueViewModel(InformationViewModel model, RevenueData revenueData,bool IsRevenueData)
         {
             try
             {
@@ -1098,6 +1098,7 @@ namespace DealEngine.WebUI.Controllers
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
                     model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
+                    model.RevenueDataViewModel.IsRevenueData = IsRevenueData;
                 }
             }
             catch (Exception ex)
