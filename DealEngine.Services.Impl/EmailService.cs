@@ -1206,7 +1206,7 @@ namespace DealEngine.Services.Impl
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
             {
-                if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)))// && document.ContentType != "application/pdf"
+                if (document.DocumentType != 8 && document.DocumentType != 99 && (!(document.Path != null && document.ContentType == "application/pdf" && document.DocumentType == 0)) && document.ContentType != "application/pdf")// && document.ContentType != "application/pdf"
                 {
                     attachments.Add(await ToAttachment(document));
                 }
