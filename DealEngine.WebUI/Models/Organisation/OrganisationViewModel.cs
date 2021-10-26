@@ -35,6 +35,10 @@ namespace DealEngine.WebUI.Models
                     {
                         InsuranceAttributes = GetAdvisorTypes2();
                     }
+                    if (Programme.NamedPartyUnitName == "NZBart Programme")
+                    {
+                        InsuranceAttributes = GetAdvisorTypes5();
+                    }
                     else if (Programme.NamedPartyUnitName == "Apollo Programme" || Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
                         Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
                     {
@@ -189,6 +193,7 @@ namespace DealEngine.WebUI.Models
             return _Types;
         }
 
+       
         private IList<SelectListItem> GetAssociationOptions2()
         {
             var _Types = new List<SelectListItem>();
@@ -765,6 +770,30 @@ namespace DealEngine.WebUI.Models
             return _Types;
 
         }
+        private IList<SelectListItem> GetAdvisorTypes5()
+        {
+            var _Types = new List<SelectListItem>();
+            _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "Employee Barrister",
+                        Value = "EBarrister"
+                    },
+
+                    new SelectListItem
+                    {
+                        Text = "Junior Barrister",
+                        Value = "JBarrister"
+                    },
+                    new SelectListItem
+                    {
+                        Text = "Incorporated Entity",
+                        Value = "IEntity"
+                    }
+                };
+            return _Types;
+        }
+
         private IList<SelectListItem> GetAdvisorTypes3()
         {
             
