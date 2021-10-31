@@ -2223,6 +2223,7 @@ namespace DealEngine.WebUI.Controllers
                 decimal totalPayable = 0M;
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(cagreement => cagreement.DateDeleted == null))
                 {
+                    
                     ViewAgreementViewModel model = new ViewAgreementViewModel
                     {
                         EditEnabled = true,
