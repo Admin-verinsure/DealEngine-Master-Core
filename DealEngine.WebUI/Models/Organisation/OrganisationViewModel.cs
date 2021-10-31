@@ -22,10 +22,12 @@ namespace DealEngine.WebUI.Models
                 Programme = ClientInformationSheet.Programme.BaseProgramme;
                 if(Programme.NamedPartyUnitName == "NZFSG Programme" || Programme.NamedPartyUnitName == "TripleA Programme" || Programme.NamedPartyUnitName == "Apollo Programme" || 
                     Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" || 
-                    Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme")
+                    Programme.NamedPartyUnitName == "Financial Advice NZ Financial Advice Provider Liability Programme" || Programme.NamedPartyUnitName == "New Zealand Bar Association Liability Programme")
                 {
                     AdvisorUnit = new AdvisorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
                     AdministratorUnit = new AdministratorUnit(null, null, null, null);//organisation.FirstOrDefault(o=>o.OrganisationalUnits.Any(o=>o.Type == "Advisor"));
+                    EBaristerUnit = new EBaristerUnit(null, null, null, null);
+                    JBaristerUnit = new JBaristerUnit(null, null, null, null);
 
                     if (Programme.NamedPartyUnitName == "NZFSG Programme") 
                     { 
@@ -35,7 +37,7 @@ namespace DealEngine.WebUI.Models
                     {
                         InsuranceAttributes = GetAdvisorTypes2();
                     }
-                    if (Programme.NamedPartyUnitName == "NZBart Programme")
+                    if (Programme.NamedPartyUnitName == "New Zealand Bar Association Liability Programme")
                     {
                         InsuranceAttributes = GetAdvisorTypes5();
                     }
@@ -771,9 +773,14 @@ namespace DealEngine.WebUI.Models
 
         }
         private IList<SelectListItem> GetAdvisorTypes5()
-        {
+        { 
             var _Types = new List<SelectListItem>();
             _Types = new List<SelectListItem>() {
+                    new SelectListItem
+                    {
+                        Text = "-- Select --",
+                        Value = "0"
+                    },
                     new SelectListItem
                     {
                         Text = "Employee Barrister",
@@ -787,8 +794,8 @@ namespace DealEngine.WebUI.Models
                     },
                     new SelectListItem
                     {
-                        Text = "Incorporated Entity",
-                        Value = "IEntity"
+                        Text = "Associated Business",
+                        Value = "ABusiness"
                     }
                 };
             return _Types;
@@ -919,7 +926,8 @@ namespace DealEngine.WebUI.Models
         public AdministratorUnit AdministratorUnit { get; set; }
 
         public DirectorUnit DirectorUnit { get; set; }
-
+        public EBaristerUnit EBaristerUnit { get; set; }
+        public JBaristerUnit JBaristerUnit { get; set; }
     }
 }
 

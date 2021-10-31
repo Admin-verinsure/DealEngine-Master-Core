@@ -170,7 +170,22 @@ namespace DealEngine.WebUI.Models
 
             CreateMap<AdditionalRoleInformation, AdditionalRoleInformationViewModel>();
             CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
-                .IncludeAllDerived();         
+                .IncludeAllDerived();
+
+
+            CreateMap<EBaristerUnit, EBaristerUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
+
+            CreateMap<JBaristerUnit, JBaristerUnit>()
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.DateCreated, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.Ignore())
+                .ForMember(dest => dest.Type, map => map.Ignore())
+                .ForMember(dest => dest.CreatedBy, map => map.Ignore());
 
             //clonesystem
             //CreateMap<SubClientInformationSheet, SubClientInformationSheet>()

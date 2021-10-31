@@ -2948,9 +2948,13 @@ namespace DealEngine.WebUI.Controllers
 
                                 if (!agreement.Product.IsOptionalCombinedProduct)
                                 {
-                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
+                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10 && atl.DocumentType != 7))
                                     {
                                         documents.Add(await RerenderTemplate(template, agreement, programme));
+                                    }
+                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10 && atl.DocumentType == 7))
+                                    {
+                                        documentspremiumadvice.Add(await RerenderTemplate(template, agreement, programme));
                                     }
                                     if (programme.BaseProgramme.ProgEnableEmail && !Rerenderalldocs)
                                     {
@@ -3139,7 +3143,8 @@ namespace DealEngine.WebUI.Controllers
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                 agreement.Documents.Add(renderedDoc);
                                 //documents.Add(renderedDoc);
-                                documentspremiumadvice.Add(renderedDoc);
+                                //documentspremiumadvice.Add(renderedDoc);
+                                documents = renderedDoc;
                                 await _fileService.UploadFile(renderedDoc);
                             }
                             else if (template.DocumentType == 8 && !programme.BaseProgramme.IsPdfDoc)
@@ -3455,9 +3460,14 @@ namespace DealEngine.WebUI.Controllers
 
                                 if (!agreement.Product.IsOptionalCombinedProduct)
                                 {
-                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10))
+                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10 && atl.DocumentType != 7))
                                     {
                                         documents.Add(await RerenderTemplate(template, agreement, programme));
+
+                                    }
+                                    foreach (SystemDocument template in agreeTemplateList.Where(atl => atl.DateDeleted == null && atl.DocumentType != 10 && atl.DocumentType == 7))
+                                    {
+                                        documentspremiumadvice.Add(await RerenderTemplate(template, agreement, programme));
 
                                     }
 
