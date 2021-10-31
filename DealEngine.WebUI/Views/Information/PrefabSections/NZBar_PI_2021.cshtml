@@ -1,7 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
     <form id="PIViewModel" class="is-valid" data-accordianId="Professional Indemnity">
-            <strong>Professional Indemnity Cover</strong>
+            @*<strong>Professional Indemnity Cover</strong>*@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -64,25 +64,23 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="IsRequirecoverJunior" class="label required">
-                            Do you require cover for Employed or Junior Barristers?
-                        </label>
-                        <label>(Cover is provided at an additional $200+gst per junior barrister and $500+gst per employed barrister.)</label>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="IsRequirecoverJunior" class="label required">
+                                Do you require cover for Employed or Junior Barristers?
+                                (Cover is provided at an additional $200+gst per junior barrister and $500+gst per employed barrister.)
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="IsRequirecoverJunior" name="PIViewModel.IsRequirecoverJunior" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.IsRequirecoverJunior)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <select id="IsRequirecoverJunior" name="PIViewModel.IsRequirecoverJunior" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PIViewModel.IsRequirecoverJunior)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-
-
-                    </div>
-                </div>
             </div>
             <div id="PIViewModel.IsRequirecoverJunior" hidden>
                 <div class="form-group">
@@ -156,7 +154,7 @@
             </div>
 
 
-            <strong>Professional Indemnity Run Off Cover</strong>
+            @*<strong>Professional Indemnity Run Off Cover</strong>*@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
