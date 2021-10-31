@@ -1,8 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
     <form id="PIViewModel" class="is-valid" data-accordianId="Professional Indemnity">
-        <div>
-            <strong>Professional Indemnity Cover</strong>
+            @*<strong>Professional Indemnity Cover</strong>*@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
@@ -49,8 +48,9 @@
                     <div class="col-9">
                         <label for="IsJuniorBarrister" class="label required">
                             Are you a junior barrister?
+                            <label>(Note: A Junior Barrister is a barrister with less than seven years' post admission experience. The seven years may include time spent in a legal firm/public sector or other legal role.)</label>
+
                         </label>
-                        <label>(Cover is provided at an additional $200+gst per junior barrister and $500+gst per employed barrister.)</label>
                     </div>
                     <div class="col-3">
                         <select id="IsJuniorBarrister" name="PIViewModel.IsJuniorBarrister" class="custom-select" onchange="OnChange(this.id, this.name)" required>
@@ -64,7 +64,25 @@
                     </div>
                 </div>
             </div>
-            <div id="PIViewModel.IsJuniorBarrister" hidden>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="IsRequirecoverJunior" class="label required">
+                                Do you require cover for Employed or Junior Barristers?
+                                (Cover is provided at an additional $200+gst per junior barrister and $500+gst per employed barrister.)
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="IsRequirecoverJunior" name="PIViewModel.IsRequirecoverJunior" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PIViewModel.IsRequirecoverJunior)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+            </div>
+            <div id="PIViewModel.IsRequirecoverJunior" hidden>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
@@ -134,21 +152,20 @@
                 </div>
 
             </div>
-        </div>
 
-        <div>
-            <strong>Professional Indemnity Run Off Cover</strong>
+
+            @*<strong>Professional Indemnity Run Off Cover</strong>*@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="hasPreviouslyUndertaken" class="label required">
+                        <label for="HasPreviouslyUndertaken" class="label required">
                             Do you require run-off cover for work previously undertaken as a sole practicing barrister or solicitor.
                         </label>
                     </div>
                     <div class="col-3">
 
-                        <select id="hasPreviouslyUndertaken" name="PIViewModel.hasPreviouslyUndertaken" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PIViewModel.hasPreviouslyUndertaken)
+                        <select id="HasPreviouslyUndertaken" name="PIViewModel.HasPreviouslyUndertaken" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.PIViewModel.HasPreviouslyUndertaken)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }
@@ -158,7 +175,7 @@
                 </div>
             </div>
 
-            <div id="PIViewModel.hasPreviouslyUndertaken" hidden>
+            <div id="PIViewModel.HasPreviouslyUndertaken" hidden>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
@@ -203,8 +220,6 @@
                         </div>
                     </div>
                 </div>
-
-
 
 
                 <div class="form-group">
@@ -268,5 +283,4 @@
                 </div>
 
             </div>
-        </div>
     </form>
