@@ -2294,7 +2294,7 @@ namespace DealEngine.WebUI.Controllers
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Payment for " + clientProgramme.Owner.Name;
 
                 bool requirePayment = false;
-                if (clientProgramme.BaseProgramme.HasCCPayment && totalPayable > 0)
+                if ((clientProgramme.BaseProgramme.HasCCPayment || clientProgramme.BaseProgramme.HasInvoicePayment) && totalPayable > 0)
                 {
                     requirePayment = true;
                 }
@@ -3948,6 +3948,7 @@ namespace DealEngine.WebUI.Controllers
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
             User user = null;
+            var paymentype = HttpContext.Request.Form["AnswerSheetId"];
             try
             {
                 if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
