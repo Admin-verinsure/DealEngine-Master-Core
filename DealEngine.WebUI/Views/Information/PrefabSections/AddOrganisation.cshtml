@@ -249,8 +249,8 @@
                 }
                 else if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "New Zealand Bar Association Liability Programme")
                 {
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.EBaristerUnit.GetType().AssemblyQualifiedName, new { @id = "EBaristerUnit" })
-                    @Html.Hidden("Unit", Model.OrganisationViewModel.JBaristerUnit.GetType().AssemblyQualifiedName, new { @id = "JBaristerUnit" })
+                    @Html.Hidden("EBaristerUnit", Model.OrganisationViewModel.EBaristerUnit.GetType().AssemblyQualifiedName, new { @id = "EBaristerUnit" })
+                    @Html.Hidden("JBaristerUnit", Model.OrganisationViewModel.JBaristerUnit.GetType().AssemblyQualifiedName, new { @id = "JBaristerUnit" })
 
                     @*@Html.Hidden("Unit", Model.OrganisationViewModel.InterestedPartyUnit.GetType().AssemblyQualifiedName, new { @id = "InterestedPartyUnit" })*@
                     @await Html.PartialAsync("PrefabSections/OrganisationPartials/NZBar_AddOrganisation", Model)
