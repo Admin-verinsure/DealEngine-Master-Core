@@ -155,11 +155,11 @@ namespace DealEngine.Services.Impl
             }
             else if(InsuranceAttribute == "EBarrister" || InsuranceAttribute == "ABusiness")
             {
-                UnitName = collection["EBarrister"].ToString();
+                UnitName = collection["EBarristerUnit"].ToString();
 
             }else if (InsuranceAttribute == "JBarrister")
             {
-                UnitName = collection["JBarrister"].ToString();
+                UnitName = collection["JBarristerUnit"].ToString();
 
             }
             else

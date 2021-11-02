@@ -2287,7 +2287,7 @@ namespace DealEngine.WebUI.Controllers
                     model.PolicyNumber = agreement.PolicyNumber;
 
                     model.NoPaymentRequiredMessage = clientProgramme.BaseProgramme.NoPaymentRequiredMessage;
-
+                    model.IsMasterAgreement = agreement.MasterAgreement;
                     models.Add(model);
                 }
 

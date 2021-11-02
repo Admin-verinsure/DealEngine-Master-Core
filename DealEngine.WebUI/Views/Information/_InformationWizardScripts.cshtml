@@ -5825,10 +5825,14 @@ function UpdateChosen() {
     }
 
     function submitPayment() {
-         event.preventDefault();
-        if ((!$('#paymentCreditCard').is(":checked") || !$('#paymentEGlobal').is(":checked") ) || (!$('#paymentEGlobal').is(":checked") || !$('#paymentEGlobal').is(":checked")))
+        debugger;
+        event.preventDefault();
+        var jh = $('#paymentCreditCard').is(":checked");
+
+        var kljklkl = $('#paymentEGlobal').is(":checked");
+        if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
-        if ($('#paymentCreditCard').is(":checked") || $('#paymentEGlobal').is(":checked")) {
+        if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
