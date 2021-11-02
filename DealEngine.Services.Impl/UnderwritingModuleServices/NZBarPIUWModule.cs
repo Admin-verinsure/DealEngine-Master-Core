@@ -190,7 +190,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolfinancialmemberreferral = false;
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.hasNzbar").Any())
             {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.hasNzbar").First().Value == "1")
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.hasNzbar").First().Value == "2")
                 {
                     bolfinancialmemberreferral = true;
                 }
@@ -382,6 +382,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Change policy premium calculation
             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
             {
+                //set admin fee $0
+                agreement.BrokerFee = 0M;
+
                 var PreviousAgreement = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "PI"));
                 foreach (var term in PreviousAgreement.ClientAgreementTerms)
                 {

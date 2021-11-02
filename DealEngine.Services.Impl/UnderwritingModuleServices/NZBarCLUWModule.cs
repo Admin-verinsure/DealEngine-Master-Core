@@ -139,17 +139,67 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 cAECLUPM.DeletedBy = underwritingUser;
             }
 
+            foreach (ClientAgreementTermExtension cltermextension in agreement.ClientAgreementTermExtensions.Where(ctex => ctex.DateDeleted == null))
+            {
+                cltermextension.Delete(underwritingUser);
+            }
+
             if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
-                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1")
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" && 
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
             {
                 extpremium = rates["clsocialengineeringextpremium"];
 
-                if (cAECLExt != null)
+                //if (cAECLExt != null)
+                //{
+                //    cAECLExt.DateDeleted = null;
+                //    cAECLExt.DeletedBy = null;
+                //}
+
+                //add Social Engineering Fraud Extension
+                decimal decSEFPremium = extpremium;
+                decimal decSEFBasePremium = extpremium;
+                decSEFPremium = decSEFPremium / coverperiodindays * agreementperiodindays;
+                
+                ClientAgreementTermExtension termSEFextension = GetAgreementExtensionTerm(underwritingUser, agreement, 100000, 2500, decSEFPremium, "Social Engineering Fraud Extension");
+                termSEFextension.ExtentionName = "Social Engineering Fraud Extension";
+                termSEFextension.HideLimitExcess = false;
+                termSEFextension.Premium = decSEFPremium;
+                termSEFextension.BasePremium = decSEFBasePremium;
+                termSEFextension.DateDeleted = null;
+                termSEFextension.DeletedBy = null;
+
+                //Change policy premium claculation
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
                 {
-                    cAECLExt.DateDeleted = null;
-                    cAECLExt.DeletedBy = null;
+                    var PreviousAgreementExtension = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                    foreach (var termExtension in PreviousAgreementExtension.ClientAgreementTermExtensions)
+                    {
+                        if (termExtension.Bound)
+                        {
+                            var PreviousBoundPremiumExtension = termExtension.Premium;
+                            if (termExtension.BasePremium > 0 && PreviousAgreementExtension.ClientInformationSheet.IsChange)
+                            {
+                                PreviousBoundPremiumExtension = termExtension.BasePremium;
+                            }
+                            termSEFextension.PremiumDiffer = (decSEFPremium - PreviousBoundPremiumExtension) * coverperiodindaysforchange / agreementperiodindays;
+                            termSEFextension.PremiumPre = PreviousBoundPremiumExtension;
+                            if (termSEFextension.TermLimit == termExtension.TermLimit && termSEFextension.Excess == termExtension.Excess && termSEFextension.ExtentionName == termExtension.ExtentionName)
+                            {
+                                termSEFextension.Bound = true;
+                            }
+                            if (termSEFextension.PremiumDiffer < 0)
+                            {
+                                termSEFextension.PremiumDiffer = 0;
+                            }
+
+                        }
+
+                    }
                 }
+
+
             }
             if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "2")
@@ -176,7 +226,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium250k = 0M;
             decimal TermBrokerage250k = 0M;
             decimal TermExcess250k = 2500;
-            TermPremium250k = rates["cl250klimitpremium"] + extpremium;
+            TermPremium250k = rates["cl250klimitpremium"];
             TermBasePremium250k = TermPremium250k;
             TermPremium250k = TermPremium250k * agreementperiodindays / coverperiodindays;
             TermBrokerage250k = TermPremium250k * agreement.Brokerage / 100;
@@ -196,7 +246,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium500k = 0M;
             decimal TermBrokerage500k = 0M;
             decimal TermExcess500k = 2500;
-            TermPremium500k = rates["cl500klimitpremium"] + extpremium;
+            TermPremium500k = rates["cl500klimitpremium"];
             TermBasePremium500k = TermPremium500k;
             TermPremium500k = TermPremium500k * agreementperiodindays / coverperiodindays;
             TermBrokerage500k = TermPremium500k * agreement.Brokerage / 100;
@@ -216,7 +266,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBasePremium1mil = 0M;
             decimal TermBrokerage1mil = 0M;
             decimal TermExcess1mil = 2500;
-            TermPremium1mil = rates["cl1millimitpremium"] + extpremium;
+            TermPremium1mil = rates["cl1millimitpremium"];
             TermBasePremium1mil = TermPremium1mil;
             TermPremium1mil = TermPremium1mil * agreementperiodindays / coverperiodindays;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
@@ -399,6 +449,19 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 dict[name] = Convert.ToDecimal(agreement.ClientAgreementRules.FirstOrDefault(r => r.Name == name).Value);
 
             return dict;
+        }
+
+        ClientAgreementTermExtension GetAgreementExtensionTerm(User CurrentUser, ClientAgreement agreement, int limitoption, decimal excessoption, decimal premiumoption, string extensionName)
+        {
+            ClientAgreementTermExtension extensionTerm = agreement.ClientAgreementTermExtensions.FirstOrDefault(tex => tex.DateDeleted != null && tex.ExtentionName == extensionName);
+
+            if (extensionTerm == null)
+            {
+                extensionTerm = new ClientAgreementTermExtension(CurrentUser, limitoption, excessoption, premiumoption, agreement);
+                agreement.ClientAgreementTermExtensions.Add(extensionTerm);
+            }
+
+            return extensionTerm;
         }
 
         void uwrfnotrenewalcl(User underwritingUser, ClientAgreement agreement)
