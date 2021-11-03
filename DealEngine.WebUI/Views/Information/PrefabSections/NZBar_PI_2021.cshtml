@@ -84,14 +84,14 @@
             <div id="PIViewModel.IsRequirecoverJunior" hidden>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-9">
-                            <label for="JuniorBarristersdetails" class="label required">
+                        <div class="col-12">
+                            <label for="JuniorBarristersdetails">
                                 <strong>Please provide the details of all Employed or Junior Barristers for whom cover is required within the Named Parties Panel. </strong>
                             </label>
                         </div>
-                        <div class="col-3">
+                        @*<div class="col-3">
                             @Html.TextAreaFor(m => m.PIViewModel.JuniorBarristersdetails, new { @class = "form-control", @id = "investigationdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
-                        </div>
+                        </div>*@
                     </div>
                 </div>
 

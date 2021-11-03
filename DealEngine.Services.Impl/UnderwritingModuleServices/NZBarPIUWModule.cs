@@ -102,27 +102,26 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            //{
-            //    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-            //    {
-            //        if (!uisorg.Removed)
-            //        {
-            //            var advisorunit = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Advisor" && u.DateDeleted == null);
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    if (uisorg.DateDeleted == null && !uisorg.Removed)
+                    {
+                        var addjuniorbarristerunit = (JBaristerUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "JBarrister" && u.DateDeleted == null);
+                        if (addjuniorbarristerunit != null)
+                        {
+                            numberofaddjuniorbarrister += 1;
+                        }
 
-            //            if (advisorunit != null)
-            //            {
-            //                if (uisorg.DateDeleted == null && !uisorg.Removed)
-            //                {
-            //                    if (!bolauthorisedbodiesreferral && advisorunit.isTheFAP && advisorunit.isInterposedPerson)
-            //                    {
-            //                        bolauthorisedbodiesreferral = true;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                        var addbarristerunit = (EBaristerUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "EBarrister" && u.DateDeleted == null);
+                        if (addbarristerunit != null)
+                        {
+                            numberofaddbarrister += 1;
+                        }
+                    }
+                }
+            }
 
             //For 1st year set up
             string strretrodate = "";
@@ -229,9 +228,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Junior Barrister Pricing and None Junior Barrister Pricing
             decimal decadditionbarpremium = 0M;
             //Check if the additional cover for Junior Barrister and Barrister required
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.hasPreviouslyUndertaken").Any())
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.IsRequirecoverJunior").Any())
             {
-                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.hasPreviouslyUndertaken").First().Value == "1")
+                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PIViewModel.IsRequirecoverJunior").First().Value == "1")
                 {
                     decadditionbarpremium = rates["piadditionalpremiumjb"] * numberofaddjuniorbarrister + rates["piadditionalpremiumb"] * numberofaddbarrister;
                 }
