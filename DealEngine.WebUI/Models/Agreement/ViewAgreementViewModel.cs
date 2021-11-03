@@ -529,6 +529,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public string EndDate { get; set; }
         public string CurrencySymbol { get; set; }
         public string AdministrationFee { get; set; }
+        public string TotalPremium { get; set; }
+        public string TotalAdministrationFee { get; set; }
         public string PlacementFee { get; set; }
         public string AdditionalCertFee { get; set; }
         public IList<InsuranceInclusion> Inclusions { get; set; }
