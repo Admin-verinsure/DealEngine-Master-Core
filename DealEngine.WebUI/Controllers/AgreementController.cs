@@ -4156,7 +4156,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
                 }
-                string paymentType = "Credit";
+                string paymentType = "Invoice";
                 Guid transactionreferenceid = Guid.NewGuid();
 
                 var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, false, null);
