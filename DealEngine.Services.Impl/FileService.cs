@@ -213,12 +213,25 @@ namespace DealEngine.Services.Impl
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
                 currencyFormat.CurrencyNegativePattern = 2;
                 Decimal PremiumTotal = 0.0m;
+                Decimal BrokerFeeTotal = 0.0m;
 
                 int intMonthlyInstalmentNumber = 1;
                 if (agreement.ClientInformationSheet.Programme.BaseProgramme.EnableMonthlyPremiumDisplay)
                 {
                     intMonthlyInstalmentNumber = agreement.ClientInformationSheet.Programme.BaseProgramme.MonthlyInstalmentNumber;
                 }
+
+                //set default merge feilds
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_PI]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_PL]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_SL]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_DO]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_EL]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_ED]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_LPD]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_FID]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_IL]]", ""), "Not Insured"));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_CL]]", ""), "Not Insured"));
 
                 // loop over terms and set merge feilds
                 foreach (var agreementlist in agreement.ClientInformationSheet.Programme.Agreements.Where(a => a.DateDeleted == null))
@@ -236,6 +249,22 @@ namespace DealEngine.Services.Impl
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                             mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+
+                            mergeFields.Remove(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_{0}]]", term.SubTermType), "Not Insured"));
+                            mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_{0}]]", term.SubTermType), "Insured"));
+
+                            if (term.SubTermType == "IL")
+                            {
+                                var CLAgreement = agreement.ClientInformationSheet.Programme.Agreements.Where(a => a.DateDeleted == null).FirstOrDefault(p => p.ClientAgreementTerms.Any(i => i.SubTermType == "CL"));
+                                if (CLAgreement != null)
+                                {
+                                    if (CLAgreement.ClientAgreementTerms.Where(cla => cla.DateDeleted == null && cla.Bound).Count() > 0)
+                                    {
+                                        mergeFields.Remove(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_{0}]]", term.SubTermType), "Insured"));
+                                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[PolicyStatus_{0}]]", term.SubTermType), "Not Insured"));
+                                    }
+                                }
+                            }
 
                             if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
                             {
@@ -273,6 +302,8 @@ namespace DealEngine.Services.Impl
                                 if (agreementlist.Status == "Bound" || agreementlist.Status == "Bound and pending payment" || agreementlist.Status == "Bound and invoice pending" || agreementlist.Status == "Bound and invoiced; Bound")
                                     PremiumTotal += term.Premium;
                             }
+
+                            BrokerFeeTotal += agreementlist.BrokerFee;
 
                             //Endorsements
                             if (agreementlist.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null && !ce.Removed).Count() > 0)
@@ -349,6 +380,40 @@ namespace DealEngine.Services.Impl
                                         mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CL1]]", "Extension NOT Included"));
                                     }
                                 }
+
+                                if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").Count() == 0 ||
+                                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").Count() == 0 ||
+                                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").Count() == 0)
+                                {
+                                    mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLExt]]", "Extension NOT Included"));
+                                }
+                                else
+                                {
+                                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOptions").First().Value == "1" &&
+                                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                                    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+                                    {
+                                        bool clextensioninclude = false;
+                                        foreach (var cltermExtension in agreement.ClientAgreementTermExtensions.Where(aecl => aecl.DateDeleted == null))
+                                        {
+                                            if (cltermExtension.Bound && !clextensioninclude)
+                                            {
+                                                clextensioninclude = true;
+                                            }
+                                        }
+                                        if (clextensioninclude)
+                                        {
+                                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLExt]]", "Extension Included"));
+                                        } else
+                                        {
+                                            mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLExt]]", "Extension NOT Included"));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        mergeFields.Add(new KeyValuePair<string, string>("[[RequiresSEE_CLExt]]", "Extension NOT Included"));
+                                    }
+                                }
                             }
                         }
                     }
@@ -379,6 +444,15 @@ namespace DealEngine.Services.Impl
 
                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGst_Total]]", ""), (PremiumTotal * (decimal)1.15).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremiuminclGstMonthly_Total]]", ""), (PremiumTotal * (decimal)1.15 / intMonthlyInstalmentNumber).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+
+
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumAdjustmentTotal]]", ""), (PremiumTotal - BrokerFeeTotal).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFeeTotal]]", ""), BrokerFeeTotal.ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[CreditCardSurchargeTotal]]", ""), (PremiumTotal * (0.013m)).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGSTTotal]]", ""), (PremiumTotal * 1.013m * agreement.Product.TaxRate).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardChargeTotal]]", ""), (PremiumTotal * (1 + agreement.Product.TaxRate) * 1.013m).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeGSTTotal]]", ""), (PremiumTotal * agreement.Product.TaxRate).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTTotal]]", ""), (PremiumTotal * (1 + agreement.Product.TaxRate)).ToString("C2", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
                 if (agreement.ClientInformationSheet.Locations.Any())
                 {

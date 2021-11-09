@@ -3148,7 +3148,7 @@ namespace DealEngine.WebUI.Controllers
                     else
                     {
                         //render docs except invoice
-                        if (template.DocumentType != 4 && template.DocumentType != 6 && template.DocumentType != 9)
+                        if (template.DocumentType != 4 && template.DocumentType != 6 && template.DocumentType != 9 && template.DocumentType != 12)
                         {
                             if (template.Name == "TripleA Individual TL Certificate" && !programme.BaseProgramme.IsPdfDoc)
                             {
@@ -3215,6 +3215,25 @@ namespace DealEngine.WebUI.Controllers
 
                             }
 
+                        } else if (template.DocumentType == 4 && agreement.ClientInformationSheet.Programme.PaymentType == "Credit Card" && programme.BaseProgramme.IsPdfDoc)
+                        {
+                            SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                            renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+
+                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            agreement.Documents.Add(renderedDoc1);
+                            documents = renderedDoc;
+                            await _fileService.UploadFile(renderedDoc);
+
+                        } else if (template.DocumentType == 12 && agreement.ClientInformationSheet.Programme.PaymentType == "Invoice" && programme.BaseProgramme.IsPdfDoc)
+                        {
+                            SystemDocument renderedDoc1 = await _fileService.RenderDocument(user, template, agreement, null, null);
+                            renderedDoc = await GetInvoicePDF(renderedDoc1, template.Name);
+
+                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            agreement.Documents.Add(renderedDoc1);
+                            documents = renderedDoc;
+                            await _fileService.UploadFile(renderedDoc);
                         }
 
                         //render job certificate
