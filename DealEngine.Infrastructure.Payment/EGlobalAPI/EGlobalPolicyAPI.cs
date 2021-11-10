@@ -910,8 +910,12 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
 
             do
             {
+                if (ClientUIS.PreviousInformationSheet == null && ClientUIS.IsRenewawl)
+                {
+                    gv_transactionType = 2;
+                }
                 // try and find the original policy
-                if (ClientUIS.PreviousInformationSheet != null)
+                else if (ClientUIS.PreviousInformationSheet != null)
                 {
                     previousClientUIS = ClientUIS.PreviousInformationSheet;
 
