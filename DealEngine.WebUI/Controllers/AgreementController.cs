@@ -4030,7 +4030,7 @@ namespace DealEngine.WebUI.Controllers
                     ProgrammeId = programme.Id;
                     brokerFee += clientAgreement.BrokerFee;
                     var terms = await _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-                    foreach (ClientAgreementTerm clientAgreementTerm in terms)
+                    foreach (ClientAgreementTerm clientAgreementTerm in terms.Where(agree => agree.Bound == true))
                     {
                         if (programme.InformationSheet.IsChange && programme.InformationSheet.PreviousInformationSheet != null)
                         {
@@ -4039,6 +4039,12 @@ namespace DealEngine.WebUI.Controllers
                         else
                         {
                             totalPremium += clientAgreementTerm.Premium;
+                        }
+
+                        foreach (ClientAgreementTermExtension extension in clientAgreementTerm.ClientAgreement.ClientAgreementTermExtensions.Where(ext => ext.Bound == true))
+                        {
+                            totalPremium += extension.Premium;
+
                         }
 
                     }
