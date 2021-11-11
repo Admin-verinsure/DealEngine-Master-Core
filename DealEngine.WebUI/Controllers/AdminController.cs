@@ -895,6 +895,24 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> NZBarPreRenewData()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                //await _importService.ImportNZBarPreRenewData(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> PrivateServerList()
         {
 			var privateServers = await _privateServerService.GetAllPrivateServers();
