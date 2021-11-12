@@ -2811,12 +2811,17 @@ namespace DealEngine.Services.Impl
         {
             var currentUser = CreatedUser;
             StreamReader reader;
-
+            User user = null;
+            Organisation organisation = null;
             bool readFirstLine = false;
             string line;
-            Guid.TryParse("633b32f7-93bd-4ed1-9f7e-088ae5312b98", out Guid ProgrammeId);
+            string email;
+            string userName;
+            string type = "";
+            string Name = "";
+            Guid.TryParse("8b6b0ca4-2ba3-4e40-a196-222c3e4982a2", out Guid ProgrammeId);
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "NZBarMember.csv";
+            var fileName = WorkingDirectory + "nzbarownerdata.csv";
 
             using (reader = new StreamReader(fileName))
             {
@@ -2832,27 +2837,29 @@ namespace DealEngine.Services.Impl
                     string[] parts = line.Split(',');
                     try
                     {
-                        string type = "";
-                        string Name = "";
-                        User user = new User(currentUser, Guid.NewGuid())
-                        {
-                            FirstName = parts[2],
-                            LastName = parts[3],
-                            FullName = parts[2] + " " + parts[3],
-                            Email = parts[4],
-                            UserName = parts[6]
-                        };
-                        if (parts[0] == "t")
-                        {
-                            type = "Corporation – Limited liability";
-                            Name = parts[1];
-                        }
-                        else
-                        {
-                            type = "Person - Individual";
-                            Name = user.FullName;
-                        }
+                         userName = parts[5];
+                         email = parts[3];
+                         
 
+                            try
+                            {
+                                user = await _userService.GetUser(userName);
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Random random = new Random();
+                                int randomNumber = random.Next(10, 99);
+                                userName = userName + randomNumber.ToString();
+                            }
+                            user = new User(currentUser, Guid.NewGuid(), userName);
+                            user.FirstName = parts[1];
+                            user.LastName = parts[2];
+                            user.FullName = parts[1] + " " + parts[2];
+                            user.Email = email;
+
+                        type = "Person - Individual";
+                        Name = user.FullName;
                         OrganisationType ownerType = new OrganisationType(type);
                         InsuranceAttribute ownerAttribute = new InsuranceAttribute(currentUser, type);
                         OrganisationalUnit ownerUnit = new OrganisationalUnit(currentUser, type, "Head Office", null);
@@ -2863,28 +2870,7 @@ namespace DealEngine.Services.Impl
                             Name = Name
                         };
 
-                        Owner.OrganisationalUnits.Add(ownerUnit);
-                        Owner.InsuranceAttributes.Add(ownerAttribute);
-                        user.Organisations.Add(Owner);
-
-                        OrganisationType advisorType = new OrganisationType("Person - Individual");
-                        InsuranceAttribute advisorAttribute = new InsuranceAttribute(currentUser, "Advisor");
-                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
-                        AdvisorUnit AdvisorUnit = new AdvisorUnit(currentUser, "Advisor", "Person - Individual", null)
-                        {
-                            IsPrincipalAdvisor = true
-                        };
-                        Organisation Advisor = new Organisation(currentUser, Guid.NewGuid())
-                        {
-                            OrganisationType = advisorType,
-                            Email = user.Email,
-                            Name = user.FullName
-                        };
-
-                        Advisor.InsuranceAttributes.Add(advisorAttribute);
-                        Advisor.OrganisationalUnits.Add(defaultUnit);
-                        Advisor.OrganisationalUnits.Add(AdvisorUnit);
-                        user.Organisations.Add(Advisor);
+                     
                         user.SetPrimaryOrganisation(Owner);
                         await _userService.ApplicationCreateUser(user);
 
@@ -2894,12 +2880,12 @@ namespace DealEngine.Services.Impl
                         var reference = await _referenceService.GetLatestReferenceId();
                         var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
                         await _referenceService.CreateClientInformationReference(sheet);
-                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                        clientProgramme.ClientProgrammeMembershipNumber = parts[5];
-                        clientProgramme.EGlobalClientNumber = parts[7];
-                        clientProgramme.Tier = parts[8];
+                        clientProgramme.EGlobalClientNumber = parts[6];
+                        clientProgramme.EGlobalExternalContactNumber = parts[7];
+                        clientProgramme.EGlobalBranchCode = parts[8];
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[4];
+                        sheet.IsRenewawl = true;
                         sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
-                        sheet.Organisation.Add(Advisor);
                         await _programmeService.Update(clientProgramme);
                     }
                     catch (Exception ex)
