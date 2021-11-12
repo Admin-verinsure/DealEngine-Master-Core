@@ -2806,6 +2806,96 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportNZBarOwners(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = false;
+            string line;
+            string email;
+            string userName;
+            string type = "";
+            string Name = "";
+            Guid.TryParse("8b6b0ca4-2ba3-4e40-a196-222c3e4982a2", out Guid ProgrammeId);
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "nzbarownerdata.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                         userName = parts[5];
+                         email = parts[3];
+                         
+
+                            try
+                            {
+                                user = await _userService.GetUser(userName);
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Random random = new Random();
+                                int randomNumber = random.Next(10, 99);
+                                userName = userName + randomNumber.ToString();
+                            }
+                            user = new User(currentUser, Guid.NewGuid(), userName);
+                            user.FirstName = parts[1];
+                            user.LastName = parts[2];
+                            user.FullName = parts[1] + " " + parts[2];
+                            user.Email = email;
+
+                        type = "Person - Individual";
+                        Name = user.FullName;
+                        OrganisationType ownerType = new OrganisationType(type);
+                        InsuranceAttribute ownerAttribute = new InsuranceAttribute(currentUser, type);
+                        OrganisationalUnit ownerUnit = new OrganisationalUnit(currentUser, type, "Head Office", null);
+                        Organisation Owner = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = ownerType,
+                            Email = user.Email,
+                            Name = Name
+                        };
+
+                     
+                        user.SetPrimaryOrganisation(Owner);
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(ProgrammeId);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, Owner);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, Owner, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+                        clientProgramme.EGlobalClientNumber = parts[6];
+                        clientProgramme.EGlobalExternalContactNumber = parts[7];
+                        clientProgramme.EGlobalBranchCode = parts[8];
+                        clientProgramme.ClientProgrammeMembershipNumber = parts[4];
+                        sheet.IsRenewawl = true;
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        await _programmeService.Update(clientProgramme);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+        }
         public async Task ImportNZPIImportOwners(User CreatedUser)
         {
             var currentUser = CreatedUser;
