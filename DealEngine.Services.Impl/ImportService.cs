@@ -3953,18 +3953,24 @@ namespace DealEngine.Services.Impl
                     if (!readFirstLine)
                     {
                         line = reader.ReadLine();
-                        readFirstLine = false;
+                        readFirstLine = true;
                     }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
                     try
                     {
-                        line = reader.ReadLine();
-                        string[] parts = line.Split(',');
                         claimNotification = new ClaimNotification(currentUser);
                         claimNotification.ClaimMembershipNumber = parts[0];
                         if (!string.IsNullOrEmpty(parts[1]))
                             claimNotification.ClaimTitle = parts[1];
                         if (!string.IsNullOrEmpty(parts[2]))
+                        {
                             claimNotification.ClaimDescription = parts[2];
+                            if (parts[2].Length > 255)
+                            {
+                                claimNotification.ClaimDescription = parts[2].Substring(0, 255);
+                            }
+                        }
                         if (!string.IsNullOrEmpty(parts[3]))
                             claimNotification.ClaimReference = parts[3];
                         if (!string.IsNullOrEmpty(parts[4]))
@@ -3978,7 +3984,13 @@ namespace DealEngine.Services.Impl
                         if (!string.IsNullOrEmpty(parts[8]))
                             claimNotification.ClaimEstimateInsuredLiability = decimal.Parse(parts[8]);
                         if (!string.IsNullOrEmpty(parts[9]))
+                        {
                             claimNotification.ClaimNotes = parts[9];
+                            if (parts[9].Length > 255)
+                            {
+                                claimNotification.ClaimNotes = parts[9].Substring(0, 255);
+                            }
+                        }
                         claimNotification.ClaimStatus = "Closed";
 
                         await _programmeService.AddClaimNotificationByMembership(claimNotification);

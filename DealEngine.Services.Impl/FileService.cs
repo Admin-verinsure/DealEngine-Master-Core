@@ -281,7 +281,7 @@ namespace DealEngine.Services.Impl
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
-                                if (agreementlist.Status == "Bound" || agreementlist.Status == "Bound and pending payment" || agreementlist.Status == "Bound and invoice pending" || agreementlist.Status == "Bound and invoiced; Bound")
+                                if (agreementlist.Status == "Bound" || agreementlist.Status == "Bound and pending payment" || agreementlist.Status == "Bound and invoice pending" || agreementlist.Status == "Bound and invoiced")
                                     PremiumTotal += term.PremiumDiffer;
                             }
                             else
@@ -299,7 +299,7 @@ namespace DealEngine.Services.Impl
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[ProgrammeBoundPremium_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumFAP_{0}]]", term.SubTermType), term.FAPPremium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                                 mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGSTMonthly_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) / intMonthlyInstalmentNumber).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
-                                if (agreementlist.Status == "Bound" || agreementlist.Status == "Bound and pending payment" || agreementlist.Status == "Bound and invoice pending" || agreementlist.Status == "Bound and invoiced; Bound")
+                                if (agreementlist.Status == "Bound" || agreementlist.Status == "Bound and pending payment" || agreementlist.Status == "Bound and invoice pending" || agreementlist.Status == "Bound and invoiced")
                                     PremiumTotal += term.Premium;
                             }
 

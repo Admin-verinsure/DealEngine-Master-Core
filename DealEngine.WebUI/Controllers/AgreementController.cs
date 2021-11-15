@@ -5078,7 +5078,7 @@ namespace DealEngine.WebUI.Controllers
                                     agreement.Documents.Add(renderedDoc);
                                     await _fileService.UploadFile(renderedDoc);
                                 }
-                                else
+                                else if (template.DocumentType != 4 && template.DocumentType != 6 && template.DocumentType != 9 && template.DocumentType != 12)
                                 {
                                     renderedDoc = await _fileService.RenderDocument(user, template, agreement, null, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
