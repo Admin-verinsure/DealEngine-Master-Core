@@ -3943,32 +3943,81 @@ namespace DealEngine.Services.Impl
                     {
                         preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
                         if (!string.IsNullOrEmpty(parts[2]))
-                            preRenewOrRefData.PIRetro = parts[2];
+                            preRenewOrRefData.CLRetro = parts[2];
                         if (!string.IsNullOrEmpty(parts[3]))
-                            preRenewOrRefData.GLRetro = parts[3];
+                            preRenewOrRefData.EndorsementProduct = parts[3];
                         if (!string.IsNullOrEmpty(parts[4]))
-                            preRenewOrRefData.DORetro = parts[4];
+                            preRenewOrRefData.EndorsementTitle = parts[4];
                         if (!string.IsNullOrEmpty(parts[5]))
-                            preRenewOrRefData.ELRetro = parts[5];
-                        if (!string.IsNullOrEmpty(parts[6]))
-                            preRenewOrRefData.EDRetro = parts[6];
-                        if (!string.IsNullOrEmpty(parts[7]))
-                            preRenewOrRefData.SLRetro = parts[7];
-                        if (!string.IsNullOrEmpty(parts[8]))
-                            preRenewOrRefData.CLRetro = parts[8];
-                        if (!string.IsNullOrEmpty(parts[9]))
-                            preRenewOrRefData.LPDRetro = parts[9];
-                        if (!string.IsNullOrEmpty(parts[10]))
-                            preRenewOrRefData.FIDRetro = parts[10];
-                        if (!string.IsNullOrEmpty(parts[11]))
-                            preRenewOrRefData.EndorsementProduct = parts[11];
-                        if (!string.IsNullOrEmpty(parts[12]))
-                            preRenewOrRefData.EndorsementTitle = parts[12];
-                        if (!string.IsNullOrEmpty(parts[13]))
-                            preRenewOrRefData.EndorsementText = parts[13];
+                            preRenewOrRefData.EndorsementText = parts[5];
 
                         await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
 
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task ImportNZBarImportClaims(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            ClaimNotification claimNotification;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "nzbaclaimdata2021.csv";
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        claimNotification = new ClaimNotification(currentUser);
+                        claimNotification.ClaimMembershipNumber = parts[0];
+                        if (!string.IsNullOrEmpty(parts[1]))
+                            claimNotification.ClaimTitle = parts[1];
+                        if (!string.IsNullOrEmpty(parts[2]))
+                        {
+                            claimNotification.ClaimDescription = parts[2];
+                            if (parts[2].Length > 255)
+                            {
+                                claimNotification.ClaimDescription = parts[2].Substring(0, 255);
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            claimNotification.ClaimReference = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            claimNotification.ClaimInsurerReference = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[5]);
+                        if (!string.IsNullOrEmpty(parts[6]))
+                            claimNotification.ClaimInsuredName = parts[6];
+                        if (!string.IsNullOrEmpty(parts[7]))
+                            claimNotification.Claimant = parts[7];
+                        if (!string.IsNullOrEmpty(parts[8]))
+                            claimNotification.ClaimEstimateInsuredLiability = decimal.Parse(parts[8]);
+                        if (!string.IsNullOrEmpty(parts[9]))
+                        {
+                            claimNotification.ClaimNotes = parts[9];
+                            if (parts[9].Length > 255)
+                            {
+                                claimNotification.ClaimNotes = parts[9].Substring(0, 255);
+                            }
+                        }
+                        claimNotification.ClaimStatus = "Closed";
+
+                        await _programmeService.AddClaimNotificationByMembership(claimNotification);
                     }
                     catch (Exception ex)
                     {
