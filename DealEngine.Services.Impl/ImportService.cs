@@ -2870,8 +2870,32 @@ namespace DealEngine.Services.Impl
                             Name = Name
                         };
 
-                     
+                        OrganisationType barristerType = new OrganisationType("Person - Individual");
+                        InsuranceAttribute barristerAttribute = new InsuranceAttribute(currentUser, "Barrister");
+                        OrganisationalUnit defaultUnit = new OrganisationalUnit(currentUser, "Person - Individual", "Person - Individual", null);
+                        BarristerUnit BarristerUnit = new BarristerUnit(currentUser, "Barrister", "Person - Individual", null)
+                        {
+                            IsPrincipalBarrister = true
+                        };
+                        Organisation Barrister = new Organisation(currentUser, Guid.NewGuid())
+                        {
+                            OrganisationType = barristerType,
+                            Email = user.Email,
+                            Name = user.FullName
+                        };
+
+                        Barrister.InsuranceAttributes.Add(barristerAttribute);
+                        Barrister.OrganisationalUnits.Add(defaultUnit);
+                        Barrister.OrganisationalUnits.Add(BarristerUnit);
+                        user.Organisations.Add(Barrister);
+
+
+
                         user.SetPrimaryOrganisation(Owner);
+
+
+
+
                         await _userService.ApplicationCreateUser(user);
 
                         var programme = await _programmeService.GetProgramme(ProgrammeId);
