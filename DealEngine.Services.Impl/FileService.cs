@@ -1249,7 +1249,7 @@ namespace DealEngine.Services.Impl
                 EGlobalResponse eGlobalResponse = agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
                 if (eGlobalResponse != null)
                 {
-                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                    if (agreement.MasterAgreement) //&& (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID)
                     {
                         mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
                         //mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]",
