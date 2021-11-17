@@ -912,7 +912,7 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
             {
                 if (ClientUIS.PreviousInformationSheet == null && ClientUIS.IsRenewawl)
                 {
-                    gv_transactionType = 2;
+                    gv_transactionType = 3;//renew
                     break;
                 }
                 // try and find the original policy
