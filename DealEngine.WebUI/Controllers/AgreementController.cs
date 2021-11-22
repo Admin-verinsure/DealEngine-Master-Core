@@ -4741,6 +4741,7 @@ namespace DealEngine.WebUI.Controllers
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ProgrammeName = programme.BaseProgramme.Name;
                     model.ProgrammeNamedPartyName = programme.BaseProgramme.NamedPartyUnitName;
+                    model.UsesEglobal = programme.BaseProgramme.UsesEGlobal;
                     ViewBag.Ispdfenable = "" + programme.BaseProgramme.EnableFullProposalReport;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a => a.DateDeleted == null))
