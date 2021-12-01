@@ -330,6 +330,7 @@ namespace DealEngine.WebUI.Controllers
             if (User.Identity.IsAuthenticated)
                 return await RedirectToLocal();
 
+
             var userName = viewModel.Username.Trim();
 
             try
