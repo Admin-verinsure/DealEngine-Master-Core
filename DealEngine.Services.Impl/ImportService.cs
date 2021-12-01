@@ -2873,7 +2873,7 @@ namespace DealEngine.Services.Impl
                        };
                         Owner.OrganisationalUnits.Add(ownerUnit);
                         Owner.InsuranceAttributes.Add(ownerAttribute);
-                        //user.Organisations.Add(Owner);
+                        user.Organisations.Add(Owner);
 
                         OrganisationType barristerType = new OrganisationType("Person - Individual");
                         InsuranceAttribute barristerAttribute = new InsuranceAttribute(currentUser, "Barrister");
