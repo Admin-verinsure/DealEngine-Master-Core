@@ -2851,13 +2851,14 @@ namespace DealEngine.Services.Impl
                                 Random random = new Random();
                                 int randomNumber = random.Next(10, 99);
                                 userName = userName + randomNumber.ToString();
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[1];
+                                user.LastName = parts[2];
+                                user.FullName = parts[1] + " " + parts[2];
+                                user.Email = email;
+
                             }
-                            user = new User(currentUser, Guid.NewGuid(), userName);
-                            user.FirstName = parts[1];
-                            user.LastName = parts[2];
-                            user.FullName = parts[1] + " " + parts[2];
-                            user.Email = email;
-                           
+
 
                         type = "Corporation – Limited liability";
                         Name = user.FullName;
