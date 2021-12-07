@@ -65,10 +65,10 @@ namespace DealEngine.WebUI
             services.ConfigureApplicationCookie(options =>
             {
                 // options.AccessDeniedPath = "/Identity/Account/AccessDenied";     not implemented
-                //options.Cookie.Name = "DealEngine";
+                options.Cookie.Name = "DealEngine";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(40);
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(4);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(3);
                 options.LoginPath = "/Account/Login";
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
