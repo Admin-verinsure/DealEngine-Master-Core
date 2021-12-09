@@ -858,8 +858,6 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> ProfileEditor()
         {
             var user = await CurrentUser();
@@ -909,7 +907,6 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
         {
             var user = await CurrentUser();
