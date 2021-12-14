@@ -631,7 +631,8 @@ namespace DealEngine.WebUI.Controllers
                 
                 model.BrokerContactUser = clientProgramme.BaseProgramme.BrokerContactUser;
                 model.EGlobalSubmissions = clientProgramme.ClientAgreementEGlobalSubmissions;
-
+                model.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
+                model.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
                 if (clientProgramme.ClientAgreementEGlobalSubmissions.Any())
                 {
                     foreach (EGlobalSubmission esubmission in clientProgramme.ClientAgreementEGlobalSubmissions)

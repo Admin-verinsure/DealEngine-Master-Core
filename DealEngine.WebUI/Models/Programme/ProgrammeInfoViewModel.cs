@@ -121,7 +121,8 @@ namespace DealEngine.WebUI.Models.Programme
         public Guid ProductId { get; set; }
         public List<ProgrammeInfoViewModel> Programmes { get; set; }
         public IList<SelectListItem> Flags { get; set; }
-
+        public string EGlobalBranchCode { get; set; }
+        public string EGlobalClientNumber { get; set; }
 
 
     }
