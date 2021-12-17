@@ -480,12 +480,18 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-                if (programme.EGlobalClientNumber == null)
-                {
-                    throw new NullReferenceException("Client number is null");
-                }
 
                 var eGlobalSerializer = new EGlobalSerializerAPI();
+
+                if (string.IsNullOrEmpty(programme.PaymentType))
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        programme.PaymentType = "Invoice";
+                        await uow.Commit();
+                    }
+                }
+
                 string paymentType = programme.PaymentType;
                 Guid transactionreferenceid = Guid.NewGuid();
 
