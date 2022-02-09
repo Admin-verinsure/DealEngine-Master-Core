@@ -63,7 +63,7 @@ deploy_stagingaibgrouponline:
   - ssh ubuntu@"$URLstagingaibgrouponline" './DE-DeployPrep.sh'
   - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/net5.0/publish/ ubuntu@$URLstagingaibgrouponline:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingaibgrouponline:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLstagingaibgrouponline" './DE-DeployFin.sh'
   environment:
     name: stagingaibgrouponline
@@ -84,7 +84,7 @@ deploy_stagingdetai:
   - ssh ubuntu@"$URLstagingdetai" './DE-DeployPrep.sh'
   - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/net5.0/publish/ ubuntu@$URLstagingdetai:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingdetai:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLstagingdetai" './DE-DeployFin.sh'
   environment:
     name: stagingdetai
@@ -104,7 +104,7 @@ deploy_stagingmnzconnect:
   - ssh-add <(echo "$PKgitlab")
   - ssh ubuntu@"$URLstagingmnzconnect" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/net5.0/publish/ ubuntu@$URLstagingmnzconnect:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingmnzconnect:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLstagingmnzconnect" './DE-DeployFin.sh'
   environment:
     name: mnzconnect
@@ -125,7 +125,7 @@ deploy_stagingprofessionalrisks:
   - ssh ubuntu@"$URLstagingprorisks" './DE-DeployPrep.sh'
   - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/net5.0/publish/ ubuntu@$URLstagingprorisks:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLstagingprorisks" './DE-DeployFin.sh'
   environment:
     name: stagingprofessionalrisks
