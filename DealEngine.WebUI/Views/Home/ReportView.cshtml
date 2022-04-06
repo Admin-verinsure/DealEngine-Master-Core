@@ -30,7 +30,16 @@
                                     <option selected="selected" value="">-- Select --</option>
                                     @foreach (var product in Model.programme.Products)
                                     {
-                                        <option value=@product.UnderwritingModuleCode.Substring(@product.UnderwritingModuleCode.IndexOf("_")+1)>@product.Name  Premium report</option>
+                                        var productcode = @product.UnderwritingModuleCode.Substring(@product.UnderwritingModuleCode.IndexOf("_") + 1);
+                                        if (@productcode.IndexOf("_") > 0)
+                                        {
+                                            <option value=@productcode.Substring(0, @productcode.IndexOf("_"))>@product.Name  Premium report</option>
+                                        }
+                                        else
+                                        {
+                                            <option value=@productcode>@product.Name  Premium report</option>
+
+                                        }
 
                                     }
 
