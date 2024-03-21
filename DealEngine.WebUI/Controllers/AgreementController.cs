@@ -3797,7 +3797,7 @@ namespace DealEngine.WebUI.Controllers
                 //CommonRenderDocs(programme.BaseProgramme.Id, Action, status, sheet);
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    if (agreement.Status == "Quoted")
+                    if (agreement.Status == "Quoted" || programme.BaseProgramme.IsProgrammebypassrefferal)
                     {
                         if (Action == "BindAgreement")
                         {
@@ -5117,6 +5117,7 @@ namespace DealEngine.WebUI.Controllers
                     model.UsesEglobal = programme.BaseProgramme.UsesEGlobal;
                     model.HasCCPayment = programme.BaseProgramme.HasCCPayment;
                     model.HasInvoicePayment = programme.BaseProgramme.HasInvoicePayment;
+                    model.Isprogrammebypassrefferal = programme.BaseProgramme.IsProgrammebypassrefferal;
                     ViewBag.Ispdfenable = "" + programme.BaseProgramme.EnableFullProposalReport;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a => a.DateDeleted == null && a.InsurerDeclined !=true))

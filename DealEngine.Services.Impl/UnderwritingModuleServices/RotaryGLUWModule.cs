@@ -33,9 +33,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "AS" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "GL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm asterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "AS" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm asterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "GL" && ct.DateDeleted == null))
                 {
                     asterm.Delete(underwritingUser);
                 }
@@ -217,6 +217,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             }
             else
             {
+
+                ///to add referral
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrasreferral" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    foreach(Organisation org in agreement.ClientInformationSheet.Organisation)
+                    {
+                        if (org.OrganisationType.Name == "Other"|| org.OrganisationType.Name == "Trading Trust" || org.OrganisationType.Name == "Private" || org.OrganisationType.Name == "Company")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrasreferral" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                   
+                }
+
+
+
+
+
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrasreferral" && cref.DateDeleted == null).Status != "Pending")
                 {
                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrasreferral" && cref.DateDeleted == null).Status = "Pending";

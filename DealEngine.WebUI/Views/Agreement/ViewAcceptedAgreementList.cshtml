@@ -363,8 +363,9 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 @foreach (var item in Model)
                 {
 
-                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                        @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                       (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"
+                       || item.Isprogrammebypassrefferal))
                     {
                         <h3><strong>Documents </strong></h3>
 
