@@ -1048,9 +1048,48 @@ namespace DealEngine.Services.Impl
                                     }
                                 }
                             }
+                            /// commented below as per Craig advice named party should work on Org type
+                            /// 
+                            //var rotarydirector = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Director");
+                            //if (rotarydirector != null)
+                            //{
+                            //    if (string.IsNullOrEmpty(strallrotarynamedparties))
+                            //    {
+                            //        strallrotarynamedparties = uisorg.Name;
+                            //    }
+                            //    else
+                            //    {
+                            //        strallrotarynamedparties += ", " + uisorg.Name;
+                            //    }
+                            //}
+                            //var rotarytrustee = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Trustee");
+                            //if (rotarytrustee != null)
+                            //{
+                            //    if (string.IsNullOrEmpty(strallrotarynamedparties))
+                            //    {
+                            //        strallrotarynamedparties = uisorg.Name;
+                            //    }
+                            //    else
+                            //    {
+                            //        strallrotarynamedparties += ", " + uisorg.Name;
+                            //    }
+                            //}
+                            //var rotaryincorporatedsocietyofficer = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Incorporated Society Officer");
+                            //if (rotaryincorporatedsocietyofficer != null)
+                            //{
+                            //    if (string.IsNullOrEmpty(strallrotarynamedparties))
+                            //    {
+                            //        strallrotarynamedparties = uisorg.Name;
+                            //    }
+                            //    else
+                            //    {
+                            //        strallrotarynamedparties += ", " + uisorg.Name;
+                            //    }
+                            //}
 
-                            var rotarydirector = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Director");
-                            if (rotarydirector != null)
+
+                            if(uisorg.OrganisationType.Name == "Company" || uisorg.OrganisationType.Name == "Private"
+                                 || uisorg.OrganisationType.Name == "Trading Trust"  || uisorg.OrganisationType.Name == "Other")
                             {
                                 if (string.IsNullOrEmpty(strallrotarynamedparties))
                                 {
@@ -1061,30 +1100,7 @@ namespace DealEngine.Services.Impl
                                     strallrotarynamedparties += ", " + uisorg.Name;
                                 }
                             }
-                            var rotarytrustee = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Trustee");
-                            if (rotarytrustee != null)
-                            {
-                                if (string.IsNullOrEmpty(strallrotarynamedparties))
-                                {
-                                    strallrotarynamedparties = uisorg.Name;
-                                }
-                                else
-                                {
-                                    strallrotarynamedparties += ", " + uisorg.Name;
-                                }
-                            }
-                            var rotaryincorporatedsocietyofficer = (AdvisorUnit)uisorg.OrganisationalUnits.FirstOrDefault(u => u.Name == "Incorporated Society Officer");
-                            if (rotaryincorporatedsocietyofficer != null)
-                            {
-                                if (string.IsNullOrEmpty(strallrotarynamedparties))
-                                {
-                                    strallrotarynamedparties = uisorg.Name;
-                                }
-                                else
-                                {
-                                    strallrotarynamedparties += ", " + uisorg.Name;
-                                }
-                            }
+                            
 
 
                         }
@@ -1120,7 +1136,7 @@ namespace DealEngine.Services.Impl
                         strabusiness = "No Associated Business Insureds.";
                     }
 
-                    if (string.IsNullOrEmpty(strallrotarynamedparties) && agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName.Contains("Rotary Oceania Associations"))
+                    if (string.IsNullOrEmpty(strallrotarynamedparties) && agreement.ClientInformationSheet.Programme.BaseProgramme.NamedPartyUnitName.Contains("RotaryAssociationsProgramme"))
                     {
 
                         strabusiness = "No Additional Insureds.";
