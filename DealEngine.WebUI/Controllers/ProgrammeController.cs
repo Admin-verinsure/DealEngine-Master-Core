@@ -499,10 +499,11 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }       
+        }
 
-        [HttpPost]
-        public async Task<IActionResult> SendInvoice(Guid programmeId)
+        //[HttpPost]
+        //public virtual string EGlobalExternalContactNumber { get; set; }
+        public async Task<IActionResult> SendInvoice(Guid programmeId, string EGlobalExternalContactNumber, bool updateBeforeProceeding)
         {
             User user = null;
 
@@ -511,7 +512,16 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
 
+
                 var eGlobalSerializer = new EGlobalSerializerAPI();
+                if (programme != null && updateBeforeProceeding)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        programme.EGlobalExternalContactNumber = EGlobalExternalContactNumber;
+                        await uow.Commit();
+                    }
+                }
 
                 if (string.IsNullOrEmpty(programme.PaymentType))
                 {
