@@ -194,9 +194,14 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[First Name]]", insuredUser.Result.FirstName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[Last Name]]", insuredUser.Result.LastName));
+
+            }
+            if (user != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             }
 
-            string systememailsubject = emailTemplate.Subject;
+                string systememailsubject = emailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)
             {
