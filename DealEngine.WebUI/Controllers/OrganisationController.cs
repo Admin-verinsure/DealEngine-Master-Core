@@ -354,7 +354,8 @@ namespace DealEngine.WebUI.Controllers
                         User user = await _userService.GetUserByEmail(jsonUser.Email);
                         if (!user.Organisations.Any(org => org.Id == clientProgramme.Owner.Id)) { 
                         user.Organisations.Add(clientProgramme.Owner);
-                         user.PrimaryOrganisation = organisation;
+                         clientProgramme.Owner.Email = user.Email;
+                         user.PrimaryOrganisation = clientProgramme.Owner;
                         }
                         await uow.Commit();
                     }
