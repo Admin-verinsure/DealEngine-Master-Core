@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,7 +53,7 @@ namespace DealEngine.Services.Impl
 			User user = null;
 			try
 			{
-				user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
+				user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
 			}
 			catch (Exception ex)
 			{
