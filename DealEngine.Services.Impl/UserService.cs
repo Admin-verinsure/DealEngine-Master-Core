@@ -53,9 +53,13 @@ namespace DealEngine.Services.Impl
 			User user = null;
 			try
 			{
-				user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
-			}
-			catch (Exception ex)
+                //user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
+                user = await _userRepository.FindAll()
+                            .FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+
+
+            }
+            catch (Exception ex)
 			{
 				throw new Exception(ex.Message);
 			}
