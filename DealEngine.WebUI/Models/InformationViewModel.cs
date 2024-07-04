@@ -1614,6 +1614,7 @@ namespace DealEngine.WebUI.Models
             HasExistingPolicyOptions = GetSelectListOptions();
             HasAssumeLiabilityOptions = GetSelectListOptions();
             HasClientFundsOptions = GetSelectListOptions();
+            HasYouthProgramme = HasYouthProgrammeOptions();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -1637,6 +1638,43 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
         public IList<SelectListItem> HasClientFundsOptions { get; set; }
+        public IList<SelectListItem> HasYouthProgramme { get; set; }
+        public IList<SelectListItem> HasYouthProgrammeOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "RYE - Rotary Youth Exchange", Value = "1"
+                },
+                new SelectListItem
+                { Text = "RYPEN - Rotary Youth Enrichment", Value = "2" 
+                },
+                new SelectListItem
+                {
+                    Text = "Nat Science Forum", Value = "3"
+                },
+                new SelectListItem
+                { Text = "Model United Nations", Value = "4" 
+                },
+                new SelectListItem
+                {
+                    Text = "Trees For Survival", Value = "5"
+                },
+                new SelectListItem
+                { Text = "Other (please enter name(s) )", Value = "6" }
+                ,
+                new SelectListItem
+                { Text = "Not Applicable", Value = "6" }
+            };
+        }
+
+        public string YouthProgrammeDetails { get; set; }
+
         public int CoverAmount { get; set; }
         public string VehicleDetails { get; set; }
         public string AssumeLiabilityDetails { get; set; }
