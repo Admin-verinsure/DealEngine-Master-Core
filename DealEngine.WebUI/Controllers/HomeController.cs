@@ -1,4 +1,4 @@
-﻿#region Using
+#region Using
 using AutoMapper;
 using ClosedXML.Excel;
 using DealEngine.Domain.Entities;
@@ -4085,6 +4085,7 @@ namespace DealEngine.WebUI.Controllers
 
                             //send out login instruction email
                         //    await _emailService.SendSystemEmailLogin(email);
+                           // await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
                             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetReminder");
                             if (emailTemplate != null)

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
@@ -357,6 +357,7 @@ namespace DealEngine.WebUI.Controllers
                            // clientProgramme.Owner = user;
                             clientProgramme.Owner.Email = user.Email;
                             user.PrimaryOrganisation = clientProgramme.Owner;
+
 
                         }
                         await uow.Commit();

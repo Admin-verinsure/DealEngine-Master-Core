@@ -200,6 +200,11 @@ namespace DealEngine.Services.Impl
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             }
+            if (user != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
+            }
+
 
                 string systememailsubject = emailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);

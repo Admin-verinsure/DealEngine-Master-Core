@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -50,21 +50,18 @@ namespace DealEngine.Services.Impl
 
 		public async Task<User> GetUser(string username)
 		{
-			User user = null;
-			try
-			{
-                //user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
-                user = await _userRepository.FindAll()
-                            .FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
-
-
+            User user = null;
+            try
+            {
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
             }
             catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-			// have a repo user? Return them
-			if (user != null)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            // have a repo user? Return them
+            if (user != null)
 				return user;
 			user = _ldapService.GetUser(username);
 			// have a ldap user but no repo? Update NHibernate & return them
