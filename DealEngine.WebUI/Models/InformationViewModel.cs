@@ -1614,7 +1614,7 @@ namespace DealEngine.WebUI.Models
             HasExistingPolicyOptions = GetSelectListOptions();
             HasAssumeLiabilityOptions = GetSelectListOptions();
             HasClientFundsOptions = GetSelectListOptions();
-            HasYouthProgramme = HasYouthProgrammeOptions();
+            HasYouthProgramme =  HasYouthProgrammeOptions();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -1639,6 +1639,10 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
         public IList<SelectListItem> HasClientFundsOptions { get; set; }
         public IList<SelectListItem> HasYouthProgramme { get; set; }
+        //public List<int> SelectedYouthProg  { get; set; }
+        public List<int> SelectedYouthProg { get; set; } = new List<int>();
+
+
         public IList<SelectListItem> HasYouthProgrammeOptions()
         {
             return new List<SelectListItem>()
@@ -1652,7 +1656,7 @@ namespace DealEngine.WebUI.Models
                     Text = "RYE - Rotary Youth Exchange", Value = "1"
                 },
                 new SelectListItem
-                { Text = "RYPEN - Rotary Youth Enrichment", Value = "2" 
+                { Text = "RYPEN - Rotary Youth Enrichment", Value = "12" 
                 },
                 new SelectListItem
                 {
@@ -1666,12 +1670,11 @@ namespace DealEngine.WebUI.Models
                     Text = "Trees For Survival", Value = "5"
                 },
                 new SelectListItem
-                { Text = "Other (please enter name(s) )", Value = "6" }
-                ,
-                new SelectListItem
                 { Text = "Not Applicable", Value = "6" }
             };
         }
+
+      
 
         public string YouthProgrammeDetails { get; set; }
 

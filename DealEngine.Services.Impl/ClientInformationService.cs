@@ -132,7 +132,7 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
-            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
+        //    SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
@@ -142,9 +142,11 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("BIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer( sheet, collection, collection.Keys.Where(s => s.StartsWith("TAViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CPViewModel", StringComparison.CurrentCulture)));
-            }
+            AnswerFromGL( sheet,collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
 
-    
+        }
+
+
         //public ClubTrustAssetsInfo updateclubassetEntity(ClubTrustAssetsInfo clubTrustAssetsInfo, IFormCollection collection)
 
         //{
@@ -227,6 +229,51 @@ namespace DealEngine.Services.Impl
             }
         }
 
+
+        private void AnswerFromGL(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
+        {
+           // sheet.RoleData = new RoleData(sheet);
+            string modelLocation = "DealEngine.WebUI.Models.{1}, DealEngine.WebUI";
+            foreach (string key in enumerable)
+            {
+                int value = 0;
+                var modelArray = key.Split('.').ToList();
+                Guid id = Guid.Empty;
+                var modelType = modelLocation.Replace("{1}", modelArray.FirstOrDefault());
+                Type type = Type.GetType(modelType);
+                try
+                {
+                    int percent = 0;
+                    var model = Activator.CreateInstance(type);
+                    var ModelProperty = model.GetType().GetProperty(modelArray.ElementAt(1));
+                    if (ModelProperty.Name == "SelectedYouthProg")
+                    {
+                        
+                            Guid.TryParse(modelArray.ElementAt(2), out id);
+                       //     sharedDataRole = sheet.RoleData.DataRoles.FirstOrDefault(t => t.TemplateId == id);
+                            try
+                            {
+                         //       sharedDataRole.Selected = true;
+                        //        sharedDataRole.Total = int.Parse(collection[key].ToString());
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                        
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            }
+        }
+
+
+    
         private void SaveAnswer(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
         {
             foreach (var key in enumerable)
