@@ -1088,8 +1088,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 List<ClientProgramme> renewClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.RenewFromProgramme.Id);
                 try {
+                    //foreach (var client in renewClientProgrammes.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker"
+                    //                && (cp.InformationSheet.Answers.Count == 0 || DateTime.ParseExact(cp.InformationSheet.Answers.Where(ans => ans.ItemName == "GeneralViewModel.PolicyEndDate").FirstOrDefault().Value, "yyyy-mm-dd", CultureInfo.InvariantCulture) < DateTime.Now.AddMonths(1))).OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                    //{
+
                     foreach (var client in renewClientProgrammes.Where(cp => cp.InformationSheet.Status != "Not Taken Up By Broker"
-                                    && (cp.InformationSheet.Answers.Count == 0 || DateTime.ParseExact(cp.InformationSheet.Answers.Where(ans => ans.ItemName == "GeneralViewModel.PolicyEndDate").FirstOrDefault().Value, "yyyy-mm-dd", CultureInfo.InvariantCulture) < DateTime.Now.AddMonths(1))).OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                                   && (cp.InformationSheet.Answers.Count == 0) ).OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                     {
                         if (client.DateDeleted == null && client.InformationSheet != null)
                         {
@@ -3687,7 +3691,7 @@ namespace DealEngine.WebUI.Controllers
                                 }
 
                             //send out login instruction email
-                            await _emailService.SendSystemEmailLogin(email);
+                //            await _emailService.SendSystemEmailLogin(email);
                             //send out information sheet instruction email
                             EmailTemplate emailTemplate = null;
 
@@ -3703,11 +3707,11 @@ namespace DealEngine.WebUI.Controllers
                             {
                                 if (programme.ProgEnableProgEmailCC && !string.IsNullOrEmpty(programme.ProgEmailCCRecipent))
                                 {
-                                    await _emailService.SendEmailViaEmailTemplateWithCC(email, emailTemplate, UISAttachmentDocuments, null, null, programme.ProgEmailCCRecipent);
+                              //      await _emailService.SendEmailViaEmailTemplateWithCC(email, emailTemplate, UISAttachmentDocuments, null, null, programme.ProgEmailCCRecipent);
                                 }
                                 else
                                 {
-                                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, UISAttachmentDocuments, null, null);
+                            //        await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, UISAttachmentDocuments, null, null);
                                 }
                             }
                             //send out uis issue notification email
