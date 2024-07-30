@@ -1514,27 +1514,34 @@ namespace DealEngine.WebUI.Controllers
 
                 //ProgrammeItem model = new ProgrammeItem(clientList.FirstOrDefault().BaseProgramme);
                 ProgrammeItem model = new ProgrammeItem(programme);
-
-              
-                if (programme.IsClientTaskDisabled && !programme.IsProgrammerenewed)
+                if(!programme.IsProgrammerenewed)
                 {
-                    model = await GetBrokerRenewedDashboard(user, clientList.FirstOrDefault(), programme);
-                }else
-                if (programme.ProgMultBrokerMode)
-                {
-                    model = await GetOwnerListModel(user, clientList, programme);
-                }
-                else
-                {
-                    // model = await GetClientProgrammeListModel(user, clientList, programme);
+                   model = await GetBrokerRenewedListModel(user, clientList, programme);
+                }else{
                     model = await GetClientProgrammeListModel(user, clientList, programme);
 
-                    //model = await GetBrokerRenewedListModel(user, clientList, programme);
-                    //GetOwnerClientProgrammeListModel
-
-
                 }
-                
+
+
+                //      if (programme.IsClientTaskDisabled && !programme.IsProgrammerenewed)
+                //      {
+                //          model = await GetBrokerRenewedDashboard(user, clientList.FirstOrDefault(), programme);
+                //      }else
+                //      if (programme.ProgMultBrokerMode)
+                //      {
+                //          model = await GetOwnerListModel(user, clientList, programme);
+                //      }
+                //      else
+                //      {
+                //          // model = await GetClientProgrammeListModel(user, clientList, programme);
+                //          model = await GetClientProgrammeListModel(user, clientList, programme);
+
+                ////          model = await GetBrokerRenewedListModel(user, clientList, programme);
+                //          //GetOwnerClientProgrammeListModel
+
+
+                //      }
+
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
                 var dbUpdatemodelTypes = await _updateTypeServices.GetAllUpdateTypes();
                 var updateTypeModel = new List<UpdateTypesViewModel>();
