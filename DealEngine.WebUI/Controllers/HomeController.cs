@@ -711,7 +711,6 @@ namespace DealEngine.WebUI.Controllers
             var clientProgramme = clientList.FirstOrDefault();
             IList<Organisation> ownerList = new List<Organisation>();
             ProgrammeItem model = new ProgrammeItem(programme);
-            DateTime tme = DateTime.Now.AddMonths(3);
             if (clientProgramme != null)
             {
                 if (!isClient)
@@ -728,7 +727,7 @@ namespace DealEngine.WebUI.Controllers
                 List<ClientProgramme> renewClientProgrammes = await _programmeService.GetClientProgrammesForProgramme(programme.RenewFromProgramme.Id);
                 try
                 {
-                    foreach (var client in renewClientProgrammes.Where(cp => cp.InformationSheet.Status == "Bound and invoiced"))
+                    foreach (var client in renewClientProgrammes)
                     {
                         if (client.DateDeleted == null && client.InformationSheet != null)
                         {
@@ -970,19 +969,20 @@ namespace DealEngine.WebUI.Controllers
         {
             IList<Organisation> ownerList = new List<Organisation>();
             ProgrammeItem model = new ProgrammeItem(programme);
-            DateTime tme = DateTime.Now.AddMonths(3);
-            if (clientProgramme != null)
-            {
-                if (!isClient)
-                {
-                    var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
-                    if (isBaseClientProg)
-                    {
-                        ownerList = await _programmeService.GetOwnerForProgramme(programme.Id);
-                    }
-                }
-            }
-            //  ownerList = await _programmeService.GetOwnerForProgramme(programme.Id);
+            //if (clientProgramme != null )
+            //{
+            //    if (!isClient)
+            //    {
+            //        var isBaseClientProg = await _programmeService.IsBaseClass(clientProgramme);
+            //        if (isBaseClientProg)
+            //        {
+            //            ownerList = await _programmeService.GetOwnerForProgramme(programme.Id);
+            //        }
+            //    }
+            //}
+
+            //GetDashboardOwnerForProgramme
+             ownerList = await _programmeService.GetOwnerForProgramme(programme.Id);
 
 
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsProgrammeManager)
@@ -1526,7 +1526,13 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
+                    // model = await GetClientProgrammeListModel(user, clientList, programme);
                     model = await GetClientProgrammeListModel(user, clientList, programme);
+
+                    //model = await GetBrokerRenewedListModel(user, clientList, programme);
+                    //GetOwnerClientProgrammeListModel
+
+
                 }
                 
                 model.IsSubclientEnabled = programme.HasSubsystemEnabled;
