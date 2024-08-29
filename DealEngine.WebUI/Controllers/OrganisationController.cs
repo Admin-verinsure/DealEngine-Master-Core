@@ -366,7 +366,7 @@ namespace DealEngine.WebUI.Controllers
 
                     if (clientProgramme.BaseProgramme.ProgEnableEmail)
                     {
-                        await _emailService.CreateUserAdministrator(user, organisation);
+                        await _emailService.CreateUserAdministrator(user, clientProgramme.Owner);
                     }
                 }
 
