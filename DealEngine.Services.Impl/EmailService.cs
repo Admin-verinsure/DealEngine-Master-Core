@@ -1495,6 +1495,25 @@ namespace DealEngine.Services.Impl
 
         }
 
+        public async Task CreateUserAdministrator(User createdUser, Organisation organisation)
+        {
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, createdUser.Email);
+            string subject = organisation.Name + " - Administrator Assignment & Insurance Information";
+            string body = "Dear " + createdUser.FirstName + ", you have been assigned as the administrator for " + organisation.Name + "." +
+                " Please visit the following URL to log in and complete the necessary information sheet for the insurance of this club: " +
+                "<br><a href='https://insure.rotaryoceania.zone/'>https://insure.rotaryoceania.zone/</a><br>" +
+                "Your username is: " + createdUser.UserName + "<br>" +
+                "If you need to reset your password, please click on the \"Reset Password\" button on the login page.<br>" +
+                "Thank you for your attention to this matter.";
+
+            email.From(DefaultSender);
+            email.WithSubject(subject);
+            email.UseHtmlBody(true);
+            email.WithBody(body);
+            email.Send();
+        }
+
+
         #region Merge Field Library
         public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
@@ -1560,6 +1579,12 @@ namespace DealEngine.Services.Impl
             return mergeFields;
         }
         #endregion
+
+
+
+
+
+
 
     }
 }

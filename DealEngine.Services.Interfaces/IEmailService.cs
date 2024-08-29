@@ -58,7 +58,8 @@ namespace DealEngine.Services.Interfaces
         Task SendCSVReportsViaEmail(string recipent, string workbook, string fileName,string ProgName);
         Task SendworkbookReportsViaEmail(string recipent, Attachment attachment);
 
-        
+        Task CreateUserAdministrator(User createdUser, User creatingUser);
+
 
     }
 }

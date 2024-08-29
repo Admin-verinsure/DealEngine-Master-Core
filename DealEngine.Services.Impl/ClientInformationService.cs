@@ -132,7 +132,7 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
-        //    SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("SLViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("FAPViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("IPViewModel", StringComparison.CurrentCulture)));
@@ -142,7 +142,7 @@ namespace DealEngine.Services.Impl
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("BIViewModel", StringComparison.CurrentCulture)));
             SaveAnswer( sheet, collection, collection.Keys.Where(s => s.StartsWith("TAViewModel", StringComparison.CurrentCulture)));
             SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CPViewModel", StringComparison.CurrentCulture)));
-            AnswerFromGL( sheet,collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
+            //AnswerFromGL( sheet,collection, collection.Keys.Where(s => s.StartsWith("GLViewModel", StringComparison.CurrentCulture)));
 
         }
 
