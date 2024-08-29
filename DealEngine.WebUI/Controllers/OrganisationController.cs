@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Linq.Dynamic;
 using NHibernate.Linq;
+using User = DealEngine.Domain.Entities.User;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -348,19 +349,24 @@ namespace DealEngine.WebUI.Controllers
 
                 if (TypeName == "Administrator")
                 {
+                    User user = await _userService.GetUserByEmail(jsonUser.Email);
+
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
 
-                        User user = await _userService.GetUserByEmail(jsonUser.Email);
                         if (!user.Organisations.Any(org => org.Id == clientProgramme.Owner.Id)) { 
                         user.Organisations.Add(clientProgramme.Owner);
                            // clientProgramme.Owner = user;
                             clientProgramme.Owner.Email = user.Email;
                             user.PrimaryOrganisation = clientProgramme.Owner;
 
-
                         }
                         await uow.Commit();
+                    }
+
+                    if (clientProgramme.BaseProgramme.ProgEnableEmail)
+                    {
+                        await _emailService.CreateUserAdministrator(user, organisation);
                     }
                 }
 
