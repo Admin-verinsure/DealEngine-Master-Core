@@ -2293,7 +2293,8 @@ namespace DealEngine.WebUI.Controllers
                             ClientAgreementId = agreement.Id,
                             ClientProgrammeId = clientProgramme.Id,
                             Declaration = clientProgramme.BaseProgramme.Declaration,
-                            Isprogrammebypassrefferal = clientProgramme.BaseProgramme.IsProgrammebypassrefferal
+                            Isprogrammebypassrefferal = clientProgramme.BaseProgramme.IsProgrammebypassrefferal,
+                            ProgrammeNamedPartyName= clientProgramme.BaseProgramme.NamedPartyUnitName,
                         };
 
                         model.Advisory = await _milestoneService.SetMilestoneFor("Agreement Status - Declined", user, answerSheet);
@@ -2532,7 +2533,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 models.BaseProgramme = clientProgramme.BaseProgramme;
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Payment for " + clientProgramme.Owner.Name;
-
+                ViewBag.StopDocuments = clientProgramme.BaseProgramme.StopDocuments;
                 bool requirePayment = false;
                 if ((clientProgramme.BaseProgramme.HasCCPayment || clientProgramme.BaseProgramme.HasInvoicePayment) && totalPayable > 0)
                 {

@@ -362,7 +362,7 @@
                }
             }
             else if (stepNumber === 2) {
-                if (!$('#agreementAccept').is(":checked")) {
+                if (!$('#agreementAccept').is(":checked") && !$('#RotaryAgreementAccept').is(":checked")) {
                     document.getElementById("advisoryModal").hidden = false;
                     return false;
                 }

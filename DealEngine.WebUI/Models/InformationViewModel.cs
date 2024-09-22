@@ -1614,7 +1614,8 @@ namespace DealEngine.WebUI.Models
             HasExistingPolicyOptions = GetSelectListOptions();
             HasAssumeLiabilityOptions = GetSelectListOptions();
             HasClientFundsOptions = GetSelectListOptions();
-            HasYouthProgramme =  HasYouthProgrammeOptions();
+            HasYouthProgrammeOptions = GetYouthProgrammeOptions();
+            SelectedYouthProgrammes = new List<string>();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -1638,12 +1639,14 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
         public IList<SelectListItem> HasClientFundsOptions { get; set; }
-        public IList<SelectListItem> HasYouthProgramme { get; set; }
+        //public IList<SelectListItem> HasYouthProgramme { get; set; }
+        public IList<SelectListItem> HasYouthProgrammeOptions { get; set; }
+        public List<string> SelectedYouthProgrammes { get; set; }
         //public List<int> SelectedYouthProg  { get; set; }
-        public List<int> SelectedYouthProg { get; set; } = new List<int>();
+        //public List<int> SelectedYouthProg { get; set; } = new List<int>();
 
 
-        public IList<SelectListItem> HasYouthProgrammeOptions()
+        public IList<SelectListItem> GetYouthProgrammeOptions()
         {
             return new List<SelectListItem>()
             {
@@ -1656,7 +1659,7 @@ namespace DealEngine.WebUI.Models
                     Text = "RYE - Rotary Youth Exchange", Value = "1"
                 },
                 new SelectListItem
-                { Text = "RYPEN - Rotary Youth Enrichment", Value = "12" 
+                { Text = "RYPEN - Rotary Youth Enrichment", Value = "2" 
                 },
                 new SelectListItem
                 {

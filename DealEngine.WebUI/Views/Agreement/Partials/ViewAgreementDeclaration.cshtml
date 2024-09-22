@@ -3,6 +3,7 @@
 @{
     var agreementStatus = Model.Status;
     var bypassreferral = Model.Isprogrammebypassrefferal;
+    var ProgrammeNamedPartyName = Model.ProgrammeNamedPartyName;
     string clientMessage = "";
     bool Isenablebacktoclient = false;
 
@@ -67,6 +68,24 @@
                 </a>
             </label>
         </div>
+        <div class="form-group RotaryDeclaration hidden">
+
+            <div class="input-group">
+                <p>On behalf of all proposed Insureds I/We declare and agree that:</p>
+                <p>
+                    <ol>
+                        @Html.Raw(Model.Declaration)
+                    </ol>
+                </p>
+            </div>
+
+            <label class="radio">
+                <a>
+                    <input id="RotaryAgreementAccept" name="radio" type="radio" data-bs-toggle="modal" >
+                    <i></i>I confirm have read the above statements
+                </a>
+            </label>
+        </div>
 
     </div>
 </div>
@@ -99,20 +118,38 @@
         var prevbutton = document.getElementsByClassName("sw-btn-next");
         $(prevbutton).addClass("hidden");
         $(prevbutton).hide();
-
         $(".nonsubmitted").addClass("hidden");
+        $(".RotaryDeclaration").addClass("hidden");
+
+
     </script>
 }
 else
 {
-        
 
-    <script type="text/javascript">
-        var back = document.getElementById("backbutton");
-        $(back).addClass("hidden");
-        $(back).hide();
-        $(".nonsubmitted").removeClass("hidden");
-    </script>
+    @if (ProgrammeNamedPartyName.Contains("Rotary"))
+    {
+        <script type="text/javascript">
+            var back = document.getElementById("backbutton");
+            $(back).addClass("hidden");
+            $(back).hide();
+            $(".nonsubmitted").addClass("hidden");
+            $(".RotaryDeclaration").removeClass("hidden");
+
+        </script>
+    }
+    else
+    {
+         <script type="text/javascript">
+           var back = document.getElementById("backbutton");
+           $(back).addClass("hidden");
+           $(back).hide();
+           $(".nonsubmitted").removeClass("hidden
+           $(".RotaryDeclaration").addClass("hidden");
+
+         </script>
+    }
+
 
 }
 

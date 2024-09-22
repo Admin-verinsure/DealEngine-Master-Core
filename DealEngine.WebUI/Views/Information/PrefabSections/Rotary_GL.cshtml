@@ -1,47 +1,21 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-<form id="GLViewModel" class="is-valid" data-accordianId="Club General Liability">
-
-
-    <br />
-    <br />
+<form id="GLViewModelForm" class="is-valid" data-accordianId="Club General Liability" method="post">
     <div class="form-group">
         <div class="row">
-            <div class="col-9">
-                <label class="label required">
-                    Is you club involved in a youth programme?
-                </label>
+            <div class="col-4">
+                <label for="HasYouthProgrammeOptions" class="label required">Is your club involved in a youth programme?</label>
             </div>
-            <div class="col-3">
-                <select id="HasYouthProgramme" name="GLViewModel.HasYouthProgramme" class="form-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.GLViewModel.HasYouthProgramme)
+            <div class="col-8">
+                <select id="HasYouthProgrammeOptions" name="GLViewModel.SelectedYouthProgrammes" class="form-select b" multiple required>
+                    @foreach (var option in Model.GLViewModel.HasYouthProgrammeOptions)
                     {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        <option value="@option.Value" selected="@(Model.GLViewModel.SelectedYouthProgrammes.Contains(option.Value) ? "selected" : "")">
+                            @option.Text
+                        </option>
                     }
                 </select>
             </div>
         </div>
     </div>
-
-@*
-    <div class="form-group">
-        <div class="row">
-            <div class="col-9">
-                <label>
-                    Your Club or Club Trust motor vehicle, if any?
-
-                </label>
-            </div>
-            <div class="col-3">
-                <select id="HasClubTrustMotorVehicle" name="CPViewModel.HasClubTrustMotorVehicle" class="form-select" onchange="OnChange(this.id, this.name)" required>
-                    @foreach (var option in Model.CPViewModel.HasClubTrustMotorVehicle)
-                    {
-                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-
-*@
 </form>

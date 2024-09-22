@@ -9,13 +9,16 @@
 {
 
     <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
+            <!-- Adjusted for larger dialog -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Advisory</h5>
                 </div>
                 <div class="modal-body">
-                    @Html.Raw(Model.Advisory)
+                    <div id="advisoryTextEditor" contenteditable="true" class="text-editor">
+                        @Html.Raw(Model.Advisory)
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="advisoryModal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
@@ -859,28 +862,7 @@ else
 
         });
         debugger;
-        @*var progId = "@ViewBag.Id";
-        var postData = { ProgrammeId: "@ViewBag.Id" };
-        //viewage662
-        $.ajax({
-        url: '@Url.Action("GetExtensionCoverOptions", "Information")',
-        type: "POST",
-        data: postData
-        }).done(function (data) {
-
-        if (data != "") {
-        for (var item = 0; item < data.length; item++) {
-        var arr = data[item];
-        var count = 0;
-        var queryselector = "" + "input[name=\'" + arr[count] + " Extensiontable\'][value=\'" + arr[count + 1] + "\']";
-        $(queryselector).attr('checked', true);
-        //extensionselected(arr[count]);
-
-        }
-        }
-        }) .fail(function (jqXHR, textStatus, errorThrown) {
-        alert("There was an error while trying to get the Cover Options.");
-        });*@
+        
 
     </script>
 
@@ -894,6 +876,22 @@ else
             $('.modal').css({ "width": "300px", "height": "400px", "position": "absolute", "float": "left", "left": "40%", "top": "20%", "transform": "translate(-40%, -40%)" });
 
         });
+
+
+    .text-editor {
+        width: 100%;
+        min-height: 300px;
+        max-height: 500px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        overflow-y: auto;
+        white-space: pre-wrap; /* Ensure text wraps correctly */
+    }
+
+
 
         $('.Startdate').datepicker({
             maxDate: "+30d",

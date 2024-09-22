@@ -117,7 +117,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsProgrammebypassrefferal { get; set; }
         public virtual string ProgrammeRenewalDateon { get; set; }
         //public virtual List<string> ProgrammeRenewalFrom { get; set; }
-
+        public virtual bool StopDocuments { get; set; }
 
         protected Programme() : this(null) { }
 

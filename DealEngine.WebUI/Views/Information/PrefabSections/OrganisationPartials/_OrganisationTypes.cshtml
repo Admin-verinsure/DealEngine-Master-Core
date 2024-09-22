@@ -59,8 +59,8 @@
 </div>
 <div id="Else" class="form-group row" hidden>
     <div class="form-group col-md-6">
-        @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required" })
-        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
+        @Html.LabelFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "label required OrganisationName" })
+        @Html.TextBoxFor(m => m.OrganisationViewModel.Organisation.Name, new { @class = "form-control OrganisationName", @id = "Organisation.Name", @onchange = "OnChange(this.id, this.name)", @required = "", @maxlength = "250", @placeholder = "Max characters is 250. Over 250 will not be stored." })
         @if (Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo Programme" || Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Abbott Financial Advisor Liability Programme" ||
              Model.OrganisationViewModel.Programme.NamedPartyUnitName == "Apollo ML Programme")
         {

@@ -15,9 +15,13 @@
                     </div>
                     break;
                 }
-                <div class="form-group float-right">
-                    <button id="NextNoPayment" onclick="bypassPayment()" class="btn btn-primary">Next</button>
-                </div>
+
+                @if(!@ViewBag.StopDocuments){
+                 <div class="form-group float-right">
+                   <button id="NextNoPayment" onclick="bypassPayment()" class="btn btn-primary">Next</button>
+                 </div>
+                }
+               
             </div>
         </div>
     </div>
