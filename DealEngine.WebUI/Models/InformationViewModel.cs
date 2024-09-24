@@ -1616,6 +1616,7 @@ namespace DealEngine.WebUI.Models
             HasClientFundsOptions = GetSelectListOptions();
             HasYouthProgrammeOptions = GetYouthProgrammeOptions();
             SelectedYouthProgrammes = new List<string>();
+            HasYouthProgramme = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetSelectListOptions()
@@ -1639,7 +1640,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasExistingPolicyOptions { get; set; }
         public IList<SelectListItem> HasAssumeLiabilityOptions { get; set; }
         public IList<SelectListItem> HasClientFundsOptions { get; set; }
-        //public IList<SelectListItem> HasYouthProgramme { get; set; }
+        public IList<SelectListItem> HasYouthProgramme { get; set; }
         public IList<SelectListItem> HasYouthProgrammeOptions { get; set; }
         public List<string> SelectedYouthProgrammes { get; set; }
         public string YouthProgrammesDetails { get; set; }
