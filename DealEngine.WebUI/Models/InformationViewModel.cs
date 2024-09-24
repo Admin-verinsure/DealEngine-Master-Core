@@ -1642,6 +1642,8 @@ namespace DealEngine.WebUI.Models
         //public IList<SelectListItem> HasYouthProgramme { get; set; }
         public IList<SelectListItem> HasYouthProgrammeOptions { get; set; }
         public List<string> SelectedYouthProgrammes { get; set; }
+        public string YouthProgrammesDetails { get; set; }
+
         //public List<int> SelectedYouthProg  { get; set; }
         //public List<int> SelectedYouthProg { get; set; } = new List<int>();
 

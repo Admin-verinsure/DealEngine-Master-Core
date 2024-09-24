@@ -4,9 +4,12 @@
     <div class="form-group">
         <div class="row">
             <div class="col-4">
-                <label for="HasYouthProgrammeOptions" class="label required">Is your club involved in a youth programme?</label>
+                <label for="HasYouthProgrammeOptions" class="label required">If your Club is involved in a Youth programme please enter name(s) here</label>
             </div>
-            <div class="col-8">
+             <div class="col-8">
+                @Html.TextBoxFor(m => m.GLViewModel.YouthProgrammesDetails, new { id = "YouthProgrammesDetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)" })
+            </div>
+           @* <div class="col-8">
                 <select id="HasYouthProgrammeOptions" name="GLViewModel.SelectedYouthProgrammes" class="form-select b" multiple required>
                     @foreach (var option in Model.GLViewModel.HasYouthProgrammeOptions)
                     {
@@ -15,7 +18,21 @@
                         </option>
                     }
                 </select>
-            </div>
+            </div>*@
         </div>
     </div>
 </form>
+
+
+@*<div class="form-group">
+    <div class="row">
+        <div class="col-6">
+            <label for="postcodedetails" class="label">
+                Postcode
+            </label>
+        </div>
+        <div class="col-6">
+            @Html.TextBoxFor(m => m.LocationViewModel.Postcode, new { id = "postcodedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @form = "LocationViewModel" })
+        </div>
+    </div>
+</div>*@
