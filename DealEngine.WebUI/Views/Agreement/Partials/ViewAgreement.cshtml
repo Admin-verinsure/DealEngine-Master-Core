@@ -994,39 +994,6 @@ else
 
 
 
-        //    if ("@Model.InformationSheetStatus" == "Started") {
-        //        debugger;
-        //        var progId = $("#ClientProgrammeId").val();
-        //        var postData = { ProgrammeId: progId };
-
-        //        $.ajax({
-        //            url: '@Url.Action("GetdefaultCoverOptions", "Information")',
-        //            type: "POST",
-        //            data: postData
-        //        }).done(function (data) {
-        //            if (data.optionitems != "") {
-        //                for (var item = 0; item < data.optionitems.length; item++) {
-        //                    var arr = data.optionitems[item];
-        //                    var count = 0;
-        //                    var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
-
-        //                    $(queryselector).attr('checked', true);
-        //                }
-        //            }
-        //            debugger;
-
-        //@*var TermLimitTotal = @ViewBag.TermLimitTotal;*@
-
-        //                document.getElementById("Limittotal").innerHTML = data.termlimit;
-
-        //        }).fail(function (jqXHR, textStatus, errorThrown) {
-        //            alert("There was an error while trying to save default cover option.");
-        //        });
-
-        //    }
-
-
-
 
         $('#SubQuoteTermModal').on('show.bs.modal', function (e) {
             debugger;

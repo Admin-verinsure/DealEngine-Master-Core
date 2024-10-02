@@ -747,8 +747,8 @@ namespace DealEngine.WebUI.Models
                     },
                     new SelectListItem
                     {
-                        Text = "Holding Trust",
-                        Value = "Holding Trust"
+                        Text = "Non Trading",
+                        Value = "Non Trading"
                     },
                     new SelectListItem
                     {

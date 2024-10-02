@@ -830,7 +830,6 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                //ViewBag.TermLimitTotal = limittotal;
                 var result = new { termlimit = limittotal, optionitems = OptionItems };
                 return Json(result);
             }
