@@ -355,7 +355,7 @@ namespace DealEngine.WebUI.Controllers
                     {
 
                         if (!user.Organisations.Any(org => org.Id == clientProgramme.Owner.Id)) { 
-                        user.Organisations.Add(clientProgramme.Owner);
+                            user.Organisations.Add(clientProgramme.Owner);
                            // clientProgramme.Owner = user;
                             clientProgramme.Owner.Email = user.Email;
                             user.PrimaryOrganisation = clientProgramme.Owner;

@@ -153,8 +153,9 @@ namespace DealEngine.Services.Impl
 			User user = null;
 			try
 			{
-				user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
-			}
+				//user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            }
 			catch (Exception ex)
 			{
 				throw new Exception(ex.Message);
