@@ -31,4 +31,7 @@
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
+  <PropertyGroup>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
 </Project>
