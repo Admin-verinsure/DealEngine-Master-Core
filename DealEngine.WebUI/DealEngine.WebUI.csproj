@@ -422,7 +422,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.18" />
+    <PackageReference Include="Microsoft.NET.Sdk.Razor" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="NHibernateProfiler.Appender" Version="6.0.6031" />
     <PackageReference Include="NLog" Version="4.6.8" />
