@@ -3,6 +3,7 @@ name: CICD Pipeline
 on:
   push:
     branches:
+      - main
       - Rotary2024
   workflow_dispatch:
 
