@@ -3,7 +3,6 @@ name: CICD Pipeline
 on:
   push:
     branches:
-      - main
       - Rotary2024
   workflow_dispatch:
 
@@ -51,7 +50,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: test
-    if: ${{ github.event_name == 'workflow_dispatch' }} # Manual Trigger
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' }} # Manual Trigger
 
     steps:
     - name: Checkout Repository
