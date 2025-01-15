@@ -69,8 +69,8 @@ jobs:
         sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URL_INSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
     - name: Execute Deploy Preparation Script
-      run: ssh -v -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@${{ secrets.URL_INSUREROTARYOCEANIA }} './DE-DeployPrep.sh'
-
+      run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.URL_INSUREROTARYOCEANIA }} './DE-DeployPrep.sh'
+      
     - name: Copy Login Text File
       run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
 
