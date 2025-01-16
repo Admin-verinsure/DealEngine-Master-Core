@@ -69,7 +69,10 @@ jobs:
        sed -i "s|https://localhost:44323/Image/_|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/_|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
        sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
        sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-
+       
+    - name: Add SSH Host Key
+      run: ssh-keyscan -H ${{ secrets.URLINSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
+     
 
     # Execute Deploy Preparation Script
     - name: Execute Deploy Preparation Script
