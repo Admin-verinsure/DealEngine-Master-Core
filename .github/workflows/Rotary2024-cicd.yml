@@ -70,11 +70,15 @@ jobs:
        sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
        sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-    # SSH into the server and execute the deploy preparation script
+    # Add server to known_hosts to avoid SSH warnings
+    - name: Add server to known_hosts
+      run: ssh-keyscan -H ${{ secrets.URLINSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
+
+    # Execute Deploy Preparation Script
     - name: Execute Deploy Preparation Script
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
-
+        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
+        
     - name: Copy Login Text File
       run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
 
