@@ -82,4 +82,4 @@ jobs:
         rsync -azhe ssh DealEngine.WebUI/bin/Release/net6.0/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
 
     - name: Execute Final Deploy Script
-      run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
+      run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh' #
