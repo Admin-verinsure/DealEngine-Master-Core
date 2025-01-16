@@ -70,18 +70,14 @@ jobs:
        sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
        sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
      
-    - name: Test Connectivity
-      run: ping -c 4 ${{ secrets.URLINSUREROTARYOCEANIA }}
-     
-
-    - name: Add SSH Host Key
-      run: ssh-keyscan -v -H ${{ secrets.URLINSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
-     
+    - name: Test SSH Connection
+      run: |
+         ssh -o StrictHostKeyChecking=no -i ${{ secrets.PKGITHUB }} ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo Connection Successful"
 
     # Execute Deploy Preparation Script
-    - name: Execute Deploy Preparation Script
-      run: |
-        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
+    #- name: Execute Deploy Preparation Script
+      #run: |
+        #ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
 
     - name: Copy Login Text File
       run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
