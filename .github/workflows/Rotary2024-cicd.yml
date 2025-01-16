@@ -56,15 +56,13 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-     # Setup SSH manually with private key stored in GitHub secrets
+    # Setup SSH agent with the private key stored in GitHub secrets
     - name: Setup SSH
-      run: |
-       mkdir -p ~/.ssh
-       echo "${{ secrets.PKGITHUB }}" > ~/.ssh/id_rsa
-       chmod 600 ~/.ssh/id_rsa
-       ssh-keyscan -H ${{ secrets.URLINSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+       ssh-private-key: ${{ secrets.PKGITHUB }}
 
-   # Replace URLs in ckeditor.js
+    # Replace URLs in ckeditor.js
     - name: Replace URLs in ckeditor.js
       run: |
        sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
@@ -72,11 +70,11 @@ jobs:
        sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
        sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-   # SSH into the server and execute the deploy preparation script
+    # SSH into the server and execute the deploy preparation script
     - name: Execute Deploy Preparation Script
       run: |
-       ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
-       
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
+
     - name: Copy Login Text File
       run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
 
