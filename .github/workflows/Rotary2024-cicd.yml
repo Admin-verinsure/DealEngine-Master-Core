@@ -1,6 +1,9 @@
 name: Deploy to InsureRotaryOceania
 
 on:
+  push:
+    branches:
+      - Rotary2024
   workflow_dispatch:  # Trigger the workflow manually from GitHub Actions UI
 
 jobs:
