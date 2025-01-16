@@ -57,10 +57,13 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.URL_INSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
 
+    # Step 3: Replace URLs in ckeditor.js (Modify this step as per your project requirements)
     - name: Replace URLs in ckeditor.js
       run: |
         sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URL_INSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
@@ -68,8 +71,10 @@ jobs:
         sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URL_INSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
         sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URL_INSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-    - name: Execute Deploy Preparation Script
-      run: ssh -vvv -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URL_INSUREROTARYOCEANIA }} echo "SSH Connection Successful"
+    # Step 4: Deploy to Server (SSH connection and execution)
+    - name: Deploy to Server
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URL_INSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
       
     - name: Copy Login Text File
       run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
