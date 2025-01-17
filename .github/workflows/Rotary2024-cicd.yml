@@ -62,7 +62,7 @@ jobs:
       with:
        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # Replace URLs in ckeditor.js
+    # Replace URLs in ckeditor
     - name: Replace URLs in ckeditor.js
       run: |
        sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
