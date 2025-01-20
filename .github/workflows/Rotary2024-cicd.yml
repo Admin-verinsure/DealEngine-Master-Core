@@ -22,4 +22,4 @@ jobs:
 
     - name: Test SSH Connection
       run: |
-        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
+        ssh -v -o StrictHostKeyChecking=no -p 22 ubuntu@54.176.44.171 "echo 'SSH Connection Successful'"
