@@ -79,8 +79,8 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
 
-    - name: Copy Login Text File
-      run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
+    #- name: Copy Login Text File
+    #  run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
 
     - name: Publish Project
       run: dotnet publish -c Release
