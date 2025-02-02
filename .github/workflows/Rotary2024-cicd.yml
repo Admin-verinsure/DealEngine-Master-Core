@@ -18,8 +18,8 @@ jobs:
     - name: Setup SSH
       uses: webfactory/ssh-agent@v0.8.0
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}#
 
     - name: Test SSH Connection
       run: |
-        ssh -v -o StrictHostKeyChecking=no -p 22 ubuntu@54.176.44.171 "echo 'SSH Connection Successful'"
+        ssh -v -o StrictHostKeyChecking=no -p 22 ubuntu@54.176.44.174 "echo 'SSH Connection Successful'"
