@@ -30,15 +30,32 @@ jobs:
       - name: Build Project
         run: dotnet build -c Release --no-restore
 
+      - name: Publish Project
+        run: |
+          dotnet publish DealEngine.WebUI/DealEngine.WebUI.csproj -c Release --no-restore -o ./publish_output
+          ls -la ./publish_output  # Debugging step
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: ./publish_output
+
   deploy_insurerotaryoceania:
     name: Deploy to Rotary Oceania
     runs-on: ubuntu-latest
-    needs: build
+    needs: build  # Ensures deployment only runs after a successful build
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Ensures full repo is fetched
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: ./publish_output
 
       - name: Setup SSH
         run: |
@@ -58,21 +75,6 @@ jobs:
 
       - name: Debug: Check If _LoginText.cshtml Exists
         run: ls -la DealEngine.WebUI/Views/Account/
-
-      - name: Copy Login Text File from Repository
-        run: |
-          if [ -f "DealEngine.WebUI/Views/Account/_LoginText.cshtml" ]; then
-            cp DealEngine.WebUI/Views/Account/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
-            echo "✅ File copied successfully."
-          else
-            echo "❌ ERROR: _LoginText.cshtml NOT FOUND! Check case sensitivity."
-            exit 1
-          fi
-
-      - name: Publish Project
-        run: |
-          dotnet publish DealEngine.WebUI/DealEngine.WebUI.csproj -c Release --no-restore -o ./publish_output
-          ls -la ./publish_output  # Debugging step
 
       - name: Deploy Files via Rsync
         run: |
