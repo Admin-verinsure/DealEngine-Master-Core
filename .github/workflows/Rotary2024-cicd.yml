@@ -3,75 +3,65 @@ name: CICD Pipeline
 on:
   push:
     branches:
-      - Rotary2024
-  workflow_dispatch:
+      - Rotary2024  # Change as needed
+  workflow_dispatch:  # Allows manual runs
 
 jobs:
   build:
     name: Build .NET 6
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '6.0.x'
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
 
-    - name: Clean Project
-      run: dotnet clean
-           dotnet nuget disable source IAG
-           dotnet build -c Release
+      - name: Clean Project
+        run: |
+          dotnet clean
+          dotnet nuget disable source IAG
+          dotnet restore
+          dotnet build -c Release --no-restore
 
-    #- name: Disable NuGet Source
-     # run: dotnet nuget disable source IAG
-
-    - name: Build Project
-      run: dotnet build -c Release
-
- 
   deploy_insurerotaryoceania:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    # Setup SSH agent with the private key stored in GitHub secrets
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.URLINSUREROTARYOCEANIA }} >> ~/.ssh/known_hosts
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
 
-    # Replace URLs in ckeditor
-    - name: Replace URLs in ckeditor.js
-      run: |
-       sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-       sed -i "s|https://localhost:44323/Image/_|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/_|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-       sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-       sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-     
-    #- name: Test SSH Connection
-      #run: |
-         #ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo Connection Successful"
+      - name: Replace URLs in ckeditor.js
+        run: |
+          sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/_|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/_|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-    # Execute Deploy Preparation Script
-    - name: Execute Deploy Preparation Script
-      run: |
-        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
+      - name: Test SSH Connection
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'SSH Connection Successful'"
 
-    #- name: Copy Login Text File
-    #  run: cp ~/general/_LoginText.cshtml DealEngine.WebUI/Views/Account/_LoginText.cshtml
+      - name: Execute Deploy Preparation Script
+        run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployPrep.sh'
 
-    - name: Publish Project
-      run: dotnet publish -c Release
+      - name: Publish Project
+        run: dotnet publish -c Release --no-restore
 
-    - name: Deploy Files via rsync
-      run: |
-        rsync -azhe ssh DealEngine.WebUI/bin/Release/net6.0/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
+      - name: Deploy Files via rsync
+        run: |
+          rsync -azhe "ssh -o StrictHostKeyChecking=no" DealEngine.WebUI/bin/Release/net6.0/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
 
-    - name: Execute Final Deploy Script
-      run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh' #
+      - name: Execute Final Deploy Script
+        run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
