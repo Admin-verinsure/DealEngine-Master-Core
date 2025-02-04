@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full repo is fetched
 
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v3
@@ -30,19 +32,38 @@ jobs:
 
       - name: Publish Project
         run: |
+          echo "🔧 Creating publish output directory..."
+          mkdir -p ./publish_output
+          echo "🚀 Running dotnet publish..."
           dotnet publish DealEngine.WebUI/DealEngine.WebUI.csproj -c Release --no-restore -o ./publish_output
+          echo "📂 Checking publish_output directory..."
           ls -la ./publish_output  # Debugging step
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: ./publish_output
 
   deploy_insurerotaryoceania:
     name: Deploy to Rotary Oceania
     runs-on: ubuntu-latest
-    needs: build
+    needs: build  # Ensures deployment only runs after a successful build
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full repo is fetched
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: ./publish_output
 
       - name: Setup SSH
         run: |
+          echo "🔑 Setting up SSH..."
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -52,28 +73,39 @@ jobs:
 
       - name: Replace URLs in CKEditor
         run: |
+          echo "🔧 Updating CKEditor URLs..."
           sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/_|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/_|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
+          sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-      - name: Deploy Files via Rsync
+      - name: Verify Publish Directory Before Deployment
         run: |
+          echo "📂 Checking publish_output directory before deployment..."
           if [ -d "./publish_output" ]; then
-            rsync -avzhe "ssh -o StrictHostKeyChecking=no" ./publish_output/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
+            echo "✅ Publish directory exists. Proceeding with deployment."
+            ls -la ./publish_output
           else
-            echo "⚠️ Error: Publish directory not found! Skipping rsync."
+            echo "❌ ERROR: Publish directory not found!"
             exit 1
           fi
 
-      # ✅ New: Verify Deployment by Checking Latest Modified File
-      - name: Verify Deployment - Check Latest Modified File
+      - name: Deploy Files via Rsync
         run: |
-          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} 'ls -lt /home/ubuntu/projects/dealengine | head -n 5'
+          echo "🚀 Deploying files via rsync..."
+          rsync -azhe "ssh -o StrictHostKeyChecking=no" ./publish_output/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
 
-      # ✅ New: Verify Git Commit Hash on Server
-      - name: Verify Git Commit Hash
+      - name: Verify Deployment Timestamp
         run: |
-          COMMIT_HASH=$(git rev-parse HEAD)
-          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'Deployed Commit Hash: ${COMMIT_HASH}' > /home/ubuntu/projects/dealengine/commit_hash.txt"
-          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "cat /home/ubuntu/projects/dealengine/commit_hash.txt"
+          echo "🕒 Checking file timestamps on server..."
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "ls -lt /home/ubuntu/projects/dealengine/ | head -n 10"
+
+      - name: Verify File Content (Version Check)
+        run: |
+          echo "📄 Checking deployed version file..."
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "cat /home/ubuntu/projects/dealengine/version.txt || echo '⚠️ No version file found'"
 
       - name: Execute Final Deploy Script
-        run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
+        run: |
+          echo "🚀 Running final deployment script on server..."
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
