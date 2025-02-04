@@ -1,4 +1,4 @@
-name: Rotary CICD Pipeline
+name: CICD Pipeline
 
 on:
   push:
@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Ensures full repo is fetched
 
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v3
@@ -35,27 +33,13 @@ jobs:
           dotnet publish DealEngine.WebUI/DealEngine.WebUI.csproj -c Release --no-restore -o ./publish_output
           ls -la ./publish_output  # Debugging step
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: ./publish_output
-
   deploy_insurerotaryoceania:
     name: Deploy to Rotary Oceania
     runs-on: ubuntu-latest
-    needs: build  # Ensures deployment only runs after a successful build
+    needs: build
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Ensures full repo is fetched
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: ./publish_output
 
       - name: Setup SSH
         run: |
@@ -69,21 +53,27 @@ jobs:
       - name: Replace URLs in CKEditor
         run: |
           sed -i "s|https://localhost:44323/Image/CKGetAllImages|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKGetAllImages|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-          sed -i "s|https://localhost:44323/Image/_|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/_|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-          sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-          sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
-
-      - name: "Debug - Check If _LoginText.cshtml Exists"
-        run: ls -la DealEngine.WebUI/Views/Account/
 
       - name: Deploy Files via Rsync
         run: |
           if [ -d "./publish_output" ]; then
-            rsync -azhe "ssh -o StrictHostKeyChecking=no" ./publish_output/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
+            rsync -avzhe "ssh -o StrictHostKeyChecking=no" ./publish_output/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
           else
             echo "⚠️ Error: Publish directory not found! Skipping rsync."
             exit 1
           fi
+
+      # ✅ New: Verify Deployment by Checking Latest Modified File
+      - name: Verify Deployment - Check Latest Modified File
+        run: |
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} 'ls -lt /home/ubuntu/projects/dealengine | head -n 5'
+
+      # ✅ New: Verify Git Commit Hash on Server
+      - name: Verify Git Commit Hash
+        run: |
+          COMMIT_HASH=$(git rev-parse HEAD)
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "echo 'Deployed Commit Hash: ${COMMIT_HASH}' > /home/ubuntu/projects/dealengine/commit_hash.txt"
+          ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} "cat /home/ubuntu/projects/dealengine/commit_hash.txt"
 
       - name: Execute Final Deploy Script
         run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
