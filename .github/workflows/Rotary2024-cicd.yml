@@ -22,7 +22,6 @@ jobs:
       - name: Clean Project
         run: |
           dotnet clean
-          dotnet nuget disable source IAG
           dotnet restore
           dotnet build -c Release --no-restore
 
