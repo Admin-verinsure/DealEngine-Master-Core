@@ -3,8 +3,8 @@ name: CICD Pipeline
 on:
   push:
     branches:
-      - Rotary2024  # Change as needed
-  workflow_dispatch:  # Allows manual triggering
+      - Rotary2024
+  workflow_dispatch:  # Allows manual runs
 
 jobs:
   build:
@@ -37,7 +37,9 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish Project
-        run: dotnet publish -c Release --no-restore
+        run: |
+          dotnet publish -c Release --no-restore
+          ls -la DealEngine.WebUI/bin/Release/net6.0/  # Debugging step
 
   deploy_insurerotaryoceania:
     name: Deploy to Rotary Oceania
@@ -71,7 +73,12 @@ jobs:
 
       - name: Deploy Files via Rsync
         run: |
-          rsync -azhe "ssh -o StrictHostKeyChecking=no" DealEngine.WebUI/bin/Release/net6.0/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
+          if [ -d "DealEngine.WebUI/bin/Release/net6.0/" ]; then
+            rsync -azhe "ssh -o StrictHostKeyChecking=no" DealEngine.WebUI/bin/Release/net6.0/ ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }}:/home/ubuntu/projects/dealengine
+          else
+            echo "⚠️ Error: Publish directory not found! Skipping rsync."
+            exit 1
+          fi
 
       - name: Execute Final Deploy Script
         run: ssh ubuntu@${{ secrets.URLINSUREROTARYOCEANIA }} './DE-DeployFin.sh'
