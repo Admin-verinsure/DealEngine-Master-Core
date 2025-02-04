@@ -36,7 +36,7 @@ jobs:
           ls -la ./publish_output  # Debugging step
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: ./publish_output
@@ -52,7 +52,7 @@ jobs:
           fetch-depth: 0  # Ensures full repo is fetched
 
       - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-output
           path: ./publish_output
