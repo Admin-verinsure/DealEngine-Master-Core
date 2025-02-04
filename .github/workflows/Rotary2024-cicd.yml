@@ -73,7 +73,7 @@ jobs:
           sed -i "s|https://localhost:44323/Image/CKUpload|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/CKUpload|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
           sed -i "s|https://localhost:44323/Image/|https://${{ secrets.URLINSUREROTARYOCEANIA }}/Image/|g" DealEngine.WebUI/wwwroot/ckeditor/ckeditor5-techcertain/build/ckeditor.js
 
-      - name: Debug: Check If _LoginText.cshtml Exists
+      - name: "Debug - Check If _LoginText.cshtml Exists"
         run: ls -la DealEngine.WebUI/Views/Account/
 
       - name: Deploy Files via Rsync
