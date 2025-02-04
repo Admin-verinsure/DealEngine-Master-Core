@@ -1,4 +1,4 @@
-name: CICD Pipeline
+name: Rotary CICD Pipeline
 
 on:
   push:
