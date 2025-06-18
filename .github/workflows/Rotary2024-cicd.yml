@@ -108,4 +108,4 @@ jobs:
       - name: Execute Final Deploy Script
         run: |
           echo "🚀 Running final deployment script on server..."
-          ssh ubuntu@${{ secrets.ROTARY_SITEHOST_IP }} './DE-DeployFin.sh'
+          ssh ubuntu@${{ secrets.ROTARY_SITEHOST_IP }} 'cd /home/ubuntu/projects/dealengine && ./DE-DeployFin.sh'
